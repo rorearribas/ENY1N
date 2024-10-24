@@ -11,6 +11,11 @@
 *.gch
 *.pch
 
+# ignore
+*.ipch
+*.vsidx
+*.opendb
+
 # Compiled Dynamic libraries
 *.so
 *.dylib

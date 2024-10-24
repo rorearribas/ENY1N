@@ -4,15 +4,7 @@
 void CType::RegisterType(CType* _pType)
 {
   CTypeManager& oTypeManager = CTypeManager::GetInstance();
-  CType* pType = oTypeManager.FindType(_pType->GetTypeName());
-  if (pType)
-  {
-
-  }
-  else
-  {
-    oTypeManager.RegisterType(_pType);
-  }
+  oTypeManager.RegisterType(_pType);
 }
 
 void CType::RegisterProperty(CProperty* _pProperty)
