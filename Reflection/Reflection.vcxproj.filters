@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="ConsoleApplication1.cpp" />
+    <ClCompile Include="Entity.cpp">
+      <Filter>Compile</Filter>
+    </ClCompile>
+    <ClCompile Include="Type.cpp">
+      <Filter>Compile</Filter>
+    </ClCompile>
+    <ClCompile Include="Functions.cpp">
+      <Filter>Compile</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Entity.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Type.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Functions.h">
+      <Filter>Headers</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Compile">
+      <UniqueIdentifier>{1125ecf5-e5e8-419f-8d9d-68f7c35eff8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headers">
+      <UniqueIdentifier>{50a6de10-d395-4144-aeca-e551a96d6f94}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
