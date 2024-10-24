@@ -1,5 +1,5 @@
 #include "TypeManager.h"
-#include "Type.h"
+#include "../Base/Type.h"
 
 void CTypeManager::RegisterType(CType* _pType)
 {

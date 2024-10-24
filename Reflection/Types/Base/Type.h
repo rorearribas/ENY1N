@@ -1,8 +1,8 @@
 #pragma once
 #include <array>
 #include <vector>
-#include "Functions.h"
-#include "Property.h"
+#include "../Functions/Functions.h"
+#include "../Property/Property.h"
 
 // CType
 class CType 

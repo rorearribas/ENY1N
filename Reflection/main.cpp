@@ -2,9 +2,10 @@
 #include <Windows.h>
 #include <vector>
 #include <cmath>
-#include "Type.h"
-#include "Entity.h"
-#include "Functions.h"
+
+#include "Types/Base/Type.h"
+#include "Types/Game/Entity.h"
+#include "Types/Functions/Functions.h"
 
 int main()
 {

@@ -24,7 +24,7 @@
     <ProjectGuid>{3f569f91-b437-4aa5-9c9c-dedbeaea94cc}</ProjectGuid>
     <RootNamespace>Reflection</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>ReflectionApp</ProjectName>
+    <ProjectName>Reflection</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -130,16 +130,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="Functions.cpp" />
-    <ClCompile Include="Type.cpp" />
-    <ClCompile Include="TypeManager.cpp" />
+    <ClCompile Include="Types\Game\Entity.cpp" />
+    <ClCompile Include="Types\Functions\Functions.cpp" />
+    <ClCompile Include="Types\Property\Property.cpp" />
+    <ClCompile Include="Types\Base\Type.cpp" />
+    <ClCompile Include="Types\TypeManager\TypeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Entity.h" />
-    <ClInclude Include="Functions.h" />
-    <ClInclude Include="Type.h" />
-    <ClInclude Include="TypeManager.h" />
+    <ClInclude Include="Types\Game\Entity.h" />
+    <ClInclude Include="Types\Functions\Functions.h" />
+    <ClInclude Include="Types\Property\Property.h" />
+    <ClInclude Include="Types\Base\Type.h" />
+    <ClInclude Include="Types\TypeManager\TypeManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
