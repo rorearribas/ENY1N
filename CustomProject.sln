@@ -10,6 +10,11 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Reflection", "Reflection\Reflection.vcxproj", "{3F569F91-B437-4AA5-9C9C-DEDBEAEA94CC}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GameApp", "GameApp\GameApp.vcxproj", "{D847EF57-06E7-41AD-B159-B4B8B91D8B72}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3F569F91-B437-4AA5-9C9C-DEDBEAEA94CC} = {3F569F91-B437-4AA5-9C9C-DEDBEAEA94CC}
+		{C2563C48-0F40-4231-A59E-BD1021B93B9E} = {C2563C48-0F40-4231-A59E-BD1021B93B9E}
+		{E9154C9C-C731-432E-AE3D-DF4FBE9E938F} = {E9154C9C-C731-432E-AE3D-DF4FBE9E938F}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,5 @@
 ﻿  Engine.cpp
   RenderSystem.cpp
   RenderWindow.cpp
-D:\Projects\Personal\ENY1N\Engine\Render\RenderWindow.cpp(80,15): warning C4244: 'return': conversión de 'WPARAM' a 'int'; posible pérdida de datos
   Generando código...
   Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Debug\Engine.lib

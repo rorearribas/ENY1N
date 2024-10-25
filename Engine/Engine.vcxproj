@@ -140,6 +140,7 @@
     <ClInclude Include="Base\Engine.h" />
     <ClInclude Include="Render\RenderSystem.h" />
     <ClInclude Include="Render\RenderWindow.h" />
+    <ClInclude Include="Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp" />
