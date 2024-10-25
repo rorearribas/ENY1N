@@ -1,2 +1,3 @@
 ﻿  main.cpp
-  GameApp.vcxproj -> D:\Projects\Personal\ENY1N\x64\Debug\GameApp.exe
+D:\Projects\Personal\ENY1N\GameApp\main.cpp(73,13): warning C4244: 'return': conversión de 'WPARAM' a 'int'; posible pérdida de datos
+  GameApp.vcxproj -> D:\Projects\Personal\ENY1N\GameApp\x64\Debug\GameApp.exe
