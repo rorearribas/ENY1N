@@ -2,8 +2,12 @@
 #include "../Engine/Base/Engine.h"
 #include "../Engine/Utils/Utils.h"
 
+#define WIDTH 1280
+#define HEIGHT 720
+
 int main()
 {
   engine::CEngine* pEngine = engine::CEngine::GetInstance();
-  pEngine->InitEngine(1920, 1080);
+  pEngine->InitEngine(WIDTH, HEIGHT);
+  pEngine->Update();
 }

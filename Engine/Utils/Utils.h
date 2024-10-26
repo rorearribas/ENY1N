@@ -1,15 +1,19 @@
 #pragma once
 
-template <typename T>
-class CSingleton
+namespace utils
 {
-public:
-  static T* GetInstance() 
+  template <typename T>
+  class CSingleton
   {
-    static T* m_pInstance = new T();
-    return m_pInstance;
-  }
-protected:
-  CSingleton() {}
-  ~CSingleton() {}
-};
+  public:
+    static T* GetInstance()
+    {
+      static T* m_pInstance = new T();
+      return m_pInstance;
+    }
+  protected:
+    CSingleton() {}
+    ~CSingleton() {}
+  };
+
+}

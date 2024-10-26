@@ -140,12 +140,14 @@
     <ClInclude Include="Base\Engine.h" />
     <ClInclude Include="Render\RenderSystem.h" />
     <ClInclude Include="Render\RenderWindow.h" />
+    <ClInclude Include="Utils\Tick.h" />
     <ClInclude Include="Utils\Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp" />
     <ClCompile Include="Render\RenderSystem.cpp" />
     <ClCompile Include="Render\RenderWindow.cpp" />
+    <ClCompile Include="Utils\Tick.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

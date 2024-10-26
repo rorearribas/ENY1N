@@ -48,46 +48,33 @@ namespace render
 
       // create the window and use the result as the handle
       hWnd = CreateWindowEx(NULL,
-        L"WindowClass1",    // name of the window class
-        L"Game Engine",   // title of the window
+        L"WindowClass1", // name of the window class
+        L"Game Engine",// title of the window
         WS_OVERLAPPEDWINDOW,    // window style
-        _uWidth / 2,    // x-position of the window
-        _uHeight / 2,    // y-position of the window
-        _uWidth,    // width of the window
-        _uHeight,    // height of the window
-        NULL,    // we have no parent window, NULL
-        NULL,    // we aren't using menus, NULL
-        hInstance,    // application handle
-        NULL);    // used with multiple windows, NULL
+        0, // x-position of the window
+        0, // y-position of the window
+        _uWidth, // width of the window
+        _uHeight, // height of the window
+        NULL, // we have no parent window, NULL
+        NULL, // we aren't using menus, NULL
+        hInstance, // application handle
+        NULL); // used with multiple windows, NULL
 
       return hWnd;
     }
   }
-
+  // ------------------------------------
   void CRenderWindow::CreateRenderWindow(const UINT32& _uWidth, const UINT32& _uHeight)
   {
     HINSTANCE hInstance = GetModuleHandle(NULL);
     m_hWnd = internal_renderwindow::CreateWinMain(hInstance, _uWidth, _uHeight);
+
+    m_uWidth = _uWidth;
+    m_uHeight = _uHeight;
   }
-
-  void CRenderWindow::ShowRenderWindow()
+  // ------------------------------------
+  void CRenderWindow::SetEnabled(bool _bEnabled) const
   {
-    ShowWindow(m_hWnd, true);
-  }
-
-  void render::CRenderWindow::UpdateWindow()
-  {
-    // this struct holds Windows event messages
-    MSG msg;
-
-    // wait for the next message in the queue, store the result in 'msg'
-    while (GetMessage(&msg, NULL, 0, 0))
-    {
-      // translate keystroke messages into the right format
-      TranslateMessage(&msg);
-
-      // send the message to the WindowProc function
-      DispatchMessage(&msg);
-    }
+    ShowWindow(m_hWnd, _bEnabled);
   }
 }

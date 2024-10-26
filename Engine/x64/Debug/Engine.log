@@ -1,5 +1,6 @@
 ﻿  Engine.cpp
   RenderSystem.cpp
-  RenderWindow.cpp
+  Tick.cpp
   Generando código...
+D:\Projects\Personal\ENY1N\Engine\Render\RenderSystem.cpp(72,1): warning C4715: 'render::CRenderSystem::CreateRenderTargetView': no todas las rutas de acceso de control devuelven un valor
   Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Debug\Engine.lib
