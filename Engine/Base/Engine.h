@@ -1,7 +1,7 @@
 #pragma once
 #include "..\Render\RenderSystem.h"
-#include "..\Utils\Utils.h"
-#include "..\Utils\Tick.h"
+#include "..\..\Libs/Utils/Singleton.h"
+#include "..\..\Libs/Time/Fixedtick.h"
 
 namespace engine 
 {
@@ -19,7 +19,7 @@ namespace engine
 
   private:
     render::CRenderSystem* m_pRenderSystem = nullptr;
-    utils::CTick* m_pTick = nullptr;
+    global::CFixedTick* m_pFixedTick = nullptr;
   };
 }
 

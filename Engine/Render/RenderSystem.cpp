@@ -66,11 +66,12 @@ namespace render
     m_pDXGISwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
     if (!pBackBuffer) return -1;
 
-    m_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView);
+    HRESULT hr = m_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView);
     pBackBuffer->Release();
     m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
-  }
 
+    return hr;
+  }
   // ------------------------------------
   void CRenderSystem::UpdateRender()
   {
@@ -78,7 +79,7 @@ namespace render
     m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, vctClearColor);
     m_pDXGISwapChain->Present(0, 0);
   }
-
+  // ------------------------------------
   void CRenderSystem::ConfigureViewport()
   {
     if(m_pDeviceContext && m_pRenderWindow)

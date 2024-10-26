@@ -15,5 +15,4 @@ namespace utils
     CSingleton() {}
     ~CSingleton() {}
   };
-
 }
