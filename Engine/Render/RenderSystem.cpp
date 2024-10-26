@@ -75,7 +75,7 @@ namespace render
   // ------------------------------------
   void CRenderSystem::UpdateRender()
   {
-    FLOAT vctClearColor[4] = { 0.0f, 0.2f, 0.4f, 1.0f };
+    FLOAT vctClearColor[4] = { 1.0f, 0.2f, 0.4f, 1.0f };
     m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, vctClearColor);
     m_pDXGISwapChain->Present(0, 0);
   }

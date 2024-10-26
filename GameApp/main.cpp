@@ -8,7 +8,8 @@
 
 int main()
 {
-  engine::CEngine* pEngine = engine::CEngine::GetInstance();
+  engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->InitEngine(WIDTH, HEIGHT);
   pEngine->Update();
+  pEngine->DestroySingleton();
 }
