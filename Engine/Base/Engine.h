@@ -1,7 +1,7 @@
 #pragma once
-#include "..\Render\RenderSystem.h"
-#include "..\..\Libs/Utils/Singleton.h"
-#include "..\..\Libs/Time/Fixedtick.h"
+#include "Engine/Render/RenderSystem.h"
+#include "Libs/Utils/Singleton.h"
+#include "Libs/Time/Fixedtick.h"
 
 namespace engine 
 {

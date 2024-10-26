@@ -1,7 +1,7 @@
 #include <iostream>
-#include "../Engine/Base/Engine.h"
-#include "../Libs/Maths/Vector2.h"
-#include "../Libs/Maths/Vector3.h"
+#include "Engine/Base/Engine.h"
+#include "Libs/Maths/Vector2.h"
+#include "Libs/Maths/Vector3.h"
 
 #define WIDTH 1280
 #define HEIGHT 720
