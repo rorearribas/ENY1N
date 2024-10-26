@@ -1,28 +1,19 @@
 #pragma once
 #include <array>
+#include "Libs/Utils/Singleton.h"
 
 class CType;
-class CTypeManager 
+class CTypeManager : public utils::CSingleton<CTypeManager>
 {
 public:
-  static CTypeManager& GetInstance()
-  {
-    static CTypeManager m_oInstance;
-    return m_oInstance;
-  }
-
-  CTypeManager(const CTypeManager&) = delete;
-  CTypeManager& operator=(const CTypeManager&) = delete;
+  CTypeManager() {}
+  ~CTypeManager() { ClearAllTypes(); }
 
   void RegisterType(CType* _pType);
   CType* FindType(const char* _sTypeName);
 
 private:
-  CTypeManager() {}
-  ~CTypeManager() { ClearAllTypes(); }
-
   inline void ClearAllTypes() { std::fill(std::begin(m_vctTypeList), std::end(m_vctTypeList), nullptr); }
-
   std::array<CType*, 1000> m_vctTypeList = {};
   int m_iRegisteredTypesCount = 0;
 };

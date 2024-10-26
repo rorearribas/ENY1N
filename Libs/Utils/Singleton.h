@@ -9,7 +9,7 @@ namespace utils
   public:
     static T* CreateSingleton();
     static void DestroySingleton();
-    inline static T* GetInstance() { return m_pInstance; }
+    static T* GetInstance();
 
   protected:
     CSingleton() {}
@@ -21,6 +21,12 @@ namespace utils
     inline static T* m_pInstance = nullptr;
     inline static std::mutex m_mutex;
   };
+
+  template <typename T>
+  T* utils::CSingleton<T>::GetInstance()
+  {
+    return m_pInstance ? m_pInstance : CreateSingleton();
+  }
 
   template <typename T>
   T* utils::CSingleton<T>::CreateSingleton()

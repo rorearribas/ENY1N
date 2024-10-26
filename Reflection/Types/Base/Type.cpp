@@ -3,8 +3,8 @@
 
 void CType::RegisterType(CType* _pType)
 {
-  CTypeManager& oTypeManager = CTypeManager::GetInstance();
-  oTypeManager.RegisterType(_pType);
+  CTypeManager* pTypeManager = CTypeManager::GetInstance();
+  pTypeManager->RegisterType(_pType);
 }
 
 void CType::RegisterProperty(CProperty* _pProperty)
