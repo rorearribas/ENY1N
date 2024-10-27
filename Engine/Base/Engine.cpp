@@ -1,4 +1,6 @@
 #include "Engine.h"
+#include "Engine/Render/RenderItem/PrimitiveItem.h"
+#include <cassert>
 
 namespace engine
 {
@@ -7,7 +9,8 @@ namespace engine
     if (!m_pRenderSystem)
     {
       m_pRenderSystem = new render::CRenderSystem(_uWidth, _uHeight);
-      m_pRenderSystem->InitDevice();
+      HRESULT hr = m_pRenderSystem->InitDevice();
+      assert(!FAILED(hr));
       m_pRenderSystem->GetRenderWindow()->SetEnabled(true);
     }
 
@@ -34,5 +37,9 @@ namespace engine
       }
     }
   }
-
+  // ------------------------------------
+  render::items::CPrimitiveItem* CEngine::CreatePrimitiveItem(std::vector<float>& _vctVertexData)
+  {
+    return m_pRenderSystem ? m_pRenderSystem->CreatePrimitiveItem(_vctVertexData) : nullptr;
+  }
 }

@@ -144,11 +144,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Base\Engine.h" />
+    <ClInclude Include="Render\RenderItem\PrimitiveItem.h" />
     <ClInclude Include="Render\RenderSystem.h" />
     <ClInclude Include="Render\RenderWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp" />
+    <ClCompile Include="Render\RenderItem\PrimitiveItem.cpp" />
     <ClCompile Include="Render\RenderSystem.cpp" />
     <ClCompile Include="Render\RenderWindow.cpp" />
   </ItemGroup>

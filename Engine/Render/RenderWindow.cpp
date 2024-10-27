@@ -1,6 +1,7 @@
 #include "RenderWindow.h"
 #include <windows.h>
 #include <windowsx.h>
+#include <cassert>
 
 namespace render
 {
@@ -64,13 +65,11 @@ namespace render
     }
   }
   // ------------------------------------
-  void CRenderWindow::CreateRenderWindow(const UINT32& _uWidth, const UINT32& _uHeight)
+  CRenderWindow::CRenderWindow(const UINT32& _uWidth, const UINT32& _uHeight)
   {
     HINSTANCE hInstance = GetModuleHandle(NULL);
     m_hWnd = internal_renderwindow::CreateWinMain(hInstance, _uWidth, _uHeight);
-
-    m_uWidth = _uWidth;
-    m_uHeight = _uHeight;
+    assert(m_hWnd);
   }
   // ------------------------------------
   void CRenderWindow::SetEnabled(bool _bEnabled) const
