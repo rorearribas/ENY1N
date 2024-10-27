@@ -30,6 +30,18 @@ namespace render
     ID3D11DeviceContext* m_pDeviceContext = nullptr;
     IDXGISwapChain* m_pDXGISwapChain = nullptr;
     ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
+
+    // Vertex shader
+    ID3DBlob* m_pVertexShaderBlob = nullptr;
+    ID3D11VertexShader* m_pVertexShader = nullptr;
+    // Pixel shader
+    ID3DBlob* m_pPixelShaderBlob = nullptr;
+    ID3D11PixelShader* m_pPixelShader = nullptr;
+
+    // Layout
+    ID3D11InputLayout* m_pInputLayout = nullptr;
+
+    ID3D11Buffer* m_pVertexBuffer = nullptr;
   };
 }
 
