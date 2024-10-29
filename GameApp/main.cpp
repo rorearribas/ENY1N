@@ -23,7 +23,19 @@ int main()
     0.5f,  0.5f,  0.0f,  // Esquina superior derecha
     0.5f, -0.5f,  0.0f   // Esquina inferior derecha
   };
+  std::vector<float> vctVertexData2 =
+  {
+    // Primer triángulo
+    -0.5f + 1,  0.5f + 1,  0.0f,  // Esquina superior izquierda
+    0.5f + 1, -0.5f + 1,  0.0f,  // Esquina inferior derecha
+    -0.5f + 1, -0.5f + 1,  0.0f,  // Esquina inferior izquierda
+    // Segundo triángulo
+    -0.5f + 1,  0.5f + 1,  0.0f,  // Esquina superior izquierda
+    0.5f + 1,  0.5f + 1,  0.0f,  // Esquina superior derecha
+    0.5f + 1, -0.5f + 1,  0.0f   // Esquina inferior derecha
+  };
   render::items::CPrimitiveItem* pPrimitiveItem = pEngine->CreatePrimitiveItem(vctVertexData);
+  render::items::CPrimitiveItem* pPrimitiveItem2 = pEngine->CreatePrimitiveItem(vctVertexData2);
 
 
   pEngine->Update();
