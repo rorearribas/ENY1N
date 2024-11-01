@@ -76,8 +76,8 @@ namespace render
       if (m_pBuffer) { m_pBuffer->Release(); }
       if (m_pInputLayout) { m_pInputLayout->Release(); }
 
-      if (m_pVertexShaderBlob) { m_pBuffer->Release(); }
-      if (m_pVertexShader) { m_pBuffer->Release(); }
+      if (m_pVertexShaderBlob) { m_pVertexShaderBlob->Release(); }
+      if (m_pVertexShader) { m_pVertexShader->Release(); }
 
       if (m_pPixelShaderBlob) { m_pPixelShaderBlob->Release(); }
       if (m_pPixelShader) { m_pPixelShader->Release(); }

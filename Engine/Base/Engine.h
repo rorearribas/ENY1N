@@ -19,8 +19,11 @@ namespace engine
     const UINT32& GetRenderWidth() { return m_pRenderSystem->GetRenderWindow()->GetWidth(); }
     const UINT32& GetRenderHeight() { return m_pRenderSystem->GetRenderWindow()->GetHeight(); }
 
+    const scene::CSceneManager* GetSceneManager() const { return m_pSceneManager.get(); }
     render::items::CPrimitiveItem* CreatePrimitiveItem(std::vector<float>& _vctVertexData, const UINT32& _uSceneIndex = 0);
   private:
+    void Loop();
+
     std::unique_ptr<global::CFixedTick> m_pFixedTick = nullptr;
     std::unique_ptr<render::CRenderSystem> m_pRenderSystem = nullptr;
     std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;

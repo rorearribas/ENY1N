@@ -4,6 +4,7 @@
 #include "Libs/Maths/Vector3.h"
 #include "Engine/Render/RenderItem/PrimitiveItem.h"
 #include <random>
+#include "Engine/Scenes/SceneManager.h"
 
 #define WIDTH 1280
 #define HEIGHT 720
@@ -12,12 +13,13 @@ int main()
 {
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->InitEngine(WIDTH, HEIGHT);
+  const scene::CSceneManager* pSceneManager = pEngine->GetSceneManager();
 
   std::random_device rd;
   std::mt19937 gen(rd()); // Generador Mersenne Twister
   std::uniform_real_distribution<float> distr(0.1f, 0.5f); // Rango: 1.0f a 10.0f
   // Generar un número aleatorio de tipo float
-  for (UINT32 uIndex = 0; uIndex < 200; uIndex++)
+  for (UINT32 uIndex = 0; uIndex < 100; uIndex++)
   {
     float fRandomFloat = distr(gen);
     std::vector<float> vctVertexData =

@@ -30,6 +30,7 @@ namespace engine
     {
       m_pSceneManager = std::make_unique<scene::CSceneManager>();
       m_pSceneManager->InitScenes();
+      m_pSceneManager->SetSceneEnabled(true, 0);
     }
     // Show window
     m_pRenderSystem->GetRenderWindow()->SetEnabled(true);
@@ -47,11 +48,19 @@ namespace engine
       }
       else
       {
-        m_pFixedTick->UpdateTick();
-        for (auto& pScene : m_pSceneManager->GetScenes())
-        {
-          m_pRenderSystem->Update(pScene);
-        }
+        Loop();
+      }
+    }
+  }
+  // ------------------------------------
+  void CEngine::Loop()
+  {
+    m_pFixedTick->UpdateTick();
+    for (auto& pScene : m_pSceneManager->GetScenes())
+    {
+      if (pScene->IsSceneEnabled())
+      {
+        m_pRenderSystem->Update(pScene);
       }
     }
   }

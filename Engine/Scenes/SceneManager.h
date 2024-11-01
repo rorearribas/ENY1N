@@ -15,9 +15,11 @@ namespace scene
     ~CSceneManager();
 
     void InitScenes();
+    void DisableAllScenes() const;
+    void SetSceneEnabled(bool _bEnabled, const UINT32& _uIndex) const;
+
     const std::array<CScene*, s_iMaxScenes>& GetScenes() { return m_vctScenes; }
     render::items::CPrimitiveItem* CreatePrimitiveItem(std::vector<float>& _vctVertexData, const UINT32& _uSceneIndex = 0);
-
   private:
     void DestroyAllScenes();
     std::array<CScene*, s_iMaxScenes> m_vctScenes = {};

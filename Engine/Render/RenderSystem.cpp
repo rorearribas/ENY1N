@@ -100,7 +100,7 @@ namespace render
   void CRenderSystem::Update(scene::CScene* _pScene)
   {
     // Clear the back buffer to cornflower blue for the new frame
-    float background_color[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    float background_color[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     global::dx11::s_pDX11DeviceContext->ClearRenderTargetView(global::dx11::s_pDX11RenderTargetView, background_color);
 
     // Draw scene

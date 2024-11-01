@@ -15,9 +15,13 @@ namespace scene
     ~CScene();
 
     void DrawScene();
+    void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
+
     render::items::CPrimitiveItem* CreatePrimitiveItem(std::vector<float>& _vctVertexData);
     const TPrimitiveList& GetPrimitives() const { return m_vctPrimitiveItems; }
+
     const UINT32& GetSceneIndex() const { return m_uSceneIdx; }
+    const bool& IsSceneEnabled() const { return m_bEnabled; }
 
   private:
     void DrawPrimitives();
@@ -26,8 +30,8 @@ namespace scene
     TPrimitiveList m_vctPrimitiveItems = {};
     int m_iRegisteredPrimitives = -1;
 
+    bool m_bEnabled = false;
     UINT32 m_uSceneIdx = 0;
-    
   };
 }
 

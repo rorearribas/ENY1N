@@ -17,6 +17,21 @@ namespace scene
     });
   }
   // ------------------------------------
+  void CSceneManager::DisableAllScenes() const
+  {
+    std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene* _pScene)
+    {
+      _pScene->SetSceneEnabled(false);
+    });
+  }
+  // ------------------------------------
+  void CSceneManager::SetSceneEnabled(bool _bEnabled, const UINT32& _uIndex) const
+  {
+    if (_uIndex > (s_iMaxScenes - 1)) return;
+    scene::CScene* pScene = m_vctScenes[_uIndex];
+    pScene->SetSceneEnabled(_bEnabled);
+  }
+  // ------------------------------------
   render::items::CPrimitiveItem* CSceneManager::CreatePrimitiveItem(std::vector<float>& _vctVertexData, const UINT32& _uSceneIndex)
   {
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
