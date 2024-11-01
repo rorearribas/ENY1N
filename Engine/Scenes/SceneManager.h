@@ -10,6 +10,7 @@ namespace scene
   {
   public:
     static int constexpr s_iMaxScenes = 5;
+    typedef std::array<CScene*, s_iMaxScenes> TSceneList;
 
     CSceneManager() {}
     ~CSceneManager();
@@ -18,11 +19,11 @@ namespace scene
     void DisableAllScenes() const;
     void SetSceneEnabled(bool _bEnabled, const UINT32& _uIndex) const;
 
-    const std::array<CScene*, s_iMaxScenes>& GetScenes() { return m_vctScenes; }
+    const TSceneList& GetScenes() { return m_vctScenes; }
     render::items::CPrimitiveItem* CreatePrimitiveItem(std::vector<float>& _vctVertexData, const UINT32& _uSceneIndex = 0);
   private:
     void DestroyAllScenes();
-    std::array<CScene*, s_iMaxScenes> m_vctScenes = {};
+    TSceneList m_vctScenes = {};
   };
 }
 
