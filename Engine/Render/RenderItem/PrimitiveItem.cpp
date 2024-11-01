@@ -1,4 +1,5 @@
 #include "PrimitiveItem.h"
+#include "Engine/Global/DX11GlobalInterface.h"
 #include <d3dcompiler.h>
 #include <cassert>
 
@@ -6,22 +7,22 @@ namespace render
 {
   namespace items
   {
-    CPrimitiveItem::CPrimitiveItem(ID3D11Device* _pDevice, std::vector<float>& _vctVertexData)
+    CPrimitiveItem::CPrimitiveItem(std::vector<float>& _vctVertexData)
     {
       // Compile shaders
       HRESULT hr = CompileShaders();
       assert(!FAILED(hr));
 
       // Init shaders
-      hr = InitShaders(_pDevice);
+      hr = InitShaders(global::dx11::s_pDX11Device);
       assert(!FAILED(hr));
 
       // Create input layout
-      hr = CreateInputLayout(_pDevice);
+      hr = CreateInputLayout(global::dx11::s_pDX11Device);
       assert(!FAILED(hr));
 
       // Create buffer from vertex data
-      hr = CreateBufferFromVertexData(_pDevice, _vctVertexData);
+      hr = CreateBufferFromVertexData(global::dx11::s_pDX11Device, _vctVertexData);
       assert(!FAILED(hr));
     }
     // ------------------------------------

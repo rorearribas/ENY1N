@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Render/RenderSystem.h"
+#include "Engine/Scenes/SceneManager.h"
 #include "Libs/Utils/Singleton.h"
 #include "Libs/Time/Fixedtick.h"
 
@@ -10,19 +11,19 @@ namespace engine
   class CEngine : public utils::CSingleton<CEngine> {
   public:
     CEngine() {}
-    ~CEngine() {}
+    ~CEngine();
 
     void InitEngine(const UINT32& _uWidth, const UINT32& _uHeight);
-    void Update( );
+    void UpdateEngine();
 
     const UINT32& GetRenderWidth() { return m_pRenderSystem->GetRenderWindow()->GetWidth(); }
     const UINT32& GetRenderHeight() { return m_pRenderSystem->GetRenderWindow()->GetHeight(); }
 
-    render::items::CPrimitiveItem* CreatePrimitiveItem(std::vector<float>& _vctVertexData);
-
+    render::items::CPrimitiveItem* CreatePrimitiveItem(std::vector<float>& _vctVertexData, const UINT32& _uSceneIndex = 0);
   private:
-    render::CRenderSystem* m_pRenderSystem = nullptr;
-    global::CFixedTick* m_pFixedTick = nullptr;
+    std::unique_ptr<global::CFixedTick> m_pFixedTick = nullptr;
+    std::unique_ptr<render::CRenderSystem> m_pRenderSystem = nullptr;
+    std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;
   };
 }
 

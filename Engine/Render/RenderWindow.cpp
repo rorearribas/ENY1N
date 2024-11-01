@@ -70,6 +70,8 @@ namespace render
     HINSTANCE hInstance = GetModuleHandle(NULL);
     m_hWnd = internal_renderwindow::CreateWinMain(hInstance, _uWidth, _uHeight);
     assert(m_hWnd);
+    m_uRenderWindowX = _uWidth;
+    m_uRenderWindowY = _uHeight;
   }
   // ------------------------------------
   void CRenderWindow::SetEnabled(bool _bEnabled) const

@@ -1,10 +1,13 @@
 d:\projects\personal\eny1n\engine\x64\debug\engine.pdb
 d:\projects\personal\eny1n\engine\x64\debug\engine.idb
+d:\projects\personal\eny1n\engine\x64\debug\scene.obj
+d:\projects\personal\eny1n\engine\x64\debug\scenemanager.obj
 d:\projects\personal\eny1n\engine\x64\debug\renderwindow.obj
 d:\projects\personal\eny1n\engine\x64\debug\rendersystem.obj
 d:\projects\personal\eny1n\engine\x64\debug\primitiveitem.obj
-d:\projects\personal\eny1n\engine\x64\debug\engine.obj
+d:\projects\personal\eny1n\engine\x64\debug\dx11globalinterface.obj
 d:\projects\personal\eny1n\engine\x64\debug\camera.obj
+d:\projects\personal\eny1n\engine\x64\debug\engine.obj
 d:\projects\personal\eny1n\engine\x64\debug\pixelshader.cso
 d:\projects\personal\eny1n\engine\x64\debug\vertexshader.cso
 d:\projects\personal\eny1n\engine\x64\debug\engine.lib

@@ -1,6 +1,6 @@
 #include "RenderSystem.h"
-#include <d3dcompiler.h>
-#include <array>
+#include "Engine/Global/DX11GlobalInterface.h"
+#include "Engine/Scenes/Scene.h"
 
 namespace render
 {
@@ -18,10 +18,10 @@ namespace render
   // ------------------------------------
   CRenderSystem::~CRenderSystem()
   {
-    if (m_pDevice) { m_pDevice->Release(); }
-    if (m_pDeviceContext) { m_pDeviceContext->Release(); }
-    if (m_pDXGISwapChain) { m_pDXGISwapChain->Release(); }
-    if (m_pRenderTargetView) { m_pRenderTargetView->Release(); }
+    if (global::dx11::s_pDX11Device) { global::dx11::s_pDX11Device->Release(); }
+    if (global::dx11::s_pDX11DeviceContext) { global::dx11::s_pDX11DeviceContext->Release(); }
+    if (global::dx11::s_pDX11SwapChain) { global::dx11::s_pDX11SwapChain->Release(); }
+    if (global::dx11::s_pDX11RenderTargetView) { global::dx11::s_pDX11RenderTargetView->Release(); }
   }
   // ------------------------------------
   HRESULT CRenderSystem::InitDevice()
@@ -53,8 +53,8 @@ namespace render
 
     // Device and swapchain
     HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, vctFeatureLevels,
-      uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &m_pDXGISwapChain,
-      &m_pDevice, &oFeatureLevel, &m_pDeviceContext);
+      uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &global::dx11::s_pDX11SwapChain,
+      &global::dx11::s_pDX11Device, &oFeatureLevel, &global::dx11::s_pDX11DeviceContext);
     if (FAILED(hr)) return hr;
 
     // Render target view
@@ -70,19 +70,19 @@ namespace render
   HRESULT CRenderSystem::CreateRenderTargetView()
   {
     ID3D11Texture2D* pBackBuffer = nullptr;
-    m_pDXGISwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
+    global::dx11::s_pDX11SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
     if (!pBackBuffer) return -1;
 
-    HRESULT hr = m_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &m_pRenderTargetView);
+    HRESULT hr = global::dx11::s_pDX11Device->CreateRenderTargetView(pBackBuffer, nullptr, &global::dx11::s_pDX11RenderTargetView);
     pBackBuffer->Release();
-    m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, nullptr);
+    global::dx11::s_pDX11DeviceContext->OMSetRenderTargets(1, &global::dx11::s_pDX11RenderTargetView, nullptr);
 
     return hr;
   }
   // ------------------------------------
   void CRenderSystem::ConfigureViewport()
   {
-    if (m_pDeviceContext && m_pRenderWindow)
+    if (global::dx11::s_pDX11DeviceContext && m_pRenderWindow)
     {
       RECT rWinRect;
       GetClientRect(m_pRenderWindow->GetHwnd(), &rWinRect);
@@ -93,42 +93,20 @@ namespace render
       oD3D11Viewport.MinDepth = internal_rendersystem::s_fMinDepth;
       oD3D11Viewport.MaxDepth = internal_rendersystem::s_fMaxDepth;
 
-      m_pDeviceContext->RSSetViewports(1, &oD3D11Viewport);
+      global::dx11::s_pDX11DeviceContext->RSSetViewports(1, &oD3D11Viewport);
     }
   }
   // ------------------------------------
-  void CRenderSystem::UpdateRender()
+  void CRenderSystem::Update(scene::CScene* _pScene)
   {
-    /* clear the back buffer to cornflower blue for the new frame */
+    // Clear the back buffer to cornflower blue for the new frame
     float background_color[4] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, background_color);
+    global::dx11::s_pDX11DeviceContext->ClearRenderTargetView(global::dx11::s_pDX11RenderTargetView, background_color);
 
-    /***** Input Assembler (map how the vertex shader inputs should be read from vertex buffer) ******/
-    for (auto& oPrimitiveItem : m_vctPrimitiveItems)
-    {
-      UINT vertex_stride = 3 * sizeof(float);
-      UINT vertex_offset = 0;
+    // Draw scene
+    _pScene->DrawScene();
 
-      m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-      m_pDeviceContext->IASetInputLayout(oPrimitiveItem->GetInputLayout());
-
-      ID3D11Buffer* pBuffer = oPrimitiveItem->GetBuffer();
-      m_pDeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &vertex_stride, &vertex_offset);
-
-      /*** set vertex shader to use and pixel shader to use, and constant buffers for each ***/
-      m_pDeviceContext->VSSetShader(oPrimitiveItem->GetVertexShader(), NULL, 0);
-      m_pDeviceContext->PSSetShader(oPrimitiveItem->GetPixelShader(), NULL, 0);
-
-      /*** draw the vertex buffer with the shaders ****/
-      m_pDeviceContext->Draw(oPrimitiveItem->GetIndexCount(), 0);
-    }
-
-    /**** swap the back and front buffers (show the frame we just drew) ****/
-    m_pDXGISwapChain->Present(1, 0);
-  }
-  // ------------------------------------
-  items::CPrimitiveItem* CRenderSystem::CreatePrimitiveItem(std::vector<float>& _vctVertexData)
-  {
-    return m_vctPrimitiveItems.emplace_back(new items::CPrimitiveItem(m_pDevice, _vctVertexData));
+    // Swap the back and front buffers (show the frame we just drew)
+    global::dx11::s_pDX11SwapChain->Present(1, 0);
   }
 }

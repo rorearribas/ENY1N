@@ -8,7 +8,7 @@ namespace render
   {
     class CPrimitiveItem {
     public:
-      CPrimitiveItem(ID3D11Device* _pDevice, std::vector<float>& _vctVertexData);
+      CPrimitiveItem(std::vector<float>& _vctVertexData);
       ~CPrimitiveItem();
 
       UINT GetIndexCount() { return (UINT)m_vctVertexData.size(); }

@@ -1,8 +1,8 @@
 #pragma once
-#include <d3d11.h>
 #include <vector>
 #include "RenderWindow.h"
 #include "Engine/Render/RenderItem/PrimitiveItem.h"
+#include "Engine/Scenes/Scene.h"
 
 namespace render
 {
@@ -13,15 +13,8 @@ namespace render
     ~CRenderSystem();
 
     HRESULT InitDevice();
-    void UpdateRender();
-
-    items::CPrimitiveItem* CreatePrimitiveItem(std::vector<float>& _vctVertexData);
-
-    // DirectX
+    void Update(scene::CScene* _pScene);
     const CRenderWindow* GetRenderWindow() { return m_pRenderWindow; }
-    const ID3D11Device* GetDevice() { return m_pDevice; }
-    const ID3D11DeviceContext* GetDeviceContext() { return m_pDeviceContext; }
-    const ID3D11RenderTargetView* GetRenderTargetView() { return m_pRenderTargetView; }
 
   private:
     HRESULT CreateRenderTargetView();
@@ -29,14 +22,6 @@ namespace render
 
     // Render window
     CRenderWindow* m_pRenderWindow = nullptr;
-
-    // DirectX
-    ID3D11Device* m_pDevice = nullptr;
-    ID3D11DeviceContext* m_pDeviceContext = nullptr;
-    IDXGISwapChain* m_pDXGISwapChain = nullptr;
-    ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
-
-    std::vector<items::CPrimitiveItem*> m_vctPrimitiveItems = {};
   };
 }
 
