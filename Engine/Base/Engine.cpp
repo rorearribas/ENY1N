@@ -1,12 +1,12 @@
 #include "Engine.h"
-#include "Engine/Render/RenderItem/PrimitiveItem.h"
+#include "Engine/Render/Primitives/Primitive.h"
 #include <cassert>
 
 namespace engine
 {
   CEngine::~CEngine()
   {
-    m_pRenderSystem.reset();
+    m_pRender.reset();
     m_pSceneManager.reset();
     m_pFixedTick.reset();
   }
@@ -14,10 +14,10 @@ namespace engine
   void CEngine::InitEngine(const UINT32& _uWidth, const UINT32& _uHeight)
   {
     // Create render system
-    if (!m_pRenderSystem)
+    if (!m_pRender)
     {
-      m_pRenderSystem = std::make_unique<render::CRenderSystem>(_uWidth, _uHeight);
-      HRESULT hr = m_pRenderSystem->InitDevice();
+      m_pRender = std::make_unique<render::CRender>(_uWidth, _uHeight);
+      HRESULT hr = m_pRender->InitDevice();
       assert(!FAILED(hr));
     }
     // Create fixed tick
@@ -33,7 +33,7 @@ namespace engine
       m_pSceneManager->SetSceneEnabled(true, 0);
     }
     // Show window
-    m_pRenderSystem->GetRenderWindow()->SetEnabled(true);
+    m_pRender->GetRenderWindow()->SetEnabled(true);
   }
   // ------------------------------------
   void CEngine::UpdateEngine()
@@ -56,17 +56,22 @@ namespace engine
   void CEngine::Loop()
   {
     m_pFixedTick->UpdateTick();
-    for (auto& pScene : m_pSceneManager->GetScenes())
+    for (scene::CScene* pScene : m_pSceneManager->GetScenes())
     {
-      if (pScene->IsSceneEnabled())
+      if (pScene->IsEnabled())
       {
-        m_pRenderSystem->Update(pScene);
+        m_pRender->DrawScene(pScene);
       }
     }
   }
   // ------------------------------------
-  render::items::CPrimitiveItem* CEngine::CreatePrimitiveItem(std::vector<float>& _vctVertexData, const UINT32& _uSceneIndex)
+  render::primitive::CPrimitive* CEngine::CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
   {
     return m_pSceneManager ? m_pSceneManager->CreatePrimitiveItem(_vctVertexData, _uSceneIndex) : nullptr;
+  }
+
+  render::primitive::CPrimitive* CEngine::CreatePrimitiveItem(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex /*= 0*/)
+  {
+    return m_pSceneManager ? m_pSceneManager->CreatePrimitiveItem(_ePrimitiveType, _uSceneIndex) : nullptr;
   }
 }

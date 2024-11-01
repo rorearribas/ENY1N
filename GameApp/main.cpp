@@ -2,7 +2,7 @@
 #include "Engine/Base/Engine.h"
 #include "Libs/Maths/Vector2.h"
 #include "Libs/Maths/Vector3.h"
-#include "Engine/Render/RenderItem/PrimitiveItem.h"
+#include "Engine/Render/Primitives/Primitive.h"
 #include <random>
 #include "Engine/Scenes/SceneManager.h"
 
@@ -19,22 +19,26 @@ int main()
   std::mt19937 gen(rd()); // Generador Mersenne Twister
   std::uniform_real_distribution<float> distr(0.1f, 0.5f); // Rango: 1.0f a 10.0f
   // Generar un número aleatorio de tipo float
-  for (UINT32 uIndex = 0; uIndex < 100; uIndex++)
-  {
-    float fRandomFloat = distr(gen);
-    std::vector<float> vctVertexData =
-    {
-      // Primer triángulo
-      -0.1f + fRandomFloat,  0.1f + fRandomFloat,  0.0f,  // Esquina superior izquierda
-      0.1f + fRandomFloat, -0.1f + fRandomFloat,  0.0f,  // Esquina inferior derecha
-      -0.1f + fRandomFloat, -0.1f + fRandomFloat,  0.0f,  // Esquina inferior izquierda
-      // Segundo triángulo
-      -0.1f + fRandomFloat, 0.1f + fRandomFloat,  0.0f,  // Esquina superior izquierda
-      0.1f + fRandomFloat, 0.1f + fRandomFloat,  0.0f,  // Esquina superior derecha
-      0.1f + fRandomFloat, -0.1f + fRandomFloat,  0.0f   // Esquina inferior derecha
-    };
-    render::items::CPrimitiveItem* pPrimitiveItem = pEngine->CreatePrimitiveItem(vctVertexData);
-  }
+
+  //std::vector<render::primitive::CPrimitive::SPrimitiveInfo> vctVertexData =
+  //{
+  //  // Primer triángulo
+  //  { maths::CVector3(-0.1f,  0.1f,  0.0f), maths::CVector3(1.0f,  1.0f,  1.0f)}, // Esquina superior izquierda
+  //  { maths::CVector3(0.1f, -0.1f,  0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f)}, // Esquina superior izquierda
+  //  { maths::CVector3(-0.1f, -0.1f,  0.0f), maths::CVector3(1.0f, 1.0f, 1.0f)}, // Esquina superior izquierda
+  //  // Segundo triángulo
+  //  { maths::CVector3(-0.1f, 0.1f,  0.0f), maths::CVector3(1.0f,  1.0f,  1.0f)}, // Esquina superior izquierda
+  //  { maths::CVector3(0.1f, 0.1f,  0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f)}, // Esquina superior izquierda
+  //  { maths::CVector3(0.1f, -0.1f,  0.0f), maths::CVector3(1.0f,  1.0f,  1.0f)}, // Esquina superior izquierda
+  //};
+  //render::primitive::CPrimitive* pPrimitive = pEngine->CreatePrimitiveItem(vctVertexData);
+  //pPrimitive->SetColor(maths::CVector3(1.0f, 0.0f, 0.0f));
+
+  render::primitive::CPrimitive* pPrimitive2 = pEngine->CreatePrimitiveItem(render::primitive::CPrimitive::EPrimitiveType::TRIANGLE);
+  pPrimitive2->SetColor(maths::CVector3(0.0f, 1.0f, 0.0f));
+
+  /*render::primitive::CPrimitive* pPrimitive3 = pEngine->CreatePrimitiveItem(render::primitive::CPrimitive::EPrimitiveType::RECTANGLE);
+  pPrimitive3->SetColor(maths::CVector3(0.0f, 0.0f, 1.0f));*/
 
   pEngine->UpdateEngine();
   pEngine->DestroySingleton();

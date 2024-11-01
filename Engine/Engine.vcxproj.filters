@@ -18,13 +18,13 @@
     <ClInclude Include="Base\Engine.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderSystem.h">
+    <ClInclude Include="Render\Render.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderWindow.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderItem\PrimitiveItem.h">
+    <ClInclude Include="Render\Primitives\Primitive.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Camera\Camera.h">
@@ -44,13 +44,13 @@
     <ClCompile Include="Base\Engine.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderSystem.cpp">
+    <ClCompile Include="Render\Render.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\RenderWindow.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderItem\PrimitiveItem.cpp">
+    <ClCompile Include="Render\Primitives\Primitive.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Camera\Camera.cpp">

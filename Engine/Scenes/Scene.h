@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Render/RenderItem/PrimitiveItem.h"
+#include "Engine/Render/Primitives/Primitive.h"
 #include <array>
 
 namespace scene
@@ -7,8 +7,8 @@ namespace scene
   class CScene 
   {
   public:
-    static int constexpr s_iMaxPrimitives = 200;
-    typedef std::array<render::items::CPrimitiveItem*, s_iMaxPrimitives> TPrimitiveList;
+    static int constexpr s_iMaxPrimitives = 500;
+    typedef std::array<render::primitive::CPrimitive*, s_iMaxPrimitives> TPrimitiveList;
 
   public:
     CScene(const UINT32& _uIndex) : m_uSceneIdx(_uIndex) {}
@@ -17,11 +17,12 @@ namespace scene
     void DrawScene();
     void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
 
-    render::items::CPrimitiveItem* CreatePrimitiveItem(std::vector<float>& _vctVertexData);
     const TPrimitiveList& GetPrimitives() const { return m_vctPrimitiveItems; }
+    render::primitive::CPrimitive* CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData);
+    render::primitive::CPrimitive* CreatePrimitiveItem(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType);
 
     const UINT32& GetSceneIndex() const { return m_uSceneIdx; }
-    const bool& IsSceneEnabled() const { return m_bEnabled; }
+    const bool& IsEnabled() const { return m_bEnabled; }
 
   private:
     void DrawPrimitives();

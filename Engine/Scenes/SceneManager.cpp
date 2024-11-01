@@ -32,11 +32,18 @@ namespace scene
     pScene->SetSceneEnabled(_bEnabled);
   }
   // ------------------------------------
-  render::items::CPrimitiveItem* CSceneManager::CreatePrimitiveItem(std::vector<float>& _vctVertexData, const UINT32& _uSceneIndex)
+  render::primitive::CPrimitive* CSceneManager::CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
   {
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreatePrimitiveItem(_vctVertexData);
+  }
+  // ------------------------------------
+  render::primitive::CPrimitive* CSceneManager::CreatePrimitiveItem(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex /*= 0*/)
+  {
+    if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
+    scene::CScene* pScene = m_vctScenes[_uSceneIndex];
+    return pScene->CreatePrimitiveItem(_ePrimitiveType);
   }
   // ------------------------------------
   void CSceneManager::DestroyAllScenes()

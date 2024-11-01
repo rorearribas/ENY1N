@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Render/RenderItem/PrimitiveItem.h"
+#include "Engine/Render/Primitives/Primitive.h"
 #include "Engine/Scenes/Scene.h"
 #include "Libs/Utils/Singleton.h"
 #include <array>
@@ -20,7 +20,8 @@ namespace scene
     void SetSceneEnabled(bool _bEnabled, const UINT32& _uIndex) const;
 
     const TSceneList& GetScenes() { return m_vctScenes; }
-    render::items::CPrimitiveItem* CreatePrimitiveItem(std::vector<float>& _vctVertexData, const UINT32& _uSceneIndex = 0);
+    render::primitive::CPrimitive* CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
+    render::primitive::CPrimitive* CreatePrimitiveItem(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
   private:
     void DestroyAllScenes();
     TSceneList m_vctScenes = {};

@@ -18,8 +18,8 @@ namespace scene
   {
     for (int iIndex = 0; iIndex <= m_iRegisteredPrimitives; iIndex++)
     {
-      render::items::CPrimitiveItem* pPrimitiveItem = m_vctPrimitiveItems[iIndex];
-      UINT vertex_stride = 3 * sizeof(float);
+      render::primitive::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[iIndex];
+      UINT vertex_stride = sizeof(render::primitive::CPrimitive::SPrimitiveInfo);
       UINT vertex_offset = 0;
 
       global::dx11::s_pDX11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -39,7 +39,7 @@ namespace scene
   // ------------------------------------
   void CScene::DestroyAllPrimitives()
   {
-    std::for_each(m_vctPrimitiveItems.begin(), m_vctPrimitiveItems.end(), [](render::items::CPrimitiveItem* _pPrimitive) 
+    std::for_each(m_vctPrimitiveItems.begin(), m_vctPrimitiveItems.end(), [](render::primitive::CPrimitive* _pPrimitive) 
     {
       if (_pPrimitive) 
       { 
@@ -49,11 +49,19 @@ namespace scene
     });
   }
   // ------------------------------------
-  render::items::CPrimitiveItem* CScene::CreatePrimitiveItem(std::vector<float>& _vctVertexData)
+  render::primitive::CPrimitive* CScene::CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData)
   {
     if (m_iRegisteredPrimitives >= (s_iMaxPrimitives - 1)) return nullptr;
-    render::items::CPrimitiveItem*& pPrimitiveItem = m_vctPrimitiveItems[++m_iRegisteredPrimitives];
-    pPrimitiveItem = new render::items::CPrimitiveItem(_vctVertexData);
+    render::primitive::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[++m_iRegisteredPrimitives];
+    pPrimitiveItem = new render::primitive::CPrimitive(_vctVertexData);
+    return pPrimitiveItem;
+  }
+  // ------------------------------------
+  render::primitive::CPrimitive* CScene::CreatePrimitiveItem(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType)
+  {
+    if (m_iRegisteredPrimitives >= (s_iMaxPrimitives - 1)) return nullptr;
+    render::primitive::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[++m_iRegisteredPrimitives];
+    pPrimitiveItem = new render::primitive::CPrimitive(_ePrimitiveType);
     return pPrimitiveItem;
   }
 }
