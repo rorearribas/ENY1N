@@ -32,6 +32,7 @@ namespace render
       ID3D11PixelShader* GetPixelShader() { return m_pPixelShader; }
 
     private:
+      HRESULT InitPrimitive();
       HRESULT CompileShaders();
       HRESULT InitShaders(ID3D11Device* _pDevice);
       HRESULT CreateInputLayout(ID3D11Device* _pDevice);

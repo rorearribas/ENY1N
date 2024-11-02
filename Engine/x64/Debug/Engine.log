@@ -1,5 +1,7 @@
-﻿  Primitive.cpp
+﻿  Engine.cpp
+  Primitive.cpp
   Render.cpp
+  Scene.cpp
   SceneManager.cpp
   Generating Code...
   Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Debug\Engine.lib

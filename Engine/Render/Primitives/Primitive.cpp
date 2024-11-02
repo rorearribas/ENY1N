@@ -31,16 +31,7 @@ namespace render
 
     CPrimitive::CPrimitive(const EPrimitiveType& _ePrimitiveType)
     {
-      // Compile shaders
-      HRESULT hr = CompileShaders();
-      assert(!FAILED(hr));
-
-      // Init shaders
-      hr = InitShaders(global::dx11::s_pDX11Device);
-      assert(!FAILED(hr));
-
-      // Create input layout
-      hr = CreateInputLayout(global::dx11::s_pDX11Device);
+      HRESULT hr = InitPrimitive();
       assert(!FAILED(hr));
 
       // Create buffer from presets
@@ -59,21 +50,29 @@ namespace render
     // ------------------------------------
     CPrimitive::CPrimitive(std::vector<SPrimitiveInfo>& _vctVertexData)
     {
-      // Compile shaders
-      HRESULT hr = CompileShaders();
-      assert(!FAILED(hr));
-
-      // Init shaders
-      hr = InitShaders(global::dx11::s_pDX11Device);
-      assert(!FAILED(hr));
-
-      // Create input layout
-      hr = CreateInputLayout(global::dx11::s_pDX11Device);
+      HRESULT hr = InitPrimitive();
       assert(!FAILED(hr));
 
       // Create buffer from vertex data
       hr = CreateBufferFromVertexData(global::dx11::s_pDX11Device, _vctVertexData);
       assert(!FAILED(hr));
+    }
+    // ------------------------------------
+    HRESULT CPrimitive::InitPrimitive()
+    {
+      // Compile shaders
+      HRESULT hr = CompileShaders();
+      if (FAILED(hr)) return hr;
+
+      // Init shaders
+      hr = InitShaders(global::dx11::s_pDX11Device);
+      if (FAILED(hr)) return hr;
+
+      // Create input layout
+      hr = CreateInputLayout(global::dx11::s_pDX11Device);
+      if (FAILED(hr)) return hr;
+
+      return hr;
     }
     // ------------------------------------
     HRESULT CPrimitive::CreateInputLayout(ID3D11Device* _pDevice)
