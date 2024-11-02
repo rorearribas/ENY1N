@@ -30,7 +30,7 @@ namespace engine
     {
       m_pSceneManager = std::make_unique<scene::CSceneManager>();
       m_pSceneManager->InitScenes();
-      m_pSceneManager->SetSceneEnabled(true, 0);
+      m_pSceneManager->SetSceneEnabled(0, true);
     }
     // Show window
     m_pRender->GetRenderWindow()->SetEnabled(true);
@@ -65,13 +65,13 @@ namespace engine
     }
   }
   // ------------------------------------
-  render::primitive::CPrimitive* CEngine::CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
+  render::primitive::CPrimitive* CEngine::CreatePrimitive(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
   {
-    return m_pSceneManager ? m_pSceneManager->CreatePrimitiveItem(_vctVertexData, _uSceneIndex) : nullptr;
+    return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_vctVertexData, _uSceneIndex) : nullptr;
   }
 
-  render::primitive::CPrimitive* CEngine::CreatePrimitiveItem(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex /*= 0*/)
+  render::primitive::CPrimitive* CEngine::CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex /*= 0*/)
   {
-    return m_pSceneManager ? m_pSceneManager->CreatePrimitiveItem(_ePrimitiveType, _uSceneIndex) : nullptr;
+    return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_ePrimitiveType, _uSceneIndex) : nullptr;
   }
 }

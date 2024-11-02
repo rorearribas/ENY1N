@@ -9,12 +9,15 @@ namespace render
   {
     class CPrimitive 
     {
+    private:
+      static const maths::CVector3 s_vDefaultColor;
+
     public:
       enum EPrimitiveType { RECTANGLE, TRIANGLE };
       struct SPrimitiveInfo
       {
-        maths::CVector3 m_vPosition;
-        maths::CVector3 m_vColor;
+        maths::CVector3 m_vPosition = maths::CVector3::vEMPTY;
+        maths::CVector3 m_vColor = s_vDefaultColor;
       };
 
       CPrimitive(const EPrimitiveType& _ePrimitiveType);
@@ -50,7 +53,7 @@ namespace render
       ID3D11InputLayout* m_pInputLayout = nullptr;
       // Vertex data
       std::vector<CPrimitive::SPrimitiveInfo> m_vctVertexData = {};
-      maths::CVector3 m_v3Color = maths::CVector3::vEMPTY;
+      maths::CVector3 m_v3Color = s_vDefaultColor;
     };
   }
 }

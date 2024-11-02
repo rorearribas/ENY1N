@@ -20,8 +20,8 @@ namespace engine
     const UINT32& GetRenderWidth() { return m_pRender->GetRenderWindow()->GetWidth(); }
     const UINT32& GetRenderHeight() { return m_pRender->GetRenderWindow()->GetHeight(); }
 
-    render::primitive::CPrimitive* CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
-    render::primitive::CPrimitive* CreatePrimitiveItem(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
+    render::primitive::CPrimitive* CreatePrimitive(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
+    render::primitive::CPrimitive* CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
   private:
     void Loop();
 

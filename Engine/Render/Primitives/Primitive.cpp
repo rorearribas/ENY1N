@@ -29,6 +29,10 @@ namespace render
       };
     }
 
+    // Static values
+    const maths::CVector3 CPrimitive::s_vDefaultColor(1.0f, 1.0f, 1.0f);
+
+    // ------------------------------------
     CPrimitive::CPrimitive(const EPrimitiveType& _ePrimitiveType)
     {
       HRESULT hr = InitPrimitive();
@@ -155,7 +159,7 @@ namespace render
       // Compile vertex shader
       HRESULT hr = D3DCompileFromFile
       (
-        L"D:\\Projects\\Personal\\ENY1N\\Engine\\Shaders\\VertexShader.hlsl",
+        L"..\\Engine\\Shaders\\VertexShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "vs_main",
@@ -171,7 +175,7 @@ namespace render
       // Compile pixel shader
       return D3DCompileFromFile
       (
-        L"D:\\Projects\\Personal\\ENY1N\\Engine\\Shaders\\PixelShader.hlsl",
+        L"..\\Engine\\Shaders\\PixelShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "ps_main",

@@ -49,7 +49,7 @@ namespace scene
     });
   }
   // ------------------------------------
-  render::primitive::CPrimitive* CScene::CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData)
+  render::primitive::CPrimitive* CScene::CreatePrimitive(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData)
   {
     if (m_iRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
     render::primitive::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[(++m_iRegisteredPrimitives - 1)];
@@ -57,7 +57,7 @@ namespace scene
     return pPrimitiveItem;
   }
   // ------------------------------------
-  render::primitive::CPrimitive* CScene::CreatePrimitiveItem(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType)
+  render::primitive::CPrimitive* CScene::CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType)
   {
     if (m_iRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
     render::primitive::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[(++m_iRegisteredPrimitives - 1)];
