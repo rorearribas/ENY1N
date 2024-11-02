@@ -16,7 +16,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawPrimitives()
   {
-    for (int iIndex = 0; iIndex <= m_iRegisteredPrimitives; iIndex++)
+    for (int iIndex = 0; iIndex < m_iRegisteredPrimitives; iIndex++)
     {
       render::primitive::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[iIndex];
       UINT vertex_stride = sizeof(render::primitive::CPrimitive::SPrimitiveInfo);
@@ -51,16 +51,16 @@ namespace scene
   // ------------------------------------
   render::primitive::CPrimitive* CScene::CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData)
   {
-    if (m_iRegisteredPrimitives >= (s_iMaxPrimitives - 1)) return nullptr;
-    render::primitive::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[++m_iRegisteredPrimitives];
+    if (m_iRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
+    render::primitive::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[(++m_iRegisteredPrimitives - 1)];
     pPrimitiveItem = new render::primitive::CPrimitive(_vctVertexData);
     return pPrimitiveItem;
   }
   // ------------------------------------
   render::primitive::CPrimitive* CScene::CreatePrimitiveItem(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType)
   {
-    if (m_iRegisteredPrimitives >= (s_iMaxPrimitives - 1)) return nullptr;
-    render::primitive::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[++m_iRegisteredPrimitives];
+    if (m_iRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
+    render::primitive::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[(++m_iRegisteredPrimitives - 1)];
     pPrimitiveItem = new render::primitive::CPrimitive(_ePrimitiveType);
     return pPrimitiveItem;
   }

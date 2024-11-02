@@ -13,8 +13,8 @@ namespace render
       enum EPrimitiveType { RECTANGLE, TRIANGLE };
       struct SPrimitiveInfo
       {
-        maths::CVector3 Position;
-        maths::CVector3 Color;
+        maths::CVector3 m_vPosition;
+        maths::CVector3 m_vColor;
       };
 
       CPrimitive(const EPrimitiveType& _ePrimitiveType);

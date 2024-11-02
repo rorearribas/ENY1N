@@ -25,7 +25,7 @@ namespace scene
     });
   }
   // ------------------------------------
-  void CSceneManager::SetSceneEnabled(bool _bEnabled, const UINT32& _uIndex) const
+  void CSceneManager::SetSceneEnabled(const UINT32& _uIndex, bool _bEnabled) const
   {
     if (_uIndex > (s_iMaxScenes - 1)) return;
     scene::CScene* pScene = m_vctScenes[_uIndex];

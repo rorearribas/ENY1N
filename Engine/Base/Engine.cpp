@@ -47,7 +47,7 @@ namespace engine
         DispatchMessage(&oMsg);
       }
       else
-      {
+      {        
         Loop();
       }
     }

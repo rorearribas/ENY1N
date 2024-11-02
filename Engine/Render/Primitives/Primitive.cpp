@@ -80,8 +80,8 @@ namespace render
     {
       D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
       {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, m_vPosition), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, m_vColor), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         /*
         { "COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "NOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
@@ -141,7 +141,7 @@ namespace render
       // Update colors
       for (size_t i = 0; i < m_vctVertexData.size(); ++i) 
       {
-        m_vctVertexData[i].Color = _v3Color; 
+        m_vctVertexData[i].m_vColor = _v3Color; 
       }
 
       // Create a new buffer
@@ -193,9 +193,8 @@ namespace render
 
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
       oVertexBufferDescriptor.ByteWidth = UINT(sizeof(SPrimitiveInfo) * m_vctVertexData.size());
-      oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
+      oVertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-      oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = { 0 };
       oSubresourceData.pSysMem = m_vctVertexData.data();

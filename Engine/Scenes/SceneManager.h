@@ -17,7 +17,7 @@ namespace scene
 
     void InitScenes();
     void DisableAllScenes() const;
-    void SetSceneEnabled(bool _bEnabled, const UINT32& _uIndex) const;
+    void SetSceneEnabled(const UINT32& _uIndex, bool _bEnabled) const;
 
     const TSceneList& GetScenes() { return m_vctScenes; }
     render::primitive::CPrimitive* CreatePrimitiveItem(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);

@@ -29,7 +29,7 @@ namespace scene
     void DestroyAllPrimitives();
 
     TPrimitiveList m_vctPrimitiveItems = {};
-    int m_iRegisteredPrimitives = -1;
+    int m_iRegisteredPrimitives = 0;
 
     bool m_bEnabled = false;
     UINT32 m_uSceneIdx = 0;
