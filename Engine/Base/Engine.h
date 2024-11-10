@@ -3,7 +3,7 @@
 #include "Engine/Scenes/SceneManager.h"
 #include "Engine/Camera/Camera.h"
 #include "Libs/Utils/Singleton.h"
-#include "Libs/Time/Fixedtick.h"
+#include "Libs/Time/TickRate.h"
 
 namespace render { namespace primitive { class CPrimitive; } }
 
@@ -26,7 +26,7 @@ namespace engine
     std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;
     std::unique_ptr<render::CRender> m_pRender = nullptr;
     std::unique_ptr<camera::CCamera> m_pCamera = nullptr;
-    std::unique_ptr<global::CFixedTick> m_pFixedTick = nullptr;
+    std::unique_ptr<tick::CTickRate> m_pTickRate = nullptr;
   };
 }
 

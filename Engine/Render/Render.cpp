@@ -65,11 +65,9 @@ namespace render
     oSwapChainDescriptor.BufferCount = 1;
     oSwapChainDescriptor.BufferDesc.Width = m_pRenderWindow->GetWidth();
     oSwapChainDescriptor.BufferDesc.Height = m_pRenderWindow->GetHeight();
-    oSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    oSwapChainDescriptor.BufferDesc.RefreshRate.Numerator = 60;
-    oSwapChainDescriptor.BufferDesc.RefreshRate.Denominator = 1;
-    oSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     oSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHwnd();
+    oSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    oSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     oSwapChainDescriptor.SampleDesc.Count = 1;
     oSwapChainDescriptor.SampleDesc.Quality = 0;
     oSwapChainDescriptor.Windowed = TRUE;
@@ -158,7 +156,7 @@ namespace render
     DrawImGui();
 
     // Swap the back and front buffers (show the frame we just drew)
-    global::dx11::s_pDX11SwapChain->Present(1, 0);
+    global::dx11::s_pDX11SwapChain->Present(m_bVerticalSync, 0);
   }
   // ------------------------------------
   void CRender::DrawImGui()

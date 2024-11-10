@@ -4,13 +4,11 @@
 
 namespace engine
 {
-
   CEngine::~CEngine()
   {
     m_pSceneManager.reset();
     m_pRender.reset();
     m_pCamera.reset();
-    m_pFixedTick.reset();
   }
   // ------------------------------------
   void CEngine::InitEngine(const UINT32& _uWidth, const UINT32& _uHeight)
@@ -29,7 +27,7 @@ namespace engine
     m_pCamera = std::make_unique<camera::CCamera>();
 
     // Create fixed tick
-    m_pFixedTick = std::make_unique<global::CFixedTick>(60);
+    m_pTickRate = std::make_unique<tick::CTickRate>();
 
     // Show window
     m_pRender->GetRenderWindow()->SetEnabled(true);
@@ -55,7 +53,7 @@ namespace engine
   void CEngine::Loop()
   {
     // Update tick rate
-    m_pFixedTick->UpdateTick();
+    m_pTickRate->UpdateTick();
 
     // Update camera
     m_pCamera->Update();

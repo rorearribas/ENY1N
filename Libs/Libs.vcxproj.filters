@@ -24,9 +24,6 @@
     <ClInclude Include="Maths\Matrix4x4.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Time\FixedTick.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Utils\Singleton.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -57,6 +54,9 @@
     <ClInclude Include="Utils\Delegate.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Time\TickRate.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Maths\Vector3.cpp">
@@ -66,9 +66,6 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Maths\Matrix4x4.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Time\FixedTick.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_demo.cpp">
@@ -90,6 +87,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_impl_win32.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Time\TickRate.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
