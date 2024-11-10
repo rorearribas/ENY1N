@@ -3,10 +3,10 @@
 
 namespace maths
 {
-  maths::CVector3 CVector3::vEMPTY(0.0f, 0.0f, 0.0f);
-  maths::CVector3 CVector3::vForward(0.0f, 0.0f, 1.0f);
-  maths::CVector3 CVector3::vRight(1.0f, 0.0f, 0.0f);
-  maths::CVector3 CVector3::vUp(0.0f, 1.0f, 0.0f);
+  maths::CVector3 CVector3::Zero(0.0f, 0.0f, 0.0f);
+  maths::CVector3 CVector3::Forward(0.0f, 0.0f, 1.0f);
+  maths::CVector3 CVector3::Right(1.0f, 0.0f, 0.0f);
+  maths::CVector3 CVector3::Up(0.0f, 1.0f, 0.0f);
 
   // ------------------------------------
   float CVector3::DotProduct(const CVector3& _v3) const

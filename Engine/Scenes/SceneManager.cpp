@@ -32,7 +32,7 @@ namespace scene
     pScene->SetSceneEnabled(_bEnabled);
   }
   // ------------------------------------
-  render::primitive::CPrimitive* CSceneManager::CreatePrimitive(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
+  render::primitive::CPrimitive* CSceneManager::CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
   {
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];

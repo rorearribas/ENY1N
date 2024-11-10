@@ -16,18 +16,18 @@ namespace render
       enum EPrimitiveType { RECTANGLE, TRIANGLE };
       struct SPrimitiveInfo
       {
-        maths::CVector3 m_vPosition = maths::CVector3::vEMPTY;
+        maths::CVector3 m_vPosition = maths::CVector3::Zero;
         maths::CVector3 m_vColor = s_vDefaultColor;
       };
 
       CPrimitive(const EPrimitiveType& _ePrimitiveType);
-      CPrimitive(std::vector<SPrimitiveInfo>& _vctVertexData);
+      CPrimitive(const std::vector<SPrimitiveInfo>& _vctVertexData);
       ~CPrimitive();
 
       void SetColor(const maths::CVector3& _v3Color);
       const maths::CVector3& GetColor() const { return m_v3Color; }
 
-      UINT GetIndexCount() { return (UINT)m_vctVertexData.size(); }
+      UINT GetIndexCount() { return m_uVertexCount; }
       ID3D11Buffer* GetBuffer() { return m_pBuffer; }
       ID3D11InputLayout* GetInputLayout() { return m_pInputLayout; }
 
@@ -39,7 +39,7 @@ namespace render
       HRESULT CompileShaders();
       HRESULT InitShaders(ID3D11Device* _pDevice);
       HRESULT CreateInputLayout(ID3D11Device* _pDevice);
-      HRESULT CreateBufferFromVertexData(ID3D11Device* _pDevice, std::vector<SPrimitiveInfo>& _vctPrimitiveInfo);
+      HRESULT CreateBufferFromVertexData(ID3D11Device* _pDevice, const std::vector<SPrimitiveInfo>& _vctPrimitiveInfo);
 
       // Vertex buffer
       ID3D11Buffer* m_pBuffer = nullptr;
@@ -51,9 +51,10 @@ namespace render
       ID3D11PixelShader* m_pPixelShader = nullptr;
       // Input layout
       ID3D11InputLayout* m_pInputLayout = nullptr;
-      // Vertex data
-      std::vector<CPrimitive::SPrimitiveInfo> m_vctVertexData = {};
+
+      // Info
       maths::CVector3 m_v3Color = s_vDefaultColor;
+      UINT m_uVertexCount = 0;
     };
   }
 }

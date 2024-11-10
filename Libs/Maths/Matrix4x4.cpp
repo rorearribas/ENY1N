@@ -2,14 +2,14 @@
 
 namespace maths
 {
-  const CMatrix4x4 CMatrix4x4::mIdentity = 
+  const CMatrix4x4 CMatrix4x4::Identity = 
   {
     1.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f, 0.0f,
     0.0f, 0.0f, 1.0f, 0.0f,
     0.0f, 0.0f, 0.0f, 1.0f
   };
-  const CMatrix4x4 CMatrix4x4::mZero =
+  const CMatrix4x4 CMatrix4x4::Zero =
   {
     0.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 0.0f, 0.0f, 0.0f,

@@ -52,7 +52,7 @@ namespace render
       assert(!FAILED(hr));
     }
     // ------------------------------------
-    CPrimitive::CPrimitive(std::vector<SPrimitiveInfo>& _vctVertexData)
+    CPrimitive::CPrimitive(const std::vector<SPrimitiveInfo>& _vctVertexData)
     {
       HRESULT hr = InitPrimitive();
       assert(!FAILED(hr));
@@ -139,16 +139,20 @@ namespace render
     // ------------------------------------
     void CPrimitive::SetColor(const maths::CVector3& _v3Color)
     {
-      if (m_vctVertexData.empty()) return;
+      // Map
+      D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
+      HRESULT hResult = global::dx11::s_pDX11DeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      CPrimitive::SPrimitiveInfo* pPrimitiveInfo = (CPrimitive::SPrimitiveInfo*)(oMappedSubresource.pData);
+      assert(pPrimitiveInfo);
 
-      // Update colors
-      for (size_t i = 0; i < m_vctVertexData.size(); ++i) 
+      // Update color
+      for (UINT uIndex = 0; uIndex < m_uVertexCount; ++uIndex)
       {
-        m_vctVertexData[i].m_vColor = _v3Color; 
+        pPrimitiveInfo[uIndex].m_vColor = _v3Color;
       }
 
-      // Create a new buffer
-      assert(!FAILED(CreateBufferFromVertexData(global::dx11::s_pDX11Device, m_vctVertexData)));
+      // Unmap
+      global::dx11::s_pDX11DeviceContext->Unmap(m_pBuffer, 0);
 
       // Save color
       m_v3Color = _v3Color;
@@ -187,20 +191,19 @@ namespace render
       );
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBufferFromVertexData(ID3D11Device* _pDevice, std::vector<SPrimitiveInfo>& _vctPrimitiveInfo)
+    HRESULT CPrimitive::CreateBufferFromVertexData(ID3D11Device* _pDevice, const std::vector<SPrimitiveInfo>& _vctPrimitiveInfo)
     {
       if (_vctPrimitiveInfo.empty()) return -1;
 
-      // Move data
-      m_vctVertexData = std::move(_vctPrimitiveInfo);
-
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
-      oVertexBufferDescriptor.ByteWidth = UINT(sizeof(SPrimitiveInfo) * m_vctVertexData.size());
-      oVertexBufferDescriptor.Usage = D3D11_USAGE_DEFAULT;
+      oVertexBufferDescriptor.ByteWidth = UINT(sizeof(SPrimitiveInfo) * _vctPrimitiveInfo.size());
+      oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+      oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = { 0 };
-      oSubresourceData.pSysMem = m_vctVertexData.data();
+      oSubresourceData.pSysMem = _vctPrimitiveInfo.data();
+      m_uVertexCount = (UINT)_vctPrimitiveInfo.size();
 
       // Release buffer
       if (m_pBuffer) { m_pBuffer->Release(); }

@@ -9,8 +9,8 @@ namespace maths
 
   public:
     typedef float TMatrix4x4[s_iMatrixSize][s_iMatrixSize];
-    static const CMatrix4x4 mIdentity;
-    static const CMatrix4x4 mZero;
+    static const CMatrix4x4 Identity;
+    static const CMatrix4x4 Zero;
 
     CMatrix4x4(const float _mMatrix[s_iMatrixSize][s_iMatrixSize]);
     CMatrix4x4

@@ -18,7 +18,7 @@ namespace scene
     void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
 
     const TPrimitiveList& GetPrimitives() const { return m_vctPrimitiveItems; }
-    render::primitive::CPrimitive* CreatePrimitive(std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData);
+    render::primitive::CPrimitive* CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData);
     render::primitive::CPrimitive* CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType);
 
     const UINT32& GetSceneIndex() const { return m_uSceneIdx; }
