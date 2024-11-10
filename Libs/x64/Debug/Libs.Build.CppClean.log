@@ -4,6 +4,13 @@ d:\projects\personal\eny1n\libs\x64\debug\fixedtick.obj
 d:\projects\personal\eny1n\libs\x64\debug\matrix4x4.obj
 d:\projects\personal\eny1n\libs\x64\debug\vector3.obj
 d:\projects\personal\eny1n\libs\x64\debug\vector2.obj
+d:\projects\personal\eny1n\libs\x64\debug\imgui_impl_dx11.obj
+d:\projects\personal\eny1n\libs\x64\debug\imgui_widgets.obj
+d:\projects\personal\eny1n\libs\x64\debug\imgui_tables.obj
+d:\projects\personal\eny1n\libs\x64\debug\imgui_impl_win32.obj
+d:\projects\personal\eny1n\libs\x64\debug\imgui_draw.obj
+d:\projects\personal\eny1n\libs\x64\debug\imgui_demo.obj
+d:\projects\personal\eny1n\libs\x64\debug\imgui.obj
 d:\projects\personal\eny1n\libs\x64\debug\libs.lib
 d:\projects\personal\eny1n\libs\x64\debug\libs.tlog\cl.command.1.tlog
 d:\projects\personal\eny1n\libs\x64\debug\libs.tlog\cl.items.tlog

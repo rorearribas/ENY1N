@@ -1,30 +1,46 @@
 #include "RenderWindow.h"
+#include "Engine/Global/DX11GlobalInterface.h"
 #include <windows.h>
 #include <windowsx.h>
 #include <cassert>
+
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND _hWnd, UINT _uMessage, WPARAM _wParam, LPARAM _lParam);
 
 namespace render
 {
   namespace internal_renderwindow
   {
-    LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
+    LRESULT CALLBACK WindowProc(HWND _hWnd, UINT _uMessage, WPARAM _wParam, LPARAM _lParam)
     {
+      if (ImGui_ImplWin32_WndProcHandler(_hWnd, _uMessage, _wParam, _lParam))
+        return true;
+
       // sort through and find what code to run for the message given
-      switch (message)
+      switch (_uMessage)
       {
-        // this message is read when the window is closed
       case WM_DESTROY:
       {
-        // close the application entirely
         PostQuitMessage(0);
         return 0;
-      } break;
+      }
+      break;
+
+      case WM_SIZE:
+      {
+        if (_wParam == SIZE_RESTORED || _wParam == SIZE_MAXIMIZED)
+        {
+          UINT uWindowX = (UINT)(LOWORD(_lParam));
+          UINT uWindowY = (UINT)(HIWORD(_lParam));
+          global::dx11::s_oWindowResizeDelegate.Execute(uWindowX, uWindowY);
+        }
+      }
+      break;
       }
 
       // Handle any messages the switch statement didn't
-      return DefWindowProc(hWnd, message, wParam, lParam);
+      return DefWindowProc(_hWnd, _uMessage, _wParam, _lParam);
     }
-
+    // ------------------------------------
     HWND WINAPI CreateWinMain(HINSTANCE hInstance, const UINT32& _uWidth, const UINT32& _uHeight)
     {
       // the handle for the window, filled by a function
@@ -38,20 +54,21 @@ namespace render
       // fill in the struct with the needed information
       wc.cbSize = sizeof(WNDCLASSEX);
       wc.style = CS_HREDRAW | CS_VREDRAW;
-      wc.lpfnWndProc = WindowProc;
+      wc.lpfnWndProc = internal_renderwindow::WindowProc;
       wc.hInstance = hInstance;
       wc.hCursor = LoadCursor(NULL, IDC_ARROW);
       wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
-      wc.lpszClassName = L"WindowClass1";
+      wc.lpszClassName = L"Game Engine";
 
       // register the window class
       RegisterClassEx(&wc);
 
       // create the window and use the result as the handle
-      hWnd = CreateWindowEx(NULL,
-        L"WindowClass1", // name of the window class
+      hWnd = CreateWindowEx(
+        NULL,
+        L"Game Engine", // name of the window class
         L"Game Engine",// title of the window
-        WS_OVERLAPPEDWINDOW,    // window style
+        WS_OVERLAPPEDWINDOW, // window style
         0, // x-position of the window
         0, // y-position of the window
         _uWidth, // width of the window
@@ -59,7 +76,8 @@ namespace render
         NULL, // we have no parent window, NULL
         NULL, // we aren't using menus, NULL
         hInstance, // application handle
-        NULL); // used with multiple windows, NULL
+        NULL
+      ); // used with multiple windows, NULL
 
       return hWnd;
     }
@@ -70,12 +88,31 @@ namespace render
     HINSTANCE hInstance = GetModuleHandle(NULL);
     m_hWnd = internal_renderwindow::CreateWinMain(hInstance, _uWidth, _uHeight);
     assert(m_hWnd);
-    m_uRenderWindowX = _uWidth;
-    m_uRenderWindowY = _uHeight;
   }
   // ------------------------------------
   void CRenderWindow::SetEnabled(bool _bEnabled) const
   {
     ShowWindow(m_hWnd, _bEnabled);
   }
+  // ------------------------------------
+  const HWND& CRenderWindow::GetHwnd() const
+  {
+    return m_hWnd;
+  }
+  // ------------------------------------
+  const UINT32 CRenderWindow::GetWidth() const
+  {
+    RECT oClientRect;
+    GetClientRect(m_hWnd, &oClientRect);
+    return (UINT32)(oClientRect.right - oClientRect.left);
+  }
+  // ------------------------------------
+  const UINT32 CRenderWindow::GetHeight() const
+  {
+    RECT oClientRect;
+    GetClientRect(m_hWnd, &oClientRect);
+    return (UINT32)(oClientRect.bottom - oClientRect.top);
+  }
+  // ------------------------------------
+
 }

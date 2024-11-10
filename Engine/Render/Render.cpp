@@ -1,6 +1,8 @@
 #include "Render.h"
 #include "Engine/Global/DX11GlobalInterface.h"
 #include "Engine/Scenes/Scene.h"
+#include "Libs/ImGui/imgui_impl_win32.h"
+#include "Libs/ImGui/imgui_impl_dx11.h"
 
 namespace render
 {
@@ -24,7 +26,40 @@ namespace render
     if (global::dx11::s_pDX11RenderTargetView) { global::dx11::s_pDX11RenderTargetView->Release(); }
   }
   // ------------------------------------
-  HRESULT CRender::InitDevice()
+  HRESULT CRender::Init()
+  {
+    // Create deviec
+    HRESULT hr = CreateDevice();
+    if (FAILED(hr)) return hr;
+
+    // Init ImGui
+    if (!InitImGui()) return -1;
+
+    // Set delegate
+    global::dx11::s_oWindowResizeDelegate.Bind(&CRender::OnWindowResizeEvent, this);
+
+    return S_OK;
+  }
+  // ------------------------------------
+  bool CRender::InitImGui()
+  {
+    if (!IMGUI_CHECKVERSION()) 
+      return false;
+
+    if (!ImGui::CreateContext()) 
+      return false;
+
+    if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHwnd())) 
+      return false;
+
+    if (!ImGui_ImplDX11_Init(global::dx11::s_pDX11Device, global::dx11::s_pDX11DeviceContext)) 
+      return false;
+
+    ImGui::StyleColorsDark();
+    return true;
+  }
+  // ------------------------------------
+  HRESULT CRender::CreateDevice()
   {
     DXGI_SWAP_CHAIN_DESC oSwapChainDescriptor = {};
     oSwapChainDescriptor.BufferCount = 1;
@@ -53,43 +88,56 @@ namespace render
 
     // Device and swapchain
     HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, vctFeatureLevels,
-      uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &global::dx11::s_pDX11SwapChain,
-      &global::dx11::s_pDX11Device, &oFeatureLevel, &global::dx11::s_pDX11DeviceContext);
+    uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &global::dx11::s_pDX11SwapChain,
+    &global::dx11::s_pDX11Device, &oFeatureLevel, &global::dx11::s_pDX11DeviceContext);
     if (FAILED(hr)) return hr;
-
-    // Render target view
-    hr = CreateRenderTargetView();
-    if (FAILED(hr)) return hr;
-
-    // Viewport
-    ConfigureViewport();
 
     return S_OK;
+  }
+  // ------------------------------------
+  void CRender::OnWindowResizeEvent(UINT32 _uX, UINT32 _uY)
+  {
+    // Delete current target view
+    if (global::dx11::s_pDX11RenderTargetView)
+    {
+      global::dx11::s_pDX11RenderTargetView->Release();
+      global::dx11::s_pDX11RenderTargetView = nullptr;
+    }
+
+    // Resize buffers
+    HRESULT hr = global::dx11::s_pDX11SwapChain->ResizeBuffers(0, _uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+    assert(!FAILED(hr));
+
+    // Create new render target
+    hr = CreateRenderTargetView();
+    assert(!FAILED(hr));
+
+    // Configure viewport
+    ConfigureViewport(_uX, _uY);
   }
   // ------------------------------------
   HRESULT CRender::CreateRenderTargetView()
   {
     ID3D11Texture2D* pBackBuffer = nullptr;
-    global::dx11::s_pDX11SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
+    global::dx11::s_pDX11SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(&pBackBuffer));
     if (!pBackBuffer) return -1;
 
     HRESULT hr = global::dx11::s_pDX11Device->CreateRenderTargetView(pBackBuffer, nullptr, &global::dx11::s_pDX11RenderTargetView);
+    if (FAILED(hr)) return hr;
+
     pBackBuffer->Release();
     global::dx11::s_pDX11DeviceContext->OMSetRenderTargets(1, &global::dx11::s_pDX11RenderTargetView, nullptr);
 
     return hr;
   }
   // ------------------------------------
-  void CRender::ConfigureViewport()
+  void CRender::ConfigureViewport(UINT32 _uX, UINT32 _uY)
   {
     if (global::dx11::s_pDX11DeviceContext && m_pRenderWindow)
     {
-      RECT rWinRect;
-      GetClientRect(m_pRenderWindow->GetHwnd(), &rWinRect);
-
       D3D11_VIEWPORT oD3D11Viewport = {};
-      oD3D11Viewport.Width = (FLOAT)(rWinRect.right - rWinRect.left);
-      oD3D11Viewport.Height = (FLOAT)(rWinRect.bottom - rWinRect.top);
+      oD3D11Viewport.Width = (FLOAT)(_uX);
+      oD3D11Viewport.Height = (FLOAT)(_uY);
       oD3D11Viewport.MinDepth = internal_rendersystem::s_fMinDepth;
       oD3D11Viewport.MaxDepth = internal_rendersystem::s_fMaxDepth;
 
@@ -106,7 +154,23 @@ namespace render
     // Draw scene
     _pScene->DrawScene();
 
+    // Draw ImGui
+    DrawImGui();
+
     // Swap the back and front buffers (show the frame we just drew)
     global::dx11::s_pDX11SwapChain->Present(1, 0);
+  }
+  // ------------------------------------
+  void CRender::DrawImGui()
+  {
+    ImGui_ImplDX11_NewFrame();
+    ImGui_ImplWin32_NewFrame();
+    ImGui::NewFrame();
+
+    // Test
+    ImGui::ShowDemoWindow();
+
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
   }
 }

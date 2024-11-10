@@ -13,14 +13,12 @@ namespace render
     void SetEnabled(bool _bEnabled) const;
     void SetHwnd(const HWND& _hWnd) { m_hWnd = _hWnd; }
 
-    const HWND& GetHwnd() { return m_hWnd; }
-    inline const UINT32& GetWidth() const { return m_uRenderWindowX; }
-    inline const UINT32& GetHeight() const { return m_uRenderWindowY; }
+    const HWND& GetHwnd() const;
+    const UINT32 GetWidth() const;
+    const UINT32 GetHeight() const;
 
   private:
     HWND m_hWnd = nullptr;
-    UINT32 m_uRenderWindowX = 0;
-    UINT32 m_uRenderWindowY = 0;
   };
 }
 

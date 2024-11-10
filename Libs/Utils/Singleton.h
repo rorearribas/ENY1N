@@ -8,8 +8,8 @@ namespace utils
   {
   public:
     static T* CreateSingleton();
-    static void DestroySingleton();
     static T* GetInstance();
+    static void DestroySingleton();
 
   protected:
     CSingleton() {}
@@ -25,7 +25,7 @@ namespace utils
   template <typename T>
   T* utils::CSingleton<T>::GetInstance()
   {
-    return m_pInstance ? m_pInstance : CreateSingleton();
+    return m_pInstance ? m_pInstance : nullptr;
   }
 
   template <typename T>

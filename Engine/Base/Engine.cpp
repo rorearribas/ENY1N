@@ -4,34 +4,33 @@
 
 namespace engine
 {
+
   CEngine::~CEngine()
   {
-    m_pRender.reset();
     m_pSceneManager.reset();
+    m_pRender.reset();
+    m_pCamera.reset();
     m_pFixedTick.reset();
   }
   // ------------------------------------
   void CEngine::InitEngine(const UINT32& _uWidth, const UINT32& _uHeight)
   {
     // Create render system
-    if (!m_pRender)
-    {
-      m_pRender = std::make_unique<render::CRender>(_uWidth, _uHeight);
-      HRESULT hr = m_pRender->InitDevice();
-      assert(!FAILED(hr));
-    }
-    // Create fixed tick
-    if (!m_pFixedTick)
-    {
-      m_pFixedTick = std::make_unique<global::CFixedTick>(60);
-    }
+    m_pRender = std::make_unique<render::CRender>(_uWidth, _uHeight);
+    HRESULT hr = m_pRender->Init();
+    assert(!FAILED(hr));
+
     // Create scene manager
-    if (!m_pSceneManager)
-    {
-      m_pSceneManager = std::make_unique<scene::CSceneManager>();
-      m_pSceneManager->InitScenes();
-      m_pSceneManager->SetSceneEnabled(0, true);
-    }
+    m_pSceneManager = std::make_unique<scene::CSceneManager>();
+    m_pSceneManager->InitScenes();
+    m_pSceneManager->SetSceneEnabled(0, true);
+
+    // Create camera
+    m_pCamera = std::make_unique<camera::CCamera>();
+
+    // Create fixed tick
+    m_pFixedTick = std::make_unique<global::CFixedTick>(60);
+
     // Show window
     m_pRender->GetRenderWindow()->SetEnabled(true);
   }
@@ -55,7 +54,13 @@ namespace engine
   // ------------------------------------
   void CEngine::Loop()
   {
+    // Update tick rate
     m_pFixedTick->UpdateTick();
+
+    // Update camera
+    m_pCamera->Update();
+
+    // Update current scene
     for (scene::CScene* pScene : m_pSceneManager->GetScenes())
     {
       if (pScene->IsEnabled())

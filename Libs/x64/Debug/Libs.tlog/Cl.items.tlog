@@ -1,3 +1,10 @@
+D:\Projects\Personal\ENY1N\Libs\ImGui\imgui.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\imgui.obj
+D:\Projects\Personal\ENY1N\Libs\ImGui\imgui_demo.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\imgui_demo.obj
+D:\Projects\Personal\ENY1N\Libs\ImGui\imgui_draw.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\imgui_draw.obj
+D:\Projects\Personal\ENY1N\Libs\ImGui\imgui_impl_win32.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\imgui_impl_win32.obj
+D:\Projects\Personal\ENY1N\Libs\ImGui\imgui_tables.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\imgui_tables.obj
+D:\Projects\Personal\ENY1N\Libs\ImGui\imgui_widgets.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\imgui_widgets.obj
+D:\Projects\Personal\ENY1N\Libs\ImGui\imgui_impl_dx11.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\imgui_impl_dx11.obj
 D:\Projects\Personal\ENY1N\Libs\Maths\Vector2.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\Vector2.obj
 D:\Projects\Personal\ENY1N\Libs\Maths\Vector3.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\Vector3.obj
 D:\Projects\Personal\ENY1N\Libs\Maths\Matrix4x4.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Debug\Matrix4x4.obj

@@ -26,7 +26,7 @@ int main()
     { maths::CVector3(0.1f, -0.1f,  0.0f)}, // Esquina superior izquierda
   };
   render::primitive::CPrimitive* pPrimitive = pEngine->CreatePrimitive(vctVertexData);
-  pPrimitive->SetColor(maths::CVector3(0.0f, 1.0f, 0.0f));
+  pPrimitive->SetColor(maths::CVector3(1.0f, 1.0f, 0.0f));
 
   pEngine->UpdateEngine();
   pEngine->DestroySingleton();

@@ -8,5 +8,6 @@ namespace global
     ID3D11DeviceContext* s_pDX11DeviceContext = nullptr;
     IDXGISwapChain* s_pDX11SwapChain = nullptr;
     ID3D11RenderTargetView* s_pDX11RenderTargetView = nullptr;
+    utils::CDelegate<void(UINT32, UINT32)> s_oWindowResizeDelegate = {};
   }
 }
