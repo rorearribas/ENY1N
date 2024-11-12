@@ -146,6 +146,8 @@
     <ClInclude Include="Base\Engine.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Global\DX11GlobalInterface.h" />
+    <ClInclude Include="Input\InputManager.h" />
+    <ClInclude Include="Render\ConstantBuffer.h" />
     <ClInclude Include="Render\Primitives\Primitive.h" />
     <ClInclude Include="Render\Render.h" />
     <ClInclude Include="Render\RenderWindow.h" />
@@ -156,6 +158,7 @@
     <ClCompile Include="Base\Engine.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Global\DX11GlobalInterface.cpp" />
+    <ClCompile Include="Input\InputManager.cpp" />
     <ClCompile Include="Render\Primitives\Primitive.cpp" />
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Render\RenderWindow.cpp" />
@@ -168,16 +171,16 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">ps_main</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">ps_main</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PSMain</EntryPointName>
     </FxCompile>
     <FxCompile Include="Shaders\VertexShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">vs_main</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">vs_main</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
     </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

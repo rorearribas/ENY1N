@@ -17,16 +17,19 @@ namespace scene
     void DrawScene();
     void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
 
-    const TPrimitiveList& GetPrimitives() const { return m_vctPrimitiveItems; }
+    const TPrimitiveList& GetPrimitives() { return m_vctPrimitiveItems; }
     render::primitive::CPrimitive* CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData);
     render::primitive::CPrimitive* CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType);
+
+    void DestroyPrimitive(const render::primitive::CPrimitive* _pPrimitive);
+    void DestroyAllPrimitives();
 
     const UINT32& GetSceneIndex() const { return m_uSceneIdx; }
     const bool& IsEnabled() const { return m_bEnabled; }
 
   private:
+    // Draw
     void DrawPrimitives();
-    void DestroyAllPrimitives();
 
     TPrimitiveList m_vctPrimitiveItems = {};
     int m_iRegisteredPrimitives = 0;

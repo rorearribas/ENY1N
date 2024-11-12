@@ -1,14 +1,22 @@
 #include "Engine.h"
 #include "Engine/Render/Primitives/Primitive.h"
+#include "Engine/Global/DX11GlobalInterface.h"
 #include <cassert>
 
 namespace engine
 {
+  struct ConstantBuffer 
+  {
+    DirectX::XMMATRIX viewMatrix;
+    DirectX::XMMATRIX projectionMatrix;
+  };
+
+  static ID3D11Buffer* s_pConstantBuffer = nullptr;
+
   CEngine::~CEngine()
   {
     m_pSceneManager.reset();
     m_pRender.reset();
-    m_pCamera.reset();
   }
   // ------------------------------------
   void CEngine::InitEngine(const UINT32& _uWidth, const UINT32& _uHeight)
@@ -22,9 +30,6 @@ namespace engine
     m_pSceneManager = std::make_unique<scene::CSceneManager>();
     m_pSceneManager->InitScenes();
     m_pSceneManager->SetSceneEnabled(0, true);
-
-    // Create camera
-    m_pCamera = std::make_unique<camera::CCamera>();
 
     // Create fixed tick
     m_pTickRate = std::make_unique<tick::CTickRate>();
@@ -55,9 +60,6 @@ namespace engine
     // Update tick rate
     m_pTickRate->UpdateTick();
 
-    // Update camera
-    m_pCamera->Update();
-
     // Update current scene
     for (scene::CScene* pScene : m_pSceneManager->GetScenes())
     {
@@ -72,9 +74,20 @@ namespace engine
   {
     return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_vctVertexData, _uSceneIndex) : nullptr;
   }
-
+  // ------------------------------------
   render::primitive::CPrimitive* CEngine::CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex /*= 0*/)
   {
     return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_ePrimitiveType, _uSceneIndex) : nullptr;
+  }
+  // ------------------------------------
+  void CEngine::DestroyPrimitive(const render::primitive::CPrimitive* _pPrimitive)
+  {
+    assert(_pPrimitive);
+    m_pSceneManager->DestroyPrimitive(_pPrimitive);
+  }
+  // ------------------------------------
+  void CEngine::DestroyAllPrimimitives(const UINT32& _uSceneIndex)
+  {
+    m_pSceneManager->DestroyAllPrimimitives(_uSceneIndex);
   }
 }

@@ -20,8 +20,13 @@ namespace scene
     void SetSceneEnabled(const UINT32& _uIndex, bool _bEnabled) const;
 
     const TSceneList& GetScenes() { return m_vctScenes; }
+
     render::primitive::CPrimitive* CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
     render::primitive::CPrimitive* CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
+
+    void DestroyPrimitive(const render::primitive::CPrimitive* _pPrimitive);
+    void DestroyAllPrimimitives(const UINT32& _uSceneIndex);
+
   private:
     void DestroyAllScenes();
     TSceneList m_vctScenes = {};

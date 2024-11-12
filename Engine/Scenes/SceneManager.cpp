@@ -1,5 +1,6 @@
 #include "SceneManager.h"
 #include <algorithm>
+#include <cassert>
 
 namespace scene
 {
@@ -44,6 +45,28 @@ namespace scene
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreatePrimitive(_ePrimitiveType);
+  }
+  // ------------------------------------
+  void CSceneManager::DestroyPrimitive(const render::primitive::CPrimitive* _pPrimitive)
+  {
+    assert(_pPrimitive);
+    for (scene::CScene* pScene : m_vctScenes)
+    {
+      const scene::CScene::TPrimitiveList& vctPrimitives = pScene->GetPrimitives();
+      auto it = std::find(vctPrimitives.begin(), vctPrimitives.end(), _pPrimitive);
+      if (it != vctPrimitives.end())
+      {
+        pScene->DestroyPrimitive(_pPrimitive);
+        break;
+      }
+    }
+  }
+  // ------------------------------------
+  void CSceneManager::DestroyAllPrimimitives(const UINT32& _uSceneIndex)
+  {
+    scene::CScene* pScene = m_vctScenes.at(_uSceneIndex);
+    assert(pScene);
+    pScene->DestroyAllPrimitives();
   }
   // ------------------------------------
   void CSceneManager::DestroyAllScenes()

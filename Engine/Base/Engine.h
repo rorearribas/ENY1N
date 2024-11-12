@@ -18,14 +18,18 @@ namespace engine
     void UpdateEngine();
 
     const scene::CSceneManager* GetSceneManager() const { return m_pSceneManager.get(); }
+
     render::primitive::CPrimitive* CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
     render::primitive::CPrimitive* CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
+
+    void DestroyPrimitive(const render::primitive::CPrimitive* _pPrimitive);
+    void DestroyAllPrimimitives(const UINT32& _uSceneIndex = 0);
+
   private:
     void Loop();
 
-    std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;
     std::unique_ptr<render::CRender> m_pRender = nullptr;
-    std::unique_ptr<camera::CCamera> m_pCamera = nullptr;
+    std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;
     std::unique_ptr<tick::CTickRate> m_pTickRate = nullptr;
   };
 }

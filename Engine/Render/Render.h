@@ -2,6 +2,8 @@
 #include "Engine/Render/Primitives/Primitive.h"
 #include "Engine/Scenes/Scene.h"
 #include "RenderWindow.h"
+#include "ConstantBuffer.h"
+#include "Engine/Camera/Camera.h"
 
 namespace render
 {
@@ -12,21 +14,28 @@ namespace render
     ~CRender();
 
     HRESULT Init();
+
     const CRenderWindow* GetRenderWindow() { return m_pRenderWindow; }
     void DrawScene(scene::CScene* _pScene);
     void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
 
   private:
+    ConstantBuffer<CB_VS_vertexshader> constantBuffer;
+
     void OnWindowResizeEvent(UINT32 _uX, UINT32 _uY);
     void ConfigureViewport(UINT32 _uX, UINT32 _uY);
     void DrawImGui();
 
     HRESULT CreateDevice();
     HRESULT CreateRenderTargetView();
+    HRESULT InitCamera();
     bool InitImGui();
 
+    // Render camera
+    render::CCamera* m_pCamera = nullptr;
+
     // Render window
-    CRenderWindow* m_pRenderWindow = nullptr;
+    render::CRenderWindow* m_pRenderWindow = nullptr;
     bool m_bVerticalSync = true;
   };
 }

@@ -1,8 +1,15 @@
 d:\projects\personal\eny1n\libs\x64\release\libs.pdb
-d:\projects\personal\eny1n\libs\x64\release\fixedtick.obj
 d:\projects\personal\eny1n\libs\x64\release\matrix4x4.obj
 d:\projects\personal\eny1n\libs\x64\release\vector3.obj
 d:\projects\personal\eny1n\libs\x64\release\vector2.obj
+d:\projects\personal\eny1n\libs\x64\release\imgui_impl_dx11.obj
+d:\projects\personal\eny1n\libs\x64\release\imgui_widgets.obj
+d:\projects\personal\eny1n\libs\x64\release\imgui_tables.obj
+d:\projects\personal\eny1n\libs\x64\release\imgui_impl_win32.obj
+d:\projects\personal\eny1n\libs\x64\release\imgui_draw.obj
+d:\projects\personal\eny1n\libs\x64\release\imgui_demo.obj
+d:\projects\personal\eny1n\libs\x64\release\imgui.obj
+d:\projects\personal\eny1n\libs\x64\release\tickrate.obj
 d:\projects\personal\eny1n\libs\x64\release\libs.lib
 d:\projects\personal\eny1n\libs\x64\release\libs.tlog\cl.command.1.tlog
 d:\projects\personal\eny1n\libs\x64\release\libs.tlog\cl.items.tlog

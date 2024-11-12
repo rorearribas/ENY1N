@@ -1,24 +1,28 @@
-// Vertex Shader
-
-/* vertex attributes go here to input to the vertex shader */
-struct vs_in 
+cbuffer ConstantBuffer : register(b0) 
 {
-    float3 local_position : POSITION;
-    float3 color : COLOR;
+   float4x4 mat;
 };
 
-/* outputs from vertex shader go here. can be interpolated to pixel shader */
-struct vs_out 
-{
-    float4 clip_position : SV_POSITION; // required output of VS
+struct VS_INPUT {
+    float3 position : POSITION;
+    //float3 normal : NORMAL;
+    //float2 texcoord : TEXCOORD;
     float4 color : COLOR;
 };
 
-vs_out vs_main(vs_in input) 
-{
-  vs_out output = (vs_out)0; // zero the memory first
-  output.clip_position = float4(input.local_position, 1.0);
-  output.color = float4(input.color, 1.0);
-  return output;
-}
+struct PS_INPUT {
+    float4 position : SV_POSITION;
+    //float3 normal : NORMAL;
+    //float2 texcoord : TEXCOORD;
+    float4 color : COLOR;
+};
 
+PS_INPUT VSMain(VS_INPUT input) 
+{
+    PS_INPUT output;
+    // Aplica las transformaciones de mundo, vista y proyección
+    output.position = mul(float4(input.position, 1.0f), mat);
+    // Pasa el color al shader de píxeles
+    output.color = input.color;
+    return output;
+}

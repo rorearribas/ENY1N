@@ -3,6 +3,7 @@
 #include "Engine/Scenes/Scene.h"
 #include "Libs/ImGui/imgui_impl_win32.h"
 #include "Libs/ImGui/imgui_impl_dx11.h"
+#include "../Base/Engine.h"
 
 namespace render
 {
@@ -15,7 +16,9 @@ namespace render
   CRender::CRender(const UINT32& _uWidth, const UINT32& _uHeight)
   {
     // Create render window
-    m_pRenderWindow = new CRenderWindow(_uWidth, _uHeight);
+    m_pRenderWindow = new render::CRenderWindow(_uWidth, _uHeight);
+    // Create render camera
+    m_pCamera = new render::CCamera();
   }
   // ------------------------------------
   CRender::~CRender()
@@ -32,11 +35,26 @@ namespace render
     HRESULT hr = CreateDevice();
     if (FAILED(hr)) return hr;
 
+    // Init camera
+    hr = InitCamera();
+    if (FAILED(hr)) return hr;
+
     // Init ImGui
     if (!InitImGui()) return -1;
 
     // Set delegate
     global::dx11::s_oWindowResizeDelegate.Bind(&CRender::OnWindowResizeEvent, this);
+
+    return S_OK;
+  }
+  // ------------------------------------
+  HRESULT CRender::InitCamera()
+  {
+    HRESULT hr = constantBuffer.Initialize(global::dx11::s_pDX11Device, global::dx11::s_pDX11DeviceContext);
+    if (FAILED(hr)) { return hr; }
+
+    m_pCamera->SetPosition(0.0f, 0.0f, -2.0f);
+    m_pCamera->SetProjectionValues(45.0f, static_cast<float>(m_pRenderWindow->GetWidth()) / static_cast<float>(m_pRenderWindow->GetHeight()), 0.1f, 1000.0f);
 
     return S_OK;
   }
@@ -150,10 +168,20 @@ namespace render
     global::dx11::s_pDX11DeviceContext->ClearRenderTargetView(global::dx11::s_pDX11RenderTargetView, background_color);
 
     // Draw scene
-    _pScene->DrawScene();
+    DrawImGui();
 
     // Draw ImGui
-    DrawImGui();
+    _pScene->DrawScene();
+
+    // Update camera
+    m_pCamera->Update();
+
+    DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
+    constantBuffer.data.matrix = world * m_pCamera->GetViewMatrix() * m_pCamera->GetProjectionMatrix();
+    constantBuffer.data.matrix = DirectX::XMMatrixTranspose(constantBuffer.data.matrix);
+
+    if (!constantBuffer.ApplyChanges()) return;
+    global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
 
     // Swap the back and front buffers (show the frame we just drew)
     global::dx11::s_pDX11SwapChain->Present(m_bVerticalSync, 0);
@@ -166,7 +194,19 @@ namespace render
     ImGui::NewFrame();
 
     // Test
-    ImGui::ShowDemoWindow();
+    ImGui::Begin("Handler");
+
+    if (ImGui::Button("Create primitive"))
+    {
+      render::primitive::CPrimitive* pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::RECTANGLE);
+      pPrimitive->SetColor(maths::CVector3(1.0f, 1.0f, 0.0f));
+    }
+    if (ImGui::Button("Destroy primitive"))
+    {
+      engine::CEngine::GetInstance()->DestroyAllPrimimitives();
+    }
+
+    ImGui::End();
 
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
