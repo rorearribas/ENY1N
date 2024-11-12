@@ -1,58 +1,68 @@
 #pragma once
-#include <DirectXMath.h>
+#include "Libs/Maths/Vector3.h"
+#include "Libs/Maths/Matrix4x4.h"
+#include "Engine/Render/ConstantBuffer.h"
 
 namespace render
 {
-  using namespace DirectX;
-
   class CCamera
   {
   public:
+    struct SCameraSettings 
+    {
+      float m_fFov = 45.0f;
+      float m_fAspectRatio = 1.7777f;
+      float m_fNear = 0.01f;
+      float m_fFar = 100000.0f;
+    };
+
     CCamera();
-    void SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ);
+    ~CCamera() {}
+
+    void SetupCamera(const SCameraSettings& _oCameraSettings);
     void Update();
 
-    const XMMATRIX& GetViewMatrix() const;
-    const XMMATRIX& GetProjectionMatrix() const;
+    void SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ);
+    const maths::CMatrix4x4& GetViewMatrix() const;
+    const maths::CMatrix4x4& GetProjectionMatrix() const;
 
-    const XMVECTOR& GetPositionVector() const;
-    const XMFLOAT3& GetPositionFloat3() const;
-    const XMVECTOR& GetRotationVector() const;
-    const XMFLOAT3& GetRotationFloat3() const;
+    const maths::CVector3& GetPositionVector() const;
+    const maths::CVector3& GetPositionFloat3() const;
+    const maths::CVector3& GetRotationVector() const;
+    const maths::CVector3& GetRotationFloat3() const;
 
-    void SetPosition(const XMVECTOR& pos);
+    void SetPosition(const maths::CVector3& pos);
     void SetPosition(float x, float y, float z);
-    void AdjustPosition(const XMVECTOR& pos);
+    void AdjustPosition(const maths::CVector3& pos);
     void AdjustPosition(float x, float y, float z);
-    void SetRotation(const XMVECTOR& rot);
+    void SetRotation(const maths::CVector3& rot);
     void SetRotation(float x, float y, float z);
-    void AdjustRotation(const XMVECTOR& rot);
+    void AdjustRotation(const maths::CVector3& rot);
     void AdjustRotation(float x, float y, float z);
-    void SetLookAtPos(XMFLOAT3 lookAtPos);
-    const XMVECTOR& GetForwardVector();
-    const XMVECTOR& GetRightVector();
-    const XMVECTOR& GetBackwardVector();
-    const XMVECTOR& GetLeftVector();
+    void SetLookAtPos(const maths::CVector3& _v3LookAtPos);
+
+    const maths::CVector3& GetForwardVector();
+    const maths::CVector3& GetRightVector();
+    const maths::CVector3& GetBackwardVector();
+    const maths::CVector3& GetLeftVector();
 
   private:
     void UpdateViewMatrix();
-    XMVECTOR posVector;
-    XMVECTOR rotVector;
-    XMFLOAT3 pos;
-    XMFLOAT3 rot;
-    XMMATRIX viewMatrix;
-    XMMATRIX projectionMatrix;
 
-    const XMVECTOR DEFAULT_FORWARD_VECTOR = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-    const XMVECTOR DEFAULT_UP_VECTOR = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-    const XMVECTOR DEFAULT_BACKWARD_VECTOR = XMVectorSet(0.0f, 0.0f, -1.0f, 0.0f);
-    const XMVECTOR DEFAULT_LEFT_VECTOR = XMVectorSet(-1.0f, 0.0f, 0.0f, 0.0f);
-    const XMVECTOR DEFAULT_RIGHT_VECTOR = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+    ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
+    maths::CMatrix4x4 m_mViewMatrix = maths::CMatrix4x4::Identity;
+    maths::CMatrix4x4 m_mProjectionMatrix = maths::CMatrix4x4::Identity;
 
-    XMVECTOR vec_forward;
-    XMVECTOR vec_left;
-    XMVECTOR vec_right;
-    XMVECTOR vec_backward;
+    maths::CVector3 posVector = maths::CVector3::Zero;
+    maths::CVector3 rotVector = maths::CVector3::Zero;
+
+    maths::CVector3 m_vPos = maths::CVector3::Zero;
+    maths::CVector3 m_vRot = maths::CVector3::Zero;
+
+    maths::CVector3 vec_forward;
+    maths::CVector3 vec_left;
+    maths::CVector3 vec_right;
+    maths::CVector3 vec_backward;
   };
 }
 

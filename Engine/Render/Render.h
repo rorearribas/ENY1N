@@ -20,15 +20,13 @@ namespace render
     void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
 
   private:
-    ConstantBuffer<CB_VS_vertexshader> constantBuffer;
-
     void OnWindowResizeEvent(UINT32 _uX, UINT32 _uY);
     void ConfigureViewport(UINT32 _uX, UINT32 _uY);
     void DrawImGui();
 
     HRESULT CreateDevice();
     HRESULT CreateRenderTargetView();
-    HRESULT InitCamera();
+    void SetupCamera();
     bool InitImGui();
 
     // Render camera

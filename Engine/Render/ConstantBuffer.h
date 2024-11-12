@@ -1,11 +1,10 @@
 #pragma once
 #include <d3d11.h>
-#include <wrl/client.h>
-#include <DirectXMath.h>
+#include "Libs/Maths/Matrix4x4.h"
 
-struct CB_VS_vertexshader
+struct SConstantBuffer
 {
-  DirectX::XMMATRIX matrix;
+  maths::CMatrix4x4 mMatrix = maths::CMatrix4x4::Identity;
 };
 
 template<class T>
@@ -14,52 +13,43 @@ class ConstantBuffer
 private:
   ConstantBuffer(const ConstantBuffer<T>& rhs);
 
-private:
-
-  Microsoft::WRL::ComPtr<ID3D11Buffer> pBuffer;
-  ID3D11DeviceContext* deviceContext = nullptr;
-
 public:
   ConstantBuffer() {}
 
-  T data;
-
-  ID3D11Buffer* Get()const
+  HRESULT Initialize(ID3D11Device* _pDevice, ID3D11DeviceContext* _pDeviceContext)
   {
-    return pBuffer.Get();
-  }
-
-  ID3D11Buffer* const* GetAddressOf()const
-  {
-    return pBuffer.GetAddressOf();
-  }
-
-  HRESULT Initialize(ID3D11Device* device, ID3D11DeviceContext* deviceContext)
-  {
-    this->deviceContext = deviceContext;
+    m_pDeviceContext = _pDeviceContext;
 
     D3D11_BUFFER_DESC desc;
     desc.Usage = D3D11_USAGE_DYNAMIC;
     desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     desc.MiscFlags = 0;
-    desc.ByteWidth = static_cast<UINT>(sizeof(T) + (16 - (sizeof(T) % 16)));
     desc.StructureByteStride = 0;
+    desc.ByteWidth = static_cast<UINT>(sizeof(maths::CMatrix4x4) + (16 - (sizeof(maths::CMatrix4x4) % 16)));
 
-    HRESULT hr = device->CreateBuffer(&desc, 0, pBuffer.GetAddressOf());
+    HRESULT hr = _pDevice->CreateBuffer(&desc, 0, &m_pBuffer);
     return hr;
   }
 
-  bool ApplyChanges()
+  bool Apply()
   {
     D3D11_MAPPED_SUBRESOURCE mappedResource;
-    HRESULT hr = this->deviceContext->Map(pBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    HRESULT hr = this->m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
     if (FAILED(hr))
     {
       return false;
     }
-    CopyMemory(mappedResource.pData, &data, sizeof(T));
-    this->deviceContext->Unmap(pBuffer.Get(), 0);
+    CopyMemory(mappedResource.pData, &m_oData, sizeof(T));
+    this->m_pDeviceContext->Unmap(m_pBuffer, 0);
     return true;
   }
+
+  ID3D11Buffer* GetBuffer() const { return m_pBuffer; }
+  T& GetCurrentData() { return m_oData; }
+
+private:
+  ID3D11Buffer* m_pBuffer = nullptr;
+  ID3D11DeviceContext* m_pDeviceContext = nullptr;
+  T m_oData;
 };

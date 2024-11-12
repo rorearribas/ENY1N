@@ -35,12 +35,11 @@ namespace render
     HRESULT hr = CreateDevice();
     if (FAILED(hr)) return hr;
 
-    // Init camera
-    hr = InitCamera();
-    if (FAILED(hr)) return hr;
-
     // Init ImGui
     if (!InitImGui()) return -1;
+
+    // Setup camera
+    SetupCamera();
 
     // Set delegate
     global::dx11::s_oWindowResizeDelegate.Bind(&CRender::OnWindowResizeEvent, this);
@@ -48,15 +47,16 @@ namespace render
     return S_OK;
   }
   // ------------------------------------
-  HRESULT CRender::InitCamera()
+  void CRender::SetupCamera()
   {
-    HRESULT hr = constantBuffer.Initialize(global::dx11::s_pDX11Device, global::dx11::s_pDX11DeviceContext);
-    if (FAILED(hr)) { return hr; }
+    render::CCamera::SCameraSettings oCameraSettings;
+    oCameraSettings.m_fFov = 45.0f;
+    oCameraSettings.m_fAspectRatio = static_cast<float>(m_pRenderWindow->GetWidth()) / static_cast<float>(m_pRenderWindow->GetHeight());
+    oCameraSettings.m_fNear = 0.1f;
+    oCameraSettings.m_fFar = 1000.0f;
 
-    m_pCamera->SetPosition(0.0f, 0.0f, -2.0f);
-    m_pCamera->SetProjectionValues(45.0f, static_cast<float>(m_pRenderWindow->GetWidth()) / static_cast<float>(m_pRenderWindow->GetHeight()), 0.1f, 1000.0f);
-
-    return S_OK;
+    m_pCamera->SetupCamera(oCameraSettings);
+    m_pCamera->SetPosition(0.0f, 0.0f, -5.0f);
   }
   // ------------------------------------
   bool CRender::InitImGui()
@@ -176,13 +176,6 @@ namespace render
     // Update camera
     m_pCamera->Update();
 
-    DirectX::XMMATRIX world = DirectX::XMMatrixIdentity();
-    constantBuffer.data.matrix = world * m_pCamera->GetViewMatrix() * m_pCamera->GetProjectionMatrix();
-    constantBuffer.data.matrix = DirectX::XMMatrixTranspose(constantBuffer.data.matrix);
-
-    if (!constantBuffer.ApplyChanges()) return;
-    global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(0, 1, constantBuffer.GetAddressOf());
-
     // Swap the back and front buffers (show the frame we just drew)
     global::dx11::s_pDX11SwapChain->Present(m_bVerticalSync, 0);
   }
@@ -201,7 +194,7 @@ namespace render
       render::primitive::CPrimitive* pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::RECTANGLE);
       pPrimitive->SetColor(maths::CVector3(1.0f, 1.0f, 0.0f));
     }
-    if (ImGui::Button("Destroy primitive"))
+    if (ImGui::Button("Destroy all primitives"))
     {
       engine::CEngine::GetInstance()->DestroyAllPrimimitives();
     }

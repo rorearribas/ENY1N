@@ -5,14 +5,6 @@
 
 namespace engine
 {
-  struct ConstantBuffer 
-  {
-    DirectX::XMMATRIX viewMatrix;
-    DirectX::XMMATRIX projectionMatrix;
-  };
-
-  static ID3D11Buffer* s_pConstantBuffer = nullptr;
-
   CEngine::~CEngine()
   {
     m_pSceneManager.reset();
