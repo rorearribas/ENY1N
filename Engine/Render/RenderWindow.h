@@ -11,8 +11,6 @@ namespace render
     ~CRenderWindow() {}
 
     void SetEnabled(bool _bEnabled) const;
-    void SetHwnd(const HWND& _hWnd) { m_hWnd = _hWnd; }
-
     const HWND& GetHwnd() const;
     const UINT32 GetWidth() const;
     const UINT32 GetHeight() const;

@@ -18,6 +18,7 @@ namespace engine
     void UpdateEngine();
 
     const scene::CSceneManager* GetSceneManager() const { return m_pSceneManager.get(); }
+    const render::CRender* GetRender() const { return m_pRender.get(); }
 
     render::primitive::CPrimitive* CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
     render::primitive::CPrimitive* CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);

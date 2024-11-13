@@ -1,40 +1,49 @@
 #include "Camera.h"
-#include <DirectXMath.h>
 #include "Engine/Global/DX11GlobalInterface.h"
-#include <windows.h>
+#include "Libs/ImGui/imgui.h"
+#include "../Base/Engine.h"
 
 namespace render
 {
-  CCamera::CCamera() : m_vPos(maths::CVector3(0.0f, 0.0f, 0.0f)),
-    m_vRot(maths::CVector3(0.0f, 0.0f, 0.0f)), posVector(m_vPos), rotVector(m_vRot)
+  namespace internal_camera
   {
-    UpdateViewMatrix();
+    const float s_fPI(3.14159274f);
   }
-  // ------------------------------------
-  void CCamera::SetProjectionValues(float fovDegrees, float aspectRatio, float nearZ, float farZ) 
-  {
-    float fovRadians = fovDegrees * (DirectX::XM_PI / 180.0f);
-    this->m_mProjectionMatrix = maths::CMatrix4x4::CreatePerspectiveMatrix(fovRadians, aspectRatio, nearZ, farZ);
-  }
-  // ------------------------------------
-  void CCamera::SetupCamera(const SCameraSettings& _oCameraSettings)
+
+  CCamera::CCamera()
   {
     m_oConstantBuffer.Initialize(global::dx11::s_pDX11Device, global::dx11::s_pDX11DeviceContext);
-    SetProjectionValues(_oCameraSettings.m_fFov, _oCameraSettings.m_fAspectRatio, _oCameraSettings.m_fNear, _oCameraSettings.m_fFar);
   }
   // ------------------------------------
   void CCamera::Update()
   {
-    const float cameraSpeed = 0.02f;
+    const float fCameraSpeed = 0.02f;
 
-    if (GetAsyncKeyState('W') & 0x8000) AdjustPosition(GetForwardVector() * cameraSpeed);
-    if (GetAsyncKeyState('S') & 0x8000) AdjustPosition(GetBackwardVector() * cameraSpeed);
-    if (GetAsyncKeyState('D') & 0x8000) AdjustPosition(GetRightVector() * cameraSpeed);
-    if (GetAsyncKeyState('A') & 0x8000) AdjustPosition(GetLeftVector() * cameraSpeed);
+    maths::CMatrix4x4 mRotMatrix = maths::CMatrix4x4::Rotation(0.0f, m_vRot.Y, 0.0f);
+    if (GetAsyncKeyState('W') & 0x8000) AdjustPosition(mRotMatrix * maths::CVector3::Forward * fCameraSpeed);
+    if (GetAsyncKeyState('S') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Forward * -1.0f) * fCameraSpeed);
+    if (GetAsyncKeyState('D') & 0x8000) AdjustPosition(mRotMatrix * maths::CVector3::Right * fCameraSpeed);
+    if (GetAsyncKeyState('A') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Right * -1.0f) * fCameraSpeed);
+    if (GetAsyncKeyState('Q') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Up * 1.0f) * fCameraSpeed);
+    if (GetAsyncKeyState('E') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Up * -1.0f) * fCameraSpeed);
 
-    // Update matrix
+    // Rotation
+    ImGuiIO& iO = ImGui::GetIO();
+    ImVec2 v2MouseDelta = iO.MouseDelta;
+    maths::CVector3 v3Delta(v2MouseDelta.y * 0.001f, v2MouseDelta.x * 0.001f, 0.0f);
+
+    bool bMousePressed = iO.MouseDown[1];
+    AdjustRotation(bMousePressed ? v3Delta : maths::CVector3::Zero);
+
+    if (bMousePressed) { while (ShowCursor(FALSE) >= 0); }
+    else { while (ShowCursor(TRUE) < 0); }
+
+    // Update perspective matrix
+    UpdatePerspectiveMatrix();
+
+    // Calculate MVP matrix
     maths::CMatrix4x4 mViewProjection = maths::CMatrix4x4::Identity;
-    maths::CMatrix4x4 mMatrix = mViewProjection * GetViewMatrix() * GetProjectionMatrix();
+    maths::CMatrix4x4 mMatrix = mViewProjection * m_mViewMatrix * m_mProjectionMatrix;
     m_oConstantBuffer.GetCurrentData().mMatrix = maths::CMatrix4x4::Transpose(mMatrix);
 
     if (!m_oConstantBuffer.Apply()) return;
@@ -42,81 +51,56 @@ namespace render
     ID3D11Buffer* pBuffer = m_oConstantBuffer.GetBuffer();
     global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(0, 1, &pBuffer);
   }
-
-  const maths::CMatrix4x4& CCamera::GetViewMatrix() const 
+  // ------------------------------------
+  void CCamera::SetPosition(const maths::CVector3& newPos) 
   {
-    return this->m_mViewMatrix;
-  }
-  // ------------------------------------
-  const maths::CMatrix4x4& CCamera::GetProjectionMatrix() const {
-    return this->m_mProjectionMatrix;
-  }
-  // ------------------------------------
-  const maths::CVector3& CCamera::GetPositionVector() const {
-    return this->posVector;
-  }
-  // ------------------------------------
-  const maths::CVector3& CCamera::GetPositionFloat3() const {
-    return this->m_vPos;
-  }
-  // ------------------------------------
-  const maths::CVector3& CCamera::GetRotationVector() const {
-    return this->rotVector;
-  }
-  // ------------------------------------
-  const maths::CVector3& CCamera::GetRotationFloat3() const {
-    return this->m_vRot;
-  }
-  // ------------------------------------
-  void CCamera::SetPosition(const maths::CVector3& newPos) {
     m_vPos = newPos;
-    posVector = m_vPos;
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::SetPosition(float x, float y, float z) {
-    m_vPos = maths::CVector3(x, y, z);
-    posVector = m_vPos;
+  void CCamera::SetPosition(float _x, float _y, float _z)
+  {
+    m_vPos = maths::CVector3(_x, _y, _z);
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::AdjustPosition(const maths::CVector3& deltaPos) {
-    posVector += deltaPos;
-    m_vPos = posVector;
+  void CCamera::AdjustPosition(const maths::CVector3& vDelta) 
+  {
+    m_vPos += vDelta;
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::AdjustPosition(float x, float y, float z) {
+  void CCamera::AdjustPosition(float x, float y, float z) 
+  {
     m_vPos.X += x;
     m_vPos.Y += y;
     m_vPos.Z += z;
-    posVector = m_vPos;
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::SetRotation(const maths::CVector3& newRot) {
-    rotVector = newRot;
-    m_vRot = rotVector;
+  void CCamera::SetRotation(const maths::CVector3& _vNewRot) 
+  {
+    m_vRot = _vNewRot;
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::SetRotation(float x, float y, float z) {
+  void CCamera::SetRotation(float x, float y, float z) 
+  {
     m_vRot = maths::CVector3(x, y, z);
-    rotVector = m_vRot;
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::AdjustRotation(const maths::CVector3& deltaRot) {
-    rotVector += deltaRot;
-    m_vRot = rotVector;
+  void CCamera::AdjustRotation(const maths::CVector3& _vDeltaRot) 
+  {
+    m_vRot += _vDeltaRot;
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::AdjustRotation(float x, float y, float z) {
+  void CCamera::AdjustRotation(float x, float y, float z) 
+  {
     m_vRot.X += x;
     m_vRot.Y += y;
     m_vRot.Z += z;
-    rotVector = m_vRot;
     UpdateViewMatrix();
   }
   // ------------------------------------
@@ -130,47 +114,30 @@ namespace render
     float fYaw = (float)atan2(direction.X, direction.Z);
 
     if (direction.Z > 0)
-      fYaw += DirectX::XM_PI;
+      fYaw += internal_camera::s_fPI;
 
     SetRotation(fPitch, fYaw, 0.0f);
   }
   // ------------------------------------
-  const maths::CVector3& CCamera::GetForwardVector() {
-    return this->vec_forward;
-  }
-  // ------------------------------------
-  const maths::CVector3& CCamera::GetRightVector() {
-    return this->vec_right;
-  }
-  // ------------------------------------
-  const maths::CVector3& CCamera::GetBackwardVector() {
-    return this->vec_backward;
-  }
-  // ------------------------------------
-  const maths::CVector3& CCamera::GetLeftVector() {
-    return this->vec_left;
+  void CCamera::UpdatePerspectiveMatrix()
+  {
+    float fRadians = m_fFov * (internal_camera::s_fPI / 180.0f);
+    m_mProjectionMatrix = maths::CMatrix4x4::CreatePerspectiveMatrix(fRadians, m_fAspectRatio, m_fNear, m_fFar);
   }
   // ------------------------------------
   void CCamera::UpdateViewMatrix() 
   {
-    // Crear la matriz de rotación de la cámara
-    maths::CMatrix4x4 camRotationMatrix = maths::CMatrix4x4::Rotation(m_vRot.X, m_vRot.Y, m_vRot.Z);
+    // Create the rotation matrix
+    maths::CMatrix4x4 mRotationMatrix = maths::CMatrix4x4::Rotation(m_vRot.X, m_vRot.Y, m_vRot.Z);
 
-    // Calcular el vector de dirección hacia adelante de la cámara
-    maths::CVector3 camTarget = camRotationMatrix * maths::CVector3::Forward;
-    camTarget = camTarget + m_vPos;
+    // Calculate target offset
+    maths::CVector3 vTarget = mRotationMatrix * maths::CVector3::Forward;
+    vTarget = vTarget + m_vPos;
 
-    // Calcular el vector de dirección hacia arriba de la cámara
-    maths::CVector3 upDir = camRotationMatrix * maths::CVector3::Up;
+    // Calculate up direction
+    maths::CVector3 vUpDir = mRotationMatrix * maths::CVector3::Up;
 
-    // Crear la matriz de vista personalizada
-    this->m_mViewMatrix = maths::CMatrix4x4::LookAt(m_vPos, camTarget, upDir);
-
-    // Actualizar los vectores de movimiento con la nueva rotación
-    maths::CMatrix4x4 vecRotationMatrix = maths::CMatrix4x4::Rotation(0.0f, m_vRot.Y, 0.0f);
-    this->vec_forward = vecRotationMatrix * maths::CVector3::Forward;
-    this->vec_backward = vecRotationMatrix * (maths::CVector3::Forward * -1.0f);
-    this->vec_right = vecRotationMatrix * maths::CVector3::Right;
-    this->vec_left = vecRotationMatrix * (maths::CVector3::Right * -1.0f);
+    // Create look at
+    m_mViewMatrix = maths::CMatrix4x4::LookAt(m_vPos, vTarget, vUpDir);
   }
 }

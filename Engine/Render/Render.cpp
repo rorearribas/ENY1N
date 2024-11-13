@@ -17,8 +17,6 @@ namespace render
   {
     // Create render window
     m_pRenderWindow = new render::CRenderWindow(_uWidth, _uHeight);
-    // Create render camera
-    m_pCamera = new render::CCamera();
   }
   // ------------------------------------
   CRender::~CRender()
@@ -49,13 +47,7 @@ namespace render
   // ------------------------------------
   void CRender::SetupCamera()
   {
-    render::CCamera::SCameraSettings oCameraSettings;
-    oCameraSettings.m_fFov = 45.0f;
-    oCameraSettings.m_fAspectRatio = static_cast<float>(m_pRenderWindow->GetWidth()) / static_cast<float>(m_pRenderWindow->GetHeight());
-    oCameraSettings.m_fNear = 0.1f;
-    oCameraSettings.m_fFar = 1000.0f;
-
-    m_pCamera->SetupCamera(oCameraSettings);
+    m_pCamera = new render::CCamera();
     m_pCamera->SetPosition(0.0f, 0.0f, -5.0f);
   }
   // ------------------------------------
@@ -130,6 +122,9 @@ namespace render
 
     // Configure viewport
     ConfigureViewport(_uX, _uY);
+
+    // Set valid aspect ratio
+    m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
   }
   // ------------------------------------
   HRESULT CRender::CreateRenderTargetView()
@@ -186,6 +181,8 @@ namespace render
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
+    ImGui::ShowDemoWindow();
+
     // Test
     ImGui::Begin("Handler");
 
@@ -197,6 +194,16 @@ namespace render
     if (ImGui::Button("Destroy all primitives"))
     {
       engine::CEngine::GetInstance()->DestroyAllPrimimitives();
+    }
+
+    if (ImGui::Button("Fov 90"))
+    {
+      m_pCamera->SetFov(90.0f);
+    }
+
+    if (ImGui::Button("Fov 45"))
+    {
+      m_pCamera->SetFov(45.0f);
     }
 
     ImGui::End();

@@ -13,7 +13,7 @@ namespace engine
   // ------------------------------------
   void CEngine::InitEngine(const UINT32& _uWidth, const UINT32& _uHeight)
   {
-    // Create render system
+    // Create render
     m_pRender = std::make_unique<render::CRender>(_uWidth, _uHeight);
     HRESULT hr = m_pRender->Init();
     assert(!FAILED(hr));
@@ -24,7 +24,7 @@ namespace engine
     m_pSceneManager->SetSceneEnabled(0, true);
 
     // Create fixed tick
-    m_pTickRate = std::make_unique<tick::CTickRate>();
+    m_pTickRate = std::make_unique<tick::CTickRate>(300);
 
     // Show window
     m_pRender->GetRenderWindow()->SetEnabled(true);
