@@ -13,6 +13,8 @@ namespace engine
   // ------------------------------------
   void CEngine::InitEngine(const UINT32& _uWidth, const UINT32& _uHeight)
   {
+    if (m_bInitialized) return;
+
     // Create render
     m_pRender = std::make_unique<render::CRender>(_uWidth, _uHeight);
     HRESULT hr = m_pRender->Init();
@@ -28,6 +30,9 @@ namespace engine
 
     // Show window
     m_pRender->GetRenderWindow()->SetEnabled(true);
+
+    // Marked as initialized
+    m_bInitialized = true;
   }
   // ------------------------------------
   void CEngine::UpdateEngine()

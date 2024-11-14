@@ -32,6 +32,8 @@ namespace engine
     std::unique_ptr<render::CRender> m_pRender = nullptr;
     std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;
     std::unique_ptr<tick::CTickRate> m_pTickRate = nullptr;
+
+    bool m_bInitialized = false;
   };
 }
 

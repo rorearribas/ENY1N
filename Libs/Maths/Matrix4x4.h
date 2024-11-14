@@ -23,34 +23,32 @@ namespace maths
       float _m41, float _m42, float _m43, float _m44
     );
 
+    maths::CVector3 operator*(const CVector3& vec) const
+    {
+      float x = vec.X * m[0][0] + vec.Y * m[1][0] + vec.Z * m[2][0] + m[3][0];
+      float y = vec.X * m[0][1] + vec.Y * m[1][1] + vec.Z * m[2][1] + m[3][1];
+      float z = vec.X * m[0][2] + vec.Y * m[1][2] + vec.Z * m[2][2] + m[3][2];
+      return CVector3(x, y, z);
+    }
     CMatrix4x4 operator*(const CMatrix4x4& mat) const 
     {
       CMatrix4x4 result;
       for (int i = 0; i < 4; ++i) {
         for (int j = 0; j < 4; ++j) {
-          result.mMat[i][j] = mMat[i][0] * mat.mMat[0][j] +
-            mMat[i][1] * mat.mMat[1][j] +
-            mMat[i][2] * mat.mMat[2][j] +
-            mMat[i][3] * mat.mMat[3][j];
+          result.m[i][j] = m[i][0] * mat.m[0][j] +
+            m[i][1] * mat.m[1][j] +
+            m[i][2] * mat.m[2][j] +
+            m[i][3] * mat.m[3][j];
         }
       }
       return result;
     }
-
-    maths::CVector3 operator*(const CVector3& vec) const 
-    {
-      float x = vec.X * mMat[0][0] + vec.Y * mMat[1][0] + vec.Z * mMat[2][0] + mMat[3][0];
-      float y = vec.X * mMat[0][1] + vec.Y * mMat[1][1] + vec.Z * mMat[2][1] + mMat[3][1];
-      float z = vec.X * mMat[0][2] + vec.Y * mMat[1][2] + vec.Z * mMat[2][2] + mMat[3][2];
-      return CVector3(x, y, z);
-    }
-
     CMatrix4x4& operator=(const CMatrix4x4& other) 
     {
       if (this != &other) {  // Evita la autoasignación
         for (int i = 0; i < 4; ++i) {
           for (int j = 0; j < 4; ++j) {
-            mMat[i][j] = other.mMat[i][j];
+            m[i][j] = other.m[i][j];
           }
         }
       }
@@ -59,11 +57,12 @@ namespace maths
 
     static CMatrix4x4 CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar);
     static CMatrix4x4 LookAt(const CVector3& _vEye, const CVector3& _vTarget, const CVector3& _vUp);
-    static CMatrix4x4 Rotation(float pitch, float yaw, float roll);
+    static CMatrix4x4 Rotation(const CVector3& _vRot);
+    static CMatrix4x4 Translate(const CVector3& _vTranslate);
     static CMatrix4x4 Transpose(const CMatrix4x4& matrix);
 
   private:
-    TMatrix4x4 mMat;
+    TMatrix4x4 m;
   };
 }
 

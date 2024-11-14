@@ -38,7 +38,7 @@ namespace scene
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreatePrimitive(_vctVertexData);
-  }
+  } 
   // ------------------------------------
   render::primitive::CPrimitive* CSceneManager::CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex)
   {

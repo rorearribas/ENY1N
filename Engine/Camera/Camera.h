@@ -13,7 +13,6 @@ namespace render
     ~CCamera() {}
 
     void Update();
-
     const maths::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const maths::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
 
@@ -36,6 +35,7 @@ namespace render
     void SetLookAtPos(const maths::CVector3& _v3LookAtPos);
 
   private:
+    void ShowCursor(bool _bMousePressed);
     void UpdatePerspectiveMatrix();
     void UpdateViewMatrix();
 

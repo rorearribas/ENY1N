@@ -2,6 +2,8 @@
 #include <d3d11.h>
 #include <vector>
 #include "Libs/Maths/Vector3.h"
+#include "Libs/Maths/Matrix4x4.h"
+#include "Engine/Render/ConstantBuffer.h"
 
 namespace render
 {
@@ -16,19 +18,24 @@ namespace render
       enum EPrimitiveType { RECTANGLE, TRIANGLE };
       struct SPrimitiveInfo
       {
-        maths::CVector3 m_vPosition = maths::CVector3::Zero;
-        maths::CVector3 m_vColor = s_vDefaultColor;
+        maths::CVector3 Position = maths::CVector3::Zero;
+        maths::CVector3 Color = s_vDefaultColor;
       };
 
       CPrimitive(const EPrimitiveType& _ePrimitiveType);
       CPrimitive(const std::vector<SPrimitiveInfo>& _vctVertexData);
       ~CPrimitive();
 
+      void SetPosition(const maths::CVector3& _v3Position) { m_vPos = _v3Position; }
+      const maths::CVector3& GetPosition() const { return m_vPos; }
+
       void SetColor(const maths::CVector3& _v3Color);
       const maths::CVector3& GetColor() const { return m_v3Color; }
 
-      UINT GetIndexCount() { return m_uVertexCount; }
       ID3D11Buffer* GetBuffer() { return m_pBuffer; }
+      ConstantBuffer<SConstantBuffer>& GetConstantBuffer() { return m_oConstantBuffer; }
+
+      UINT GetIndexCount() { return m_uVertexCount; }
       ID3D11InputLayout* GetInputLayout() { return m_pInputLayout; }
 
       ID3D11VertexShader* GetVertexShader() { return m_pVertexShader; }
@@ -37,11 +44,12 @@ namespace render
     private:
       HRESULT InitPrimitive();
       HRESULT CompileShaders();
-      HRESULT InitShaders(ID3D11Device* _pDevice);
-      HRESULT CreateInputLayout(ID3D11Device* _pDevice);
-      HRESULT CreateBufferFromVertexData(ID3D11Device* _pDevice, const std::vector<SPrimitiveInfo>& _vctPrimitiveInfo);
+      HRESULT InitShaders();
+      HRESULT CreateInputLayout();
+      HRESULT CreateBufferFromVertexData(const std::vector<SPrimitiveInfo>& _vctPrimitiveInfo);
 
-      // Vertex buffer
+      // Buffers
+      ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
       ID3D11Buffer* m_pBuffer = nullptr;
       // Vertex shader
       ID3DBlob* m_pVertexShaderBlob = nullptr;
@@ -54,6 +62,7 @@ namespace render
 
       // Info
       maths::CVector3 m_v3Color = s_vDefaultColor;
+      maths::CVector3 m_vPos = maths::CVector3::Zero;
       UINT m_uVertexCount = 0;
     };
   }

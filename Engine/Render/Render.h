@@ -14,10 +14,13 @@ namespace render
     ~CRender();
 
     HRESULT Init();
-
     void DrawScene(scene::CScene* _pScene);
+
+    const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
+    const render::CCamera* GetCamera() const { return m_pCamera; }
+
     void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
-    const CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
+    bool IsVSyncEnabled() { return m_bVerticalSync; }
 
   private:
     void OnWindowResizeEvent(UINT32 _uX, UINT32 _uY);
@@ -34,6 +37,8 @@ namespace render
 
     // Render window
     render::CRenderWindow* m_pRenderWindow = nullptr;
+
+    // Info
     bool m_bVerticalSync = true;
   };
 }

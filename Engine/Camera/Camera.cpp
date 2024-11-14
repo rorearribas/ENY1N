@@ -19,13 +19,11 @@ namespace render
   {
     const float fCameraSpeed = 0.02f;
 
-    maths::CMatrix4x4 mRotMatrix = maths::CMatrix4x4::Rotation(0.0f, m_vRot.Y, 0.0f);
+    maths::CMatrix4x4 mRotMatrix = maths::CMatrix4x4::Rotation(m_vRot);
     if (GetAsyncKeyState('W') & 0x8000) AdjustPosition(mRotMatrix * maths::CVector3::Forward * fCameraSpeed);
     if (GetAsyncKeyState('S') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Forward * -1.0f) * fCameraSpeed);
     if (GetAsyncKeyState('D') & 0x8000) AdjustPosition(mRotMatrix * maths::CVector3::Right * fCameraSpeed);
     if (GetAsyncKeyState('A') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Right * -1.0f) * fCameraSpeed);
-    if (GetAsyncKeyState('Q') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Up * 1.0f) * fCameraSpeed);
-    if (GetAsyncKeyState('E') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Up * -1.0f) * fCameraSpeed);
 
     // Rotation
     ImGuiIO& iO = ImGui::GetIO();
@@ -34,22 +32,25 @@ namespace render
 
     bool bMousePressed = iO.MouseDown[1];
     AdjustRotation(bMousePressed ? v3Delta : maths::CVector3::Zero);
-
-    if (bMousePressed) { while (ShowCursor(FALSE) >= 0); }
-    else { while (ShowCursor(TRUE) < 0); }
+    ShowCursor(bMousePressed);
 
     // Update perspective matrix
     UpdatePerspectiveMatrix();
 
     // Calculate MVP matrix
-    maths::CMatrix4x4 mViewProjection = maths::CMatrix4x4::Identity;
-    maths::CMatrix4x4 mMatrix = mViewProjection * m_mViewMatrix * m_mProjectionMatrix;
-    m_oConstantBuffer.GetCurrentData().mMatrix = maths::CMatrix4x4::Transpose(mMatrix);
+    maths::CMatrix4x4 mWorld = maths::CMatrix4x4::Identity;
+    maths::CMatrix4x4 mMVP = mWorld * m_mViewMatrix * m_mProjectionMatrix;
+    m_oConstantBuffer.GetCurrentData().mMatrix = maths::CMatrix4x4::Transpose(mMVP);
 
     if (!m_oConstantBuffer.Apply()) return;
 
     ID3D11Buffer* pBuffer = m_oConstantBuffer.GetBuffer();
     global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(0, 1, &pBuffer);
+  }
+  // ------------------------------------
+  void CCamera::ShowCursor(bool bMousePressed)
+  {
+    while (bMousePressed ? ::ShowCursor(!bMousePressed) >= 0 : ::ShowCursor(!bMousePressed) < 0);
   }
   // ------------------------------------
   void CCamera::SetPosition(const maths::CVector3& newPos) 
@@ -128,7 +129,7 @@ namespace render
   void CCamera::UpdateViewMatrix() 
   {
     // Create the rotation matrix
-    maths::CMatrix4x4 mRotationMatrix = maths::CMatrix4x4::Rotation(m_vRot.X, m_vRot.Y, m_vRot.Z);
+    maths::CMatrix4x4 mRotationMatrix = maths::CMatrix4x4::Rotation(m_vRot);
 
     // Calculate target offset
     maths::CVector3 vTarget = mRotationMatrix * maths::CVector3::Forward;
@@ -137,7 +138,7 @@ namespace render
     // Calculate up direction
     maths::CVector3 vUpDir = mRotationMatrix * maths::CVector3::Up;
 
-    // Create look at
+    // Set view matrix
     m_mViewMatrix = maths::CMatrix4x4::LookAt(m_vPos, vTarget, vUpDir);
   }
 }

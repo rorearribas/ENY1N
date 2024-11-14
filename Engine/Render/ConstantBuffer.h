@@ -20,28 +20,28 @@ public:
   {
     m_pDeviceContext = _pDeviceContext;
 
-    D3D11_BUFFER_DESC desc;
-    desc.Usage = D3D11_USAGE_DYNAMIC;
-    desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-    desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-    desc.MiscFlags = 0;
-    desc.StructureByteStride = 0;
-    desc.ByteWidth = static_cast<UINT>(sizeof(maths::CMatrix4x4) + (16 - (sizeof(maths::CMatrix4x4) % 16)));
+    D3D11_BUFFER_DESC oBufferDesc;
+    oBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    oBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+    oBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+    oBufferDesc.MiscFlags = 0;
+    oBufferDesc.StructureByteStride = 0;
+    oBufferDesc.ByteWidth = static_cast<UINT>(sizeof(maths::CMatrix4x4) + (16 - (sizeof(maths::CMatrix4x4) % 16)));
 
-    HRESULT hr = _pDevice->CreateBuffer(&desc, 0, &m_pBuffer);
+    HRESULT hr = _pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
     return hr;
   }
 
   bool Apply()
   {
-    D3D11_MAPPED_SUBRESOURCE mappedResource;
-    HRESULT hr = this->m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
+    D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
+    HRESULT hr = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
     if (FAILED(hr))
     {
       return false;
     }
-    CopyMemory(mappedResource.pData, &m_oData, sizeof(T));
-    this->m_pDeviceContext->Unmap(m_pBuffer, 0);
+    CopyMemory(oMappedSubresource.pData, &m_oData, sizeof(T));
+    m_pDeviceContext->Unmap(m_pBuffer, 0);
     return true;
   }
 

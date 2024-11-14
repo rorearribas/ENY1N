@@ -3,6 +3,7 @@
 #include <d3dcompiler.h>
 #include <cassert>
 #include <iostream>
+#include "../Base/Engine.h"
 
 namespace render
 {
@@ -42,10 +43,10 @@ namespace render
       switch (_ePrimitiveType)
       {
       case EPrimitiveType::RECTANGLE:
-        hr = CreateBufferFromVertexData(global::dx11::s_pDX11Device, internal_primitive::oRectangle);
+        hr = CreateBufferFromVertexData(internal_primitive::oRectangle);
         break;
       case EPrimitiveType::TRIANGLE:
-        hr = CreateBufferFromVertexData(global::dx11::s_pDX11Device, internal_primitive::oTriangle);
+        hr = CreateBufferFromVertexData(internal_primitive::oTriangle);
         break;
       }
 
@@ -58,71 +59,8 @@ namespace render
       assert(!FAILED(hr));
 
       // Create buffer from vertex data
-      hr = CreateBufferFromVertexData(global::dx11::s_pDX11Device, _vctVertexData);
+      hr = CreateBufferFromVertexData(_vctVertexData);
       assert(!FAILED(hr));
-    }
-    // ------------------------------------
-    HRESULT CPrimitive::InitPrimitive()
-    {
-      // Compile shaders
-      HRESULT hr = CompileShaders();
-      if (FAILED(hr)) return hr;
-
-      // Init shaders
-      hr = InitShaders(global::dx11::s_pDX11Device);
-      if (FAILED(hr)) return hr;
-
-      // Create input layout
-      hr = CreateInputLayout(global::dx11::s_pDX11Device);
-      if (FAILED(hr)) return hr;
-
-      return hr;
-    }
-    // ------------------------------------
-    HRESULT CPrimitive::CreateInputLayout(ID3D11Device* _pDevice)
-    {
-      D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
-      {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, m_vPosition), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, m_vColor), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        /*
-        { "COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEX", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        */
-      };
-
-      return _pDevice->CreateInputLayout
-      (
-        oInputElementDesc,
-        ARRAYSIZE(oInputElementDesc),
-        m_pVertexShaderBlob->GetBufferPointer(),
-        m_pVertexShaderBlob->GetBufferSize(),
-        &m_pInputLayout
-      );
-    }
-    // ------------------------------------
-    HRESULT CPrimitive::InitShaders(ID3D11Device* _pDevice)
-    {
-      // Create vertex shader
-      HRESULT hr = _pDevice->CreateVertexShader
-      (
-        m_pVertexShaderBlob->GetBufferPointer(),
-        m_pVertexShaderBlob->GetBufferSize(),
-        NULL,
-        &m_pVertexShader
-      );
-
-      if (FAILED(hr)) return hr;
-
-      // Create pixel shader
-      return _pDevice->CreatePixelShader
-      (
-        m_pPixelShaderBlob->GetBufferPointer(),
-        m_pPixelShaderBlob->GetBufferSize(),
-        NULL,
-        &m_pPixelShader
-      );
     }
     // ------------------------------------
     CPrimitive::~CPrimitive()
@@ -137,6 +75,69 @@ namespace render
       if (m_pPixelShader) { m_pPixelShader->Release(); }
     }
     // ------------------------------------
+    HRESULT CPrimitive::InitPrimitive()
+    {
+      // Compile shaders
+      HRESULT hr = CompileShaders();
+      if (FAILED(hr)) return hr;
+
+      // Init shaders
+      hr = InitShaders();
+      if (FAILED(hr)) return hr;
+
+      // Create input layout
+      hr = CreateInputLayout();
+      if (FAILED(hr)) return hr;
+
+      return hr;
+    }
+    // ------------------------------------
+    HRESULT CPrimitive::CreateInputLayout()
+    {
+      D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
+      {
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        /*
+        { "COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEX", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        */
+      };
+
+      return global::dx11::s_pDX11Device->CreateInputLayout
+      (
+        oInputElementDesc,
+        ARRAYSIZE(oInputElementDesc),
+        m_pVertexShaderBlob->GetBufferPointer(),
+        m_pVertexShaderBlob->GetBufferSize(),
+        &m_pInputLayout
+      );
+    }
+    // ------------------------------------
+    HRESULT CPrimitive::InitShaders()
+    {
+      // Create vertex shader
+      HRESULT hr = global::dx11::s_pDX11Device->CreateVertexShader
+      (
+        m_pVertexShaderBlob->GetBufferPointer(),
+        m_pVertexShaderBlob->GetBufferSize(),
+        NULL,
+        &m_pVertexShader
+      );
+
+      if (FAILED(hr)) return hr;
+
+      // Create pixel shader
+      return global::dx11::s_pDX11Device->CreatePixelShader
+      (
+        m_pPixelShaderBlob->GetBufferPointer(),
+        m_pPixelShaderBlob->GetBufferSize(),
+        NULL,
+        &m_pPixelShader
+      );
+    }
+    // ------------------------------------
     void CPrimitive::SetColor(const maths::CVector3& _v3Color)
     {
       // Map
@@ -148,7 +149,7 @@ namespace render
       // Update color
       for (UINT uIndex = 0; uIndex < m_uVertexCount; ++uIndex)
       {
-        pPrimitiveInfo[uIndex].m_vColor = _v3Color;
+        pPrimitiveInfo[uIndex].Color = _v3Color;
       }
 
       // Unmap
@@ -191,10 +192,14 @@ namespace render
       );
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBufferFromVertexData(ID3D11Device* _pDevice, const std::vector<SPrimitiveInfo>& _vctPrimitiveInfo)
+    HRESULT CPrimitive::CreateBufferFromVertexData(const std::vector<SPrimitiveInfo>& _vctPrimitiveInfo)
     {
       if (_vctPrimitiveInfo.empty()) return -1;
 
+      // Create constant buffer
+      m_oConstantBuffer.Initialize(global::dx11::s_pDX11Device, global::dx11::s_pDX11DeviceContext);
+
+      // Create vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
       oVertexBufferDescriptor.ByteWidth = UINT(sizeof(SPrimitiveInfo) * _vctPrimitiveInfo.size());
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
@@ -205,10 +210,7 @@ namespace render
       oSubresourceData.pSysMem = _vctPrimitiveInfo.data();
       m_uVertexCount = (UINT)_vctPrimitiveInfo.size();
 
-      // Release buffer
-      if (m_pBuffer) { m_pBuffer->Release(); }
-
-      return _pDevice->CreateBuffer
+      return global::dx11::s_pDX11Device->CreateBuffer
       (
         &oVertexBufferDescriptor,
         &oSubresourceData,

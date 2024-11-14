@@ -162,10 +162,10 @@ namespace render
     float background_color[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     global::dx11::s_pDX11DeviceContext->ClearRenderTargetView(global::dx11::s_pDX11RenderTargetView, background_color);
 
-    // Draw scene
+    // Draw ImGui
     DrawImGui();
 
-    // Draw ImGui
+    // Draw scene
     _pScene->DrawScene();
 
     // Update camera
@@ -190,7 +190,9 @@ namespace render
     {
       render::primitive::CPrimitive* pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::RECTANGLE);
       pPrimitive->SetColor(maths::CVector3(1.0f, 1.0f, 0.0f));
+      pPrimitive->SetPosition(maths::CVector3(5.0f, -10.0f, 0.0f));
     }
+
     if (ImGui::Button("Destroy all primitives"))
     {
       engine::CEngine::GetInstance()->DestroyAllPrimimitives();
