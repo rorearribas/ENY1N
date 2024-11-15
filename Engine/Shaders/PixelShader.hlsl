@@ -1,12 +1,10 @@
-Texture2D myTexture : register(t0);
-SamplerState mySampler : register(s0);
+//Texture2D myTexture : register(t0);
+//SamplerState mySampler : register(s0);
 
 struct PS_INPUT 
 {
     float4 position : SV_POSITION;
     float4 color : COLOR;
-    //float3 normal : NORMAL;
-    //float2 texcoord : TEXCOORD;
 };
 
 float4 PSMain(PS_INPUT input) : SV_TARGET 

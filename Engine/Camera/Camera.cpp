@@ -17,7 +17,7 @@ namespace render
   // ------------------------------------
   void CCamera::Update()
   {
-    const float fCameraSpeed = 0.02f;
+    const float fCameraSpeed = 0.05f;
 
     maths::CMatrix4x4 mRotMatrix = maths::CMatrix4x4::Rotation(m_vRot);
     if (GetAsyncKeyState('W') & 0x8000) AdjustPosition(mRotMatrix * maths::CVector3::Forward * fCameraSpeed);
@@ -37,15 +37,13 @@ namespace render
     // Update perspective matrix
     UpdatePerspectiveMatrix();
 
-    // Calculate MVP matrix
-    maths::CMatrix4x4 mWorld = maths::CMatrix4x4::Identity;
-    maths::CMatrix4x4 mMVP = mWorld * m_mViewMatrix * m_mProjectionMatrix;
-    m_oConstantBuffer.GetCurrentData().mMatrix = maths::CMatrix4x4::Transpose(mMVP);
-
+    // Calculate view projection matrix
+    maths::CMatrix4x4 mViewProjection = m_mViewMatrix * m_mProjectionMatrix;
+    m_oConstantBuffer.GetCurrentData().mMatrix = maths::CMatrix4x4::Transpose(mViewProjection);
     if (!m_oConstantBuffer.Apply()) return;
 
-    ID3D11Buffer* pBuffer = m_oConstantBuffer.GetBuffer();
-    global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(0, 1, &pBuffer);
+    ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
+    global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
   }
   // ------------------------------------
   void CCamera::ShowCursor(bool bMousePressed)

@@ -48,7 +48,7 @@ namespace render
   void CRender::SetupCamera()
   {
     m_pCamera = new render::CCamera();
-    m_pCamera->SetPosition(0.0f, 0.0f, -5.0f);
+    m_pCamera->SetPosition(0.0f, 0.0f, -10.0f);
   }
   // ------------------------------------
   bool CRender::InitImGui()
@@ -181,33 +181,31 @@ namespace render
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    ImGui::ShowDemoWindow();
-
     // Test
     ImGui::Begin("Handler");
 
-    if (ImGui::Button("Create primitive"))
+    if (ImGui::Button("Create primitives"))
     {
       render::primitive::CPrimitive* pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::RECTANGLE);
       pPrimitive->SetColor(maths::CVector3(1.0f, 1.0f, 0.0f));
-      pPrimitive->SetPosition(maths::CVector3(5.0f, -10.0f, 0.0f));
-    }
+      pPrimitive->SetPosition(maths::CVector3(-2.5f, 0.0f, 0.0f));
 
+      render::primitive::CPrimitive* pPrimitive2 = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::TRIANGLE);
+      pPrimitive2->SetColor(maths::CVector3(1.0f, 0.0f, 1.0f));
+      pPrimitive2->SetPosition(maths::CVector3(2.5f, 0.0f, 0.0f));
+    }
     if (ImGui::Button("Destroy all primitives"))
     {
       engine::CEngine::GetInstance()->DestroyAllPrimimitives();
     }
-
     if (ImGui::Button("Fov 90"))
     {
       m_pCamera->SetFov(90.0f);
     }
-
     if (ImGui::Button("Fov 45"))
     {
       m_pCamera->SetFov(45.0f);
     }
-
     ImGui::End();
 
     ImGui::Render();

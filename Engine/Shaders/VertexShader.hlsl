@@ -1,14 +1,21 @@
-cbuffer ConstantBuffer : register(b0) 
+cbuffer Camera : register(b0) 
 {
-   matrix mat;
+   matrix viewProjection;
 };
 
-struct VS_INPUT {
+cbuffer Object : register(b1)
+{
+  matrix modelMatrix;
+};
+
+struct VS_INPUT 
+{
     float3 position : POSITION;
     float4 color : COLOR;
 };
 
-struct PS_INPUT {
+struct PS_INPUT 
+{
     float4 position : SV_POSITION;
     float4 color : COLOR;
 };
@@ -16,7 +23,8 @@ struct PS_INPUT {
 PS_INPUT VSMain(VS_INPUT input) 
 {
     PS_INPUT output;
-    output.position = mul(float4(input.position, 1.0f), mat);
+    matrix world = mul(modelMatrix, viewProjection);
+    output.position = mul(float4(input.position, 1.0), world);
     output.color = input.color;
     return output;
 }

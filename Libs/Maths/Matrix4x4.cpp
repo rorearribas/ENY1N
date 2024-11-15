@@ -90,6 +90,15 @@ namespace maths
     return mMatrix;
   }
   // ------------------------------------
+  maths::CMatrix4x4 CMatrix4x4::Scale(const CVector3& _vScale)
+  {
+    CMatrix4x4 mMatrix = CMatrix4x4::Identity;
+    mMatrix.m[0][0] = _vScale.X;
+    mMatrix.m[1][1] = _vScale.Y;
+    mMatrix.m[2][2] = _vScale.Z;
+    return mMatrix;
+  }
+  // ------------------------------------
   maths::CMatrix4x4 CMatrix4x4::Rotation(const maths::CVector3& _vRot)
   {
     CMatrix4x4 mPitchMatrix = CMatrix4x4::Identity;

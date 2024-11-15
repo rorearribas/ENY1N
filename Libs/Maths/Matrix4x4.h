@@ -30,18 +30,20 @@ namespace maths
       float z = vec.X * m[0][2] + vec.Y * m[1][2] + vec.Z * m[2][2] + m[3][2];
       return CVector3(x, y, z);
     }
-    CMatrix4x4 operator*(const CMatrix4x4& mat) const 
+    CMatrix4x4 operator*(const CMatrix4x4& _mMatrix) const 
     {
-      CMatrix4x4 result;
-      for (int i = 0; i < 4; ++i) {
-        for (int j = 0; j < 4; ++j) {
-          result.m[i][j] = m[i][0] * mat.m[0][j] +
-            m[i][1] * mat.m[1][j] +
-            m[i][2] * mat.m[2][j] +
-            m[i][3] * mat.m[3][j];
+      CMatrix4x4 mMatrix = CMatrix4x4::Identity;
+      for (int i = 0; i < 4; ++i) 
+      {
+        for (int j = 0; j < 4; ++j) 
+        {
+          mMatrix.m[i][j] = m[i][0] * _mMatrix.m[0][j] +
+            m[i][1] * _mMatrix.m[1][j] +
+            m[i][2] * _mMatrix.m[2][j] +
+            m[i][3] * _mMatrix.m[3][j];
         }
       }
-      return result;
+      return mMatrix;
     }
     CMatrix4x4& operator=(const CMatrix4x4& other) 
     {
@@ -59,6 +61,7 @@ namespace maths
     static CMatrix4x4 LookAt(const CVector3& _vEye, const CVector3& _vTarget, const CVector3& _vUp);
     static CMatrix4x4 Rotation(const CVector3& _vRot);
     static CMatrix4x4 Translate(const CVector3& _vTranslate);
+    static CMatrix4x4 Scale(const CVector3& _vScale);
     static CMatrix4x4 Transpose(const CMatrix4x4& matrix);
 
   private:
