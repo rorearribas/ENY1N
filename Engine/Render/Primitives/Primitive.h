@@ -3,7 +3,7 @@
 #include <vector>
 #include "Libs/Maths/Vector3.h"
 #include "Libs/Maths/Matrix4x4.h"
-#include "Engine/Render/ConstantBuffer.h"
+#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 
 namespace render
 {
@@ -15,7 +15,7 @@ namespace render
       static const maths::CVector3 s_vDefaultColor;
 
     public:
-      enum EPrimitiveType { RECTANGLE, TRIANGLE };
+      enum EPrimitiveType { RECTANGLE, TRIANGLE, CUBE, SPHERE };
       struct SPrimitiveInfo
       {
         maths::CVector3 Position = maths::CVector3::Zero;
@@ -26,13 +26,15 @@ namespace render
       CPrimitive(const std::vector<SPrimitiveInfo>& _vctVertexData);
       ~CPrimitive();
 
+      void Draw();
+
       void SetPosition(const maths::CVector3& _v3Position) { m_vPos = _v3Position; }
       const maths::CVector3& GetPosition() const { return m_vPos; }
 
       void SetColor(const maths::CVector3& _v3Color);
       const maths::CVector3& GetColor() const { return m_v3Color; }
 
-      ID3D11Buffer* GetBuffer() { return m_pBuffer; }
+      ID3D11Buffer* GetBuffer() { return m_pVertexBuffer; }
       ConstantBuffer<SConstantBuffer>& GetConstantBuffer() { return m_oConstantBuffer; }
 
       UINT GetIndexCount() { return m_uVertexCount; }
@@ -50,7 +52,7 @@ namespace render
 
       // Buffers
       ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
-      ID3D11Buffer* m_pBuffer = nullptr;
+      ID3D11Buffer* m_pVertexBuffer = nullptr;
       // Vertex shader
       ID3DBlob* m_pVertexShaderBlob = nullptr;
       ID3D11VertexShader* m_pVertexShader = nullptr;

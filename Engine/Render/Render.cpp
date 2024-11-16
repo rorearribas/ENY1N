@@ -186,9 +186,9 @@ namespace render
 
     if (ImGui::Button("Create primitives"))
     {
-      render::primitive::CPrimitive* pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::RECTANGLE);
+      render::primitive::CPrimitive* pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::CUBE);
       pPrimitive->SetColor(maths::CVector3(1.0f, 1.0f, 0.0f));
-      pPrimitive->SetPosition(maths::CVector3(-2.5f, 0.0f, 0.0f));
+      pPrimitive->SetPosition(maths::CVector3(-2.5f, 0.0f, -5.0f));
 
       render::primitive::CPrimitive* pPrimitive2 = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::TRIANGLE);
       pPrimitive2->SetColor(maths::CVector3(1.0f, 0.0f, 1.0f));

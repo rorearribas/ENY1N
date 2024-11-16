@@ -37,10 +37,10 @@ namespace render
     // Update perspective matrix
     UpdatePerspectiveMatrix();
 
-    // Calculate view projection matrix
+    // Update view projection matrix
     maths::CMatrix4x4 mViewProjection = m_mViewMatrix * m_mProjectionMatrix;
-    m_oConstantBuffer.GetCurrentData().mMatrix = maths::CMatrix4x4::Transpose(mViewProjection);
-    if (!m_oConstantBuffer.Apply()) return;
+    m_oConstantBuffer.GetData().mMatrix = maths::CMatrix4x4::Transpose(mViewProjection);
+    assert(m_oConstantBuffer.UpdateBuffer());
 
     ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
     global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);

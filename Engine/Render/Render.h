@@ -2,7 +2,6 @@
 #include "Engine/Render/Primitives/Primitive.h"
 #include "Engine/Scenes/Scene.h"
 #include "RenderWindow.h"
-#include "ConstantBuffer.h"
 #include "Engine/Camera/Camera.h"
 
 namespace render

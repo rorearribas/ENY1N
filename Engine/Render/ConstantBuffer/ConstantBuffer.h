@@ -32,7 +32,7 @@ public:
     return hr;
   }
 
-  bool Apply()
+  bool UpdateBuffer()
   {
     D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
     HRESULT hr = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
@@ -46,7 +46,7 @@ public:
   }
 
   ID3D11Buffer* GetBuffer() const { return m_pBuffer; }
-  T& GetCurrentData() { return m_oData; }
+  T& GetData() { return m_oData; }
 
 private:
   ID3D11Buffer* m_pBuffer = nullptr;

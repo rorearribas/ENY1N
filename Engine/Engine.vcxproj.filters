@@ -42,7 +42,7 @@
     <ClInclude Include="Input\InputManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\ConstantBuffer.h">
+    <ClInclude Include="Render\ConstantBuffer\ConstantBuffer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>

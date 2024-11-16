@@ -23,31 +23,7 @@ namespace scene
     for (int iIndex = 0; iIndex < m_iRegisteredPrimitives; iIndex++)
     {
       render::primitive::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[iIndex];
-      UINT vertex_stride = sizeof(render::primitive::CPrimitive::SPrimitiveInfo);
-      UINT vertex_offset = 0;
-
-      global::dx11::s_pDX11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-      global::dx11::s_pDX11DeviceContext->IASetInputLayout(pPrimitiveItem->GetInputLayout());
-
-      ID3D11Buffer* pBuffer = pPrimitiveItem->GetBuffer();
-      global::dx11::s_pDX11DeviceContext->IASetVertexBuffers(0, 1, &pBuffer, &vertex_stride, &vertex_offset);
-
-      // set vertex shader to use and pixel shader to use, and constant buffers for each
-      global::dx11::s_pDX11DeviceContext->VSSetShader(pPrimitiveItem->GetVertexShader(), nullptr, 0);
-      global::dx11::s_pDX11DeviceContext->PSSetShader(pPrimitiveItem->GetPixelShader(), nullptr, 0);
-
-      ConstantBuffer<SConstantBuffer>& oConstantBuffer = pPrimitiveItem->GetConstantBuffer();
-      maths::CMatrix4x4 mMatrixTranslation = maths::CMatrix4x4::Translate(pPrimitiveItem->GetPosition());
-      maths::CMatrix4x4 mMatrixScaling = maths::CMatrix4x4::Scale(maths::CVector3(1, 1, 1));
-      maths::CMatrix4x4 mMatrixRotation = maths::CMatrix4x4::Rotation(maths::CVector3::Zero);
-      oConstantBuffer.GetCurrentData().mMatrix = (mMatrixRotation * mMatrixScaling) * mMatrixTranslation;
-      oConstantBuffer.Apply();
-
-      ID3D11Buffer* pConstantBuffer = oConstantBuffer.GetBuffer();
-      global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
-
-      // draw the vertex buffer with the shaders
-      global::dx11::s_pDX11DeviceContext->Draw(pPrimitiveItem->GetIndexCount(), 0);
+      pPrimitiveItem->Draw();
     }
   }
   // ------------------------------------

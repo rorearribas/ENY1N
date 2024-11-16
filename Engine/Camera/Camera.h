@@ -1,8 +1,7 @@
 #pragma once
 #include "Libs/Maths/Vector3.h"
 #include "Libs/Maths/Matrix4x4.h"
-#include "Engine/Render/ConstantBuffer.h"
-#include "Engine/Render/RenderWindow.h"
+#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 
 namespace render
 {
@@ -13,6 +12,7 @@ namespace render
     ~CCamera() {}
 
     void Update();
+
     const maths::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const maths::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
 
