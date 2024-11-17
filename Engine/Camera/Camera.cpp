@@ -12,7 +12,7 @@ namespace render
 
   CCamera::CCamera()
   {
-    m_oConstantBuffer.Initialize(global::dx11::s_pDX11Device, global::dx11::s_pDX11DeviceContext);
+    m_oConstantBuffer.Initialize(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
   }
   // ------------------------------------
   void CCamera::Update()
@@ -43,7 +43,7 @@ namespace render
     assert(m_oConstantBuffer.UpdateBuffer());
 
     ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
-    global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
+    global::dx11::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
   }
   // ------------------------------------
   void CCamera::ShowCursor(bool bMousePressed)

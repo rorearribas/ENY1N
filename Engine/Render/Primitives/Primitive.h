@@ -11,15 +11,12 @@ namespace render
   {
     class CPrimitive 
     {
-    private:
-      static const maths::CVector3 s_vDefaultColor;
-
     public:
-      enum EPrimitiveType { RECTANGLE, TRIANGLE, CUBE, SPHERE };
+      enum EPrimitiveType { SQUARE, TRIANGLE, CUBE };
       struct SPrimitiveInfo
       {
         maths::CVector3 Position = maths::CVector3::Zero;
-        maths::CVector3 Color = s_vDefaultColor;
+        maths::CVector3 Color = maths::CVector3::One;
       };
 
       CPrimitive(const EPrimitiveType& _ePrimitiveType);
@@ -28,11 +25,11 @@ namespace render
 
       void Draw();
 
-      void SetPosition(const maths::CVector3& _v3Position) { m_vPos = _v3Position; }
-      const maths::CVector3& GetPosition() const { return m_vPos; }
+      void SetPosition(const maths::CVector3& _v3Position) { m_v3CurrentPosition = _v3Position; }
+      const maths::CVector3& GetPosition() const { return m_v3CurrentPosition; }
 
       void SetColor(const maths::CVector3& _v3Color);
-      const maths::CVector3& GetColor() const { return m_v3Color; }
+      const maths::CVector3& GetColor() const { return m_v3CurrentColor; }
 
       ID3D11Buffer* GetBuffer() { return m_pVertexBuffer; }
       ConstantBuffer<SConstantBuffer>& GetConstantBuffer() { return m_oConstantBuffer; }
@@ -48,11 +45,16 @@ namespace render
       HRESULT CompileShaders();
       HRESULT InitShaders();
       HRESULT CreateInputLayout();
-      HRESULT CreateBufferFromVertexData(const std::vector<SPrimitiveInfo>& _vctPrimitiveInfo);
+      HRESULT CreateBufferFromVertexData
+      (
+      const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, 
+      const std::vector<UINT>& _vctIndexes = {}
+      );
 
       // Buffers
       ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
       ID3D11Buffer* m_pVertexBuffer = nullptr;
+      ID3D11Buffer* m_pIndexBuffer = nullptr;
       // Vertex shader
       ID3DBlob* m_pVertexShaderBlob = nullptr;
       ID3D11VertexShader* m_pVertexShader = nullptr;
@@ -63,9 +65,12 @@ namespace render
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
       // Info
-      maths::CVector3 m_v3Color = s_vDefaultColor;
-      maths::CVector3 m_vPos = maths::CVector3::Zero;
       UINT m_uVertexCount = 0;
+
+      // Data
+      bool m_b3DPrimitive = false;
+      maths::CVector3 m_v3CurrentColor = maths::CVector3::One;
+      maths::CVector3 m_v3CurrentPosition = maths::CVector3::Zero;
     };
   }
 }

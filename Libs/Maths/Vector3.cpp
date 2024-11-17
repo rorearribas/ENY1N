@@ -4,6 +4,7 @@
 namespace maths
 {
   maths::CVector3 CVector3::Zero(0.0f, 0.0f, 0.0f);
+  maths::CVector3 CVector3::One(1.0f, 1.0f, 1.0f);
   maths::CVector3 CVector3::Forward(0.0f, 0.0f, 1.0f);
   maths::CVector3 CVector3::Backward(0.0f, 0.0f, -1.0f);
   maths::CVector3 CVector3::Right(1.0f, 0.0f, 0.0f);
@@ -14,6 +15,8 @@ namespace maths
   {
     return (this->X * _v3.X) + (this->Y * _v3.Y) + (this->Z * _v3.Z);
   }
+
+
   // ------------------------------------
   CVector3 CVector3::CrossProduct(const CVector3& _v3) const
   {

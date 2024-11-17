@@ -4,10 +4,8 @@ namespace global
 {
   namespace dx11
   {
-    ID3D11Device* s_pDX11Device = nullptr;
-    ID3D11DeviceContext* s_pDX11DeviceContext = nullptr;
-    IDXGISwapChain* s_pDX11SwapChain = nullptr;
-    ID3D11RenderTargetView* s_pDX11RenderTargetView = nullptr;
+    ID3D11Device* s_pDevice = nullptr;
+    ID3D11DeviceContext* s_pDeviceContext = nullptr;
     utils::CDelegate<void(UINT32, UINT32)> s_oWindowResizeDelegate = {};
   }
 }

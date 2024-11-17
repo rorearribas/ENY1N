@@ -23,8 +23,8 @@ struct PS_INPUT
 PS_INPUT VSMain(VS_INPUT input) 
 {
     PS_INPUT output;
-    matrix world = mul(modelMatrix, viewProjection);
-    output.position = mul(float4(input.position, 1.0), world);
+    matrix worldViewProjection = mul(modelMatrix, viewProjection);
+    output.position = mul(float4(input.position, 1.0), worldViewProjection);
     output.color = input.color;
     return output;
 }

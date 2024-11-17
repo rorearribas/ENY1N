@@ -10,7 +10,8 @@ namespace maths
     float Z = 0.0f;
 
   public:
-    static CVector3 Zero, Forward, Backward, Right, Up;
+    static CVector3 Zero, One;
+    static CVector3 Forward, Backward, Right, Up;
 
     CVector3() = default;
     CVector3(float _x, float _y, float _z) : X(_x), Y(_y), Z(_z) {}

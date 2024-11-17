@@ -3,7 +3,6 @@
 #include <d3dcompiler.h>
 #include <cassert>
 #include <iostream>
-#include "../Base/Engine.h"
 
 namespace render
 {
@@ -14,74 +13,42 @@ namespace render
       static const std::vector<CPrimitive::SPrimitiveInfo> s_oTrianglePrimitive =
       {
         // TRIANGLE
-        { maths::CVector3(0, 0.5f, 0.0f),   maths::CVector3(1.0f, 1.0f, 1.0f) }, // Esquina superior izquierda
-        { maths::CVector3(0.5f, -0.5f,  0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) }, // Esquina superior izquierda
-        { maths::CVector3(-0.5f, -0.5f,  0.0f), maths::CVector3(1.0f, 1.0f, 1.0f) }, // Esquina superior izquierda
+        { maths::CVector3(0, 0.5f, 0.0f),   maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(0.5f, -0.5f,  0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(-0.5f, -0.5f,  0.0f), maths::CVector3(1.0f, 1.0f, 1.0f) },
       };
-      static const std::vector<CPrimitive::SPrimitiveInfo> s_oRectanglePrimitive =
+      static const std::vector<CPrimitive::SPrimitiveInfo> s_oSquarePrimitive =
       {
         // FRONT FACE
-        { maths::CVector3(-0.5f, 0.5f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) }, // Esquina superior izquierda
-        { maths::CVector3(0.5f, -0.5f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) }, // Esquina superior izquierda
-        { maths::CVector3(-0.5f,-0.5f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) }, // Esquina superior izquierda                    
-        { maths::CVector3(-0.5f, 0.5f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) }, // Esquina superior izquierda
-        { maths::CVector3(0.5f, 0.5f, 0.0f),   maths::CVector3(1.0f,  1.0f,  1.0f) }, // Esquina superior izquierda
-        { maths::CVector3(0.5f, -0.5f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) }, // Esquina superior izquierda
+        { maths::CVector3(-0.5f, 0.5f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(0.5f, -0.5f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(-0.5f,-0.5f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },                   
+        { maths::CVector3(-0.5f, 0.5f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) },
+        { maths::CVector3(0.5f, 0.5f, 0.0f),   maths::CVector3(1.0f,  1.0f,  1.0f) },
+        { maths::CVector3(0.5f, -0.5f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) },
       };
       static const std::vector<CPrimitive::SPrimitiveInfo> s_oCubePrimitive =
       {
-        // FRONT FACE
-        { maths::CVector3(-0.5f,  0.5f,  0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(-0.5f, -0.5f,  0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },
-        { maths::CVector3(-0.5f,  0.5f,  0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(0.5f,  0.5f,  0.5f), maths::CVector3(1.0f, 1.0f, 0.0f) },
-        { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
+        { maths::CVector3(-1.0f,  -1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
+        { maths::CVector3(1.0f, -1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
+        { maths::CVector3(-1.0f, 1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f)},
+        { maths::CVector3(1.0f,  1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
 
-        // BACK FACE
-        { maths::CVector3(-0.5f,  0.5f, -0.5f), maths::CVector3(0.0f, 1.0f, 1.0f) },
-        { maths::CVector3(-0.5f, -0.5f, -0.5f), maths::CVector3(1.0f, 0.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f, -0.5f), maths::CVector3(0.5f, 0.5f, 0.5f) },
-        { maths::CVector3(-0.5f,  0.5f, -0.5f), maths::CVector3(0.0f, 1.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f, -0.5f), maths::CVector3(0.5f, 0.5f, 0.5f) },
-        { maths::CVector3(0.5f,  0.5f, -0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) },
-
-        // LEFT FACE
-        { maths::CVector3(-0.5f,  0.5f, -0.5f), maths::CVector3(1.0f, 0.0f, 1.0f) },
-        { maths::CVector3(-0.5f, -0.5f,  0.5f), maths::CVector3(0.5f, 0.5f, 0.5f) },
-        { maths::CVector3(-0.5f, -0.5f, -0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(-0.5f,  0.5f, -0.5f), maths::CVector3(1.0f, 0.0f, 1.0f) },
-        { maths::CVector3(-0.5f,  0.5f,  0.5f), maths::CVector3(1.0f, 1.0f, 0.0f) },
-        { maths::CVector3(-0.5f, -0.5f,  0.5f), maths::CVector3(0.5f, 0.5f, 0.5f) },
-
-        // RIGHT FACE
-        { maths::CVector3(0.5f,  0.5f, -0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f, -0.5f), maths::CVector3(0.5f, 0.5f, 0.5f) },
-        { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(0.5f,  0.5f, -0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(0.5f,  0.5f,  0.5f), maths::CVector3(1.0f, 0.0f, 1.0f) },
-
-        // TOP FACE
-        { maths::CVector3(-0.5f,  0.5f, -0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(-0.5f,  0.5f,  0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(0.5f,  0.5f,  0.5f), maths::CVector3(0.5f, 0.5f, 0.5f) },
-        { maths::CVector3(-0.5f,  0.5f, -0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(0.5f,  0.5f,  0.5f), maths::CVector3(0.5f, 0.5f, 0.5f) },
-        { maths::CVector3(0.5f,  0.5f, -0.5f), maths::CVector3(1.0f, 1.0f, 0.0f) },
-
-        // BOTTOM FACE
-        { maths::CVector3(-0.5f, -0.5f, -0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(-0.5f, -0.5f,  0.5f), maths::CVector3(0.5f, 0.5f, 0.5f) },
-        { maths::CVector3(-0.5f, -0.5f, -0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f, -0.5f), maths::CVector3(0.0f, 1.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(-1.0f,  -1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
+        { maths::CVector3(1.0f, -1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
+        { maths::CVector3(-1.0f, 1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
+        { maths::CVector3(1.0f,  1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) }
+      };
+      static const std::vector<UINT> s_oCubeIndexes =
+      {
+        0, 1, 2, 2, 1, 3,
+        4, 5, 6, 6, 5, 7,
+        0, 1, 4, 4, 1, 5,
+        2, 3, 6, 6, 3, 7,
+        0, 2, 4, 4, 2, 6,
+        1, 3, 5, 5, 3, 7
       };
     }
-
-    // Static values
-    const maths::CVector3 CPrimitive::s_vDefaultColor(1.0f, 1.0f, 1.0f);
 
     // ------------------------------------
     CPrimitive::CPrimitive(const EPrimitiveType& _ePrimitiveType)
@@ -92,14 +59,14 @@ namespace render
       // Create buffer from presets
       switch (_ePrimitiveType)
       {
-      case EPrimitiveType::RECTANGLE:
-        hr = CreateBufferFromVertexData(internal_primitive::s_oRectanglePrimitive);
-        break;
-      case EPrimitiveType::TRIANGLE:
-        hr = CreateBufferFromVertexData(internal_primitive::s_oTrianglePrimitive);
-        break;
-      case EPrimitiveType::CUBE:
-        hr = CreateBufferFromVertexData(internal_primitive::s_oCubePrimitive);
+        case EPrimitiveType::SQUARE:
+          hr = CreateBufferFromVertexData(internal_primitive::s_oSquarePrimitive);
+          break;
+        case EPrimitiveType::TRIANGLE:
+          hr = CreateBufferFromVertexData(internal_primitive::s_oTrianglePrimitive);
+          break;
+        case EPrimitiveType::CUBE:
+          hr = CreateBufferFromVertexData(internal_primitive::s_oCubePrimitive, internal_primitive::s_oCubeIndexes);
       }
 
       assert(!FAILED(hr));
@@ -150,14 +117,9 @@ namespace render
       {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        /*
-        { "COL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEX", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        */
       };
 
-      return global::dx11::s_pDX11Device->CreateInputLayout
+      return global::dx11::s_pDevice->CreateInputLayout
       (
         oInputElementDesc,
         ARRAYSIZE(oInputElementDesc),
@@ -170,7 +132,7 @@ namespace render
     HRESULT CPrimitive::InitShaders()
     {
       // Create vertex shader
-      HRESULT hr = global::dx11::s_pDX11Device->CreateVertexShader
+      HRESULT hr = global::dx11::s_pDevice->CreateVertexShader
       (
         m_pVertexShaderBlob->GetBufferPointer(),
         m_pVertexShaderBlob->GetBufferSize(),
@@ -181,7 +143,7 @@ namespace render
       if (FAILED(hr)) return hr;
 
       // Create pixel shader
-      return global::dx11::s_pDX11Device->CreatePixelShader
+      return global::dx11::s_pDevice->CreatePixelShader
       (
         m_pPixelShaderBlob->GetBufferPointer(),
         m_pPixelShaderBlob->GetBufferSize(),
@@ -194,7 +156,7 @@ namespace render
     {
       // Map
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
-      HRESULT hResult = global::dx11::s_pDX11DeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      HRESULT hResult = global::dx11::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
       CPrimitive::SPrimitiveInfo* pPrimitiveInfo = (CPrimitive::SPrimitiveInfo*)(oMappedSubresource.pData);
       assert(pPrimitiveInfo);
 
@@ -205,10 +167,10 @@ namespace render
       }
 
       // Unmap
-      global::dx11::s_pDX11DeviceContext->Unmap(m_pVertexBuffer, 0);
+      global::dx11::s_pDeviceContext->Unmap(m_pVertexBuffer, 0);
 
       // Save color
-      m_v3Color = _v3Color;
+      m_v3CurrentColor = _v3Color;
     }
     // ------------------------------------
     HRESULT CPrimitive::CompileShaders()
@@ -244,12 +206,12 @@ namespace render
       );
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBufferFromVertexData(const std::vector<SPrimitiveInfo>& _vctPrimitiveInfo)
+    HRESULT CPrimitive::CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes)
     {
       if (_vctPrimitiveInfo.empty()) return -1;
 
       // Create constant buffer
-      m_oConstantBuffer.Initialize(global::dx11::s_pDX11Device, global::dx11::s_pDX11DeviceContext);
+      m_oConstantBuffer.Initialize(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Create vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
@@ -262,28 +224,46 @@ namespace render
       oSubresourceData.pSysMem = _vctPrimitiveInfo.data();
       m_uVertexCount = (UINT)_vctPrimitiveInfo.size();
 
-      return global::dx11::s_pDX11Device->CreateBuffer
+      HRESULT hr = global::dx11::s_pDevice->CreateBuffer
       (
         &oVertexBufferDescriptor,
         &oSubresourceData,
         &m_pVertexBuffer
       );
+      if (_vctIndexes.empty()) return hr;
+
+      // Set as 3d primitive
+      m_b3DPrimitive = true;
+
+      // Config index buffer
+      D3D11_BUFFER_DESC oIndexBufferDesc = {};
+      oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+      oIndexBufferDesc.ByteWidth = sizeof(UINT) * _vctIndexes.size();
+      oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+      oIndexBufferDesc.CPUAccessFlags = 0;
+
+      D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = {};
+      oSubresourceIndexesData.pSysMem = _vctIndexes.data();
+
+      return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
     void CPrimitive::Draw()
     {
-      UINT uVertexStrid = sizeof(render::primitive::CPrimitive::SPrimitiveInfo);
+      UINT uVertexStride = sizeof(render::primitive::CPrimitive::SPrimitiveInfo);
       UINT uVertexOffset = 0;
 
-      global::dx11::s_pDX11DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-      global::dx11::s_pDX11DeviceContext->IASetInputLayout(GetInputLayout());
-      global::dx11::s_pDX11DeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStrid, &uVertexOffset);
+      // Set general data
+      global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
+      global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
+      global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-      // set vertex shader to use and pixel shader to use, and constant buffers for each
-      global::dx11::s_pDX11DeviceContext->VSSetShader(GetVertexShader(), nullptr, 0);
-      global::dx11::s_pDX11DeviceContext->PSSetShader(GetPixelShader(), nullptr, 0);
+      // Set pixel and vertex shaders
+      global::dx11::s_pDeviceContext->VSSetShader(m_pVertexShader, nullptr, 0);
+      global::dx11::s_pDeviceContext->PSSetShader(m_pPixelShader, nullptr, 0);
 
-      maths::CMatrix4x4 mMatrixTranslation = maths::CMatrix4x4::Translate(GetPosition());
+      // Calculate model matrix
+      maths::CMatrix4x4 mMatrixTranslation = maths::CMatrix4x4::Translate(m_v3CurrentPosition);
       maths::CMatrix4x4 mMatrixScaling = maths::CMatrix4x4::Scale(maths::CVector3(1, 1, 1));
       maths::CMatrix4x4 mMatrixRotation = maths::CMatrix4x4::Rotation(maths::CVector3::Zero);
       m_oConstantBuffer.GetData().mMatrix = (mMatrixRotation * mMatrixScaling) * mMatrixTranslation;
@@ -291,10 +271,18 @@ namespace render
 
       // Apply constant buffer
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
-      global::dx11::s_pDX11DeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer); 
+      global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
-      // draw the vertex buffer with the shaders
-      global::dx11::s_pDX11DeviceContext->Draw(GetIndexCount(), 0);
+      // Draw
+      if (m_b3DPrimitive)
+      {
+        global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+        global::dx11::s_pDeviceContext->DrawIndexed(internal_primitive::s_oCubeIndexes.size(), 0, 0);
+      }
+      else
+      {
+        global::dx11::s_pDeviceContext->Draw(m_uVertexCount, 0);
+      }
     }
   }
 }
