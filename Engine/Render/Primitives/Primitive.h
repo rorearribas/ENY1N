@@ -64,11 +64,8 @@ namespace render
       // Input layout
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
-      // Info
-      UINT m_uVertexCount = 0;
-
       // Data
-      bool m_b3DPrimitive = false;
+      UINT m_uVertexCount = 0;
       maths::CVector3 m_v3CurrentColor = maths::CVector3::One;
       maths::CVector3 m_v3CurrentPosition = maths::CVector3::Zero;
     };

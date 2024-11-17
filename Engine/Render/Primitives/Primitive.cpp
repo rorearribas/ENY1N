@@ -232,15 +232,13 @@ namespace render
       );
       if (_vctIndexes.empty()) return hr;
 
-      // Set as 3d primitive
-      m_b3DPrimitive = true;
-
       // Config index buffer
       D3D11_BUFFER_DESC oIndexBufferDesc = {};
       oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-      oIndexBufferDesc.ByteWidth = sizeof(UINT) * _vctIndexes.size();
+      oIndexBufferDesc.ByteWidth = (UINT)(sizeof(UINT) * _vctIndexes.size());
       oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
       oIndexBufferDesc.CPUAccessFlags = 0;
+      m_uVertexCount = (UINT)_vctIndexes.size();
 
       D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = {};
       oSubresourceIndexesData.pSysMem = _vctIndexes.data();
@@ -250,10 +248,9 @@ namespace render
     // ------------------------------------
     void CPrimitive::Draw()
     {
+      // Set general data
       UINT uVertexStride = sizeof(render::primitive::CPrimitive::SPrimitiveInfo);
       UINT uVertexOffset = 0;
-
-      // Set general data
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
       global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -274,10 +271,10 @@ namespace render
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
       // Draw
-      if (m_b3DPrimitive)
+      if (m_pIndexBuffer)
       {
         global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-        global::dx11::s_pDeviceContext->DrawIndexed(internal_primitive::s_oCubeIndexes.size(), 0, 0);
+        global::dx11::s_pDeviceContext->DrawIndexed(m_uVertexCount, 0, 0);
       }
       else
       {
