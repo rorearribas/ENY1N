@@ -25,8 +25,14 @@ namespace render
 
       void Draw();
 
-      void SetPosition(const maths::CVector3& _v3Position) { m_v3CurrentPosition = _v3Position; }
-      const maths::CVector3& GetPosition() const { return m_v3CurrentPosition; }
+      void SetPosition(const maths::CVector3& _v3Position) { m_v3Pos = _v3Position; }
+      const maths::CVector3& GetPosition() const { return m_v3Pos; }
+
+      void SetRotation(const maths::CVector3& _v3Rot) { m_v3Rot = _v3Rot; }
+      const maths::CVector3& GetRotation() const { return m_v3Rot; }
+
+      void SetScale(const maths::CVector3& _v3Scale) { m_v3Scale = _v3Scale; }
+      const maths::CVector3& GetScale() const { return m_v3Scale; }
 
       void SetColor(const maths::CVector3& _v3Color);
       const maths::CVector3& GetColor() const { return m_v3CurrentColor; }
@@ -45,11 +51,7 @@ namespace render
       HRESULT CompileShaders();
       HRESULT InitShaders();
       HRESULT CreateInputLayout();
-      HRESULT CreateBufferFromVertexData
-      (
-      const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, 
-      const std::vector<UINT>& _vctIndexes = {}
-      );
+      HRESULT CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes = {});
 
       // Buffers
       ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
@@ -67,7 +69,11 @@ namespace render
       // Data
       UINT m_uVertexCount = 0;
       maths::CVector3 m_v3CurrentColor = maths::CVector3::One;
-      maths::CVector3 m_v3CurrentPosition = maths::CVector3::Zero;
+
+      // Transform
+      maths::CVector3 m_v3Pos = maths::CVector3::Zero;
+      maths::CVector3 m_v3Rot = maths::CVector3::Zero;
+      maths::CVector3 m_v3Scale = maths::CVector3::One;
     };
   }
 }

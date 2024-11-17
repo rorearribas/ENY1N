@@ -9,6 +9,7 @@ namespace engine
   {
     m_pSceneManager.reset();
     m_pRender.reset();
+    m_pTickRate.reset();
   }
   // ------------------------------------
   void CEngine::InitEngine(const UINT32& _uWidth, const UINT32& _uHeight)

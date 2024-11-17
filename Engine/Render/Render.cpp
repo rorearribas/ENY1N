@@ -7,11 +7,12 @@
 
 namespace render
 {
-  namespace internal_rendersystem
+  namespace internal_render
   {
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
   }
+  // ------------------------------------
 
   CRender::CRender(const UINT32& _uWidth, const UINT32& _uHeight)
   {
@@ -21,19 +22,16 @@ namespace render
   // ------------------------------------
   CRender::~CRender()
   {
-    // Global device
-    if (global::dx11::s_pDevice) { global::dx11::s_pDevice->Release(); }
-    if (global::dx11::s_pDeviceContext) { global::dx11::s_pDeviceContext->Release(); }
-
-    // Erase render data
-    if (m_oRenderingResources.m_pSwapChain) { m_oRenderingResources.m_pSwapChain->Release(); }
-    if (m_oRenderingResources.m_pRenderTargetView) { m_oRenderingResources.m_pSwapChain->Release(); }
-
-    if (m_oRenderingResources.m_pDepthStencilTexture) { m_oRenderingResources.m_pDepthStencilTexture->Release(); }
-    if (m_oRenderingResources.m_pDepthStencilState) { m_oRenderingResources.m_pDepthStencilState->Release(); }
-    if (m_oRenderingResources.m_pDepthStencilView) { m_oRenderingResources.m_pDepthStencilView->Release(); }
-
-    if (m_oRenderingResources.m_pRasterizerState) { m_oRenderingResources.m_pRasterizerState->Release(); }
+    // Delete global resources
+    global::dx11::SafeRelease(global::dx11::s_pDevice);
+    global::dx11::SafeRelease(global::dx11::s_pDeviceContext);
+    // Delete internal resources
+    global::dx11::SafeRelease(m_oRenderingResources.m_pSwapChain);
+    global::dx11::SafeRelease(m_oRenderingResources.m_pRenderTargetView);
+    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilTexture);
+    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilState);
+    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilView);
+    global::dx11::SafeRelease(m_oRenderingResources.m_pRasterizerState);
   }
   // ------------------------------------
   HRESULT CRender::Init()
@@ -55,6 +53,16 @@ namespace render
     global::dx11::s_oWindowResizeDelegate.Bind(&CRender::OnWindowResizeEvent, this);
 
     return S_OK;
+  }
+  // ------------------------------------
+  void CRender::UpdateScissor(UINT32 _uX, UINT32 _uY)
+  {
+    D3D11_RECT oScissorRect = {};
+    oScissorRect.left = 0;
+    oScissorRect.top = 0;
+    oScissorRect.right = static_cast<LONG>(_uX);
+    oScissorRect.bottom = static_cast<LONG>(_uY);
+    global::dx11::s_pDeviceContext->RSSetScissorRects(1, &oScissorRect);
   }
   // ------------------------------------
   void CRender::SetupCamera()
@@ -117,15 +125,15 @@ namespace render
   // ------------------------------------
   void CRender::OnWindowResizeEvent(UINT32 _uX, UINT32 _uY)
   {
-    // Delete current target view
-    if (m_oRenderingResources.m_pRenderTargetView)
-    {
-      m_oRenderingResources.m_pRenderTargetView->Release();
-      m_oRenderingResources.m_pRenderTargetView = nullptr;
-    }
+    // Remove current target view
+    global::dx11::SafeRelease(m_oRenderingResources.m_pRenderTargetView);
 
     // Resize buffers
     HRESULT hr = m_oRenderingResources.m_pSwapChain->ResizeBuffers(0, _uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+    assert(!FAILED(hr));
+
+    // Configure viewport
+    ConfigureViewport(_uX, _uY);
     assert(!FAILED(hr));
 
     // Create new render target
@@ -135,9 +143,8 @@ namespace render
     // Create a new depth stencil
     hr = CreateDepthStencilView(_uX, _uY);
 
-    // Configure viewport
-    ConfigureViewport(_uX, _uY);
-    assert(!FAILED(hr));
+    // Update scissor
+    UpdateScissor(_uX, _uY);
 
     // Set valid aspect ratio
     m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
@@ -158,37 +165,25 @@ namespace render
   // ------------------------------------
   HRESULT CRender::CreateDepthStencilView(UINT32 _uX, UINT32 _uY)
   {
-    if (m_oRenderingResources.m_pDepthStencilTexture)
-    {
-      m_oRenderingResources.m_pDepthStencilTexture->Release();
-      m_oRenderingResources.m_pDepthStencilTexture = nullptr;
-    }
+    // Release resources
+    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilTexture);
+    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilState);
+    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilView);
 
-    if (m_oRenderingResources.m_pDepthStencilState)
-    {
-      m_oRenderingResources.m_pDepthStencilState->Release();
-      m_oRenderingResources.m_pDepthStencilState = nullptr;
-    }
-
-    if (m_oRenderingResources.m_pDepthStencilView)
-    {
-      m_oRenderingResources.m_pDepthStencilView->Release();
-      m_oRenderingResources.m_pDepthStencilView = nullptr;
-    }
-
-    D3D11_TEXTURE2D_DESC oTexture2DDesc = {};
-    oTexture2DDesc.Width = _uX;
-    oTexture2DDesc.Height = _uY;
-    oTexture2DDesc.MipLevels = 1;
-    oTexture2DDesc.ArraySize = 1;
-    oTexture2DDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
-    oTexture2DDesc.SampleDesc.Count = 1;
-    oTexture2DDesc.SampleDesc.Quality = 0;
-    oTexture2DDesc.Usage = D3D11_USAGE_DEFAULT;
-    oTexture2DDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-    oTexture2DDesc.CPUAccessFlags = 0;
-    oTexture2DDesc.MiscFlags = 0;
-    HRESULT hr = global::dx11::s_pDevice->CreateTexture2D(&oTexture2DDesc, nullptr, &m_oRenderingResources.m_pDepthStencilTexture);
+    // Create texture
+    D3D11_TEXTURE2D_DESC oTextureDesc = {};
+    oTextureDesc.Width = _uX;
+    oTextureDesc.Height = _uY;
+    oTextureDesc.MipLevels = 1;
+    oTextureDesc.ArraySize = 1;
+    oTextureDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+    oTextureDesc.SampleDesc.Count = 1;
+    oTextureDesc.SampleDesc.Quality = 0;
+    oTextureDesc.Usage = D3D11_USAGE_DEFAULT;
+    oTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+    oTextureDesc.CPUAccessFlags = 0;
+    oTextureDesc.MiscFlags = 0;
+    HRESULT hr = global::dx11::s_pDevice->CreateTexture2D(&oTextureDesc, nullptr, &m_oRenderingResources.m_pDepthStencilTexture);
     assert(!FAILED(hr));
 
     // Depth test parameters
@@ -200,13 +195,13 @@ namespace render
     oDepthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
     oDepthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
 
-    // Configuración de operaciones de Stencil (front-face)
+    // Front-face
     oDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
     oDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
     oDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
     oDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-    // Configuración de operaciones de Stencil (back-face)
+    // Back-face
     oDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
     oDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
     oDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
@@ -231,17 +226,21 @@ namespace render
   // ------------------------------------
   HRESULT CRender::CreateRasterizerState(D3D11_FILL_MODE _eFillMode)
   {
-    if (m_oRenderingResources.m_pRasterizerState)
-    {
-      m_oRenderingResources.m_pRasterizerState->Release();
-      m_oRenderingResources.m_pRasterizerState = nullptr;
-    }
+    global::dx11::SafeRelease(m_oRenderingResources.m_pRasterizerState);
 
-    D3D11_RASTERIZER_DESC oRasterizerDesc = {};
-    ZeroMemory(&oRasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
-    oRasterizerDesc.FillMode = _eFillMode;
-    oRasterizerDesc.CullMode = D3D11_CULL_NONE;
-    return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerDesc, &m_oRenderingResources.m_pRasterizerState);
+    D3D11_RASTERIZER_DESC oRasterizerConfig = {};
+    oRasterizerConfig.FillMode = _eFillMode;
+    oRasterizerConfig.CullMode = D3D11_CULL_BACK;
+    oRasterizerConfig.FrontCounterClockwise = false;
+    oRasterizerConfig.DepthBias = false;
+    oRasterizerConfig.DepthBiasClamp = 0;
+    oRasterizerConfig.SlopeScaledDepthBias = 0;
+    oRasterizerConfig.DepthClipEnable = true;
+    oRasterizerConfig.ScissorEnable = true;
+    oRasterizerConfig.MultisampleEnable = false;
+    oRasterizerConfig.AntialiasedLineEnable = false;
+
+    return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerConfig, &m_oRenderingResources.m_pRasterizerState);
   }
   // ------------------------------------
   void CRender::ConfigureViewport(UINT32 _uX, UINT32 _uY)
@@ -251,8 +250,8 @@ namespace render
       D3D11_VIEWPORT oD3D11Viewport = {};
       oD3D11Viewport.Width = (FLOAT)(_uX);
       oD3D11Viewport.Height = (FLOAT)(_uY);
-      oD3D11Viewport.MinDepth = internal_rendersystem::s_fMinDepth;
-      oD3D11Viewport.MaxDepth = internal_rendersystem::s_fMaxDepth;
+      oD3D11Viewport.MinDepth = internal_render::s_fMinDepth;
+      oD3D11Viewport.MaxDepth = internal_render::s_fMaxDepth;
 
       global::dx11::s_pDeviceContext->RSSetViewports(1, &oD3D11Viewport);
     }
@@ -260,10 +259,15 @@ namespace render
   // ------------------------------------
   void CRender::DrawScene(scene::CScene* _pScene)
   {
-    // Clear render target view and stencil view
+    // Clear resources
     float background_color[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     global::dx11::s_pDeviceContext->ClearRenderTargetView(m_oRenderingResources.m_pRenderTargetView, background_color);
     global::dx11::s_pDeviceContext->ClearDepthStencilView(m_oRenderingResources.m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+    // Update resourecs
+    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &m_oRenderingResources.m_pRenderTargetView, m_oRenderingResources.m_pDepthStencilView);
+    global::dx11::s_pDeviceContext->OMSetDepthStencilState(m_oRenderingResources.m_pDepthStencilState, 1);
+    global::dx11::s_pDeviceContext->RSSetState(m_oRenderingResources.m_pRasterizerState);
 
     // Draw ImGui
     DrawImGui();
@@ -273,11 +277,6 @@ namespace render
 
     // Update camera
     m_pCamera->Update();
-
-    // Update render target and stencil view
-    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &m_oRenderingResources.m_pRenderTargetView, m_oRenderingResources.m_pDepthStencilView);
-    global::dx11::s_pDeviceContext->OMSetDepthStencilState(m_oRenderingResources.m_pDepthStencilState, 1);
-    global::dx11::s_pDeviceContext->RSSetState(m_oRenderingResources.m_pRasterizerState);
 
     // Swap the back and front buffers (show the frame we just drew)
     m_oRenderingResources.m_pSwapChain->Present(m_bVerticalSync, 0);
@@ -295,8 +294,11 @@ namespace render
     if (ImGui::Button("Create primitives"))
     {
       render::primitive::CPrimitive* pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::CUBE);
-      engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::TRIANGLE);
-      pPrimitive->SetPosition(maths::CVector3(5.0f, 0.0f, -2.0f));
+      pPrimitive->SetPosition(maths::CVector3(3.0f, 0.0f, 0.0f));
+      pPrimitive->SetScale({ 2.0f, 2.0f, 2.0f });
+
+      render::primitive::CPrimitive* pPrimitive2 = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::TRIANGLE);
+      pPrimitive2->SetColor(maths::CVector3(1.0f, 0.0f, 0.0f));
     }
     if (ImGui::Button("Destroy all primitives"))
     {

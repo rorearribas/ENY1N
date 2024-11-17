@@ -13,40 +13,46 @@ namespace render
       static const std::vector<CPrimitive::SPrimitiveInfo> s_oTrianglePrimitive =
       {
         // TRIANGLE
-        { maths::CVector3(0, 0.5f, 0.0f),   maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f,  0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(-0.5f, -0.5f,  0.0f), maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(0, 1.0f, 0.0f),   maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(1.0f, -1.0f,  0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(-1.0f, -1.0f,  0.0f), maths::CVector3(1.0f, 1.0f, 1.0f) },
       };
       static const std::vector<CPrimitive::SPrimitiveInfo> s_oSquarePrimitive =
       {
         // FRONT FACE
-        { maths::CVector3(-0.5f, 0.5f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(-0.5f,-0.5f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },                   
-        { maths::CVector3(-0.5f, 0.5f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) },
-        { maths::CVector3(0.5f, 0.5f, 0.0f),   maths::CVector3(1.0f,  1.0f,  1.0f) },
-        { maths::CVector3(0.5f, -0.5f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) },
+        { maths::CVector3(-1.0f, 1.0f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(1.0f, -1.0f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(-1.0f,-1.0f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },                   
+        { maths::CVector3(-1.0f, 1.0f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) },
+        { maths::CVector3(1.0f, 1.0f, 0.0f),   maths::CVector3(1.0f,  1.0f,  1.0f) },
+        { maths::CVector3(1.0f, -1.0f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) },
       };
       static const std::vector<CPrimitive::SPrimitiveInfo> s_oCubePrimitive =
       {
         { maths::CVector3(-1.0f,  -1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(1.0f, -1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(-1.0f, 1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f)},
-        { maths::CVector3(1.0f,  1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
+        { maths::CVector3(-1.0f, 1.0f,  -1.0f), maths::CVector3(0.0f, 1.0f, 0.0f) },
+        { maths::CVector3(1.0f, 1.0f,  -1.0f), maths::CVector3(0.0f, 0.0f, 1.0f)},
+        { maths::CVector3(1.0f,  -1.0f,  -1.0f), maths::CVector3(1.0f, 1.0f, 1.0f) },
 
-        { maths::CVector3(-1.0f,  -1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(1.0f, -1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(-1.0f, 1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(1.0f,  1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) }
+        { maths::CVector3(-1.0f,  -1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f)},
+        { maths::CVector3(-1.0f, 1.0f,  1.0f), maths::CVector3(0.0f, 1.0f, 0.0f) },
+        { maths::CVector3(1.0f, 1.0f,  1.0f), maths::CVector3(0.0f, 0.0f, 1.0f) },
+        { maths::CVector3(1.0f,  -1.0f,  1.0f), maths::CVector3(1.0f, 1.0f, 1.0f) }
       };
-      static const std::vector<UINT> s_oCubeIndexes =
+      static const std::vector<uint32_t> s_oCubeIndexes = 
       {
-        0, 1, 2, 2, 1, 3,
-        4, 5, 6, 6, 5, 7,
-        0, 1, 4, 4, 1, 5,
-        2, 3, 6, 6, 3, 7,
-        0, 2, 4, 4, 2, 6,
-        1, 3, 5, 5, 3, 7
+        0, 1, 2, //FRONT
+        0, 2, 3, //FRONT
+        4, 7, 6, //BACK 
+        4, 6, 5, //BACK
+        3, 2, 6, //RIGHT SIDE
+        3, 6, 7, //RIGHT SIDE
+        4, 5, 1, //LEFT SIDE
+        4, 1, 0, //LEFT SIDE
+        1, 5, 6, //TOP
+        1, 6, 2, //TOP
+        0, 3, 7, //BOTTOM
+        0, 7, 4, //BOTTOM
       };
     }
 
@@ -84,14 +90,14 @@ namespace render
     // ------------------------------------
     CPrimitive::~CPrimitive()
     {
-      if (m_pVertexBuffer) { m_pVertexBuffer->Release(); }
-      if (m_pInputLayout) { m_pInputLayout->Release(); }
+      global::dx11::SafeRelease(m_pVertexBuffer);
+      global::dx11::SafeRelease(m_pInputLayout);
 
-      if (m_pVertexShaderBlob) { m_pVertexShaderBlob->Release(); }
-      if (m_pVertexShader) { m_pVertexShader->Release(); }
+      global::dx11::SafeRelease(m_pVertexShaderBlob);
+      global::dx11::SafeRelease(m_pVertexShader);
 
-      if (m_pPixelShaderBlob) { m_pPixelShaderBlob->Release(); }
-      if (m_pPixelShader) { m_pPixelShader->Release(); }
+      global::dx11::SafeRelease(m_pPixelShaderBlob);
+      global::dx11::SafeRelease(m_pPixelShader);
     }
     // ------------------------------------
     HRESULT CPrimitive::InitPrimitive()
@@ -260,9 +266,9 @@ namespace render
       global::dx11::s_pDeviceContext->PSSetShader(m_pPixelShader, nullptr, 0);
 
       // Calculate model matrix
-      maths::CMatrix4x4 mMatrixTranslation = maths::CMatrix4x4::Translate(m_v3CurrentPosition);
-      maths::CMatrix4x4 mMatrixScaling = maths::CMatrix4x4::Scale(maths::CVector3(1, 1, 1));
-      maths::CMatrix4x4 mMatrixRotation = maths::CMatrix4x4::Rotation(maths::CVector3::Zero);
+      maths::CMatrix4x4 mMatrixTranslation = maths::CMatrix4x4::Translate(m_v3Pos);
+      maths::CMatrix4x4 mMatrixScaling = maths::CMatrix4x4::Scale(m_v3Scale);
+      maths::CMatrix4x4 mMatrixRotation = maths::CMatrix4x4::Rotation(m_v3Rot);
       m_oConstantBuffer.GetData().mMatrix = (mMatrixRotation * mMatrixScaling) * mMatrixTranslation;
       assert(m_oConstantBuffer.UpdateBuffer());
 

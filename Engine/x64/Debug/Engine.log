@@ -1,13 +1,2 @@
-﻿  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Debug\PixelShader.cso
-  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Debug\VertexShader.cso
-  Engine.cpp
-  Camera.cpp
-  DX11GlobalInterface.cpp
-  InputManager.cpp
-  Primitive.cpp
-  Render.cpp
-  RenderWindow.cpp
-  SceneManager.cpp
-  Scene.cpp
-  Generating Code...
+﻿  Render.cpp
   Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Debug\Engine.lib
