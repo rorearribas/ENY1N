@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Engine/Render/Primitives/Primitive.h"
-#include "Engine/Global/DX11GlobalInterface.h"
+#include "Engine/Global/GlobalResources.h"
+#include "Engine/Input/InputManager.h"
 #include <cassert>
 
 namespace engine
@@ -28,9 +29,6 @@ namespace engine
 
     // Create fixed tick
     m_pTickRate = std::make_unique<tick::CTickRate>(300);
-
-    // Show window
-    m_pRender->GetRenderWindow()->SetEnabled(true);
 
     // Marked as initialized
     m_bInitialized = true;
@@ -63,9 +61,13 @@ namespace engine
     {
       if (pScene->IsEnabled())
       {
-        m_pRender->DrawScene(pScene);
+        m_pRender->DrawScene(pScene, m_pTickRate->DeltaTime());
       }
     }
+
+    // Flush input manager
+    input::CInputManager* pInputManager = input::CInputManager::GetInstance();
+    pInputManager->Flush();
   }
   // ------------------------------------
   render::primitive::CPrimitive* CEngine::CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)

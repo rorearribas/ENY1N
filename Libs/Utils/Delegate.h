@@ -42,16 +42,10 @@ namespace utils
         return (_pObject->*Method)(std::forward<Args>(args)...);
       };
     }
-    inline void Bind(RETURN_TYPE(*func)(Args...))
-    {
-      m_oFunction = func;
-    }
 
-    inline const bool IsValid() const { return static_cast<bool>(m_oFunction); }
-    inline void Clear()
-    {
-      m_oFunction = nullptr;
-    }
+    inline void Bind(RETURN_TYPE(*func)(Args...)) { m_oFunction = func; }
+    inline bool IsValid() { return static_cast<bool>(m_oFunction); }
+    inline void Clear() { m_oFunction = nullptr; }
 
   private:
     std::function<RETURN_TYPE(Args...)> m_oFunction;

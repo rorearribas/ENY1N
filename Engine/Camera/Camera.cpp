@@ -1,7 +1,9 @@
 #include "Camera.h"
-#include "Engine/Global/DX11GlobalInterface.h"
+#include "Engine/Global/GlobalResources.h"
 #include "Libs/ImGui/imgui.h"
-#include "../Base/Engine.h"
+#include "Engine/Base/Engine.h"
+#include "Engine/Input/InputManager.h"
+#include <algorithm>
 
 namespace render
 {
@@ -15,40 +17,63 @@ namespace render
     m_oConstantBuffer.Initialize(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
   }
   // ------------------------------------
-  void CCamera::Update()
+  void CCamera::Update(float _fDeltaTime)
   {
-    const float fCameraSpeed = 0.05f;
+    // Input
+    input::CInputManager* pInputManager = input::CInputManager::GetInstance();
+    input::CMouse* pMouse = pInputManager->GetMouse();
 
+    // Movimiento de teclado
     maths::CMatrix4x4 mRotMatrix = maths::CMatrix4x4::Rotation(m_vRot);
-    if (GetAsyncKeyState('W') & 0x8000) AdjustPosition(mRotMatrix * maths::CVector3::Forward * fCameraSpeed);
-    if (GetAsyncKeyState('S') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Forward * -1.0f) * fCameraSpeed);
-    if (GetAsyncKeyState('D') & 0x8000) AdjustPosition(mRotMatrix * maths::CVector3::Right * fCameraSpeed);
-    if (GetAsyncKeyState('A') & 0x8000) AdjustPosition(mRotMatrix * (maths::CVector3::Right * -1.0f) * fCameraSpeed);
+    maths::CVector3 vForward = (mRotMatrix * maths::CVector3::Forward).Normalized();
+    maths::CVector3 vRight = (mRotMatrix * maths::CVector3::Right).Normalized();
 
-    // Rotation
-    ImGuiIO& iO = ImGui::GetIO();
-    ImVec2 v2MouseDelta = iO.MouseDelta;
-    maths::CVector3 v3Delta(v2MouseDelta.y * 0.001f, v2MouseDelta.x * 0.001f, 0.0f);
+    if (pInputManager->IsKeyPressed('W')) MovePosition(vForward * m_fMovementSpeed);
+    if (pInputManager->IsKeyPressed('S')) MovePosition(-vForward * m_fMovementSpeed);
+    if (pInputManager->IsKeyPressed('D')) MovePosition(vRight * m_fMovementSpeed);
+    if (pInputManager->IsKeyPressed('A')) MovePosition(-vRight * m_fMovementSpeed);
 
-    bool bMousePressed = iO.MouseDown[1];
-    AdjustRotation(bMousePressed ? v3Delta : maths::CVector3::Zero);
+    // Movimiento del ratón
+    bool bMousePressed = pMouse->IsRightButtonPressed();
     ShowCursor(bMousePressed);
 
-    // Update perspective matrix
-    UpdatePerspectiveMatrix();
+    float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed * _fDeltaTime;
+    float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed * _fDeltaTime;
+    AddRotation(bMousePressed ? maths::CVector3(yValue, xValue, 0.0f) : maths::CVector3::Zero);
 
-    // Update view projection matrix
+    // Actualización de matrices
+    UpdatePerspectiveMatrix(); // Asegúrate de que actualiza solo la proyección
     maths::CMatrix4x4 mViewProjection = m_mViewMatrix * m_mProjectionMatrix;
+
+    // Actualización del buffer constante
     m_oConstantBuffer.GetData().mMatrix = maths::CMatrix4x4::Transpose(mViewProjection);
-    assert(m_oConstantBuffer.UpdateBuffer());
+    if (!m_oConstantBuffer.UpdateBuffer())
+    {
+      assert(false && "Failed to update constant buffer.");
+    }
 
     ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
     global::dx11::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
   }
   // ------------------------------------
-  void CCamera::ShowCursor(bool bMousePressed)
+  void CCamera::ShowCursor(bool _bMousePressed)
   {
-    while (bMousePressed ? ::ShowCursor(!bMousePressed) >= 0 : ::ShowCursor(!bMousePressed) < 0);
+    if (_bMousePressed)
+    {
+      // Get rect
+      RECT oRect = {};
+      GetClientRect(global::window::s_oHwnd, &oRect);
+
+      // Calculate center
+      POINT oCenter = {};
+      oCenter.x = (oRect.left + oRect.right) / 2;
+      oCenter.y = (oRect.top + oRect.bottom) / 2;
+
+      // Set cursor in the middle of the screen
+      ClientToScreen(global::window::s_oHwnd, &oCenter);
+      SetCursorPos(oCenter.x, oCenter.y);
+    }
+    while (_bMousePressed ? ::ShowCursor(!_bMousePressed) >= 0 : ::ShowCursor(!_bMousePressed) < 0);
   }
   // ------------------------------------
   void CCamera::SetPosition(const maths::CVector3& newPos) 
@@ -57,23 +82,9 @@ namespace render
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::SetPosition(float _x, float _y, float _z)
-  {
-    m_vPos = maths::CVector3(_x, _y, _z);
-    UpdateViewMatrix();
-  }
-  // ------------------------------------
-  void CCamera::AdjustPosition(const maths::CVector3& vDelta) 
+  void CCamera::MovePosition(const maths::CVector3& vDelta) 
   {
     m_vPos += vDelta;
-    UpdateViewMatrix();
-  }
-  // ------------------------------------
-  void CCamera::AdjustPosition(float x, float y, float z) 
-  {
-    m_vPos.X += x;
-    m_vPos.Y += y;
-    m_vPos.Z += z;
     UpdateViewMatrix();
   }
   // ------------------------------------
@@ -83,39 +94,25 @@ namespace render
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::SetRotation(float x, float y, float z) 
-  {
-    m_vRot = maths::CVector3(x, y, z);
-    UpdateViewMatrix();
-  }
-  // ------------------------------------
-  void CCamera::AdjustRotation(const maths::CVector3& _vDeltaRot) 
+  void CCamera::AddRotation(const maths::CVector3& _vDeltaRot) 
   {
     m_vRot += _vDeltaRot;
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::AdjustRotation(float x, float y, float z) 
+  void CCamera::SetLookAtPos(const maths::CVector3& _v3LookAt) 
   {
-    m_vRot.X += x;
-    m_vRot.Y += y;
-    m_vRot.Z += z;
-    UpdateViewMatrix();
-  }
-  // ------------------------------------
-  void CCamera::SetLookAtPos(const maths::CVector3& targetPos) 
-  {
-    if (targetPos == m_vPos)
+    if (_v3LookAt == m_vPos)
       return;
 
-    maths::CVector3 direction = targetPos - m_vPos;
-    float fPitch = (float)atan2(direction.Y, sqrt(direction.X * direction.X + direction.Z * direction.Z));
-    float fYaw = (float)atan2(direction.X, direction.Z);
+    maths::CVector3 v3Dir = _v3LookAt - m_vPos;
+    float fPitch = (float)atan2(v3Dir.Y, sqrt(v3Dir.X * v3Dir.X + v3Dir.Z * v3Dir.Z));
+    float fYaw = (float)atan2(v3Dir.X, v3Dir.Z);
 
-    if (direction.Z > 0)
+    if (v3Dir.Z > 0)
       fYaw += internal_camera::s_fPI;
 
-    SetRotation(fPitch, fYaw, 0.0f);
+    SetRotation(maths::CVector3(fPitch, fYaw, 0.0f));
   }
   // ------------------------------------
   void CCamera::UpdatePerspectiveMatrix()

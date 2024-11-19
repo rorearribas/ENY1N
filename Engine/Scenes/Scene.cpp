@@ -1,10 +1,10 @@
 #include "Scene.h"
-#include "Engine/Global/DX11GlobalInterface.h"
+#include "Engine/Global/GlobalResources.h"
+#include "Engine/Base/Engine.h"
+#include "Engine/Render/Render.h"
 #include <algorithm>
 #include <random>
 #include <cassert>
-#include "../Base/Engine.h"
-#include "../Render/Render.h"
 
 namespace scene
 {

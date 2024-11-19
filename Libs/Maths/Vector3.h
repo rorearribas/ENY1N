@@ -23,6 +23,7 @@ namespace maths
     inline CVector3 operator*(const float& _fValue) const { return CVector3(X * _fValue, Y * _fValue, Z * _fValue); }
     inline CVector3 operator+(const CVector3& _v3) const { return CVector3(X + _v3.X, Y + _v3.Y, Z + _v3.Z); }
     inline CVector3 operator-(const CVector3& _v3) const { return CVector3(X - _v3.X, Y - _v3.Y, Z - _v3.Z); }
+    inline CVector3 operator-() const { return CVector3(-X, -Y, -Z); }
 
     inline bool operator==(const CVector3& _v3) const { return X == _v3.X && Y == _v3.Y && Z == _v3.Z; }
     inline bool operator!=(const CVector3& _v3)  const { return X != _v3.X && Y != _v3.Y && Z != _v3.Z; }

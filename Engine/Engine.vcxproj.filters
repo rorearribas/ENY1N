@@ -36,7 +36,7 @@
     <ClInclude Include="Scenes\SceneManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Global\DX11GlobalInterface.h">
+    <ClInclude Include="Global\GlobalResources.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Input\InputManager.h">
@@ -68,7 +68,7 @@
     <ClCompile Include="Scenes\SceneManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Global\DX11GlobalInterface.cpp">
+    <ClCompile Include="Global\GlobalResources.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Input\InputManager.cpp">

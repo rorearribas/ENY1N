@@ -1,5 +1,6 @@
 #include "RenderWindow.h"
-#include "Engine/Global/DX11GlobalInterface.h"
+#include "Engine/Global/GlobalResources.h"
+#include "Engine/Input/InputManager.h"
 #include <windows.h>
 #include <windowsx.h>
 #include <cassert>
@@ -31,7 +32,34 @@ namespace render
         {
           UINT uWindowX = (UINT)(LOWORD(_lParam));
           UINT uWindowY = (UINT)(HIWORD(_lParam));
-          global::dx11::s_oWindowResizeDelegate.Execute(uWindowX, uWindowY);
+          global::delegates::s_oWindowResizeDelegate.Execute(uWindowX, uWindowY);
+        }
+      }
+      break;
+
+      case WM_INPUT:
+      {
+        unsigned uSize = 0;
+        GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, nullptr, &uSize, sizeof(RAWINPUTHEADER));
+        if (uSize == 0)
+          break;
+
+        /// Get raw input data
+        std::unique_ptr<BYTE[]> pRawInputData(new BYTE[uSize]);
+        if (GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, pRawInputData.get(), &uSize, sizeof(RAWINPUTHEADER)) != uSize)
+        {
+          assert(false && "Failed to retrieve RAWINPUT data.");
+          break;
+        }
+
+        RAWINPUT* pRawInput = reinterpret_cast<RAWINPUT*>(pRawInputData.get());
+        if (pRawInput && pRawInput->header.dwType == RIM_TYPEMOUSE)
+        {
+          global::delegates::s_oUpdateMouseDelegate.Execute(&pRawInput->data.mouse);
+        }
+        else if (pRawInput && pRawInput->header.dwType == RIM_TYPEKEYBOARD)
+        {
+          global::delegates::s_oUpdateKeyboardDelegate.Execute(&pRawInput->data.keyboard);
         }
       }
       break;
@@ -43,8 +71,6 @@ namespace render
     // ------------------------------------
     HWND WINAPI CreateWinMain(HINSTANCE hInstance, const UINT32& _uWidth, const UINT32& _uHeight)
     {
-      // the handle for the window, filled by a function
-      HWND hWnd;
       // this struct holds information for the window class
       WNDCLASSEX wc;
 
@@ -64,7 +90,8 @@ namespace render
       RegisterClassEx(&wc);
 
       // create the window and use the result as the handle
-      hWnd = CreateWindowEx(
+      global::window::s_oHwnd = CreateWindowEx
+      (
         NULL,
         L"Game Engine", // name of the window class
         L"Game Engine",// title of the window
@@ -79,7 +106,7 @@ namespace render
         NULL
       ); // used with multiple windows, NULL
 
-      return hWnd;
+      return global::window::s_oHwnd;
     }
   }
   // ------------------------------------

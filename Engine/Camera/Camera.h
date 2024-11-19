@@ -11,7 +11,7 @@ namespace render
     CCamera();
     ~CCamera() {}
 
-    void Update();
+    void Update(float _fDeltaTime);
 
     const maths::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const maths::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
@@ -22,16 +22,16 @@ namespace render
     void SetFov(float _fFov) { m_fFov = _fFov; }
     void SetFar(float _fFar) { m_fFar = _fFar; }
     void SetNear(float _fNear) { m_fNear = _fNear; }
+
+    void SetCameraSpeed(float _fCameraSpeed) { m_fCameraSpeed = _fCameraSpeed; }
     void SetAspectRatio(float _fAspectRatio) { m_fAspectRatio = _fAspectRatio; }
 
     void SetPosition(const maths::CVector3& pos);
-    void SetPosition(float x, float y, float z);
-    void AdjustPosition(const maths::CVector3& pos);
-    void AdjustPosition(float x, float y, float z);
     void SetRotation(const maths::CVector3& rot);
-    void SetRotation(float x, float y, float z);
-    void AdjustRotation(const maths::CVector3& rot);
-    void AdjustRotation(float x, float y, float z);
+
+    void MovePosition(const maths::CVector3& pos);
+    void AddRotation(const maths::CVector3& rot);
+
     void SetLookAtPos(const maths::CVector3& _v3LookAtPos);
 
   private:
@@ -45,6 +45,9 @@ namespace render
 
     maths::CVector3 m_vPos = maths::CVector3::Zero;
     maths::CVector3 m_vRot = maths::CVector3::Zero;
+
+    float m_fCameraSpeed = 10.0f;
+    float m_fMovementSpeed = 0.2f;
 
     float m_fFov = 45.0f;
     float m_fFar = 100000.0f;

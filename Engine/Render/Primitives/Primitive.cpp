@@ -1,5 +1,5 @@
 #include "Primitive.h"
-#include "Engine/Global/DX11GlobalInterface.h"
+#include "Engine/Global/GlobalResources.h"
 #include <d3dcompiler.h>
 #include <cassert>
 #include <iostream>

@@ -1,9 +1,9 @@
 #include "Render.h"
-#include "Engine/Global/DX11GlobalInterface.h"
+#include "Engine/Global/GlobalResources.h"
 #include "Engine/Scenes/Scene.h"
 #include "Libs/ImGui/imgui_impl_win32.h"
 #include "Libs/ImGui/imgui_impl_dx11.h"
-#include "../Base/Engine.h"
+#include "Engine/Base/Engine.h"
 
 namespace render
 {
@@ -25,6 +25,7 @@ namespace render
     // Delete global resources
     global::dx11::SafeRelease(global::dx11::s_pDevice);
     global::dx11::SafeRelease(global::dx11::s_pDeviceContext);
+
     // Delete internal resources
     global::dx11::SafeRelease(m_oRenderingResources.m_pSwapChain);
     global::dx11::SafeRelease(m_oRenderingResources.m_pRenderTargetView);
@@ -50,7 +51,7 @@ namespace render
     CreateRasterizerState(D3D11_FILL_SOLID);
 
     // Set delegate
-    global::dx11::s_oWindowResizeDelegate.Bind(&CRender::OnWindowResizeEvent, this);
+    global::delegates::s_oWindowResizeDelegate.Bind(&CRender::OnWindowResizeEvent, this);
 
     return S_OK;
   }
@@ -68,7 +69,7 @@ namespace render
   void CRender::SetupCamera()
   {
     m_pCamera = new render::CCamera();
-    m_pCamera->SetPosition(0.0f, 0.0f, -10.0f);
+    m_pCamera->SetPosition(maths::CVector3(0.0f, 0.0f, -10.0f));
   }
   // ------------------------------------
   bool CRender::InitImGui()
@@ -257,7 +258,7 @@ namespace render
     }
   }
   // ------------------------------------
-  void CRender::DrawScene(scene::CScene* _pScene)
+  void CRender::DrawScene(scene::CScene* _pScene, float _fDeltaTime)
   {
     // Clear resources
     float background_color[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -276,7 +277,7 @@ namespace render
     _pScene->DrawScene();
 
     // Update camera
-    m_pCamera->Update();
+    m_pCamera->Update(_fDeltaTime);
 
     // Swap the back and front buffers (show the frame we just drew)
     m_oRenderingResources.m_pSwapChain->Present(m_bVerticalSync, 0);
@@ -287,6 +288,8 @@ namespace render
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+
+    ImGui::ShowDemoWindow();
 
     // Test
     ImGui::Begin("Handler");

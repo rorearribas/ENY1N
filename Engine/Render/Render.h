@@ -29,7 +29,7 @@ namespace render
     ~CRender();
 
     HRESULT Init();
-    void DrawScene(scene::CScene* _pScene);
+    void DrawScene(scene::CScene* _pScene, float _fDeltaTime);
 
     const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
     const render::CCamera* GetCamera() const { return m_pCamera; }
@@ -59,7 +59,7 @@ namespace render
 
     // Info
     SRenderingResources m_oRenderingResources = {};
-    bool m_bVerticalSync = true;
+    bool m_bVerticalSync = false;
   };
 }
 

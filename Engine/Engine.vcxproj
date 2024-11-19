@@ -145,7 +145,7 @@
   <ItemGroup>
     <ClInclude Include="Base\Engine.h" />
     <ClInclude Include="Camera\Camera.h" />
-    <ClInclude Include="Global\DX11GlobalInterface.h" />
+    <ClInclude Include="Global\GlobalResources.h" />
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Render\ConstantBuffer\ConstantBuffer.h" />
     <ClInclude Include="Render\Primitives\Primitive.h" />
@@ -157,7 +157,7 @@
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
-    <ClCompile Include="Global\DX11GlobalInterface.cpp" />
+    <ClCompile Include="Global\GlobalResources.cpp" />
     <ClCompile Include="Input\InputManager.cpp" />
     <ClCompile Include="Render\Primitives\Primitive.cpp" />
     <ClCompile Include="Render\Render.cpp" />

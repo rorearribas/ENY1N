@@ -10,21 +10,21 @@ namespace maths
   // ------------------------------------
   float CVector2::DotProduct(const CVector2& _v2) const
   {
-    return (m_x * _v2.m_x) + (m_y * _v2.m_y);
+    return (X * _v2.X) + (Y * _v2.Y);
   }
   // ------------------------------------
   float CVector2::CrossProduct(const CVector2& _v2) const
   {
-    return m_x * _v2.m_y - m_y * _v2.m_x;
+    return X * _v2.Y - Y * _v2.X;
   }
   // ------------------------------------
   void CVector2::Normalize()
   {
-    float fMagnitude = sqrt((m_x * m_x) + (m_y * m_y));
+    float fMagnitude = sqrt((X * X) + (Y * Y));
     if (fMagnitude > 0) 
     {
-      m_x /= fMagnitude;
-      m_y /= fMagnitude;
+      X /= fMagnitude;
+      Y /= fMagnitude;
     }
   }
 
