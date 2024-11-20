@@ -1,22 +1,21 @@
 #include "TickRate.h"
-#include <windows.h>
+#include <iostream>
 
 namespace tick
 {
-  CTickRate::CTickRate(__int64 _iMaxFPS) : m_dSecondsPerCount(0.0), m_dDeltaTime(-1.0), m_llBaseTime(0),
-    m_llPausedTime(0), m_llPrevTime(0), m_llCurrTime(0), m_bStopped(false)
+  CTickRate::CTickRate(int _iMaxFPS) : m_fDeltaTime(-1.0), m_llBaseTime(0), m_llPausedTime(0), m_bStopped(false)
   {
-    __int64 lCountsPerSec;
-    QueryPerformanceFrequency((LARGE_INTEGER*)&lCountsPerSec);
-    m_dSecondsPerCount = 1.0 / (double)lCountsPerSec;
+    QueryPerformanceCounter(&m_llPrevTime);
+    QueryPerformanceCounter(&m_llTicksPerFrame);
     SetMaxFPS(_iMaxFPS);
   }
   // ------------------------------------
-  void CTickRate::SetMaxFPS(__int64 _iMaxFPS)
+  void CTickRate::SetMaxFPS(int _iMaxFPS)
   {
     __int64 lCountsPerSec;
     QueryPerformanceFrequency((LARGE_INTEGER*)&lCountsPerSec);
-    m_llTicksPerFrame = lCountsPerSec / _iMaxFPS;
+    m_iMaxFPS = _iMaxFPS;
+    m_llTargetTick = lCountsPerSec / m_iMaxFPS;
   }
   // ------------------------------------
   void CTickRate::Reset()
@@ -25,14 +24,13 @@ namespace tick
     QueryPerformanceCounter((LARGE_INTEGER*)&lCurrentTime);
 
     m_llBaseTime = lCurrentTime;
-    m_llPrevTime = lCurrentTime;
     m_llStopTime = 0;
     m_bStopped = false;
   }
   // ------------------------------------
   float CTickRate::DeltaTime() const
   {
-    return (float)m_dDeltaTime;
+    return static_cast<float>(m_fDeltaTime);
   }
   // ------------------------------------
   bool CTickRate::IsStopped() const
@@ -42,14 +40,15 @@ namespace tick
   // ------------------------------------
   void CTickRate::Start()
   {
-    __int64 lStartTime;
-    QueryPerformanceCounter((LARGE_INTEGER*)&lStartTime);
-
     if (m_bStopped)
     {
+      __int64 lStartTime;
+      QueryPerformanceCounter((LARGE_INTEGER*)&lStartTime);
+
+      // Ajustar tiempo pausado
       m_llPausedTime += (lStartTime - m_llStopTime);
 
-      m_llPrevTime = lStartTime;
+      //m_llPrevTime = lStartTime;
       m_llStopTime = 0;
       m_bStopped = false;
     }
@@ -67,46 +66,39 @@ namespace tick
     }
   }
   // ------------------------------------
-  void CTickRate::UpdateTick()
+  void CTickRate::BeginFrame()
   {
     if (m_bStopped)
     {
-      m_dDeltaTime = 0.0;
+      m_fDeltaTime = 0.0;
       return;
     }
 
-    LONGLONG lCurrentTime;
-    QueryPerformanceCounter((LARGE_INTEGER*)&lCurrentTime);
-    m_llCurrTime = lCurrentTime;
+    // Obtener el tiempo actual
+    QueryPerformanceCounter(&m_llCurrentTickCount);
+    uint64_t elapsedTicks = m_llCurrentTickCount.QuadPart - m_llPrevTime.QuadPart;
 
-    // Get delta time
-    m_dDeltaTime = (m_llCurrTime - m_llPrevTime) * m_dSecondsPerCount;
+    LARGE_INTEGER lFrequency;
+    QueryPerformanceFrequency(&lFrequency);
+    double elapsedTimeSeconds = static_cast<double>(elapsedTicks) / lFrequency.QuadPart;
 
-    // Wait
-    while ((m_llCurrTime - m_llPrevTime) < m_llTicksPerFrame)
-    {
-      QueryPerformanceCounter((LARGE_INTEGER*)&lCurrentTime);
-      m_llCurrTime = lCurrentTime;
-    }
-
-    // Update previous time
-    m_llPrevTime = m_llCurrTime;
-
-    if (m_dDeltaTime < 0.0)
-    {
-      m_dDeltaTime = 0.0;
-    }
+    m_oBeginFrame = std::chrono::steady_clock::now();
+    m_fDeltaTime = std::chrono::duration<float>(m_oBeginFrame - m_oEndFrame).count();
+    m_oEndFrame = m_oBeginFrame;
   }
   // ------------------------------------
-  float CTickRate::TotalTime() const
+  void CTickRate::EndFrame()
   {
     if (m_bStopped)
+      return;
+
+    // Wait v-sync
+    while ((m_llCurrentTickCount.QuadPart - m_llPrevTime.QuadPart) < m_llTargetTick)
     {
-      return (float)(((m_llStopTime - m_llPausedTime) - m_llBaseTime) * m_dSecondsPerCount);
+      QueryPerformanceCounter(&m_llCurrentTickCount);
     }
-    else
-    {
-      return (float)(((m_llCurrTime - m_llPausedTime) - m_llBaseTime) * m_dSecondsPerCount);
-    }
+
+    // Update
+    m_llPrevTime = m_llCurrentTickCount;
   }
 }

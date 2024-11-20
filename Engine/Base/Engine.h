@@ -4,7 +4,9 @@
 #include "Engine/Camera/Camera.h"
 #include "Libs/Utils/Singleton.h"
 #include "Libs/Time/TickRate.h"
+#include <chrono>
 
+namespace render { class CCamera; }
 namespace render { namespace primitive { class CPrimitive; } }
 
 namespace engine 
@@ -28,6 +30,10 @@ namespace engine
 
   private:
     void Loop();
+
+    bool m_bFirstTick = true;
+    float m_fAccumulator = 0.0f;
+    float m_fFixedDeltaTime = 1.0f / 60.0f;
 
     std::unique_ptr<render::CRender> m_pRender = nullptr;
     std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;

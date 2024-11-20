@@ -5,14 +5,12 @@
 #include "Engine/Base/Engine.h"
 #include "Engine/Render/Render.h"
 #include "Libs/ImGui/imgui.h"
+#include "Libs/Maths/Maths.h"
 
 namespace input
 {
   CMouse::CMouse()
   {
-    // Bind delegate
-    global::delegates::s_oUpdateMouseDelegate.Bind(&CMouse::OnUpdateMouse, this);
-
     // Raw input config
     RAWINPUTDEVICE oRawInputDevice = {};
     oRawInputDevice.usUsagePage = 0x01;
@@ -22,6 +20,9 @@ namespace input
 
     // Register raw input
     assert(RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice)));
+
+    // Bind delegate
+    global::delegates::s_oUpdateMouseDelegate.Bind(&CMouse::OnUpdateMouse, this);
   }
   // ------------------------------------
   CMouse::~CMouse()
@@ -46,17 +47,17 @@ namespace input
   // ------------------------------------
   const float CMouse::GetMouseWheelDelta() const
   {
-    return ImGui::GetIO().MouseWheel;
+    return m_fMouseWheelDelta;
   }
   // ------------------------------------
   const bool CMouse::IsRightButtonPressed()
   {
-    return ImGui::GetIO().MouseDown[1];
+    return GetAsyncKeyState(VK_RBUTTON);
   }
   // ------------------------------------
   const bool CMouse::IsLeftButtonPressed()
   {
-    return ImGui::GetIO().MouseDown[0];
+    return GetAsyncKeyState(VK_LBUTTON);
   }
   // ------------------------------------
   void CMouse::OnUpdateMouse(RAWMOUSE* _pRawMouse)
@@ -64,8 +65,12 @@ namespace input
     // Set mouse delta
     if (_pRawMouse && _pRawMouse->usButtonFlags == MOUSE_MOVE_RELATIVE)
     {
-      m_vMouseDelta.X = static_cast<float>(_pRawMouse->lLastX);
-      m_vMouseDelta.Y = static_cast<float>(_pRawMouse->lLastY);
+      // Get values
+      float fDeltaX = static_cast<float>(_pRawMouse->lLastX);
+      float fDeltaY = static_cast<float>(_pRawMouse->lLastY);
+      // Interpolation
+      m_vMouseDelta.X = maths::Lerp(m_vMouseDelta.X, fDeltaX, 0.1f);
+      m_vMouseDelta.Y = maths::Lerp(m_vMouseDelta.Y, fDeltaY, 0.1f);
     }
 
     // Set mouse wheel delta
@@ -77,8 +82,8 @@ namespace input
   // ------------------------------------
   CInputManager::CInputManager()
   {
-    // Bind delegate
-    global::delegates::s_oUpdateKeyboardDelegate.Bind(&CInputManager::OnUpdateKeyboard, this);
+    // Create mouse instance
+    m_pMouse = new CMouse();
 
     // Raw input config
     RAWINPUTDEVICE oRawInputDevice = {};
@@ -90,8 +95,8 @@ namespace input
     // Register raw input
     assert(RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice)));
 
-    // Create mouse instance
-    m_pMouse = new CMouse();
+    // Bind delegate
+    global::delegates::s_oUpdateKeyboardDelegate.Bind(&CInputManager::OnUpdateKeyboard, this);
   }
   // ------------------------------------
   CInputManager::~CInputManager()
@@ -113,26 +118,21 @@ namespace input
     }
   }
   // ------------------------------------
-  std::string GetKeyNameFromVirtualKey(USHORT virtualKey)
+  bool CInputManager::IsKeyPressed(USHORT _uKey) const
   {
-    // Obtener el nombre de la tecla desde el virtual key code
-    char keyName[128] = {};
-    if (GetKeyNameTextA(MapVirtualKey(virtualKey, MAPVK_VK_TO_VSC) << 16, keyName, sizeof(keyName)) > 0)
-    {
-      return std::string(keyName);
-    }
-    return "Unknown Key";
+    return m_mapKeyStates.count(_uKey) ? m_mapKeyStates.at(_uKey) : false;
   }
   // ------------------------------------
   void CInputManager::OnUpdateKeyboard(RAWKEYBOARD* _pRawKeyboard)
   {
     if (_pRawKeyboard)
     {
-      USHORT virtualKey = _pRawKeyboard->VKey;
-      bool isKeyDown = !(_pRawKeyboard->Flags & RI_KEY_BREAK);
+      USHORT uKey = _pRawKeyboard->VKey;
+      bool bIsKeyDown = !(_pRawKeyboard->Flags & RI_KEY_BREAK);
 
-      auto [it, inserted] = m_mapKeyStates.emplace(virtualKey, isKeyDown);
-      if (!inserted) { it->second = isKeyDown; }
+      // Register key or set to pressed
+      auto [it, inserted] = m_mapKeyStates.emplace(uKey, bIsKeyDown);
+      if (!inserted) { it->second = bIsKeyDown; }
     }
   }
 }

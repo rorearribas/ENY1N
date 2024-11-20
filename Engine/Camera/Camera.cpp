@@ -5,6 +5,7 @@
 #include "Engine/Input/InputManager.h"
 #include <algorithm>
 
+#include <iostream>
 namespace render
 {
   namespace internal_camera
@@ -28,13 +29,14 @@ namespace render
     maths::CVector3 vForward = (mRotMatrix * maths::CVector3::Forward).Normalized();
     maths::CVector3 vRight = (mRotMatrix * maths::CVector3::Right).Normalized();
 
-    if (pInputManager->IsKeyPressed('W')) MovePosition(vForward * m_fMovementSpeed);
-    if (pInputManager->IsKeyPressed('S')) MovePosition(-vForward * m_fMovementSpeed);
-    if (pInputManager->IsKeyPressed('D')) MovePosition(vRight * m_fMovementSpeed);
-    if (pInputManager->IsKeyPressed('A')) MovePosition(-vRight * m_fMovementSpeed);
+    if (pInputManager->IsKeyPressed('W')) MovePosition(vForward * m_fMovementSpeed * _fDeltaTime);
+    if (pInputManager->IsKeyPressed('S')) MovePosition(-vForward * m_fMovementSpeed * _fDeltaTime);
+    if (pInputManager->IsKeyPressed('D')) MovePosition(vRight * m_fMovementSpeed * _fDeltaTime);
+    if (pInputManager->IsKeyPressed('A')) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
 
     // Movimiento del ratón
     bool bMousePressed = pMouse->IsRightButtonPressed();
+    std::cout << bMousePressed << std::endl;
     ShowCursor(bMousePressed);
 
     float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed * _fDeltaTime;

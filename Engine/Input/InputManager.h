@@ -34,14 +34,14 @@ namespace input
     ~CInputManager();
 
     void Flush();
-    bool IsKeyPressed(USHORT _uKey) const { return m_mapKeyStates.count(_uKey) ? m_mapKeyStates.at(_uKey) : false; }
+    bool IsKeyPressed(USHORT _uKey) const;
     CMouse* GetMouse() const { return m_pMouse; }
 
   private:
     void OnUpdateKeyboard(RAWKEYBOARD*);
-    CMouse* m_pMouse = nullptr;
-    bool m_bInitialized = false;
+
     std::unordered_map<USHORT, bool> m_mapKeyStates;
+    CMouse* m_pMouse = nullptr;
   };
 }
 

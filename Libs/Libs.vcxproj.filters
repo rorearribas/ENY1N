@@ -57,6 +57,9 @@
     <ClInclude Include="Time\TickRate.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Maths\Maths.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Maths\Vector3.cpp">

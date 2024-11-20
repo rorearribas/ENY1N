@@ -29,7 +29,9 @@ namespace render
     ~CRender();
 
     HRESULT Init();
-    void DrawScene(scene::CScene* _pScene, float _fDeltaTime);
+
+    void Update(float _fDeltaTime);
+    void DrawScene(scene::CScene* _pScene);
 
     const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
     const render::CCamera* GetCamera() const { return m_pCamera; }

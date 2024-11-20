@@ -4,6 +4,7 @@
 #include "Engine/Input/InputManager.h"
 #include <cassert>
 
+#include <iostream>
 namespace engine
 {
   CEngine::~CEngine()
@@ -28,7 +29,7 @@ namespace engine
     m_pSceneManager->SetSceneEnabled(0, true);
 
     // Create fixed tick
-    m_pTickRate = std::make_unique<tick::CTickRate>(300);
+    m_pTickRate = std::make_unique<tick::CTickRate>(144);
 
     // Marked as initialized
     m_bInitialized = true;
@@ -53,21 +54,38 @@ namespace engine
   // ------------------------------------
   void CEngine::Loop()
   {
-    // Update tick rate
-    m_pTickRate->UpdateTick();
+    // Iniciar el frame
+    m_pTickRate->BeginFrame();
 
-    // Update current scene
+    if (m_bFirstTick)
+    {
+      m_bFirstTick = false;
+    }
+    else
+    {
+      m_fAccumulator += m_pTickRate->DeltaTime();
+      while (m_fAccumulator >= m_fFixedDeltaTime)
+      {
+        m_pRender->Update(m_fFixedDeltaTime);
+
+        input::CInputManager* pInputManager = input::CInputManager::GetInstance();
+        pInputManager->Flush();
+
+        m_fAccumulator -= m_fFixedDeltaTime;
+      }
+    }
+
+    // Dibujar la escena
     for (scene::CScene* pScene : m_pSceneManager->GetScenes())
     {
       if (pScene->IsEnabled())
       {
-        m_pRender->DrawScene(pScene, m_pTickRate->DeltaTime());
+        m_pRender->DrawScene(pScene);
       }
     }
 
-    // Flush input manager
-    input::CInputManager* pInputManager = input::CInputManager::GetInstance();
-    pInputManager->Flush();
+    // Finalizar el frame
+    m_pTickRate->EndFrame();
   }
   // ------------------------------------
   render::primitive::CPrimitive* CEngine::CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)

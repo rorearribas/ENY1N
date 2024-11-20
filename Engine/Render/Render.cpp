@@ -55,7 +55,7 @@ namespace render
 
     return S_OK;
   }
-  // ------------------------------------
+// ------------------------------------
   void CRender::UpdateScissor(UINT32 _uX, UINT32 _uY)
   {
     D3D11_RECT oScissorRect = {};
@@ -258,7 +258,12 @@ namespace render
     }
   }
   // ------------------------------------
-  void CRender::DrawScene(scene::CScene* _pScene, float _fDeltaTime)
+  void CRender::Update(float _fDeltaTime)
+  {
+    m_pCamera->Update(_fDeltaTime);
+  }
+  // ------------------------------------
+  void CRender::DrawScene(scene::CScene* _pScene)
   {
     // Clear resources
     float background_color[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
@@ -275,9 +280,6 @@ namespace render
 
     // Draw scene
     _pScene->DrawScene();
-
-    // Update camera
-    m_pCamera->Update(_fDeltaTime);
 
     // Swap the back and front buffers (show the frame we just drew)
     m_oRenderingResources.m_pSwapChain->Present(m_bVerticalSync, 0);
