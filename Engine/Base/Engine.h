@@ -25,20 +25,19 @@ namespace engine
     render::primitive::CPrimitive* CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
     render::primitive::CPrimitive* CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
 
+    void SetTargetFPS(int _iMaxFPS);
     void DestroyPrimitive(const render::primitive::CPrimitive* _pPrimitive);
     void DestroyAllPrimimitives(const UINT32& _uSceneIndex = 0);
 
   private:
-    void Loop();
-
-    bool m_bFirstTick = true;
-    float m_fAccumulator = 0.0f;
-    float m_fFixedDeltaTime = 1.0f / 60.0f;
+    void Update(float _fDeltaTime);
 
     std::unique_ptr<render::CRender> m_pRender = nullptr;
     std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;
     std::unique_ptr<tick::CTickRate> m_pTickRate = nullptr;
 
+    float m_fFixedDelta = 1.0f / 60.0f;
+    float m_fFixedDeltaAccumulator = 0.0f;
     bool m_bInitialized = false;
   };
 }

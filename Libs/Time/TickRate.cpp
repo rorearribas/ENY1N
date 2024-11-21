@@ -74,10 +74,11 @@ namespace tick
       return;
     }
 
-    // Obtener el tiempo actual
+    // Get current tick count
     QueryPerformanceCounter(&m_llCurrentTickCount);
     uint64_t elapsedTicks = m_llCurrentTickCount.QuadPart - m_llPrevTime.QuadPart;
 
+    // Get current frequency
     LARGE_INTEGER lFrequency;
     QueryPerformanceFrequency(&lFrequency);
     double elapsedTimeSeconds = static_cast<double>(elapsedTicks) / lFrequency.QuadPart;
@@ -92,7 +93,7 @@ namespace tick
     if (m_bStopped)
       return;
 
-    // Wait v-sync
+    // Wait max FPS
     while ((m_llCurrentTickCount.QuadPart - m_llPrevTime.QuadPart) < m_llTargetTick)
     {
       QueryPerformanceCounter(&m_llCurrentTickCount);

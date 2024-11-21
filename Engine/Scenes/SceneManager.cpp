@@ -4,17 +4,23 @@
 
 namespace scene
 {
+  CSceneManager::CSceneManager()
+  {
+    CreateScenes();
+  }
+  // ------------------------------------
   CSceneManager::~CSceneManager()
   {
     DestroyAllScenes();
   }
   // ------------------------------------
-  void CSceneManager::InitScenes()
+  void CSceneManager::CreateScenes()
   {
     int iCurrentIdx = 0;
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene*& _pScene) 
     {
       _pScene = new scene::CScene(iCurrentIdx++);
+      _pScene->SetSceneEnabled(false);
     });
   }
   // ------------------------------------
@@ -29,8 +35,8 @@ namespace scene
   void CSceneManager::SetSceneEnabled(const UINT32& _uIndex, bool _bEnabled) const
   {
     if (_uIndex > (s_iMaxScenes - 1)) return;
-    scene::CScene* pScene = m_vctScenes[_uIndex];
-    pScene->SetSceneEnabled(_bEnabled);
+    m_pCurrentScene = m_vctScenes[_uIndex];
+    m_pCurrentScene->SetSceneEnabled(_bEnabled);
   }
   // ------------------------------------
   render::primitive::CPrimitive* CSceneManager::CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)

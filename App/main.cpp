@@ -20,6 +20,20 @@ int main()
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
   pRenderWindow->SetEnabled(true);
 
-  pEngine->UpdateEngine();
+  MSG oMsg = { 0 };
+  while (WM_QUIT != oMsg.message)
+  {
+    if (PeekMessage(&oMsg, nullptr, 0, 0, PM_REMOVE))
+    {
+      TranslateMessage(&oMsg);
+      DispatchMessage(&oMsg);
+    }
+    else
+    {
+      pEngine->UpdateEngine();
+    }
+  }
+
+
   pEngine->DestroySingleton();
 }

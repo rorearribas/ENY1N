@@ -25,13 +25,14 @@ namespace render
     };
 
   public:
-    CRender(const UINT32& _uWidth, const UINT32& _uHeight);
+    CRender(UINT32 _uX, UINT32 _uY);
     ~CRender();
 
-    HRESULT Init();
+    void BeginDraw();
+    void Draw(scene::CScene* _pScene);
+    void EndDraw();
 
     void Update(float _fDeltaTime);
-    void DrawScene(scene::CScene* _pScene);
 
     const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
     const render::CCamera* GetCamera() const { return m_pCamera; }
@@ -40,15 +41,19 @@ namespace render
     bool IsVSyncEnabled() { return m_bVerticalSync; }
 
   private:
+    void ImGui();
     void OnWindowResizeEvent(UINT32 _uX, UINT32 _uY);
-    void ConfigureViewport(UINT32 _uX, UINT32 _uY);
-    void DrawImGui();
 
-    HRESULT CreateDevice();
+    HRESULT Init(UINT32 _uX, UINT32 _uY);
+    HRESULT CreateDevice(UINT32 _uX, UINT32 _uY);
+    HRESULT InitBasicPipeline(UINT32 _uX, UINT32 _uY);
+
     HRESULT CreateRenderTargetView();
     HRESULT CreateDepthStencilView(UINT32 _uX, UINT32 _uY);
-    HRESULT CreateRasterizerState(D3D11_FILL_MODE _eFillMode);
-    void UpdateScissor(UINT32 _uX, UINT32 _uY);
+    HRESULT CreateRasterizerState(D3D11_FILL_MODE _eFillMode = D3D11_FILL_SOLID);
+
+    void ConfigureViewport(UINT32 _uX, UINT32 _uY);
+    void SetScissorRect(UINT32 _uX, UINT32 _uY);
 
     void SetupCamera();
     bool InitImGui();

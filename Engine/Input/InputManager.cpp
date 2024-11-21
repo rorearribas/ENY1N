@@ -69,8 +69,8 @@ namespace input
       float fDeltaX = static_cast<float>(_pRawMouse->lLastX);
       float fDeltaY = static_cast<float>(_pRawMouse->lLastY);
       // Interpolation
-      m_vMouseDelta.X = maths::Lerp(m_vMouseDelta.X, fDeltaX, 0.1f);
-      m_vMouseDelta.Y = maths::Lerp(m_vMouseDelta.Y, fDeltaY, 0.1f);
+      m_vMouseDelta.X = maths::Lerp(m_vMouseDelta.X, fDeltaX, 0.01f);
+      m_vMouseDelta.Y = maths::Lerp(m_vMouseDelta.Y, fDeltaY, 0.01f);
     }
 
     // Set mouse wheel delta

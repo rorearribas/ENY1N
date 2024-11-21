@@ -14,10 +14,12 @@ namespace render
   }
   // ------------------------------------
 
-  CRender::CRender(const UINT32& _uWidth, const UINT32& _uHeight)
+  CRender::CRender(UINT32 _uX, UINT32 _uY)
   {
     // Create render window
-    m_pRenderWindow = new render::CRenderWindow(_uWidth, _uHeight);
+    m_pRenderWindow = new render::CRenderWindow(_uX, _uY);
+    // Init render
+    assert(!FAILED(Init(_uX, _uY)));
   }
   // ------------------------------------
   CRender::~CRender()
@@ -34,11 +36,11 @@ namespace render
     global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilView);
     global::dx11::SafeRelease(m_oRenderingResources.m_pRasterizerState);
   }
-  // ------------------------------------
-  HRESULT CRender::Init()
+// ------------------------------------
+  HRESULT CRender::Init(UINT32 _uX, UINT32 _uY)
   {
     // Create deviec
-    HRESULT hr = CreateDevice();
+    HRESULT hr = CreateDevice(_uX, _uY);
     if (FAILED(hr)) return hr;
 
     // Init ImGui
@@ -47,16 +49,43 @@ namespace render
     // Setup camera
     SetupCamera();
 
-    // Create rasterizer
-    CreateRasterizerState(D3D11_FILL_SOLID);
+    // Setup basic pipeline
+    hr = InitBasicPipeline(_uX, _uY);
+    if (FAILED(hr)) return hr;
 
     // Set delegate
     global::delegates::s_oWindowResizeDelegate.Bind(&CRender::OnWindowResizeEvent, this);
 
     return S_OK;
   }
+  // ------------------------------------
+  HRESULT CRender::InitBasicPipeline(UINT32 _uX, UINT32 _uY)
+  {
+    // Configure viewport
+    ConfigureViewport(_uX, _uY);
+
+    // Create new render target
+    HRESULT hr = CreateRenderTargetView();
+    assert(!FAILED(hr));
+
+    // Create a new depth stencil
+    hr = CreateDepthStencilView(_uX, _uY);
+    assert(!FAILED(hr));
+
+    // Create rasterizer
+    hr = CreateRasterizerState();
+    assert(!FAILED(hr));
+
+    // Update scissor
+    SetScissorRect(_uX, _uY);
+
+    // Set valid aspect ratio
+    m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY))); 
+    
+    return hr;
+  }
 // ------------------------------------
-  void CRender::UpdateScissor(UINT32 _uX, UINT32 _uY)
+  void CRender::SetScissorRect(UINT32 _uX, UINT32 _uY)
   {
     D3D11_RECT oScissorRect = {};
     oScissorRect.left = 0;
@@ -90,13 +119,13 @@ namespace render
     return true;
   }
   // ------------------------------------
-  HRESULT CRender::CreateDevice()
+  HRESULT CRender::CreateDevice(UINT32 _uX, UINT32 _uY)
   {
     DXGI_SWAP_CHAIN_DESC oSwapChainDescriptor = {};
     oSwapChainDescriptor.BufferCount = 1;
-    oSwapChainDescriptor.BufferDesc.Width = m_pRenderWindow->GetWidth();
-    oSwapChainDescriptor.BufferDesc.Height = m_pRenderWindow->GetHeight();
-    oSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHwnd();
+    oSwapChainDescriptor.BufferDesc.Width = _uX;
+    oSwapChainDescriptor.BufferDesc.Height = _uY;
+    oSwapChainDescriptor.OutputWindow = global::window::s_oHwnd;
     oSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     oSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     oSwapChainDescriptor.SampleDesc.Count = 1;
@@ -133,22 +162,9 @@ namespace render
     HRESULT hr = m_oRenderingResources.m_pSwapChain->ResizeBuffers(0, _uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
     assert(!FAILED(hr));
 
-    // Configure viewport
-    ConfigureViewport(_uX, _uY);
+    // Init basic pipeline
+    hr = InitBasicPipeline(_uX, _uY);
     assert(!FAILED(hr));
-
-    // Create new render target
-    hr = CreateRenderTargetView();
-    assert(!FAILED(hr));
-
-    // Create a new depth stencil
-    hr = CreateDepthStencilView(_uX, _uY);
-
-    // Update scissor
-    UpdateScissor(_uX, _uY);
-
-    // Set valid aspect ratio
-    m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
   }
   // ------------------------------------
   HRESULT CRender::CreateRenderTargetView()
@@ -258,39 +274,50 @@ namespace render
     }
   }
   // ------------------------------------
-  void CRender::Update(float _fDeltaTime)
-  {
-    m_pCamera->Update(_fDeltaTime);
-  }
-  // ------------------------------------
-  void CRender::DrawScene(scene::CScene* _pScene)
+  void CRender::BeginDraw()
   {
     // Clear resources
     float background_color[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
     global::dx11::s_pDeviceContext->ClearRenderTargetView(m_oRenderingResources.m_pRenderTargetView, background_color);
     global::dx11::s_pDeviceContext->ClearDepthStencilView(m_oRenderingResources.m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    // Update resourecs
+    // Update resources
     global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &m_oRenderingResources.m_pRenderTargetView, m_oRenderingResources.m_pDepthStencilView);
     global::dx11::s_pDeviceContext->OMSetDepthStencilState(m_oRenderingResources.m_pDepthStencilState, 1);
     global::dx11::s_pDeviceContext->RSSetState(m_oRenderingResources.m_pRasterizerState);
 
-    // Draw ImGui
-    DrawImGui();
-
-    // Draw scene
-    _pScene->DrawScene();
-
-    // Swap the back and front buffers (show the frame we just drew)
-    m_oRenderingResources.m_pSwapChain->Present(m_bVerticalSync, 0);
-  }
-  // ------------------------------------
-  void CRender::DrawImGui()
-  {
+    // Prepare imgui new frame
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+  }
+  // ------------------------------------
+  void CRender::Draw(scene::CScene* _pScene)
+  {
+    // Draw scene
+    _pScene->DrawScene();
 
+    // Draw imgui
+    ImGui();
+  }
+  // ------------------------------------
+  void CRender::EndDraw()
+  {
+    // End imgui draw
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+    // Render the current frame
+    m_oRenderingResources.m_pSwapChain->Present(m_bVerticalSync, 0);
+  }
+  // ------------------------------------
+  void CRender::Update(float _fDeltaTime)
+  {
+    m_pCamera->Update(_fDeltaTime);
+  }
+  // ------------------------------------
+  void CRender::ImGui()
+  {
     ImGui::ShowDemoWindow();
 
     // Test
@@ -327,8 +354,5 @@ namespace render
     }
 
     ImGui::End();
-
-    ImGui::Render();
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
   }
 }

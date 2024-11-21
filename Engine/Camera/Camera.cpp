@@ -36,7 +36,6 @@ namespace render
 
     // Movimiento del ratón
     bool bMousePressed = pMouse->IsRightButtonPressed();
-    std::cout << bMousePressed << std::endl;
     ShowCursor(bMousePressed);
 
     float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed * _fDeltaTime;
@@ -49,10 +48,7 @@ namespace render
 
     // Actualización del buffer constante
     m_oConstantBuffer.GetData().mMatrix = maths::CMatrix4x4::Transpose(mViewProjection);
-    if (!m_oConstantBuffer.UpdateBuffer())
-    {
-      assert(false && "Failed to update constant buffer.");
-    }
+    assert(m_oConstantBuffer.UpdateBuffer() && "Failed to update constant buffer.");
 
     ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
     global::dx11::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
