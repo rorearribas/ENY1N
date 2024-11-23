@@ -1,21 +1,23 @@
 #pragma once
 #include <chrono>
 #include <windows.h>
+#include "Libs/Utils/Singleton.h"
 
 namespace tick
 {
-  class CTickRate
+  class CTimeManager : public utils::CSingleton<CTimeManager>
   {
   public:
-    CTickRate(int _iMaxFPS = 60);
-    ~CTickRate() {}
+    CTimeManager(int _iMaxFPS = 60);
+    ~CTimeManager() {}
 
     void BeginFrame();
     void EndFrame();
-
-    float TotalTime() const;
-    float DeltaTime() const;
     bool IsStopped() const;
+
+    float GetFixedDelta() const;
+    float GetMaxFixedDelta() const;
+    float GetDeltaTime() const;
 
     void SetMaxFPS(int maxFPS);
     int GetMaxFPS() { return m_iMaxFPS; }
@@ -26,8 +28,10 @@ namespace tick
 
   private:
     int m_iMaxFPS = 60;
-    float m_fDeltaTime;
-    bool m_bStopped;
+    bool m_bStopped = false;
+
+    float m_fFixedDelta = 1.0f / 60.0f;
+    float m_fDeltaTime = 0.0f;
 
     __int64 m_llBaseTime;
     __int64 m_llPausedTime;

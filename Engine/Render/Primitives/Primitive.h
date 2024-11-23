@@ -4,6 +4,7 @@
 #include "Libs/Maths/Vector3.h"
 #include "Libs/Maths/Matrix4x4.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Libs/Maths/Transform.h"
 
 namespace render
 {
@@ -26,12 +27,16 @@ namespace render
       // Draw primitive
       void Draw();
 
-      void SetPosition(const maths::CVector3& _v3Position) { m_v3Pos = _v3Position; }
-      const maths::CVector3& GetPosition() const { return m_v3Pos; }
-      void SetRotation(const maths::CVector3& _v3Rot) { m_v3Rot = _v3Rot; }
-      const maths::CVector3& GetRotation() const { return m_v3Rot; }
-      void SetScale(const maths::CVector3& _v3Scale) { m_v3Scale = _v3Scale; }
-      const maths::CVector3& GetScale() const { return m_v3Scale; }
+      void SetPosition(const maths::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
+      void MovePosition(const maths::CVector3& _v3Delta) { m_oTransform.MovePosition(_v3Delta); }
+      const maths::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+
+      void SetRotation(const maths::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
+      void AddRotation(const maths::CVector3 _v3Delta) { m_oTransform.AddRotation(_v3Delta); }
+      const maths::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
+
+      void SetScale(const maths::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
+      const maths::CVector3& GetScale() const { return m_oTransform.GetScale(); }
       void SetColor(const maths::CVector3& _v3Color);
       const maths::CVector3& GetColor() const { return m_v3CurrentColor; }
 
@@ -69,9 +74,7 @@ namespace render
       maths::CVector3 m_v3CurrentColor = maths::CVector3::One;
 
       // Transform
-      maths::CVector3 m_v3Pos = maths::CVector3::Zero;
-      maths::CVector3 m_v3Rot = maths::CVector3::Zero;
-      maths::CVector3 m_v3Scale = maths::CVector3::One;
+      maths::CTransform m_oTransform;
     };
   }
 }

@@ -2,7 +2,7 @@
 #include "Libs/Utils/Singleton.h"
 #include <windows.h>
 #include "Libs/Maths/Vector2.h"
-#include <unordered_map>
+#include <map>
 
 namespace input
 {
@@ -22,8 +22,7 @@ namespace input
     void OnUpdateMouse(RAWMOUSE*);
     friend class CInputManager;
 
-    maths::CVector2 m_vMouseDelta = maths::CVector2::vEMPTY;
-    maths::CVector2 m_vMousePosition = maths::CVector2::vEMPTY;
+    maths::CVector2 m_vMouseDelta = maths::CVector2::Zero;
     float m_fMouseWheelDelta = 0.0f;
   };
 
@@ -38,9 +37,10 @@ namespace input
     CMouse* GetMouse() const { return m_pMouse; }
 
   private:
+    void RegisterKeys();
     void OnUpdateKeyboard(RAWKEYBOARD*);
 
-    std::unordered_map<USHORT, bool> m_mapKeyStates;
+    std::map<USHORT, bool> m_mapKeyStates;
     CMouse* m_pMouse = nullptr;
   };
 }

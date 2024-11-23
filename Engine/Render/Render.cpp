@@ -14,12 +14,15 @@ namespace render
   }
   // ------------------------------------
 
+  static render::primitive::CPrimitive* pPrimitive = nullptr;
+
   CRender::CRender(UINT32 _uX, UINT32 _uY)
   {
     // Create render window
     m_pRenderWindow = new render::CRenderWindow(_uX, _uY);
     // Init render
-    assert(!FAILED(Init(_uX, _uY)));
+    HRESULT hr = Init(_uX, _uY);
+    assert(!FAILED(hr));
   }
   // ------------------------------------
   CRender::~CRender()
@@ -307,13 +310,17 @@ namespace render
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
-    // Render the current frame
+    // Draw the current frame
     m_oRenderingResources.m_pSwapChain->Present(m_bVerticalSync, 0);
   }
   // ------------------------------------
   void CRender::Update(float _fDeltaTime)
   {
     m_pCamera->Update(_fDeltaTime);
+    if (pPrimitive)
+    {
+      pPrimitive->AddRotation({ 0.0f, 1.0f * _fDeltaTime, 0.0f });
+    }
   }
   // ------------------------------------
   void CRender::ImGui()
@@ -325,9 +332,9 @@ namespace render
 
     if (ImGui::Button("Create primitives"))
     {
-      render::primitive::CPrimitive* pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::CUBE);
+      pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::CUBE);
       pPrimitive->SetPosition(maths::CVector3(3.0f, 0.0f, 0.0f));
-      pPrimitive->SetScale({ 2.0f, 2.0f, 2.0f });
+      pPrimitive->SetScale({ 1.0f, 1.0f, 1.0f });
 
       render::primitive::CPrimitive* pPrimitive2 = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::TRIANGLE);
       pPrimitive2->SetColor(maths::CVector3(1.0f, 0.0f, 0.0f));

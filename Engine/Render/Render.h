@@ -33,9 +33,8 @@ namespace render
     void EndDraw();
 
     void Update(float _fDeltaTime);
-
-    const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
-    const render::CCamera* GetCamera() const { return m_pCamera; }
+    render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
+    render::CCamera* GetCamera() const { return m_pCamera; }
 
     void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
     bool IsVSyncEnabled() { return m_bVerticalSync; }

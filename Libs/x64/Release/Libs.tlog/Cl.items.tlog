@@ -1,4 +1,4 @@
-D:\Projects\Personal\ENY1N\Libs\Time\TickRate.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Release\TickRate.obj
+D:\Projects\Personal\ENY1N\Libs\Time\TimeManager.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Release\TimeManager.obj
 D:\Projects\Personal\ENY1N\Libs\ImGui\imgui.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Release\imgui.obj
 D:\Projects\Personal\ENY1N\Libs\ImGui\imgui_demo.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Release\imgui_demo.obj
 D:\Projects\Personal\ENY1N\Libs\ImGui\imgui_draw.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Release\imgui_draw.obj
@@ -9,3 +9,4 @@ D:\Projects\Personal\ENY1N\Libs\ImGui\imgui_impl_dx11.cpp;D:\Projects\Personal\E
 D:\Projects\Personal\ENY1N\Libs\Maths\Vector2.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Release\Vector2.obj
 D:\Projects\Personal\ENY1N\Libs\Maths\Vector3.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Release\Vector3.obj
 D:\Projects\Personal\ENY1N\Libs\Maths\Matrix4x4.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Release\Matrix4x4.obj
+D:\Projects\Personal\ENY1N\Libs\Maths\Transform.cpp;D:\Projects\Personal\ENY1N\Libs\x64\Release\Transform.obj

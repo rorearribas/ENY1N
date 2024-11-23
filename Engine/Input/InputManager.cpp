@@ -5,7 +5,6 @@
 #include "Engine/Base/Engine.h"
 #include "Engine/Render/Render.h"
 #include "Libs/ImGui/imgui.h"
-#include "Libs/Maths/Maths.h"
 
 namespace input
 {
@@ -19,7 +18,8 @@ namespace input
     oRawInputDevice.hwndTarget = global::window::s_oHwnd;
 
     // Register raw input
-    assert(RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice)));
+    bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
+    assert(bOk);
 
     // Bind delegate
     global::delegates::s_oUpdateMouseDelegate.Bind(&CMouse::OnUpdateMouse, this);
@@ -42,7 +42,7 @@ namespace input
     {
       return maths::CVector2((float)oScreenPoint.x, (float)oScreenPoint.y);
     }
-    return maths::CVector2::vEMPTY;
+    return maths::CVector2::Zero;
   }
   // ------------------------------------
   const float CMouse::GetMouseWheelDelta() const
@@ -66,11 +66,9 @@ namespace input
     if (_pRawMouse && _pRawMouse->usButtonFlags == MOUSE_MOVE_RELATIVE)
     {
       // Get values
-      float fDeltaX = static_cast<float>(_pRawMouse->lLastX);
-      float fDeltaY = static_cast<float>(_pRawMouse->lLastY);
-      // Interpolation
-      m_vMouseDelta.X = maths::Lerp(m_vMouseDelta.X, fDeltaX, 0.01f);
-      m_vMouseDelta.Y = maths::Lerp(m_vMouseDelta.Y, fDeltaY, 0.01f);
+      const float fSmoothDelta = 0.05f;
+      m_vMouseDelta.X = static_cast<float>(_pRawMouse->lLastX) * fSmoothDelta;
+      m_vMouseDelta.Y = static_cast<float>(_pRawMouse->lLastY) * fSmoothDelta;
     }
 
     // Set mouse wheel delta
@@ -92,11 +90,26 @@ namespace input
     oRawInputDevice.dwFlags = RIDEV_INPUTSINK;
     oRawInputDevice.hwndTarget = global::window::s_oHwnd;
 
-    // Register raw input
-    assert(RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice)));
+    // Register keyboard input
+    bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
+    assert(bOk);
+
+    // Register all keys
+    RegisterKeys();
 
     // Bind delegate
     global::delegates::s_oUpdateKeyboardDelegate.Bind(&CInputManager::OnUpdateKeyboard, this);
+  }
+  void CInputManager::RegisterKeys()
+  {
+    // Register all keys
+    for (USHORT uKey = VK_LBUTTON; uKey <= VK_OEM_CLEAR; ++uKey) 
+    {
+      RAWKEYBOARD oRawKeyboard = {};
+      oRawKeyboard.VKey = uKey;
+      oRawKeyboard.Flags = 0;
+      m_mapKeyStates[oRawKeyboard.VKey] = false;
+    }
   }
   // ------------------------------------
   CInputManager::~CInputManager()
@@ -106,14 +119,14 @@ namespace input
       delete m_pMouse;
       m_pMouse = nullptr;
     }
+    m_mapKeyStates.clear();
   }
   // ------------------------------------
   void CInputManager::Flush()
   {
     if (m_pMouse)
     {
-      m_pMouse->m_vMouseDelta = maths::CVector2::vEMPTY;
-      m_pMouse->m_vMousePosition = maths::CVector2::vEMPTY;
+      m_pMouse->m_vMouseDelta = maths::CVector2::Zero;
       m_pMouse->m_fMouseWheelDelta = 0.0f;
     }
   }
@@ -122,17 +135,14 @@ namespace input
   {
     return m_mapKeyStates.count(_uKey) ? m_mapKeyStates.at(_uKey) : false;
   }
-  // ------------------------------------
+// ------------------------------------
   void CInputManager::OnUpdateKeyboard(RAWKEYBOARD* _pRawKeyboard)
   {
-    if (_pRawKeyboard)
+    if (_pRawKeyboard && !m_mapKeyStates.empty())
     {
-      USHORT uKey = _pRawKeyboard->VKey;
-      bool bIsKeyDown = !(_pRawKeyboard->Flags & RI_KEY_BREAK);
-
-      // Register key or set to pressed
-      auto [it, inserted] = m_mapKeyStates.emplace(uKey, bIsKeyDown);
-      if (!inserted) { it->second = bIsKeyDown; }
+      // Set value
+      auto it = m_mapKeyStates.find(_pRawKeyboard->VKey);
+      it->second = !(_pRawKeyboard->Flags & RI_KEY_BREAK);
     }
   }
 }

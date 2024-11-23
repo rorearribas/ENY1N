@@ -265,12 +265,9 @@ namespace render
       global::dx11::s_pDeviceContext->VSSetShader(m_pVertexShader, nullptr, 0);
       global::dx11::s_pDeviceContext->PSSetShader(m_pPixelShader, nullptr, 0);
 
-      // Calculate model matrix
-      maths::CMatrix4x4 mMatrixTranslation = maths::CMatrix4x4::Translate(m_v3Pos);
-      maths::CMatrix4x4 mMatrixScaling = maths::CMatrix4x4::Scale(m_v3Scale);
-      maths::CMatrix4x4 mMatrixRotation = maths::CMatrix4x4::Rotation(m_v3Rot);
-      m_oConstantBuffer.GetData().mMatrix = (mMatrixRotation * mMatrixScaling) * mMatrixTranslation;
-      assert(m_oConstantBuffer.UpdateBuffer());
+      // Set model matrix
+      m_oConstantBuffer.GetData().mMatrix = m_oTransform.ComputeModelMatrix();
+      m_oConstantBuffer.UpdateBuffer();
 
       // Apply constant buffer
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();

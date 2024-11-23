@@ -99,7 +99,7 @@ namespace maths
     return mMatrix;
   }
   // ------------------------------------
-  maths::CMatrix4x4 CMatrix4x4::Rotation(const maths::CVector3& _vRot)
+  maths::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _vRot)
   {
     CMatrix4x4 mPitchMatrix = CMatrix4x4::Identity;
     mPitchMatrix.m[1][1] = (float)cos(_vRot.X);

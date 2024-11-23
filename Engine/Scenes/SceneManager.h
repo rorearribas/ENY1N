@@ -15,6 +15,7 @@ namespace scene
     CSceneManager();
     ~CSceneManager();
 
+    void Update(float _fDeltaTime);
     const TSceneList& GetScenes() { return m_vctScenes; }
     scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
 

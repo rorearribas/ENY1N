@@ -3,9 +3,9 @@
 
 namespace maths
 {
-  maths::CVector2 CVector2::vEMPTY(0.0f, 0.0f);
-  maths::CVector2 CVector2::vRight(1.0f, 0.0f);
-  maths::CVector2 CVector2::vUp(0.0f, 1.0f);
+  maths::CVector2 CVector2::Zero(0.0f, 0.0f);
+  maths::CVector2 CVector2::Right(1.0f, 0.0f);
+  maths::CVector2 CVector2::Up(0.0f, 1.0f);
 
   // ------------------------------------
   float CVector2::DotProduct(const CVector2& _v2) const

@@ -1,6 +1,6 @@
 D:\Projects\Personal\ENY1N\Engine\Base\Engine.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Engine.obj
 D:\Projects\Personal\ENY1N\Engine\Camera\Camera.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Camera.obj
-D:\Projects\Personal\ENY1N\Engine\Global\DX11GlobalInterface.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\DX11GlobalInterface.obj
+D:\Projects\Personal\ENY1N\Engine\Global\GlobalResources.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\GlobalResources.obj
 D:\Projects\Personal\ENY1N\Engine\Input\InputManager.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\InputManager.obj
 D:\Projects\Personal\ENY1N\Engine\Render\Primitives\Primitive.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Primitive.obj
 D:\Projects\Personal\ENY1N\Engine\Render\Render.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Render.obj

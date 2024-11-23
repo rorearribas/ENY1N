@@ -1,24 +1,30 @@
-#include "TickRate.h"
-#include <iostream>
+#include "TimeManager.h"
 
 namespace tick
 {
-  CTickRate::CTickRate(int _iMaxFPS) : m_fDeltaTime(-1.0), m_llBaseTime(0), m_llPausedTime(0), m_bStopped(false)
+  namespace internal_tickratemanager
+  {
+    const float s_fMaxFixedDelta = 1.0f / 10.f;
+  }
+  // ------------------------------------
+  CTimeManager::CTimeManager(int _iMaxFPS) : m_fDeltaTime(-1.0), m_llBaseTime(0), m_llPausedTime(0), m_bStopped(false)
   {
     QueryPerformanceCounter(&m_llPrevTime);
     QueryPerformanceCounter(&m_llTicksPerFrame);
     SetMaxFPS(_iMaxFPS);
   }
   // ------------------------------------
-  void CTickRate::SetMaxFPS(int _iMaxFPS)
+  void CTimeManager::SetMaxFPS(int _iMaxFPS)
   {
     __int64 lCountsPerSec;
     QueryPerformanceFrequency((LARGE_INTEGER*)&lCountsPerSec);
+    m_llTargetTick = lCountsPerSec / _iMaxFPS;
+
+    m_fFixedDelta = static_cast<float>(1.0f / _iMaxFPS);
     m_iMaxFPS = _iMaxFPS;
-    m_llTargetTick = lCountsPerSec / m_iMaxFPS;
   }
   // ------------------------------------
-  void CTickRate::Reset()
+  void CTimeManager::Reset()
   {
     __int64 lCurrentTime;
     QueryPerformanceCounter((LARGE_INTEGER*)&lCurrentTime);
@@ -28,17 +34,26 @@ namespace tick
     m_bStopped = false;
   }
   // ------------------------------------
-  float CTickRate::DeltaTime() const
+  float CTimeManager::GetDeltaTime() const
   {
-    return static_cast<float>(m_fDeltaTime);
+    return m_fDeltaTime;
+  }
+  float CTimeManager::GetFixedDelta() const
+  {
+    return m_fFixedDelta;
   }
   // ------------------------------------
-  bool CTickRate::IsStopped() const
+  float CTimeManager::GetMaxFixedDelta() const
+  {
+    return internal_tickratemanager::s_fMaxFixedDelta;
+  }
+  // ------------------------------------
+  bool CTimeManager::IsStopped() const
   {
     return m_bStopped;
   }
   // ------------------------------------
-  void CTickRate::Start()
+  void CTimeManager::Start()
   {
     if (m_bStopped)
     {
@@ -54,7 +69,7 @@ namespace tick
     }
   }
   // ------------------------------------
-  void CTickRate::Stop()
+  void CTimeManager::Stop()
   {
     if (!m_bStopped)
     {
@@ -66,7 +81,7 @@ namespace tick
     }
   }
   // ------------------------------------
-  void CTickRate::BeginFrame()
+  void CTimeManager::BeginFrame()
   {
     if (m_bStopped)
     {
@@ -88,7 +103,7 @@ namespace tick
     m_oEndFrame = m_oBeginFrame;
   }
   // ------------------------------------
-  void CTickRate::EndFrame()
+  void CTimeManager::EndFrame()
   {
     if (m_bStopped)
       return;

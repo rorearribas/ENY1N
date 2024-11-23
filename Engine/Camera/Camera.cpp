@@ -3,9 +3,10 @@
 #include "Libs/ImGui/imgui.h"
 #include "Engine/Base/Engine.h"
 #include "Engine/Input/InputManager.h"
-#include <algorithm>
-
+#include "Libs/Maths/Maths.h"
+#include <ostream>
 #include <iostream>
+
 namespace render
 {
   namespace internal_camera
@@ -20,35 +21,34 @@ namespace render
   // ------------------------------------
   void CCamera::Update(float _fDeltaTime)
   {
-    // Input
-    input::CInputManager* pInputManager = input::CInputManager::GetInstance();
-    input::CMouse* pMouse = pInputManager->GetMouse();
-
-    // Movimiento de teclado
+    // Keyboard movement
     maths::CMatrix4x4 mRotMatrix = maths::CMatrix4x4::Rotation(m_vRot);
     maths::CVector3 vForward = (mRotMatrix * maths::CVector3::Forward).Normalized();
     maths::CVector3 vRight = (mRotMatrix * maths::CVector3::Right).Normalized();
 
+    input::CInputManager* pInputManager = input::CInputManager::GetInstance();
     if (pInputManager->IsKeyPressed('W')) MovePosition(vForward * m_fMovementSpeed * _fDeltaTime);
     if (pInputManager->IsKeyPressed('S')) MovePosition(-vForward * m_fMovementSpeed * _fDeltaTime);
     if (pInputManager->IsKeyPressed('D')) MovePosition(vRight * m_fMovementSpeed * _fDeltaTime);
     if (pInputManager->IsKeyPressed('A')) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
 
-    // Movimiento del ratón
+    // Show cursor
+    input::CMouse* pMouse = pInputManager->GetMouse();
     bool bMousePressed = pMouse->IsRightButtonPressed();
     ShowCursor(bMousePressed);
 
+    // Rotation
     float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed * _fDeltaTime;
     float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed * _fDeltaTime;
     AddRotation(bMousePressed ? maths::CVector3(yValue, xValue, 0.0f) : maths::CVector3::Zero);
 
-    // Actualización de matrices
-    UpdatePerspectiveMatrix(); // Asegúrate de que actualiza solo la proyección
-    maths::CMatrix4x4 mViewProjection = m_mViewMatrix * m_mProjectionMatrix;
+    // Update perspective matrix
+    UpdatePerspectiveMatrix();
 
-    // Actualización del buffer constante
+    // Update constant buffer
+    maths::CMatrix4x4 mViewProjection = m_mViewMatrix * m_mProjectionMatrix;
     m_oConstantBuffer.GetData().mMatrix = maths::CMatrix4x4::Transpose(mViewProjection);
-    assert(m_oConstantBuffer.UpdateBuffer() && "Failed to update constant buffer.");
+    m_oConstantBuffer.UpdateBuffer();
 
     ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
     global::dx11::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);

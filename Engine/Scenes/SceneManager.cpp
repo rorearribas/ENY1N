@@ -8,6 +8,7 @@ namespace scene
   {
     CreateScenes();
   }
+
   // ------------------------------------
   CSceneManager::~CSceneManager()
   {
@@ -30,6 +31,11 @@ namespace scene
     {
       _pScene->SetSceneEnabled(false);
     });
+  }
+  // ------------------------------------
+  void CSceneManager::Update(float _fDeltaTime)
+  {
+
   }
   // ------------------------------------
   void CSceneManager::SetSceneEnabled(const UINT32& _uIndex, bool _bEnabled) const
