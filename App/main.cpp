@@ -8,17 +8,26 @@
 #include "Engine/Input/InputManager.h"
 #include "Libs/Time/TimeManager.h"
 #include "Libs/ImGui/imgui_internal.h"
+#include "Game/GameManager/GameManager.h"
+#include "Reflection/Types/Game/Entity.h"
+#include "Game/ETT/Components/ModelComponent/ModelComponent.h"
 
 #define WIDTH 1920
 #define HEIGHT 1080
 
 int main()
 {
+  game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->InitEngine(WIDTH, HEIGHT);
 
-  tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
+  tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
+  pTimeManager->SetMaxFPS(144);
+
+  game::CEntity* pEntity = pGameManager->CreateEntity("Test");
+  pEntity->RegisterComponent<game::CModelComponent>();
+  game::CModelComponent* pComponent = pEntity->GetComponent<game::CModelComponent>();
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -35,7 +44,10 @@ int main()
     }
     else
     {
+      // Compute delta time
       pTimeManager->BeginFrame();
+      // Begin draw
+      pEngine->BeginDraw();
 
       // Calculate 
       float fDeltaTime = pTimeManager->GetDeltaTime();
@@ -46,16 +58,24 @@ int main()
       while (m_fFixedDeltaAccumulator >= pTimeManager->GetFixedDelta())
       {
         pEngine->Update(pTimeManager->GetFixedDelta());
-        pInputManager->Flush();
+        pGameManager->Update(pTimeManager->GetFixedDelta());
 
+        pInputManager->Flush();
         m_fFixedDeltaAccumulator -= pTimeManager->GetFixedDelta();
       }
 
-      // Begin draw
-      pEngine->BeginDraw();
-
       // Draw
-      pEngine->Draw();
+      pEngine->DrawScene();
+
+      const maths::CVector3 vRot(1.0f * pTimeManager->GetFixedDelta(), 0.0f, 0.0f);
+      pEntity->AddRotation(vRot);
+
+      if (ImGui::Button("Move actor"))
+      {
+        const maths::CVector3 v3Dir(5.0f, 0.0f, 0.0f);
+        pEntity->MovePosition(v3Dir);
+        pTimeManager->SetMaxFPS(999);
+      }
 
       // Imgui utils
       if (ImGui::Button("Set max fps to unlimited"))

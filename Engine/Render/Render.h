@@ -29,10 +29,8 @@ namespace render
     ~CRender();
 
     void BeginDraw();
-    void Draw(scene::CScene* _pScene);
     void EndDraw();
 
-    void Update(float _fDeltaTime);
     render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
     render::CCamera* GetCamera() const { return m_pCamera; }
 
@@ -40,7 +38,6 @@ namespace render
     bool IsVSyncEnabled() { return m_bVerticalSync; }
 
   private:
-    void ImGui();
     void OnWindowResizeEvent(UINT32 _uX, UINT32 _uY);
 
     HRESULT Init(UINT32 _uX, UINT32 _uY);
@@ -53,8 +50,6 @@ namespace render
 
     void ConfigureViewport(UINT32 _uX, UINT32 _uY);
     void SetScissorRect(UINT32 _uX, UINT32 _uY);
-
-    void SetupCamera();
     bool InitImGui();
 
     // Render camera

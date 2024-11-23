@@ -17,7 +17,7 @@ namespace maths
 
     void SetRotation(const maths::CVector3& _v3Rotation);
     void AddRotation(const maths::CVector3& _v3Delta);
-    const maths::CVector3& GetRotation() const { return m_vPosition; }
+    const maths::CVector3& GetRotation() const { return m_vRotate; }
 
     void SetScale(const maths::CVector3& _v3Scale);
     const maths::CVector3& GetScale() const { return m_vScale; }
@@ -28,11 +28,11 @@ namespace maths
     void UpdateScaleMatrix();
 
     maths::CVector3 m_vPosition = maths::CVector3::Zero;
-    maths::CVector3 m_vScale = maths::CVector3::Zero;
     maths::CVector3 m_vRotate = maths::CVector3::Zero;
+    maths::CVector3 m_vScale = maths::CVector3::Zero;
 
     maths::CMatrix4x4 m_mTranslate = maths::CMatrix4x4::Identity;
-    maths::CMatrix4x4 m_mScale = maths::CMatrix4x4::Identity;
     maths::CMatrix4x4 m_mRotate = maths::CMatrix4x4::Identity;
+    maths::CMatrix4x4 m_mScale = maths::CMatrix4x4::Identity;
   };
 }

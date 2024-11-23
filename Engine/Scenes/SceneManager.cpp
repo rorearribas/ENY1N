@@ -25,17 +25,17 @@ namespace scene
     });
   }
   // ------------------------------------
+  void CSceneManager::Draw()
+  {
+    m_pCurrentScene->DrawScene();
+  }
+  // ------------------------------------
   void CSceneManager::DisableAllScenes() const
   {
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene* _pScene)
     {
       _pScene->SetSceneEnabled(false);
     });
-  }
-  // ------------------------------------
-  void CSceneManager::Update(float _fDeltaTime)
-  {
-
   }
   // ------------------------------------
   void CSceneManager::SetSceneEnabled(const UINT32& _uIndex, bool _bEnabled) const

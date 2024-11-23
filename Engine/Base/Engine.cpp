@@ -28,12 +28,25 @@ namespace engine
     // Create render
     m_pRender = std::make_unique<render::CRender>(_uWidth, _uHeight);
 
+    // Create camera
+    m_pCamera = std::make_unique<render::CCamera>();
+    m_pCamera->SetPosition({ 0.0f, 0.0f, -10.0f });
+
     // Create scene manager
     m_pSceneManager = std::make_unique<scene::CSceneManager>();
     m_pSceneManager->SetSceneEnabled(0, true);
 
+    // Set delegate
+    utils::CDelegate<void(UINT32, UINT32)> oResizeDelegate(&CEngine::OnWindowResizeEvent, this);
+    global::delegates::s_vctWindowsResizeDelegates.push_back(oResizeDelegate);
+
     // Marked as initialized
     m_bInitialized = true;
+  }
+  // ------------------------------------
+  void CEngine::OnWindowResizeEvent(UINT32 _uX, UINT32 _uY)
+  {
+    m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
   }
   // ------------------------------------
   void CEngine::BeginDraw()
@@ -41,10 +54,31 @@ namespace engine
     // Begin
     m_pRender->BeginDraw();
   }
-  void CEngine::Draw()
+  void CEngine::DrawScene()
   {
-    // Draw the current scene
-    m_pRender->Draw(m_pSceneManager->GetCurrentScene());
+    // Draw the current scene using the scene manager
+    if (m_pSceneManager->GetCurrentScene())
+    {
+      m_pSceneManager->Draw();
+    }
+
+    // Test
+    ImGui::Begin("Handler");
+
+    if (ImGui::Button("Destroy all primitives"))
+    {
+      engine::CEngine::GetInstance()->DestroyAllPrimimitives();
+    }
+    if (ImGui::Button("Fov 90"))
+    {
+      m_pCamera->SetFov(90.0f);
+    }
+    if (ImGui::Button("Fov 45"))
+    {
+      m_pCamera->SetFov(45.0f);
+    }
+
+    ImGui::End();
   }
   // ------------------------------------
   void CEngine::EndDraw()
@@ -55,8 +89,8 @@ namespace engine
   // ------------------------------------
   void CEngine::Update(float _fDeltaTime)
   {
-    // Update
-    m_pRender->Update(_fDeltaTime);
+    // Update camera
+    m_pCamera->Update(_fDeltaTime);
   }
   // ------------------------------------
   render::primitive::CPrimitive* CEngine::CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)

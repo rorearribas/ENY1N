@@ -113,7 +113,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,7 +129,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -139,14 +139,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="ETT\Components\Base\Component.h" />
+    <ClInclude Include="ETT\Components\Component.h" />
     <ClInclude Include="ETT\Entity.h" />
     <ClInclude Include="GameManager\GameManager.h" />
+    <ClInclude Include="ETT\Components\ModelComponent\ModelComponent.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ETT\Components\Base\Component.cpp" />
+    <ClCompile Include="ETT\Components\Component.cpp" />
     <ClCompile Include="ETT\Entity.cpp" />
     <ClCompile Include="GameManager\GameManager.cpp" />
+    <ClCompile Include="ETT\Components\ModelComponent\ModelComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

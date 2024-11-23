@@ -31,7 +31,6 @@ namespace render
 
     void MovePosition(const maths::CVector3& pos);
     void AddRotation(const maths::CVector3& rot);
-
     void SetLookAtPos(const maths::CVector3& _v3LookAtPos);
 
   private:

@@ -21,7 +21,10 @@
     <ClInclude Include="ETT\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ETT\Components\Base\Component.h">
+    <ClInclude Include="ETT\Components\Component.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ETT\Components\ModelComponent\ModelComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,7 +35,10 @@
     <ClCompile Include="ETT\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ETT\Components\Base\Component.cpp">
+    <ClCompile Include="ETT\Components\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ETT\Components\ModelComponent\ModelComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

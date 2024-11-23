@@ -13,9 +13,6 @@ namespace render
     static const float s_fMaxDepth(1.0f);
   }
   // ------------------------------------
-
-  static render::primitive::CPrimitive* pPrimitive = nullptr;
-
   CRender::CRender(UINT32 _uX, UINT32 _uY)
   {
     // Create render window
@@ -49,15 +46,13 @@ namespace render
     // Init ImGui
     if (!InitImGui()) return -1;
 
-    // Setup camera
-    SetupCamera();
-
     // Setup basic pipeline
     hr = InitBasicPipeline(_uX, _uY);
     if (FAILED(hr)) return hr;
 
     // Set delegate
-    global::delegates::s_oWindowResizeDelegate.Bind(&CRender::OnWindowResizeEvent, this);
+    utils::CDelegate<void(UINT32, UINT32)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
+    global::delegates::s_vctWindowsResizeDelegates.push_back(oResizeDelegate);
 
     return S_OK;
   }
@@ -81,9 +76,6 @@ namespace render
 
     // Update scissor
     SetScissorRect(_uX, _uY);
-
-    // Set valid aspect ratio
-    m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY))); 
     
     return hr;
   }
@@ -96,12 +88,6 @@ namespace render
     oScissorRect.right = static_cast<LONG>(_uX);
     oScissorRect.bottom = static_cast<LONG>(_uY);
     global::dx11::s_pDeviceContext->RSSetScissorRects(1, &oScissorRect);
-  }
-  // ------------------------------------
-  void CRender::SetupCamera()
-  {
-    m_pCamera = new render::CCamera();
-    m_pCamera->SetPosition(maths::CVector3(0.0f, 0.0f, -10.0f));
   }
   // ------------------------------------
   bool CRender::InitImGui()
@@ -284,73 +270,14 @@ namespace render
     global::dx11::s_pDeviceContext->ClearRenderTargetView(m_oRenderingResources.m_pRenderTargetView, background_color);
     global::dx11::s_pDeviceContext->ClearDepthStencilView(m_oRenderingResources.m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    // Update resources
-    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &m_oRenderingResources.m_pRenderTargetView, m_oRenderingResources.m_pDepthStencilView);
-    global::dx11::s_pDeviceContext->OMSetDepthStencilState(m_oRenderingResources.m_pDepthStencilState, 1);
-    global::dx11::s_pDeviceContext->RSSetState(m_oRenderingResources.m_pRasterizerState);
-
     // Prepare imgui new frame
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
   }
   // ------------------------------------
-  void CRender::Draw(scene::CScene* _pScene)
-  {
-    // Draw scene
-    _pScene->DrawScene();
-
-    // Draw imgui
-    ImGui();
-  }
-  // ------------------------------------
   void CRender::EndDraw()
   {
-    // End imgui draw
-    ImGui::Render();
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-
-    // Draw the current frame
-    m_oRenderingResources.m_pSwapChain->Present(m_bVerticalSync, 0);
-  }
-  // ------------------------------------
-  void CRender::Update(float _fDeltaTime)
-  {
-    m_pCamera->Update(_fDeltaTime);
-    if (pPrimitive)
-    {
-      pPrimitive->AddRotation({ 0.0f, 1.0f * _fDeltaTime, 0.0f });
-    }
-  }
-  // ------------------------------------
-  void CRender::ImGui()
-  {
-    ImGui::ShowDemoWindow();
-
-    // Test
-    ImGui::Begin("Handler");
-
-    if (ImGui::Button("Create primitives"))
-    {
-      pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::CUBE);
-      pPrimitive->SetPosition(maths::CVector3(3.0f, 0.0f, 0.0f));
-      pPrimitive->SetScale({ 1.0f, 1.0f, 1.0f });
-
-      render::primitive::CPrimitive* pPrimitive2 = engine::CEngine::GetInstance()->CreatePrimitive(render::primitive::CPrimitive::TRIANGLE);
-      pPrimitive2->SetColor(maths::CVector3(1.0f, 0.0f, 0.0f));
-    }
-    if (ImGui::Button("Destroy all primitives"))
-    {
-      engine::CEngine::GetInstance()->DestroyAllPrimimitives();
-    }
-    if (ImGui::Button("Fov 90"))
-    {
-      m_pCamera->SetFov(90.0f);
-    }
-    if (ImGui::Button("Fov 45"))
-    {
-      m_pCamera->SetFov(45.0f);
-    }
     if (ImGui::Button("Show wireframe"))
     {
       CreateRasterizerState(D3D11_FILL_WIREFRAME);
@@ -360,6 +287,16 @@ namespace render
       CreateRasterizerState(D3D11_FILL_SOLID);
     }
 
-    ImGui::End();
+    // Update resources
+    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &m_oRenderingResources.m_pRenderTargetView, m_oRenderingResources.m_pDepthStencilView);
+    global::dx11::s_pDeviceContext->OMSetDepthStencilState(m_oRenderingResources.m_pDepthStencilState, 1);
+    global::dx11::s_pDeviceContext->RSSetState(m_oRenderingResources.m_pRasterizerState);
+
+    // End imgui draw
+    ImGui::Render();
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
+    // Draw the current frame
+    m_oRenderingResources.m_pSwapChain->Present(m_bVerticalSync, 0);
   }
 }

@@ -14,9 +14,9 @@ namespace utils
   public:
     CDelegate() {};
     template<typename Object>
-    CDelegate(Object* objectPtr, RETURN_TYPE(Object::* Method)(Args...))
+    CDelegate(RETURN_TYPE(Object::* MemberFunction)(Args...), Object* _pObject)
     {
-      Bind(objectPtr, Method);
+      Bind(MemberFunction, _pObject);
     }
 
     inline RETURN_TYPE Execute(Args... args) const

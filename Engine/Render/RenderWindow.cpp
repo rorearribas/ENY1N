@@ -32,7 +32,11 @@ namespace render
         {
           UINT uWindowX = (UINT)(LOWORD(_lParam));
           UINT uWindowY = (UINT)(HIWORD(_lParam));
-          global::delegates::s_oWindowResizeDelegate.Execute(uWindowX, uWindowY);
+          for (auto& oDelegate : global::delegates::s_vctWindowsResizeDelegates)
+          {
+            if (!oDelegate.IsValid()) continue;
+            oDelegate.Execute(uWindowX, uWindowY);
+          }
         }
       }
       break;

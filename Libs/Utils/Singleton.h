@@ -9,7 +9,9 @@ namespace utils
   public:
     static T* CreateSingleton();
     static T* GetInstance();
+
     static void DestroySingleton();
+    static bool HasSingleton() { return m_pInstance; }
 
   protected:
     CSingleton() {}
