@@ -22,12 +22,12 @@ namespace input
     assert(bOk);
 
     // Bind delegate
-    global::delegates::s_oOnUpdateMouseDelegate.Bind(&CMouse::OnUpdateMouse, this);
+    global::delegates::s_oUpdateMouseDelegate.Bind(&CMouse::OnUpdateMouse, this);
   }
   // ------------------------------------
   CMouse::~CMouse()
   {
-    global::delegates::s_oOnUpdateMouseDelegate.Clear();
+    global::delegates::s_oUpdateMouseDelegate.Clear();
   }
   // ------------------------------------
   const maths::CVector2 CMouse::GetMouseDelta() const

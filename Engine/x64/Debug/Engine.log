@@ -1,6 +1,10 @@
-﻿  AABB.cpp
-  DirectionalLight.cpp
+﻿  Engine.cpp
+  Camera.cpp
   GlobalResources.cpp
-  PointLight.cpp
+  InputManager.cpp
+  Primitive.cpp
+  Render.cpp
+  RenderWindow.cpp
+  Scene.cpp
   Generating Code...
   Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Debug\Engine.lib

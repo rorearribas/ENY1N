@@ -1,2 +1,19 @@
-﻿  InputManager.cpp
-  Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Release\Engine.lib
+﻿  AABB.cpp
+  Engine.cpp
+  Camera.cpp
+  DirectionalLight.cpp
+  GlobalResources.cpp
+  InputManager.cpp
+D:\Projects\Personal\ENY1N\Engine\Input\InputManager.cpp(21,10): error C2220: the following warning is treated as an error
+D:\Projects\Personal\ENY1N\Engine\Input\InputManager.cpp(21,10): warning C4189: 'bOk': local variable is initialized but not referenced
+D:\Projects\Personal\ENY1N\Engine\Input\InputManager.cpp(94,10): warning C4189: 'bOk': local variable is initialized but not referenced
+  PointLight.cpp
+  Primitive.cpp
+D:\Projects\Personal\ENY1N\Engine\Render\Primitives\Primitive.cpp(165,15): error C2220: the following warning is treated as an error
+D:\Projects\Personal\ENY1N\Engine\Render\Primitives\Primitive.cpp(165,15): warning C4189: 'hr': local variable is initialized but not referenced
+  Render.cpp
+D:\Projects\Personal\ENY1N\Engine\Render\Render.cpp(21,13): error C2220: the following warning is treated as an error
+D:\Projects\Personal\ENY1N\Engine\Render\Render.cpp(21,13): warning C4189: 'hr': local variable is initialized but not referenced
+  RenderWindow.cpp
+  SceneManager.cpp
+  Scene.cpp

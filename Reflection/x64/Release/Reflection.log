@@ -1,6 +1,5 @@
-﻿  Entity.cpp
+﻿  Type.cpp
   Functions.cpp
-  Property.cpp
-  Type.cpp
+  Entity.cpp
   TypeManager.cpp
   Reflection.vcxproj -> D:\Projects\Personal\ENY1N\Reflection\x64\Release\Reflection.lib

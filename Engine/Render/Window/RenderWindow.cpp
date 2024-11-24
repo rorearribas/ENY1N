@@ -58,7 +58,7 @@ namespace render
         RAWINPUT* pRawInput = reinterpret_cast<RAWINPUT*>(pRawInputData.get());
         if (pRawInput && pRawInput->header.dwType == RIM_TYPEMOUSE)
         {
-          global::delegates::s_oOnUpdateMouseDelegate.Execute(&pRawInput->data.mouse);
+          global::delegates::s_oUpdateMouseDelegate.Execute(&pRawInput->data.mouse);
         }
         else if (pRawInput && pRawInput->header.dwType == RIM_TYPEKEYBOARD)
         {

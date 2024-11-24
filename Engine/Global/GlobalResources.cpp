@@ -17,6 +17,6 @@ namespace global
   {
     std::vector<utils::CDelegate<void(UINT32, UINT32)>> s_vctOnWindowResizeDelegates;
     utils::CDelegate<void(RAWKEYBOARD*)> s_oOnUpdateKeyboardDelegate = {};
-    utils::CDelegate<void(RAWMOUSE*)> s_oOnUpdateMouseDelegate = {};
+    utils::CDelegate<void(RAWMOUSE*)> s_oUpdateMouseDelegate = {};
   }
 }
