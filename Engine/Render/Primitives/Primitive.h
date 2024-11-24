@@ -24,17 +24,12 @@ namespace render
       CPrimitive(const std::vector<SPrimitiveInfo>& _vctVertexData);
       ~CPrimitive();
 
-      // Draw primitive
-      void Draw();
+      void DrawPrimitive();
 
       void SetPosition(const maths::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
-      void MovePosition(const maths::CVector3& _v3Delta) { m_oTransform.MovePosition(_v3Delta); }
       const maths::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-
       void SetRotation(const maths::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
-      void AddRotation(const maths::CVector3 _v3Delta) { m_oTransform.AddRotation(_v3Delta); }
       const maths::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-
       void SetScale(const maths::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
       const maths::CVector3& GetScale() const { return m_oTransform.GetScale(); }
       void SetColor(const maths::CVector3& _v3Color);

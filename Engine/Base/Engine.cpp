@@ -38,7 +38,7 @@ namespace engine
 
     // Set delegate
     utils::CDelegate<void(UINT32, UINT32)> oResizeDelegate(&CEngine::OnWindowResizeEvent, this);
-    global::delegates::s_vctWindowsResizeDelegates.push_back(oResizeDelegate);
+    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
 
     // Marked as initialized
     m_bInitialized = true;

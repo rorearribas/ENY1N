@@ -17,12 +17,14 @@ namespace game
 
     void Update(float _fDeltaTime);
 
+    void SetDebugMode(bool _bStatus) { m_bDebugMode = _bStatus; }
     CEntity* CreateEntity(const char* _sEntityName);
     bool DestroyEntity(const char* _sEntityName);
 
   private:
     void DestroyAllEntities();
 
+    bool m_bDebugMode = false;
     int m_iRegisteredEntities = 0;
     TEntitiesList m_vctEntitiesList = {};
   };

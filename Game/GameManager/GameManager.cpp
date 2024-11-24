@@ -16,6 +16,8 @@ namespace game
       if (pEntity)
       {
         pEntity->Update(_fDeltaTime);
+        if (!m_bDebugMode) continue;
+        pEntity->DrawDebug();
       }
     }
   }

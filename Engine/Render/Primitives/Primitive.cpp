@@ -162,7 +162,9 @@ namespace render
     {
       // Map
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
-      HRESULT hResult = global::dx11::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      HRESULT hr = global::dx11::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      assert(!FAILED(hr));
+
       CPrimitive::SPrimitiveInfo* pPrimitiveInfo = (CPrimitive::SPrimitiveInfo*)(oMappedSubresource.pData);
       assert(pPrimitiveInfo);
 
@@ -252,7 +254,7 @@ namespace render
       return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
-    void CPrimitive::Draw()
+    void CPrimitive::DrawPrimitive()
     {
       // Set general data
       UINT uVertexStride = sizeof(render::primitive::CPrimitive::SPrimitiveInfo);

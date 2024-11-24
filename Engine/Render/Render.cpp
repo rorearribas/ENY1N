@@ -52,7 +52,7 @@ namespace render
 
     // Set delegate
     utils::CDelegate<void(UINT32, UINT32)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
-    global::delegates::s_vctWindowsResizeDelegates.push_back(oResizeDelegate);
+    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
 
     return S_OK;
   }

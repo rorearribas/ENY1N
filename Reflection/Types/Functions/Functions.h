@@ -11,7 +11,7 @@ class CFunction<RETURN_TYPE(Object::*)(Args...)>;
 class CFunctionBase
 {
 public:
-  CFunctionBase(void* pInternalPtr, void* _pPtrClass, const char* _sFunctionName)
+  CFunctionBase(void* pInternalPtr, void* /*_pPtrClass*/, const char* _sFunctionName)
   : m_pInternalFunction(pInternalPtr), m_sFunctionName(_sFunctionName) {}
   virtual ~CFunctionBase() = default;
 

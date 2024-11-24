@@ -91,13 +91,8 @@ namespace tick
 
     // Get current tick count
     QueryPerformanceCounter(&m_llCurrentTickCount);
-    uint64_t elapsedTicks = m_llCurrentTickCount.QuadPart - m_llPrevTime.QuadPart;
 
-    // Get current frequency
-    LARGE_INTEGER lFrequency;
-    QueryPerformanceFrequency(&lFrequency);
-    double elapsedTimeSeconds = static_cast<double>(elapsedTicks) / lFrequency.QuadPart;
-
+    // Compute tick
     m_oBeginFrame = std::chrono::steady_clock::now();
     m_fDeltaTime = std::chrono::duration<float>(m_oBeginFrame - m_oEndFrame).count();
     m_oEndFrame = m_oBeginFrame;
@@ -108,7 +103,7 @@ namespace tick
     if (m_bStopped)
       return;
 
-    // Wait max FPS
+    // Wait max fps
     while ((m_llCurrentTickCount.QuadPart - m_llPrevTime.QuadPart) < m_llTargetTick)
     {
       QueryPerformanceCounter(&m_llCurrentTickCount);

@@ -23,7 +23,7 @@ namespace scene
     for (int iIndex = 0; iIndex < m_iRegisteredPrimitives; iIndex++)
     {
       render::primitive::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[iIndex];
-      pPrimitiveItem->Draw();
+      pPrimitiveItem->DrawPrimitive();
     }
   }
   // ------------------------------------

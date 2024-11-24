@@ -45,7 +45,7 @@ namespace render
     maths::CVector3 m_vPos = maths::CVector3::Zero;
     maths::CVector3 m_vRot = maths::CVector3::Zero;
 
-    float m_fCameraSpeed = 10.0f;
+    float m_fCameraSpeed = 20.0f;
     float m_fMovementSpeed = 20.0f;
 
     float m_fFov = 45.0f;

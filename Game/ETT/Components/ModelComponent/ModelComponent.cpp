@@ -1,5 +1,6 @@
 #include "ModelComponent.h"
 #include "Engine/Base/Engine.h"
+#include <cassert>
 
 namespace game
 {
@@ -9,27 +10,60 @@ namespace game
     {
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
       m_pPrimitive = pEngine->CreatePrimitive(render::primitive::CPrimitive::CUBE);
+      assert(m_pPrimitive);
     }
   }
   // ------------------------------------
-  void CModelComponent::Update(float /*_fDeltaTime*/)
+  CModelComponent::~CModelComponent()
   {
-    SetPosition(m_pOwner->GetPosition());
-    SetRotation(m_pOwner->GetRotation());
+    if (m_pPrimitive && engine::CEngine::HasSingleton())
+    {
+      engine::CEngine* pEngine = engine::CEngine::GetInstance();
+      pEngine->DestroyPrimitive(m_pPrimitive);
+    }
+  }
+  // ------------------------------------
+  void CModelComponent::Update(float _fDeltaTime)
+  {
+    Super::Update(_fDeltaTime);
+  }
+  // ------------------------------------
+  void CModelComponent::OnPositionChanged(const maths::CVector3& _v3Pos)
+  {
+    SetPosition(_v3Pos);
+  }
+  // ------------------------------------
+  void CModelComponent::OnRotationChanged(const maths::CVector3& _v3Rot)
+  {
+    SetRotation(_v3Rot);
+  }
+  // ------------------------------------
+  void CModelComponent::OnScaleChanged(const maths::CVector3& _v3Scale)
+  {
+    SetRotation(_v3Scale);
   }
   // ------------------------------------
   void CModelComponent::SetPosition(const maths::CVector3& _v3Position)
   {
-    m_pPrimitive->SetPosition(_v3Position);
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetPosition(_v3Position);
+    }
   }
   // ------------------------------------
   void CModelComponent::SetRotation(const maths::CVector3& _v3Rot)
   {
-    m_pPrimitive->SetRotation(_v3Rot);
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetRotation(_v3Rot);
+    }
   }
   // ------------------------------------
   void CModelComponent::SetScale(const maths::CVector3& _v3Scale)
   {
-    m_pPrimitive->SetScale(_v3Scale);
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetScale(_v3Scale);
+    }
   }
 }

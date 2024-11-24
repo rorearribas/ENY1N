@@ -21,7 +21,7 @@
     <ClInclude Include="Render\Render.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderWindow.h">
+    <ClInclude Include="Render\Window\RenderWindow.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\Primitives\Primitive.h">
@@ -45,6 +45,15 @@
     <ClInclude Include="Render\ConstantBuffer\ConstantBuffer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Lights\PointLight.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Lights\DirectionalLight.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\AABB.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp">
@@ -53,7 +62,7 @@
     <ClCompile Include="Render\Render.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderWindow.cpp">
+    <ClCompile Include="Render\Window\RenderWindow.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Primitives\Primitive.cpp">
@@ -72,6 +81,15 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Input\InputManager.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Lights\PointLight.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Lights\DirectionalLight.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\AABB.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

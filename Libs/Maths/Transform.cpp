@@ -9,12 +9,6 @@ namespace maths
     UpdateTranslateMatrix();
   }
   // ------------------------------------
-  void CTransform::MovePosition(const maths::CVector3& _v3Delta)
-  {
-    m_vPosition += _v3Delta;
-    UpdateTranslateMatrix();
-  }
-  // ------------------------------------
   void CTransform::SetScale(const maths::CVector3& _v3Scale)
   {
     m_vScale = _v3Scale;
@@ -24,12 +18,6 @@ namespace maths
   void CTransform::SetRotation(const maths::CVector3& _v3Rotation)
   {
     m_vRotate = _v3Rotation;
-    UpdateRotateMatrix();
-  }
-  // ------------------------------------
-  void CTransform::AddRotation(const maths::CVector3& _v3Delta)
-  {
-    m_vRotate += _v3Delta;
     UpdateRotateMatrix();
   }
   // ------------------------------------

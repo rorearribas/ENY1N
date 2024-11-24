@@ -4,7 +4,7 @@
 
 namespace maths
 {
-  class __declspec(align(16)) CMatrix4x4
+  class CMatrix4x4
   {
     static constexpr int s_iMatrixSize = 4;
 

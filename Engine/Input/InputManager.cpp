@@ -22,12 +22,12 @@ namespace input
     assert(bOk);
 
     // Bind delegate
-    global::delegates::s_oUpdateMouseDelegate.Bind(&CMouse::OnUpdateMouse, this);
+    global::delegates::s_oOnUpdateMouseDelegate.Bind(&CMouse::OnUpdateMouse, this);
   }
   // ------------------------------------
   CMouse::~CMouse()
   {
-    global::delegates::s_oUpdateMouseDelegate.Clear();
+    global::delegates::s_oOnUpdateMouseDelegate.Clear();
   }
   // ------------------------------------
   const maths::CVector2 CMouse::GetMouseDelta() const
@@ -98,7 +98,7 @@ namespace input
     RegisterKeys();
 
     // Bind delegate
-    global::delegates::s_oUpdateKeyboardDelegate.Bind(&CInputManager::OnUpdateKeyboard, this);
+    global::delegates::s_oOnUpdateKeyboardDelegate.Bind(&CInputManager::OnUpdateKeyboard, this);
   }
   void CInputManager::RegisterKeys()
   {

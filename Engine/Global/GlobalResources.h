@@ -4,6 +4,11 @@
 
 namespace global
 {
+  namespace window
+  {
+    extern HWND s_oHwnd;
+  }
+
   namespace dx11
   {
     extern ID3D11Device* s_pDevice;
@@ -20,16 +25,11 @@ namespace global
     }
   }
 
-  namespace window
-  {
-    extern HWND s_oHwnd;
-  }
-
   namespace delegates
   {
-    extern std::vector< utils::CDelegate<void(UINT32, UINT32)>> s_vctWindowsResizeDelegates;
-    extern utils::CDelegate<void(RAWKEYBOARD*)> s_oUpdateKeyboardDelegate;
-    extern utils::CDelegate<void(RAWMOUSE*)> s_oUpdateMouseDelegate;
+    extern std::vector< utils::CDelegate<void(UINT32, UINT32)>> s_vctOnWindowResizeDelegates;
+    extern utils::CDelegate<void(RAWKEYBOARD*)> s_oOnUpdateKeyboardDelegate;
+    extern utils::CDelegate<void(RAWMOUSE*)> s_oOnUpdateMouseDelegate;
   }
 }
 

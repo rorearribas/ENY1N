@@ -27,7 +27,6 @@ int main()
 
   game::CEntity* pEntity = pGameManager->CreateEntity("Test");
   pEntity->RegisterComponent<game::CModelComponent>();
-  game::CModelComponent* pComponent = pEntity->GetComponent<game::CModelComponent>();
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -59,7 +58,6 @@ int main()
       {
         pEngine->Update(pTimeManager->GetFixedDelta());
         pGameManager->Update(pTimeManager->GetFixedDelta());
-
         pInputManager->Flush();
         m_fFixedDeltaAccumulator -= pTimeManager->GetFixedDelta();
       }
@@ -68,19 +66,22 @@ int main()
       pEngine->DrawScene();
 
       const maths::CVector3 vRot(1.0f * pTimeManager->GetFixedDelta(), 0.0f, 0.0f);
-      pEntity->AddRotation(vRot);
+      maths::CVector3 vCurrentRotation = pEntity->GetRotation();
+      pEntity->SetRotation(vCurrentRotation + vRot);
+
+      ImGui::ShowDemoWindow();
 
       if (ImGui::Button("Move actor"))
       {
+        maths::CVector3 v3Pos = pEntity->GetPosition();
         const maths::CVector3 v3Dir(5.0f, 0.0f, 0.0f);
-        pEntity->MovePosition(v3Dir);
-        pTimeManager->SetMaxFPS(999);
+        pEntity->SetPosition(v3Pos + v3Dir);
       }
 
       // Imgui utils
       if (ImGui::Button("Set max fps to unlimited"))
       {
-        pTimeManager->SetMaxFPS(999);
+        pTimeManager->SetMaxFPS(9999);
       }
       if (ImGui::Button("Set max fps to 144"))
       {
@@ -102,6 +103,7 @@ int main()
   }
 
   pEngine->DestroySingleton();
+  pGameManager->DestroySingleton();
   pTimeManager->DestroySingleton();
   pInputManager->DestroySingleton();
 }
