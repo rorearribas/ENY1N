@@ -1,2 +1,5 @@
-﻿  GameManager.cpp
+﻿  ModelComponent.cpp
+  Entity.cpp
+  GameManager.cpp
+  Generating Code...
   Game.vcxproj -> D:\Projects\Personal\ENY1N\Game\x64\Debug\Game.lib

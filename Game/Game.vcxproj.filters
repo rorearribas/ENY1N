@@ -35,9 +35,6 @@
     <ClCompile Include="ETT\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ETT\Components\Component.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ETT\Components\ModelComponent\ModelComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

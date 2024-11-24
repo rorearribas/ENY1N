@@ -147,7 +147,6 @@
     <ClInclude Include="ETT\Components\ModelComponent\ModelComponent.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ETT\Components\Component.cpp" />
     <ClCompile Include="ETT\Entity.cpp" />
     <ClCompile Include="GameManager\GameManager.cpp" />
     <ClCompile Include="ETT\Components\ModelComponent\ModelComponent.cpp" />

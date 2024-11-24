@@ -2,6 +2,7 @@
 #include "Libs/Maths/Vector3.h"
 namespace game { class CEntity; }
 
+// Component definition
 namespace game
 {
   class CComponent
