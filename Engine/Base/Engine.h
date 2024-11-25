@@ -5,7 +5,7 @@
 #include "Libs/Utils/Singleton.h"
 
 namespace render { class CCamera; }
-namespace render { namespace primitive { class CPrimitive; } }
+namespace render { namespace graphics { class CPrimitive; } }
 
 namespace engine 
 {
@@ -25,10 +25,10 @@ namespace engine
     const render::CRender* GetRender() const { return m_pRender.get(); }
     const render::CCamera* GetCamera() const { return m_pCamera.get(); }
 
-    render::primitive::CPrimitive* CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
-    render::primitive::CPrimitive* CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
+    render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
+    render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
 
-    void DestroyPrimitive(const render::primitive::CPrimitive* _pPrimitive);
+    void DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive);
     void DestroyAllPrimimitives(const UINT32& _uSceneIndex = 0);
 
   private:

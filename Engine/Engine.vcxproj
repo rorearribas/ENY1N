@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Render\Graphics\Model.h" />
     <ClInclude Include="Physics\AABB.h" />
     <ClInclude Include="Base\Engine.h" />
     <ClInclude Include="Camera\Camera.h" />
@@ -153,13 +154,14 @@
     <ClInclude Include="Input\InputManager.h" />
     <ClInclude Include="Render\Lights\PointLight.h" />
     <ClInclude Include="Render\ConstantBuffer\ConstantBuffer.h" />
-    <ClInclude Include="Render\Primitives\Primitive.h" />
+    <ClInclude Include="Render\Graphics\Primitive.h" />
     <ClInclude Include="Render\Render.h" />
     <ClInclude Include="Render\Window\RenderWindow.h" />
     <ClInclude Include="Scenes\SceneManager.h" />
     <ClInclude Include="Scenes\Scene.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Render\Graphics\Model.cpp" />
     <ClCompile Include="Physics\AABB.cpp" />
     <ClCompile Include="Base\Engine.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
@@ -167,7 +169,7 @@
     <ClCompile Include="Global\GlobalResources.cpp" />
     <ClCompile Include="Input\InputManager.cpp" />
     <ClCompile Include="Render\Lights\PointLight.cpp" />
-    <ClCompile Include="Render\Primitives\Primitive.cpp" />
+    <ClCompile Include="Render\Graphics\Primitive.cpp" />
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Render\Window\RenderWindow.cpp" />
     <ClCompile Include="Scenes\SceneManager.cpp" />

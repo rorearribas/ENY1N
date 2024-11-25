@@ -1,12 +1,11 @@
 #include "Engine.h"
-#include "Engine/Render/Primitives/Primitive.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Input/InputManager.h"
 #include <cassert>
 
 #include <iostream>
-#include <algorithm>
-#include "c:/Users/Ruben/Downloads/imgui-master/imgui.h"
+#include "Libs/ImGui/imgui.h"
+
 namespace engine
 {
   namespace internal_engine
@@ -93,17 +92,17 @@ namespace engine
     m_pCamera->Update(_fDeltaTime);
   }
   // ------------------------------------
-  render::primitive::CPrimitive* CEngine::CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
+  render::graphics::CPrimitive* CEngine::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
   {
     return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_vctVertexData, _uSceneIndex) : nullptr;
   }
   // ------------------------------------
-  render::primitive::CPrimitive* CEngine::CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex /*= 0*/)
+  render::graphics::CPrimitive* CEngine::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex /*= 0*/)
   {
     return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_ePrimitiveType, _uSceneIndex) : nullptr;
   }
   // ------------------------------------
-  void CEngine::DestroyPrimitive(const render::primitive::CPrimitive* _pPrimitive)
+  void CEngine::DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive)
   {
     assert(_pPrimitive);
     m_pSceneManager->DestroyPrimitive(_pPrimitive);

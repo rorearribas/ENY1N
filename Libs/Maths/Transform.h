@@ -9,28 +9,18 @@ namespace maths
     CTransform() {}
     ~CTransform() {}
 
-    maths::CMatrix4x4 ComputeModelMatrix() { return m_mTranslate * (m_mScale * m_mRotate); }
+    const maths::CMatrix4x4 ComputeModelMatrix() const;
 
     void SetPosition(const maths::CVector3& _v3Pos);
-    const maths::CVector3& GetPosition() const { return m_vPosition; }
-
+    const maths::CVector3& GetPosition() const;
     void SetRotation(const maths::CVector3& _v3Rotation);
-    const maths::CVector3& GetRotation() const { return m_vRotate; }
-
+    const maths::CVector3& GetRotation() const;
     void SetScale(const maths::CVector3& _v3Scale);
-    const maths::CVector3& GetScale() const { return m_vScale; }
+    const maths::CVector3& GetScale() const;
 
   private:
-    void UpdateRotateMatrix();
-    void UpdateTranslateMatrix();
-    void UpdateScaleMatrix();
-
-    maths::CMatrix4x4 m_mTranslate = maths::CMatrix4x4::Identity;
-    maths::CMatrix4x4 m_mRotate = maths::CMatrix4x4::Identity;
-    maths::CMatrix4x4 m_mScale = maths::CMatrix4x4::Identity;
-
-    maths::CVector3 m_vPosition = maths::CVector3::Zero;
-    maths::CVector3 m_vRotate = maths::CVector3::Zero;
-    maths::CVector3 m_vScale = maths::CVector3::One;
+    maths::CVector3 m_v3Pos = maths::CVector3::Zero;
+    maths::CVector3 m_v3Rot = maths::CVector3::Zero;
+    maths::CVector3 m_v3Scale = maths::CVector3::One;
   };
 }

@@ -2,7 +2,7 @@
 #include "Engine/Base/Engine.h"
 #include "Libs/Maths/Vector2.h"
 #include "Libs/Maths/Vector3.h"
-#include "Engine/Render/Primitives/Primitive.h"
+#include "Engine/Render/Graphics/Primitive.h"
 #include <random>
 #include "Engine/Scenes/SceneManager.h"
 #include "Engine/Input/InputManager.h"

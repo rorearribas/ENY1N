@@ -1,5 +1,6 @@
 #include "ModelComponent.h"
 #include "Engine/Base/Engine.h"
+#include "Game/ETT/Entity.h"
 #include <cassert>
 
 namespace game
@@ -9,7 +10,7 @@ namespace game
     if (engine::CEngine::HasSingleton())
     {
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      m_pPrimitive = pEngine->CreatePrimitive(render::primitive::CPrimitive::CUBE);
+      m_pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::CUBE);
       assert(m_pPrimitive);
     }
   }
@@ -51,12 +52,22 @@ namespace game
     }
   }
   // ------------------------------------
+  const maths::CVector3& CModelComponent::GetPosition() const
+  {
+    return m_pOwner->GetPosition();
+  }
+  // ------------------------------------
   void CModelComponent::SetRotation(const maths::CVector3& _v3Rot)
   {
     if (m_pPrimitive)
     {
       m_pPrimitive->SetRotation(_v3Rot);
     }
+  }
+  // ------------------------------------
+  const maths::CVector3& CModelComponent::GetRotation() const
+  {
+    return m_pOwner->GetRotation();
   }
   // ------------------------------------
   void CModelComponent::SetScale(const maths::CVector3& _v3Scale)
@@ -66,4 +77,10 @@ namespace game
       m_pPrimitive->SetScale(_v3Scale);
     }
   }
+  // ------------------------------------
+  const maths::CVector3& CModelComponent::GetScale() const
+  {
+    return m_pOwner->GetScale();
+  }
+  // ------------------------------------
 }

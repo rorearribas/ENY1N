@@ -45,21 +45,21 @@ namespace scene
     m_pCurrentScene->SetSceneEnabled(_bEnabled);
   }
   // ------------------------------------
-  render::primitive::CPrimitive* CSceneManager::CreatePrimitive(const std::vector<render::primitive::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
+  render::graphics::CPrimitive* CSceneManager::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
   {
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreatePrimitive(_vctVertexData);
   } 
   // ------------------------------------
-  render::primitive::CPrimitive* CSceneManager::CreatePrimitive(const render::primitive::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex)
+  render::graphics::CPrimitive* CSceneManager::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex)
   {
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreatePrimitive(_ePrimitiveType);
   }
   // ------------------------------------
-  void CSceneManager::DestroyPrimitive(const render::primitive::CPrimitive* _pPrimitive)
+  void CSceneManager::DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive)
   {
     assert(_pPrimitive);
     for (scene::CScene* pScene : m_vctScenes)

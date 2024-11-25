@@ -3,16 +3,28 @@
   "WorkspaceRootPath": "D:\\Projects\\Personal\\ENY1N\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Entity.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\ETT\\Entity.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\Libs\\Time\\TimeManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Time\\TimeManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\Libs\\Time\\TimeManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Time\\TimeManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Transform.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Maths\\Transform.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|D:\\Projects\\Personal\\ENY1N\\App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|solutionrelative:App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\Libs\\Time\\TimeManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Time\\TimeManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|D:\\Projects\\Personal\\ENY1N\\Engine\\Input\\InputManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -23,14 +35,6 @@
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Input\\InputManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Entity.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\ETT\\Entity.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|D:\\Projects\\Personal\\ENY1N\\GAME\\ETT\\COMPONENTS\\COMPONENT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:GAME\\ETT\\COMPONENTS\\COMPONENT.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -39,20 +43,8 @@
       "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\ETT\\Entity.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|D:\\PROJECTS\\PERSONAL\\ENY1N\\LIBS\\MATHS\\TRANSFORM.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:LIBS\\MATHS\\TRANSFORM.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Transform.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Maths\\Transform.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\Primitives\\Primitive.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\Primitives\\Primitive.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|D:\\PROJECTS\\PERSONAL\\ENY1N\\ENGINE\\RENDER\\PRIMITIVES\\PRIMITIVE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:ENGINE\\RENDER\\PRIMITIVES\\PRIMITIVE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Matrix4x4.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -107,16 +99,8 @@
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Global\\GlobalResources.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\RenderWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\RenderWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\LIBS\\UTILS\\DELEGATE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:LIBS\\UTILS\\DELEGATE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|D:\\PROJECTS\\PERSONAL\\ENY1N\\LIBS\\MATHS\\VECTOR2.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:LIBS\\MATHS\\VECTOR2.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\winnt.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
@@ -136,10 +120,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Vector3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Maths\\Vector3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Components\\Component.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\ETT\\Components\\Component.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|D:\\Projects\\Personal\\ENY1N\\Engine\\Base\\Engine.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -167,10 +147,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{3F569F91-B437-4AA5-9C9C-DEDBEAEA94CC}|Reflection\\Reflection.vcxproj|D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\TypeManager\\TypeManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{3F569F91-B437-4AA5-9C9C-DEDBEAEA94CC}|Reflection\\Reflection.vcxproj|solutionrelative:Reflection\\Types\\TypeManager\\TypeManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\RenderWindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\RenderWindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{3F569F91-B437-4AA5-9C9C-DEDBEAEA94CC}|Reflection\\Reflection.vcxproj|D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\Base\\Type.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -224,6 +200,30 @@
     {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\LIBS\\UTILS\\SINGLETON.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:LIBS\\UTILS\\SINGLETON.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|D:\\Projects\\Personal\\ENY1N\\ENGINE\\RENDER\\PRIMITIVES\\PRIMITIVE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:ENGINE\\RENDER\\PRIMITIVES\\PRIMITIVE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\LIBS\\MATHS\\TRANSFORM.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:LIBS\\MATHS\\TRANSFORM.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\RenderWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Engine\\Render\\RenderWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|D:\\Projects\\Personal\\ENY1N\\LIBS\\MATHS\\VECTOR2.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:LIBS\\MATHS\\VECTOR2.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Components\\Component.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Game\\ETT\\Components\\Component.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\RenderWindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Engine\\Render\\RenderWindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -233,7 +233,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Bookmark",
@@ -241,20 +241,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "TimeManager.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Time\\TimeManager.cpp",
               "RelativeDocumentMoniker": "Libs\\Time\\TimeManager.cpp",
               "ToolTip": "D:\\Projects\\Personal\\ENY1N\\Libs\\Time\\TimeManager.cpp",
               "RelativeToolTip": "Libs\\Time\\TimeManager.cpp",
-              "ViewState": "AgIAAFQAAAAAAAAAAAArwF8AAAA1AAAAAAAAAA==",
+              "ViewState": "AgIAAEsAAAAAAAAAAAArwFgAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-11-19T17:01:00.464Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 3,
               "Title": "Transform.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Transform.cpp",
               "RelativeDocumentMoniker": "Libs\\Maths\\Transform.cpp",
@@ -267,20 +267,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
-              "Title": "Matrix4x4.cpp",
-              "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Matrix4x4.cpp",
-              "RelativeDocumentMoniker": "Libs\\Maths\\Matrix4x4.cpp",
-              "ToolTip": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Matrix4x4.cpp",
-              "RelativeToolTip": "Libs\\Maths\\Matrix4x4.cpp",
-              "ViewState": "AgIAAE4AAAAAAAAAAIAxwFwAAAAxAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-26T09:28:55.494Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 51,
               "Title": "Primitive.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\Primitives\\Primitive.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Primitives\\Primitive.h",
@@ -288,12 +275,11 @@
               "RelativeToolTip": "Engine\\Render\\Primitives\\Primitive.h",
               "ViewState": "AgIAABMAAAAAAAAAAAAAAB4AAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-27T19:30:35.235Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-27T19:30:35.235Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "Entity.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Entity.h",
               "RelativeDocumentMoniker": "Game\\ETT\\Entity.h",
@@ -301,25 +287,24 @@
               "RelativeToolTip": "Game\\ETT\\Entity.h",
               "ViewState": "AgIAABUAAAAAAAAAAAArwBwAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T11:19:07.113Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T11:19:07.113Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 1,
               "Title": "ModelComponent.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp",
               "RelativeDocumentMoniker": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp",
               "ToolTip": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp",
               "RelativeToolTip": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp",
-              "ViewState": "AgIAABAAAAAAAAAAAAAgwBwAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAABgAAAAAAAAAAAAAADMAAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-11-23T16:13:48.242Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "InputManager.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Input\\InputManager.h",
               "RelativeDocumentMoniker": "Engine\\Input\\InputManager.h",
@@ -327,12 +312,11 @@
               "RelativeToolTip": "Engine\\Input\\InputManager.h",
               "ViewState": "AgIAABUAAAAAAAAAAIAwwCEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-11T17:43:58.277Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-11T17:43:58.277Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "InputManager.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Input\\InputManager.cpp",
               "RelativeDocumentMoniker": "Engine\\Input\\InputManager.cpp",
@@ -340,12 +324,11 @@
               "RelativeToolTip": "Engine\\Input\\InputManager.cpp",
               "ViewState": "AgIAADQAAAAAAAAAAAAAAD8AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-17T21:22:43.991Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-17T21:22:43.991Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 5,
               "Title": "TimeManager.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Time\\TimeManager.h",
               "RelativeDocumentMoniker": "Libs\\Time\\TimeManager.h",
@@ -353,12 +336,11 @@
               "RelativeToolTip": "Libs\\Time\\TimeManager.h",
               "ViewState": "AgIAABkAAAAAAAAAAAArwCYAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T19:26:23.39Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T19:26:23.39Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 4,
               "Title": "main.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\App\\main.cpp",
               "RelativeDocumentMoniker": "App\\main.cpp",
@@ -371,7 +353,32 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 0,
+              "Title": "Entity.cpp",
+              "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Entity.cpp",
+              "RelativeDocumentMoniker": "Game\\ETT\\Entity.cpp",
+              "ToolTip": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Entity.cpp",
+              "RelativeToolTip": "Game\\ETT\\Entity.cpp",
+              "ViewState": "AgIAAAEAAAAAAAAAAAAgwA8AAAApAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-11-23T11:19:58.251Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "Matrix4x4.cpp",
+              "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Matrix4x4.cpp",
+              "RelativeDocumentMoniker": "Libs\\Maths\\Matrix4x4.cpp",
+              "ToolTip": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Matrix4x4.cpp",
+              "RelativeToolTip": "Libs\\Maths\\Matrix4x4.cpp",
+              "ViewState": "AgIAAE4AAAAAAAAAAIAxwFwAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-10-26T09:28:55.494Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "Matrix4x4.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Matrix4x4.h",
               "RelativeDocumentMoniker": "Libs\\Maths\\Matrix4x4.h",
@@ -379,12 +386,11 @@
               "RelativeToolTip": "Libs\\Maths\\Matrix4x4.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-26T09:28:43.422Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-26T09:28:43.422Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 13,
               "Title": "Functions.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\Functions\\Functions.h",
               "RelativeDocumentMoniker": "Reflection\\Types\\Functions\\Functions.h",
@@ -392,12 +398,11 @@
               "RelativeToolTip": "Reflection\\Types\\Functions\\Functions.h",
               "ViewState": "AgIAAAYAAAAAAAAAAAAQwB8AAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:30:38.303Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:30:38.303Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 16,
               "Title": "Scene.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Scenes\\Scene.cpp",
               "RelativeDocumentMoniker": "Engine\\Scenes\\Scene.cpp",
@@ -405,25 +410,11 @@
               "RelativeToolTip": "Engine\\Scenes\\Scene.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-01T14:33:07.221Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:33:07.221Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Entity.cpp",
-              "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Entity.cpp",
-              "RelativeDocumentMoniker": "Game\\ETT\\Entity.cpp",
-              "ToolTip": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Entity.cpp",
-              "RelativeToolTip": "Game\\ETT\\Entity.cpp",
-              "ViewState": "AgIAAAcAAAAAAAAAAAAgwB8AAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-23T11:19:58.251Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "Component.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Components\\Component.h",
               "RelativeDocumentMoniker": "Game\\ETT\\Components\\Component.h",
@@ -431,12 +422,11 @@
               "RelativeToolTip": "Game\\ETT\\Components\\Component.h",
               "ViewState": "AgIAAAEAAAAAAAAAAAAQwA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T11:19:23.449Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T11:19:23.449Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 14,
               "Title": "Entity.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\Game\\Entity.cpp",
               "RelativeDocumentMoniker": "Reflection\\Types\\Game\\Entity.cpp",
@@ -444,12 +434,11 @@
               "RelativeToolTip": "Reflection\\Types\\Game\\Entity.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAADwvwcAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T18:49:17.603Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:49:17.603Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 52,
               "Title": "Transform.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Transform.h",
               "RelativeDocumentMoniker": "Libs\\Maths\\Transform.h",
@@ -457,12 +446,11 @@
               "RelativeToolTip": "Libs\\Maths\\Transform.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T13:05:43.062Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T13:05:43.062Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 10,
               "Title": "Primitive.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\Primitives\\Primitive.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Primitives\\Primitive.cpp",
@@ -470,12 +458,11 @@
               "RelativeToolTip": "Engine\\Render\\Primitives\\Primitive.cpp",
               "ViewState": "AgIAAAMBAAAAAAAAAAAAAA4BAABLAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-27T19:32:43.337Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-27T19:32:43.337Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 18,
               "Title": "GameManager.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Game\\GameManager\\GameManager.h",
               "RelativeDocumentMoniker": "Game\\GameManager\\GameManager.h",
@@ -483,12 +470,11 @@
               "RelativeToolTip": "Game\\GameManager\\GameManager.h",
               "ViewState": "AgIAAAQAAAAAAAAAAAAAABcAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T11:17:13.802Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T11:17:13.802Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 15,
               "Title": "GameManager.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Game\\GameManager\\GameManager.cpp",
               "RelativeDocumentMoniker": "Game\\GameManager\\GameManager.cpp",
@@ -496,12 +482,11 @@
               "RelativeToolTip": "Game\\GameManager\\GameManager.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-23T11:17:14.95Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T11:17:14.95Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 17,
               "Title": "Scene.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Scenes\\Scene.h",
               "RelativeDocumentMoniker": "Engine\\Scenes\\Scene.h",
@@ -509,12 +494,11 @@
               "RelativeToolTip": "Engine\\Scenes\\Scene.h",
               "ViewState": "AgIAAAEAAAAAAAAAAAAywA0AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-01T14:26:18.394Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:26:18.394Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 19,
               "Title": "ModelComponent.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Components\\ModelComponent\\ModelComponent.h",
               "RelativeDocumentMoniker": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.h",
@@ -522,12 +506,11 @@
               "RelativeToolTip": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T16:13:01.298Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T16:13:01.298Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 20,
               "Title": "Camera.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Camera\\Camera.h",
               "RelativeDocumentMoniker": "Engine\\Camera\\Camera.h",
@@ -535,12 +518,11 @@
               "RelativeToolTip": "Engine\\Camera\\Camera.h",
               "ViewState": "AgIAACYAAAAAAAAAAAAuwCkAAABCAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-29T23:04:40.071Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-29T23:04:40.071Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 22,
               "Title": "GlobalResources.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Global\\GlobalResources.h",
               "RelativeDocumentMoniker": "Engine\\Global\\GlobalResources.h",
@@ -548,12 +530,11 @@
               "RelativeToolTip": "Engine\\Global\\GlobalResources.h",
               "ViewState": "AgIAABIAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-01T14:57:35.42Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:57:35.42Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 23,
               "Title": "GlobalResources.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Global\\GlobalResources.cpp",
               "RelativeDocumentMoniker": "Engine\\Global\\GlobalResources.cpp",
@@ -561,12 +542,11 @@
               "RelativeToolTip": "Engine\\Global\\GlobalResources.cpp",
               "ViewState": "AgIAAAYAAAAAAAAAAAArwBMAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-01T15:32:05.772Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T15:32:05.772Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 53,
               "Title": "RenderWindow.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\RenderWindow.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\RenderWindow.cpp",
@@ -574,23 +554,21 @@
               "RelativeToolTip": "Engine\\Render\\RenderWindow.cpp",
               "ViewState": "AgIAACwAAAAAAAAAAAAAADkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-25T16:29:23.771Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-25T16:29:23.771Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 25,
               "Title": "winnt.h",
               "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\winnt.h",
               "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\winnt.h",
               "ViewState": "AgIAAMcBAAAAAAAAAADwv9ABAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-11T22:27:56.506Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-11T22:27:56.506Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 54,
               "Title": "Vector2.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Vector2.h",
               "RelativeDocumentMoniker": "Libs\\Maths\\Vector2.h",
@@ -598,12 +576,11 @@
               "RelativeToolTip": "Libs\\Maths\\Vector2.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-26T09:07:16.197Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-26T09:07:16.197Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 24,
               "Title": "Delegate.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Utils\\Delegate.h",
               "RelativeDocumentMoniker": "Libs\\Utils\\Delegate.h",
@@ -611,12 +588,11 @@
               "RelativeToolTip": "Libs\\Utils\\Delegate.h",
               "ViewState": "AgIAABUAAAAAAAAAAIAxwCoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T17:08:54.336Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T17:08:54.336Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 27,
               "Title": "SceneManager.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Scenes\\SceneManager.h",
               "RelativeDocumentMoniker": "Engine\\Scenes\\SceneManager.h",
@@ -624,12 +600,11 @@
               "RelativeToolTip": "Engine\\Scenes\\SceneManager.h",
               "ViewState": "AgIAABAAAAAAAAAAAAAgwB4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-01T14:26:45.565Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:26:45.565Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 28,
               "Title": "Render.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\Render.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Render.h",
@@ -637,12 +612,11 @@
               "RelativeToolTip": "Engine\\Render\\Render.h",
               "ViewState": "AgIAABEAAAAAAAAAAAAgwBsAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-25T15:41:48.958Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-25T15:41:48.958Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 26,
               "Title": "Engine.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Base\\Engine.cpp",
               "RelativeDocumentMoniker": "Engine\\Base\\Engine.cpp",
@@ -650,12 +624,11 @@
               "RelativeToolTip": "Engine\\Base\\Engine.cpp",
               "ViewState": "AgIAABcAAAAAAAAAAAAwwDMAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T19:07:52.732Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T19:07:52.732Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 29,
               "Title": "Vector3.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Vector3.cpp",
               "RelativeDocumentMoniker": "Libs\\Maths\\Vector3.cpp",
@@ -663,12 +636,11 @@
               "RelativeToolTip": "Libs\\Maths\\Vector3.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAfAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-26T11:39:28.559Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-26T11:39:28.559Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 30,
               "Title": "Engine.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Base\\Engine.h",
               "RelativeDocumentMoniker": "Engine\\Base\\Engine.h",
@@ -676,12 +648,11 @@
               "RelativeToolTip": "Engine\\Base\\Engine.h",
               "ViewState": "AgIAAA4AAAAAAAAAAAAuwB4AAABMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T19:07:51.549Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T19:07:51.549Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 55,
               "Title": "Component.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Game\\ETT\\Components\\Component.cpp",
               "RelativeDocumentMoniker": "Game\\ETT\\Components\\Component.cpp",
@@ -689,12 +660,11 @@
               "RelativeToolTip": "Game\\ETT\\Components\\Component.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-23T11:20:29.594Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T11:20:29.594Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 50,
               "Title": "Singleton.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Utils\\Singleton.h",
               "RelativeDocumentMoniker": "Libs\\Utils\\Singleton.h",
@@ -706,7 +676,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 31,
               "Title": "SceneManager.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Scenes\\SceneManager.cpp",
               "RelativeDocumentMoniker": "Engine\\Scenes\\SceneManager.cpp",
@@ -718,7 +688,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 32,
               "Title": "TypeManager.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\TypeManager\\TypeManager.h",
               "RelativeDocumentMoniker": "Reflection\\Types\\TypeManager\\TypeManager.h",
@@ -730,7 +700,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 34,
               "Title": "ConstantBuffer.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\ConstantBuffer\\ConstantBuffer.h",
               "RelativeDocumentMoniker": "Engine\\Render\\ConstantBuffer\\ConstantBuffer.h",
@@ -742,7 +712,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 33,
               "Title": "vector",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\vector",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\vector",
@@ -752,7 +722,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 35,
               "Title": "Vector2.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\Maths\\Vector2.cpp",
               "RelativeDocumentMoniker": "Libs\\Maths\\Vector2.cpp",
@@ -764,7 +734,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 36,
               "Title": "TypeManager.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\TypeManager\\TypeManager.cpp",
               "RelativeDocumentMoniker": "Reflection\\Types\\TypeManager\\TypeManager.cpp",
@@ -776,7 +746,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 38,
               "Title": "Property.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\Property\\Property.h",
               "RelativeDocumentMoniker": "Reflection\\Types\\Property\\Property.h",
@@ -788,7 +758,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 56,
               "Title": "RenderWindow.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Render\\RenderWindow.h",
               "RelativeDocumentMoniker": "Engine\\Render\\RenderWindow.h",
@@ -800,7 +770,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 39,
               "Title": "Property.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\Property\\Property.cpp",
               "RelativeDocumentMoniker": "Reflection\\Types\\Property\\Property.cpp",
@@ -812,7 +782,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 40,
               "Title": "imgui_impl_dx11.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\ImGui\\imgui_impl_dx11.h",
               "RelativeDocumentMoniker": "Libs\\ImGui\\imgui_impl_dx11.h",
@@ -824,7 +794,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 37,
               "Title": "Type.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\Base\\Type.cpp",
               "RelativeDocumentMoniker": "Reflection\\Types\\Base\\Type.cpp",
@@ -836,7 +806,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 41,
               "Title": "DirectXMath.h",
               "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\DirectXMath.h",
               "ToolTip": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\DirectXMath.h",
@@ -846,7 +816,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 42,
               "Title": "ostream",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\ostream",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\ostream",
@@ -856,7 +826,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 43,
               "Title": "VertexShader.hlsl",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Shaders\\VertexShader.hlsl",
               "RelativeDocumentMoniker": "Engine\\Shaders\\VertexShader.hlsl",
@@ -868,7 +838,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 44,
               "Title": "PixelShader.hlsl",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Shaders\\PixelShader.hlsl",
               "RelativeDocumentMoniker": "Engine\\Shaders\\PixelShader.hlsl",
@@ -880,7 +850,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 46,
               "Title": "Entity.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\Game\\Entity.h",
               "RelativeDocumentMoniker": "Reflection\\Types\\Game\\Entity.h",
@@ -892,7 +862,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 45,
               "Title": "Type.h",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\Base\\Type.h",
               "RelativeDocumentMoniker": "Reflection\\Types\\Base\\Type.h",
@@ -904,7 +874,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 47,
               "Title": "Functions.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Reflection\\Types\\Functions\\Functions.cpp",
               "RelativeDocumentMoniker": "Reflection\\Types\\Functions\\Functions.cpp",
@@ -916,7 +886,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 48,
               "Title": "imgui_demo.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Libs\\ImGui\\imgui_demo.cpp",
               "RelativeDocumentMoniker": "Libs\\ImGui\\imgui_demo.cpp",
@@ -928,7 +898,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 49,
               "Title": "algorithm",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\algorithm",
               "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.41.34120\\include\\algorithm",
@@ -959,7 +929,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 21,
               "Title": "Camera.cpp",
               "DocumentMoniker": "D:\\Projects\\Personal\\ENY1N\\Engine\\Camera\\Camera.cpp",
               "RelativeDocumentMoniker": "Engine\\Camera\\Camera.cpp",

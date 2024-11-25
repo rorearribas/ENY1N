@@ -2,37 +2,38 @@
 
 namespace maths
 {
+  const maths::CMatrix4x4 CTransform::ComputeModelMatrix() const
+  {
+    return maths::CMatrix4x4::Translate(m_v3Pos) * (maths::CMatrix4x4::Scale(m_v3Scale) * maths::CMatrix4x4::Rotation(m_v3Rot));
+  }
   // ------------------------------------
   void CTransform::SetPosition(const maths::CVector3& _v3Pos)
   {
-    m_vPosition = _v3Pos;
-    UpdateTranslateMatrix();
+    m_v3Pos = _v3Pos;
   }
   // ------------------------------------
-  void CTransform::SetScale(const maths::CVector3& _v3Scale)
+  const maths::CVector3& CTransform::GetPosition() const
   {
-    m_vScale = _v3Scale;
-    UpdateScaleMatrix();
+    return m_v3Pos;
   }
   // ------------------------------------
   void CTransform::SetRotation(const maths::CVector3& _v3Rotation)
   {
-    m_vRotate = _v3Rotation;
-    UpdateRotateMatrix();
+    m_v3Rot = _v3Rotation;
   }
   // ------------------------------------
-  void CTransform::UpdateTranslateMatrix()
+  const maths::CVector3& CTransform::GetRotation() const
   {
-    m_mTranslate = maths::CMatrix4x4::Translate(m_vPosition);
+    return m_v3Rot;
   }
   // ------------------------------------
-  void CTransform::UpdateRotateMatrix()
+  void CTransform::SetScale(const maths::CVector3& _v3Scale)
   {
-    m_mRotate = maths::CMatrix4x4::Rotation(m_vRotate);
+    m_v3Scale = _v3Scale;
   }
   // ------------------------------------
-  void CTransform::UpdateScaleMatrix()
+  const maths::CVector3& CTransform::GetScale() const
   {
-    m_mScale = maths::CMatrix4x4::Scale(m_vScale);
+    return m_v3Scale;
   }
 }

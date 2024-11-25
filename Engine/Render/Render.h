@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Render/Primitives/Primitive.h"
+#include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Scenes/Scene.h"
 #include "Window/RenderWindow.h"
 #include "Engine/Camera/Camera.h"

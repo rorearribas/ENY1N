@@ -24,7 +24,7 @@
     <ClInclude Include="Render\Window\RenderWindow.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Primitives\Primitive.h">
+    <ClInclude Include="Render\Graphics\Primitive.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Camera\Camera.h">
@@ -54,6 +54,9 @@
     <ClInclude Include="Physics\AABB.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Graphics\Model.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp">
@@ -65,7 +68,7 @@
     <ClCompile Include="Render\Window\RenderWindow.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Primitives\Primitive.cpp">
+    <ClCompile Include="Render\Graphics\Primitive.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Camera\Camera.cpp">
@@ -90,6 +93,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Physics\AABB.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Graphics\Model.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
