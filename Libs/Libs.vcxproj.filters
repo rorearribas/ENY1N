@@ -63,6 +63,9 @@
     <ClInclude Include="Maths\Transform.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Macros\GlobalMacros.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Maths\Vector3.cpp">

@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Macros\GlobalMacros.h" />
     <ClInclude Include="Maths\Maths.h" />
     <ClInclude Include="Time\TimeManager.h" />
     <ClInclude Include="ImGui\imconfig.h" />

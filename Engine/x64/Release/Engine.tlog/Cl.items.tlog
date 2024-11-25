@@ -1,9 +1,13 @@
+D:\Projects\Personal\ENY1N\Engine\Render\Graphics\Model.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Model.obj
+D:\Projects\Personal\ENY1N\Engine\Physics\AABB.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\AABB.obj
 D:\Projects\Personal\ENY1N\Engine\Base\Engine.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Engine.obj
 D:\Projects\Personal\ENY1N\Engine\Camera\Camera.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Camera.obj
+D:\Projects\Personal\ENY1N\Engine\Render\Lights\DirectionalLight.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\DirectionalLight.obj
 D:\Projects\Personal\ENY1N\Engine\Global\GlobalResources.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\GlobalResources.obj
 D:\Projects\Personal\ENY1N\Engine\Input\InputManager.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\InputManager.obj
-D:\Projects\Personal\ENY1N\Engine\Render\Primitives\Primitive.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Primitive.obj
+D:\Projects\Personal\ENY1N\Engine\Render\Lights\PointLight.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\PointLight.obj
+D:\Projects\Personal\ENY1N\Engine\Render\Graphics\Primitive.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Primitive.obj
 D:\Projects\Personal\ENY1N\Engine\Render\Render.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Render.obj
-D:\Projects\Personal\ENY1N\Engine\Render\RenderWindow.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\RenderWindow.obj
+D:\Projects\Personal\ENY1N\Engine\Render\Window\RenderWindow.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\RenderWindow.obj
 D:\Projects\Personal\ENY1N\Engine\Scenes\SceneManager.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\SceneManager.obj
 D:\Projects\Personal\ENY1N\Engine\Scenes\Scene.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Scene.obj

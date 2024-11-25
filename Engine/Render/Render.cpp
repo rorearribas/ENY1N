@@ -4,6 +4,7 @@
 #include "Libs/ImGui/imgui_impl_win32.h"
 #include "Libs/ImGui/imgui_impl_dx11.h"
 #include "Engine/Base/Engine.h"
+#include "Libs/Macros/GlobalMacros.h"
 
 namespace render
 {
@@ -17,8 +18,10 @@ namespace render
   {
     // Create render window
     m_pRenderWindow = new render::CRenderWindow(_uX, _uY);
+
     // Init render
     HRESULT hr = Init(_uX, _uY);
+    UNUSED_VARIABLE(hr);
     assert(!FAILED(hr));
   }
   // ------------------------------------

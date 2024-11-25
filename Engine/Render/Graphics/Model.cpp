@@ -1,9 +1,9 @@
 #include "Model.h"
-
 #include "Primitive.h"
 #include "Engine/Global/GlobalResources.h"
 #include <d3dcompiler.h>
 #include <cassert>
+#include "Libs/Macros/GlobalMacros.h"
 
 namespace render
 {
@@ -13,6 +13,7 @@ namespace render
     CModel::CModel()
     {
       HRESULT hr = InitModel();
+      UNUSED_VARIABLE(hr);
       assert(!FAILED(hr));
     }
     // ------------------------------------

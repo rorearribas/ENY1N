@@ -3,6 +3,7 @@
 #include <d3dcompiler.h>
 #include <cassert>
 #include <iostream>
+#include "Libs/Macros/GlobalMacros.h"
 
 namespace render
 {
@@ -163,6 +164,7 @@ namespace render
       // Map
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
       HRESULT hr = global::dx11::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      UNUSED_VARIABLE(hr);
       assert(!FAILED(hr));
 
       CPrimitive::SPrimitiveInfo* pPrimitiveInfo = (CPrimitive::SPrimitiveInfo*)(oMappedSubresource.pData);

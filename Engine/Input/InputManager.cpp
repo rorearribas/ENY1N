@@ -5,6 +5,7 @@
 #include "Engine/Base/Engine.h"
 #include "Engine/Render/Render.h"
 #include "Libs/ImGui/imgui.h"
+#include "Libs/Macros/GlobalMacros.h"
 
 namespace input
 {
@@ -19,6 +20,7 @@ namespace input
 
     // Register raw input
     bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
+    UNUSED_VARIABLE(bOk);
     assert(bOk);
 
     // Bind delegate
@@ -92,6 +94,7 @@ namespace input
 
     // Register keyboard input
     bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
+    UNUSED_VARIABLE(bOk);
     assert(bOk);
 
     // Register all keys
