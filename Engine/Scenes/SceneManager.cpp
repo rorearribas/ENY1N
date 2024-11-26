@@ -59,6 +59,13 @@ namespace scene
     return pScene->CreatePrimitive(_ePrimitiveType);
   }
   // ------------------------------------
+  render::graphics::CModel* CSceneManager::CreateModel(const char* _sPath, const UINT32& _uSceneIndex)
+  {
+    if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
+    scene::CScene* pScene = m_vctScenes[_uSceneIndex];
+    return pScene->CreateModel(_sPath);
+  }
+  // ------------------------------------
   void CSceneManager::DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive)
   {
     assert(_pPrimitive);
@@ -79,6 +86,28 @@ namespace scene
     scene::CScene* pScene = m_vctScenes.at(_uSceneIndex);
     assert(pScene);
     pScene->DestroyAllPrimitives();
+  }
+  // ------------------------------------
+  void CSceneManager::DestroyModel(const render::graphics::CModel* _pModel)
+  {
+    assert(_pModel);
+    for (scene::CScene* pScene : m_vctScenes)
+    {
+      const scene::CScene::TModelList& vctModels = pScene->GetModels();
+      auto it = std::find(vctModels.begin(), vctModels.end(), _pModel);
+      if (it != vctModels.end())
+      {
+        pScene->DestroyModel(_pModel);
+        break;
+      }
+    }
+  }
+  // ------------------------------------
+  void CSceneManager::DestroyAllModels(const UINT32& _uSceneIndex)
+  {
+    scene::CScene* pScene = m_vctScenes.at(_uSceneIndex);
+    assert(pScene);
+    pScene->DestroyAllModels();
   }
   // ------------------------------------
   void CSceneManager::DestroyAllScenes()

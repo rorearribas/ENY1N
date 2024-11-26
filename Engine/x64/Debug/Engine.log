@@ -1,10 +1,2 @@
 ﻿  Engine.cpp
-  Camera.cpp
-  InputManager.cpp
-  Model.cpp
-  Primitive.cpp
-  Render.cpp
-  Scene.cpp
-  SceneManager.cpp
-  Generating Code...
   Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Debug\Engine.lib

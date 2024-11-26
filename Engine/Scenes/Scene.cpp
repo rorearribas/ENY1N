@@ -11,10 +11,12 @@ namespace scene
   CScene::~CScene()
   {
     DestroyAllPrimitives();
+    DestroyAllModels();
   }
   // ------------------------------------
   void CScene::DrawScene()
   {
+    DrawModels();
     DrawPrimitives();
   }
   // ------------------------------------
@@ -24,6 +26,15 @@ namespace scene
     {
       render::graphics::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[iIndex];
       pPrimitiveItem->DrawPrimitive();
+    }
+  }
+  // ------------------------------------
+  void CScene::DrawModels()
+  {
+    for (int iIndex = 0; iIndex < m_iRegisteredModels; iIndex++)
+    {
+      render::graphics::CModel* pModel = m_vctModels[iIndex];
+      pModel->DrawModel();
     }
   }
   // ------------------------------------
@@ -38,6 +49,19 @@ namespace scene
       }
     });
     m_iRegisteredPrimitives = 0;
+  }
+  // ------------------------------------
+  void CScene::DestroyAllModels()
+  {
+    std::for_each(m_vctModels.begin(), m_vctModels.end(), [](render::graphics::CModel*& _pModel)
+      {
+        if (_pModel)
+        {
+          delete _pModel;
+          _pModel = nullptr;
+        }
+      });
+    m_iRegisteredModels = 0;
   }
   // ------------------------------------
   render::graphics::CPrimitive* CScene::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData)
@@ -56,6 +80,14 @@ namespace scene
     return pPrimitiveItem;
   }
   // ------------------------------------
+  render::graphics::CModel* CScene::CreateModel(const char* _sPath)
+  {
+    if (m_iRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
+    render::graphics::CModel*& pModel = m_vctModels[m_iRegisteredModels++];
+    pModel = new render::graphics::CModel(_sPath);
+    return pModel;
+  }
+  // ------------------------------------
   void CScene::DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive)
   {
     assert(_pPrimitive);
@@ -67,8 +99,24 @@ namespace scene
       m_iRegisteredPrimitives--;
 
       auto oReorderFunc = std::remove_if(m_vctPrimitiveItems.begin(), m_vctPrimitiveItems.end(), 
-      [] (render::graphics::CPrimitive* ptr) { return ptr == nullptr; }); // Reorder fixed list
+      [] (render::graphics::CPrimitive* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
       std::fill(oReorderFunc, m_vctPrimitiveItems.end(), nullptr); // Set nullptr
+    }
+  }
+  // ------------------------------------
+  void CScene::DestroyModel(const render::graphics::CModel* _pModel)
+  {
+    assert(_pModel);
+    auto it = std::find(m_vctModels.begin(), m_vctModels.end(), _pModel);
+    if (it != m_vctModels.end())
+    {
+      delete* it;
+      *it = nullptr;
+      m_iRegisteredModels--;
+
+      auto oReorderFunc = std::remove_if(m_vctModels.begin(), m_vctModels.end(),
+        [](render::graphics::CModel* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+      std::fill(oReorderFunc, m_vctModels.end(), nullptr); // Set nullptr
     }
   }
 }

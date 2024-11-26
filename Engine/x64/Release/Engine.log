@@ -1,5 +1,1 @@
-﻿  InputManager.cpp
-  Model.cpp
-  Primitive.cpp
-  Render.cpp
-  Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Release\Engine.lib
+﻿  Scene.cpp

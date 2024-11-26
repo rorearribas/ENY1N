@@ -4,8 +4,9 @@
 #include "Engine/Camera/Camera.h"
 #include "Libs/Utils/Singleton.h"
 
-namespace render { class CCamera; }
+namespace render { namespace graphics { class CModel; } }
 namespace render { namespace graphics { class CPrimitive; } }
+namespace render { class CCamera; }
 
 namespace engine 
 {
@@ -27,9 +28,13 @@ namespace engine
 
     render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
     render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
+    render::graphics::CModel* CreateModel(const char* _sPath, const UINT32& _uSceneIndex = 0);
 
     void DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive);
     void DestroyAllPrimimitives(const UINT32& _uSceneIndex = 0);
+
+    void DestroyModel(const render::graphics::CModel* _pModel);
+    void DestroyAllModels(const UINT32& _uSceneIndex = 0);
 
   private:
     void OnWindowResizeEvent(UINT32 _uX, UINT32 _uY);
@@ -39,6 +44,7 @@ namespace engine
     std::unique_ptr<render::CCamera> m_pCamera = nullptr;
 
     bool m_bInitialized = false;
+  public:
   };
 }
 

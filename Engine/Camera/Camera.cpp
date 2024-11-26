@@ -26,21 +26,27 @@ namespace render
     maths::CVector3 vForward = (mRotMatrix * maths::CVector3::Forward).Normalized();
     maths::CVector3 vRight = (mRotMatrix * maths::CVector3::Right).Normalized();
 
-    input::CInputManager* pInputManager = input::CInputManager::GetInstance();
-    if (pInputManager->IsKeyPressed('W')) MovePosition(vForward * m_fMovementSpeed * _fDeltaTime);
-    if (pInputManager->IsKeyPressed('S')) MovePosition(-vForward * m_fMovementSpeed * _fDeltaTime);
-    if (pInputManager->IsKeyPressed('D')) MovePosition(vRight * m_fMovementSpeed * _fDeltaTime);
-    if (pInputManager->IsKeyPressed('A')) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
-
     // Show cursor
+    input::CInputManager* pInputManager = input::CInputManager::GetInstance();
     input::CMouse* pMouse = pInputManager->GetMouse();
     bool bMousePressed = pMouse->IsRightButtonPressed();
     ShowCursor(bMousePressed);
+
+    if (pInputManager->IsKeyPressed('W') && bMousePressed) MovePosition(vForward * m_fMovementSpeed * _fDeltaTime);
+    if (pInputManager->IsKeyPressed('S') && bMousePressed) MovePosition(-vForward * m_fMovementSpeed * _fDeltaTime);
+    if (pInputManager->IsKeyPressed('D') && bMousePressed) MovePosition(vRight * m_fMovementSpeed * _fDeltaTime);
+    if (pInputManager->IsKeyPressed('A') && bMousePressed) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
 
     // Rotation
     float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed * _fDeltaTime;
     float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed * _fDeltaTime;
     AddRotation(bMousePressed ? maths::CVector3(yValue, xValue, 0.0f) : maths::CVector3::Zero);
+
+    if (!bMousePressed)
+    {
+      float fMouseDelta = pMouse->GetMouseWheelDelta();
+      MovePosition(fMouseDelta != 0 ? vForward * (fMouseDelta * 100.0f) * _fDeltaTime : maths::CVector3::Zero);
+    }
 
     // Update perspective matrix
     UpdatePerspectiveMatrix();

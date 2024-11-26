@@ -64,9 +64,9 @@ namespace engine
     // Test
     ImGui::Begin("Handler");
 
-    if (ImGui::Button("Destroy all primitives"))
+    if (ImGui::Button("Destroy models"))
     {
-      engine::CEngine::GetInstance()->DestroyAllPrimimitives();
+      engine::CEngine::GetInstance()->DestroyAllModels();
     }
     if (ImGui::Button("Fov 90"))
     {
@@ -102,6 +102,11 @@ namespace engine
     return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_ePrimitiveType, _uSceneIndex) : nullptr;
   }
   // ------------------------------------
+  render::graphics::CModel* CEngine::CreateModel(const char* _sPath, const UINT32& _uSceneIndex)
+  {
+    return m_pSceneManager ? m_pSceneManager->CreateModel(_sPath, _uSceneIndex) : nullptr;
+  }
+  // ------------------------------------
   void CEngine::DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive)
   {
     assert(_pPrimitive);
@@ -111,5 +116,16 @@ namespace engine
   void CEngine::DestroyAllPrimimitives(const UINT32& _uSceneIndex)
   {
     m_pSceneManager->DestroyAllPrimimitives(_uSceneIndex);
+  }
+  // ------------------------------------
+  void CEngine::DestroyModel(const render::graphics::CModel* _pModel)
+  {
+    assert(_pModel);
+    m_pSceneManager->DestroyModel(_pModel);
+  }
+  // ------------------------------------
+  void CEngine::DestroyAllModels(const UINT32& _uSceneIndex /*= 0*/)
+  {
+    m_pSceneManager->DestroyAllModels(_uSceneIndex);
   }
 }

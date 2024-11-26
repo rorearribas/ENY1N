@@ -11,6 +11,8 @@
 #include "Game/GameManager/GameManager.h"
 #include "Reflection/Types/Game/Entity.h"
 #include "Game/ETT/Components/ModelComponent/ModelComponent.h"
+#include "Engine/ResourceManager.h"
+#include "Libs/Macros/GlobalMacros.h"
 
 #define WIDTH 1920
 #define HEIGHT 1080
@@ -26,7 +28,8 @@ int main()
   pTimeManager->SetMaxFPS(144);
 
   game::CEntity* pEntity = pGameManager->CreateEntity("Test");
-  pEntity->RegisterComponent<game::CModelComponent>();
+  game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
+  pModelComponent->LoadModel("C://Users//Ruben//Desktop//model.obj");
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();

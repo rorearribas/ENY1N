@@ -16,6 +16,8 @@ namespace game
 
     virtual void Update(float _fDeltaTime) override;
 
+    void LoadModel(const char* _sPath);
+
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const;
     void SetRotation(const maths::CVector3& _v3Rot);

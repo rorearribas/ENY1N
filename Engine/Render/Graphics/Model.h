@@ -13,12 +13,12 @@ namespace render
       struct SModelInfo
       {
         maths::CVector3 Position = maths::CVector3::Zero;
-        maths::CVector3 Color = maths::CVector3::One;
-        maths::CVector3 Normal = maths::CVector3::Forward * -1.0f;
+        maths::CVector3 Color = maths::CVector3(0.2f, 0.2f, 0.2f);
+        //maths::CVector3 Normal = maths::CVector3::Forward * -1.0f;
       };
 
     public:
-      CModel();
+      CModel(const char* _sPath);
       ~CModel();
 
       void DrawModel();
@@ -30,8 +30,8 @@ namespace render
       void SetScale(const maths::CVector3& _v3Scale) { m_oModelTransform.SetScale(_v3Scale); }
       const maths::CVector3& GetScale() const { return m_oModelTransform.GetScale(); }
 
-    private:
-      HRESULT InitModel();
+    private: 
+      HRESULT InitModel(const char* _sPath);
       HRESULT CompileShaders();
       HRESULT InitShaders();
       HRESULT CreateInputLayout();

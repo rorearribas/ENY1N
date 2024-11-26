@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Render/Graphics/Primitive.h"
+#include "Engine/Render/Graphics/Model.h"
 #include "Engine/Scenes/Scene.h"
 #include "Libs/Utils/Singleton.h"
 #include <array>
@@ -24,9 +25,13 @@ namespace scene
 
     render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
     render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
+    render::graphics::CModel* CreateModel(const char* _sPath, const UINT32& _uSceneIndex = 0);
 
     void DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive);
     void DestroyAllPrimimitives(const UINT32& _uSceneIndex);
+
+    void DestroyModel(const render::graphics::CModel* _pModel);
+    void DestroyAllModels(const UINT32& _uSceneIndex);
 
   private:
     void CreateScenes();

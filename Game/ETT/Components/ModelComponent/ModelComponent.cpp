@@ -29,6 +29,21 @@ namespace game
     Super::Update(_fDeltaTime);
   }
   // ------------------------------------
+  void CModelComponent::LoadModel(const char* _sPath)
+  {
+    if (engine::CEngine::HasSingleton())
+    {
+      engine::CEngine* pEngine = engine::CEngine::GetInstance();
+      m_pModel = pEngine->CreateModel(_sPath);
+      assert(m_pModel);
+
+      if (m_pModel)
+      {
+        pEngine->DestroyPrimitive(m_pPrimitive);
+      }
+    }
+  }
+  // ------------------------------------
   void CModelComponent::OnPositionChanged(const maths::CVector3& _v3Pos)
   {
     SetPosition(_v3Pos);
