@@ -1,26 +1,26 @@
 #include "Model.h"
-#include "Primitive.h"
 #include "Engine/Global/GlobalResources.h"
+#include "Engine/Managers/ResourceManager.h"
 #include <d3dcompiler.h>
-#include <cassert>
 #include "Libs/Macros/GlobalMacros.h"
-#include "../ResourceManager.h"
-#include <sstream>
+#include <cassert>
 
 namespace render
 {
   namespace graphics
   {
     // ------------------------------------
-    CModel::CModel(const char* _sPath)
+    CModel::CModel(const char* _sModelPath)
     {
-      HRESULT hr = InitModel(_sPath);
+      HRESULT hr = InitModel(_sModelPath);
       UNUSED_VARIABLE(hr);
       assert(!FAILED(hr));
     }
     // ------------------------------------
     CModel::~CModel()
     {
+      m_oConstantBuffer.CleanBuffer();
+
       global::dx11::SafeRelease(m_pVertexBuffer);
       global::dx11::SafeRelease(m_pInputLayout);
 
@@ -33,87 +33,18 @@ namespace render
     // ------------------------------------
     HRESULT CModel::InitModel(const char* _sPath)
     {
-      char* cLoadResource = CResourceManager::GetInstance()->LoadResource(_sPath);
-      UNUSED_VARIABLE(cLoadResource);
-
-      std::vector<SModelInfo> vctModelInfo = {};
-      std::vector<uint32_t> vctIndices = {};
-
-      std::istringstream stream(cLoadResource);
-      std::string line;
-      while (std::getline(stream, line)) 
-      {
-        if (line.rfind("v ", 0) == 0) 
-        { // Comprobar si la línea comienza con "v "
-          std::istringstream linestream(line.substr(2));
-          float x, y, z;
-          linestream >> x >> y >> z;
-
-          SModelInfo oModelInfo;
-          oModelInfo.Position = maths::CVector3(x, y, z);
-          vctModelInfo.push_back(oModelInfo);
-        }
-        else if (line.rfind("f ", 0) == 0)
-        {
-          std::istringstream linestream(line.substr(2));
-          std::string vertexData;
-          while (linestream >> vertexData)
-          {
-            size_t pos = vertexData.find('/');
-            uint32_t vertexIndex = 0;
-            if (pos != std::string::npos) 
-            {
-              vertexIndex = std::stoi(vertexData.substr(0, pos)) - 1; // Convertir a 0-based
-            }
-            else 
-            {
-              vertexIndex = std::stoi(vertexData) - 1;
-            }
-            vctIndices.push_back(vertexIndex);
-          }
-        }
-      }
-
-      // Create constant buffer
-      m_oConstantBuffer.Initialize(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
-
-      // Create vertex buffer
-      D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
-      oVertexBufferDescriptor.ByteWidth = UINT(sizeof(SModelInfo) * vctModelInfo.size());
-      oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
-      oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-      oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-      D3D11_SUBRESOURCE_DATA oSubresourceData = { 0 };
-      oSubresourceData.pSysMem = vctModelInfo.data();
-      m_uVertexCount = (UINT)vctModelInfo.size();
-
-      HRESULT hr = global::dx11::s_pDevice->CreateBuffer
-      (
-        &oVertexBufferDescriptor,
-        &oSubresourceData,
-        &m_pVertexBuffer
-      );
-
-      // Config index buffer
-      D3D11_BUFFER_DESC oIndexBufferDesc = {};
-      oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-      oIndexBufferDesc.ByteWidth = (UINT)(sizeof(UINT) * vctIndices.size());
-      oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-      oIndexBufferDesc.CPUAccessFlags = 0;
-      m_uVertexCount = (UINT)vctIndices.size();
-
-      D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = {};
-      oSubresourceIndexesData.pSysMem = vctIndices.data();
-
-      global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
+      // Create buffers from model data
+      CResourceManager* pResourceManager = CResourceManager::GetInstance();
+      CResourceManager::SModelData oModelData = pResourceManager->LoadModelData(_sPath, "rb");
+      HRESULT hr = CreateBuffersFromModelData(oModelData.m_vctVertexInfo, oModelData.m_vctIndexes);
+      if (FAILED(hr)) return hr;
 
       // Compile shaders
       hr = CompileShaders();
       if (FAILED(hr)) return hr;
 
       // Init shaders
-      hr = InitShaders();
+      hr = CreateShaders();
       if (FAILED(hr)) return hr;
 
       // Create input layout
@@ -123,12 +54,50 @@ namespace render
       return hr;
     }
     // ------------------------------------
+    HRESULT CModel::CreateBuffersFromModelData(TVertexInfoList& _vctVertexInfo, TIndexesList& _vctIndexes)
+    {
+      // Create constant buffer
+      m_oConstantBuffer.Initialize(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+
+      // Config vertex buffer
+      D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
+      oVertexBufferDescriptor.ByteWidth = static_cast<UINT>((sizeof(SVertexInfo) * _vctVertexInfo.size()));
+      oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
+      oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+      oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+      D3D11_SUBRESOURCE_DATA oSubresourceData = { 0 };
+      oSubresourceData.pSysMem = _vctVertexInfo.data();
+
+      HRESULT hr = global::dx11::s_pDevice->CreateBuffer
+      (
+        &oVertexBufferDescriptor,
+        &oSubresourceData,
+        &m_pVertexBuffer
+      );
+      if (FAILED(hr)) return hr;
+
+      // Config index buffer
+      D3D11_BUFFER_DESC oIndexBufferDesc = {};
+      oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+      oIndexBufferDesc.ByteWidth = static_cast<UINT>((sizeof(uint32_t) * _vctIndexes.size()));
+      oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+      oIndexBufferDesc.CPUAccessFlags = 0;
+      m_uVertexCount = static_cast<UINT>(_vctIndexes.size());
+
+      D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = {};
+      oSubresourceIndexesData.pSysMem = _vctIndexes.data();
+
+      return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
+    }
+    // ------------------------------------
     HRESULT CModel::CreateInputLayout()
     {
       D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
       {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SModelInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SModelInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexInfo, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
       };
 
       return global::dx11::s_pDevice->CreateInputLayout
@@ -141,7 +110,7 @@ namespace render
       );
     }
     // ------------------------------------
-    HRESULT CModel::InitShaders()
+    HRESULT CModel::CreateShaders()
     {
       // Create vertex shader
       HRESULT hr = global::dx11::s_pDevice->CreateVertexShader
@@ -200,7 +169,7 @@ namespace render
     void CModel::DrawModel()
     {
       // Set general data
-      UINT uVertexStride = sizeof(render::graphics::CModel::SModelInfo);
+      UINT uVertexStride = sizeof(render::graphics::CModel::SVertexInfo);
       UINT uVertexOffset = 0;
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);

@@ -28,8 +28,8 @@ namespace scene
     render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType);
     render::graphics::CModel* CreateModel(const char* _sPath);
 
-    void DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive);
-    void DestroyModel(const render::graphics::CModel* _pModel);
+    void DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_);
+    void DestroyModel(render::graphics::CModel*& pModel_);
 
     const UINT32& GetSceneIndex() const { return m_uSceneIdx; }
     const bool& IsEnabled() const { return m_bEnabled; }

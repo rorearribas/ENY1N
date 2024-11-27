@@ -7,12 +7,7 @@ namespace game
 {
   CModelComponent::CModelComponent(CEntity* _pEntity) : CComponent(_pEntity)
   {
-    if (engine::CEngine::HasSingleton())
-    {
-      engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      m_pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::CUBE);
-      assert(m_pPrimitive);
-    }
+    
   }
   // ------------------------------------
   CModelComponent::~CModelComponent()
@@ -37,9 +32,24 @@ namespace game
       m_pModel = pEngine->CreateModel(_sPath);
       assert(m_pModel);
 
-      if (m_pModel)
+      if (m_pPrimitive)
       {
         pEngine->DestroyPrimitive(m_pPrimitive);
+      }
+    }
+  }
+  // ------------------------------------
+  void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType)
+  {
+    if (engine::CEngine::HasSingleton())
+    {
+      engine::CEngine* pEngine = engine::CEngine::GetInstance();
+      m_pPrimitive = pEngine->CreatePrimitive(_ePrimitiveType);
+      assert(m_pPrimitive);
+
+      if (m_pModel)
+      {
+        pEngine->DestroyModel(m_pModel);
       }
     }
   }
@@ -56,7 +66,7 @@ namespace game
   // ------------------------------------
   void CModelComponent::OnScaleChanged(const maths::CVector3& _v3Scale)
   {
-    SetRotation(_v3Scale);
+    SetScale(_v3Scale);
   }
   // ------------------------------------
   void CModelComponent::SetPosition(const maths::CVector3& _v3Position)
@@ -64,6 +74,10 @@ namespace game
     if (m_pPrimitive)
     {
       m_pPrimitive->SetPosition(_v3Position);
+    }
+    if (m_pModel)
+    {
+      m_pModel->SetPosition(_v3Position);
     }
   }
   // ------------------------------------
@@ -78,6 +92,10 @@ namespace game
     {
       m_pPrimitive->SetRotation(_v3Rot);
     }
+    if (m_pModel)
+    {
+      m_pModel->SetRotation(_v3Rot);
+    }
   }
   // ------------------------------------
   const maths::CVector3& CModelComponent::GetRotation() const
@@ -90,6 +108,10 @@ namespace game
     if (m_pPrimitive)
     {
       m_pPrimitive->SetScale(_v3Scale);
+    }
+    if (m_pModel)
+    {
+      m_pModel->SetScale(_v3Scale);
     }
   }
   // ------------------------------------

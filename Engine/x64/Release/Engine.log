@@ -1,1 +1,17 @@
-﻿  Scene.cpp
+﻿  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Release\PixelShader.cso
+  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Release\VertexShader.cso
+  Model.cpp
+  AABB.cpp
+  Engine.cpp
+  Camera.cpp
+  DirectionalLight.cpp
+  GlobalResources.cpp
+  InputManager.cpp
+  PointLight.cpp
+  Primitive.cpp
+  Render.cpp
+  RenderWindow.cpp
+  ResourceManager.cpp
+  SceneManager.cpp
+  Scene.cpp
+  Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Release\Engine.lib

@@ -9,6 +9,6 @@ D:\Projects\Personal\ENY1N\Engine\Render\Lights\PointLight.cpp;D:\Projects\Perso
 D:\Projects\Personal\ENY1N\Engine\Render\Graphics\Primitive.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Debug\Primitive.obj
 D:\Projects\Personal\ENY1N\Engine\Render\Render.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Debug\Render.obj
 D:\Projects\Personal\ENY1N\Engine\Render\Window\RenderWindow.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Debug\RenderWindow.obj
-D:\Projects\Personal\ENY1N\Engine\ResourceManager.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Debug\ResourceManager.obj
+D:\Projects\Personal\ENY1N\Engine\Managers\ResourceManager.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Debug\ResourceManager.obj
 D:\Projects\Personal\ENY1N\Engine\Scenes\SceneManager.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Debug\SceneManager.obj
 D:\Projects\Personal\ENY1N\Engine\Scenes\Scene.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Debug\Scene.obj

@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 #include "Libs/Maths/Matrix4x4.h"
+#include "Engine/Global/GlobalResources.h"
 
 struct SConstantBuffer
 {
@@ -15,6 +16,7 @@ private:
 
 public:
   ConstantBuffer() {}
+  ~ConstantBuffer() {}
 
   HRESULT Initialize(ID3D11Device* _pDevice, ID3D11DeviceContext* _pDeviceContext)
   {
@@ -43,6 +45,10 @@ public:
     CopyMemory(oMappedSubresource.pData, &m_oData, sizeof(T));
     m_pDeviceContext->Unmap(m_pBuffer, 0);
     return true;
+  }
+  void CleanBuffer()
+  { 
+    global::dx11::SafeRelease(m_pBuffer); 
   }
 
   ID3D11Buffer* GetBuffer() const { return m_pBuffer; }

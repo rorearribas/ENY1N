@@ -30,10 +30,10 @@ namespace engine
     render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
     render::graphics::CModel* CreateModel(const char* _sPath, const UINT32& _uSceneIndex = 0);
 
-    void DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive);
+    void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive);
     void DestroyAllPrimimitives(const UINT32& _uSceneIndex = 0);
 
-    void DestroyModel(const render::graphics::CModel* _pModel);
+    void DestroyModel(render::graphics::CModel*& _pModel);
     void DestroyAllModels(const UINT32& _uSceneIndex = 0);
 
   private:

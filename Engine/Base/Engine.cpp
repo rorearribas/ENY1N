@@ -107,10 +107,10 @@ namespace engine
     return m_pSceneManager ? m_pSceneManager->CreateModel(_sPath, _uSceneIndex) : nullptr;
   }
   // ------------------------------------
-  void CEngine::DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive)
+  void CEngine::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)
   {
-    assert(_pPrimitive);
-    m_pSceneManager->DestroyPrimitive(_pPrimitive);
+    assert(pPrimitive_);
+    m_pSceneManager->DestroyPrimitive(pPrimitive_);
   }
   // ------------------------------------
   void CEngine::DestroyAllPrimimitives(const UINT32& _uSceneIndex)
@@ -118,10 +118,10 @@ namespace engine
     m_pSceneManager->DestroyAllPrimimitives(_uSceneIndex);
   }
   // ------------------------------------
-  void CEngine::DestroyModel(const render::graphics::CModel* _pModel)
+  void CEngine::DestroyModel(render::graphics::CModel*& pModel_)
   {
-    assert(_pModel);
-    m_pSceneManager->DestroyModel(_pModel);
+    assert(pModel_);
+    m_pSceneManager->DestroyModel(pModel_);
   }
   // ------------------------------------
   void CEngine::DestroyAllModels(const UINT32& _uSceneIndex /*= 0*/)

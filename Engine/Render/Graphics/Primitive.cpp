@@ -91,6 +91,8 @@ namespace render
     // ------------------------------------
     CPrimitive::~CPrimitive()
     {
+      m_oConstantBuffer.CleanBuffer();
+
       global::dx11::SafeRelease(m_pVertexBuffer);
       global::dx11::SafeRelease(m_pInputLayout);
 
@@ -108,7 +110,7 @@ namespace render
       if (FAILED(hr)) return hr;
 
       // Init shaders
-      hr = InitShaders();
+      hr = CreateShaders();
       if (FAILED(hr)) return hr;
 
       // Create input layout
@@ -123,6 +125,7 @@ namespace render
       D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
       {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
       };
 
@@ -136,7 +139,7 @@ namespace render
       );
     }
     // ------------------------------------
-    HRESULT CPrimitive::InitShaders()
+    HRESULT CPrimitive::CreateShaders()
     {
       // Create vertex shader
       HRESULT hr = global::dx11::s_pDevice->CreateVertexShader
@@ -277,7 +280,7 @@ namespace render
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
-      // Draw
+      // 3D or 2D
       if (m_pIndexBuffer)
       {
         global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);

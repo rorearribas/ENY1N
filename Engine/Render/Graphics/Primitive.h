@@ -13,14 +13,14 @@ namespace render
     class CPrimitive {
     public:
       enum EPrimitiveType { SQUARE, TRIANGLE, CUBE };
-
       struct SPrimitiveInfo
       {
         maths::CVector3 Position = maths::CVector3::Zero;
+        maths::CVector3 Normal = maths::CVector3::Forward;
         maths::CVector3 Color = maths::CVector3::One;
       };
-    public:
 
+    public:
       CPrimitive(const EPrimitiveType& _ePrimitiveType);
       CPrimitive(const std::vector<SPrimitiveInfo>& _vctVertexData);
       ~CPrimitive();
@@ -39,7 +39,7 @@ namespace render
     private:
       HRESULT InitPrimitive();
       HRESULT CompileShaders();
-      HRESULT InitShaders();
+      HRESULT CreateShaders();
       HRESULT CreateInputLayout();
       HRESULT CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes = {});
 

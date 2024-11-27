@@ -1,10 +1,10 @@
 #pragma once
 #include "Game/ETT/Components/Component.h"
+#include "Engine/Render/Graphics/Primitive.h"
+#include "Engine/Render/Graphics/Model.h"
 #include "Libs/Maths/Vector3.h"
 
 namespace game { class CEntity; }
-namespace render { namespace graphics { class CModel; } }
-namespace render { namespace graphics { class CPrimitive; } }
 
 namespace game
 {
@@ -17,6 +17,7 @@ namespace game
     virtual void Update(float _fDeltaTime) override;
 
     void LoadModel(const char* _sPath);
+    void CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType);
 
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const;

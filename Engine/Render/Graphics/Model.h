@@ -1,7 +1,7 @@
 #pragma once
+#include <d3d11.h>
 #include "Libs/Maths/Transform.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-#include <d3d11.h>
 
 namespace render
 {
@@ -9,16 +9,19 @@ namespace render
   {
     class CModel
     {
-    private:
-      struct SModelInfo
+    public:
+      struct SVertexInfo
       {
         maths::CVector3 Position = maths::CVector3::Zero;
-        maths::CVector3 Color = maths::CVector3(0.2f, 0.2f, 0.2f);
-        //maths::CVector3 Normal = maths::CVector3::Forward * -1.0f;
+        maths::CVector3 Normal = maths::CVector3::Zero;
+        maths::CVector3 Color = maths::CVector3::One;
       };
 
+      typedef std::vector<render::graphics::CModel::SVertexInfo> TVertexInfoList;
+      typedef std::vector<uint32_t> TIndexesList;
+
     public:
-      CModel(const char* _sPath);
+      CModel(const char* _sModelPath);
       ~CModel();
 
       void DrawModel();
@@ -32,8 +35,10 @@ namespace render
 
     private: 
       HRESULT InitModel(const char* _sPath);
+      HRESULT CreateBuffersFromModelData(TVertexInfoList& _vctPrimitiveInfo, TIndexesList& _vctIndexes);
+
       HRESULT CompileShaders();
-      HRESULT InitShaders();
+      HRESULT CreateShaders();
       HRESULT CreateInputLayout();
 
       // Buffers
@@ -53,7 +58,7 @@ namespace render
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
       // Data
-      UINT m_uVertexCount = 0;
+      uint32_t m_uVertexCount = 0;
       maths::CTransform m_oModelTransform;
     };
   }

@@ -66,16 +66,16 @@ namespace scene
     return pScene->CreateModel(_sPath);
   }
   // ------------------------------------
-  void CSceneManager::DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive)
+  void CSceneManager::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)
   {
-    assert(_pPrimitive);
+    assert(pPrimitive_);
     for (scene::CScene* pScene : m_vctScenes)
     {
       const scene::CScene::TPrimitiveList& vctPrimitives = pScene->GetPrimitives();
-      auto it = std::find(vctPrimitives.begin(), vctPrimitives.end(), _pPrimitive);
+      auto it = std::find(vctPrimitives.begin(), vctPrimitives.end(), pPrimitive_);
       if (it != vctPrimitives.end())
       {
-        pScene->DestroyPrimitive(_pPrimitive);
+        pScene->DestroyPrimitive(pPrimitive_);
         break;
       }
     }
@@ -88,16 +88,16 @@ namespace scene
     pScene->DestroyAllPrimitives();
   }
   // ------------------------------------
-  void CSceneManager::DestroyModel(const render::graphics::CModel* _pModel)
+  void CSceneManager::DestroyModel(render::graphics::CModel*& pModel_)
   {
-    assert(_pModel);
+    assert(pModel_);
     for (scene::CScene* pScene : m_vctScenes)
     {
       const scene::CScene::TModelList& vctModels = pScene->GetModels();
-      auto it = std::find(vctModels.begin(), vctModels.end(), _pModel);
+      auto it = std::find(vctModels.begin(), vctModels.end(), pModel_);
       if (it != vctModels.end())
       {
-        pScene->DestroyModel(_pModel);
+        pScene->DestroyModel(pModel_);
         break;
       }
     }

@@ -88,10 +88,10 @@ namespace scene
     return pModel;
   }
   // ------------------------------------
-  void CScene::DestroyPrimitive(const render::graphics::CPrimitive* _pPrimitive)
+  void CScene::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)
   {
-    assert(_pPrimitive);
-    auto it = std::find(m_vctPrimitiveItems.begin(), m_vctPrimitiveItems.end(), _pPrimitive);
+    assert(pPrimitive_);
+    auto it = std::find(m_vctPrimitiveItems.begin(), m_vctPrimitiveItems.end(), pPrimitive_);
     if (it != m_vctPrimitiveItems.end())
     {
       delete* it;
@@ -102,12 +102,13 @@ namespace scene
       [] (render::graphics::CPrimitive* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
       std::fill(oReorderFunc, m_vctPrimitiveItems.end(), nullptr); // Set nullptr
     }
+    pPrimitive_ = nullptr;
   }
   // ------------------------------------
-  void CScene::DestroyModel(const render::graphics::CModel* _pModel)
+  void CScene::DestroyModel(render::graphics::CModel*& pModel_)
   {
-    assert(_pModel);
-    auto it = std::find(m_vctModels.begin(), m_vctModels.end(), _pModel);
+    assert(pModel_);
+    auto it = std::find(m_vctModels.begin(), m_vctModels.end(), pModel_);
     if (it != m_vctModels.end())
     {
       delete* it;
@@ -118,5 +119,6 @@ namespace scene
         [](render::graphics::CModel* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
       std::fill(oReorderFunc, m_vctModels.end(), nullptr); // Set nullptr
     }
+    pModel_ = nullptr;
   }
 }

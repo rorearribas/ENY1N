@@ -11,7 +11,7 @@
 #include "Game/GameManager/GameManager.h"
 #include "Reflection/Types/Game/Entity.h"
 #include "Game/ETT/Components/ModelComponent/ModelComponent.h"
-#include "Engine/ResourceManager.h"
+#include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 
 #define WIDTH 1920
@@ -29,7 +29,7 @@ int main()
 
   game::CEntity* pEntity = pGameManager->CreateEntity("Test");
   game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
-  pModelComponent->LoadModel("C://Users//Ruben//Desktop//model.obj");
+  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Model//Format//model_test.obj");
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -37,6 +37,8 @@ int main()
 
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };
+
+  bool bRotateActor = false;
   while (WM_QUIT != oMsg.message)
   {
     if (PeekMessage(&oMsg, nullptr, 0, 0, PM_REMOVE))
@@ -68,9 +70,12 @@ int main()
       // Draw
       pEngine->DrawScene();
 
-      const maths::CVector3 vRot(1.0f * pTimeManager->GetFixedDelta(), 0.0f, 0.0f);
-      maths::CVector3 vCurrentRotation = pEntity->GetRotation();
-      pEntity->SetRotation(vCurrentRotation + vRot);
+      if (bRotateActor)
+      {
+        const maths::CVector3 vRot(1.0f * pTimeManager->GetFixedDelta(), 0.0f, 0.0f);
+        maths::CVector3 vCurrentRotation = pEntity->GetRotation();
+        pEntity->SetRotation(vCurrentRotation + vRot);
+      }
 
       ImGui::ShowDemoWindow();
 
@@ -79,6 +84,41 @@ int main()
         maths::CVector3 v3Pos = pEntity->GetPosition();
         const maths::CVector3 v3Dir(5.0f, 0.0f, 0.0f);
         pEntity->SetPosition(v3Pos + v3Dir);
+      }
+
+      if (ImGui::Button("Rotate Actor"))
+      {
+        bRotateActor = !bRotateActor;
+        
+        if (!bRotateActor)
+        {
+          pEntity->SetRotation(maths::CVector3::Zero);
+        }
+      }
+
+      if (ImGui::Button("Increase Scale"))
+      {
+        bRotateActor = !bRotateActor;
+
+        if (!bRotateActor)
+        {
+          pEntity->SetScale(maths::CVector3::Zero);
+        }
+      }
+
+      if (ImGui::Button("Low scale"))
+      {
+        pEntity->SetScale(maths::CVector3(0.01f, 0.01f, 0.01f));
+      }
+
+      if (ImGui::Button("Normal scale"))
+      {
+        pEntity->SetScale(maths::CVector3(1.0f, 1.0f, 1.0f));
+      }
+
+      if (ImGui::Button("High scale"))
+      {
+        pEntity->SetScale(maths::CVector3(3.0f, 3.0f, 3.0f));
       }
 
       // Imgui utils
