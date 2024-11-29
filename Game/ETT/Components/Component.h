@@ -14,7 +14,7 @@ namespace game
     CComponent(CEntity* _pOwner) : m_pOwner(_pOwner) {}
     virtual ~CComponent() { m_pOwner = nullptr; }
 
-    virtual void Update(float /*_fDeltaTime*/) {}
+    virtual void UpdateComponent(float /*_fDeltaTime*/) {}
     virtual void DrawDebug() {}
 
     virtual void OnPositionChanged(const maths::CVector3& /*_v3Pos*/) {}

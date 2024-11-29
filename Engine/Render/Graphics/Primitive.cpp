@@ -125,7 +125,6 @@ namespace render
       D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
       {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
       };
 
@@ -191,7 +190,7 @@ namespace render
       // Compile vertex shader
       HRESULT hr = D3DCompileFromFile
       (
-        L"..\\Engine\\Shaders\\VertexShader.hlsl",
+        L"..\\Engine\\Shaders\\Primitive\\PVertexShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "VSMain",
@@ -207,7 +206,7 @@ namespace render
       // Compile pixel shader
       return D3DCompileFromFile
       (
-        L"..\\Engine\\Shaders\\PixelShader.hlsl",
+        L"..\\Engine\\Shaders\\Primitive\\PPixelShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "PSMain",

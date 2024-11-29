@@ -16,7 +16,6 @@ namespace render
       struct SPrimitiveInfo
       {
         maths::CVector3 Position = maths::CVector3::Zero;
-        maths::CVector3 Normal = maths::CVector3::Forward;
         maths::CVector3 Color = maths::CVector3::One;
       };
 

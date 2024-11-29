@@ -60,6 +60,12 @@
     <ClInclude Include="Managers\ResourceManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Material\Material.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Material\Texture.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp">
@@ -104,9 +110,17 @@
     <ClCompile Include="Managers\ResourceManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Render\Material\Material.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Material\Texture.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\VertexShader.hlsl" />
-    <FxCompile Include="Shaders\PixelShader.hlsl" />
+    <FxCompile Include="Shaders\Primitive\PVertexShader.hlsl" />
+    <FxCompile Include="Shaders\Primitive\PPixelShader.hlsl" />
+    <FxCompile Include="Shaders\Model\MVertexShader.hlsl" />
+    <FxCompile Include="Shaders\Model\MPixelShader.hlsl" />
   </ItemGroup>
 </Project>

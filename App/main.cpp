@@ -29,7 +29,8 @@ int main()
 
   game::CEntity* pEntity = pGameManager->CreateEntity("Test");
   game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
-  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Model//Format//model_test.obj");
+  pModelComponent->CreatePrimitive(render::graphics::CPrimitive::CUBE);
+  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Model//model_test.obj");
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();

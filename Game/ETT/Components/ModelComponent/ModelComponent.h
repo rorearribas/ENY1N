@@ -11,12 +11,13 @@ namespace game
   class CModelComponent : public CComponent
   {
   public:
-    CModelComponent(CEntity* _pEntity);
+    CModelComponent(CEntity* _pEntity) : CComponent(_pEntity) {}
     virtual ~CModelComponent();
 
-    virtual void Update(float _fDeltaTime) override;
+    virtual void UpdateComponent(float _fDeltaTime) override;
+    virtual void DrawDebug() override {};
 
-    void LoadModel(const char* _sPath);
+    void LoadModel(const char* _sModelPath);
     void CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType);
 
     void SetPosition(const maths::CVector3& _v3Position);

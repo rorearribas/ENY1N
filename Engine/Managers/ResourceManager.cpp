@@ -2,6 +2,7 @@
 #include <sstream>
 #include <iostream>
 #include "Libs/Macros/GlobalMacros.h"
+#include <filesystem>
 
 char* CResourceManager::LoadResource(const char* _sPath, const char* _sMode)
 {
@@ -41,11 +42,16 @@ CResourceManager::SModelData CResourceManager::LoadModelData(const char* _sPath,
 
   // Reserve
   std::vector<maths::CVector3> vctNormal = {};
-  vctNormal.reserve(1500);
-  oModelData.m_vctVertexInfo.reserve(1500);
-  oModelData.m_vctIndexes.reserve(5000);
+  vctNormal.reserve(300);
 
-  std::cout << "Loading resource from: " << _sPath << std::endl;
+  // Texture coords
+  std::vector<maths::CVector2> vctTextureCoords = {};
+  vctTextureCoords.reserve(5000);
+
+  oModelData.m_vctVertexInfo.reserve(3000);
+  oModelData.m_vctIndexes.reserve(9000);
+
+  std::cout << "Loading model data from: " << _sPath << std::endl;
   while (std::getline(oStream, sLine))
   {
     // Vertex position
@@ -57,6 +63,14 @@ CResourceManager::SModelData CResourceManager::LoadModelData(const char* _sPath,
       render::graphics::CModel::SVertexInfo oVertexInfo;
       oVertexInfo.Position = maths::CVector3(fPosX, fPosY, fPosZ);
       oModelData.m_vctVertexInfo.emplace_back(oVertexInfo);
+    }
+    // Texture coords
+    else if (sLine.rfind("vt", 0) == 0)
+    {
+      std::istringstream linestream(sLine.substr(2));
+      float fPosX, fPosY;
+      linestream >> fPosX >> fPosY;
+      vctTextureCoords.emplace_back(maths::CVector2(fPosX, fPosY));
     }
     // Vertex normals
     else if (sLine.rfind("vn", 0) == 0)
@@ -79,20 +93,30 @@ CResourceManager::SModelData CResourceManager::LoadModelData(const char* _sPath,
         size_t firstSlash = vertexData.find('/');
         size_t secondSlash = vertexData.find('/', firstSlash + 1);
 
+        // Vertex index
         uint32_t uVertexIdx = std::stoi(vertexData.substr(0, firstSlash)) - 1;
+        vctIndexes.emplace_back(uVertexIdx);
+        // Texture coord index
         uint32_t uTexCoordIdx = (firstSlash != std::string::npos && secondSlash != std::string::npos) ?
           std::stoi(vertexData.substr(firstSlash + 1, secondSlash - firstSlash - 1)) - 1 : 0;
-        UNUSED_VARIABLE(uTexCoordIdx);
+        // Normal index
         uint32_t uNormalIdx = (secondSlash != std::string::npos) ? std::stoi(vertexData.substr(secondSlash + 1)) - 1 : 0;
 
-        vctIndexes.emplace_back(uVertexIdx);
-        if (uNormalIdx < vctNormal.size())
+
+        // Set normal
+        if (uVertexIdx < oModelData.m_vctVertexInfo.size() && uNormalIdx < vctNormal.size())
         {
           oModelData.m_vctVertexInfo[uVertexIdx].Normal = vctNormal[uNormalIdx];
         }
+
+        // Set texture coord
+        if (uVertexIdx < oModelData.m_vctVertexInfo.size() && uTexCoordIdx < vctTextureCoords.size())
+        {
+          oModelData.m_vctVertexInfo[uVertexIdx].TextureCoord = vctTextureCoords[uTexCoordIdx];
+        }
       }
 
-      // Triangle
+      // Only for triangles
       if (vctIndexes.size() == 3)
       {
         for (uint32_t uIndex = 0; uIndex < vctIndexes.size(); ++uIndex)
@@ -100,7 +124,7 @@ CResourceManager::SModelData CResourceManager::LoadModelData(const char* _sPath,
           oModelData.m_vctIndexes.emplace_back(vctIndexes[uIndex]);
         }
       }
-      // Quad
+      // More than 3 vertex
       else if (vctIndexes.size() >= 4)
       {
         for (size_t i = 1; i < vctIndexes.size() - 1; ++i)
@@ -112,8 +136,7 @@ CResourceManager::SModelData CResourceManager::LoadModelData(const char* _sPath,
       }
       else
       {
-        std::cout << "error getting valid faces" << std::endl;
-        abort();
+        throw std::runtime_error("Invalid face detected in file: " + std::string(_sPath));
       }
     }
   }
@@ -122,7 +145,90 @@ CResourceManager::SModelData CResourceManager::LoadModelData(const char* _sPath,
   delete[] cBuffer;
   cBuffer = nullptr;
 
-  std::cout << "Resource loaded" << std::endl;
+  std::cout << "Model data loaded" << std::endl;
   return oModelData;
+}
+// ------------------------------------
+std::vector<render::material::CMaterial> CResourceManager::LoadMaterials(const char* _sPath, const char* _sMode)
+{
+  std::vector<render::material::CMaterial> vctMaterials = {};
+
+  char* cBuffer = LoadResource(_sPath, _sMode);
+  if (!cBuffer) { return vctMaterials; }
+
+  vctMaterials.reserve(100);
+
+  std::cout << "Loading materials from: " << _sPath << std::endl;
+  std::istringstream oStream(cBuffer);
+  std::string sLine;
+  while (std::getline(oStream, sLine))
+  {
+    if (sLine.rfind("newmtl", 0) == 0)
+    {
+      std::istringstream linestream(sLine.substr(strlen("newmtl")));
+      std::string sMaterialId;
+      linestream >> sMaterialId;
+
+      render::material::CMaterial oMaterial(sMaterialId.c_str());
+      vctMaterials.emplace_back(oMaterial);
+    }
+    else if (sLine.rfind("Ns", 0) == 0)
+    {
+      std::istringstream linestream(sLine.substr(strlen("Ns")));
+      float fSpecularExponent;
+      linestream >> fSpecularExponent;
+      vctMaterials[vctMaterials.size() - 1].SetSpecularExponent(fSpecularExponent);
+    }
+    else if (sLine.rfind("Ka", 0) == 0)
+    {
+      std::istringstream linestream(sLine.substr(strlen("Ka")));
+      float fAmbientX, fAmbientY, fAmbientZ;
+      linestream >> fAmbientX >> fAmbientY >> fAmbientZ;
+      vctMaterials[vctMaterials.size() - 1].SetAmbientColor(maths::CVector3(fAmbientX, fAmbientY, fAmbientZ));
+    }
+    else if (sLine.rfind("Kd", 0) == 0)
+    {
+      std::istringstream linestream(sLine.substr(strlen("Kd")));
+      float fDiffuseX, fDiffuseY, fDiffuseZ;
+      linestream >> fDiffuseX >> fDiffuseY >> fDiffuseZ;
+      vctMaterials[vctMaterials.size() - 1].SetDiffuseColor(maths::CVector3(fDiffuseX, fDiffuseY, fDiffuseZ));
+    }
+    else if (sLine.rfind("Ks", 0) == 0)
+    {
+      std::istringstream linestream(sLine.substr(strlen("Ks")));
+      float fSpecularX, fSpecularY, fSpecularZ;
+      linestream >> fSpecularX >> fSpecularY >> fSpecularZ;
+      vctMaterials[vctMaterials.size() - 1].SetSpecularColor(maths::CVector3(fSpecularX, fSpecularY, fSpecularZ));
+    }
+    else if (sLine.rfind("Ni", 0) == 0)
+    {
+      std::istringstream linestream(sLine.substr(strlen("Ni")));
+      float fOpticalDensity;
+      linestream >> fOpticalDensity;
+      vctMaterials[vctMaterials.size() - 1].SetOpticalDensity(fOpticalDensity);
+    }
+    else if (sLine.rfind("d", 0) == 0)
+    {
+      std::istringstream linestream(sLine.substr(strlen("d")));
+      float fTransparent;
+      linestream >> fTransparent;
+      vctMaterials[vctMaterials.size() - 1].SetTransparent(fTransparent);
+    }
+    else if (sLine.rfind("map_Kd", 0) == 0)
+    {
+      std::istringstream linestream(sLine.substr(strlen("map_Kd")));
+      std::filesystem::path oPath(linestream.str());
+      std::string sValidFileName = oPath.filename().string();
+      std::string sCompletePath = "C://Users//Ruben//Desktop//Model//Textures//FBX.fbm//";
+      sCompletePath += sValidFileName;
+      //vctMaterials[vctMaterials.size() - 1].LoadTexture(sCompletePath);
+    }
+  }
+
+  delete[] cBuffer;
+  cBuffer = nullptr;
+
+  std::cout << "Materials loaded" << std::endl;
+  return vctMaterials;
 }
 

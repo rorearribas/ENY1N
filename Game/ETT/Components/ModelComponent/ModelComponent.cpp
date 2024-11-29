@@ -5,37 +5,31 @@
 
 namespace game
 {
-  CModelComponent::CModelComponent(CEntity* _pEntity) : CComponent(_pEntity)
-  {
-    
-  }
   // ------------------------------------
   CModelComponent::~CModelComponent()
   {
-    if (m_pPrimitive && engine::CEngine::HasSingleton())
-    {
-      engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      pEngine->DestroyPrimitive(m_pPrimitive);
-    }
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    if (m_pPrimitive && pEngine) { pEngine->DestroyPrimitive(m_pPrimitive); }
+    if (m_pModel && pEngine) { pEngine->DestroyModel(m_pModel); }
   }
   // ------------------------------------
-  void CModelComponent::Update(float _fDeltaTime)
+  void CModelComponent::UpdateComponent(float _fDeltaTime)
   {
-    Super::Update(_fDeltaTime);
+    Super::UpdateComponent(_fDeltaTime);
   }
   // ------------------------------------
-  void CModelComponent::LoadModel(const char* _sPath)
+  void CModelComponent::LoadModel(const char* _sModelPath)
   {
     if (engine::CEngine::HasSingleton())
     {
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      m_pModel = pEngine->CreateModel(_sPath);
+      m_pModel = pEngine->CreateModel(_sModelPath);
       assert(m_pModel);
 
-      if (m_pPrimitive)
+      /*if (m_pPrimitive)
       {
         pEngine->DestroyPrimitive(m_pPrimitive);
-      }
+      }*/
     }
   }
   // ------------------------------------

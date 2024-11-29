@@ -35,6 +35,11 @@ namespace render
     {
       // Create buffers from model data
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
+
+      m_pTexture = new render::texture::CTexture("C://Users//Ruben//Desktop//Model//textures//cottage.png");
+
+      //m_vctMaterialList = std::move(pResourceManager->LoadMaterials("C://Users//Ruben//Desktop//Model//model_mat.mtl", "rb"));
+
       CResourceManager::SModelData oModelData = pResourceManager->LoadModelData(_sPath, "rb");
       HRESULT hr = CreateBuffersFromModelData(oModelData.m_vctVertexInfo, oModelData.m_vctIndexes);
       if (FAILED(hr)) return hr;
@@ -92,12 +97,13 @@ namespace render
     }
     // ------------------------------------
     HRESULT CModel::CreateInputLayout()
-    {
+    { 
       D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
       {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexInfo, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVertexInfo, TextureCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
       };
 
       return global::dx11::s_pDevice->CreateInputLayout
@@ -138,7 +144,7 @@ namespace render
       // Compile vertex shader
       HRESULT hr = D3DCompileFromFile
       (
-        L"..\\Engine\\Shaders\\VertexShader.hlsl",
+        L"..\\Engine\\Shaders\\Model\\MVertexShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "VSMain",
@@ -154,7 +160,7 @@ namespace render
       // Compile pixel shader
       return D3DCompileFromFile
       (
-        L"..\\Engine\\Shaders\\PixelShader.hlsl",
+        L"..\\Engine\\Shaders\\Model\\MPixelShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "PSMain",
@@ -174,6 +180,14 @@ namespace render
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
       global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+      ID3D11ShaderResourceView* shaderResourceView = m_pTexture->GetShaderResourceView();
+      ID3D11SamplerState* pSamplerState = m_pTexture->GetSamplerState();
+      if (shaderResourceView && pSamplerState)
+      {
+        global::dx11::s_pDeviceContext->PSSetShaderResources(0, 1, &shaderResourceView);
+        global::dx11::s_pDeviceContext->PSSetSamplers(0, 1, &pSamplerState);
+      }
 
       // Set pixel and vertex shaders
       global::dx11::s_pDeviceContext->VSSetShader(m_pVertexShader, nullptr, 0);

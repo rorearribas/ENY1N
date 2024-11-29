@@ -1,7 +1,10 @@
 #pragma once
 #include <d3d11.h>
 #include "Libs/Maths/Transform.h"
+#include "Libs/Maths/Vector2.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Engine/Render/Material/Material.h"
+#include "Engine/Render/Material/Texture.h"
 
 namespace render
 {
@@ -15,8 +18,10 @@ namespace render
         maths::CVector3 Position = maths::CVector3::Zero;
         maths::CVector3 Normal = maths::CVector3::Zero;
         maths::CVector3 Color = maths::CVector3::One;
+        maths::CVector2 TextureCoord = maths::CVector2::Zero;
       };
 
+      typedef std::vector<material::CMaterial> TMaterialList;
       typedef std::vector<render::graphics::CModel::SVertexInfo> TVertexInfoList;
       typedef std::vector<uint32_t> TIndexesList;
 
@@ -58,8 +63,11 @@ namespace render
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
       // Data
-      uint32_t m_uVertexCount = 0;
+      TMaterialList m_vctMaterialList = {};
       maths::CTransform m_oModelTransform;
+      uint32_t m_uVertexCount = 0;
+
+      render::texture::CTexture* m_pTexture = nullptr;
     };
   }
 }

@@ -110,10 +110,10 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,10 +126,10 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <TreatWarningAsError>true</TreatWarningAsError>
+      <TreatWarningAsError>false</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -141,6 +141,27 @@
   <ItemGroup>
     <ClInclude Include="Macros\GlobalMacros.h" />
     <ClInclude Include="Maths\Maths.h" />
+    <ClInclude Include="Third-Party\stb\stb.h" />
+    <ClInclude Include="Third-Party\stb\stb_connected_components.h" />
+    <ClInclude Include="Third-Party\stb\stb_c_lexer.h" />
+    <ClInclude Include="Third-Party\stb\stb_divide.h" />
+    <ClInclude Include="Third-Party\stb\stb_ds.h" />
+    <ClInclude Include="Third-Party\stb\stb_dxt.h" />
+    <ClInclude Include="Third-Party\stb\stb_easy_font.h" />
+    <ClInclude Include="Third-Party\stb\stb_herringbone_wang_tile.h" />
+    <ClInclude Include="Third-Party\stb\stb_image.h" />
+    <ClInclude Include="Third-Party\stb\stb_image_resize.h" />
+    <ClInclude Include="Third-Party\stb\stb_image_write.h" />
+    <ClInclude Include="Third-Party\stb\stb_include.h" />
+    <ClInclude Include="Third-Party\stb\stb_leakcheck.h" />
+    <ClInclude Include="Third-Party\stb\stb_perlin.h" />
+    <ClInclude Include="Third-Party\stb\stb_rect_pack.h" />
+    <ClInclude Include="Third-Party\stb\stb_sprintf.h" />
+    <ClInclude Include="Third-Party\stb\stb_textedit.h" />
+    <ClInclude Include="Third-Party\stb\stb_tilemap_editor.h" />
+    <ClInclude Include="Third-Party\stb\stb_truetype.h" />
+    <ClInclude Include="Third-Party\stb\stb_voxel_render.h" />
+    <ClInclude Include="Third-Party\stb\stretchy_buffer.h" />
     <ClInclude Include="Time\TimeManager.h" />
     <ClInclude Include="ImGui\imconfig.h" />
     <ClInclude Include="ImGui\imgui.h" />
@@ -158,6 +179,7 @@
     <ClInclude Include="Utils\Singleton.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Third-Party\stb\stb_vorbis.c" />
     <ClCompile Include="Time\TimeManager.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />

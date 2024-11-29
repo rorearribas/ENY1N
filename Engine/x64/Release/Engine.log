@@ -1,17 +1,16 @@
-﻿  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Release\PixelShader.cso
-  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Release\VertexShader.cso
+﻿  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Release\MPixelShader.cso
+  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Release\MVertexShader.cso
+  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Release\PPixelShader.cso
+  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Release\PVertexShader.cso
+  Material.cpp
   Model.cpp
-  AABB.cpp
   Engine.cpp
   Camera.cpp
-  DirectionalLight.cpp
-  GlobalResources.cpp
   InputManager.cpp
-  PointLight.cpp
   Primitive.cpp
   Render.cpp
-  RenderWindow.cpp
   ResourceManager.cpp
   SceneManager.cpp
   Scene.cpp
+  Texture.cpp
   Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Release\Engine.lib

@@ -1,12 +1,12 @@
 #include "Entity.h"
 #include "Components/Component.h"
 #include <algorithm>
+#include "Libs/ImGui/imgui.h"
+#include <string>
+#include <typeinfo>
 
 namespace game
 {
-  CEntity::CEntity(const char* _sEntityName) : m_sEntityName(_sEntityName)
-  {
-  }
   // ------------------------------------
   CEntity::~CEntity()
   {
@@ -22,13 +22,43 @@ namespace game
     {
       if (pComponent)
       {
-        pComponent->Update(_fDeltaTime);
+        pComponent->UpdateComponent(_fDeltaTime);
       }
     }
   }
   // ------------------------------------
   void CEntity::DrawDebug()
   {
+    ImGui::Begin("Entity");
+
+    ImGui::Text("ID: ");
+    ImGui::SameLine();
+    ImGui::Text(m_sEntityName);
+
+    ImGui::Text("Pos: ");
+    ImGui::SameLine();
+    ImGui::SameLine();
+    float vPos[3] = { m_oTransform.GetPosition().X, m_oTransform.GetPosition().Y, m_oTransform.GetPosition().Z };
+    std::string sUniquePosValue = std::string("##Pos") + m_sEntityName + std::string("_unique");
+    ImGui::InputFloat3(sUniquePosValue.c_str(), vPos);
+
+    ImGui::Text("Rot: ");
+    ImGui::SameLine();
+    ImGui::SameLine();
+    float vRot[3] = { m_oTransform.GetRotation().X, m_oTransform.GetRotation().Y, m_oTransform.GetRotation().Z };
+    std::string sUniqueRotValue = std::string("##Rot") + m_sEntityName + std::string("_unique");
+    ImGui::InputFloat3(sUniqueRotValue.c_str(), vRot);
+
+    ImGui::Text("Scl: ");
+    ImGui::SameLine();
+    ImGui::SameLine();
+    float vScale[3] = { m_oTransform.GetScale().X, m_oTransform.GetScale().Y, m_oTransform.GetScale().Z };
+    std::string sUniqueSclValue = std::string("##Scl") + m_sEntityName + std::string("_unique");
+    ImGui::InputFloat3(sUniqueSclValue.c_str(), vScale);
+
+    ImGui::Spacing();
+    ImGui::Text("Component List");
+
     // Draw debug
     for (CComponent* pComponent : m_vctComponents)
     {
@@ -37,6 +67,8 @@ namespace game
         pComponent->DrawDebug();
       }
     }
+
+    ImGui::End();
   }
   // ------------------------------------
   void CEntity::SetPosition(const maths::CVector3& _v3Position)

@@ -3,10 +3,16 @@
   <ProjectOutputs />
   <ContentFiles>
     <ContentFile>
-      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\PixelShader.cso</FullPath>
+      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\MPixelShader.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\VertexShader.cso</FullPath>
+      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\MVertexShader.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\PPixelShader.cso</FullPath>
+    </ContentFile>
+    <ContentFile>
+      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\PVertexShader.cso</FullPath>
     </ContentFile>
   </ContentFiles>
   <SatelliteDlls />

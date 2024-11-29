@@ -13,7 +13,7 @@ namespace game
     typedef std::array<CComponent*, s_iMaxComponents> TComponentsList;
 
   public:
-    CEntity(const char* _sEntityName);
+    CEntity(const char* _sEntityName) : m_sEntityName(_sEntityName) {}
     ~CEntity();
 
     void Update(float _fDeltaTime);
@@ -24,10 +24,8 @@ namespace game
 
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-
     void SetRotation(const maths::CVector3& _v3Rot);
     const maths::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-
     void SetScale(const maths::CVector3& _v3Scale);
     const maths::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
@@ -53,12 +51,12 @@ namespace game
   private:
     void DestroyAllComponents();
 
-    const char* m_sEntityName = nullptr;
+    TComponentsList m_vctComponents = {};
     maths::CTransform m_oTransform;
 
-    TComponentsList m_vctComponents = {};
-    int m_iRegisteredComponents = 0;
+    const char* m_sEntityName = nullptr;
     bool m_bTickEnabled = true;
+    int m_iRegisteredComponents = 0;
   };
 }
 

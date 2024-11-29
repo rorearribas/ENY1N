@@ -1,6 +1,7 @@
 #pragma once
 #include "Libs/Utils/Singleton.h"
 #include "Engine/Render/Graphics/Model.h"
+#include "Engine/Render/Material/Material.h"
 #include <vector>
 
 class CResourceManager : public utils::CSingleton<CResourceManager>
@@ -14,6 +15,7 @@ public:
 public:
   [[nodiscard]] char* LoadResource(const char* _sPath, const char* _sMode);
   [[nodiscard]] SModelData LoadModelData(const char* _sPath, const char* _sMode);
+  [[nodiscard]] std::vector<render::material::CMaterial> LoadMaterials(const char* _sPath, const char* _sMode);
 };
 
 
