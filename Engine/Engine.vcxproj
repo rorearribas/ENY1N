@@ -145,7 +145,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Render\Material\Material.h" />
+    <ClInclude Include="Render\Graphics\Mesh.h" />
+    <ClInclude Include="Render\Resources\Material.h" />
     <ClInclude Include="Render\Graphics\Model.h" />
     <ClInclude Include="Physics\AABB.h" />
     <ClInclude Include="Base\Engine.h" />
@@ -161,10 +162,12 @@
     <ClInclude Include="Managers\ResourceManager.h" />
     <ClInclude Include="Scenes\SceneManager.h" />
     <ClInclude Include="Scenes\Scene.h" />
-    <ClInclude Include="Render\Material\Texture.h" />
+    <ClInclude Include="Render\Resources\Texture.h" />
+    <ClInclude Include="Render\Graphics\Shape.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Render\Material\Material.cpp" />
+    <ClCompile Include="Render\Graphics\Mesh.cpp" />
+    <ClCompile Include="Render\Resources\Material.cpp" />
     <ClCompile Include="Render\Graphics\Model.cpp" />
     <ClCompile Include="Physics\AABB.cpp" />
     <ClCompile Include="Base\Engine.cpp" />
@@ -179,7 +182,8 @@
     <ClCompile Include="Managers\ResourceManager.cpp" />
     <ClCompile Include="Scenes\SceneManager.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
-    <ClCompile Include="Render\Material\Texture.cpp" />
+    <ClCompile Include="Render\Resources\Texture.cpp" />
+    <ClCompile Include="Render\Graphics\Shape.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Model\MPixelShader.hlsl">

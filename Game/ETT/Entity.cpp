@@ -56,8 +56,7 @@ namespace game
     std::string sUniqueSclValue = std::string("##Scl") + m_sEntityName + std::string("_unique");
     ImGui::InputFloat3(sUniqueSclValue.c_str(), vScale);
 
-    ImGui::Spacing();
-    ImGui::Text("Component List");
+    ImGui::End();
 
     // Draw debug
     for (CComponent* pComponent : m_vctComponents)
@@ -67,8 +66,6 @@ namespace game
         pComponent->DrawDebug();
       }
     }
-
-    ImGui::End();
   }
   // ------------------------------------
   void CEntity::SetPosition(const maths::CVector3& _v3Position)

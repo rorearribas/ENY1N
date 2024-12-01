@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClInclude Include="Macros\GlobalMacros.h" />
     <ClInclude Include="Maths\Maths.h" />
+    <ClInclude Include="Third-Party\objloader\tiny_obj_loader.h" />
     <ClInclude Include="Third-Party\stb\stb.h" />
     <ClInclude Include="Third-Party\stb\stb_connected_components.h" />
     <ClInclude Include="Third-Party\stb\stb_c_lexer.h" />
@@ -179,6 +180,7 @@
     <ClInclude Include="Utils\Singleton.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Third-Party\objloader\tiny_obj_loader.cc" />
     <ClCompile Include="Third-Party\stb\stb_vorbis.c" />
     <ClCompile Include="Time\TimeManager.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />

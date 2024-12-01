@@ -4,6 +4,9 @@
 #include "Libs/Macros/GlobalMacros.h"
 #include <filesystem>
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include "Libs/Third-Party/objloader/tiny_obj_loader.h"
+
 char* CResourceManager::LoadResource(const char* _sPath, const char* _sMode)
 {
   FILE* pFile = nullptr;
@@ -31,123 +34,123 @@ char* CResourceManager::LoadResource(const char* _sPath, const char* _sMode)
   return cBuffer;
 }
 // ------------------------------------
-CResourceManager::SModelData CResourceManager::LoadModelData(const char* _sPath, const char* _sMode)
-{
-  CResourceManager::SModelData oModelData = {};
-  char* cBuffer = LoadResource(_sPath, _sMode);
-  if (!cBuffer) { return oModelData; }
-
-  std::istringstream oStream(cBuffer);
-  std::string sLine;
-
-  // Reserve
-  std::vector<maths::CVector3> vctNormal = {};
-  vctNormal.reserve(300);
-
-  // Texture coords
-  std::vector<maths::CVector2> vctTextureCoords = {};
-  vctTextureCoords.reserve(5000);
-
-  oModelData.m_vctVertexInfo.reserve(3000);
-  oModelData.m_vctIndexes.reserve(9000);
-
-  std::cout << "Loading model data from: " << _sPath << std::endl;
-  while (std::getline(oStream, sLine))
-  {
-    // Vertex position
-    if (sLine.rfind("v ", 0) == 0)
-    {
-      std::istringstream linestream(sLine.substr(2));
-      float fPosX, fPosY, fPosZ;
-      linestream >> fPosX >> fPosY >> fPosZ;
-      render::graphics::CModel::SVertexInfo oVertexInfo;
-      oVertexInfo.Position = maths::CVector3(fPosX, fPosY, fPosZ);
-      oModelData.m_vctVertexInfo.emplace_back(oVertexInfo);
-    }
-    // Texture coords
-    else if (sLine.rfind("vt", 0) == 0)
-    {
-      std::istringstream linestream(sLine.substr(2));
-      float fPosX, fPosY;
-      linestream >> fPosX >> fPosY;
-      vctTextureCoords.emplace_back(maths::CVector2(fPosX, fPosY));
-    }
-    // Vertex normals
-    else if (sLine.rfind("vn", 0) == 0)
-    {
-      // Comprobar si la línea comienza con "vn"
-      std::istringstream linestream(sLine.substr(2));
-      float fNormalX, fNormalY, fNormalZ;
-      linestream >> fNormalX >> fNormalY >> fNormalZ;
-      vctNormal.emplace_back(maths::CVector3(fNormalX, fNormalY, fNormalZ));
-    }
-    // Faces
-    else if (sLine.rfind("f ", 0) == 0)
-    {
-      std::istringstream linestream(sLine.substr(2));
-      std::string vertexData;
-
-      std::vector<uint32_t> vctIndexes = {};
-      while (linestream >> vertexData)
-      {
-        size_t firstSlash = vertexData.find('/');
-        size_t secondSlash = vertexData.find('/', firstSlash + 1);
-
-        // Vertex index
-        uint32_t uVertexIdx = std::stoi(vertexData.substr(0, firstSlash)) - 1;
-        vctIndexes.emplace_back(uVertexIdx);
-        // Texture coord index
-        uint32_t uTexCoordIdx = (firstSlash != std::string::npos && secondSlash != std::string::npos) ?
-          std::stoi(vertexData.substr(firstSlash + 1, secondSlash - firstSlash - 1)) - 1 : 0;
-        // Normal index
-        uint32_t uNormalIdx = (secondSlash != std::string::npos) ? std::stoi(vertexData.substr(secondSlash + 1)) - 1 : 0;
-
-
-        // Set normal
-        if (uVertexIdx < oModelData.m_vctVertexInfo.size() && uNormalIdx < vctNormal.size())
-        {
-          oModelData.m_vctVertexInfo[uVertexIdx].Normal = vctNormal[uNormalIdx];
-        }
-
-        // Set texture coord
-        if (uVertexIdx < oModelData.m_vctVertexInfo.size() && uTexCoordIdx < vctTextureCoords.size())
-        {
-          oModelData.m_vctVertexInfo[uVertexIdx].TextureCoord = vctTextureCoords[uTexCoordIdx];
-        }
-      }
-
-      // Only for triangles
-      if (vctIndexes.size() == 3)
-      {
-        for (uint32_t uIndex = 0; uIndex < vctIndexes.size(); ++uIndex)
-        {
-          oModelData.m_vctIndexes.emplace_back(vctIndexes[uIndex]);
-        }
-      }
-      // More than 3 vertex
-      else if (vctIndexes.size() >= 4)
-      {
-        for (size_t i = 1; i < vctIndexes.size() - 1; ++i)
-        {
-          oModelData.m_vctIndexes.push_back(vctIndexes[0]);
-          oModelData.m_vctIndexes.push_back(vctIndexes[i]);
-          oModelData.m_vctIndexes.push_back(vctIndexes[i + 1]);
-        }
-      }
-      else
-      {
-        throw std::runtime_error("Invalid face detected in file: " + std::string(_sPath));
-      }
-    }
-  }
-
-  // Delete buffer
-  delete[] cBuffer;
-  cBuffer = nullptr;
-
-  std::cout << "Model data loaded" << std::endl;
-  return oModelData;
-}
+//CResourceManager::SModelData CResourceManager::LoadModelData(const char* _sPath, const char* _sMode)
+//{
+//  CResourceManager::SModelData oModelData = {};
+//  char* cBuffer = LoadResource(_sPath, _sMode);
+//  if (!cBuffer) { return oModelData; }
+//
+//  std::istringstream oStream(cBuffer);
+//  std::string sLine;
+//
+//  // Reserve
+//  std::vector<maths::CVector3> vctNormal = {};
+//  vctNormal.reserve(300);
+//
+//  // Texture coords
+//  std::vector<maths::CVector2> vctTextureCoords = {};
+//  vctTextureCoords.reserve(5000);
+//
+//  oModelData.m_vctVertexData.reserve(3000);
+//  oModelData.m_vctIndexes.reserve(9000);
+//
+//  std::cout << "Loading model data from: " << _sPath << std::endl;
+//  while (std::getline(oStream, sLine))
+//  {
+//    // Vertex position
+//    if (sLine.rfind("v ", 0) == 0)
+//    {
+//      std::istringstream linestream(sLine.substr(2));
+//      float fPosX, fPosY, fPosZ;
+//      linestream >> fPosX >> fPosY >> fPosZ;
+//      render::graphics::SVertexData oVertexInfo;
+//      oVertexInfo.Position = maths::CVector3(fPosX, fPosY, fPosZ);
+//      oModelData.m_vctVertexData.emplace_back(oVertexInfo);
+//    }
+//    // Texture coords
+//    else if (sLine.rfind("vt", 0) == 0)
+//    {
+//      std::istringstream linestream(sLine.substr(2));
+//      float fPosX, fPosY;
+//      linestream >> fPosX >> fPosY;
+//      vctTextureCoords.emplace_back(maths::CVector2(fPosX, fPosY));
+//    }
+//    // Vertex normals
+//    else if (sLine.rfind("vn", 0) == 0)
+//    {
+//      // Comprobar si la línea comienza con "vn"
+//      std::istringstream linestream(sLine.substr(2));
+//      float fNormalX, fNormalY, fNormalZ;
+//      linestream >> fNormalX >> fNormalY >> fNormalZ;
+//      vctNormal.emplace_back(maths::CVector3(fNormalX, fNormalY, fNormalZ));
+//    }
+//    // Faces
+//    else if (sLine.rfind("f ", 0) == 0)
+//    {
+//      std::istringstream linestream(sLine.substr(2));
+//      std::string vertexData;
+//
+//      std::vector<uint32_t> vctIndexes = {};
+//      while (linestream >> vertexData)
+//      {
+//        size_t firstSlash = vertexData.find('/');
+//        size_t secondSlash = vertexData.find('/', firstSlash + 1);
+//
+//        // Vertex index
+//        uint32_t uVertexIdx = std::stoi(vertexData.substr(0, firstSlash)) - 1;
+//        vctIndexes.emplace_back(uVertexIdx);
+//        // Texture coord index
+//        uint32_t uTexCoordIdx = (firstSlash != std::string::npos && secondSlash != std::string::npos) ?
+//          std::stoi(vertexData.substr(firstSlash + 1, secondSlash - firstSlash - 1)) - 1 : 0;
+//        // Normal index
+//        uint32_t uNormalIdx = (secondSlash != std::string::npos) ? std::stoi(vertexData.substr(secondSlash + 1)) - 1 : 0;
+//
+//
+//        // Set normal
+//        if (uVertexIdx < oModelData.m_vctVertexData.size() && uNormalIdx < vctNormal.size())
+//        {
+//          oModelData.m_vctVertexData[uVertexIdx].Normal = vctNormal[uNormalIdx];
+//        }
+//
+//        // Set texture coord
+//        if (uVertexIdx < oModelData.m_vctVertexData.size() && uTexCoordIdx < vctTextureCoords.size())
+//        {
+//          oModelData.m_vctVertexData[uVertexIdx].TexCoord = vctTextureCoords[uTexCoordIdx];
+//        }
+//      }
+//
+//      // Only for triangles
+//      if (vctIndexes.size() == 3)
+//      {
+//        for (uint32_t uIndex = 0; uIndex < vctIndexes.size(); ++uIndex)
+//        {
+//          oModelData.m_vctIndexes.emplace_back(vctIndexes[uIndex]);
+//        }
+//      }
+//      // More than 3 vertex
+//      else if (vctIndexes.size() >= 4)
+//      {
+//        for (size_t i = 1; i < vctIndexes.size() - 1; ++i)
+//        {
+//          oModelData.m_vctIndexes.push_back(vctIndexes[0]);
+//          oModelData.m_vctIndexes.push_back(vctIndexes[i]);
+//          oModelData.m_vctIndexes.push_back(vctIndexes[i + 1]);
+//        }
+//      }
+//      else
+//      {
+//        throw std::runtime_error("Invalid face detected in file: " + std::string(_sPath));
+//      }
+//    }
+//  }
+//
+//  // Delete buffer
+//  delete[] cBuffer;
+//  cBuffer = nullptr;
+//
+//  std::cout << "Model data loaded" << std::endl;
+//  return oModelData;
+//}
 // ------------------------------------
 std::vector<render::material::CMaterial> CResourceManager::LoadMaterials(const char* _sPath, const char* _sMode)
 {
@@ -212,7 +215,7 @@ std::vector<render::material::CMaterial> CResourceManager::LoadMaterials(const c
       std::istringstream linestream(sLine.substr(strlen("d")));
       float fTransparent;
       linestream >> fTransparent;
-      vctMaterials[vctMaterials.size() - 1].SetTransparent(fTransparent);
+      vctMaterials[vctMaterials.size() - 1].SetOpacity(fTransparent);
     }
     else if (sLine.rfind("map_Kd", 0) == 0)
     {
@@ -230,5 +233,105 @@ std::vector<render::material::CMaterial> CResourceManager::LoadMaterials(const c
 
   std::cout << "Materials loaded" << std::endl;
   return vctMaterials;
+}
+// ------------------------------------
+CResourceManager::SModelData CResourceManager::LoadModel(const char* _sPath, const char* _sBaseModelMtlDir)
+{
+  CResourceManager::SModelData oModelData;
+
+  tinyobj::attrib_t attributes;
+  std::vector<tinyobj::shape_t> shapes;
+  std::vector<tinyobj::material_t> materials;
+  std::string warnings;
+  std::string errors;
+
+  tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, _sPath, _sBaseModelMtlDir);
+
+  // Register materials
+  for (auto& oMaterial : materials)
+  {
+    render::material::CMaterial oRegisterMaterial(oMaterial.name.c_str());
+
+    oRegisterMaterial.SetAmbientColor({ oMaterial.ambient[0], oMaterial.ambient[1], oMaterial.ambient[2] });
+    oRegisterMaterial.SetDiffuseColor({ oMaterial.diffuse[0], oMaterial.diffuse[1], oMaterial.diffuse[2] });
+    oRegisterMaterial.SetSpecularColor({ oMaterial.specular[0], oMaterial.specular[1], oMaterial.specular[2] });
+
+    oRegisterMaterial.RegisterPath(render::material::EModifierType::AMBIENT, oMaterial.ambient_texname);
+    oRegisterMaterial.RegisterPath(render::material::EModifierType::DIFFUSE, oMaterial.diffuse_texname);
+    oRegisterMaterial.RegisterPath(render::material::EModifierType::SPECULAR, oMaterial.specular_texname);
+    oRegisterMaterial.RegisterPath(render::material::EModifierType::BUMP, oMaterial.bump_texname);
+    oRegisterMaterial.RegisterPath(render::material::EModifierType::DISPLACEMENT, oMaterial.displacement_texname);
+    oRegisterMaterial.RegisterPath(render::material::EModifierType::ALPHA, oMaterial.alpha_texname);
+    oRegisterMaterial.RegisterPath(render::material::EModifierType::REFLECTION, oMaterial.reflection_texname);
+
+    oModelData.m_vctMaterials.emplace_back(oRegisterMaterial);
+  }
+
+  for (size_t i = 0; i < attributes.vertices.size(); i += 3)
+  {
+    render::graphics::SVertexData oVertexData;
+    oVertexData.Position = 
+    {
+      attributes.vertices[i],
+      attributes.vertices[i + 1],
+      attributes.vertices[i + 2] 
+    };
+
+    oModelData.m_vctVertexData.emplace_back(oVertexData);
+  }
+
+  std::vector<maths::CVector3> vctNormals = {};
+  for (size_t i = 0; i < attributes.normals.size(); i += 3)
+  {
+    vctNormals.emplace_back
+    (
+      attributes.normals[i],
+      attributes.normals[i + 1],
+      attributes.normals[i + 2]
+    );
+  }
+
+  std::vector<maths::CVector2> vctCoords = {};
+  for (size_t i = 0; i < attributes.texcoords.size(); i += 2)
+  {
+    vctCoords.emplace_back
+    (
+      attributes.texcoords[i],
+      attributes.texcoords[i + 1]
+    );
+  }
+
+  std::vector<render::graphics::CMesh*> vctMeshes = {};
+
+  for (int i = 0; i < shapes.size(); i++)
+  {
+    tinyobj::shape_t& shape = shapes[i];
+    tinyobj::mesh_t& mesh = shape.mesh;
+
+    render::graphics::CMesh* pMesh = new render::graphics::CMesh(shape.name);
+
+    size_t index_offset = 0;
+    for (int j = 0; j < mesh.num_face_vertices.size(); j++) 
+    {
+      unsigned int uVertexCount = mesh.num_face_vertices[j];
+      for (size_t k = 0; k < uVertexCount; k++)
+      {
+        tinyobj::index_t idx = mesh.indices[index_offset + k];
+
+        bool bValidNormal = idx.normal_index >= 0 && idx.normal_index < vctNormals.size();
+        oModelData.m_vctVertexData[idx.vertex_index].Normal = bValidNormal ? vctNormals[idx.normal_index] : maths::CVector3::Forward;
+
+        bool bValidTexCoord = idx.texcoord_index >= 0 && idx.texcoord_index < vctCoords.size();
+        oModelData.m_vctVertexData[idx.vertex_index].TexCoord = bValidTexCoord ? vctCoords[idx.texcoord_index] : maths::CVector2::Zero;
+
+        oModelData.m_vctIndexes.emplace_back(idx.vertex_index);
+      }
+      index_offset += uVertexCount;
+    }
+    vctMeshes.emplace_back(pMesh);
+  }
+
+  std::cout << "loaded" << std::endl;
+  return oModelData;
 }
 

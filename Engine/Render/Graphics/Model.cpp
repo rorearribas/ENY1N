@@ -35,13 +35,18 @@ namespace render
     {
       // Create buffers from model data
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
+      //m_pTexture = new render::texture::CTexture("C://Users//Ruben//Desktop//cat//Cat_diffuse.jpg");
 
-      m_pTexture = new render::texture::CTexture("C://Users//Ruben//Desktop//Model//textures//cottage.png");
+      /*CResourceManager::SModelData oModelData = pResourceManager->LoadModelData(_sPath, "rb");
+      UNUSED_VARIABLE(oModelData);*/
 
-      //m_vctMaterialList = std::move(pResourceManager->LoadMaterials("C://Users//Ruben//Desktop//Model//model_mat.mtl", "rb"));
+      CResourceManager::SModelData vctMeshes = pResourceManager->LoadModel(_sPath, "C://Users//Ruben//Desktop//Model_2");
+      UNUSED_VARIABLE(vctMeshes);
 
-      CResourceManager::SModelData oModelData = pResourceManager->LoadModelData(_sPath, "rb");
-      HRESULT hr = CreateBuffersFromModelData(oModelData.m_vctVertexInfo, oModelData.m_vctIndexes);
+      //render::graphics::CMesh* pMesh = vctMeshes[0];
+      //UNUSED_VARIABLE(pMesh);
+
+      HRESULT hr = CreateBuffersFromModelData(vctMeshes.m_vctVertexData, vctMeshes.m_vctIndexes);
       if (FAILED(hr)) return hr;
 
       // Compile shaders
@@ -59,14 +64,14 @@ namespace render
       return hr;
     }
     // ------------------------------------
-    HRESULT CModel::CreateBuffersFromModelData(TVertexInfoList& _vctVertexInfo, TIndexesList& _vctIndexes)
+    HRESULT CModel::CreateBuffersFromModelData(const CMesh::TVertexDataList& _vctVertexInfo, const CMesh::TIndexesList& _vctIndexes)
     {
       // Create constant buffer
       m_oConstantBuffer.Initialize(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Config vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
-      oVertexBufferDescriptor.ByteWidth = static_cast<UINT>((sizeof(SVertexInfo) * _vctVertexInfo.size()));
+      oVertexBufferDescriptor.ByteWidth = static_cast<UINT>((sizeof(render::graphics::SVertexData) * _vctVertexInfo.size()));
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -100,10 +105,9 @@ namespace render
     { 
       D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
       {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexInfo, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVertexInfo, TextureCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::graphics::SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
       };
 
       return global::dx11::s_pDevice->CreateInputLayout
@@ -175,18 +179,21 @@ namespace render
     void CModel::DrawModel()
     {
       // Set general data
-      UINT uVertexStride = sizeof(render::graphics::CModel::SVertexInfo);
+      UINT uVertexStride = sizeof(render::graphics::SVertexData);
       UINT uVertexOffset = 0;
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
       global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-      ID3D11ShaderResourceView* shaderResourceView = m_pTexture->GetShaderResourceView();
-      ID3D11SamplerState* pSamplerState = m_pTexture->GetSamplerState();
-      if (shaderResourceView && pSamplerState)
+      if (m_pTexture)
       {
-        global::dx11::s_pDeviceContext->PSSetShaderResources(0, 1, &shaderResourceView);
-        global::dx11::s_pDeviceContext->PSSetSamplers(0, 1, &pSamplerState);
+        ID3D11ShaderResourceView* shaderResourceView = m_pTexture->GetShaderResourceView();
+        ID3D11SamplerState* pSamplerState = m_pTexture->GetSamplerState();
+        if (shaderResourceView && pSamplerState)
+        {
+          global::dx11::s_pDeviceContext->PSSetShaderResources(0, 1, &shaderResourceView);
+          global::dx11::s_pDeviceContext->PSSetSamplers(0, 1, &pSamplerState);
+        }
       }
 
       // Set pixel and vertex shaders

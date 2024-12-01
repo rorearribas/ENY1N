@@ -26,10 +26,10 @@ namespace game
       m_pModel = pEngine->CreateModel(_sModelPath);
       assert(m_pModel);
 
-      /*if (m_pPrimitive)
+      if (m_pPrimitive)
       {
         pEngine->DestroyPrimitive(m_pPrimitive);
-      }*/
+      }
     }
   }
   // ------------------------------------

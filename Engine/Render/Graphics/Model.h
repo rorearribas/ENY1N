@@ -3,8 +3,9 @@
 #include "Libs/Maths/Transform.h"
 #include "Libs/Maths/Vector2.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-#include "Engine/Render/Material/Material.h"
-#include "Engine/Render/Material/Texture.h"
+#include "Engine/Render/Resources/Material.h"
+#include "Engine/Render/Resources/Texture.h"
+#include "Mesh.h"
 
 namespace render
 {
@@ -13,17 +14,7 @@ namespace render
     class CModel
     {
     public:
-      struct SVertexInfo
-      {
-        maths::CVector3 Position = maths::CVector3::Zero;
-        maths::CVector3 Normal = maths::CVector3::Zero;
-        maths::CVector3 Color = maths::CVector3::One;
-        maths::CVector2 TextureCoord = maths::CVector2::Zero;
-      };
-
       typedef std::vector<material::CMaterial> TMaterialList;
-      typedef std::vector<render::graphics::CModel::SVertexInfo> TVertexInfoList;
-      typedef std::vector<uint32_t> TIndexesList;
 
     public:
       CModel(const char* _sModelPath);
@@ -40,7 +31,7 @@ namespace render
 
     private: 
       HRESULT InitModel(const char* _sPath);
-      HRESULT CreateBuffersFromModelData(TVertexInfoList& _vctPrimitiveInfo, TIndexesList& _vctIndexes);
+      HRESULT CreateBuffersFromModelData(const CMesh::TVertexDataList& _vctPrimitiveInfo, const CMesh::TIndexesList& _vctIndexes);
 
       HRESULT CompileShaders();
       HRESULT CreateShaders();

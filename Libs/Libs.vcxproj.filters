@@ -129,6 +129,9 @@
     <ClInclude Include="Third-Party\stb\stretchy_buffer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Third-Party\objloader\tiny_obj_loader.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Maths\Vector3.cpp">
@@ -168,6 +171,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Third-Party\stb\stb_vorbis.c">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Third-Party\objloader\tiny_obj_loader.cc">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

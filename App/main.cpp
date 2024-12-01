@@ -29,8 +29,8 @@ int main()
 
   game::CEntity* pEntity = pGameManager->CreateEntity("Test");
   game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
-  pModelComponent->CreatePrimitive(render::graphics::CPrimitive::CUBE);
-  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Model//model_test.obj");
+  //pModelComponent->CreatePrimitive(render::graphics::CPrimitive::CUBE);
+  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Model_2//bugatti.obj");
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -73,7 +73,7 @@ int main()
 
       if (bRotateActor)
       {
-        const maths::CVector3 vRot(1.0f * pTimeManager->GetFixedDelta(), 0.0f, 0.0f);
+        const maths::CVector3 vRot(0.0f, 1.0f * pTimeManager->GetFixedDelta(), 0.0f);
         maths::CVector3 vCurrentRotation = pEntity->GetRotation();
         pEntity->SetRotation(vCurrentRotation + vRot);
       }
