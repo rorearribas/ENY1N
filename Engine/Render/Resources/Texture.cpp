@@ -22,6 +22,15 @@ namespace render
       ClearTexture();
     }
     // ------------------------------------
+    void CTexture::DrawTexture()
+    {
+      if (m_pShaderResourceView && m_pSamplerState)
+      {
+        global::dx11::s_pDeviceContext->PSSetShaderResources(0, 1, &m_pShaderResourceView);
+        global::dx11::s_pDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState);
+      }
+    }
+    // ------------------------------------
     HRESULT CTexture::LoadTexture(const char* _sTexturePath)
     {
       ClearTexture();

@@ -52,16 +52,15 @@ namespace render
       // Draw textures
       for (auto& it : m_dctMaterials)
       {
-        render::texture::CTexture* pAmbient = it.second->GetTexture(render::material::EModifierType::AMBIENT);
+        /*render::texture::CTexture* pAmbient = it.second->GetTexture(render::material::EModifierType::AMBIENT);
         if (pAmbient)
         {
-          ID3D11ShaderResourceView* pShaderResourceView = pAmbient->GetShaderResourceView();
-          ID3D11SamplerState* pSamplerState = pAmbient->GetSamplerState();
-          if (pShaderResourceView && pSamplerState)
-          {
-            global::dx11::s_pDeviceContext->PSSetShaderResources(0, 1, &pShaderResourceView);
-            global::dx11::s_pDeviceContext->PSSetSamplers(0, 1, &pSamplerState);
-          }
+          pAmbient->DrawTexture();
+        }*/
+        render::texture::CTexture* pDiffuse = it.second->GetTexture(render::material::EModifierType::DIFFUSE);
+        if (pDiffuse)
+        {
+          pDiffuse->DrawTexture();
         }
       }
 

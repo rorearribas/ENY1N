@@ -8,7 +8,7 @@ namespace render
 {
   namespace material
   {
-    enum EModifierType { AMBIENT, DIFFUSE, SPECULAR, SPECULAR_HIGHLIGHT, BUMP, DISPLACEMENT, ALPHA, REFLECTION };
+    enum EModifierType : int { AMBIENT, DIFFUSE, SPECULAR, SPECULAR_HIGHLIGHT, BUMP, DISPLACEMENT, ALPHA, REFLECTION, COUNT};
 
     class CMaterial
     {

@@ -11,6 +11,7 @@ namespace render
       explicit CTexture(const char* _sTexturePath);
       ~CTexture();
 
+      void DrawTexture();
       HRESULT LoadTexture(const char* _sTexturePath);
       void ClearTexture();
 

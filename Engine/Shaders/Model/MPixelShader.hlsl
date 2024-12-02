@@ -6,7 +6,7 @@ SamplerState cSamplerState : register(s0);
 float4 PSMain(PS_INPUT input) : SV_TARGET 
 {
     // Luz direccional
-    float3 lightDir = normalize(float3(0.5f, 1.0f, -1.0f));
+    float3 lightDir = normalize(float3(0.0f, 0.0f, 1.0f));
     float3 normal = normalize(input.normal);
 
     // Cálculo de iluminación difusa (Lambert)
