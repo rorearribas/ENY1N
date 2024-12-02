@@ -6,6 +6,8 @@
 
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "Libs/Third-Party/objloader/tiny_obj_loader.h"
+#include <algorithm>
+#include <unordered_set>
 
 char* CResourceManager::LoadResource(const char* _sPath, const char* _sMode)
 {
@@ -235,10 +237,8 @@ std::vector<render::material::CMaterial> CResourceManager::LoadMaterials(const c
   return vctMaterials;
 }
 // ------------------------------------
-CResourceManager::SModelData CResourceManager::LoadModel(const char* _sPath, const char* _sBaseModelMtlDir)
+std::vector<render::graphics::CMesh*> CResourceManager::LoadModel(const char* _sPath, const char* _sBaseModelMtlDir)
 {
-  CResourceManager::SModelData oModelData;
-
   tinyobj::attrib_t attributes;
   std::vector<tinyobj::shape_t> shapes;
   std::vector<tinyobj::material_t> materials;
@@ -248,36 +248,35 @@ CResourceManager::SModelData CResourceManager::LoadModel(const char* _sPath, con
   tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, _sPath, _sBaseModelMtlDir);
 
   // Register materials
+  std::vector<render::material::CMaterial*> vctMaterials;
   for (auto& oMaterial : materials)
   {
-    render::material::CMaterial oRegisterMaterial(oMaterial.name.c_str());
+    render::material::CMaterial* pRegisterMaterial = new render::material::CMaterial(oMaterial.name.c_str());
 
-    oRegisterMaterial.SetAmbientColor({ oMaterial.ambient[0], oMaterial.ambient[1], oMaterial.ambient[2] });
-    oRegisterMaterial.SetDiffuseColor({ oMaterial.diffuse[0], oMaterial.diffuse[1], oMaterial.diffuse[2] });
-    oRegisterMaterial.SetSpecularColor({ oMaterial.specular[0], oMaterial.specular[1], oMaterial.specular[2] });
+    pRegisterMaterial->SetAmbientColor({ oMaterial.ambient[0], oMaterial.ambient[1], oMaterial.ambient[2] });
+    pRegisterMaterial->SetDiffuseColor({ oMaterial.diffuse[0], oMaterial.diffuse[1], oMaterial.diffuse[2] });
+    pRegisterMaterial->SetSpecularColor({ oMaterial.specular[0], oMaterial.specular[1], oMaterial.specular[2] });
 
-    oRegisterMaterial.RegisterPath(render::material::EModifierType::AMBIENT, oMaterial.ambient_texname);
-    oRegisterMaterial.RegisterPath(render::material::EModifierType::DIFFUSE, oMaterial.diffuse_texname);
-    oRegisterMaterial.RegisterPath(render::material::EModifierType::SPECULAR, oMaterial.specular_texname);
-    oRegisterMaterial.RegisterPath(render::material::EModifierType::BUMP, oMaterial.bump_texname);
-    oRegisterMaterial.RegisterPath(render::material::EModifierType::DISPLACEMENT, oMaterial.displacement_texname);
-    oRegisterMaterial.RegisterPath(render::material::EModifierType::ALPHA, oMaterial.alpha_texname);
-    oRegisterMaterial.RegisterPath(render::material::EModifierType::REFLECTION, oMaterial.reflection_texname);
+    pRegisterMaterial->RegisterPath(render::material::EModifierType::AMBIENT, oMaterial.ambient_texname);
+    pRegisterMaterial->RegisterPath(render::material::EModifierType::DIFFUSE, oMaterial.diffuse_texname);
+    pRegisterMaterial->RegisterPath(render::material::EModifierType::SPECULAR, oMaterial.specular_texname);
+    pRegisterMaterial->RegisterPath(render::material::EModifierType::BUMP, oMaterial.bump_texname);
+    pRegisterMaterial->RegisterPath(render::material::EModifierType::DISPLACEMENT, oMaterial.displacement_texname);
+    pRegisterMaterial->RegisterPath(render::material::EModifierType::ALPHA, oMaterial.alpha_texname);
+    pRegisterMaterial->RegisterPath(render::material::EModifierType::REFLECTION, oMaterial.reflection_texname);
 
-    oModelData.m_vctMaterials.emplace_back(oRegisterMaterial);
+    vctMaterials.emplace_back(pRegisterMaterial);
   }
 
+  std::vector<maths::CVector3> vctVertices = {};
   for (size_t i = 0; i < attributes.vertices.size(); i += 3)
   {
-    render::graphics::SVertexData oVertexData;
-    oVertexData.Position = 
-    {
+    vctVertices.emplace_back
+    (
       attributes.vertices[i],
       attributes.vertices[i + 1],
-      attributes.vertices[i + 2] 
-    };
-
-    oModelData.m_vctVertexData.emplace_back(oVertexData);
+      attributes.vertices[i + 2]
+    );
   }
 
   std::vector<maths::CVector3> vctNormals = {};
@@ -308,30 +307,43 @@ CResourceManager::SModelData CResourceManager::LoadModel(const char* _sPath, con
     tinyobj::shape_t& shape = shapes[i];
     tinyobj::mesh_t& mesh = shape.mesh;
 
+    std::vector<uint32_t> vctIndexes = {};
+    std::vector<render::graphics::SVertexData> vctVertexData = {};
+
+    uint32_t uOffset = 0;
     render::graphics::CMesh* pMesh = new render::graphics::CMesh(shape.name);
 
-    size_t index_offset = 0;
     for (int j = 0; j < mesh.num_face_vertices.size(); j++) 
     {
-      unsigned int uVertexCount = mesh.num_face_vertices[j];
-      for (size_t k = 0; k < uVertexCount; k++)
+      uint32_t uVertexCount = mesh.num_face_vertices[j];
+      for (uint32_t k = 0; k < uVertexCount; k++)
       {
-        tinyobj::index_t idx = mesh.indices[index_offset + k];
+        tinyobj::index_t idx = mesh.indices[uOffset + k];
+
+        render::graphics::SVertexData oVertexData;
+        oVertexData.Position = vctVertices[idx.vertex_index];
 
         bool bValidNormal = idx.normal_index >= 0 && idx.normal_index < vctNormals.size();
-        oModelData.m_vctVertexData[idx.vertex_index].Normal = bValidNormal ? vctNormals[idx.normal_index] : maths::CVector3::Forward;
+        oVertexData.Normal = bValidNormal ? vctNormals[idx.normal_index] : maths::CVector3::Forward;
 
         bool bValidTexCoord = idx.texcoord_index >= 0 && idx.texcoord_index < vctCoords.size();
-        oModelData.m_vctVertexData[idx.vertex_index].TexCoord = bValidTexCoord ? vctCoords[idx.texcoord_index] : maths::CVector2::Zero;
+        oVertexData.TexCoord = bValidTexCoord ? vctCoords[idx.texcoord_index] : maths::CVector2::Zero;
 
-        oModelData.m_vctIndexes.emplace_back(idx.vertex_index);
+        vctVertexData.emplace_back(oVertexData);
+        vctIndexes.emplace_back((uint32_t)(vctVertexData.size() - 1)); // Register index
       }
-      index_offset += uVertexCount;
+      uOffset += uVertexCount;
+    }
+
+    pMesh->CreateMesh(vctVertexData, vctIndexes);
+    if (mesh.material_ids.size() > 0)
+    {
+      pMesh->ApplyMaterial(std::move(vctMaterials[mesh.material_ids[0]]));
     }
     vctMeshes.emplace_back(pMesh);
   }
 
   std::cout << "loaded" << std::endl;
-  return oModelData;
+  return vctMeshes;
 }
 

@@ -1,5 +1,11 @@
 d:\projects\personal\eny1n\libs\x64\debug\libs.pdb
 d:\projects\personal\eny1n\libs\x64\debug\libs.idb
+d:\projects\personal\eny1n\libs\x64\debug\trailing_whitespace.obj
+d:\projects\personal\eny1n\libs\x64\debug\make_readme.obj
+d:\projects\personal\eny1n\libs\x64\debug\easy_font_maker.obj
+d:\projects\personal\eny1n\libs\x64\debug\build_matrix.obj
+d:\projects\personal\eny1n\libs\x64\debug\stb_vorbis.obj
+d:\projects\personal\eny1n\libs\x64\debug\transform.obj
 d:\projects\personal\eny1n\libs\x64\debug\matrix4x4.obj
 d:\projects\personal\eny1n\libs\x64\debug\vector3.obj
 d:\projects\personal\eny1n\libs\x64\debug\vector2.obj
@@ -11,7 +17,7 @@ d:\projects\personal\eny1n\libs\x64\debug\imgui_draw.obj
 d:\projects\personal\eny1n\libs\x64\debug\imgui_demo.obj
 d:\projects\personal\eny1n\libs\x64\debug\imgui.obj
 d:\projects\personal\eny1n\libs\x64\debug\timemanager.obj
-d:\projects\personal\eny1n\libs\x64\debug\transform.obj
+d:\projects\personal\eny1n\libs\x64\debug\tiny_obj_loader.obj
 d:\projects\personal\eny1n\libs\x64\debug\libs.lib
 d:\projects\personal\eny1n\libs\x64\debug\libs.tlog\cl.command.1.tlog
 d:\projects\personal\eny1n\libs\x64\debug\libs.tlog\cl.items.tlog

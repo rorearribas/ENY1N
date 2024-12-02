@@ -1,4 +1,5 @@
-D:\Projects\Personal\ENY1N\Engine\Render\Material\Material.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Material.obj
+D:\Projects\Personal\ENY1N\Engine\Render\Graphics\Mesh.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Mesh.obj
+D:\Projects\Personal\ENY1N\Engine\Render\Resources\Material.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Material.obj
 D:\Projects\Personal\ENY1N\Engine\Render\Graphics\Model.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Model.obj
 D:\Projects\Personal\ENY1N\Engine\Physics\AABB.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\AABB.obj
 D:\Projects\Personal\ENY1N\Engine\Base\Engine.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Engine.obj
@@ -13,4 +14,5 @@ D:\Projects\Personal\ENY1N\Engine\Render\Window\RenderWindow.cpp;D:\Projects\Per
 D:\Projects\Personal\ENY1N\Engine\Managers\ResourceManager.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\ResourceManager.obj
 D:\Projects\Personal\ENY1N\Engine\Scenes\SceneManager.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\SceneManager.obj
 D:\Projects\Personal\ENY1N\Engine\Scenes\Scene.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Scene.obj
-D:\Projects\Personal\ENY1N\Engine\Render\Material\Texture.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Texture.obj
+D:\Projects\Personal\ENY1N\Engine\Render\Resources\Texture.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Texture.obj
+D:\Projects\Personal\ENY1N\Engine\Render\Graphics\Shape.cpp;D:\Projects\Personal\ENY1N\Engine\x64\Release\Shape.obj

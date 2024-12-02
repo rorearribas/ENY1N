@@ -18,12 +18,12 @@ namespace game
     Super::UpdateComponent(_fDeltaTime);
   }
   // ------------------------------------
-  void CModelComponent::LoadModel(const char* _sModelPath)
+  void CModelComponent::LoadModel(const char* _sModelPath, const char* _sBaseMltDir)
   {
     if (engine::CEngine::HasSingleton())
     {
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      m_pModel = pEngine->CreateModel(_sModelPath);
+      m_pModel = pEngine->CreateModel(_sModelPath, _sBaseMltDir);
       assert(m_pModel);
 
       if (m_pPrimitive)

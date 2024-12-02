@@ -80,11 +80,11 @@ namespace scene
     return pPrimitiveItem;
   }
   // ------------------------------------
-  render::graphics::CModel* CScene::CreateModel(const char* _sPath)
+  render::graphics::CModel* CScene::CreateModel(const char* _sModelPath, const char* _sBaseMltDir)
   {
     if (m_iRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
     render::graphics::CModel*& pModel = m_vctModels[m_iRegisteredModels++];
-    pModel = new render::graphics::CModel(_sPath);
+    pModel = new render::graphics::CModel(_sModelPath, _sBaseMltDir);
     return pModel;
   }
   // ------------------------------------

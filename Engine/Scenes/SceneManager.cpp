@@ -59,11 +59,11 @@ namespace scene
     return pScene->CreatePrimitive(_ePrimitiveType);
   }
   // ------------------------------------
-  render::graphics::CModel* CSceneManager::CreateModel(const char* _sPath, const UINT32& _uSceneIndex)
+  render::graphics::CModel* CSceneManager::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, const UINT32& _uSceneIndex)
   {
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
-    return pScene->CreateModel(_sPath);
+    return pScene->CreateModel(_sModelPath, _sBaseMltDir);
   }
   // ------------------------------------
   void CSceneManager::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)

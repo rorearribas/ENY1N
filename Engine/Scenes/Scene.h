@@ -26,7 +26,7 @@ namespace scene
 
     render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData);
     render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType);
-    render::graphics::CModel* CreateModel(const char* _sPath);
+    render::graphics::CModel* CreateModel(const char* _sModelPath, const char* _sBaseMltDir);
 
     void DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_);
     void DestroyModel(render::graphics::CModel*& pModel_);

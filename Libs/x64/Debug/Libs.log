@@ -1,2 +1,4 @@
-﻿  tiny_obj_loader.cc
+﻿  Matrix4x4.cpp
+  Transform.cpp
+  Generating Code...
   Libs.vcxproj -> D:\Projects\Personal\ENY1N\Libs\x64\Debug\Libs.lib

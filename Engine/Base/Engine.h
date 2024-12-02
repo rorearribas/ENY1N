@@ -28,7 +28,7 @@ namespace engine
 
     render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex = 0);
     render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex = 0);
-    render::graphics::CModel* CreateModel(const char* _sPath, const UINT32& _uSceneIndex = 0);
+    render::graphics::CModel* CreateModel(const char* _sModelPath, const char* _sBaseMltDir, const UINT32& _uSceneIndex = 0);
 
     void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive);
     void DestroyAllPrimimitives(const UINT32& _uSceneIndex = 0);

@@ -1,4 +1,5 @@
 #pragma once
+#include <functional>
 
 namespace maths
 {
@@ -20,20 +21,35 @@ namespace maths
     inline void operator+=(const CVector3& _v3) { X += _v3.X; Y += _v3.Y; Z += _v3.Z; }
     inline void operator-=(const CVector3& _v3) { X -= _v3.X; Y -= _v3.Y; Z -= _v3.Z; }
 
+    inline bool operator<(const CVector3& _other) const { return X < _other.X && Y < _other.Y && Z < _other.Z; }
     inline CVector3 operator*(const float& _fValue) const { return CVector3(X * _fValue, Y * _fValue, Z * _fValue); }
     inline CVector3 operator+(const CVector3& _v3) const { return CVector3(X + _v3.X, Y + _v3.Y, Z + _v3.Z); }
     inline CVector3 operator-(const CVector3& _v3) const { return CVector3(X - _v3.X, Y - _v3.Y, Z - _v3.Z); }
     inline CVector3 operator-() const { return CVector3(-X, -Y, -Z); }
 
     inline bool operator==(const CVector3& _v3) const { return X == _v3.X && Y == _v3.Y && Z == _v3.Z; }
-    inline bool operator!=(const CVector3& _v3)  const { return X != _v3.X && Y != _v3.Y && Z != _v3.Z; }
-
+    bool operator!=(const CVector3& other) const { return !(*this == other); }
 
     CVector3 CrossProduct(const CVector3& _v3) const;
     float DotProduct(const CVector3& _v3) const;
     CVector3 Normalized() const;
   };
-
 }
+
+namespace std
+{
+  template<>
+  struct std::hash<maths::CVector3>
+  {
+    std::size_t operator()(const maths::CVector3& v) const
+    {
+      size_t hx = std::hash<float>()(v.X);
+      size_t hy = std::hash<float>()(v.Y);
+      size_t hz = std::hash<float>()(v.Z);
+      return hx ^ (hy << 1) ^ (hz << 2);
+    }
+  };
+}
+
 
 

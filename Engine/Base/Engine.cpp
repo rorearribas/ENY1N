@@ -102,9 +102,9 @@ namespace engine
     return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_ePrimitiveType, _uSceneIndex) : nullptr;
   }
   // ------------------------------------
-  render::graphics::CModel* CEngine::CreateModel(const char* _sPath, const UINT32& _uSceneIndex)
+  render::graphics::CModel* CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, const UINT32& _uSceneIndex)
   {
-    return m_pSceneManager ? m_pSceneManager->CreateModel(_sPath, _uSceneIndex) : nullptr;
+    return m_pSceneManager ? m_pSceneManager->CreateModel(_sModelPath, _sBaseMltDir, _uSceneIndex) : nullptr;
   }
   // ------------------------------------
   void CEngine::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)

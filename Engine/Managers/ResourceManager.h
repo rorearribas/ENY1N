@@ -27,7 +27,7 @@ public:
   [[nodiscard]] std::vector<render::material::CMaterial> LoadMaterials(const char* _sPath, const char* _sMode);
 
 
-  [[nodiscard]] SModelData LoadModel(const char* _sPath, const char* _sBaseModelMtlDir);
+  [[nodiscard]] std::vector<render::graphics::CMesh*> LoadModel(const char* _sPath, const char* _sBaseModelMtlDir);
 };
 
 

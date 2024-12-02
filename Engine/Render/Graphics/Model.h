@@ -6,6 +6,7 @@
 #include "Engine/Render/Resources/Material.h"
 #include "Engine/Render/Resources/Texture.h"
 #include "Mesh.h"
+#include "Shape.h"
 
 namespace render
 {
@@ -14,10 +15,9 @@ namespace render
     class CModel
     {
     public:
-      typedef std::vector<material::CMaterial> TMaterialList;
+      typedef std::vector<render::graphics::CMesh*> TMeshList;
 
-    public:
-      CModel(const char* _sModelPath);
+      CModel(const char* _sModelPath, const char* _sBaseMltDir);
       ~CModel();
 
       void DrawModel();
@@ -30,35 +30,10 @@ namespace render
       const maths::CVector3& GetScale() const { return m_oModelTransform.GetScale(); }
 
     private: 
-      HRESULT InitModel(const char* _sPath);
-      HRESULT CreateBuffersFromModelData(const CMesh::TVertexDataList& _vctPrimitiveInfo, const CMesh::TIndexesList& _vctIndexes);
+      HRESULT InitModel(const char* _sModelPath, const char* _sBaseMltDir);
 
-      HRESULT CompileShaders();
-      HRESULT CreateShaders();
-      HRESULT CreateInputLayout();
-
-      // Buffers
-      ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
-      ID3D11Buffer* m_pVertexBuffer = nullptr;
-      ID3D11Buffer* m_pIndexBuffer = nullptr;
-
-      // Vertex shader
-      ID3DBlob* m_pVertexShaderBlob = nullptr;
-      ID3D11VertexShader* m_pVertexShader = nullptr;
-
-      // Pixel shader
-      ID3DBlob* m_pPixelShaderBlob = nullptr;
-      ID3D11PixelShader* m_pPixelShader = nullptr;
-
-      // Input layout
-      ID3D11InputLayout* m_pInputLayout = nullptr;
-
-      // Data
-      TMaterialList m_vctMaterialList = {};
       maths::CTransform m_oModelTransform;
-      uint32_t m_uVertexCount = 0;
-
-      render::texture::CTexture* m_pTexture = nullptr;
+      TMeshList m_vctMeshes = {};
     };
   }
 }
