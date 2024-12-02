@@ -16,5 +16,5 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
     float4 texColor = cTexture2D.Sample(cSamplerState, input.uv);
     float4 finalColor = texColor * diff * input.color;
 
-    return diff * input.color;
+    return finalColor;
 }

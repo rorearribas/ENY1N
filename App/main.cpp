@@ -30,7 +30,7 @@ int main()
   game::CEntity* pEntity = pGameManager->CreateEntity("Test");
   game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
   //pModelComponent->CreatePrimitive(render::graphics::CPrimitive::CUBE);
-  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Model_2//bugatti.obj", "C://Users//Ruben//Desktop//Model_2//");
+  pModelComponent->LoadModel("C://Users//Ruben//Desktop//cat//12221_Cat_v1_l3.obj", "C://Users//Ruben//Desktop//cat//");
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();

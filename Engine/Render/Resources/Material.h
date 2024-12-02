@@ -20,9 +20,9 @@ namespace render
       CMaterial(std::string _sMaterialName) : m_sMaterialName(_sMaterialName) {}
       ~CMaterial();
 
+      const std::string& GetMaterialName() const{ return m_sMaterialName; }
       void LoadTexture(EModifierType _eModifierType, const char* _sPath);
       render::texture::CTexture* const GetTexture(EModifierType _eMapType) { return m_dctTextures[_eMapType]; }
-
       void RegisterPath(EModifierType _eModifierType, std::string _sPath);
       const std::string& GetPath(EModifierType _eMapType) { return m_dctTexturesPath[_eMapType]; }
 

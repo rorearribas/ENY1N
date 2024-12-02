@@ -2,6 +2,7 @@
 #include <d3dcompiler.h>
 #include <cassert>
 #include "Libs/Macros/GlobalMacros.h"
+#include <iostream>
 
 namespace render
 {
@@ -48,21 +49,30 @@ namespace render
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
-      // Draw associated texture
-      if (m_pTexture)
+      // Draw textures
+      for (auto& it : m_dctMaterials)
       {
-        ID3D11ShaderResourceView* pShaderResourceView = m_pTexture->GetShaderResourceView();
-        ID3D11SamplerState* pSamplerState = m_pTexture->GetSamplerState();
-        if (pShaderResourceView && pSamplerState)
+        render::texture::CTexture* pAmbient = it.second->GetTexture(render::material::EModifierType::AMBIENT);
+        if (pAmbient)
         {
-          global::dx11::s_pDeviceContext->PSSetShaderResources(0, 1, &pShaderResourceView);
-          global::dx11::s_pDeviceContext->PSSetSamplers(0, 1, &pSamplerState);
+          ID3D11ShaderResourceView* pShaderResourceView = pAmbient->GetShaderResourceView();
+          ID3D11SamplerState* pSamplerState = pAmbient->GetSamplerState();
+          if (pShaderResourceView && pSamplerState)
+          {
+            global::dx11::s_pDeviceContext->PSSetShaderResources(0, 1, &pShaderResourceView);
+            global::dx11::s_pDeviceContext->PSSetSamplers(0, 1, &pSamplerState);
+          }
         }
       }
 
       // Draw
       global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
       global::dx11::s_pDeviceContext->DrawIndexed(m_uVertexCount, 0, 0);
+    }
+    // ------------------------------------
+    void CMesh::AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx)
+    {
+      m_dctMaterials.emplace(_uMaterialIdx, _pMaterial);
     }
     // ------------------------------------
     HRESULT CMesh::InitMesh()
@@ -195,14 +205,16 @@ namespace render
       return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
-    void CMesh::ApplyMaterial(render::material::CMaterial* _pMaterial)
+    void CMesh::ApplyMaterials()
     {
-      m_pMaterial = _pMaterial;
-
-      // Set color
-      if (m_pMaterial)
+      // Set material
+      uint32_t uOffsetMat = 0;
+      for (int iIterator = 0; iIterator < m_vctMaterialsIds.size(); iIterator++)
       {
-        // Map
+        int iMaterialId = m_vctMaterialsIds[iIterator];
+        render::material::CMaterial* pMaterial = m_dctMaterials[iMaterialId];
+        assert(pMaterial);
+
         D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
         HRESULT hr = global::dx11::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
         UNUSED_VARIABLE(hr);
@@ -212,13 +224,17 @@ namespace render
         assert(pVertexData);
 
         // Update color
-        for (UINT uIndex = 0; uIndex < m_uVertexCount; ++uIndex)
+        const uint32_t uMeshOffset = m_uVertexCount / static_cast<uint32_t>(m_vctMaterialsIds.size());
+        for (UINT uIndex = uOffsetMat; uIndex < uMeshOffset + uOffsetMat; ++uIndex)
         {
-          pVertexData[uIndex].Color = m_pMaterial->GetDiffuseColor();
+          pVertexData[uIndex].Color = pMaterial->GetDiffuseColor();
         }
 
         // Unmap
         global::dx11::s_pDeviceContext->Unmap(m_pVertexBuffer, 0);
+
+        // Add offset
+        uOffsetMat += uMeshOffset;
       }
     }
   }

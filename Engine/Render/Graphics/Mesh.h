@@ -28,6 +28,11 @@ namespace render
         return !(*this == _other);
       }
     };
+
+    struct STriangleMesh 
+    {
+      std::array<SVertexData, 3> m_vctTriangleMesh;
+    };
     
     class CMesh
     {
@@ -40,8 +45,11 @@ namespace render
       ~CMesh();
 
       void DrawMesh(const maths::CTransform& _oTransform);
-      void ApplyMaterial(render::material::CMaterial* _pMaterial);
+      void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
+      void ApplyMaterials();
+
       HRESULT CreateMesh(TVertexDataList& _vctVertexData, TIndexesList& _vctIndexes);
+      void SetMaterialIds(std::vector<int>& _vctMaterialIds) { m_vctMaterialsIds = _vctMaterialIds; }
 
     private:
       HRESULT InitMesh();
@@ -51,6 +59,7 @@ namespace render
 
       // Info
       std::string m_sMeshName = std::string();
+      uint32_t m_uVertexCount = 0;
 
       // Buffers
       ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
@@ -68,10 +77,8 @@ namespace render
       // Input layout
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
-      uint32_t m_uVertexCount = 0;
-
-      render::material::CMaterial* m_pMaterial = nullptr;
-      render::texture::CTexture* m_pTexture = nullptr;
+      std::map<uint32_t, render::material::CMaterial*> m_dctMaterials = {};
+      std::vector<int> m_vctMaterialsIds = {};
     };
   }
 }

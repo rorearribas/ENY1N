@@ -26,9 +26,12 @@ namespace render
     {
       ClearTexture();
 
+      std::string sPath = "C://Users//Ruben//Desktop//cat//";
+      sPath += _sTexturePath;
+
       unsigned char* cBuffer = nullptr;
       int iWidth, iHeight, iChannels;
-      cBuffer = stbi_load(_sTexturePath, &iWidth, &iHeight, &iChannels, 4);
+      cBuffer = stbi_load(sPath.c_str(), &iWidth, &iHeight, &iChannels, 4);
       if (!cBuffer)
       {
         std::cout << "Texture not found" << std::endl;

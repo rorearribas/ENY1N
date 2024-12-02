@@ -308,6 +308,7 @@ std::vector<render::graphics::CMesh*> CResourceManager::LoadModel(const char* _s
     tinyobj::mesh_t& mesh = shape.mesh;
 
     std::vector<uint32_t> vctIndexes = {};
+    std::vector<uint32_t> vctMaterialIds = {};
     std::vector<render::graphics::SVertexData> vctVertexData = {};
 
     uint32_t uOffset = 0;
@@ -336,10 +337,20 @@ std::vector<render::graphics::CMesh*> CResourceManager::LoadModel(const char* _s
     }
 
     pMesh->CreateMesh(vctVertexData, vctIndexes);
-    if (mesh.material_ids.size() > 0)
+
+    int iLastMaterialIdx = -1;
+    for (uint32_t uIndex = 0; uIndex < mesh.material_ids.size(); uIndex++)
     {
-      pMesh->ApplyMaterial(std::move(vctMaterials[mesh.material_ids[0]]));
+      int iMaterialIdx = mesh.material_ids[uIndex];
+      if (iLastMaterialIdx != iMaterialIdx)
+      {
+        iLastMaterialIdx = iMaterialIdx;
+        pMesh->AddMaterial(vctMaterials[iLastMaterialIdx], iMaterialIdx);
+      }
     }
+    pMesh->SetMaterialIds(mesh.material_ids);
+    pMesh->ApplyMaterials();
+
     vctMeshes.emplace_back(pMesh);
   }
 
