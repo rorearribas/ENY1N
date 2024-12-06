@@ -6,6 +6,10 @@ namespace render
 {
 	namespace graphics
 	{
+    struct SLine 
+    {
+    };
+
     class CShape
     {
     public:
@@ -16,6 +20,7 @@ namespace render
 
     private:
       std::string m_sShapeName = std::string();
+
       render::graphics::CMesh* m_pMesh = nullptr;
     };
 	}

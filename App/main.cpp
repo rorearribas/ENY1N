@@ -29,8 +29,7 @@ int main()
 
   game::CEntity* pEntity = pGameManager->CreateEntity("Test");
   game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
-  //pModelComponent->CreatePrimitive(render::graphics::CPrimitive::CUBE);
-  pModelComponent->LoadModel("C://Users//Ruben//Desktop//cat//12221_Cat_v1_l3.obj", "C://Users//Ruben//Desktop//cat//");
+  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Model_2//bugatti.obj", "C://Users//Ruben//Desktop//Model_2//");
   //pEntity->SetRotation(maths::CVector3(1.8f, 0.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
@@ -74,7 +73,7 @@ int main()
 
       if (bRotateActor)
       {
-        const maths::CVector3 vRot(0.0f, 0.0f, 1.0f * pTimeManager->GetFixedDelta());
+        const maths::CVector3 vRot(0.0f, 1.0f * pTimeManager->GetFixedDelta(), 0.0f);
         maths::CVector3 vCurrentRotation = pEntity->GetRotation();
         pEntity->SetRotation(vCurrentRotation + vRot);
       }
@@ -95,16 +94,6 @@ int main()
         if (!bRotateActor)
         {
           pEntity->SetRotation(maths::CVector3::Zero);
-        }
-      }
-
-      if (ImGui::Button("Increase Scale"))
-      {
-        bRotateActor = !bRotateActor;
-
-        if (!bRotateActor)
-        {
-          pEntity->SetScale(maths::CVector3::Zero);
         }
       }
 

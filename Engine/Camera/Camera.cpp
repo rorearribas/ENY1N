@@ -32,16 +32,21 @@ namespace render
     bool bMousePressed = pMouse->IsRightButtonPressed();
     ShowCursor(bMousePressed);
 
-    if (pInputManager->IsKeyPressed('W') && bMousePressed) MovePosition(vForward * m_fMovementSpeed * _fDeltaTime);
-    if (pInputManager->IsKeyPressed('S') && bMousePressed) MovePosition(-vForward * m_fMovementSpeed * _fDeltaTime);
-    if (pInputManager->IsKeyPressed('D') && bMousePressed) MovePosition(vRight * m_fMovementSpeed * _fDeltaTime);
-    if (pInputManager->IsKeyPressed('A') && bMousePressed) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
+    // Movement + rotation
+    if (bMousePressed)
+    {
+      if (pInputManager->IsKeyPressed('W') && bMousePressed) MovePosition(vForward * m_fMovementSpeed * _fDeltaTime);
+      if (pInputManager->IsKeyPressed('S') && bMousePressed) MovePosition(-vForward * m_fMovementSpeed * _fDeltaTime);
+      if (pInputManager->IsKeyPressed('D') && bMousePressed) MovePosition(vRight * m_fMovementSpeed * _fDeltaTime);
+      if (pInputManager->IsKeyPressed('A') && bMousePressed) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
 
-    // Rotation
-    float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed * _fDeltaTime;
-    float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed * _fDeltaTime;
-    AddRotation(bMousePressed ? maths::CVector3(yValue, xValue, 0.0f) : maths::CVector3::Zero);
+      // Rotation
+      float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed * _fDeltaTime;
+      float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed * _fDeltaTime;
+      AddRotation(maths::CVector3(yValue, xValue, 0.0f));
+    }
 
+    // Wheel 
     if (!bMousePressed)
     {
       float fMouseDelta = pMouse->GetMouseWheelDelta();

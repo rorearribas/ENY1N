@@ -29,7 +29,11 @@ namespace maths
     inline CVector2 operator-(const CVector2& _v2) const { return CVector2(X - _v2.X, Y - _v2.Y); }
     inline CVector2 operator*(const CVector2& _v2) const { return CVector2(X * _v2.X, Y * _v2.Y); }
 
-    inline bool operator==(const CVector2& _v2) const { return X == _v2.X && Y == _v2.Y; }
+    inline bool operator==(const CVector2& _v2) const 
+    { 
+      constexpr float EPSILON = 1e-5f;
+      return std::fabs(X - _v2.X) < EPSILON && std::fabs(Y - _v2.Y) < EPSILON;
+    }
     bool operator!=(const CVector2& other) const { return !(*this == other); }
 
     float DotProduct(const CVector2& _v2) const;

@@ -22,7 +22,7 @@ namespace render
       ClearTexture();
     }
     // ------------------------------------
-    void CTexture::DrawTexture()
+    void CTexture::BindTexture()
     {
       if (m_pShaderResourceView && m_pSamplerState)
       {
@@ -35,7 +35,7 @@ namespace render
     {
       ClearTexture();
 
-      std::string sPath = "C://Users//Ruben//Desktop//cat//";
+      std::string sPath = "C://Users//Ruben//Desktop//Model_2//";
       sPath += _sTexturePath;
 
       unsigned char* cBuffer = nullptr;

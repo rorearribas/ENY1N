@@ -11,9 +11,9 @@ namespace render
       explicit CTexture(const char* _sTexturePath);
       ~CTexture();
 
-      void DrawTexture();
-      HRESULT LoadTexture(const char* _sTexturePath);
+      void BindTexture();
       void ClearTexture();
+      HRESULT LoadTexture(const char* _sTexturePath);
 
       ID3D11Texture2D* const GetTexture() { return m_pTexture; }
       ID3D11SamplerState* const GetSamplerState() { return m_pSamplerState; }

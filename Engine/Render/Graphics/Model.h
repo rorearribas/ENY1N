@@ -15,7 +15,13 @@ namespace render
     class CModel
     {
     public:
+      struct SModelData
+      {
+        std::vector<render::graphics::CMesh*> m_vctMeshes = {};
+        std::vector<render::graphics::SVertexData> m_vctVertexData = {};
+      };
       typedef std::vector<render::graphics::CMesh*> TMeshList;
+    public:
 
       CModel(const char* _sModelPath, const char* _sBaseMltDir);
       ~CModel();
@@ -31,9 +37,26 @@ namespace render
 
     private: 
       HRESULT InitModel(const char* _sModelPath, const char* _sBaseMltDir);
+      HRESULT CreateShaders();
+      HRESULT CompileShaders();
+      HRESULT CreateInputLayout();
+
+      // Vertex shader
+      ID3DBlob* m_pVertexShaderBlob = nullptr;
+      ID3D11VertexShader* m_pVertexShader = nullptr;
+
+      // Pixel shader
+      ID3DBlob* m_pPixelShaderBlob = nullptr;
+      ID3D11PixelShader* m_pPixelShader = nullptr;
+
+      // Input layout
+      ID3D11InputLayout* m_pInputLayout = nullptr;
 
       maths::CTransform m_oModelTransform;
-      TMeshList m_vctMeshes = {};
+      ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
+
+      ID3D11Buffer* m_pVertexBuffer = nullptr;
+      SModelData m_oModelData;
     };
   }
 }
