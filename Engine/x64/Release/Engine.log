@@ -1,16 +1,11 @@
-﻿  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Release\MPixelShader.cso
-  Engine.cpp
+﻿  Engine.cpp
   Camera.cpp
   InputManager.cpp
   ResourceManager.cpp
   Mesh.cpp
   Model.cpp
-  Primitive.cpp
   Shape.cpp
   Render.cpp
-  Material.cpp
-  Texture.cpp
-  RenderWindow.cpp
   Scene.cpp
   SceneManager.cpp
   Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Release\Engine.lib

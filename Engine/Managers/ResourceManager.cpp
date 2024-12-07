@@ -100,12 +100,15 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     for (uint32_t uJ = 0; uJ < static_cast<uint32_t>(mesh.num_face_vertices.size()); uJ++)
     {
       uint32_t uVertexCount = mesh.num_face_vertices[uJ];
+      int iMaterialId = mesh.material_ids[uJ];
 
       for (uint32_t uK = 0; uK < uVertexCount; uK++)
       {
         tinyobj::index_t idx = mesh.indices[uOffset + uK];
         render::graphics::SVertexData oVertexData;
+        oVertexData.MaterialId = iMaterialId; // Set material id
 
+        // Set position
         oVertexData.Position = maths::CVector3
         (
           attributes.vertices[3 * idx.vertex_index], 
@@ -114,8 +117,8 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
         );
 
         // Set normal
-        bool bValidNormal = idx.normal_index >= 0 && idx.normal_index < (attributes.normals.size() / 3);
-        oVertexData.Normal = bValidNormal ? 
+        bool bHasNormal = idx.normal_index >= 0 && idx.normal_index < (attributes.normals.size() / 3);
+        oVertexData.Normal = bHasNormal ? 
         maths::CVector3
         (
           attributes.normals[3 * idx.normal_index],
@@ -125,8 +128,8 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
         ) : maths::CVector3::Forward;
 
         // Set texture coord
-        bool bValidTexCoord = idx.texcoord_index >= 0 && idx.texcoord_index < (attributes.texcoords.size() / 2);
-        oVertexData.TexCoord = bValidTexCoord ? maths::CVector2
+        bool bHasTexCoord = idx.texcoord_index >= 0 && idx.texcoord_index < (attributes.texcoords.size() / 2);
+        oVertexData.TexCoord = bHasTexCoord ? maths::CVector2
         (
           attributes.texcoords[2 * idx.texcoord_index],
           attributes.texcoords[2 * idx.texcoord_index + 1]
@@ -163,7 +166,6 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
       int iMaterialIdx = vctMaterialIds[uMaterialIdx];
       pMesh->AddMaterial(vctMaterials[iMaterialIdx], static_cast<uint32_t>(iMaterialIdx));
     }
-    pMesh->SetMaterialIndexes(mesh.material_ids);
     oModelData.m_vctMeshes.emplace_back(pMesh); // Add mesh
   }
 

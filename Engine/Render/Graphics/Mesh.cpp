@@ -13,7 +13,6 @@ namespace render
     {
       global::dx11::SafeRelease(m_pIndexBuffer);
       m_dctMaterials.clear();
-      m_vctMaterialsIdx.clear();
     }
     // ------------------------------------
     void CMesh::DrawMesh()
@@ -63,25 +62,22 @@ namespace render
       assert(!FAILED(hr));
 
       // Get vertex data
-      SVertexData* pVertexData = (SVertexData*)(oMappedSubresource.pData);
+      SVertexData* pVertexData = static_cast<SVertexData*>(oMappedSubresource.pData);
       assert(pVertexData);
 
-      // Apply Materials
       uint32_t uOffsetMat = 0;
-      for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(m_vctMaterialsIdx.size()); uIndex++)
+      uint32_t uMaxTriangles = m_uIndexCount / 3; // Get max triangles
+      for (uint32_t uIndex = 0; uIndex < uMaxTriangles; uIndex++)
       {
-        int iMaterialIdx = m_vctMaterialsIdx[uIndex];
-        render::material::CMaterial* pMaterial = m_dctMaterials[iMaterialIdx];
-        assert(pMaterial);
-
-        // Update color
-        const uint32_t uMeshOffset = m_uIndexCount / static_cast<uint32_t>(m_vctMaterialsIdx.size());
+        // Set material color
+        uint32_t uMeshOffset = m_uIndexCount / uMaxTriangles; // Get mesh offset
         for (uint32_t uJ = uOffsetMat; uJ < uMeshOffset + uOffsetMat; uJ++)
         {
           uint32_t uVertexDataIdx = m_vctIndexes[uJ];
+          render::material::CMaterial* pMaterial = m_dctMaterials[pVertexData[uVertexDataIdx].MaterialId];
+          assert(pMaterial);
           pVertexData[uVertexDataIdx].Color = pMaterial->GetDiffuseColor();
         }
-
         // Add offset
         uOffsetMat += uMeshOffset;
       }

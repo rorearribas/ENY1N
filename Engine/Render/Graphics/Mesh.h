@@ -19,6 +19,7 @@ namespace render
       maths::CVector3 Normal = maths::CVector3::Zero;
       maths::CVector2 TexCoord = maths::CVector2::Zero;
       maths::CVector3 Color = maths::CVector3::One;
+      int MaterialId = 0;
 
       bool operator==(const SVertexData& _other) const
       {
@@ -48,11 +49,10 @@ namespace render
       HRESULT CreateMesh(TIndexesList& _vctIndexes);
 
       const std::string& GetMeshName() const { return m_sMeshName; }
-      const uint32_t& GetIndexCount() const { return m_uIndexCount; }
       const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
+      const uint32_t& GetIndexCount() const { return m_uIndexCount; }
 
       void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
-      void SetMaterialIndexes(const std::vector<int>& _vctIndexes) { m_vctMaterialsIdx = _vctIndexes; }
       void ApplyMaterials(ID3D11Buffer* _pVertexBuffer);
 
     private:
@@ -65,7 +65,6 @@ namespace render
 
       // Materials
       TMapMaterials m_dctMaterials = {};
-      std::vector<int> m_vctMaterialsIdx = {};
       TIndexesList m_vctIndexes = {};
     };
   }
