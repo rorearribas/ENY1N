@@ -8,12 +8,12 @@ namespace render
     class CTexture 
     {
     public:
-      explicit CTexture(const char* _sTexturePath);
+      CTexture() {}
       ~CTexture();
 
+      HRESULT SetTexture(unsigned char* _cTexture, int _iWidth, int _iHeight);
       void BindTexture();
       void ClearTexture();
-      HRESULT LoadTexture(const char* _sTexturePath);
 
       ID3D11Texture2D* const GetTexture() { return m_pTexture; }
       ID3D11SamplerState* const GetSamplerState() { return m_pSamplerState; }

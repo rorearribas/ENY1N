@@ -3,9 +3,15 @@
 #include "Libs/Maths/Matrix4x4.h"
 #include "Engine/Global/GlobalResources.h"
 
-struct SConstantBuffer
+struct SConstantMatrix
 {
   maths::CMatrix4x4 mMatrix = maths::CMatrix4x4::Identity;
+};
+
+struct SConstantTexture
+{
+  bool bHasTexture = false;
+  char padding[15];
 };
 
 template<class T>
@@ -18,7 +24,7 @@ public:
   ConstantBuffer() {}
   ~ConstantBuffer() {}
 
-  HRESULT Initialize(ID3D11Device* _pDevice, ID3D11DeviceContext* _pDeviceContext)
+  HRESULT Init(ID3D11Device* _pDevice, ID3D11DeviceContext* _pDeviceContext)
   {
     m_pDeviceContext = _pDeviceContext;
 
@@ -28,7 +34,7 @@ public:
     oBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     oBufferDesc.MiscFlags = 0;
     oBufferDesc.StructureByteStride = 0;
-    oBufferDesc.ByteWidth = static_cast<UINT>(sizeof(maths::CMatrix4x4) + (16 - (sizeof(maths::CMatrix4x4) % 16)));
+    oBufferDesc.ByteWidth = static_cast<UINT>(sizeof(T));
 
     HRESULT hr = _pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
     return hr;

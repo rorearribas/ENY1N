@@ -22,7 +22,7 @@ namespace game
     {
       if (pComponent)
       {
-        pComponent->UpdateComponent(_fDeltaTime);
+        pComponent->Update(_fDeltaTime);
       }
     }
   }
@@ -33,7 +33,7 @@ namespace game
 
     ImGui::Text("ID: ");
     ImGui::SameLine();
-    ImGui::Text(m_sEntityName);
+    ImGui::Text(m_sEntityName.c_str());
 
     ImGui::Text("Pos: ");
     ImGui::SameLine();

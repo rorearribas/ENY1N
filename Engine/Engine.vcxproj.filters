@@ -130,9 +130,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\Primitive\PVertexShader.hlsl" />
-    <FxCompile Include="Shaders\Primitive\PPixelShader.hlsl" />
-    <FxCompile Include="Shaders\Model\MVertexShader.hlsl" />
-    <FxCompile Include="Shaders\Model\MPixelShader.hlsl" />
+    <FxCompile Include="Shaders\Primitive\VertexShader.hlsl" />
+    <FxCompile Include="Shaders\Primitive\PixelShader.hlsl" />
+    <FxCompile Include="Shaders\Model\DeferredVertexShader.hlsl" />
+    <FxCompile Include="Shaders\Model\DeferredPixelShader.hlsl" />
   </ItemGroup>
 </Project>

@@ -13,10 +13,10 @@ namespace render
   {
     const float s_fPI(3.14159274f);
   }
-
+  // ------------------------------------
   CCamera::CCamera()
   {
-    m_oConstantBuffer.Initialize(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+    m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
   }
   // ------------------------------------
   void CCamera::Update(float _fDeltaTime)

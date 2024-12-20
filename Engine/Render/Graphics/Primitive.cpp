@@ -190,7 +190,7 @@ namespace render
       // Compile vertex shader
       HRESULT hr = D3DCompileFromFile
       (
-        L"..\\Engine\\Shaders\\Primitive\\PVertexShader.hlsl",
+        L"..\\Engine\\Shaders\\Primitive\\VertexShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "VSMain",
@@ -206,7 +206,7 @@ namespace render
       // Compile pixel shader
       return D3DCompileFromFile
       (
-        L"..\\Engine\\Shaders\\Primitive\\PPixelShader.hlsl",
+        L"..\\Engine\\Shaders\\Primitive\\PixelShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "PSMain",
@@ -223,7 +223,7 @@ namespace render
       if (_vctPrimitiveInfo.empty()) return -1;
 
       // Create constant buffer
-      m_oConstantBuffer.Initialize(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Create vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};

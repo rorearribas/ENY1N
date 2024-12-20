@@ -2,6 +2,7 @@
 #include "Engine/Global/GlobalResources.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include <iostream>
+#include <filesystem>
 
 namespace render
 {
@@ -19,26 +20,15 @@ namespace render
     // ------------------------------------
     CMaterial::~CMaterial()
     {
-      m_dctTexturesPath.clear();
       m_dctTextures.clear();
     }
     // ------------------------------------
-    void CMaterial::LoadTexture(EModifierType _eModifierType, const char* _sPath)
+    render::texture::CTexture* const CMaterial::RegisterTexture(EModifierType _eModifierType)
     {
+      // Create texture or get it
       render::texture::CTexture*& pTargetTexture = m_dctTextures[_eModifierType];
-      SafeRelease(pTargetTexture);
-      pTargetTexture = new render::texture::CTexture(_sPath); // create texture
-    }
-    // ------------------------------------
-    void CMaterial::RegisterPath(EModifierType _eModifierType, std::string _sPath)
-    {
-      // Set texture path
-      m_dctTexturesPath[_eModifierType] = _sPath;
-      // Try to load the texture if the path is not empty
-      if (!_sPath.empty())
-      {
-        LoadTexture(_eModifierType, _sPath.c_str());
-      }
+      if (!pTargetTexture) { pTargetTexture = new render::texture::CTexture(); }
+      return pTargetTexture;
     }
   }
 }

@@ -13,9 +13,9 @@ namespace game
     if (m_pModel && pEngine) { pEngine->DestroyModel(m_pModel); }
   }
   // ------------------------------------
-  void CModelComponent::UpdateComponent(float _fDeltaTime)
+  void CModelComponent::Update(float _fDeltaTime)
   {
-    Super::UpdateComponent(_fDeltaTime);
+    Super::Update(_fDeltaTime);
   }
   // ------------------------------------
   void CModelComponent::LoadModel(const char* _sModelPath, const char* _sBaseMltDir)

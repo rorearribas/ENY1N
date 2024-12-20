@@ -163,7 +163,7 @@ namespace render
   {
     ID3D11Texture2D* pBackBuffer = nullptr;
     m_oRenderingResources.m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(&pBackBuffer));
-    if (!pBackBuffer) return -1;
+    if (!pBackBuffer) return E_FAIL;
 
     HRESULT hr = global::dx11::s_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &m_oRenderingResources.m_pRenderTargetView);
     if (FAILED(hr)) return hr;

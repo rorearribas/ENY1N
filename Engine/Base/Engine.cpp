@@ -50,8 +50,7 @@ namespace engine
   // ------------------------------------
   void CEngine::BeginDraw()
   {
-    // Begin
-    m_pRender->BeginDraw();
+    m_pRender->BeginDraw(); // Begin
   }
   void CEngine::DrawScene()
   {
@@ -82,8 +81,7 @@ namespace engine
   // ------------------------------------
   void CEngine::EndDraw()
   {
-    // End 
-    m_pRender->EndDraw();
+    m_pRender->EndDraw(); // End 
   }
   // ------------------------------------
   void CEngine::Update(float _fDeltaTime)
@@ -124,7 +122,7 @@ namespace engine
     m_pSceneManager->DestroyModel(pModel_);
   }
   // ------------------------------------
-  void CEngine::DestroyAllModels(const UINT32& _uSceneIndex /*= 0*/)
+  void CEngine::DestroyAllModels(const UINT32& _uSceneIndex)
   {
     m_pSceneManager->DestroyAllModels(_uSceneIndex);
   }

@@ -27,10 +27,10 @@ int main()
   tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
   pTimeManager->SetMaxFPS(144);
 
-  game::CEntity* pEntity = pGameManager->CreateEntity("Test");
+  game::CEntity* pEntity = pGameManager->CreateEntity("Cocacola");
   game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
-  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Model_2//bugatti.obj", "C://Users//Ruben//Desktop//Model_2//");
-  //pEntity->SetRotation(maths::CVector3(1.8f, 0.0f, 0.0f));
+  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Cup//cup OBJ.obj", "C://Users//Ruben//Desktop//Cup");
+  //pEntity->SetRotation(maths::CVector3(1.6f, 0.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -73,7 +73,7 @@ int main()
 
       if (bRotateActor)
       {
-        const maths::CVector3 vRot(0.0f, 1.0f * pTimeManager->GetFixedDelta(), 0.0f);
+        const maths::CVector3 vRot(0.0f, 0.0f, 1.0f * pTimeManager->GetFixedDelta());
         maths::CVector3 vCurrentRotation = pEntity->GetRotation();
         pEntity->SetRotation(vCurrentRotation + vRot);
       }

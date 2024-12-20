@@ -2,6 +2,7 @@
 #include "Components/Component.h"
 #include "Libs/Maths/Transform.h"
 #include <array>
+#include <string>
 
 namespace game { class CComponent; }
 namespace game
@@ -13,14 +14,14 @@ namespace game
     typedef std::array<CComponent*, s_iMaxComponents> TComponentsList;
 
   public:
-    CEntity(const char* _sEntityName) : m_sEntityName(_sEntityName) {}
+    CEntity(std::string _sEntityName) : m_sEntityName(_sEntityName) {}
     ~CEntity();
 
     void Update(float _fDeltaTime);
     void DrawDebug();
 
     void SetTickEnabled(bool _bStatus) { m_bTickEnabled = _bStatus; }
-    const char* GetEntityName() { return m_sEntityName; }
+    const std::string& GetName() { return m_sEntityName; }
 
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
@@ -54,7 +55,7 @@ namespace game
     TComponentsList m_vctComponents = {};
     maths::CTransform m_oTransform;
 
-    const char* m_sEntityName = nullptr;
+    std::string m_sEntityName = {};
     bool m_bTickEnabled = true;
     int m_iRegisteredComponents = 0;
   };

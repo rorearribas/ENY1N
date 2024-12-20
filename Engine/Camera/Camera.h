@@ -38,7 +38,7 @@ namespace render
     void UpdatePerspectiveMatrix();
     void UpdateViewMatrix();
 
-    ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
+    ConstantBuffer<SConstantMatrix> m_oConstantBuffer;
     maths::CMatrix4x4 m_mViewMatrix = maths::CMatrix4x4::Identity;
     maths::CMatrix4x4 m_mProjectionMatrix = maths::CMatrix4x4::Identity;
 
@@ -46,7 +46,7 @@ namespace render
     maths::CVector3 m_vRot = maths::CVector3::Zero;
 
     float m_fCameraSpeed = 20.0f;
-    float m_fMovementSpeed = 20.0f;
+    float m_fMovementSpeed = 500.0f;
 
     float m_fFov = 45.0f;
     float m_fFar = 100000.0f;

@@ -14,7 +14,7 @@ namespace game
     CModelComponent(CEntity* _pEntity) : CComponent(_pEntity) {}
     virtual ~CModelComponent();
 
-    virtual void UpdateComponent(float _fDeltaTime) override;
+    virtual void Update(float _fDeltaTime) override;
     virtual void DrawDebug() override {};
 
     void LoadModel(const char* _sModelPath, const char* _sBaseMltDir);

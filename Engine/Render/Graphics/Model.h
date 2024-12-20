@@ -20,7 +20,6 @@ namespace render
         std::vector<render::graphics::CMesh*> m_vctMeshes = {};
         std::vector<render::graphics::SVertexData> m_vctVertexData = {};
       };
-      typedef std::vector<render::graphics::CMesh*> TMeshList;
     public:
 
       CModel(const char* _sModelPath, const char* _sBaseMltDir);
@@ -52,10 +51,12 @@ namespace render
       // Input layout
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
-      maths::CTransform m_oModelTransform;
-      ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
-
+      // Buffer
       ID3D11Buffer* m_pVertexBuffer = nullptr;
+      ConstantBuffer<SConstantMatrix> m_oConstantBuffer;
+      maths::CTransform m_oModelTransform;
+
+      // Model data
       SModelData m_oModelData;
     };
   }

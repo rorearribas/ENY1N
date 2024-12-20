@@ -1,5 +1,6 @@
 #include "GameManager.h"
 #include <algorithm>
+#include <sstream>
 
 namespace game
 {
@@ -36,17 +37,32 @@ namespace game
   CEntity* CGameManager::CreateEntity(const char* _sEntityName)
   {
     if (m_iRegisteredEntities >= s_iMaxEntities) return nullptr;
+
+    // Check id collision
+    std::string sTargetEntityID = _sEntityName;
+    int iNameSuffix = 1;
+    for (const auto& entity : m_vctEntitiesList) 
+    {
+      if (entity && entity->GetName() == sTargetEntityID) 
+      {
+        std::ostringstream oss;
+        oss << _sEntityName << "_" << iNameSuffix++;
+        sTargetEntityID = oss.str();
+      }
+    }
+
+    // Register entity
     CEntity*& pEntity = m_vctEntitiesList[m_iRegisteredEntities++];
-    pEntity = new CEntity(_sEntityName);
+    pEntity = new CEntity(sTargetEntityID.c_str());
     return pEntity;
   }
   // ------------------------------------
   bool CGameManager::DestroyEntity(const char* _sEntityName)
   {
     bool bFound = false;
-    for (CEntity* pEntity : m_vctEntitiesList)
+    for (CEntity*& pEntity : m_vctEntitiesList)
     {
-      if (pEntity && strcmp(pEntity->GetEntityName(), _sEntityName) == 0)
+      if (pEntity && pEntity->GetName() == _sEntityName)
       {
         delete pEntity;
         pEntity = nullptr;

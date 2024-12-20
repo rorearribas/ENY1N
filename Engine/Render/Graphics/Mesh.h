@@ -50,7 +50,7 @@ namespace render
 
       const std::string& GetMeshName() const { return m_sMeshName; }
       const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
-      const uint32_t& GetIndexCount() const { return m_uIndexCount; }
+      const uint32_t GetIndexCount() const { return static_cast<uint32_t>(m_vctIndexes.size()); }
 
       void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
       void ApplyMaterials(ID3D11Buffer* _pVertexBuffer);
@@ -60,8 +60,8 @@ namespace render
       std::string m_sMeshName = std::string();
 
       // Buffers
+      ConstantBuffer<SConstantTexture> m_oConstantTexture;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
-      uint32_t m_uIndexCount = 0;
 
       // Materials
       TMapMaterials m_dctMaterials = {};
@@ -70,17 +70,17 @@ namespace render
   }
 }
 
-namespace std
-{
-  template<>
-  struct hash<render::graphics::SVertexData>
+namespace std {
+  template <>
+  struct hash<render::graphics::SVertexData> 
   {
-    std::size_t operator()(const render::graphics::SVertexData& v) const
+    size_t operator()(const render::graphics::SVertexData& vertex) const 
     {
-      std::size_t h1 = std::hash<maths::CVector3>()(v.Position);
-      std::size_t h2 = std::hash<maths::CVector3>()(v.Normal);
-      std::size_t h3 = std::hash<maths::CVector2>()(v.TexCoord);
-      return h1 ^ (h2 << 1) ^ (h3 << 2);
+      return ((hash<maths::CVector3>()(vertex.Position) ^
+        (hash<maths::CVector3>()(vertex.Normal) << 1)) >> 1) ^
+        (hash<maths::CVector2>()(vertex.TexCoord) << 1) ^
+        (hash<maths::CVector3>()(vertex.Color) << 1) ^
+        (hash<int>()(vertex.MaterialId) << 1);
     }
   };
 }

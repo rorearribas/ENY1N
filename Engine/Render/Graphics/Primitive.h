@@ -43,7 +43,7 @@ namespace render
       HRESULT CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes = {});
 
       // Buffers
-      ConstantBuffer<SConstantBuffer> m_oConstantBuffer;
+      ConstantBuffer<SConstantMatrix> m_oConstantBuffer;
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
       // Vertex shader

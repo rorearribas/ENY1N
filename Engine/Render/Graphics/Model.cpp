@@ -60,7 +60,7 @@ namespace render
       // Compile vertex shader
       HRESULT hr = D3DCompileFromFile
       (
-        L"..\\Engine\\Shaders\\Model\\MVertexShader.hlsl",
+        L"..\\Engine\\Shaders\\Model\\DeferredVertexShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "VSMain",
@@ -76,7 +76,7 @@ namespace render
       // Compile pixel shader
       return D3DCompileFromFile
       (
-        L"..\\Engine\\Shaders\\Model\\MPixelShader.hlsl",
+        L"..\\Engine\\Shaders\\Model\\DeferredPixelShader.hlsl",
         nullptr,
         D3D_COMPILE_STANDARD_FILE_INCLUDE,
         "PSMain",
@@ -94,8 +94,8 @@ namespace render
       {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::graphics::SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
       };
 
       return global::dx11::s_pDevice->CreateInputLayout
@@ -113,10 +113,10 @@ namespace render
       // Try to load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
       m_oModelData = std::move(pResourceManager->LoadModel(_sModelPath, _sBaseMltDir));
-      if (m_oModelData.m_vctMeshes.empty()) return -1;
+      if (m_oModelData.m_vctMeshes.empty()) return E_FAIL;
 
       // Init constant buffer
-      m_oConstantBuffer.Initialize(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Config vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
@@ -126,7 +126,7 @@ namespace render
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = { 0 };
-      oSubresourceData.pSysMem = std::move(m_oModelData.m_vctVertexData.data());
+      oSubresourceData.pSysMem = m_oModelData.m_vctVertexData.data();
 
       HRESULT hr = global::dx11::s_pDevice->CreateBuffer
       (

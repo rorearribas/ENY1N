@@ -21,10 +21,8 @@ namespace render
       ~CMaterial();
 
       const std::string& GetMaterialName() const{ return m_sMaterialName; }
-      void LoadTexture(EModifierType _eModifierType, const char* _sPath);
       render::texture::CTexture* const GetTexture(EModifierType _eMapType) { return m_dctTextures[_eMapType]; }
-      void RegisterPath(EModifierType _eModifierType, std::string _sPath);
-      const std::string& GetPath(EModifierType _eMapType) { return m_dctTexturesPath[_eMapType]; }
+      render::texture::CTexture* const RegisterTexture(EModifierType _eModifierType);
 
       void SetAmbientColor(maths::CVector3 _vAmbientColor) { m_vAmbientColor = _vAmbientColor; }
       const maths::CVector3& GetAmbientColor() { return m_vAmbientColor; }
@@ -53,7 +51,6 @@ namespace render
 
       int m_iIlluminationVariable = 1; // illum
 
-      TMapTexturesPath m_dctTexturesPath;
       TMapTextures m_dctTextures;
     };
   }

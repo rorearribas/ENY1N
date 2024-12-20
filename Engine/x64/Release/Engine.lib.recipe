@@ -3,16 +3,16 @@
   <ProjectOutputs />
   <ContentFiles>
     <ContentFile>
-      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\MPixelShader.cso</FullPath>
+      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\DeferredPixelShader.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\MVertexShader.cso</FullPath>
+      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\DeferredVertexShader.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\PPixelShader.cso</FullPath>
+      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\PixelShader.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\PVertexShader.cso</FullPath>
+      <FullPath>D:\Projects\Personal\ENY1N\Engine\x64\Release\VertexShader.cso</FullPath>
     </ContentFile>
   </ContentFiles>
   <SatelliteDlls />

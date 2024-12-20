@@ -6,6 +6,9 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include "Libs/Third-Party/objloader/tiny_obj_loader.h"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "Libs/Third-Party/stb/stb_image.h"
+
 namespace internal_resource_manager
 {
   std::vector<int> GetUniqueMaterials(const std::vector<int>& _vctInput)
@@ -42,36 +45,53 @@ char* CResourceManager::LoadResource(const char* _sPath, const char* _sMode)
   return cBuffer;
 }
 // ------------------------------------
+unsigned char* CResourceManager::LoadTexture(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
+{
+  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, 4);
+}
+// ------------------------------------
 render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sPath, const char* _sBaseModelMtlDir)
 {
   // Create a model data instance
   render::graphics::CModel::SModelData oModelData = {};
 
-  // Tiny obj
+  // Tiny obj declarations
   tinyobj::attrib_t attributes;
   std::vector<tinyobj::shape_t> shapes;
   std::vector<tinyobj::material_t> materials;
   std::string warnings;
   std::string errors;
+
   // Load obj
   tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, _sPath, _sBaseModelMtlDir);
 
-  // Register material
-  auto oRegisterMaterial = [](const tinyobj::material_t& _oMaterial, std::vector< render::material::CMaterial*>& _vctMaterials_)
+  if (errors.size() > 0)
   {
-    render::material::CMaterial* pMaterial = new render::material::CMaterial(_oMaterial.name.c_str());
-    pMaterial->SetAmbientColor({ _oMaterial.ambient[0], _oMaterial.ambient[1], _oMaterial.ambient[2] });
-    pMaterial->SetDiffuseColor({ _oMaterial.diffuse[0], _oMaterial.diffuse[1], _oMaterial.diffuse[2] });
-    pMaterial->SetSpecularColor({ _oMaterial.specular[0], _oMaterial.specular[1], _oMaterial.specular[2] });
+    std::cout << "Error loading OBJ" << std::endl;
+    return oModelData;
+  }
 
-    pMaterial->RegisterPath(render::material::EModifierType::AMBIENT, _oMaterial.ambient_texname);
-    pMaterial->RegisterPath(render::material::EModifierType::DIFFUSE, _oMaterial.diffuse_texname);
-    pMaterial->RegisterPath(render::material::EModifierType::SPECULAR, _oMaterial.specular_texname);
-    pMaterial->RegisterPath(render::material::EModifierType::BUMP, _oMaterial.bump_texname);
-    pMaterial->RegisterPath(render::material::EModifierType::DISPLACEMENT, _oMaterial.displacement_texname);
-    pMaterial->RegisterPath(render::material::EModifierType::ALPHA, _oMaterial.alpha_texname);
-    pMaterial->RegisterPath(render::material::EModifierType::REFLECTION, _oMaterial.reflection_texname);
+  // Register material
+  auto oRegisterMaterial = [=](const tinyobj::material_t& _tMaterial, std::vector< render::material::CMaterial*>& _vctMaterials_)
+  {
+    render::material::CMaterial* pMaterial = new render::material::CMaterial(_tMaterial.name.c_str());
 
+    // Set colors
+    pMaterial->SetAmbientColor({ _tMaterial.ambient[0], _tMaterial.ambient[1], _tMaterial.ambient[2] });
+    pMaterial->SetDiffuseColor({ _tMaterial.diffuse[0], _tMaterial.diffuse[1], _tMaterial.diffuse[2] });
+    pMaterial->SetSpecularColor({ _tMaterial.specular[0], _tMaterial.specular[1], _tMaterial.specular[2] });
+
+    // Register textures
+    using EType = render::material::EModifierType;
+    std::filesystem::path oBasePath(_sBaseModelMtlDir);
+    RegisterTexture(pMaterial, EType::DIFFUSE, oBasePath, _tMaterial.diffuse_texname);
+    RegisterTexture(pMaterial, EType::SPECULAR, oBasePath, _tMaterial.specular_texname);
+    RegisterTexture(pMaterial, EType::DISPLACEMENT, oBasePath, _tMaterial.displacement_texname);
+    RegisterTexture(pMaterial, EType::REFLECTION, oBasePath, _tMaterial.reflection_texname);
+    RegisterTexture(pMaterial, EType::BUMP, oBasePath, _tMaterial.bump_texname);
+    RegisterTexture(pMaterial, EType::ALPHA, oBasePath, _tMaterial.alpha_texname);
+
+    // Add material
     _vctMaterials_.emplace_back(pMaterial);
   };
 
@@ -80,7 +100,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
   for (const tinyobj::material_t& tMaterial : materials) { oRegisterMaterial(tMaterial, vctMaterials); }
 
   // Register vertex data
-  std::unordered_map<maths::CVector3, uint32_t> VertexMap;
+  std::unordered_map<render::graphics::SVertexData, uint32_t> dctVertexMap;
   for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(shapes.size()); uIndex++)
   {
     tinyobj::shape_t& shape = shapes[uIndex];
@@ -88,10 +108,14 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
 
     render::graphics::CMesh* pMesh = nullptr;
     if (mesh.num_face_vertices.size() > 0)
+    {
       pMesh = new render::graphics::CMesh(shape.name);
+    }
     else
+    {
+      // @TODO: Tiene que funcionar con lines y points
       continue;
-
+    }
 
     // Mesh
     std::vector<uint32_t> vctIndexes = {};
@@ -137,15 +161,15 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
         ) : maths::CVector2::Zero;
 
         // Check if the vertex already exists
-        auto it = VertexMap.find(oVertexData.Position);
-        if (it != VertexMap.end()) 
+        auto it = dctVertexMap.find(oVertexData);
+        if (it != dctVertexMap.end()) 
         {
           vctIndexes.emplace_back(it->second);
         }
         else 
         {
-          uint32_t uNewIdx = static_cast<uint32_t>(VertexMap.size());
-          VertexMap[oVertexData.Position] = uNewIdx;
+          uint32_t uNewIdx = static_cast<uint32_t>(dctVertexMap.size());
+          dctVertexMap[oVertexData] = uNewIdx;
           oModelData.m_vctVertexData.emplace_back(oVertexData);
           vctIndexes.emplace_back(uNewIdx);
         }
@@ -171,5 +195,20 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
 
   std::cout << "loaded" << std::endl;
   return oModelData;
+}
+
+void CResourceManager::RegisterTexture(render::material::CMaterial*& pMaterial, render::material::EModifierType _eModifierType,
+  const std::filesystem::path& _oBasePath, const std::string& _sTextureName)
+{
+  std::filesystem::path oTargetTexturePath = _oBasePath / std::filesystem::path(_sTextureName);
+  if (oTargetTexturePath.has_filename() && std::filesystem::exists(oTargetTexturePath))
+  {
+    int iWidth = 0, iHeight = 0, iChannels = 0;
+    unsigned char* cTexture = LoadTexture(oTargetTexturePath.string().c_str(), iWidth, iHeight, iChannels);
+    assert(cTexture);
+    auto* pTexture = pMaterial->RegisterTexture(_eModifierType);
+    pTexture->SetTexture(cTexture, iWidth, iHeight);
+    stbi_image_free(cTexture);
+  }
 }
 
