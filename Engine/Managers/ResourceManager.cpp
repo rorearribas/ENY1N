@@ -84,12 +84,14 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     // Register textures
     using EType = render::material::EModifierType;
     std::filesystem::path oBasePath(_sBaseModelMtlDir);
+    RegisterTexture(pMaterial, EType::AMBIENT, oBasePath, _tMaterial.ambient_texname);
     RegisterTexture(pMaterial, EType::DIFFUSE, oBasePath, _tMaterial.diffuse_texname);
     RegisterTexture(pMaterial, EType::SPECULAR, oBasePath, _tMaterial.specular_texname);
     RegisterTexture(pMaterial, EType::DISPLACEMENT, oBasePath, _tMaterial.displacement_texname);
+    RegisterTexture(pMaterial, EType::SPECULAR_HIGHLIGHT, oBasePath, _tMaterial.specular_highlight_texname);
     RegisterTexture(pMaterial, EType::REFLECTION, oBasePath, _tMaterial.reflection_texname);
-    RegisterTexture(pMaterial, EType::BUMP, oBasePath, _tMaterial.bump_texname);
     RegisterTexture(pMaterial, EType::ALPHA, oBasePath, _tMaterial.alpha_texname);
+    RegisterTexture(pMaterial, EType::BUMP, oBasePath, _tMaterial.bump_texname);
 
     // Add material
     _vctMaterials_.emplace_back(pMaterial);

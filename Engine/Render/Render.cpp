@@ -77,6 +77,9 @@ namespace render
     hr = CreateRasterizerState();
     assert(!FAILED(hr));
 
+    hr = CreateBlendState();
+    assert(!FAILED(hr));
+
     // Update scissor
     SetScissorRect(_uX, _uY);
     
@@ -185,7 +188,7 @@ namespace render
     oTextureDesc.Height = _uY;
     oTextureDesc.MipLevels = 1;
     oTextureDesc.ArraySize = 1;
-    oTextureDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+    oTextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     oTextureDesc.SampleDesc.Count = 1;
     oTextureDesc.SampleDesc.Quality = 0;
     oTextureDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -220,7 +223,7 @@ namespace render
     hr = global::dx11::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &m_oRenderingResources.m_pDepthStencilState);
 
     D3D11_DEPTH_STENCIL_VIEW_DESC oDepthStencilViewDesc = {};
-    oDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT_S8X24_UINT;
+    oDepthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
     oDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
     oDepthStencilViewDesc.Texture2D.MipSlice = 0;
 
@@ -251,6 +254,30 @@ namespace render
 
     return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerConfig, &m_oRenderingResources.m_pRasterizerState);
   }
+
+  HRESULT CRender::CreateBlendState()
+  {
+    global::dx11::SafeRelease(m_oRenderingResources.m_pBlendState);
+
+    D3D11_RENDER_TARGET_BLEND_DESC rtbd;
+    rtbd.BlendEnable = false;
+    rtbd.SrcBlend = D3D11_BLEND_ONE;
+    rtbd.DestBlend = D3D11_BLEND_BLEND_FACTOR;
+    rtbd.BlendOp = D3D11_BLEND_OP_ADD;
+    rtbd.SrcBlendAlpha = D3D11_BLEND_ONE;
+    rtbd.DestBlendAlpha = D3D11_BLEND_ZERO;
+    rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    rtbd.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
+
+    D3D11_BLEND_DESC oBlendDesc;
+    ZeroMemory(&oBlendDesc, sizeof(oBlendDesc));
+
+    oBlendDesc.AlphaToCoverageEnable = false;
+    oBlendDesc.RenderTarget[0] = rtbd;
+
+    return global::dx11::s_pDevice->CreateBlendState(&oBlendDesc, &m_oRenderingResources.m_pBlendState);
+  }
+
   // ------------------------------------
   void CRender::ConfigureViewport(UINT32 _uX, UINT32 _uY)
   {
@@ -293,6 +320,7 @@ namespace render
     // Update resources
     global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &m_oRenderingResources.m_pRenderTargetView, m_oRenderingResources.m_pDepthStencilView);
     global::dx11::s_pDeviceContext->OMSetDepthStencilState(m_oRenderingResources.m_pDepthStencilState, 1);
+    global::dx11::s_pDeviceContext->OMSetBlendState(m_oRenderingResources.m_pBlendState, nullptr, 0xFFFFFFFF);
     global::dx11::s_pDeviceContext->RSSetState(m_oRenderingResources.m_pRasterizerState);
 
     // End imgui draw

@@ -11,7 +11,7 @@ namespace render
 {
   namespace internal_camera
   {
-    const float s_fPI(3.14159274f);
+    const float s_fPI = 3.14159265358979323846f;
   }
   // ------------------------------------
   CCamera::CCamera()

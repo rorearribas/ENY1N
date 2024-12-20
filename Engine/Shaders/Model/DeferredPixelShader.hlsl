@@ -5,13 +5,13 @@ SamplerState cSamplerState : register(s0);
 
 cbuffer Texture : register(b0)
 {
-  bool HasTexture;
+  bool HasTexture = false;
 }
 
 float4 PSMain(PS_INPUT input) : SV_TARGET 
 {
   // Direction light
-  float3 lightDir = normalize(float3(1.0f, -0.5f, -1.0f));
+  float3 lightDir = normalize(float3(0.5f, 1.0f, 1.0f));
   float3 normal = normalize(input.normal);
   
   // Diffuse ilumination
@@ -20,11 +20,11 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   if(HasTexture)
   {
     float4 texColor = cTexture2D.Sample(cSamplerState, input.uv);
-    return texColor * diff;
+    return texColor;
   }
   else
   {
     //Color base
-    return  diff * input.color;
+    return diff * input.color;
   }
 }

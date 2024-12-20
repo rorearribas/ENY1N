@@ -57,7 +57,6 @@ namespace maths
     matrix.m[3][3] = 0.0f;
 
     return matrix;
-
   }
   // ------------------------------------
   maths::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _vEye, const CVector3& _vTarget, const CVector3& _vUp)

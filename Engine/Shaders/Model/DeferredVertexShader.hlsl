@@ -31,6 +31,6 @@ PS_INPUT VSMain(VS_INPUT input)
     output.position = mul(float4(input.position, 1.0), worldViewProjection);
     output.normal = input.normal;
     output.color = input.color;
-    output.uv = input.uv * -1;
+    output.uv = input.uv;
     return output;
 }

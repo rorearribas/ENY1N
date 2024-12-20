@@ -22,6 +22,9 @@ namespace render
 
       // Rasterizer
       ID3D11RasterizerState* m_pRasterizerState = nullptr;
+
+      // Blend
+      ID3D11BlendState* m_pBlendState = nullptr;
     };
 
   public:
@@ -47,6 +50,7 @@ namespace render
     HRESULT CreateRenderTargetView();
     HRESULT CreateDepthStencilView(UINT32 _uX, UINT32 _uY);
     HRESULT CreateRasterizerState(D3D11_FILL_MODE _eFillMode = D3D11_FILL_SOLID);
+    HRESULT CreateBlendState();
 
     void ConfigureViewport(UINT32 _uX, UINT32 _uY);
     void SetScissorRect(UINT32 _uX, UINT32 _uY);
