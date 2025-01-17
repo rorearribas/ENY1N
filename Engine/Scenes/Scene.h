@@ -5,7 +5,7 @@
 
 namespace scene
 {
-  class CScene 
+  class CScene
   {
   public:
     static int constexpr s_iMaxPrimitives = 500;

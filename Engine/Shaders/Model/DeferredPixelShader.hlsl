@@ -14,7 +14,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   float3 lightDir = normalize(float3(0.5f, 1.0f, 1.0f));
   float3 normal = normalize(input.normal);
   
-  // Diffuse ilumination
+  // Diffuse illumination
   float diff = max(dot(normal, lightDir), 0.0f);
 
   if(HasTexture)

@@ -2,6 +2,8 @@
 
 namespace maths
 {
+  const double PI = 3.14159265358979323846;
+  
   const CMatrix4x4 CMatrix4x4::Identity = 
   {
     1.0f, 0.0f, 0.0f, 0.0f,
@@ -100,23 +102,27 @@ namespace maths
   // ------------------------------------
   maths::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _vRot)
   {
+    float fPitch = static_cast<float>(_vRot.X * (PI / 180.0f));
+    float fYaw = static_cast<float>(_vRot.Y * (PI / 180.0f));
+    float fRoll = static_cast<float>(_vRot.Z * (PI / 180.0f));
+
     CMatrix4x4 mPitchMatrix = CMatrix4x4::Identity;
-    mPitchMatrix.m[1][1] = (float)cos(_vRot.X);
-    mPitchMatrix.m[1][2] = (float)sin(_vRot.X);
-    mPitchMatrix.m[2][1] = -(float)sin(_vRot.X);
-    mPitchMatrix.m[2][2] = (float)cos(_vRot.X);
+    mPitchMatrix.m[1][1] = cos(fPitch);
+    mPitchMatrix.m[1][2] = sin(fPitch);
+    mPitchMatrix.m[2][1] = -sin(fPitch);
+    mPitchMatrix.m[2][2] = cos(fPitch);
 
     CMatrix4x4 mYawMatrix = CMatrix4x4::Identity;
-    mYawMatrix.m[0][0] = (float)cos(_vRot.Y);
-    mYawMatrix.m[0][2] = -(float)sin(_vRot.Y);
-    mYawMatrix.m[2][0] = (float)sin(_vRot.Y);
-    mYawMatrix.m[2][2] = (float)cos(_vRot.Y);
+    mYawMatrix.m[0][0] = cos(fYaw);
+    mYawMatrix.m[0][2] = -sin(fYaw);
+    mYawMatrix.m[2][0] = sin(fYaw);
+    mYawMatrix.m[2][2] = cos(fYaw);
 
     CMatrix4x4 mRollMatrix = CMatrix4x4::Identity;
-    mRollMatrix.m[0][0] = (float)cos(_vRot.Z);
-    mRollMatrix.m[0][1] = (float)sin(_vRot.Z);
-    mRollMatrix.m[1][0] = -(float)sin(_vRot.Z);
-    mRollMatrix.m[1][1] = (float)cos(_vRot.Z);
+    mRollMatrix.m[0][0] = cos(fRoll);
+    mRollMatrix.m[0][1] = sin(fRoll);
+    mRollMatrix.m[1][0] = -sin(fRoll);
+    mRollMatrix.m[1][1] = cos(fRoll);
 
     return mPitchMatrix * mYawMatrix * mRollMatrix;
   }

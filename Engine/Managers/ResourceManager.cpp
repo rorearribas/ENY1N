@@ -158,7 +158,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
         oVertexData.TexCoord = bHasTexCoord ? maths::CVector2
         (
           attributes.texcoords[2 * idx.texcoord_index],
-          attributes.texcoords[2 * idx.texcoord_index + 1]
+          1.0f - attributes.texcoords[2 * idx.texcoord_index + 1] // Invertimos los ejes @ToDo(revisar casos)
 
         ) : maths::CVector2::Zero;
 
@@ -194,9 +194,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     }
     oModelData.m_vctMeshes.emplace_back(pMesh); // Add mesh
   }
-
-  std::cout << "loaded" << std::endl;
-  return oModelData;
+  std::cout << "loaded" << std::endl;  return oModelData;
 }
 
 void CResourceManager::RegisterTexture(render::material::CMaterial*& pMaterial, render::material::EModifierType _eModifierType,

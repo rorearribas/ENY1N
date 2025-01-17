@@ -1,2 +1,7 @@
-﻿  compilation object save succeeded; see D:\Projects\Personal\ENY1N\Engine\x64\Debug\DeferredPixelShader.cso
-  Engine.vcxproj -> D:\Projects\Personal\ENY1N\Engine\x64\Debug\Engine.lib
+﻿  Engine.cpp
+  Camera.cpp
+  InputManager.cpp
+  Render.cpp
+  Scene.cpp
+  Generando código...
+  Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\Engine.lib

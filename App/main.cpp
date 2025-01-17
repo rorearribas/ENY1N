@@ -29,7 +29,8 @@ int main()
 
   game::CEntity* pEntity = pGameManager->CreateEntity("Cocacola");
   game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
-  pModelComponent->LoadModel("C://Users//Ruben//Desktop//Car//2016 Custom Range Rover Sport.obj", "C://Users//Ruben//Desktop//Car");
+  pModelComponent->LoadModel("C://Users//Rubén//Desktop//Skull_Test//12140_Skull_v3_L2.obj", "C://Users//Rubén//Desktop//Skull_Test");
+  pEntity->SetRotation(maths::CVector3(90.f, 0.0f, 0.0));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -72,7 +73,7 @@ int main()
 
       if (bRotateActor)
       {
-        const maths::CVector3 vRot(0.0f, 1.0f * pTimeManager->GetFixedDelta(), 0.0f);
+        const maths::CVector3 vRot(0.0f, 0.0f, -45.0f * pTimeManager->GetFixedDelta());
         maths::CVector3 vCurrentRotation = pEntity->GetRotation();
         pEntity->SetRotation(vCurrentRotation + vRot);
       }
