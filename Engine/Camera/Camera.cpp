@@ -43,7 +43,8 @@ namespace render
       // Rotation
       float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed * _fDeltaTime;
       float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed * _fDeltaTime;
-      AddRotation(maths::CVector3(yValue, xValue, 0.0f));
+      maths::CVector3 v3Rot(maths::RadiansToDegrees(yValue), maths::RadiansToDegrees(xValue), 0.0f);
+      AddRotation(v3Rot);
     }
 
     // Wheel 
@@ -117,9 +118,7 @@ namespace render
     maths::CVector3 v3Dir = _v3LookAt - m_vPos;
     float fPitch = (float)atan2(v3Dir.Y, sqrt(v3Dir.X * v3Dir.X + v3Dir.Z * v3Dir.Z));
     float fYaw = (float)atan2(v3Dir.X, v3Dir.Z);
-
-    if (v3Dir.Z > 0)
-      fYaw += internal_camera::s_fPI;
+    if (v3Dir.Z > 0) fYaw += internal_camera::s_fPI;
 
     SetRotation(maths::CVector3(fPitch, fYaw, 0.0f));
   }
@@ -132,6 +131,9 @@ namespace render
   // ------------------------------------
   void CCamera::UpdateViewMatrix() 
   {
+    // Clamp pitch value
+    m_vRot.X = maths::clamp<float>(m_vRot.X, -90.0f, 90.0f);
+
     // Create the rotation matrix
     maths::CMatrix4x4 mRotationMatrix = maths::CMatrix4x4::Rotation(m_vRot);
 

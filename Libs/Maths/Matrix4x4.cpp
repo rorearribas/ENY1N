@@ -1,9 +1,8 @@
 #include "Matrix4x4.h"
+#include "Maths.h"
 
 namespace maths
 {
-  const double PI = 3.14159265358979323846;
-  
   const CMatrix4x4 CMatrix4x4::Identity = 
   {
     1.0f, 0.0f, 0.0f, 0.0f,
@@ -102,9 +101,9 @@ namespace maths
   // ------------------------------------
   maths::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _vRot)
   {
-    float fPitch = static_cast<float>(_vRot.X * (PI / 180.0f));
-    float fYaw = static_cast<float>(_vRot.Y * (PI / 180.0f));
-    float fRoll = static_cast<float>(_vRot.Z * (PI / 180.0f));
+    float fPitch = maths::DegreesToRadians(_vRot.X);
+    float fYaw = maths::DegreesToRadians(_vRot.Y);
+    float fRoll = maths::DegreesToRadians(_vRot.Z);
 
     CMatrix4x4 mPitchMatrix = CMatrix4x4::Identity;
     mPitchMatrix.m[1][1] = cos(fPitch);

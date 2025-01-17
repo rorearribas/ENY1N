@@ -26,11 +26,11 @@ namespace render
     void SetCameraSpeed(float _fCameraSpeed) { m_fCameraSpeed = _fCameraSpeed; }
     void SetAspectRatio(float _fAspectRatio) { m_fAspectRatio = _fAspectRatio; }
 
-    void SetPosition(const maths::CVector3& pos);
-    void SetRotation(const maths::CVector3& rot);
+    void SetPosition(const maths::CVector3& _v3Pos);
+    void SetRotation(const maths::CVector3& _v3Rot);
 
-    void MovePosition(const maths::CVector3& pos);
-    void AddRotation(const maths::CVector3& rot);
+    void MovePosition(const maths::CVector3& _v3Move);
+    void AddRotation(const maths::CVector3& _v3Delta);
     void SetLookAtPos(const maths::CVector3& _v3LookAtPos);
 
   private:
@@ -45,7 +45,7 @@ namespace render
     maths::CVector3 m_vPos = maths::CVector3::Zero;
     maths::CVector3 m_vRot = maths::CVector3::Zero;
 
-    float m_fCameraSpeed = 1000.0f;
+    float m_fCameraSpeed = 20.0f;
     float m_fMovementSpeed = 100.0f;
 
     float m_fFov = 45.0f;
