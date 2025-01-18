@@ -54,6 +54,9 @@ namespace render
       MovePosition(fMouseDelta != 0 ? vForward * (fMouseDelta * 100.0f) * _fDeltaTime : maths::CVector3::Zero);
     }
 
+    // Interpolate FOV
+    m_fTargetFov = maths::Lerp(m_fTargetFov, m_fFov, 10.f * _fDeltaTime);
+
     // Update perspective matrix
     UpdatePerspectiveMatrix();
 
@@ -118,14 +121,14 @@ namespace render
     maths::CVector3 v3Dir = _v3LookAt - m_vPos;
     float fPitch = (float)atan2(v3Dir.Y, sqrt(v3Dir.X * v3Dir.X + v3Dir.Z * v3Dir.Z));
     float fYaw = (float)atan2(v3Dir.X, v3Dir.Z);
-    if (v3Dir.Z > 0) fYaw += internal_camera::s_fPI;
+    if (v3Dir.Z > 0) fYaw += static_cast<float>(maths::s_fPI);
 
     SetRotation(maths::CVector3(fPitch, fYaw, 0.0f));
   }
   // ------------------------------------
   void CCamera::UpdatePerspectiveMatrix()
   {
-    float fRadians = m_fFov * (internal_camera::s_fPI / 180.0f);
+    float fRadians =  maths::DegreesToRadians(m_fTargetFov);
     m_mProjectionMatrix = maths::CMatrix4x4::CreatePerspectiveMatrix(fRadians, m_fAspectRatio, m_fNear, m_fFar);
   }
   // ------------------------------------

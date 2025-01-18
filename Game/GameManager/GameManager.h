@@ -21,8 +21,8 @@ namespace game
     CEntity* CreateEntity(const char* _sEntityName);
     bool DestroyEntity(const char* _sEntityName);
 
-  private:
     void DestroyAllEntities();
+  private:
 
     bool m_bDebugMode = false;
     int m_iRegisteredEntities = 0;

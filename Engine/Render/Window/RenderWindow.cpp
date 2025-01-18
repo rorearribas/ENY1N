@@ -87,7 +87,7 @@ namespace render
       wc.hInstance = hInstance;
       wc.hCursor = LoadCursor(NULL, IDC_ARROW);
       wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
-      wc.lpszClassName = L"Game Engine";
+      wc.lpszClassName = L"ENY1N";
 
       // register the window class
       RegisterClassEx(&wc);
@@ -96,8 +96,8 @@ namespace render
       global::window::s_oHwnd = CreateWindowEx
       (
         NULL,
-        L"Game Engine", // name of the window class
-        L"Game Engine",// title of the window
+        L"ENY1N", // name of the window class
+        L"ENY1N",// title of the window
         WS_OVERLAPPEDWINDOW, // window style
         0, // x-position of the window
         0, // y-position of the window

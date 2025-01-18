@@ -48,7 +48,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
         float diff = max(dot(normal, lightDir), 0.0f);
 
         float4 texColor = cTexture2D.Sample(cSamplerState, input.uv);
-        return diff * texColor;
+        return texColor;
     }
     else
     {

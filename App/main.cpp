@@ -27,10 +27,21 @@ int main()
   tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
   pTimeManager->SetMaxFPS(144);
   
-  game::CEntity* pEntity = pGameManager->CreateEntity("Skull");
-  game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
+  game::CEntity* pSkullEntity = pGameManager->CreateEntity("Skull");
+  game::CModelComponent* pModelComponent = pSkullEntity->RegisterComponent<game::CModelComponent>();
   pModelComponent->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
-  pEntity->SetRotation(maths::CVector3(90.f, 0.0f, 0.0));
+  pSkullEntity->SetRotation(maths::CVector3(90.f, 0.0f, 180.0f));
+
+  game::CEntity* pDavidStatue = pGameManager->CreateEntity("DavidStatue");
+  game::CModelComponent* pModelComponent2 = pDavidStatue->RegisterComponent<game::CModelComponent>();
+  pModelComponent2->LoadModel("..\\Assets//Models//Statue//uploads_files_3027914_ai_awm_LOD_00.obj", "..\\Assets//Models//Statue");
+  pDavidStatue->SetPosition(maths::CVector3(20.0f, 0.0f, 0.0f));
+  pDavidStatue->SetScale(maths::CVector3(25.0f, 25.0f, 25.0f));
+
+  game::CEntity* pCocacola = pGameManager->CreateEntity("CocaCola");
+  game::CModelComponent* pModelComponent3 = pCocacola->RegisterComponent<game::CModelComponent>();
+  pModelComponent3->LoadModel("..\\Assets//Models//Cup//Cup.obj", "..\\Assets//Models//Cup");
+  pCocacola->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -74,17 +85,17 @@ int main()
       if (bRotateActor)
       {
         const maths::CVector3 vRot(0.0f, 0.0f, -45.0f * pTimeManager->GetFixedDelta());
-        maths::CVector3 vCurrentRotation = pEntity->GetRotation();
-        pEntity->SetRotation(vCurrentRotation + vRot);
+        maths::CVector3 vCurrentRotation = pSkullEntity->GetRotation();
+        pSkullEntity->SetRotation(vCurrentRotation + vRot);
       }
 
       ImGui::ShowDemoWindow();
 
       if (ImGui::Button("Move actor"))
       {
-        maths::CVector3 v3Pos = pEntity->GetPosition();
+        maths::CVector3 v3Pos = pSkullEntity->GetPosition();
         const maths::CVector3 v3Dir(5.0f, 0.0f, 0.0f);
-        pEntity->SetPosition(v3Pos + v3Dir);
+        pSkullEntity->SetPosition(v3Pos + v3Dir);
       }
 
       if (ImGui::Button("Rotate Actor"))
@@ -93,23 +104,23 @@ int main()
         
         if (!bRotateActor)
         {
-          pEntity->SetRotation(maths::CVector3::Zero);
+          pSkullEntity->SetRotation(maths::CVector3::Zero);
         }
       }
 
       if (ImGui::Button("Low scale"))
       {
-        pEntity->SetScale(maths::CVector3(0.01f, 0.01f, 0.01f));
+        pSkullEntity->SetScale(maths::CVector3(0.01f, 0.01f, 0.01f));
       }
 
       if (ImGui::Button("Normal scale"))
       {
-        pEntity->SetScale(maths::CVector3(1.0f, 1.0f, 1.0f));
+        pSkullEntity->SetScale(maths::CVector3(1.0f, 1.0f, 1.0f));
       }
 
       if (ImGui::Button("High scale"))
       {
-        pEntity->SetScale(maths::CVector3(3.0f, 3.0f, 3.0f));
+        pSkullEntity->SetScale(maths::CVector3(3.0f, 3.0f, 3.0f));
       }
 
       // Imgui utils
