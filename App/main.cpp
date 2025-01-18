@@ -26,10 +26,10 @@ int main()
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
   tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
   pTimeManager->SetMaxFPS(144);
-
-  game::CEntity* pEntity = pGameManager->CreateEntity("Cocacola");
+  
+  game::CEntity* pEntity = pGameManager->CreateEntity("Skull");
   game::CModelComponent* pModelComponent = pEntity->RegisterComponent<game::CModelComponent>();
-  pModelComponent->LoadModel("C://Users//Rubén//Desktop//Skull_Test//12140_Skull_v3_L2.obj", "C://Users//Rubén//Desktop//Skull_Test");
+  pModelComponent->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
   pEntity->SetRotation(maths::CVector3(90.f, 0.0f, 0.0));
 
   const render::CRender* pRender = pEngine->GetRender();

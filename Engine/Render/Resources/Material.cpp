@@ -22,6 +22,13 @@ namespace render
     {
       m_dctTextures.clear();
     }
+
+    render::texture::CTexture* const CMaterial::GetTexture(EModifierType _eMapType)
+    {
+      TMapTextures::iterator it = m_dctTextures.find(_eMapType);
+      return it != m_dctTextures.end() ? it->second : nullptr;
+    }
+
     // ------------------------------------
     render::texture::CTexture* const CMaterial::RegisterTexture(EModifierType _eModifierType)
     {

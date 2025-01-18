@@ -20,9 +20,20 @@ namespace render
       // Draw textures
       for (auto& it : m_dctMaterials)
       {
-        render::texture::CTexture* pDiffuse = it.second->GetTexture(render::material::EModifierType::DIFFUSE);
-        if (pDiffuse) { pDiffuse->BindTexture(); }
-        m_oConstantTexture.GetData().bHasTexture = pDiffuse;
+        render::texture::CTexture* pValidTexture = nullptr;
+        for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(render::material::EModifierType::COUNT); uIndex++)
+        {
+          render::material::EModifierType eModifierType = static_cast<render::material::EModifierType>(uIndex);
+          pValidTexture = it.second->GetTexture(eModifierType);
+          if (pValidTexture) 
+          { 
+            pValidTexture->BindTexture(); 
+            break;
+          }
+        }
+
+        // Update buffer
+        m_oConstantTexture.GetData().bHasTexture = pValidTexture;
         m_oConstantTexture.UpdateBuffer();
 
         // Set constant buffer

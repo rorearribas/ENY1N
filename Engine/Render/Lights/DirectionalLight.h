@@ -1,13 +1,14 @@
 #pragma once
 #include "Libs/Maths/Transform.h"
+#include "Light.h"
 
 namespace lights
 {
-  class CDirectionalLight
+  class CDirectionalLight : public CLight
   {
   public:
-    CDirectionalLight() {}
-    ~CDirectionalLight() {}
+    CDirectionalLight(const std::string& _sLightName) : CLight(_sLightName) {}
+    ~CDirectionalLight() {} 
 
     void SetPostion(const maths::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }
     const maths::CVector3& GetPosition() { return m_oTransform.GetPosition(); }

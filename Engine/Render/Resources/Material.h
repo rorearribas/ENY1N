@@ -8,7 +8,7 @@ namespace render
 {
   namespace material
   {
-    enum EModifierType : int { AMBIENT, DIFFUSE, SPECULAR, SPECULAR_HIGHLIGHT, BUMP, DISPLACEMENT, ALPHA, REFLECTION, COUNT};
+    enum EModifierType : uint32_t { AMBIENT, DIFFUSE, SPECULAR, SPECULAR_HIGHLIGHT, BUMP, DISPLACEMENT, ALPHA, REFLECTION, COUNT };
 
     class CMaterial
     {
@@ -21,7 +21,7 @@ namespace render
       ~CMaterial();
 
       const std::string& GetMaterialName() const{ return m_sMaterialName; }
-      render::texture::CTexture* const GetTexture(EModifierType _eMapType) { return m_dctTextures[_eMapType]; }
+      render::texture::CTexture* const GetTexture(EModifierType _eMapType);
       render::texture::CTexture* const RegisterTexture(EModifierType _eModifierType);
 
       void SetAmbientColor(maths::CVector3 _vAmbientColor) { m_vAmbientColor = _vAmbientColor; }

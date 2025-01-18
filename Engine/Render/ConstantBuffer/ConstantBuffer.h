@@ -11,7 +11,7 @@ struct SConstantMatrix
 struct SConstantTexture
 {
   bool bHasTexture = false;
-  char padding[15];
+  char padding[15] = {};
 };
 
 template<class T>
