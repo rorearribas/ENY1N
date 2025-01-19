@@ -5,6 +5,7 @@
 #include "Libs/ImGui/imgui_impl_dx11.h"
 #include "Engine/Base/Engine.h"
 #include "Libs/Macros/GlobalMacros.h"
+#include "Libs/ImGui/ImGuizmo.h"
 
 namespace render
 {
@@ -39,7 +40,7 @@ namespace render
     global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilView);
     global::dx11::SafeRelease(m_oRenderingResources.m_pRasterizerState);
   }
-// ------------------------------------
+  // ------------------------------------
   HRESULT CRender::Init(UINT32 _uX, UINT32 _uY)
   {
     // Create deviec
@@ -82,10 +83,10 @@ namespace render
 
     // Update scissor
     SetScissorRect(_uX, _uY);
-    
+
     return hr;
   }
-// ------------------------------------
+  // ------------------------------------
   void CRender::SetScissorRect(UINT32 _uX, UINT32 _uY)
   {
     D3D11_RECT oScissorRect = {};
@@ -98,16 +99,16 @@ namespace render
   // ------------------------------------
   bool CRender::InitImGui()
   {
-    if (!IMGUI_CHECKVERSION()) 
+    if (!IMGUI_CHECKVERSION())
       return false;
 
-    if (!ImGui::CreateContext()) 
+    if (!ImGui::CreateContext())
       return false;
 
-    if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHwnd())) 
+    if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHwnd()))
       return false;
 
-    if (!ImGui_ImplDX11_Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext)) 
+    if (!ImGui_ImplDX11_Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext))
       return false;
 
     ImGui::StyleColorsDark();
@@ -141,8 +142,8 @@ namespace render
 
     // Device and swapchain
     HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, vctFeatureLevels,
-    uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &m_oRenderingResources.m_pSwapChain,
-    &global::dx11::s_pDevice, &oFeatureLevel, &global::dx11::s_pDeviceContext);
+      uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &m_oRenderingResources.m_pSwapChain,
+      &global::dx11::s_pDevice, &oFeatureLevel, &global::dx11::s_pDeviceContext);
     if (FAILED(hr)) return hr;
 
     return S_OK;
@@ -300,10 +301,13 @@ namespace render
     global::dx11::s_pDeviceContext->ClearRenderTargetView(m_oRenderingResources.m_pRenderTargetView, background_color);
     global::dx11::s_pDeviceContext->ClearDepthStencilView(m_oRenderingResources.m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    // Prepare imgui new frame
+    // Prepare ImGui new frame
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
+
+    // Prepare ImGuizmo new frame
+    ImGuizmo::BeginFrame();
   }
   // ------------------------------------
   void CRender::EndDraw()

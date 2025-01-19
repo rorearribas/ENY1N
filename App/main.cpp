@@ -31,17 +31,18 @@ int main()
   game::CModelComponent* pModelComponent = pSkullEntity->RegisterComponent<game::CModelComponent>();
   pModelComponent->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
   pSkullEntity->SetRotation(maths::CVector3(90.f, 0.0f, 180.0f));
+  pSkullEntity->SetPosition(maths::CVector3(10.0f, 0.0f, 0.0f));
 
-  game::CEntity* pDavidStatue = pGameManager->CreateEntity("DavidStatue");
-  game::CModelComponent* pModelComponent2 = pDavidStatue->RegisterComponent<game::CModelComponent>();
-  pModelComponent2->LoadModel("..\\Assets//Models//Statue//uploads_files_3027914_ai_awm_LOD_00.obj", "..\\Assets//Models//Statue");
-  pDavidStatue->SetPosition(maths::CVector3(20.0f, 0.0f, 0.0f));
-  pDavidStatue->SetScale(maths::CVector3(25.0f, 25.0f, 25.0f));
+  //game::CEntity* pDavidStatue = pGameManager->CreateEntity("DavidStatue");
+  //game::CModelComponent* pModelComponent2 = pDavidStatue->RegisterComponent<game::CModelComponent>();
+  //pModelComponent2->LoadModel("..\\Assets//Models//Statue//uploads_files_3027914_ai_awm_LOD_00.obj", "..\\Assets//Models//Statue");
+  //pDavidStatue->SetPosition(maths::CVector3(20.0f, 0.0f, 0.0f));
+  //pDavidStatue->SetScale(maths::CVector3(25.0f, 25.0f, 25.0f));
 
-  game::CEntity* pCocacola = pGameManager->CreateEntity("CocaCola");
-  game::CModelComponent* pModelComponent3 = pCocacola->RegisterComponent<game::CModelComponent>();
-  pModelComponent3->LoadModel("..\\Assets//Models//Cup//Cup.obj", "..\\Assets//Models//Cup");
-  pCocacola->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
+  //game::CEntity* pCocacola = pGameManager->CreateEntity("CocaCola");
+  //game::CModelComponent* pModelComponent3 = pCocacola->RegisterComponent<game::CModelComponent>();
+  //pModelComponent3->LoadModel("..\\Assets//Models//Cup//Cup.obj", "..\\Assets//Models//Cup");
+  //pCocacola->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();

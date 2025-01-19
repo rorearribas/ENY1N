@@ -30,10 +30,10 @@ namespace render
     void SetRotation(const maths::CVector3& _v3Rot);
 
     void MovePosition(const maths::CVector3& _v3Move);
-    void AddRotation(const maths::CVector3& _v3Delta);
     void SetLookAtPos(const maths::CVector3& _v3LookAtPos);
 
   private:
+    void AddRotation(const maths::CVector3& _v3Delta);
     void ShowCursor(bool _bMousePressed);
     void UpdatePerspectiveMatrix();
     void UpdateViewMatrix();

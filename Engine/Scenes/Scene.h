@@ -18,7 +18,7 @@ namespace scene
     CScene(const UINT32& _uIndex) : m_uSceneIdx(_uIndex) {}
     ~CScene();
 
-    void DrawScene();
+    void Draw();
     void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
 
     const TPrimitiveList& GetPrimitives() { return m_vctPrimitiveItems; }

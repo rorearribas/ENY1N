@@ -22,6 +22,7 @@ namespace maths
       float _m31, float _m32, float _m33, float _m34,
       float _m41, float _m42, float _m43, float _m44
     );
+    const TMatrix4x4& GetValue() const { return m; }
 
     maths::CVector3 operator*(const CVector3& vec) const
     {
@@ -64,7 +65,7 @@ namespace maths
     static CMatrix4x4 Scale(const CVector3& _vScale);
     static CMatrix4x4 Transpose(const CMatrix4x4& matrix);
 
-  private:
+    private:
     TMatrix4x4 m;
   };
 }

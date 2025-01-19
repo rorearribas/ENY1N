@@ -52,21 +52,19 @@ namespace engine
   {
     m_pRender->BeginDraw(); // Begin
   }
+  // ------------------------------------
   void CEngine::DrawScene()
   {
-    // Draw the current scene using the scene manager
-    if (m_pSceneManager->GetCurrentScene())
+    // Draw the current scene
+    scene::CScene* pCurrentScene = m_pSceneManager->GetCurrentScene();
+    if (pCurrentScene)
     {
-      m_pSceneManager->Draw();
+      pCurrentScene->Draw();
     }
 
     // Test
     ImGui::Begin("Handler");
 
-    if (ImGui::Button("Destroy models"))
-    {
-      engine::CEngine::GetInstance()->DestroyAllModels();
-    }
     if (ImGui::Button("Fov 90"))
     {
       m_pCamera->SetFov(90.0f);

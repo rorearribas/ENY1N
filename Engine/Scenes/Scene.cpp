@@ -14,7 +14,7 @@ namespace scene
     DestroyAllModels();
   }
   // ------------------------------------
-  void CScene::DrawScene()
+  void CScene::Draw()
   {
     DrawModels();
     DrawPrimitives();

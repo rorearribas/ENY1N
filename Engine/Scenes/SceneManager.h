@@ -16,7 +16,6 @@ namespace scene
     CSceneManager();
     ~CSceneManager();
 
-    void Draw();
     const TSceneList& GetScenes() { return m_vctScenes; }
     scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
 

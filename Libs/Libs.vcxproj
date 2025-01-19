@@ -139,6 +139,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ImGui\GraphEditor.h" />
+    <ClInclude Include="ImGui\ImCurveEdit.h" />
+    <ClInclude Include="ImGui\ImGradient.h" />
+    <ClInclude Include="ImGui\ImGuizmo.h" />
+    <ClInclude Include="ImGui\ImSequencer.h" />
+    <ClInclude Include="ImGui\ImZoomSlider.h" />
     <ClInclude Include="Macros\GlobalMacros.h" />
     <ClInclude Include="Maths\Maths.h" />
     <ClInclude Include="Third-Party\objloader\tiny_obj_loader.h" />
@@ -180,6 +186,11 @@
     <ClInclude Include="Utils\Singleton.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ImGui\GraphEditor.cpp" />
+    <ClCompile Include="ImGui\ImCurveEdit.cpp" />
+    <ClCompile Include="ImGui\ImGradient.cpp" />
+    <ClCompile Include="ImGui\ImGuizmo.cpp" />
+    <ClCompile Include="ImGui\ImSequencer.cpp" />
     <ClCompile Include="Third-Party\objloader\tiny_obj_loader.cc" />
     <ClCompile Include="Third-Party\stb\stb_vorbis.c" />
     <ClCompile Include="Time\TimeManager.cpp" />
