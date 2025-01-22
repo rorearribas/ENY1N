@@ -22,7 +22,7 @@ namespace render
 
       const std::string& GetMaterialName() const{ return m_sMaterialName; }
       render::texture::CTexture* const GetTexture(EModifierType _eMapType);
-      render::texture::CTexture* const RegisterTexture(EModifierType _eModifierType);
+      render::texture::CTexture* const RegisterTexture(EModifierType _eModifierType, std::string _sTextureID);
 
       void SetAmbientColor(maths::CVector3 _vAmbientColor) { m_vAmbientColor = _vAmbientColor; }
       const maths::CVector3& GetAmbientColor() { return m_vAmbientColor; }

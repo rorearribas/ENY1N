@@ -11,8 +11,7 @@ namespace render
     // ------------------------------------
     CMesh::~CMesh()
     {
-      global::dx11::SafeRelease(m_pIndexBuffer);
-      m_dctMaterials.clear();
+      Clean();
     }
     // ------------------------------------
     void CMesh::DrawMesh()
@@ -51,8 +50,11 @@ namespace render
       m_dctMaterials.emplace(_uMaterialIdx, _pMaterial);
     }
     // ------------------------------------
-    HRESULT CMesh::CreateMesh(TIndexesList& _vctIndexes)
+    HRESULT CMesh::AssignIndexBuffer(TIndexesList& _vctIndexes)
     {
+      // Clean mesh
+      Clean();
+
       // Init constant check texture
       m_oConstantTexture.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
@@ -72,7 +74,7 @@ namespace render
       return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
-    void CMesh::ApplyMaterials(ID3D11Buffer* _pVertexBuffer)
+    void CMesh::ApplyMaterialsColor(ID3D11Buffer* _pVertexBuffer)
     {
       // Mapped vertex buffer
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
@@ -107,6 +109,12 @@ namespace render
 
       // Unmap
       global::dx11::s_pDeviceContext->Unmap(_pVertexBuffer, 0);
+    }
+    // ------------------------------------
+    void CMesh::Clean()
+    {
+      global::dx11::SafeRelease(m_pIndexBuffer);
+      m_oConstantTexture.CleanBuffer();
     }
   }
 }

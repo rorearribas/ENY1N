@@ -1,6 +1,10 @@
 ﻿  Engine.cpp
   Camera.cpp
   InputManager.cpp
+  ResourceManager.cpp
+  Mesh.cpp
+  Model.cpp
+  Shape.cpp
   Render.cpp
   Scene.cpp
   SceneManager.cpp

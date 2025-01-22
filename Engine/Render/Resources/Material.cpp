@@ -30,11 +30,11 @@ namespace render
     }
 
     // ------------------------------------
-    render::texture::CTexture* const CMaterial::RegisterTexture(EModifierType _eModifierType)
+    render::texture::CTexture* const CMaterial::RegisterTexture(EModifierType _eModifierType, std::string _sTextureID)
     {
       // Create texture or get it
       render::texture::CTexture*& pTargetTexture = m_dctTextures[_eModifierType];
-      if (!pTargetTexture) { pTargetTexture = new render::texture::CTexture(); }
+      if (!pTargetTexture) { pTargetTexture = new render::texture::CTexture(_sTextureID); }
       return pTargetTexture;
     }
   }

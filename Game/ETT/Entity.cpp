@@ -33,74 +33,74 @@ namespace game
   {
     ImGui::Begin("Entity");
 
-    // Configuración del gizmo
-    static ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    static ImGuizmo::MODE mCurrentGizmoMode = ImGuizmo::WORLD;
+    //// Configuración del gizmo
+    //static ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    //static ImGuizmo::MODE mCurrentGizmoMode = ImGuizmo::WORLD;
 
-    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_W)) mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_E)) mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R)) mCurrentGizmoOperation = ImGuizmo::SCALE;
+    //if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_W)) mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    //if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_E)) mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    //if (ImGui::IsKeyPressed(ImGuiKey::ImGuiKey_R)) mCurrentGizmoOperation = ImGuizmo::SCALE;
 
-    // Opciones para elegir el tipo de operación (Translate, Rotate, Scale)
-    if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE)) mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-    ImGui::SameLine();
-    if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE)) mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    ImGui::SameLine();
-    if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE)) mCurrentGizmoOperation = ImGuizmo::SCALE;
+    //// Opciones para elegir el tipo de operación (Translate, Rotate, Scale)
+    //if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE)) mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    //ImGui::SameLine();
+    //if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE)) mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    //ImGui::SameLine();
+    //if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE)) mCurrentGizmoOperation = ImGuizmo::SCALE;
 
-    // Obtener las matrices de vista y proyección
-    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    const render::CCamera* pCamera = pEngine->GetCamera();
+    //// Obtener las matrices de vista y proyección
+    //engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    //const render::CCamera* pCamera = pEngine->GetCamera();
 
-    const maths::CMatrix4x4& viewMatrix = pCamera->GetViewMatrix();
-    const float* pViewMatrix = reinterpret_cast<const float*>(&viewMatrix.GetValue());
-    const maths::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
-    const float* pProjectionMatrix = reinterpret_cast<const float*>(&projectionMatrix.GetValue());
+    //const maths::CMatrix4x4& viewMatrix = pCamera->GetViewMatrix();
+    //const float* pViewMatrix = reinterpret_cast<const float*>(&viewMatrix.GetValue());
+    //const maths::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
+    //const float* pProjectionMatrix = reinterpret_cast<const float*>(&projectionMatrix.GetValue());
 
-    // Obtener la matriz de modelo de la entidad
-    maths::CMatrix4x4 modelMatrix = m_oTransform.ComputeModelMatrix();
-    const float* pModelMatrix = reinterpret_cast<const float*>(&modelMatrix.GetValue());
+    //// Obtener la matriz de modelo de la entidad
+    //maths::CMatrix4x4 modelMatrix = m_oTransform.ComputeModelMatrix();
+    //const float* pModelMatrix = reinterpret_cast<const float*>(&modelMatrix.GetValue());
+    //
+    //// Inicializar el frame de ImGuizmo
+    //ImGuiIO& io = ImGui::GetIO();
+    //ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+    //                               
+    //// Llamada a ImGuizmo::Manipulate para dibujar y manipular el gizmo
+    //ImGuizmo::Manipulate(pViewMatrix, pProjectionMatrix, mCurrentGizmoOperation, mCurrentGizmoMode, const_cast<float*>(pModelMatrix));
+    //
+    //// Descomponer la matriz de modelo transformada para obtener los componentes
+    //static float matrixTranslation[3] = { m_oTransform.GetPosition().X, m_oTransform.GetPosition().Y, m_oTransform.GetPosition().Z };
+    //static float matrixRotation[3] = { m_oTransform.GetRotation().X, m_oTransform.GetRotation().Y, m_oTransform.GetRotation().Z };
+    //static float matrixScale[3] = { m_oTransform.GetScale().X, m_oTransform.GetScale().Y, m_oTransform.GetScale().Z };
 
-    // Inicializar el frame de ImGuizmo
-    ImGuiIO& io = ImGui::GetIO();
-    ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+    //// Si el gizmo está siendo usado, actualizamos la transformación del objeto
+    //if (ImGuizmo::IsUsing()) 
+    //{
+    //  // Descomponer la matriz de modelo resultante en sus componentes
+    //  ImGuizmo::DecomposeMatrixToComponents(pModelMatrix, matrixTranslation, matrixRotation, matrixScale);
 
-    // Llamada a ImGuizmo::Manipulate para dibujar y manipular el gizmo
-    ImGuizmo::Manipulate(pViewMatrix, pProjectionMatrix, mCurrentGizmoOperation, mCurrentGizmoMode, const_cast<float*>(pModelMatrix));
+    //  // Actualizar la entidad con los nuevos valores modificados
+    //  SetPosition(maths::CVector3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
+    //  SetRotation(maths::CVector3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
+    //  SetScale(maths::CVector3(matrixScale[0], matrixScale[1], matrixScale[2]));
+    //}
 
-    // Descomponer la matriz de modelo transformada para obtener los componentes
-    static float matrixTranslation[3] = { m_oTransform.GetPosition().X, m_oTransform.GetPosition().Y, m_oTransform.GetPosition().Z };
-    static float matrixRotation[3] = { m_oTransform.GetRotation().X, m_oTransform.GetRotation().Y, m_oTransform.GetRotation().Z };
-    static float matrixScale[3] = { m_oTransform.GetScale().X, m_oTransform.GetScale().Y, m_oTransform.GetScale().Z };
+    //// Mostrar los controles para modificar manualmente la transformación
+    //ImGui::InputFloat3("Translation", matrixTranslation);
+    //ImGui::InputFloat3("Rotation", matrixRotation);
+    //ImGui::InputFloat3("Scale", matrixScale);
 
-    // Si el gizmo está siendo usado, actualizamos la transformación del objeto
-    if (ImGuizmo::IsUsing()) 
-    {
-      // Descomponer la matriz de modelo resultante en sus componentes
-      ImGuizmo::DecomposeMatrixToComponents(pModelMatrix, matrixTranslation, matrixRotation, matrixScale);
+    //// Actualizar la posición, rotación y escala del objeto
+    //SetPosition(maths::CVector3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
+    //SetRotation(maths::CVector3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
+    //SetScale(maths::CVector3(matrixScale[0], matrixScale[1], matrixScale[2]));
 
-      // Actualizar la entidad con los nuevos valores modificados
-      SetPosition(maths::CVector3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
-      SetRotation(maths::CVector3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
-      SetScale(maths::CVector3(matrixScale[0], matrixScale[1], matrixScale[2]));
-    }
-
-    // Mostrar los controles para modificar manualmente la transformación
-    ImGui::InputFloat3("Translation", matrixTranslation);
-    ImGui::InputFloat3("Rotation", matrixRotation);
-    ImGui::InputFloat3("Scale", matrixScale);
-
-    // Actualizar la posición, rotación y escala del objeto
-    SetPosition(maths::CVector3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
-    SetRotation(maths::CVector3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
-    SetScale(maths::CVector3(matrixScale[0], matrixScale[1], matrixScale[2]));
-
-    // Dibujo de depuración de componentes (si tienes alguno)
-    for (CComponent* pComponent : m_vctComponents) {
-      if (pComponent) {
-        pComponent->DrawDebug();
-      }
-    }
+    //// Dibujo de depuración de componentes (si tienes alguno)
+    //for (CComponent* pComponent : m_vctComponents) {
+    //  if (pComponent) {
+    //    pComponent->DrawDebug();
+    //  }
+    //}
 
     ImGui::End();
   }

@@ -4,9 +4,7 @@
   ResourceManager.cpp
   Mesh.cpp
   Model.cpp
-  Primitive.cpp
   Shape.cpp
-  DirectionalLight.cpp
   Render.cpp
   Scene.cpp
   SceneManager.cpp

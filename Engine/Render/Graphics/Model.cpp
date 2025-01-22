@@ -118,7 +118,7 @@ namespace render
       // Init constant buffer
       m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
-      // Config vertex buffer
+      // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
       oVertexBufferDescriptor.ByteWidth = static_cast<UINT>((sizeof(render::graphics::SVertexData) * m_oModelData.m_vctVertexData.size()));
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
@@ -136,9 +136,10 @@ namespace render
       );
       if (FAILED(hr)) return hr;
 
+      // Apply materials color
       for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
       {
-        pMesh->ApplyMaterials(m_pVertexBuffer);
+        pMesh->ApplyMaterialsColor(m_pVertexBuffer);
       }
 
       // Compile shaders

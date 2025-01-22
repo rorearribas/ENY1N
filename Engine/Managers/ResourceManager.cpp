@@ -65,6 +65,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
   // Load obj
   tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, _sPath, _sBaseModelMtlDir);
 
+  // Check errors
   if (errors.size() > 0)
   {
     std::cout << "Error loading OBJ" << std::endl;
@@ -121,7 +122,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
 
     // Mesh
     std::vector<uint32_t> vctIndexes = {};
-    uint32_t uOffset = 0;
+    uint32_t uIndexOffset = 0;
 
     for (uint32_t uJ = 0; uJ < static_cast<uint32_t>(mesh.num_face_vertices.size()); uJ++)
     {
@@ -130,14 +131,14 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
 
       for (uint32_t uK = 0; uK < uVertexCount; uK++)
       {
-        tinyobj::index_t idx = mesh.indices[uOffset + uK];
+        tinyobj::index_t idx = mesh.indices[uIndexOffset + uK];
         render::graphics::SVertexData oVertexData;
         oVertexData.MaterialId = iMaterialId; // Set material id
 
         // Set position
         oVertexData.Position = maths::CVector3
         (
-          attributes.vertices[3 * idx.vertex_index], 
+          attributes.vertices[3 * idx.vertex_index + 0], 
           attributes.vertices[3 * idx.vertex_index + 1], 
           attributes.vertices[3 * idx.vertex_index + 2]
         );
@@ -147,7 +148,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
         oVertexData.Normal = bHasNormal ? 
         maths::CVector3
         (
-          attributes.normals[3 * idx.normal_index],
+          attributes.normals[3 * idx.normal_index + 0],
           attributes.normals[3 * idx.normal_index + 1],
           attributes.normals[3 * idx.normal_index + 2]
 
@@ -157,8 +158,8 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
         bool bHasTexCoord = idx.texcoord_index >= 0 && idx.texcoord_index < (attributes.texcoords.size() / 2);
         oVertexData.TexCoord = bHasTexCoord ? maths::CVector2
         (
-          attributes.texcoords[2 * idx.texcoord_index],
-          1.0f - attributes.texcoords[2 * idx.texcoord_index + 1] // Invertimos los ejes @ToDo(revisar casos)
+          attributes.texcoords[2 * idx.texcoord_index + 0],
+          1.0f - attributes.texcoords[2 * idx.texcoord_index + 1] // We have to invert this value
 
         ) : maths::CVector2::Zero;
 
@@ -178,11 +179,11 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
       }
 
       // Add offset
-      uOffset += uVertexCount;
+      uIndexOffset += uVertexCount;
     }
 
     // Create mesh
-    HRESULT hr = pMesh->CreateMesh(vctIndexes);
+    HRESULT hr = pMesh->AssignIndexBuffer(vctIndexes);
     UNUSED_VARIABLE(hr);
     assert(!FAILED(hr));
 
@@ -194,7 +195,9 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     }
     oModelData.m_vctMeshes.emplace_back(pMesh); // Add mesh
   }
-  std::cout << "loaded" << std::endl;  return oModelData;
+
+  std::cout << "loaded" << std::endl;  
+  return oModelData;
 }
 
 void CResourceManager::RegisterTexture(render::material::CMaterial*& pMaterial, render::material::EModifierType _eModifierType,
@@ -204,11 +207,11 @@ void CResourceManager::RegisterTexture(render::material::CMaterial*& pMaterial, 
   if (oTargetTexturePath.has_filename() && std::filesystem::exists(oTargetTexturePath))
   {
     int iWidth = 0, iHeight = 0, iChannels = 0;
-    unsigned char* cTexture = LoadTexture(oTargetTexturePath.string().c_str(), iWidth, iHeight, iChannels);
-    assert(cTexture);
-    auto* pTexture = pMaterial->RegisterTexture(_eModifierType);
-    pTexture->SetTexture(cTexture, iWidth, iHeight);
-    stbi_image_free(cTexture);
+    unsigned char* pTextureData = LoadTexture(oTargetTexturePath.string().c_str(), iWidth, iHeight, iChannels);
+    assert(pTextureData);
+    render::texture::CTexture* pTexture = pMaterial->RegisterTexture(_eModifierType, oTargetTexturePath.filename().stem().string());
+    pTexture->SetTexture(pTextureData, iWidth, iHeight);
+    stbi_image_free(pTextureData);
   }
 }
 

@@ -22,14 +22,18 @@ namespace render
       }
     }
     // ------------------------------------
-    HRESULT CTexture::SetTexture(unsigned char* _cTexture, int _iWidth, int _iHeight)
+    HRESULT CTexture::SetTexture(unsigned char* _pTexture, uint32_t _uWidth, uint32_t _uHeight)
     {
       ClearTexture();
 
+      // Set values
+      m_uTextureWidth = _uWidth;
+      m_uTextureHeight = _uHeight;
+
       // Create texture
       D3D11_TEXTURE2D_DESC oTextureDesc = {};
-      oTextureDesc.Width = _iWidth;
-      oTextureDesc.Height = _iHeight;
+      oTextureDesc.Width = m_uTextureWidth;
+      oTextureDesc.Height = m_uTextureWidth;
       oTextureDesc.MipLevels = 1;
       oTextureDesc.ArraySize = 1;
       oTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -37,8 +41,8 @@ namespace render
       oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
       D3D11_SUBRESOURCE_DATA subresource_data = {};
-      subresource_data.pSysMem = _cTexture;
-      subresource_data.SysMemPitch = _iWidth * 4;
+      subresource_data.pSysMem = _pTexture;
+      subresource_data.SysMemPitch = m_uTextureWidth * 4;
 
       HRESULT hr = global::dx11::s_pDevice->CreateTexture2D(&oTextureDesc, &subresource_data, &m_pTexture);
       if (FAILED(hr))

@@ -33,11 +33,12 @@ int main()
   pSkullEntity->SetRotation(maths::CVector3(90.f, 0.0f, 180.0f));
   pSkullEntity->SetPosition(maths::CVector3(10.0f, 0.0f, 0.0f));
 
-  //game::CEntity* pDavidStatue = pGameManager->CreateEntity("DavidStatue");
-  //game::CModelComponent* pModelComponent2 = pDavidStatue->RegisterComponent<game::CModelComponent>();
-  //pModelComponent2->LoadModel("..\\Assets//Models//Statue//uploads_files_3027914_ai_awm_LOD_00.obj", "..\\Assets//Models//Statue");
-  //pDavidStatue->SetPosition(maths::CVector3(20.0f, 0.0f, 0.0f));
-  //pDavidStatue->SetScale(maths::CVector3(25.0f, 25.0f, 25.0f));
+  game::CEntity* pAirplane = pGameManager->CreateEntity("Airplane");
+  game::CModelComponent* pModelComponent2 = pAirplane->RegisterComponent<game::CModelComponent>();
+  pModelComponent2->LoadModel("..\\Assets//Models//Airplane//11805_airplane_v2_L2.obj", "..\\Assets//Models//Airplane");
+  pAirplane->SetPosition(maths::CVector3(200.0f, 0.0f, 0.0f));
+  pAirplane->SetRotation(maths::CVector3(90.0f, 0.0f, 0.0f));
+  pAirplane->SetScale(maths::CVector3(0.25f, 0.25f, 0.25f));
 
   //game::CEntity* pCocacola = pGameManager->CreateEntity("CocaCola");
   //game::CModelComponent* pModelComponent3 = pCocacola->RegisterComponent<game::CModelComponent>();
