@@ -20,16 +20,12 @@ namespace engine
     void InitEngine(UINT32 _uWidth, UINT32 _uHeight);
 
     void BeginDraw();
-    void DrawScene();
+    void DrawProcess();
     void EndDraw();
 
     scene::CSceneManager* GetSceneManager() const { return m_pSceneManager.get(); }
     render::CRender* GetRender() const { return m_pRender.get(); }
     render::CCamera* GetCamera() const { return m_pCamera.get(); }
-
-    // Shaders
-    render::shader::CShader<render::shader::SPixelShader>* GetPixelShader() const { return m_pGlobalPixelShader.get();}
-    render::shader::CShader<render::shader::SVertexShader>* GetVertexShader() const { return m_pGlobalVertexShader.get();}
 
     // Creation
     render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const uint32_t& _uSceneIndex = 0);
@@ -53,9 +49,6 @@ namespace engine
 
     std::unique_ptr<render::CRender> m_pRender = nullptr;
     std::unique_ptr<render::CCamera> m_pCamera = nullptr;
-
-    std::unique_ptr<render::shader::CShader<render::shader::SPixelShader>> m_pGlobalPixelShader;
-    std::unique_ptr<render::shader::CShader<render::shader::SVertexShader>> m_pGlobalVertexShader;
 
     bool m_bInitialized = false;
   public:

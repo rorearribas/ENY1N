@@ -25,7 +25,7 @@ namespace render
       CModel(const char* _sModelPath, const char* _sBaseMltDir);
       ~CModel();
 
-      void DrawModel(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader);
+      void DrawModel();
 
       void SetPosition(const maths::CVector3& _v3Position) { m_oModelTransform.SetPosition(_v3Position); }
       const maths::CVector3& GetPosition() const { return m_oModelTransform.GetPosition(); }

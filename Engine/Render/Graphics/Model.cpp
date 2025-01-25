@@ -1,11 +1,10 @@
 #include "Model.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/ResourceManager.h"
-#include <d3dcompiler.h>
 #include "Libs/Macros/GlobalMacros.h"
-#include <cassert>
-#include "../Base/Engine.h"
+#include "Engine/Base/Engine.h"
 #include "Engine/Shaders/Model/DeferredVertexShader.h"
+#include <cassert>
 
 namespace render
 {
@@ -89,7 +88,7 @@ namespace render
       return hr;
     }
     // ------------------------------------
-    void CModel::DrawModel(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader)
+    void CModel::DrawModel()
     {
       // Set vertex buffer
       UINT uVertexStride = sizeof(render::graphics::SVertexData);
@@ -97,10 +96,6 @@ namespace render
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
       global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-      // Set pixel and vertex shaders
-      global::dx11::s_pDeviceContext->VSSetShader(_pVertexShader, nullptr, 0);
-      global::dx11::s_pDeviceContext->PSSetShader(_pPixelShader, nullptr, 0);
 
       // Set model matrix
       m_oConstantBuffer.GetData().mMatrix = m_oModelTransform.ComputeModelMatrix();

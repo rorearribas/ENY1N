@@ -5,6 +5,7 @@
 
 namespace render { namespace lights { class CDirectionalLight; } }
 namespace render { namespace lights { class CPointLight; } }
+namespace render { class CRender; }
 
 namespace scene
 {
@@ -23,9 +24,6 @@ namespace scene
     CScene(const UINT32& _uIndex) : m_uSceneIdx(_uIndex) {}
     ~CScene();
 
-    void Draw(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader);
-    void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
-
     const TPrimitiveList& GetPrimitives() { return m_vctPrimitiveItems; }
     const TModelList& GetModels() { return m_vctModels; }
     const TLightsList& GetLights() { return m_vctLights; }
@@ -43,6 +41,7 @@ namespace scene
     void DestroyModel(render::graphics::CModel*& pModel_);
     void DestroyLight(render::lights::CLight*& pLight_);
 
+    void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
     const UINT32& GetSceneIndex() const { return m_uSceneIdx; }
     const bool& IsEnabled() const { return m_bEnabled; }
 
@@ -50,8 +49,10 @@ namespace scene
     void DestroyAllModels();
 
   private:
-    void DrawPrimitives(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader);
-    void DrawModels(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader);
+    friend class render::CRender;
+
+    void DrawPrimitives();
+    void DrawModels();
     void UpdateLights();
 
   private:
@@ -59,14 +60,12 @@ namespace scene
     UINT32 m_uSceneIdx = 0;
 
     TPrimitiveList m_vctPrimitiveItems = {};
-    int m_iRegisteredPrimitives = 0;
+    uint32_t m_uRegisteredPrimitives = 0;
 
     TModelList m_vctModels = {};
-    int m_iRegisteredModels = 0;
+    uint32_t m_uRegisteredModels = 0;
 
     TLightsList m_vctLights = {};
-    int m_iRegisteredLights  = 0;
+    uint32_t m_uRegisteredLights  = 0;
   };
 }
-
-

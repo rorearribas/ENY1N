@@ -8,17 +8,17 @@ namespace render
     class CPointLight : public CLight
     { 
     public:
-      CPointLight() : CLight(std::string()) {}
-      CPointLight(const std::string& _sLightName) : CLight(_sLightName) {}
+      CPointLight() : CLight() {}
       virtual ~CPointLight() {}
 
-      void SetPostion(const maths::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }
-      const maths::CVector3& GetPosition() { return m_oTransform.GetPosition(); }
-      void SetRotation(const maths::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
-      const maths::CVector3& GetRotation() { return m_oTransform.GetRotation(); }
+      void SetIntensity(float _fIntensity) { m_fIntensity = _fIntensity; }
+      const float& GetIntensity() { return m_fIntensity; }
+      void SetRange(float _fRange) { m_fRange = _fRange;}
+      const float& GetRange() { return m_fRange; }
 
     private:
-      maths::CTransform m_oTransform;
+      float m_fIntensity = 1.0f;
+      float m_fRange = 10.0f;
     };
   }
 

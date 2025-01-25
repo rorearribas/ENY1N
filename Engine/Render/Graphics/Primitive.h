@@ -36,23 +36,13 @@ namespace render
       const maths::CVector3& GetColor() const { return m_v3CurrentColor; }
 
     private:
-      HRESULT InitPrimitive();
-      HRESULT CompileShaders();
-      HRESULT CreateShaders();
-      HRESULT CreateInputLayout();
       HRESULT CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes = {});
+      HRESULT CreateInputLayout();
 
-      // Buffers
+      // Primitive data
       ConstantBuffer<SConstantMatrix> m_oConstantBuffer;
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
-      // Vertex shader
-      ID3DBlob* m_pVertexShaderBlob = nullptr;
-      ID3D11VertexShader* m_pVertexShader = nullptr;
-      // Pixel shader
-      ID3DBlob* m_pPixelShaderBlob = nullptr;
-      ID3D11PixelShader* m_pPixelShader = nullptr;
-      // Input layout
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
       // Data

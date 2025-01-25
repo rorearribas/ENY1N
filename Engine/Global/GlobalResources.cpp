@@ -9,8 +9,11 @@ namespace global
 
   namespace dx11
   {
+    // DirectX
     ID3D11Device* s_pDevice = nullptr;
     ID3D11DeviceContext* s_pDeviceContext = nullptr;
+    // Shaders
+
   }
 
   namespace delegates

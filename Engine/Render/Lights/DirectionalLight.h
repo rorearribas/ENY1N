@@ -9,9 +9,11 @@ namespace render
     class CDirectionalLight : public CLight
     {
     public:
-      CDirectionalLight() : CLight(std::string()) {}
-      CDirectionalLight(const std::string& _sLightName) : CLight(_sLightName) {}
+      CDirectionalLight();
       virtual ~CDirectionalLight() {}
+
+    private:
+      void InitDefaultLight();
     };
   }
 }

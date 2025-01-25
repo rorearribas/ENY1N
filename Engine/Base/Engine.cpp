@@ -35,12 +35,9 @@ namespace engine
     m_pSceneManager = std::make_unique<scene::CSceneManager>();
     m_pSceneManager->SetSceneEnabled(0, true);
 
-    m_pGlobalPixelShader = std::make_unique<render::shader::CShader<render::shader::SPixelShader>>();
-    m_pGlobalVertexShader = std::make_unique<render::shader::CShader<render::shader::SVertexShader>>();
-
     // Set delegate
     utils::CDelegate<void(UINT32, UINT32)> oResizeDelegate(&CEngine::OnWindowResizeEvent, this);
-    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
+    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate); 
 
     // Marked as initialized
     m_bInitialized = true;
@@ -56,14 +53,10 @@ namespace engine
     m_pRender->BeginDraw(); // Begin
   }
   // ------------------------------------
-  void CEngine::DrawScene()
+  void CEngine::DrawProcess()
   {
-    // Draw the current scene
-    scene::CScene* pCurrentScene = m_pSceneManager->GetCurrentScene();
-    if (pCurrentScene)
-    {
-      pCurrentScene->Draw(m_pGlobalPixelShader->GetData().m_pPixelShader, m_pGlobalVertexShader->GetData().m_pVertexShader);
-    }
+    // Draw current scene
+    m_pRender->Draw(m_pSceneManager->GetCurrentScene());
   }
   // ------------------------------------
   void CEngine::EndDraw()

@@ -7,6 +7,12 @@
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/ImGui/ImGuizmo.h"
 
+// Shaders
+#include "Engine/Shaders/Model/DeferredPixelShader.h"
+#include "Engine/Shaders/Model/DeferredVertexShader.h"
+#include "Engine/Shaders/Primitive/PixelShader.h"
+#include "Engine/Shaders/Primitive/VertexShader.h"
+
 namespace render
 {
   namespace internal_render
@@ -15,7 +21,7 @@ namespace render
     static const float s_fMaxDepth(1.0f);
   }
   // ------------------------------------
-  CRender::CRender(UINT32 _uX, UINT32 _uY)
+  CRender::CRender(uint32_t _uX, uint32_t _uY)
   {
     // Create render window
     m_pRenderWindow = new render::CRenderWindow(_uX, _uY);
@@ -43,7 +49,7 @@ namespace render
   // ------------------------------------
   HRESULT CRender::Init(UINT32 _uX, UINT32 _uY)
   {
-    // Create deviec
+    // Create device
     HRESULT hr = CreateDevice(_uX, _uY);
     if (FAILED(hr)) return hr;
 
@@ -55,13 +61,21 @@ namespace render
     if (FAILED(hr)) return hr;
 
     // Set delegate
-    utils::CDelegate<void(UINT32, UINT32)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
+    utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
     global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
+
+    // Create shaders for 3D pipeline
+    m_oRenderingResources.m_pForwardPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_DeferredPixelShader, ARRAYSIZE(g_DeferredPixelShader));
+    m_oRenderingResources.m_pForwardVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_DeferredVertexShader, ARRAYSIZE(g_DeferredVertexShader));
+
+    // Create shaders for primitives
+    m_oRenderingResources.m_pPrimitivesPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_PixelShader, ARRAYSIZE(g_PixelShader));
+    m_oRenderingResources.m_pPrimitivesVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_VertexShader, ARRAYSIZE(g_VertexShader));
 
     return S_OK;
   }
   // ------------------------------------
-  HRESULT CRender::InitBasicPipeline(UINT32 _uX, UINT32 _uY)
+  HRESULT CRender::InitBasicPipeline(uint32_t _uX, uint32_t _uY)
   {
     // Configure viewport
     ConfigureViewport(_uX, _uY);
@@ -87,7 +101,7 @@ namespace render
     return hr;
   }
   // ------------------------------------
-  void CRender::SetScissorRect(UINT32 _uX, UINT32 _uY)
+  void CRender::SetScissorRect(uint32_t _uX, uint32_t _uY)
   {
     D3D11_RECT oScissorRect = {};
     oScissorRect.left = 0;
@@ -115,7 +129,7 @@ namespace render
     return true;
   }
   // ------------------------------------
-  HRESULT CRender::CreateDevice(UINT32 _uX, UINT32 _uY)
+  HRESULT CRender::CreateDevice(uint32_t _uX, uint32_t _uY)
   {
     DXGI_SWAP_CHAIN_DESC oSwapChainDescriptor = {};
     oSwapChainDescriptor.BufferCount = 1;
@@ -149,7 +163,7 @@ namespace render
     return S_OK;
   }
   // ------------------------------------
-  void CRender::OnWindowResizeEvent(UINT32 _uX, UINT32 _uY)
+  void CRender::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
   {
     // Remove current target view
     global::dx11::SafeRelease(m_oRenderingResources.m_pRenderTargetView);
@@ -176,7 +190,7 @@ namespace render
     return hr;
   }
   // ------------------------------------
-  HRESULT CRender::CreateDepthStencilView(UINT32 _uX, UINT32 _uY)
+  HRESULT CRender::CreateDepthStencilView(uint32_t _uX, uint32_t _uY)
   {
     // Release resources
     global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilTexture);
@@ -280,7 +294,7 @@ namespace render
   }
 
   // ------------------------------------
-  void CRender::ConfigureViewport(UINT32 _uX, UINT32 _uY)
+  void CRender::ConfigureViewport(uint32_t _uX, uint32_t _uY)
   {
     if (global::dx11::s_pDeviceContext && m_pRenderWindow)
     {
@@ -308,6 +322,19 @@ namespace render
 
     // Prepare ImGuizmo new frame
     ImGuizmo::BeginFrame();
+  }
+  // ------------------------------------
+  void CRender::Draw(scene::CScene* _pScene)
+  {
+    // Draw 3D Pipeline
+    m_oRenderingResources.m_pForwardPS->PushShader();
+    m_oRenderingResources.m_pForwardVS->PushShader();
+    _pScene->DrawModels();
+
+    // Draw primitives
+    m_oRenderingResources.m_pPrimitivesPS->PushShader();
+    m_oRenderingResources.m_pPrimitivesVS->PushShader();
+    _pScene->DrawPrimitives();
   }
   // ------------------------------------
   void CRender::EndDraw()

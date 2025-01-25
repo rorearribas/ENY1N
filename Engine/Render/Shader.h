@@ -1,38 +1,94 @@
 #pragma once
 #include <d3d11.h>
-#include <type_traits>
+#include <cassert>
 
 namespace render
 {
   namespace shader
   {
-    struct SVertexShader
-    {
-      ID3D11VertexShader* m_pVertexShader = nullptr;
-      HRESULT CreateShader();
-      void Release();
-    };
+    enum EShaderType { PIXEL_SHADER, VERTEX_SHADER };
 
-    struct SPixelShader
-    {
-      ID3D11PixelShader* m_pPixelShader = nullptr;
-      HRESULT CreateShader();
-      void Release();
-    };
-
-    template<typename T, typename = std::enable_if_t<std::is_same_v<T, render::shader::SVertexShader> ||
-      std::is_same_v<T, render::shader::SPixelShader>>>
+    template<EShaderType eShaderType>
     class CShader
     {
     public:
-      CShader() { m_oShaderData.CreateShader(); }
-      ~CShader() { m_oShaderData.Release(); }
+      CShader(const BYTE* _pData, size_t _tSize);
+      ~CShader() { ReleaseShader(); }
 
-      const T& GetData() { return m_oShaderData; }
+      void PushShader();
+      void ReleaseShader();
 
     private:
-      T m_oShaderData;
+      void* m_pShaderData = nullptr;
     };
+
+    template<EShaderType eShaderType>
+    void render::shader::CShader<eShaderType>::ReleaseShader()
+    {
+      switch (eShaderType)
+      {
+      case render::shader::VERTEX_SHADER:
+        if (m_pShaderData) { static_cast<ID3D11VertexShader>(m_pShaderData)->Release(); }
+        break;
+      case render::shader::PIXEL_SHADER:
+        if (m_pShaderData) { static_cast<ID3D11PixelShader>(m_pShaderData)->Release(); }
+        break;
+      default:
+        break;
+      }
+    }
+
+    template<EShaderType eShaderType>
+    void render::shader::CShader<eShaderType>::PushShader()
+    {
+      switch (eShaderType)
+      {
+      case render::shader::VERTEX_SHADER:
+        global::dx11::s_pDeviceContext->VSSetShader(static_cast<ID3D11VertexShader*>(m_pShaderData), nullptr, 0);
+        break;
+      case render::shader::PIXEL_SHADER:
+        global::dx11::s_pDeviceContext->PSSetShader(static_cast<ID3D11PixelShader*>(m_pShaderData), nullptr, 0);
+        break;
+      default:
+        break;
+      }
+    }
+
+    template<EShaderType eShaderType>
+    render::shader::CShader<eShaderType>::CShader(const BYTE* _pData, size_t _tSize)
+    {
+      HRESULT hr = S_OK;
+      switch (eShaderType)
+      {
+      case render::shader::PIXEL_SHADER:
+      {
+        ID3D11PixelShader* pPixelShader = nullptr;
+        hr = global::dx11::s_pDevice->CreatePixelShader
+        (
+          _pData,
+          _tSize,
+          nullptr,
+          &pPixelShader
+        );
+        m_pShaderData = pPixelShader;
+      }
+      break;
+      case render::shader::VERTEX_SHADER:
+      {
+        ID3D11VertexShader* pVertexShader = nullptr;
+        hr = global::dx11::s_pDevice->CreateVertexShader
+        (
+          _pData,
+          _tSize,
+          nullptr,
+          &pVertexShader
+        );
+        m_pShaderData = pVertexShader;
+      }
+        break;
+      }
+
+      assert(!FAILED(hr));
+    }
   }
 }
-

@@ -1,9 +1,8 @@
-﻿  Engine.cpp
+﻿  Model.cpp
+  Engine.cpp
   Camera.cpp
   InputManager.cpp
-  Model.cpp
   Render.cpp
-  Shader.cpp
   Scene.cpp
   Generating Code...
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\Engine.lib

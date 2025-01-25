@@ -49,6 +49,11 @@ int main()
   pSniper->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
   pSniper->SetScale(maths::CVector3(40.0f, 40.0f, 40.0f));
 
+  game::CEntity* pPrimitive = pGameManager->CreateEntity("Primitive");
+  game::CModelComponent* pPrimitveComponent = pPrimitive->RegisterComponent<game::CModelComponent>();
+  pPrimitveComponent->CreatePrimitive(render::graphics::CPrimitive::SQUARE);
+  pPrimitive->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
+
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
   pRenderWindow->SetEnabled(true);
@@ -86,7 +91,7 @@ int main()
       }
 
       // Draw
-      pEngine->DrawScene();
+      pEngine->DrawProcess();
 
       if (bRotateActor)
       {

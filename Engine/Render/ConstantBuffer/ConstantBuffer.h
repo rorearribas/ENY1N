@@ -5,7 +5,7 @@
 #include "Engine/Render/Lights/DirectionalLight.h"
 
 struct SConstantMatrix
-{
+{    
   maths::CMatrix4x4 mMatrix = maths::CMatrix4x4::Identity;
 };
 

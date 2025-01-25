@@ -2,12 +2,12 @@
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Base/Engine.h"
 #include "Engine/Render/Render.h"
-#include <algorithm>
-#include <random>
-#include <cassert>
 #include "Engine/Render/Lights/PointLight.h"
 #include "Engine/Render/Lights/DirectionalLight.h"
 #include "Engine/Render/Lights/Light.h"
+#include <algorithm>
+#include <random>
+#include <cassert>
 
 namespace scene
 {
@@ -17,33 +17,27 @@ namespace scene
     DestroyAllModels();
   }
   // ------------------------------------
-  void CScene::Draw(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader)
+  void CScene::DrawPrimitives()
   {
-    DrawModels(_pPixelShader, _pVertexShader);
-    DrawPrimitives(_pPixelShader, _pVertexShader);
-  }
-  // ------------------------------------
-  void CScene::DrawPrimitives(ID3D11PixelShader* /*_pPixelShader*/, ID3D11VertexShader* /*_pVertexShader*/)
-  {
-    for (int iIndex = 0; iIndex < m_iRegisteredPrimitives; iIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_uRegisteredPrimitives; uIndex++)
     {
-      render::graphics::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[iIndex];
+      render::graphics::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[uIndex];
       pPrimitiveItem->DrawPrimitive();
     }
   }
   // ------------------------------------
-  void CScene::DrawModels(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader)
+  void CScene::DrawModels()
   {
-    for (int iIndex = 0; iIndex < m_iRegisteredModels; iIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_uRegisteredModels; uIndex++)
     {
-      render::graphics::CModel* pModel = m_vctModels[iIndex];
-      pModel->DrawModel(_pPixelShader, _pVertexShader);
+      render::graphics::CModel* pModel = m_vctModels[uIndex];
+      pModel->DrawModel();
     }
   }
   // ------------------------------------
   void CScene::UpdateLights()
   {
-
+    
   }
   // ------------------------------------
   void CScene::DestroyAllPrimitives()
@@ -56,7 +50,7 @@ namespace scene
         _pPrimitive = nullptr; 
       }
     });
-    m_iRegisteredPrimitives = 0;
+    m_uRegisteredPrimitives = 0;
   }
   // ------------------------------------
   void CScene::DestroyAllModels()
@@ -69,45 +63,45 @@ namespace scene
           _pModel = nullptr;
         }
       });
-    m_iRegisteredModels = 0;
+    m_uRegisteredModels = 0;
   }
   // ------------------------------------
   render::graphics::CPrimitive* CScene::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData)
   {
-    if (m_iRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
-    render::graphics::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[m_iRegisteredPrimitives++];
+    if (m_uRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
+    render::graphics::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[m_uRegisteredPrimitives++];
     pPrimitiveItem = new render::graphics::CPrimitive(_vctVertexData);
     return pPrimitiveItem;
   }
   // ------------------------------------
   render::graphics::CPrimitive* CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType)
   {
-    if (m_iRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
-    render::graphics::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[m_iRegisteredPrimitives++];
+    if (m_uRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
+    render::graphics::CPrimitive*& pPrimitiveItem = m_vctPrimitiveItems[m_uRegisteredPrimitives++];
     pPrimitiveItem = new render::graphics::CPrimitive(_ePrimitiveType);
     return pPrimitiveItem;
   }
   // ------------------------------------
   render::graphics::CModel* CScene::CreateModel(const char* _sModelPath, const char* _sBaseMltDir)
   {
-    if (m_iRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
-    render::graphics::CModel*& pModel = m_vctModels[m_iRegisteredModels++];
+    if (m_uRegisteredPrimitives >= s_iMaxPrimitives) return nullptr;
+    render::graphics::CModel*& pModel = m_vctModels[m_uRegisteredModels++];
     pModel = new render::graphics::CModel(_sModelPath, _sBaseMltDir);
     return pModel;
   }
   // ------------------------------------
   render::lights::CDirectionalLight* CScene::CreateDirectionalLight()
   {
-    if (m_iRegisteredLights >= s_iMaxLights) return nullptr;
-    render::lights::CLight*& pDirectional = m_vctLights[m_iRegisteredLights++];
+    if (m_uRegisteredLights >= s_iMaxLights) return nullptr;
+    render::lights::CLight*& pDirectional = m_vctLights[m_uRegisteredLights++];
     pDirectional = new render::lights::CDirectionalLight();
     return static_cast<render::lights::CDirectionalLight*>(pDirectional);
   }
   // ------------------------------------
   render::lights::CPointLight* CScene::CreatePointLight()
   {
-    if (m_iRegisteredLights >= s_iMaxLights) return nullptr;
-    render::lights::CLight*& pPointLight = m_vctLights[m_iRegisteredLights++];
+    if (m_uRegisteredLights >= s_iMaxLights) return nullptr;
+    render::lights::CLight*& pPointLight = m_vctLights[m_uRegisteredLights++];
     pPointLight = new render::lights::CPointLight();
     return static_cast<render::lights::CPointLight*>(pPointLight);
   }
@@ -120,7 +114,7 @@ namespace scene
     {
       delete* it;
       *it = nullptr;
-      m_iRegisteredPrimitives--;
+      m_uRegisteredPrimitives--;
 
       auto oReorderFunc = std::remove_if(m_vctPrimitiveItems.begin(), m_vctPrimitiveItems.end(), 
       [] (render::graphics::CPrimitive* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
@@ -137,7 +131,7 @@ namespace scene
     {
       delete* it;
       *it = nullptr;
-      m_iRegisteredModels--;
+      m_uRegisteredModels--;
 
       auto oReorderFunc = std::remove_if(m_vctModels.begin(), m_vctModels.end(),
         [](render::graphics::CModel* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
@@ -154,7 +148,7 @@ namespace scene
     {
       delete* it;
       *it = nullptr;
-      m_iRegisteredLights--;
+      m_uRegisteredLights--;
 
       auto oReorderFunc = std::remove_if(m_vctLights.begin(), m_vctLights.end(),
       [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list

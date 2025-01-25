@@ -1,8 +1,9 @@
 #pragma once
-#include "Engine/Render/Graphics/Primitive.h"
-#include "Engine/Scenes/Scene.h"
 #include "Window/RenderWindow.h"
 #include "Engine/Camera/Camera.h"
+#include "Shader.h"
+
+namespace scene { class CScene; }
 
 namespace render
 {
@@ -25,44 +26,45 @@ namespace render
 
       // Blend
       ID3D11BlendState* m_pBlendState = nullptr;
+
+      // Shaders for 3D Pipeline
+      shader::CShader<shader::EShaderType::PIXEL_SHADER>* m_pForwardPS;
+      shader::CShader<shader::EShaderType::VERTEX_SHADER>* m_pForwardVS;
+      // Shaders for primitives
+      shader::CShader<shader::EShaderType::PIXEL_SHADER>* m_pPrimitivesPS;
+      shader::CShader<shader::EShaderType::VERTEX_SHADER>* m_pPrimitivesVS;
     };
 
   public:
-    CRender(UINT32 _uX, UINT32 _uY);
+    CRender(uint32_t _uX, uint32_t _uY);
     ~CRender();
 
     void BeginDraw();
+    void Draw(scene::CScene* _pScene);
     void EndDraw();
 
     render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
-    render::CCamera* GetCamera() const { return m_pCamera; }
-
     void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
     bool IsVSyncEnabled() { return m_bVerticalSync; }
 
   private:
-    void OnWindowResizeEvent(UINT32 _uX, UINT32 _uY);
+    void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);
 
-    HRESULT Init(UINT32 _uX, UINT32 _uY);
-    HRESULT CreateDevice(UINT32 _uX, UINT32 _uY);
-    HRESULT InitBasicPipeline(UINT32 _uX, UINT32 _uY);
+    HRESULT Init(uint32_t _uX, uint32_t _uY);
+    HRESULT CreateDevice(uint32_t _uX, uint32_t _uY);
+    HRESULT InitBasicPipeline(uint32_t _uX, uint32_t _uY);
 
     HRESULT CreateRenderTargetView();
-    HRESULT CreateDepthStencilView(UINT32 _uX, UINT32 _uY);
+    HRESULT CreateDepthStencilView(uint32_t _uX, uint32_t _uY);
     HRESULT CreateRasterizerState(D3D11_FILL_MODE _eFillMode = D3D11_FILL_SOLID);
     HRESULT CreateBlendState();
 
-    void ConfigureViewport(UINT32 _uX, UINT32 _uY);
-    void SetScissorRect(UINT32 _uX, UINT32 _uY);
+    void ConfigureViewport(uint32_t _uX, uint32_t _uY);
+    void SetScissorRect(uint32_t _uX, uint32_t _uY);
     bool InitImGui();
 
-    // Render camera
-    render::CCamera* m_pCamera = nullptr;
-
-    // Render window
+    // Data
     render::CRenderWindow* m_pRenderWindow = nullptr;
-
-    // Info
     SRenderingResources m_oRenderingResources = {};
     bool m_bVerticalSync = false;
   };

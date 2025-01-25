@@ -1,11 +1,26 @@
-﻿  Engine.cpp
+﻿  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\DeferredPixelShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredPixelShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\DeferredVertexShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredVertexShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Primitive\PixelShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\PixelShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Primitive\VertexShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\VertexShader.cso
+  Engine.cpp
   Camera.cpp
+  GlobalResources.cpp
   InputManager.cpp
   ResourceManager.cpp
   Mesh.cpp
   Model.cpp
+  Primitive.cpp
   Shape.cpp
+  DirectionalLight.cpp
+  Light.cpp
+  PointLight.cpp
   Render.cpp
+  Texture.cpp
+  Shader.cpp
   Scene.cpp
   SceneManager.cpp
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib

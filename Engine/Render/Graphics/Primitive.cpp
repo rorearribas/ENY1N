@@ -1,6 +1,6 @@
 #include "Primitive.h"
 #include "Engine/Global/GlobalResources.h"
-#include <d3dcompiler.h>
+#include "Engine/Shaders/Primitive/VertexShader.h"
 #include <cassert>
 #include <iostream>
 #include "Libs/Macros/GlobalMacros.h"
@@ -60,7 +60,7 @@ namespace render
     // ------------------------------------
     CPrimitive::CPrimitive(const EPrimitiveType& _ePrimitiveType)
     {
-      HRESULT hr = InitPrimitive();
+      HRESULT hr = CreateInputLayout();
       assert(!FAILED(hr));
 
       // Create buffer from presets
@@ -81,7 +81,7 @@ namespace render
     // ------------------------------------
     CPrimitive::CPrimitive(const std::vector<SPrimitiveInfo>& _vctVertexData)
     {
-      HRESULT hr = InitPrimitive();
+      HRESULT hr = CreateInputLayout();
       assert(!FAILED(hr));
 
       // Create buffer from vertex data
@@ -92,32 +92,8 @@ namespace render
     CPrimitive::~CPrimitive()
     {
       m_oConstantBuffer.CleanBuffer();
-
       global::dx11::SafeRelease(m_pVertexBuffer);
       global::dx11::SafeRelease(m_pInputLayout);
-
-      global::dx11::SafeRelease(m_pVertexShaderBlob);
-      global::dx11::SafeRelease(m_pVertexShader);
-
-      global::dx11::SafeRelease(m_pPixelShaderBlob);
-      global::dx11::SafeRelease(m_pPixelShader);
-    }
-    // ------------------------------------
-    HRESULT CPrimitive::InitPrimitive()
-    {
-      // Compile shaders
-      HRESULT hr = CompileShaders();
-      if (FAILED(hr)) return hr;
-
-      // Init shaders
-      hr = CreateShaders();
-      if (FAILED(hr)) return hr;
-
-      // Create input layout
-      hr = CreateInputLayout();
-      if (FAILED(hr)) return hr;
-
-      return hr;
     }
     // ------------------------------------
     HRESULT CPrimitive::CreateInputLayout()
@@ -132,32 +108,9 @@ namespace render
       (
         oInputElementDesc,
         ARRAYSIZE(oInputElementDesc),
-        m_pVertexShaderBlob->GetBufferPointer(),
-        m_pVertexShaderBlob->GetBufferSize(),
+        g_VertexShader,
+        sizeof(g_VertexShader),
         &m_pInputLayout
-      );
-    }
-    // ------------------------------------
-    HRESULT CPrimitive::CreateShaders()
-    {
-      // Create vertex shader
-      HRESULT hr = global::dx11::s_pDevice->CreateVertexShader
-      (
-        m_pVertexShaderBlob->GetBufferPointer(),
-        m_pVertexShaderBlob->GetBufferSize(),
-        NULL,
-        &m_pVertexShader
-      );
-
-      if (FAILED(hr)) return hr;
-
-      // Create pixel shader
-      return global::dx11::s_pDevice->CreatePixelShader
-      (
-        m_pPixelShaderBlob->GetBufferPointer(),
-        m_pPixelShaderBlob->GetBufferSize(),
-        NULL,
-        &m_pPixelShader
       );
     }
     // ------------------------------------
@@ -183,39 +136,6 @@ namespace render
 
       // Save color
       m_v3CurrentColor = _v3Color;
-    }
-    // ------------------------------------
-    HRESULT CPrimitive::CompileShaders()
-    {
-      // Compile vertex shader
-      HRESULT hr = D3DCompileFromFile
-      (
-        L"..\\Engine\\Shaders\\Primitive\\VertexShader.hlsl",
-        nullptr,
-        D3D_COMPILE_STANDARD_FILE_INCLUDE,
-        "VSMain",
-        "vs_5_0",
-        D3DCOMPILE_DEBUG,
-        0,
-        &m_pVertexShaderBlob,
-        nullptr
-      );
-
-      if (FAILED(hr)) return hr;
-
-      // Compile pixel shader
-      return D3DCompileFromFile
-      (
-        L"..\\Engine\\Shaders\\Primitive\\PixelShader.hlsl",
-        nullptr,
-        D3D_COMPILE_STANDARD_FILE_INCLUDE,
-        "PSMain",
-        "ps_5_0",
-        D3DCOMPILE_DEBUG,
-        0,
-        &m_pPixelShaderBlob,
-        nullptr
-      );
     }
     // ------------------------------------
     HRESULT CPrimitive::CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes)
@@ -266,10 +186,6 @@ namespace render
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
       global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-      // Set pixel and vertex shaders
-      global::dx11::s_pDeviceContext->VSSetShader(m_pVertexShader, nullptr, 0);
-      global::dx11::s_pDeviceContext->PSSetShader(m_pPixelShader, nullptr, 0);
 
       // Set model matrix
       m_oConstantBuffer.GetData().mMatrix = m_oPrimitiveTransform.ComputeModelMatrix();
