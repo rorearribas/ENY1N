@@ -39,23 +39,21 @@ cbuffer LightingData : register(b0)
 
 float4 PSMain(PS_INPUT input) : SV_TARGET
 {
-    // Si tiene textura, aplicar la textura
+    // DirectionaLight 
+    float3 normal = normalize(input.normal); // Normal del vértice o píxel
+    float3 lightDir = normalize(float3(0.8f, -1.0f, 0.6f)); // Dirección de la luz (ajustada para un ángulo más estético)
+    float3 lightColor = float3(1.0f, 0.9f, 0.6f); // Luz amarilla cálida
+    float diff = max(dot(normal, lightDir), 0.0f); // Componente difusa
+    float3 diffuse = diff * lightColor; // Combinación de intensidad difusa y color de luz
+
+    // Apply texture color + illu
     if (HasTexture)
     {
-       // Iluminación direccional
-        float3 normal = normalize(input.normal); // Normal del vértice o píxel
-        float3 lightDir = normalize(float3(0.8f, -1.0f, 0.6f)); // Dirección de la luz (ajustada para un ángulo más estético)
-        float3 lightColor = float3(1.0f, 0.9f, 0.6f); // Luz amarilla cálida
-        float diff = max(dot(normal, lightDir), 0.0f); // Componente difusa
-        float3 diffuse = diff * lightColor; // Combinación de intensidad difusa y color de luz
-        float4 finalcolor = float4(diffuse, 1.0f);
-
         float4 texColor = cTexture2D.Sample(cSamplerState, input.uv);
-        return finalcolor * texColor;
+        return float4(diffuse, 1.0f) * texColor;
     }
     else
     {
-        // Si no tiene textura, aplicar color base
-        return input.color;
+        return float4(diffuse, 1.0f) * input.color;
     }
 }

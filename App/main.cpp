@@ -13,6 +13,7 @@
 #include "Game/ETT/Components/ModelComponent/ModelComponent.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
+#include "Game/ETT/Components/LightComponent/LightComponent.h"
 
 #define WIDTH 2560
 #define HEIGHT 1440
@@ -53,6 +54,10 @@ int main()
   game::CModelComponent* pPrimitveComponent = pPrimitive->RegisterComponent<game::CModelComponent>();
   pPrimitveComponent->CreatePrimitive(render::graphics::CPrimitive::SQUARE);
   pPrimitive->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
+
+  game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("DirectionalLight");
+  game::CLightComponent* pLightComponent = pDirectionalEntity->RegisterComponent<game::CLightComponent>();
+  pLightComponent->CreateLight(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();

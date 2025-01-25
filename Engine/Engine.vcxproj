@@ -170,6 +170,7 @@
     <ClInclude Include="Render\Shader.h" />
     <ClInclude Include="Shaders\Primitive\PixelShader.h" />
     <ClInclude Include="Shaders\Primitive\VertexShader.h" />
+    <ClInclude Include="Render\Lights\SpotLight.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Render\Graphics\Mesh.cpp" />
@@ -192,6 +193,7 @@
     <ClCompile Include="Render\Resources\Texture.cpp" />
     <ClCompile Include="Render\Graphics\Shape.cpp" />
     <ClCompile Include="Render\Shader.cpp" />
+    <ClCompile Include="Render\Lights\SpotLight.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Model\DeferredPixelShader.hlsl">

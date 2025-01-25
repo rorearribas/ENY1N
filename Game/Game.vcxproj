@@ -145,11 +145,13 @@
     <ClInclude Include="ETT\Entity.h" />
     <ClInclude Include="GameManager\GameManager.h" />
     <ClInclude Include="ETT\Components\ModelComponent\ModelComponent.h" />
+    <ClInclude Include="ETT\Components\LightComponent\LightComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ETT\Entity.cpp" />
     <ClCompile Include="GameManager\GameManager.cpp" />
     <ClCompile Include="ETT\Components\ModelComponent\ModelComponent.cpp" />
+    <ClCompile Include="ETT\Components\LightComponent\LightComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -15,6 +15,7 @@ namespace scene
   {
     DestroyAllPrimitives();
     DestroyAllModels();
+    DestroyAllLights();
   }
   // ------------------------------------
   void CScene::DrawPrimitives()
@@ -37,7 +38,11 @@ namespace scene
   // ------------------------------------
   void CScene::UpdateLights()
   {
-    
+    for (uint32_t uIndex = 0; uIndex < m_uRegisteredLights; uIndex++)
+    {
+      render::lights::CLight* pLight = m_vctLights[uIndex];
+      pLight->UpdateLight();
+    }
   }
   // ------------------------------------
   void CScene::DestroyAllPrimitives()
@@ -56,14 +61,27 @@ namespace scene
   void CScene::DestroyAllModels()
   {
     std::for_each(m_vctModels.begin(), m_vctModels.end(), [](render::graphics::CModel*& _pModel)
+    {
+      if (_pModel)
       {
-        if (_pModel)
-        {
-          delete _pModel;
-          _pModel = nullptr;
-        }
-      });
+        delete _pModel;
+        _pModel = nullptr;
+      }
+    });
     m_uRegisteredModels = 0;
+  }
+  // ------------------------------------
+  void CScene::DestroyAllLights()
+  {
+    std::for_each(m_vctLights.begin(), m_vctLights.end(), [](render::lights::CLight*& _pLight)
+    {
+      if (_pLight)
+      {
+        delete _pLight;
+        _pLight = nullptr;
+      }
+    });
+    m_uRegisteredLights = 0;
   }
   // ------------------------------------
   render::graphics::CPrimitive* CScene::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData)

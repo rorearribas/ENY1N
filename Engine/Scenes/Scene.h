@@ -47,6 +47,7 @@ namespace scene
 
     void DestroyAllPrimitives();
     void DestroyAllModels();
+    void DestroyAllLights();
 
   private:
     friend class render::CRender;
