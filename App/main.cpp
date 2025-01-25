@@ -14,14 +14,17 @@
 #include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#define WIDTH 2560
+#define HEIGHT 1440
 
 int main()
 {
   game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->InitEngine(WIDTH, HEIGHT);
+
+  render::lights::CDirectionalLight* pDirectionalLight = pEngine->CreateDirectionalLight();
+  pDirectionalLight->SetColor(maths::CVector3::Right);
 
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
   tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
@@ -31,7 +34,7 @@ int main()
   game::CModelComponent* pModelComponent = pSkullEntity->RegisterComponent<game::CModelComponent>();
   pModelComponent->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
   pSkullEntity->SetRotation(maths::CVector3(90.f, 0.0f, 180.0f));
-  pSkullEntity->SetPosition(maths::CVector3(10.0f, 0.0f, 0.0f));
+  pSkullEntity->SetPosition(maths::CVector3(110.0f, 0.0f, 0.0f));
 
   game::CEntity* pAirplane = pGameManager->CreateEntity("Airplane");
   game::CModelComponent* pModelComponent2 = pAirplane->RegisterComponent<game::CModelComponent>();
@@ -40,10 +43,11 @@ int main()
   pAirplane->SetRotation(maths::CVector3(90.0f, 0.0f, 0.0f));
   pAirplane->SetScale(maths::CVector3(0.25f, 0.25f, 0.25f));
 
-  //game::CEntity* pCocacola = pGameManager->CreateEntity("CocaCola");
-  //game::CModelComponent* pModelComponent3 = pCocacola->RegisterComponent<game::CModelComponent>();
-  //pModelComponent3->LoadModel("..\\Assets//Models//Cup//Cup.obj", "..\\Assets//Models//Cup");
-  //pCocacola->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
+  game::CEntity* pSniper = pGameManager->CreateEntity("Sniper");
+  game::CModelComponent* pModelComponent3 = pSniper->RegisterComponent<game::CModelComponent>();
+  pModelComponent3->LoadModel("..\\Assets//Models//Sniper//uploads_files_3027914_ai_awm_LOD_00.obj", "..\\Assets//Models//Sniper");
+  pSniper->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
+  pSniper->SetScale(maths::CVector3(40.0f, 40.0f, 40.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();

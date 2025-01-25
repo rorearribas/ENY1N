@@ -1,10 +1,10 @@
 #include "Engine.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Input/InputManager.h"
-#include <cassert>
+#include "Engine/Render/Shader.h"
 
+#include <cassert>
 #include <iostream>
-#include "Libs/ImGui/imgui.h"
 
 namespace engine
 {
@@ -35,6 +35,9 @@ namespace engine
     m_pSceneManager = std::make_unique<scene::CSceneManager>();
     m_pSceneManager->SetSceneEnabled(0, true);
 
+    m_pGlobalPixelShader = std::make_unique<render::shader::CShader<render::shader::SPixelShader>>();
+    m_pGlobalVertexShader = std::make_unique<render::shader::CShader<render::shader::SVertexShader>>();
+
     // Set delegate
     utils::CDelegate<void(UINT32, UINT32)> oResizeDelegate(&CEngine::OnWindowResizeEvent, this);
     global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
@@ -59,22 +62,8 @@ namespace engine
     scene::CScene* pCurrentScene = m_pSceneManager->GetCurrentScene();
     if (pCurrentScene)
     {
-      pCurrentScene->Draw();
+      pCurrentScene->Draw(m_pGlobalPixelShader->GetData().m_pPixelShader, m_pGlobalVertexShader->GetData().m_pVertexShader);
     }
-
-    // Test
-    ImGui::Begin("Handler");
-
-    if (ImGui::Button("Fov 90"))
-    {
-      m_pCamera->SetFov(90.0f);
-    }
-    if (ImGui::Button("Fov 45"))
-    {
-      m_pCamera->SetFov(45.0f);
-    }
-
-    ImGui::End();
   }
   // ------------------------------------
   void CEngine::EndDraw()
@@ -90,17 +79,27 @@ namespace engine
   // ------------------------------------
   render::graphics::CPrimitive* CEngine::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
   {
-    return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_vctVertexData, _uSceneIndex) : nullptr;
+    return m_pSceneManager->CreatePrimitive(_vctVertexData, _uSceneIndex);
   }
   // ------------------------------------
   render::graphics::CPrimitive* CEngine::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex /*= 0*/)
   {
-    return m_pSceneManager ? m_pSceneManager->CreatePrimitive(_ePrimitiveType, _uSceneIndex) : nullptr;
+    return m_pSceneManager->CreatePrimitive(_ePrimitiveType, _uSceneIndex);
   }
   // ------------------------------------
   render::graphics::CModel* CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, const UINT32& _uSceneIndex)
   {
-    return m_pSceneManager ? m_pSceneManager->CreateModel(_sModelPath, _sBaseMltDir, _uSceneIndex) : nullptr;
+    return m_pSceneManager->CreateModel(_sModelPath, _sBaseMltDir, _uSceneIndex);
+  }
+  // ------------------------------------
+  render::lights::CDirectionalLight* CEngine::CreateDirectionalLight()
+  {
+    return m_pSceneManager->CreateDirectionalLight();
+  }
+  // ------------------------------------
+  render::lights::CPointLight* CEngine::CreatePointLight()
+  {
+    return m_pSceneManager->CreatePointLight();
   }
   // ------------------------------------
   void CEngine::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)
@@ -109,19 +108,25 @@ namespace engine
     m_pSceneManager->DestroyPrimitive(pPrimitive_);
   }
   // ------------------------------------
-  void CEngine::DestroyAllPrimimitives(const UINT32& _uSceneIndex)
-  {
-    m_pSceneManager->DestroyAllPrimimitives(_uSceneIndex);
-  }
-  // ------------------------------------
   void CEngine::DestroyModel(render::graphics::CModel*& pModel_)
   {
     assert(pModel_);
     m_pSceneManager->DestroyModel(pModel_);
   }
   // ------------------------------------
-  void CEngine::DestroyAllModels(const UINT32& _uSceneIndex)
+  void CEngine::DestroyLight(render::lights::CLight*& pLight_)
+  {
+    assert(pLight_);
+    m_pSceneManager->DestroyLight(pLight_);
+  }
+  void CEngine::DestroyAllPrimimitives(const uint32_t& _uSceneIndex)
+  {
+    m_pSceneManager->DestroyAllPrimimitives(_uSceneIndex);
+  }
+  // ------------------------------------
+  void CEngine::DestroyAllModels(const uint32_t& _uSceneIndex)
   {
     m_pSceneManager->DestroyAllModels(_uSceneIndex);
   }
+  // ------------------------------------
 }

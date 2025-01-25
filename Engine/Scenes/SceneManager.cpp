@@ -33,32 +33,46 @@ namespace scene
     });
   }
   // ------------------------------------
-  void CSceneManager::SetSceneEnabled(const UINT32& _uIndex, bool _bEnabled) const
+  void CSceneManager::SetSceneEnabled(const uint32_t& _uIndex, bool _bEnabled) const
   {
     if (_uIndex > (s_iMaxScenes - 1)) return;
     m_pCurrentScene = m_vctScenes[_uIndex];
     m_pCurrentScene->SetSceneEnabled(_bEnabled);
   }
   // ------------------------------------
-  render::graphics::CPrimitive* CSceneManager::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
+  render::graphics::CPrimitive* CSceneManager::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const uint32_t& _uSceneIndex)
   {
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreatePrimitive(_vctVertexData);
   } 
   // ------------------------------------
-  render::graphics::CPrimitive* CSceneManager::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex)
+  render::graphics::CPrimitive* CSceneManager::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const uint32_t& _uSceneIndex)
   {
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreatePrimitive(_ePrimitiveType);
   }
   // ------------------------------------
-  render::graphics::CModel* CSceneManager::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, const UINT32& _uSceneIndex)
+  render::graphics::CModel* CSceneManager::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, const uint32_t& _uSceneIndex)
   {
     if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreateModel(_sModelPath, _sBaseMltDir);
+  }
+  // ------------------------------------
+  render::lights::CDirectionalLight* CSceneManager::CreateDirectionalLight(const uint32_t& _uSceneIndex)
+  {
+    if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
+    scene::CScene* pScene = m_vctScenes[_uSceneIndex];
+    return pScene->CreateDirectionalLight();
+  }
+  // ------------------------------------
+  render::lights::CPointLight* CSceneManager::CreatePointLight(const uint32_t& _uSceneIndex)
+  {
+    if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
+    scene::CScene* pScene = m_vctScenes[_uSceneIndex];
+    return pScene->CreatePointLight();
   }
   // ------------------------------------
   void CSceneManager::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)
@@ -71,6 +85,21 @@ namespace scene
       if (it != vctPrimitives.end())
       {
         pScene->DestroyPrimitive(pPrimitive_);
+        break;
+      }
+    }
+  }
+  // ------------------------------------
+  void CSceneManager::DestroyLight(render::lights::CLight*& pLight_)
+  {
+    assert(pLight_);
+    for (scene::CScene* pScene : m_vctScenes)
+    {
+      const scene::CScene::TLightsList& vctLights = pScene->GetLights();
+      auto it = std::find(vctLights.begin(), vctLights.end(), pLight_);
+      if (it != vctLights.end())
+      {
+        pScene->DestroyLight(pLight_);
         break;
       }
     }

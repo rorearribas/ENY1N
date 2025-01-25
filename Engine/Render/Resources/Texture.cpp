@@ -24,6 +24,7 @@ namespace render
     // ------------------------------------
     HRESULT CTexture::SetTexture(unsigned char* _pTexture, uint32_t _uWidth, uint32_t _uHeight)
     {
+      // Clear
       ClearTexture();
 
       // Set values

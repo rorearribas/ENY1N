@@ -2,6 +2,7 @@
 #include <d3d11.h>
 #include "Libs/Maths/Matrix4x4.h"
 #include "Engine/Global/GlobalResources.h"
+#include "Engine/Render/Lights/DirectionalLight.h"
 
 struct SConstantMatrix
 {
@@ -12,6 +13,11 @@ struct SConstantTexture
 {
   bool bHasTexture = false;
   char padding[15] = {};
+};
+
+struct SLightningData
+{
+  render::lights::CDirectionalLight DirectionalLight;
 };
 
 template<class T>

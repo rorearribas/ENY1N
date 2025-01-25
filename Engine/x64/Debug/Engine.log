@@ -1,12 +1,9 @@
 ﻿  Engine.cpp
   Camera.cpp
   InputManager.cpp
-  ResourceManager.cpp
-  Mesh.cpp
   Model.cpp
-  Shape.cpp
   Render.cpp
+  Shader.cpp
   Scene.cpp
-  SceneManager.cpp
   Generating Code...
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\Engine.lib

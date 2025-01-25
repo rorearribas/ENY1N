@@ -5,6 +5,9 @@
 #include <algorithm>
 #include <random>
 #include <cassert>
+#include "Engine/Render/Lights/PointLight.h"
+#include "Engine/Render/Lights/DirectionalLight.h"
+#include "Engine/Render/Lights/Light.h"
 
 namespace scene
 {
@@ -14,13 +17,13 @@ namespace scene
     DestroyAllModels();
   }
   // ------------------------------------
-  void CScene::Draw()
+  void CScene::Draw(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader)
   {
-    DrawModels();
-    DrawPrimitives();
+    DrawModels(_pPixelShader, _pVertexShader);
+    DrawPrimitives(_pPixelShader, _pVertexShader);
   }
   // ------------------------------------
-  void CScene::DrawPrimitives()
+  void CScene::DrawPrimitives(ID3D11PixelShader* /*_pPixelShader*/, ID3D11VertexShader* /*_pVertexShader*/)
   {
     for (int iIndex = 0; iIndex < m_iRegisteredPrimitives; iIndex++)
     {
@@ -29,13 +32,18 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::DrawModels()
+  void CScene::DrawModels(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader)
   {
     for (int iIndex = 0; iIndex < m_iRegisteredModels; iIndex++)
     {
       render::graphics::CModel* pModel = m_vctModels[iIndex];
-      pModel->DrawModel();
+      pModel->DrawModel(_pPixelShader, _pVertexShader);
     }
+  }
+  // ------------------------------------
+  void CScene::UpdateLights()
+  {
+
   }
   // ------------------------------------
   void CScene::DestroyAllPrimitives()
@@ -88,6 +96,22 @@ namespace scene
     return pModel;
   }
   // ------------------------------------
+  render::lights::CDirectionalLight* CScene::CreateDirectionalLight()
+  {
+    if (m_iRegisteredLights >= s_iMaxLights) return nullptr;
+    render::lights::CLight*& pDirectional = m_vctLights[m_iRegisteredLights++];
+    pDirectional = new render::lights::CDirectionalLight();
+    return static_cast<render::lights::CDirectionalLight*>(pDirectional);
+  }
+  // ------------------------------------
+  render::lights::CPointLight* CScene::CreatePointLight()
+  {
+    if (m_iRegisteredLights >= s_iMaxLights) return nullptr;
+    render::lights::CLight*& pPointLight = m_vctLights[m_iRegisteredLights++];
+    pPointLight = new render::lights::CPointLight();
+    return static_cast<render::lights::CPointLight*>(pPointLight);
+  }
+  // ------------------------------------
   void CScene::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)
   {
     assert(pPrimitive_);
@@ -121,4 +145,22 @@ namespace scene
     }
     pModel_ = nullptr;
   }
+  // ------------------------------------
+  void CScene::DestroyLight(render::lights::CLight*& pLight_)
+  {
+    assert(pLight_);
+    auto it = std::find(m_vctLights.begin(), m_vctLights.end(), pLight_);
+    if (it != m_vctLights.end())
+    {
+      delete* it;
+      *it = nullptr;
+      m_iRegisteredLights--;
+
+      auto oReorderFunc = std::remove_if(m_vctLights.begin(), m_vctLights.end(),
+      [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+      std::fill(oReorderFunc, m_vctLights.end(), nullptr); // Set nullptr
+    }
+    pLight_ = nullptr;
+  }
+
 }

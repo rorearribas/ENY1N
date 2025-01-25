@@ -1,6 +1,9 @@
 #include "DirectionalLight.h"
 
-namespace lights
+namespace render
 {
+  namespace lights
+  {
 
+  }
 }

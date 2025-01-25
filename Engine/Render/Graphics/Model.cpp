@@ -4,6 +4,8 @@
 #include <d3dcompiler.h>
 #include "Libs/Macros/GlobalMacros.h"
 #include <cassert>
+#include "../Base/Engine.h"
+#include "Engine/Shaders/Model/DeferredVertexShader.h"
 
 namespace render
 {
@@ -24,68 +26,6 @@ namespace render
 
       global::dx11::SafeRelease(m_pVertexBuffer);
       global::dx11::SafeRelease(m_pInputLayout);
-
-      global::dx11::SafeRelease(m_pVertexShaderBlob);
-      global::dx11::SafeRelease(m_pVertexShader);
-
-      global::dx11::SafeRelease(m_pPixelShaderBlob);
-      global::dx11::SafeRelease(m_pPixelShader);
-    }
-    // ------------------------------------
-    HRESULT CModel::CreateShaders()
-    {
-      // Create vertex shader
-      HRESULT hr = global::dx11::s_pDevice->CreateVertexShader
-      (
-        m_pVertexShaderBlob->GetBufferPointer(),
-        m_pVertexShaderBlob->GetBufferSize(),
-        NULL,
-        &m_pVertexShader
-      );
-
-      if (FAILED(hr)) return hr;
-
-      // Create pixel shader
-      return global::dx11::s_pDevice->CreatePixelShader
-      (
-        m_pPixelShaderBlob->GetBufferPointer(),
-        m_pPixelShaderBlob->GetBufferSize(),
-        NULL,
-        &m_pPixelShader
-      );
-    }
-    // ------------------------------------
-    HRESULT CModel::CompileShaders()
-    {
-      // Compile vertex shader
-      HRESULT hr = D3DCompileFromFile
-      (
-        L"..\\Engine\\Shaders\\Model\\DeferredVertexShader.hlsl",
-        nullptr,
-        D3D_COMPILE_STANDARD_FILE_INCLUDE,
-        "VSMain",
-        "vs_5_0",
-        D3DCOMPILE_DEBUG,
-        0,
-        &m_pVertexShaderBlob,
-        nullptr
-      );
-
-      if (FAILED(hr)) return hr;
-
-      // Compile pixel shader
-      return D3DCompileFromFile
-      (
-        L"..\\Engine\\Shaders\\Model\\DeferredPixelShader.hlsl",
-        nullptr,
-        D3D_COMPILE_STANDARD_FILE_INCLUDE,
-        "PSMain",
-        "ps_5_0",
-        D3DCOMPILE_DEBUG,
-        0,
-        &m_pPixelShaderBlob,
-        nullptr
-      );
     }
     // ------------------------------------
     HRESULT CModel::CreateInputLayout()
@@ -102,8 +42,8 @@ namespace render
       (
         oInputElementDesc,
         ARRAYSIZE(oInputElementDesc),
-        m_pVertexShaderBlob->GetBufferPointer(),
-        m_pVertexShaderBlob->GetBufferSize(),
+        g_DeferredVertexShader,
+        sizeof(g_DeferredVertexShader),
         &m_pInputLayout
       );
     }
@@ -142,14 +82,6 @@ namespace render
         pMesh->ApplyMaterialsColor(m_pVertexBuffer);
       }
 
-      // Compile shaders
-      hr = CompileShaders();
-      if (FAILED(hr)) return hr;
-
-      // Init shaders
-      hr = CreateShaders();
-      if (FAILED(hr)) return hr;
-
       // Create input layout
       hr = CreateInputLayout();
       if (FAILED(hr)) return hr;
@@ -157,7 +89,7 @@ namespace render
       return hr;
     }
     // ------------------------------------
-    void CModel::DrawModel()
+    void CModel::DrawModel(ID3D11PixelShader* _pPixelShader, ID3D11VertexShader* _pVertexShader)
     {
       // Set vertex buffer
       UINT uVertexStride = sizeof(render::graphics::SVertexData);
@@ -167,8 +99,8 @@ namespace render
       global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
       // Set pixel and vertex shaders
-      global::dx11::s_pDeviceContext->VSSetShader(m_pVertexShader, nullptr, 0);
-      global::dx11::s_pDeviceContext->PSSetShader(m_pPixelShader, nullptr, 0);
+      global::dx11::s_pDeviceContext->VSSetShader(_pVertexShader, nullptr, 0);
+      global::dx11::s_pDeviceContext->PSSetShader(_pPixelShader, nullptr, 0);
 
       // Set model matrix
       m_oConstantBuffer.GetData().mMatrix = m_oModelTransform.ComputeModelMatrix();
