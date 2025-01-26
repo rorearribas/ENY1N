@@ -1,7 +1,6 @@
 #pragma once
 #include "Game/ETT/Components/Component.h"
-#include "Engine/Render/Graphics/Primitive.h"
-#include "Engine/Render/Graphics/Model.h"
+#include "Engine/Render/Lights/Light.h"
 #include "Libs/Maths/Vector3.h"
 
 namespace game { class CEntity; }
@@ -17,7 +16,7 @@ namespace game
     void CreateLight(render::lights::ELightType _eLightType);
 
     virtual void Update(float _fDeltaTime) override;
-    virtual void DrawDebug() override {};
+    virtual void DrawDebug() override;
 
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const;
@@ -29,6 +28,7 @@ namespace game
 
   private:
     void Clean();
+
     render::lights::CLight* m_pLight = nullptr;
   };
 }

@@ -329,6 +329,11 @@ namespace render
     // Draw 3D Pipeline
     m_oRenderingResources.m_pForwardPS->PushShader();
     m_oRenderingResources.m_pForwardVS->PushShader();
+
+    // Update lights
+    _pScene->UpdateLights();
+
+    // Draw 3D models
     _pScene->DrawModels();
 
     // Draw primitives

@@ -2,9 +2,9 @@
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Base/Engine.h"
 #include "Engine/Render/Render.h"
-#include "Engine/Render/Lights/PointLight.h"
-#include "Engine/Render/Lights/DirectionalLight.h"
 #include "Engine/Render/Lights/Light.h"
+#include "Engine/Render/Lights/DirectionalLight.h"
+#include "Engine/Render/Lights/PointLight.h"
 #include <algorithm>
 #include <random>
 #include <cassert>

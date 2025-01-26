@@ -12,19 +12,14 @@ namespace render
     class CLight
     {
     public:
-      CLight() {}
+      CLight(ELightType _eLightType) : m_eLightType(_eLightType) {}
       virtual ~CLight() {}
 
       virtual void UpdateLight() {} 
 
-      void SetPostion(const maths::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }
-      const maths::CVector3& GetPosition() { return m_oTransform.GetPosition(); }
-      void SetRotation(const maths::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
-      const maths::CVector3& GetRotation() { return m_oTransform.GetRotation(); }
-
     private:
-      // Light transformation
       maths::CTransform m_oTransform;
+      ELightType m_eLightType = DIRECTIONAL_LIGHT;
     };
   }
 }

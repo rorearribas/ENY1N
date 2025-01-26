@@ -40,7 +40,7 @@ namespace render
       HRESULT CreateInputLayout();
 
       // Primitive data
-      ConstantBuffer<SConstantMatrix> m_oConstantBuffer;
+      CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
       ID3D11InputLayout* m_pInputLayout = nullptr;

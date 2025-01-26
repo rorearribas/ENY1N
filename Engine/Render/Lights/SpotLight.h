@@ -8,7 +8,7 @@ namespace render
     class CSpotLight : public CLight
     {
     public:
-      CSpotLight() : CLight() {}
+      CSpotLight() : CLight(SPOT_LIGHT) {}
       virtual ~CSpotLight() {}
 
       // Color

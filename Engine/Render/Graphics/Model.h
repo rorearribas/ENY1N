@@ -40,7 +40,7 @@ namespace render
 
       // Buffer
       ID3D11Buffer* m_pVertexBuffer = nullptr;
-      ConstantBuffer<SConstantMatrix> m_oConstantBuffer;
+      CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
 
       // Input layout
       ID3D11InputLayout* m_pInputLayout = nullptr;

@@ -2,10 +2,9 @@
 #include <d3d11.h>
 #include "Libs/Maths/Matrix4x4.h"
 #include "Engine/Global/GlobalResources.h"
-#include "Engine/Render/Lights/DirectionalLight.h"
 
 struct SConstantMatrix
-{    
+{
   maths::CMatrix4x4 mMatrix = maths::CMatrix4x4::Identity;
 };
 
@@ -17,18 +16,21 @@ struct SConstantTexture
 
 struct SLightningData
 {
-  render::lights::CDirectionalLight DirectionalLight;
+  maths::CVector3 Direction;
+  float Padding1;
+  maths::CVector3 Color;
+  float Intensity;
 };
 
 template<class T>
-class ConstantBuffer
+class CConstantBuffer
 {
 private:
-  ConstantBuffer(const ConstantBuffer<T>& rhs);
+  CConstantBuffer(const CConstantBuffer<T>& rhs);
 
 public:
-  ConstantBuffer() {}
-  ~ConstantBuffer() {}
+  CConstantBuffer() {}
+  ~CConstantBuffer() {}
 
   HRESULT Init(ID3D11Device* _pDevice, ID3D11DeviceContext* _pDeviceContext)
   {
@@ -42,25 +44,21 @@ public:
     oBufferDesc.StructureByteStride = 0;
     oBufferDesc.ByteWidth = static_cast<UINT>(sizeof(T));
 
-    HRESULT hr = _pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
-    return hr;
+    return _pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
   }
 
   bool UpdateBuffer()
   {
     D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
     HRESULT hr = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
-    if (FAILED(hr))
-    {
-      return false;
-    }
+    if (FAILED(hr)) { return false; }
     CopyMemory(oMappedSubresource.pData, &m_oData, sizeof(T));
     m_pDeviceContext->Unmap(m_pBuffer, 0);
     return true;
   }
   void CleanBuffer()
-  { 
-    global::dx11::SafeRelease(m_pBuffer); 
+  {
+    global::dx11::SafeRelease(m_pBuffer);
   }
 
   ID3D11Buffer* GetBuffer() const { return m_pBuffer; }

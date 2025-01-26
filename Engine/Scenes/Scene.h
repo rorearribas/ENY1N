@@ -3,8 +3,9 @@
 #include "Engine/Render/Graphics/Model.h"
 #include <array>
 
-namespace render { namespace lights { class CDirectionalLight; } }
+namespace render { namespace lights { class CLight; } }
 namespace render { namespace lights { class CPointLight; } }
+namespace render { namespace lights { class CDirectionalLight; } }
 namespace render { class CRender; }
 
 namespace scene

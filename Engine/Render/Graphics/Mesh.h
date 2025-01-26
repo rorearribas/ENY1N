@@ -62,7 +62,7 @@ namespace render
       std::string m_sMeshName = std::string();
 
       // Buffers
-      ConstantBuffer<SConstantTexture> m_oConstantTexture;
+      CConstantBuffer<SConstantTexture> m_oConstantTexture;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
 
       // Materials

@@ -38,7 +38,7 @@ namespace render
     void UpdatePerspectiveMatrix();
     void UpdateViewMatrix();
 
-    ConstantBuffer<SConstantMatrix> m_oConstantBuffer;
+    CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
     maths::CMatrix4x4 m_mViewMatrix = maths::CMatrix4x4::Identity;
     maths::CMatrix4x4 m_mProjectionMatrix = maths::CMatrix4x4::Identity;
 

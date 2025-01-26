@@ -14,6 +14,7 @@
 #include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include "Game/ETT/Components/LightComponent/LightComponent.h"
+#include "Engine/Render/Lights/DirectionalLight.h"
 
 #define WIDTH 2560
 #define HEIGHT 1440
@@ -24,12 +25,14 @@ int main()
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->InitEngine(WIDTH, HEIGHT);
 
-  render::lights::CDirectionalLight* pDirectionalLight = pEngine->CreateDirectionalLight();
-  pDirectionalLight->SetColor(maths::CVector3::Right);
-
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
   tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
   pTimeManager->SetMaxFPS(144);
+
+  game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("DirectionalLight");
+  game::CLightComponent* pLightComponent = pDirectionalEntity->RegisterComponent<game::CLightComponent>();
+  pLightComponent->CreateLight(render::lights::ELightType::DIRECTIONAL_LIGHT);
+  pDirectionalEntity->SetRotation(maths::CVector3(0.8f, -1.0f, 0.6f));
   
   game::CEntity* pSkullEntity = pGameManager->CreateEntity("Skull");
   game::CModelComponent* pModelComponent = pSkullEntity->RegisterComponent<game::CModelComponent>();
@@ -54,10 +57,6 @@ int main()
   game::CModelComponent* pPrimitveComponent = pPrimitive->RegisterComponent<game::CModelComponent>();
   pPrimitveComponent->CreatePrimitive(render::graphics::CPrimitive::SQUARE);
   pPrimitive->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
-
-  game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("DirectionalLight");
-  game::CLightComponent* pLightComponent = pDirectionalEntity->RegisterComponent<game::CLightComponent>();
-  pLightComponent->CreateLight(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();

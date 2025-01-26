@@ -5,6 +5,7 @@
 #include "Engine/Render/Shader.h"
 #include "Libs/Utils/Singleton.h"
 
+namespace render { namespace lights { class CLight; } }
 namespace render { namespace graphics { class CModel; } }
 namespace render { namespace graphics { class CPrimitive; } }
 namespace render { class CCamera; }
