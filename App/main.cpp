@@ -30,9 +30,7 @@ int main()
   pTimeManager->SetMaxFPS(144);
 
   game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("DirectionalLight");
-  game::CLightComponent* pLightComponent = pDirectionalEntity->RegisterComponent<game::CLightComponent>();
-  pLightComponent->CreateLight(render::lights::ELightType::DIRECTIONAL_LIGHT);
-  pDirectionalEntity->SetRotation(maths::CVector3(0.8f, -1.0f, 0.6f));
+  pDirectionalEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
   
   game::CEntity* pSkullEntity = pGameManager->CreateEntity("Skull");
   game::CModelComponent* pModelComponent = pSkullEntity->RegisterComponent<game::CModelComponent>();

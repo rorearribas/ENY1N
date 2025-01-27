@@ -10,6 +10,11 @@
 namespace game
 {
   // ------------------------------------
+  CLightComponent::CLightComponent(render::lights::ELightType _eLightType) : CComponent()
+  {
+    CreateLight(_eLightType);
+  }
+  // ------------------------------------
   CLightComponent::~CLightComponent()
   {
     Clean();

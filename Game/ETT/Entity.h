@@ -30,11 +30,12 @@ namespace game
     void SetScale(const maths::CVector3& _v3Scale);
     const maths::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
-    template<typename T>
-    inline T* RegisterComponent()
+    template<typename T, typename ...Args>
+    inline T* RegisterComponent(Args&&... args)
     {
       if (m_iRegisteredComponents >= s_iMaxComponents) return nullptr;
-      CComponent* pComponent = new T(this);
+      CComponent* pComponent = new T(std::forward<Args>(args)...);
+      pComponent->SetOwner(this);
       m_vctComponents[m_iRegisteredComponents++] = pComponent;
       return static_cast<T*>(pComponent);
     }

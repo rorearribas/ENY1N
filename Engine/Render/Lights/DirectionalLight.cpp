@@ -6,9 +6,12 @@ namespace render
 {
   namespace lights
   {
+    // Static values
+    maths::CVector3 CDirectionalLight::s_vDefaultDirectionalColor(1.0f, 0.9f, 0.6f);
+    maths::CVector3 CDirectionalLight::s_vDefaultDirection(0.8f, -1.0f, 0.6f);
+
     CDirectionalLight::CDirectionalLight() : CLight(DIRECTIONAL_LIGHT)
     {
-      InitDefaultLight();
       HRESULT hr = m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
       UNUSED_VARIABLE(hr);
       assert(!FAILED(hr));
@@ -25,11 +28,6 @@ namespace render
       // Set constant buffer
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx11::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
-    }
-    // ------------------------------------
-    void CDirectionalLight::InitDefaultLight()
-    {
-      SetColor(maths::CVector3(1.0f, 0.9f, 0.6f));
     }
   }
 }

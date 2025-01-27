@@ -11,7 +11,7 @@ namespace game
   class CModelComponent : public CComponent
   {
   public:
-    CModelComponent(CEntity* _pEntity) : CComponent(_pEntity) {}
+    CModelComponent() : CComponent() {}
     virtual ~CModelComponent();
 
     virtual void Update(float _fDeltaTime) override;

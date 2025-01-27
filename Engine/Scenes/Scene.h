@@ -3,10 +3,11 @@
 #include "Engine/Render/Graphics/Model.h"
 #include <array>
 
+namespace render { class CRender; }
+namespace render { namespace lights { class CSpotLight; } }
 namespace render { namespace lights { class CLight; } }
 namespace render { namespace lights { class CPointLight; } }
 namespace render { namespace lights { class CDirectionalLight; } }
-namespace render { class CRender; }
 
 namespace scene
 {
@@ -37,6 +38,7 @@ namespace scene
     // Lights
     render::lights::CDirectionalLight* CreateDirectionalLight();
     render::lights::CPointLight* CreatePointLight();
+    render::lights::CSpotLight* CreateSpotLight();
 
     void DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_);
     void DestroyModel(render::graphics::CModel*& pModel_);

@@ -111,6 +111,7 @@ namespace game
     {
       if (pComponent)
       {
+        ImGui::Spacing();
         pComponent->DrawDebug();
       }
     }

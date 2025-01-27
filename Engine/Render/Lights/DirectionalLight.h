@@ -10,9 +10,13 @@ namespace render
     class CDirectionalLight : public CLight
     {
     public:
+      static maths::CVector3 s_vDefaultDirectionalColor;
+      static maths::CVector3 s_vDefaultDirection;
+
+    public:
       CDirectionalLight();
       virtual ~CDirectionalLight() {}
-        
+
       virtual void UpdateLight() override;
 
       // Direction
@@ -26,11 +30,9 @@ namespace render
       const float& GetIntensity() const { return m_fIntensity; }
 
     private:
-      void InitDefaultLight();
-
       // Properties
-      maths::CVector3 m_v3Direction = maths::CVector3::Forward;
-      maths::CVector3 m_v3LightColor = maths::CVector3::One;
+      maths::CVector3 m_v3Direction = s_vDefaultDirection;
+      maths::CVector3 m_v3LightColor = s_vDefaultDirectionalColor;
       float m_fIntensity = 1.0f;
 
       // Buffer

@@ -10,10 +10,8 @@ namespace game
   class CLightComponent : public CComponent
   {
   public:
-    CLightComponent(CEntity* _pEntity) : CComponent(_pEntity) {}
+    CLightComponent(render::lights::ELightType _eLightType);
     virtual ~CLightComponent();
-
-    void CreateLight(render::lights::ELightType _eLightType);
 
     virtual void Update(float _fDeltaTime) override;
     virtual void DrawDebug() override;
@@ -28,7 +26,9 @@ namespace game
 
   private:
     void Clean();
+    void CreateLight(render::lights::ELightType _eLightType);
 
+  private:
     render::lights::CLight* m_pLight = nullptr;
   };
 }

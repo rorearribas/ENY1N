@@ -5,6 +5,7 @@
 #include "Engine/Render/Lights/Light.h"
 #include "Engine/Render/Lights/DirectionalLight.h"
 #include "Engine/Render/Lights/PointLight.h"
+#include "Engine/Render/Lights/SpotLight.h"
 #include <algorithm>
 #include <random>
 #include <cassert>
@@ -122,6 +123,14 @@ namespace scene
     render::lights::CLight*& pPointLight = m_vctLights[m_uRegisteredLights++];
     pPointLight = new render::lights::CPointLight();
     return static_cast<render::lights::CPointLight*>(pPointLight);
+  }
+  // ------------------------------------
+  render::lights::CSpotLight* CScene::CreateSpotLight()
+  {
+    if (m_uRegisteredLights >= s_iMaxLights) return nullptr;
+    render::lights::CLight*& pSpotLight = m_vctLights[m_uRegisteredLights++];
+    pSpotLight = new render::lights::CSpotLight();
+    return static_cast<render::lights::CSpotLight*>(pSpotLight);
   }
   // ------------------------------------
   void CScene::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)
