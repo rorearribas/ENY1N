@@ -318,7 +318,7 @@ namespace IMGUIZMO_NAMESPACE
          vec_t component[4];
       };
 
-      operator float* () { return m16; }
+      operator float* () { return m16; } 
       operator const float* () const { return m16; }
       void Translation(float _x, float _y, float _z) { this->Translation(makeVect(_x, _y, _z)); }
 

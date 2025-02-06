@@ -70,17 +70,17 @@ namespace engine
     m_pCamera->Update(_fDeltaTime);
   }
   // ------------------------------------
-  render::graphics::CPrimitive* CEngine::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const UINT32& _uSceneIndex)
+  render::graphics::CPrimitive* CEngine::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreatePrimitive(_vctVertexData, _uSceneIndex);
   }
   // ------------------------------------
-  render::graphics::CPrimitive* CEngine::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const UINT32& _uSceneIndex /*= 0*/)
+  render::graphics::CPrimitive* CEngine::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreatePrimitive(_ePrimitiveType, _uSceneIndex);
   }
   // ------------------------------------
-  render::graphics::CModel* CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, const UINT32& _uSceneIndex)
+  render::graphics::CModel* CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreateModel(_sModelPath, _sBaseMltDir, _uSceneIndex);
   }
@@ -112,12 +112,12 @@ namespace engine
     assert(pLight_);
     m_pSceneManager->DestroyLight(pLight_);
   }
-  void CEngine::DestroyAllPrimimitives(const uint32_t& _uSceneIndex)
+  void CEngine::DestroyAllPrimimitives(uint32_t _uSceneIndex)
   {
     m_pSceneManager->DestroyAllPrimimitives(_uSceneIndex);
   }
   // ------------------------------------
-  void CEngine::DestroyAllModels(const uint32_t& _uSceneIndex)
+  void CEngine::DestroyAllModels(uint32_t _uSceneIndex)
   {
     m_pSceneManager->DestroyAllModels(_uSceneIndex);
   }

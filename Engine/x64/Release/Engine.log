@@ -1,17 +1,31 @@
-﻿  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\DeferredPixelShader.h
+﻿  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredPixelShader.h
   compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredPixelShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredVertexShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredVertexShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Primitive\PixelShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\PixelShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Primitive\VertexShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\VertexShader.cso
+  Mesh.cpp
+  Light.cpp
+  Material.cpp
+  Model.cpp
+  AABB.cpp
   Engine.cpp
   Camera.cpp
-  InputManager.cpp
-  ResourceManager.cpp
-  Mesh.cpp
-  Model.cpp
-  Primitive.cpp
-  Shape.cpp
   DirectionalLight.cpp
-  Light.cpp
+  GlobalResources.cpp
+  InputManager.cpp
   PointLight.cpp
+  Primitive.cpp
   Render.cpp
-  Scene.cpp
+  RenderWindow.cpp
+  ResourceManager.cpp
   SceneManager.cpp
+  Scene.cpp
+  Texture.cpp
+  Shape.cpp
+  Shader.cpp
+  Compiling...
+  SpotLight.cpp
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib

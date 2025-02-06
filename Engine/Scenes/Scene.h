@@ -45,8 +45,8 @@ namespace scene
     void DestroyLight(render::lights::CLight*& pLight_);
 
     void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
-    const UINT32& GetSceneIndex() const { return m_uSceneIdx; }
     const bool& IsEnabled() const { return m_bEnabled; }
+    const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
     void DestroyAllPrimitives();
     void DestroyAllModels();

@@ -29,9 +29,9 @@ namespace engine
     render::CCamera* GetCamera() const { return m_pCamera.get(); }
 
     // Creation
-    render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, const uint32_t& _uSceneIndex = 0);
-    render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, const uint32_t& _uSceneIndex = 0);
-    render::graphics::CModel* CreateModel(const char* _sModelPath, const char* _sBaseMltDir, const uint32_t& _uSceneIndex = 0);
+    render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, uint32_t _uSceneIndex = 0);
+    render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, uint32_t _uSceneIndex = 0);
+    render::graphics::CModel* CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex = 0);
 
     render::lights::CDirectionalLight* CreateDirectionalLight();
     render::lights::CPointLight* CreatePointLight();
@@ -40,8 +40,8 @@ namespace engine
     void DestroyModel(render::graphics::CModel*& _pModel);
     void DestroyLight(render::lights::CLight*& pLight_);
 
-    void DestroyAllPrimimitives(const uint32_t& _uSceneIndex = 0);
-    void DestroyAllModels(const uint32_t& _uSceneIndex = 0);
+    void DestroyAllPrimimitives(uint32_t _uSceneIndex = 0);
+    void DestroyAllModels(uint32_t _uSceneIndex = 0);
 
   private:
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);

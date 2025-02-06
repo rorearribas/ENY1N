@@ -47,7 +47,7 @@ namespace render
     global::dx11::SafeRelease(m_oRenderingResources.m_pRasterizerState);
   }
   // ------------------------------------
-  HRESULT CRender::Init(UINT32 _uX, UINT32 _uY)
+  HRESULT CRender::Init(uint32_t _uX, uint32_t _uY)
   {
     // Create device
     HRESULT hr = CreateDevice(_uX, _uY);
@@ -326,19 +326,21 @@ namespace render
   // ------------------------------------
   void CRender::Draw(scene::CScene* _pScene)
   {
-    // Draw 3D Pipeline
+    // Push shaders for 3D pipeline
     m_oRenderingResources.m_pForwardPS->PushShader();
     m_oRenderingResources.m_pForwardVS->PushShader();
+
+    // Draw models
+    _pScene->DrawModels();
 
     // Update lights
     _pScene->UpdateLights();
 
-    // Draw 3D models
-    _pScene->DrawModels();
-
-    // Draw primitives
+    // Push shaders for primitives
     m_oRenderingResources.m_pPrimitivesPS->PushShader();
     m_oRenderingResources.m_pPrimitivesVS->PushShader();
+
+    // Draw primitives
     _pScene->DrawPrimitives();
   }
   // ------------------------------------

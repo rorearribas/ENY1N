@@ -2,20 +2,18 @@
 
 namespace global
 {
+  // Win handle
   namespace window
   {
     HWND s_oHwnd = nullptr;
   }
-
+  // DirectX
   namespace dx11
   {
-    // DirectX
     ID3D11Device* s_pDevice = nullptr;
     ID3D11DeviceContext* s_pDeviceContext = nullptr;
-    // Shaders
-
   }
-
+  // Global delegates
   namespace delegates
   {
     std::vector<utils::CDelegate<void(UINT32, UINT32)>> s_vctOnWindowResizeDelegates;

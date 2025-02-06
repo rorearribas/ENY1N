@@ -9,9 +9,7 @@ namespace render
   {
     enum ELightType { DIRECTIONAL_LIGHT, POINT_LIGHT, SPOT_LIGHT, INVALID };
 
-    // Base
-    class CLight
-    {
+    class CLight {
     public:
       CLight(ELightType _eLightType) : m_eLightType(_eLightType) { assert(m_eLightType != INVALID); }
       virtual ~CLight() {}

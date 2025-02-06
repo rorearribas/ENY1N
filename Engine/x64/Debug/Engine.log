@@ -1,4 +1,21 @@
-﻿  DirectionalLight.cpp
+﻿  Engine.cpp
+  Camera.cpp
+  GlobalResources.cpp
+  InputManager.cpp
+  ResourceManager.cpp
+  Mesh.cpp
+  Model.cpp
+  Primitive.cpp
+  Shape.cpp
+  DirectionalLight.cpp
+  Light.cpp
+  PointLight.cpp
+  SpotLight.cpp
+  Render.cpp
+  Material.cpp
+  Texture.cpp
+  RenderWindow.cpp
   Scene.cpp
+  SceneManager.cpp
   Generating Code...
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\Engine.lib

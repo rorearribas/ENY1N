@@ -57,8 +57,8 @@ namespace game
     maths::CTransform m_oTransform;
 
     std::string m_sEntityName = {};
-    bool m_bTickEnabled = true;
     int m_iRegisteredComponents = 0;
+    bool m_bTickEnabled = true;
   };
 }
 

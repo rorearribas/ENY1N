@@ -4,16 +4,16 @@
 
 namespace global
 {
+  // Win handle
   namespace window
   {
     extern HWND s_oHwnd;
   }
-
+  // DirectX
   namespace dx11
   {
     extern ID3D11Device* s_pDevice;
     extern ID3D11DeviceContext* s_pDeviceContext;
-
     template<typename _ID3D11Resource>
     inline void SafeRelease(_ID3D11Resource*& _pPtr)
     {
@@ -24,7 +24,7 @@ namespace global
       }
     }
   }
-
+  // Global delegates
   namespace delegates
   {
     extern std::vector< utils::CDelegate<void(UINT32, UINT32)>> s_vctOnWindowResizeDelegates;

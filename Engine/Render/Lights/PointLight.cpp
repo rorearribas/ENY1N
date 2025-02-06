@@ -1,6 +1,15 @@
 #include "PointLight.h"
 
-namespace lights
+namespace render
 {
+  namespace lights
+  {
+    void CPointLight::UpdateLight()
+    {
 
+    }
+  }
 }
+
+
+

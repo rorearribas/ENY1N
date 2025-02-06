@@ -31,12 +31,12 @@ int main()
 
   game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("DirectionalLight");
   pDirectionalEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
-  
+
   game::CEntity* pSkullEntity = pGameManager->CreateEntity("Skull");
   game::CModelComponent* pModelComponent = pSkullEntity->RegisterComponent<game::CModelComponent>();
   pModelComponent->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
   pSkullEntity->SetRotation(maths::CVector3(90.f, 0.0f, 180.0f));
-  pSkullEntity->SetPosition(maths::CVector3(110.0f, 0.0f, 0.0f));
+  pSkullEntity->SetPosition(maths::CVector3(0.0f, 0.0f, 0.0f));
 
   game::CEntity* pAirplane = pGameManager->CreateEntity("Airplane");
   game::CModelComponent* pModelComponent2 = pAirplane->RegisterComponent<game::CModelComponent>();
@@ -114,7 +114,7 @@ int main()
       if (ImGui::Button("Rotate Actor"))
       {
         bRotateActor = !bRotateActor;
-        
+
         if (!bRotateActor)
         {
           pSkullEntity->SetRotation(maths::CVector3::Zero);

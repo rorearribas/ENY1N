@@ -6,15 +6,22 @@ namespace maths
 {
   class CMatrix4x4
   {
-    static constexpr int s_iMatrixSize = 4;
+  public:
+    static constexpr int s_iMatrixSize = 16;
+    typedef float TMatrix4x4[s_iMatrixSize];
+    TMatrix4x4 m;
 
   public:
-    typedef float TMatrix4x4[s_iMatrixSize][s_iMatrixSize];
     static const CMatrix4x4 Identity;
     static const CMatrix4x4 Zero;
 
     CMatrix4x4() = default;
-    CMatrix4x4(const float _mMatrix[s_iMatrixSize][s_iMatrixSize]);
+
+    CMatrix4x4(const float _mMatrix[s_iMatrixSize])
+    {
+      std::memcpy(m, _mMatrix, sizeof(float) * s_iMatrixSize);
+    }
+
     CMatrix4x4
     (
       float _m11, float _m12, float _m13, float _m14,
@@ -22,40 +29,38 @@ namespace maths
       float _m31, float _m32, float _m33, float _m34,
       float _m41, float _m42, float _m43, float _m44
     );
-    const TMatrix4x4& GetValue() const { return m; }
 
-    maths::CVector3 operator*(const CVector3& vec) const
+    maths::CVector3 operator*(const CVector3& _v3) const
     {
-      float x = vec.X * m[0][0] + vec.Y * m[1][0] + vec.Z * m[2][0] + m[3][0];
-      float y = vec.X * m[0][1] + vec.Y * m[1][1] + vec.Z * m[2][1] + m[3][1];
-      float z = vec.X * m[0][2] + vec.Y * m[1][2] + vec.Z * m[2][2] + m[3][2];
+      float x = _v3.X * m[0] + _v3.Y * m[4] + _v3.Z * m[8] + m[12];
+      float y = _v3.X * m[1] + _v3.Y * m[5] + _v3.Z * m[9] + m[13];
+      float z = _v3.X * m[2] + _v3.Y * m[6] + _v3.Z * m[10] + m[14];
       return CVector3(x, y, z);
     }
-    CMatrix4x4 operator*(const CMatrix4x4& _mMatrix) const 
+
+    CMatrix4x4 operator*(const CMatrix4x4& _mMatrix) const
     {
       CMatrix4x4 mMatrix = CMatrix4x4::Identity;
-      for (int i = 0; i < 4; ++i) 
+      for (int i = 0; i < 4; ++i)
       {
-        for (int j = 0; j < 4; ++j) 
+        for (int j = 0; j < 4; ++j)
         {
-          mMatrix.m[i][j] = m[i][0] * _mMatrix.m[0][j] +
-            m[i][1] * _mMatrix.m[1][j] +
-            m[i][2] * _mMatrix.m[2][j] +
-            m[i][3] * _mMatrix.m[3][j];
+          mMatrix.m[i * 4 + j] = m[i * 4 + 0] * _mMatrix.m[0 * 4 + j] +
+            m[i * 4 + 1] * _mMatrix.m[1 * 4 + j] +
+            m[i * 4 + 2] * _mMatrix.m[2 * 4 + j] +
+            m[i * 4 + 3] * _mMatrix.m[3 * 4 + j];
         }
       }
       return mMatrix;
     }
-    CMatrix4x4& operator=(const CMatrix4x4& other) 
+
+    CMatrix4x4& operator=(const CMatrix4x4& _other)
     {
-      if (this != &other) {  // Evita la autoasignación
-        for (int i = 0; i < 4; ++i) {
-          for (int j = 0; j < 4; ++j) {
-            m[i][j] = other.m[i][j];
-          }
-        }
+      if (this != &_other) 
+      {
+        std::memcpy(m, _other.m, sizeof(float) * s_iMatrixSize);
       }
-      return *this;  // Devuelve la referencia a la matriz actual
+      return *this;
     }
 
     static CMatrix4x4 CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar);
@@ -64,11 +69,5 @@ namespace maths
     static CMatrix4x4 Translate(const CVector3& _vTranslate);
     static CMatrix4x4 Scale(const CVector3& _vScale);
     static CMatrix4x4 Transpose(const CMatrix4x4& matrix);
-
-    private:
-    TMatrix4x4 m;
   };
 }
-
-
-
