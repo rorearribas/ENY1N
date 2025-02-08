@@ -1,5 +1,6 @@
 #pragma once
 #include "Light.h"
+#include "../ConstantBuffer/ConstantBuffer.h"
 
 namespace render
 {
@@ -10,14 +11,12 @@ namespace render
       CPointLight() : CLight(POINT_LIGHT) {}
       virtual ~CPointLight() {}
 
-      virtual void UpdateLight() override;
-
       // Color
       void SetColor(const maths::CVector3& _v3Color) { m_v3LightColor = _v3Color; }
       const maths::CVector3& GetColor() { return m_v3LightColor; }
       // Attenuation
-      void SetAttenuation(float _fAttenuation) { m_fAttenuation = _fAttenuation; }
-      const float& GetAttenuation() { return m_fAttenuation; }
+      /*void SetAttenuation(float _fAttenuation) { m_fAttenuation = _fAttenuation; }
+      const float& GetAttenuation() { return m_fAttenuation; }*/
       // Range
       void SetRange(float _fRange) { m_fRange = _fRange; }
       const float& GetRange() { return m_fRange; }
@@ -27,7 +26,6 @@ namespace render
 
     private:
       maths::CVector3 m_v3LightColor = maths::CVector3::One;
-      float m_fAttenuation = 1.0f;
       float m_fRange = 10.0f;
       float m_fIntensity = 1.0f;
     };

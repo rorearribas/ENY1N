@@ -3,23 +3,55 @@
 #include "Libs/Maths/Matrix4x4.h"
 #include "Engine/Global/GlobalResources.h"
 
-struct SConstantMatrix
+// Model matrix
+struct __declspec(align(16)) SConstantMatrix
 {
   maths::CMatrix4x4 mMatrix = maths::CMatrix4x4::Identity;
 };
 
-struct SConstantTexture
+// Check textures
+struct __declspec(align(16)) SConstantTexture
 {
   bool bHasTexture = false;
-  char padding[15] = {};
+  char padding[15];
 };
 
-struct SLightningData
+#pragma region LIGHT DX11
+namespace internal
 {
-  maths::CVector3 Direction;
-  float Padding1;
-  maths::CVector3 Color;
-  float Intensity;
+  // Directional lights
+  struct SDirectionaLight
+  {
+    maths::CVector3 Direction;
+    float Padding1;
+    maths::CVector3 Color;
+    float Intensity;
+  };
+  // Point lights
+  struct SPointLight
+  {
+    maths::CVector3 Position;
+    maths::CVector3 Color;
+    float Intensity;
+    float Range;
+  };
+  // Spot lights
+  struct SSpotLight
+  {
+    maths::CVector3 Position;
+    maths::CVector3 Direction;
+    maths::CVector3 Color;
+    float Intensity;
+    float CutOffAngle;
+  };
+}
+#pragma endregion
+
+struct __declspec(align(16)) SLightningData
+{
+  internal::SDirectionaLight DirectionalLight;
+  internal::SPointLight PointLights[100];
+  internal::SSpotLight SpotLights[100];
 };
 
 template<class T>

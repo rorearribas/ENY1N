@@ -330,11 +330,11 @@ namespace render
     m_oRenderingResources.m_pForwardPS->PushShader();
     m_oRenderingResources.m_pForwardVS->PushShader();
 
-    // Draw models
-    _pScene->DrawModels();
-
     // Update lights
     _pScene->UpdateLights();
+
+    // Draw models
+    _pScene->DrawModels();
 
     // Push shaders for primitives
     m_oRenderingResources.m_pPrimitivesPS->PushShader();

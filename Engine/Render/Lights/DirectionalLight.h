@@ -1,7 +1,6 @@
 #pragma once
 #include "Light.h"
 #include "Libs/Maths/Transform.h"
-#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 
 namespace render
 {
@@ -14,7 +13,8 @@ namespace render
       static maths::CVector3 s_vDefaultDirection;
 
     public:
-      CDirectionalLight();
+
+      CDirectionalLight() : CLight(DIRECTIONAL_LIGHT) {}
       virtual ~CDirectionalLight() {}
 
       virtual void UpdateLight() override;
@@ -34,9 +34,6 @@ namespace render
       maths::CVector3 m_v3Direction = s_vDefaultDirection;
       maths::CVector3 m_v3LightColor = s_vDefaultDirectionalColor;
       float m_fIntensity = 1.0f;
-
-      // Buffer
-      CConstantBuffer<SLightningData> m_oConstantBuffer;
     };
   }
 }

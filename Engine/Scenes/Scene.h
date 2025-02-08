@@ -1,6 +1,9 @@
 #pragma once
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
+#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Libs/Macros/GlobalMacros.h"
+#include <cassert>
 #include <array>
 
 namespace render { class CRender; }
@@ -23,7 +26,12 @@ namespace scene
     typedef std::array<render::lights::CLight*, s_iMaxLights> TLightsList;
 
   public:
-    CScene(const UINT32& _uIndex) : m_uSceneIdx(_uIndex) {}
+    CScene(const UINT32& _uIndex) : m_uSceneIdx(_uIndex) 
+    {
+      HRESULT hr = m_oLightningBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      UNUSED_VARIABLE(hr);
+      assert(!FAILED(hr));
+    }
     ~CScene();
 
     const TPrimitiveList& GetPrimitives() { return m_vctPrimitiveItems; }
@@ -71,5 +79,6 @@ namespace scene
 
     TLightsList m_vctLights = {};
     uint32_t m_uRegisteredLights  = 0;
+    CConstantBuffer<SLightningData> m_oLightningBuffer;
   };
 }

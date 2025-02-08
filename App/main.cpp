@@ -38,18 +38,18 @@ int main()
   pSkullEntity->SetRotation(maths::CVector3(90.f, 0.0f, 180.0f));
   pSkullEntity->SetPosition(maths::CVector3(0.0f, 0.0f, 0.0f));
 
-  game::CEntity* pAirplane = pGameManager->CreateEntity("Airplane");
-  game::CModelComponent* pModelComponent2 = pAirplane->RegisterComponent<game::CModelComponent>();
-  pModelComponent2->LoadModel("..\\Assets//Models//Airplane//11805_airplane_v2_L2.obj", "..\\Assets//Models//Airplane");
-  pAirplane->SetPosition(maths::CVector3(200.0f, 0.0f, 0.0f));
-  pAirplane->SetRotation(maths::CVector3(90.0f, 0.0f, 0.0f));
-  pAirplane->SetScale(maths::CVector3(0.25f, 0.25f, 0.25f));
+  //game::CEntity* pAirplane = pGameManager->CreateEntity("Airplane");
+  //game::CModelComponent* pModelComponent2 = pAirplane->RegisterComponent<game::CModelComponent>();
+  //pModelComponent2->LoadModel("..\\Assets//Models//Airplane//11805_airplane_v2_L2.obj", "..\\Assets//Models//Airplane");
+  //pAirplane->SetPosition(maths::CVector3(200.0f, 0.0f, 0.0f));
+  //pAirplane->SetRotation(maths::CVector3(90.0f, 0.0f, 0.0f));
+  //pAirplane->SetScale(maths::CVector3(0.25f, 0.25f, 0.25f));
 
-  game::CEntity* pSniper = pGameManager->CreateEntity("Sniper");
-  game::CModelComponent* pModelComponent3 = pSniper->RegisterComponent<game::CModelComponent>();
-  pModelComponent3->LoadModel("..\\Assets//Models//Sniper//uploads_files_3027914_ai_awm_LOD_00.obj", "..\\Assets//Models//Sniper");
-  pSniper->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
-  pSniper->SetScale(maths::CVector3(40.0f, 40.0f, 40.0f));
+  //game::CEntity* pSniper = pGameManager->CreateEntity("Sniper");
+  //game::CModelComponent* pModelComponent3 = pSniper->RegisterComponent<game::CModelComponent>();
+  //pModelComponent3->LoadModel("..\\Assets//Models//Sniper//uploads_files_3027914_ai_awm_LOD_00.obj", "..\\Assets//Models//Sniper");
+  //pSniper->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
+  //pSniper->SetScale(maths::CVector3(40.0f, 40.0f, 40.0f));
 
   game::CEntity* pPrimitive = pGameManager->CreateEntity("Primitive");
   game::CModelComponent* pPrimitveComponent = pPrimitive->RegisterComponent<game::CModelComponent>();

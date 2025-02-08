@@ -43,7 +43,19 @@ namespace scene
     {
       render::lights::CLight* pLight = m_vctLights[uIndex];
       pLight->UpdateLight();
+
+      render::lights::CDirectionalLight* pDirectional = static_cast<render::lights::CDirectionalLight*>(pLight);
+      m_oLightningBuffer.GetData().DirectionalLight.Intensity = pDirectional->GetIntensity();
+      m_oLightningBuffer.GetData().DirectionalLight.Color = pDirectional->GetColor();
+      m_oLightningBuffer.GetData().DirectionalLight.Direction = pDirectional->GetDirection();
     }
+
+    // Update buffer
+    m_oLightningBuffer.UpdateBuffer();
+
+    // Set constant buffer
+    ID3D11Buffer* pConstantBuffer = m_oLightningBuffer.GetBuffer();
+    global::dx11::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
   }
   // ------------------------------------
   void CScene::DestroyAllPrimitives()
