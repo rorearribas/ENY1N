@@ -19,7 +19,7 @@ namespace scene
     const TSceneList& GetScenes() { return m_vctScenes; }
     scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
 
-    void SetSceneEnabled(const UINT32& _uIndex, bool _bEnabled) const;
+    void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
     void DisableAllScenes() const;
 
     render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, uint32_t _uSceneIndex = 0);
@@ -29,9 +29,9 @@ namespace scene
     render::lights::CDirectionalLight* CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* CreatePointLight(uint32_t _uSceneIndex = 0);
 
-    void DestroyModel(render::graphics::CModel*& pModel_);
-    void DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_);
-    void DestroyLight(render::lights::CLight*& pLight_);
+    void DestroyModel(render::graphics::CModel*& pModel_, uint32_t _uSceneIndex = 0);
+    void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
+    void DestroyLight(render::lights::CLight*& _pLight_, uint32_t _uSceneIndex = 0);
 
     void DestroyAllPrimimitives(uint32_t _uSceneIndex = 0);
     void DestroyAllModels(uint32_t _uSceneIndex = 0);

@@ -16,7 +16,7 @@ struct __declspec(align(16)) SConstantTexture
   char padding[15];
 };
 
-#pragma region LIGHT DX11
+#pragma region Lights
 namespace internal
 {
   // Directional lights
@@ -45,14 +45,16 @@ namespace internal
     float CutOffAngle;
   };
 }
-#pragma endregion
 
-struct __declspec(align(16)) SLightningData
+template<size_t MAX_POINT_LIGHTS, size_t MAX_SPOT_LIGHTS>
+struct __declspec(align(16)) SGlobalLightningData
 {
   internal::SDirectionaLight DirectionalLight;
-  internal::SPointLight PointLights[100];
-  internal::SSpotLight SpotLights[100];
+  internal::SPointLight PointLights[MAX_POINT_LIGHTS];
+  internal::SSpotLight SpotLights[MAX_SPOT_LIGHTS];
 };
+
+#pragma endregion
 
 template<class T>
 class CConstantBuffer

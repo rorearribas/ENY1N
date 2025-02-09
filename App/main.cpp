@@ -32,6 +32,12 @@ int main()
   game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("DirectionalLight");
   pDirectionalEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
+  game::CEntity* pPointLightEntity = pGameManager->CreateEntity("PointLightTest");
+  pPointLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
+
+  game::CEntity* pSpotLightEntity = pGameManager->CreateEntity("SpotLightTest");
+  pSpotLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
+
   game::CEntity* pSkullEntity = pGameManager->CreateEntity("Skull");
   game::CModelComponent* pModelComponent = pSkullEntity->RegisterComponent<game::CModelComponent>();
   pModelComponent->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
@@ -50,11 +56,6 @@ int main()
   //pModelComponent3->LoadModel("..\\Assets//Models//Sniper//uploads_files_3027914_ai_awm_LOD_00.obj", "..\\Assets//Models//Sniper");
   //pSniper->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
   //pSniper->SetScale(maths::CVector3(40.0f, 40.0f, 40.0f));
-
-  game::CEntity* pPrimitive = pGameManager->CreateEntity("Primitive");
-  game::CModelComponent* pPrimitveComponent = pPrimitive->RegisterComponent<game::CModelComponent>();
-  pPrimitveComponent->CreatePrimitive(render::graphics::CPrimitive::SQUARE);
-  pPrimitive->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();

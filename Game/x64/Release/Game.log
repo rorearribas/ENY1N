@@ -1,5 +1,4 @@
-﻿  Entity.cpp
-  GameManager.cpp
+﻿  LightComponent.cpp
   ModelComponent.cpp
-  LightComponent.cpp
+  Entity.cpp
   Game.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Game\x64\Release\Game.lib

@@ -17,7 +17,7 @@ namespace render
       CDirectionalLight() : CLight(DIRECTIONAL_LIGHT) {}
       virtual ~CDirectionalLight() {}
 
-      virtual void UpdateLight() override;
+      virtual void UpdateLight() override {}
 
       // Direction
       void SetDirection(const maths::CVector3& _v3Dir) { m_v3Direction = _v3Dir; }

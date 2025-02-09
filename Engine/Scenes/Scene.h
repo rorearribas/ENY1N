@@ -16,27 +16,25 @@ namespace scene
 {
   class CScene
   {
+  private:
+    static int constexpr s_iMaxSpotLights = 100;
+    static int constexpr s_iMaxPointLights = 100;
+
   public:
-    static int constexpr s_iMaxLights = 100;
+    static int constexpr s_iMaxLights = 200;
     static int constexpr s_iMaxModels = 2500;
     static int constexpr s_iMaxPrimitives = 500;
 
+    // Lights
+    typedef std::array<render::lights::CPointLight*, s_iMaxPointLights> TPointLightsList;
+    typedef std::array<render::lights::CSpotLight*, s_iMaxSpotLights> TSpotLightsList;
+    // Graphics
     typedef std::array<render::graphics::CPrimitive*, s_iMaxPrimitives> TPrimitiveList;
     typedef std::array<render::graphics::CModel*, s_iMaxModels> TModelList;
-    typedef std::array<render::lights::CLight*, s_iMaxLights> TLightsList;
 
   public:
-    CScene(const UINT32& _uIndex) : m_uSceneIdx(_uIndex) 
-    {
-      HRESULT hr = m_oLightningBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
-      UNUSED_VARIABLE(hr);
-      assert(!FAILED(hr));
-    }
+    CScene(const UINT32& _uIndex);
     ~CScene();
-
-    const TPrimitiveList& GetPrimitives() { return m_vctPrimitiveItems; }
-    const TModelList& GetModels() { return m_vctModels; }
-    const TLightsList& GetLights() { return m_vctLights; }
 
     // Graphics
     render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData);
@@ -77,8 +75,13 @@ namespace scene
     TModelList m_vctModels = {};
     uint32_t m_uRegisteredModels = 0;
 
-    TLightsList m_vctLights = {};
-    uint32_t m_uRegisteredLights  = 0;
-    CConstantBuffer<SLightningData> m_oLightningBuffer;
+    TPointLightsList m_vctPointLights = {};
+    uint32_t m_uRegisteredPointLights  = 0;
+
+    TSpotLightsList m_vctSpotLights = {};
+    uint32_t m_uRegisteredSpotLights  = 0;
+
+    render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
+    CConstantBuffer<SGlobalLightningData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightningBuffer;
   };
 }

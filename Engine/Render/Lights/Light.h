@@ -14,7 +14,7 @@ namespace render
       CLight(ELightType _eLightType) : m_eLightType(_eLightType) { assert(m_eLightType != INVALID); }
       virtual ~CLight() {}
 
-      virtual void UpdateLight() {}
+      virtual void UpdateLight () {}
       const ELightType& GetLightType() const { return m_eLightType; }
       const maths::CTransform& GetTransform() const { return m_oTransform; }
 
