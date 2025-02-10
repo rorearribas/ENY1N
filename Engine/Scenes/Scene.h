@@ -69,19 +69,23 @@ namespace scene
     bool m_bEnabled = false;
     UINT32 m_uSceneIdx = 0;
 
+    // Primitives
     TPrimitiveList m_vctPrimitiveItems = {};
     uint32_t m_uRegisteredPrimitives = 0;
 
+    // Models
     TModelList m_vctModels = {};
     uint32_t m_uRegisteredModels = 0;
 
+    // Point lights
     TPointLightsList m_vctPointLights = {};
     uint32_t m_uRegisteredPointLights  = 0;
-
+    // Spot lights
     TSpotLightsList m_vctSpotLights = {};
     uint32_t m_uRegisteredSpotLights  = 0;
-
+    // Directional light
     render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
+    // Global lightning buffer
     CConstantBuffer<SGlobalLightningData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightningBuffer;
   };
 }

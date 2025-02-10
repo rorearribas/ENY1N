@@ -47,6 +47,7 @@ namespace scene
   // ------------------------------------
   void CScene::UpdateLights()
   {
+    // Fill data
     auto& oGlobalLightningData = m_oLightningBuffer.GetData();
 
     // Directional light
@@ -61,22 +62,27 @@ namespace scene
     for (uint32_t uIndex = 0; uIndex < m_uRegisteredPointLights; uIndex++)
     {
       render::lights::CPointLight* pPointLight = m_vctPointLights[uIndex];
-      oGlobalLightningData.PointLights[uIndex].Position = pPointLight->GetTransform().GetPosition();
+      oGlobalLightningData.PointLights[uIndex].Position = pPointLight->GetPosition();
       oGlobalLightningData.PointLights[uIndex].Color = pPointLight->GetColor();
       oGlobalLightningData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
       oGlobalLightningData.PointLights[uIndex].Range = pPointLight->GetRange();
     }
+    // Set the number of registered point lights
+    oGlobalLightningData.RegisteredPointLights = static_cast<int>(m_uRegisteredPointLights);
 
     // Spot lights
     for (uint32_t uIndex = 0; uIndex < m_uRegisteredSpotLights; uIndex++)
     {
       render::lights::CSpotLight* pSpotLight = m_vctSpotLights[uIndex];
-      oGlobalLightningData.SpotLights[uIndex].Color = pSpotLight->GetTransform().GetPosition();
-      oGlobalLightningData.SpotLights[uIndex].CutOffAngle = pSpotLight->GetCutOffAngle();
+      oGlobalLightningData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
       oGlobalLightningData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
+      oGlobalLightningData.SpotLights[uIndex].Color = pSpotLight->GetColor();
+      oGlobalLightningData.SpotLights[uIndex].Range = pSpotLight->GetRange();
+      oGlobalLightningData.SpotLights[uIndex].CutOffAngle = pSpotLight->GetCutOffAngle();
       oGlobalLightningData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
-      oGlobalLightningData.SpotLights[uIndex].Position = pSpotLight->GetTransform().GetPosition();
     }
+    // Set the number of registered spot lights
+    oGlobalLightningData.RegisteredSpotLights = static_cast<int>(m_uRegisteredSpotLights);
 
     // Update buffer
     m_oLightningBuffer.UpdateBuffer();

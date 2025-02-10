@@ -75,6 +75,13 @@ namespace scene
     return pScene->CreatePointLight();
   }
   // ------------------------------------
+  render::lights::CSpotLight* CSceneManager::CreateSpotLight(uint32_t _uSceneIndex)
+  {
+    if ((size_t)(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
+    scene::CScene* pScene = m_vctScenes[_uSceneIndex];
+    return pScene->CreateSpotLight();
+  }
+  // ------------------------------------
   void CSceneManager::DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uIndex)
   {
     if ((size_t)(_uIndex) > (m_vctScenes.size() - 1)) return;

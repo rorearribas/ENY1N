@@ -1,2 +1,8 @@
-﻿  SceneManager.cpp
+﻿C:\Users\Rub�n\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredPixelShader.hlsl(89,27-62): warning X3206: implicit truncation of vector type
+C:\Users\Rub�n\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredPixelShader.hlsl(103,37-71): warning X3206: implicit truncation of vector type
+C:\Users\Rub�n\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredPixelShader.hlsl(109,31-65): warning X3206: implicit truncation of vector type
+  
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredPixelShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\DeferredPixelShader.cso
+  Render.cpp
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\Engine.lib

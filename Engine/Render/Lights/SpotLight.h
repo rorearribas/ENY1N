@@ -28,8 +28,8 @@ namespace render
       const float& GetIntensity() const { return m_fIntensity; }
 
     private:
-      maths::CVector3 m_v3LightColor = maths::CVector3::One;
       maths::CVector3 m_v3Direction = maths::CVector3::Up;
+      maths::CVector3 m_v3LightColor = maths::CVector3::One;
       float m_fCutOffAngle = 45.0f;
       float m_fRange = 10.0f;
       float m_fIntensity = 1.0f;

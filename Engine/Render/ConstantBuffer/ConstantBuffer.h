@@ -20,38 +20,62 @@ struct __declspec(align(16)) SConstantTexture
 namespace internal
 {
   // Directional lights
-  struct SDirectionaLight
+  struct __declspec(align(16)) SDirectionaLight
   {
+    // 12 + 4 Bytes
     maths::CVector3 Direction;
-    float Padding1;
+    float Padding0;
+    // 12 + 4 bytes
     maths::CVector3 Color;
     float Intensity;
   };
   // Point lights
-  struct SPointLight
+  struct __declspec(align(16)) SPointLight
   {
+    // 12 + 4 Bytes
     maths::CVector3 Position;
+    float Padding0;
+    // 12 + 4 Bytes
     maths::CVector3 Color;
+    float Padding1;
+    // 12 + 4 Bytes
     float Intensity;
     float Range;
+    // 12 + 4 Bytes
+    float Padding[2];
   };
   // Spot lights
-  struct SSpotLight
+  struct __declspec(align(16)) SSpotLight
   {
+    // 12 + 4 Bytes
     maths::CVector3 Position;
+    float Padding0;
+    // 12 + 4 Bytes
     maths::CVector3 Direction;
+    float Padding1;
+    // 12 + 4 Bytes
     maths::CVector3 Color;
-    float Intensity;
+    float Padding2;
+    // 12 + 4 Bytes
+    float Range;
     float CutOffAngle;
+    // 12 + 4 Bytes
+    float Intensity;
+    float Padding3;
   };
 }
 
 template<size_t MAX_POINT_LIGHTS, size_t MAX_SPOT_LIGHTS>
 struct __declspec(align(16)) SGlobalLightningData
 {
+  // Lights [144 Bytes]
   internal::SDirectionaLight DirectionalLight;
   internal::SPointLight PointLights[MAX_POINT_LIGHTS];
   internal::SSpotLight SpotLights[MAX_SPOT_LIGHTS];
+  // Handle lights [16 Bytes]
+  int RegisteredPointLights;
+  int RegisteredSpotLights;
+  float Padding[2];
 };
 
 #pragma endregion
@@ -76,7 +100,7 @@ public:
     oBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
     oBufferDesc.MiscFlags = 0;
     oBufferDesc.StructureByteStride = 0;
-    oBufferDesc.ByteWidth = static_cast<UINT>(sizeof(T));
+    oBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(T) + 15) & ~15);
 
     return _pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
   }

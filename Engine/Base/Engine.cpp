@@ -43,7 +43,7 @@ namespace engine
     m_bInitialized = true;
   }
   // ------------------------------------
-  void CEngine::OnWindowResizeEvent(UINT32 _uX, UINT32 _uY)
+  void CEngine::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
   {
     m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
   }
@@ -85,14 +85,19 @@ namespace engine
     return m_pSceneManager->CreateModel(_sModelPath, _sBaseMltDir, _uSceneIndex);
   }
   // ------------------------------------
-  render::lights::CDirectionalLight* CEngine::CreateDirectionalLight()
+  render::lights::CDirectionalLight* CEngine::CreateDirectionalLight(uint32_t _uSceneIndex)
   {
-    return m_pSceneManager->CreateDirectionalLight();
+    return m_pSceneManager->CreateDirectionalLight(_uSceneIndex);
   }
   // ------------------------------------
-  render::lights::CPointLight* CEngine::CreatePointLight()
+  render::lights::CPointLight* CEngine::CreatePointLight(uint32_t _uSceneIndex)
   {
-    return m_pSceneManager->CreatePointLight();
+    return m_pSceneManager->CreatePointLight(_uSceneIndex);
+  }
+  // ------------------------------------
+  render::lights::CSpotLight* CEngine::CreateSpotLight(uint32_t _uSceneIndex)
+  {
+    return m_pSceneManager->CreateSpotLight(_uSceneIndex);
   }
   // ------------------------------------
   void CEngine::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)

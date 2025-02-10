@@ -29,14 +29,14 @@ int main()
   tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
   pTimeManager->SetMaxFPS(144);
 
-  game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("DirectionalLight");
+  game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("Directional Light");
   pDirectionalEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
-  game::CEntity* pPointLightEntity = pGameManager->CreateEntity("PointLightTest");
+  game::CEntity* pPointLightEntity = pGameManager->CreateEntity("Point Light Test");
   pPointLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
-  game::CEntity* pSpotLightEntity = pGameManager->CreateEntity("SpotLightTest");
-  pSpotLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
+  /* game::CEntity* pSpotLightEntity = pGameManager->CreateEntity("SpotLightTest");
+   pSpotLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);*/
 
   game::CEntity* pSkullEntity = pGameManager->CreateEntity("Skull");
   game::CModelComponent* pModelComponent = pSkullEntity->RegisterComponent<game::CModelComponent>();

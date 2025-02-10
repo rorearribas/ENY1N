@@ -33,8 +33,9 @@ namespace engine
     render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, uint32_t _uSceneIndex = 0);
     render::graphics::CModel* CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex = 0);
 
-    render::lights::CDirectionalLight* CreateDirectionalLight();
-    render::lights::CPointLight* CreatePointLight();
+    render::lights::CDirectionalLight* CreateDirectionalLight(uint32_t _uSceneIndex = 0);
+    render::lights::CPointLight* CreatePointLight(uint32_t _uSceneIndex = 0);
+    render::lights::CSpotLight* CreateSpotLight(uint32_t _uSceneIndex = 0);
 
     void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive);
     void DestroyModel(render::graphics::CModel*& _pModel);

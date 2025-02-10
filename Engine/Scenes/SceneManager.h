@@ -28,6 +28,7 @@ namespace scene
 
     render::lights::CDirectionalLight* CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* CreatePointLight(uint32_t _uSceneIndex = 0);
+    render::lights::CSpotLight* CreateSpotLight(uint32_t _uSceneIndex = 0);
 
     void DestroyModel(render::graphics::CModel*& pModel_, uint32_t _uSceneIndex = 0);
     void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);

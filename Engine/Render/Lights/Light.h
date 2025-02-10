@@ -15,11 +15,15 @@ namespace render
       virtual ~CLight() {}
 
       virtual void UpdateLight () {}
+
       const ELightType& GetLightType() const { return m_eLightType; }
-      const maths::CTransform& GetTransform() const { return m_oTransform; }
+      void SetPosition(const maths::CVector3& _v3Position) { m_oLightTransform.SetPosition(_v3Position); }
+      const maths::CVector3& GetPosition() const { return m_oLightTransform.GetPosition(); }
+      void SetRotation(const maths::CVector3& _v3Rot) { m_oLightTransform.SetRotation(_v3Rot); }
+      const maths::CVector3& GetRotation() const { return m_oLightTransform.GetRotation(); }
 
     private:
-      maths::CTransform m_oTransform;
+      maths::CTransform m_oLightTransform;
       ELightType m_eLightType = INVALID;
     };
   }
