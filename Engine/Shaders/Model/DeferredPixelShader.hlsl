@@ -1,4 +1,4 @@
-#include "DeferredVertexShader.hlsl"
+// PIXEL SHADER
 
 struct DirectionalLight
 {
@@ -52,6 +52,15 @@ struct Spotlight
 Texture2D cTexture2D : register(t0);
 SamplerState cSamplerState : register(s0);
 
+// PS Input
+struct PS_INPUT
+{
+  float4 position : SV_POSITION;
+  float3 normal : NORMAL;
+  float4 color: COLOR;
+  float2 uv : TEXCOORD;
+};
+
 // Constant buffer
 cbuffer ConstantTexture : register(b0)
 {
@@ -76,7 +85,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   float3 normal = normalize(input.normal);
   float3 totalDiffuse = float3(0.0f, 0.0f, 0.0f);
 
-  // Dirección de la luz direccional
+  // Directional light
   float3 lightDir = normalize(directionalLight.Direction);
   float diff = max(dot(normal, lightDir), 0.0f);
   totalDiffuse += diff * directionalLight.Color * directionalLight.Intensity;
@@ -86,21 +95,26 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   {
     PointLight pointLight = pointLights[i];
     
-    float3 lightToPixel = pointLight.Position - input.position; // Corrección de dirección
-    float distance = length(lightToPixel);
+    float3 lightToPixel = pointLight.Position - input.position; // Diff
     float3 lightDirPoint = normalize(lightToPixel);
-    
-    float attenuation = 1.0f / (1.0f + 0.09f * distance + 0.032f * (distance * distance));
-    float diffPoint = max(dot(normal, lightDirPoint), 0.0f);
-    
-    totalDiffuse += diffPoint * pointLight.Color * pointLight.Intensity * attenuation;
+    float distance = length(lightToPixel);
+
+     // Check if the light is within range
+    if (distance < pointLight.Range)
+    {
+      // Calculate attenuation using the light range
+      float attenuation = 1.0f / (1.0f + 0.09f * distance + 0.032f * (distance * distance));
+      float diffPoint = max(dot(normal, lightDirPoint), 0.0f);
+      
+      totalDiffuse += diffPoint * pointLight.Color * pointLight.Intensity * attenuation * saturate(1.0f - (distance / pointLight.Range));
+    }
   }
   
   // Spotlights
   for (int j = 0; j < RegisteredLights.y; j++)
   {
     Spotlight spotlight = spotLights[j];
-    float3 lightToPixel = normalize(input.position - spotlight.Position); // Dirección corregida
+    float3 lightToPixel = normalize(input.position - spotlight.Position); // Diff
     float3 lightDirSpot = normalize(spotlight.Direction);
     
     float spotFactor = dot(-lightToPixel, lightDirSpot); // Factor corregido

@@ -48,16 +48,16 @@ namespace render
       void DrawMesh();
       HRESULT AssignIndexBuffer(TIndexesList& _vctIndexes);
 
-      void Clean();
-
-      const std::string& GetMeshName() const { return m_sMeshName; }
       const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
-      const uint32_t GetIndexCount() const { return static_cast<uint32_t>(m_vctIndexes.size()); }
+      const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndexes.size()); }
+      const std::string& GetMeshName() const { return m_sMeshName; }
 
       void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
       void ApplyMaterialsColor(ID3D11Buffer* _pVertexBuffer);
 
     private:
+      void Clean();
+
       // Info
       std::string m_sMeshName = std::string();
 
