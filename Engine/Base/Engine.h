@@ -17,18 +17,18 @@ namespace engine
     CEngine() {}
     ~CEngine();
 
+    void InitEngine(uint32_t _uWidth, uint32_t _uHeight);
     void Update(float _fDeltaTime);
-    void InitEngine(UINT32 _uWidth, UINT32 _uHeight);
 
-    void BeginDraw();
-    void DrawProcess();
-    void EndDraw();
+    void PushBeginDraw();
+    void PushDrawProcess();
+    void PushEndDraw();
 
     scene::CSceneManager* GetSceneManager() const { return m_pSceneManager.get(); }
     render::CRender* GetRender() const { return m_pRender.get(); }
     render::CCamera* GetCamera() const { return m_pCamera.get(); }
 
-    // Creation
+    // Creation elements
     render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, uint32_t _uSceneIndex = 0);
     render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, uint32_t _uSceneIndex = 0);
     render::graphics::CModel* CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex = 0);
@@ -41,19 +41,14 @@ namespace engine
     void DestroyModel(render::graphics::CModel*& _pModel);
     void DestroyLight(render::lights::CLight*& pLight_);
 
-    void DestroyAllPrimimitives(uint32_t _uSceneIndex = 0);
-    void DestroyAllModels(uint32_t _uSceneIndex = 0);
-
   private:
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);
 
     std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;
-
     std::unique_ptr<render::CRender> m_pRender = nullptr;
     std::unique_ptr<render::CCamera> m_pCamera = nullptr;
 
     bool m_bInitialized = false;
-  public:
   };
 }
 

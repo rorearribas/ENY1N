@@ -25,6 +25,7 @@ namespace scene
     DestroyAllPrimitives();
     DestroyAllModels();
     DestroyAllLights();
+    m_oLightningBuffer.CleanBuffer();
   }
   // ------------------------------------
   void CScene::DrawPrimitives()
@@ -95,40 +96,57 @@ namespace scene
   void CScene::DestroyAllPrimitives()
   {
     std::for_each(m_vctPrimitiveItems.begin(), m_vctPrimitiveItems.end(), [](render::graphics::CPrimitive*& _pPrimitive)
+    {
+      if (_pPrimitive)
       {
-        if (_pPrimitive)
-        {
-          delete _pPrimitive;
-          _pPrimitive = nullptr;
-        }
-      });
+        delete _pPrimitive;
+        _pPrimitive = nullptr;
+      }
+    });
     m_uRegisteredPrimitives = 0;
   }
   // ------------------------------------
   void CScene::DestroyAllModels()
   {
     std::for_each(m_vctModels.begin(), m_vctModels.end(), [](render::graphics::CModel*& _pModel)
+    {
+      if (_pModel)
       {
-        if (_pModel)
-        {
-          delete _pModel;
-          _pModel = nullptr;
-        }
-      });
+        delete _pModel;
+        _pModel = nullptr;
+      }
+    });
     m_uRegisteredModels = 0;
   }
   // ------------------------------------
   void CScene::DestroyAllLights()
   {
-    /*std::for_each(m_vctLights.begin(), m_vctLights.end(), [](render::lights::CLight*& _pLight)
+    // Destroy directional light
+    if (m_pDirectionalLight)
+    {
+      delete m_pDirectionalLight;
+      m_pDirectionalLight = nullptr;
+    }
+    // Destroy point lights
+    std::for_each(m_vctPointLights.begin(), m_vctPointLights.end(), [](render::lights::CPointLight*& _pLight)
+    {
+      if (_pLight)
       {
-        if (_pLight)
-        {
-          delete _pLight;
-          _pLight = nullptr;
-        }
-      });
-    m_uRegisteredLights = 0;*/
+        delete _pLight;
+        _pLight = nullptr;
+      }
+    });
+    m_uRegisteredPointLights = 0;
+    // Destroy spot lights
+    std::for_each(m_vctSpotLights.begin(), m_vctSpotLights.end(), [](render::lights::CSpotLight*& _pLight)
+    {
+      if (_pLight)
+      {
+        delete _pLight;
+        _pLight = nullptr;
+      }
+    });
+    m_uRegisteredSpotLights = 0;
   }
   // ------------------------------------
   render::graphics::CPrimitive* CScene::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData)
@@ -218,7 +236,7 @@ namespace scene
       m_uRegisteredModels--;
 
       auto oReorderFunc = std::remove_if(m_vctModels.begin(), m_vctModels.end(),
-        [](render::graphics::CModel* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+      [](render::graphics::CModel* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
       std::fill(oReorderFunc, m_vctModels.end(), nullptr); // Set nullptr
     }
     pModel_ = nullptr;
@@ -226,48 +244,62 @@ namespace scene
   // ------------------------------------
   void CScene::DestroyLight(render::lights::CLight*& _pLight_)
   {
-    assert(_pLight_);
-
     switch (_pLight_->GetLightType())
     {
     case render::lights::ELightType::DIRECTIONAL_LIGHT:
-      delete _pLight_;
-      _pLight_ = nullptr;
-      break;
+    {
+      if (m_pDirectionalLight)
+      {
+        delete m_pDirectionalLight;
+        m_pDirectionalLight = nullptr;
+        _pLight_ = nullptr;
+      }
+    }
+    break;
     case render::lights::ELightType::POINT_LIGHT:
     {
-      auto it = std::find(m_vctPointLights.begin(), m_vctPointLights.end(), _pLight_);
-      if (it != m_vctPointLights.end())
-      {
-        delete* it;
-        *it = nullptr;
-        m_uRegisteredPointLights--;
-
-        auto oReorderFunc = std::remove_if(m_vctPointLights.begin(), m_vctPointLights.end(),
-          [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
-        std::fill(oReorderFunc, m_vctPointLights.end(), nullptr); // Set nullptr
-      }
-      _pLight_ = nullptr;
+      DestroyPointLight(_pLight_);
     }
     break;
     case render::lights::ELightType::SPOT_LIGHT:
     {
-      auto it = std::find(m_vctSpotLights.begin(), m_vctSpotLights.end(), _pLight_);
-      if (it != m_vctSpotLights.end())
-      {
-        delete* it;
-        *it = nullptr;
-        m_uRegisteredSpotLights--;
-
-        auto oReorderFunc = std::remove_if(m_vctSpotLights.begin(), m_vctSpotLights.end(),
-        [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
-        std::fill(oReorderFunc, m_vctSpotLights.end(), nullptr); // Set nullptr
-      }
-      _pLight_ = nullptr;
+      DestroySpotLight(_pLight_);
     }
     break;
     default:
       break;
     }
+  }
+  // ------------------------------------
+  void CScene::DestroyPointLight(render::lights::CLight*& pLight_)
+  {
+    auto it = std::find(m_vctPointLights.begin(), m_vctPointLights.end(), pLight_);
+    if (it != m_vctPointLights.end())
+    {
+      delete* it;
+      *it = nullptr;
+      m_uRegisteredPointLights--;
+
+      auto oReorderFunc = std::remove_if(m_vctPointLights.begin(), m_vctPointLights.end(),
+      [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+      std::fill(oReorderFunc, m_vctPointLights.end(), nullptr); // Set nullptr
+    }
+    pLight_ = nullptr;
+  }
+  // ------------------------------------
+  void CScene::DestroySpotLight(render::lights::CLight*& pLight_)
+  {
+    auto it = std::find(m_vctSpotLights.begin(), m_vctSpotLights.end(), pLight_);
+    if (it != m_vctSpotLights.end())
+    {
+      delete* it;
+      *it = nullptr;
+      m_uRegisteredSpotLights--;
+
+      auto oReorderFunc = std::remove_if(m_vctSpotLights.begin(), m_vctSpotLights.end(),
+      [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+      std::fill(oReorderFunc, m_vctSpotLights.end(), nullptr); // Set nullptr
+    }
+    pLight_ = nullptr;
   }
 }

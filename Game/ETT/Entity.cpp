@@ -171,12 +171,12 @@ namespace game
   void CEntity::DestroyAllComponents()
   {
     std::for_each(m_vctComponents.begin(), m_vctComponents.end(), [](CComponent*& _pComponent)
+    {
+      if (_pComponent)
       {
-        if (_pComponent)
-        {
-          delete _pComponent;
-          _pComponent = nullptr;
-        }
-      });
+        delete _pComponent;
+        _pComponent = nullptr;
+      }
+    });
   }
 }

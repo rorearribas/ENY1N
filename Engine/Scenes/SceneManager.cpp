@@ -98,27 +98,12 @@ namespace scene
     pScene->DestroyLight(_pLight_);
   }
   // ------------------------------------
-  void CSceneManager::DestroyAllPrimimitives(uint32_t _uIndex)
-  {
-    if ((size_t)(_uIndex) > (m_vctScenes.size() - 1)) return;
-    scene::CScene* pScene = m_vctScenes.at(_uIndex);
-    assert(pScene);
-    pScene->DestroyAllPrimitives();
-  }
-  // ------------------------------------
   void CSceneManager::DestroyModel(render::graphics::CModel*& _pModel_, uint32_t _uIndex)
   {
     if ((size_t)(_uIndex) > (m_vctScenes.size() - 1)) return;
     assert(_pModel_);
     scene::CScene* pScene = m_vctScenes.at(_uIndex);
     pScene->DestroyModel(_pModel_);
-  }
-  // ------------------------------------
-  void CSceneManager::DestroyAllModels(uint32_t _uIndex)
-  {
-    if ((size_t)(_uIndex) > (m_vctScenes.size() - 1)) return;
-    scene::CScene* pScene = m_vctScenes.at(_uIndex);
-    pScene->DestroyAllModels();
   }
   // ------------------------------------
   void CSceneManager::DestroyAllScenes()

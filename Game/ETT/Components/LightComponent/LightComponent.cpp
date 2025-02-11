@@ -103,22 +103,22 @@ namespace game
       // Generate unique ids
       std::string sLightDir = "Direction" + std::string("##" + sOwnerName);
       std::string sColor = "Color" + std::string("##" + sOwnerName);
-      std::string sIntensity = "Intensity" + std::string("##" + sOwnerName);
       std::string sCutOffAngle = "CutOffAngle" + std::string("##" + sOwnerName);
       std::string sRange = "Range" + std::string("##" + sOwnerName);
+      std::string sIntensity = "Intensity" + std::string("##" + sOwnerName);
 
       render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight);
       float dir[3] = { pSpotLight->GetDirection().X, pSpotLight->GetDirection().Y, pSpotLight->GetDirection().Z };
       float color[3] = { pSpotLight->GetColor().X, pSpotLight->GetColor().Y, pSpotLight->GetColor().Z };
-      float fIntensity = pSpotLight->GetIntensity();
       float fCutOffAngle = pSpotLight->GetCutOffAngle();
+      float fIntensity = pSpotLight->GetIntensity();
       float fRange = pSpotLight->GetRange();
 
       ImGui::InputFloat3(sLightDir.c_str(), dir);
       ImGui::InputFloat3(sColor.c_str(), color);
-      ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
       ImGui::InputFloat(sCutOffAngle.c_str(), &fCutOffAngle);
       ImGui::InputFloat(sRange.c_str(), &fRange);
+      ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
 
       pSpotLight->SetDirection(maths::CVector3(dir[0], dir[1], dir[2]));
       pSpotLight->SetColor(maths::CVector3(color[0], color[1], color[2]));
@@ -144,12 +144,11 @@ namespace game
   // ------------------------------------
   void CLightComponent::Clean()
   {
-    // @TODO Delete from engine
-    /*if (m_pLight)
+    if (m_pLight)
     {
-      delete m_pLight;
-      m_pLight = nullptr;
-    }*/
+      engine::CEngine* pEngine = engine::CEngine::GetInstance();
+      pEngine->DestroyLight(m_pLight);
+    }
   }
   // ------------------------------------
   void CLightComponent::SetPosition(const maths::CVector3& _v3Position)

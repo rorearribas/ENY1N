@@ -56,6 +56,7 @@ SamplerState cSamplerState : register(s0);
 struct PS_INPUT
 {
   float4 position : SV_POSITION;
+  float3 positionWS : POSITION;
   float3 normal : NORMAL;
   float4 color: COLOR;
   float2 uv : TEXCOORD;
@@ -94,19 +95,16 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   for (int i = 0; i < RegisteredLights.x; i++)
   {
     PointLight pointLight = pointLights[i];
-    
-    float3 lightToPixel = pointLight.Position - input.position; // Diff
-    float3 lightDirPoint = normalize(lightToPixel);
+    float3 lightToPixel = pointLight.Position - input.positionWS;
     float distance = length(lightToPixel);
 
-     // Check if the light is within range
     if (distance < pointLight.Range)
     {
-      // Calculate attenuation using the light range
-      float attenuation = 1.0f / (1.0f + 0.09f * distance + 0.032f * (distance * distance));
+      float3 lightDirPoint = normalize(lightToPixel);
+      float smoothFactor = smoothstep(pointLight.Range * 0.75f, pointLight.Range, distance);
+      float attenuation = (1.0f - smoothFactor) / (1.0f + 0.14f * distance + 0.07f * (distance * distance));
       float diffPoint = max(dot(normal, lightDirPoint), 0.0f);
-      
-      totalDiffuse += diffPoint * pointLight.Color * pointLight.Intensity * attenuation * saturate(1.0f - (distance / pointLight.Range));
+      totalDiffuse += diffPoint * pointLight.Color * pointLight.Intensity * attenuation;
     }
   }
   
@@ -114,15 +112,21 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   for (int j = 0; j < RegisteredLights.y; j++)
   {
     Spotlight spotlight = spotLights[j];
-    float3 lightToPixel = normalize(input.position - spotlight.Position); // Diff
+    float3 lightToPixel = spotlight.Position - input.positionWS;
+    float distance = length(lightToPixel);
+
+   if (distance < spotlight.Range)
+   {
     float3 lightDirSpot = normalize(spotlight.Direction);
-    
-    float spotFactor = dot(-lightToPixel, lightDirSpot); // Factor corregido
-    if (spotFactor > cos(radians(spotlight.CutOffAngle))) // Conversión a radianes
+    float3 lightDirToPixel = normalize(lightToPixel);
+    float spotFactor = dot(lightDirToPixel, lightDirSpot);
+
+    if (spotFactor > cos(radians(spotlight.CutOffAngle)))
     {
-      float distance = length(input.position - spotlight.Position);
-      float attenuation = 1.0f / (1.0f + 0.09f * distance + 0.032f * (distance * distance));
-      totalDiffuse += max(spotFactor, 0.0f) * spotlight.Color * spotlight.Intensity * attenuation;
+      float spotAttenuation = smoothstep(cos(radians(spotlight.CutOffAngle * 0.85f)), cos(radians(spotlight.CutOffAngle * 1.1f)), spotFactor * -1.0f);
+      float distanceAttenuation = 1.0f / (1.0f + 0.14f * distance + 0.07f * (distance * distance));
+      totalDiffuse += spotlight.Color * spotlight.Intensity * spotAttenuation * distanceAttenuation;
+    }
     }
   }
 

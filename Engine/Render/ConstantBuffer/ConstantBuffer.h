@@ -88,13 +88,13 @@ private:
 
 public:
   CConstantBuffer() {}
-  ~CConstantBuffer() {}
+  ~CConstantBuffer() { CleanBuffer(); }
 
   HRESULT Init(ID3D11Device* _pDevice, ID3D11DeviceContext* _pDeviceContext)
   {
     m_pDeviceContext = _pDeviceContext;
 
-    D3D11_BUFFER_DESC oBufferDesc;
+    D3D11_BUFFER_DESC oBufferDesc = D3D11_BUFFER_DESC();
     oBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     oBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
     oBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -115,10 +115,7 @@ public:
     m_pDeviceContext->Unmap(m_pBuffer, 0);
     return true;
   }
-  void CleanBuffer()
-  {
-    global::dx11::SafeRelease(m_pBuffer);
-  }
+  void CleanBuffer() { global::dx11::SafeRelease(m_pBuffer); }
 
   ID3D11Buffer* GetBuffer() const { return m_pBuffer; }
   T& GetData() { return m_oData; }

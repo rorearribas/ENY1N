@@ -35,27 +35,14 @@ int main()
   game::CEntity* pPointLightEntity = pGameManager->CreateEntity("Point Light Test");
   pPointLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
-  /* game::CEntity* pSpotLightEntity = pGameManager->CreateEntity("SpotLightTest");
-   pSpotLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);*/
+  game::CEntity* pSpotLightEntity = pGameManager->CreateEntity("Spot light Test");
+  pSpotLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
 
   game::CEntity* pSkullEntity = pGameManager->CreateEntity("Skull");
   game::CModelComponent* pModelComponent = pSkullEntity->RegisterComponent<game::CModelComponent>();
   pModelComponent->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
   pSkullEntity->SetRotation(maths::CVector3(90.f, 0.0f, 180.0f));
   pSkullEntity->SetPosition(maths::CVector3(0.0f, 0.0f, 0.0f));
-
-  //game::CEntity* pAirplane = pGameManager->CreateEntity("Airplane");
-  //game::CModelComponent* pModelComponent2 = pAirplane->RegisterComponent<game::CModelComponent>();
-  //pModelComponent2->LoadModel("..\\Assets//Models//Airplane//11805_airplane_v2_L2.obj", "..\\Assets//Models//Airplane");
-  //pAirplane->SetPosition(maths::CVector3(200.0f, 0.0f, 0.0f));
-  //pAirplane->SetRotation(maths::CVector3(90.0f, 0.0f, 0.0f));
-  //pAirplane->SetScale(maths::CVector3(0.25f, 0.25f, 0.25f));
-
-  //game::CEntity* pSniper = pGameManager->CreateEntity("Sniper");
-  //game::CModelComponent* pModelComponent3 = pSniper->RegisterComponent<game::CModelComponent>();
-  //pModelComponent3->LoadModel("..\\Assets//Models//Sniper//uploads_files_3027914_ai_awm_LOD_00.obj", "..\\Assets//Models//Sniper");
-  //pSniper->SetPosition(maths::CVector3(60, 0.0f, 0.0f));
-  //pSniper->SetScale(maths::CVector3(40.0f, 40.0f, 40.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -77,7 +64,7 @@ int main()
       // Compute delta time
       pTimeManager->BeginFrame();
       // Begin draw
-      pEngine->BeginDraw();
+      pEngine->PushBeginDraw();
 
       // Calculate 
       float fDeltaTime = pTimeManager->GetDeltaTime();
@@ -94,7 +81,7 @@ int main()
       }
 
       // Draw
-      pEngine->DrawProcess();
+      pEngine->PushDrawProcess();
 
       if (bRotateActor)
       {
@@ -156,13 +143,13 @@ int main()
       }
 
       // End draw
-      pEngine->EndDraw();
+      pEngine->PushEndDraw();
       pTimeManager->EndFrame();
     }
   }
 
-  pEngine->DestroySingleton();
   pGameManager->DestroySingleton();
   pTimeManager->DestroySingleton();
   pInputManager->DestroySingleton();
+  pEngine->DestroySingleton();
 }

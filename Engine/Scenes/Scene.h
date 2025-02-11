@@ -54,12 +54,15 @@ namespace scene
     const bool& IsEnabled() const { return m_bEnabled; }
     const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
-    void DestroyAllPrimitives();
-    void DestroyAllModels();
-    void DestroyAllLights();
-
   private:
     friend class render::CRender;
+
+    void DestroyAllPrimitives();
+    void DestroyAllModels();
+
+    void DestroyAllLights();
+    void DestroyPointLight(render::lights::CLight*& pLight_);
+    void DestroySpotLight(render::lights::CLight*& pLight_);
 
     void DrawPrimitives();
     void DrawModels();
@@ -77,14 +80,15 @@ namespace scene
     TModelList m_vctModels = {};
     uint32_t m_uRegisteredModels = 0;
 
+    // Directional light
+    render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
     // Point lights
     TPointLightsList m_vctPointLights = {};
     uint32_t m_uRegisteredPointLights  = 0;
     // Spot lights
     TSpotLightsList m_vctSpotLights = {};
     uint32_t m_uRegisteredSpotLights  = 0;
-    // Directional light
-    render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
+
     // Global lightning buffer
     CConstantBuffer<SGlobalLightningData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightningBuffer;
   };

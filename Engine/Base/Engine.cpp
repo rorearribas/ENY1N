@@ -20,7 +20,7 @@ namespace engine
     m_pRender.reset();
   }
   // ------------------------------------
-  void CEngine::InitEngine(UINT32 _uWidth, UINT32 _uHeight)
+  void CEngine::InitEngine(uint32_t _uWidth, uint32_t _uHeight)
   {
     assert(!m_bInitialized);
 
@@ -48,18 +48,18 @@ namespace engine
     m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
   }
   // ------------------------------------
-  void CEngine::BeginDraw()
+  void CEngine::PushBeginDraw()
   {
     m_pRender->BeginDraw(); // Begin
   }
   // ------------------------------------
-  void CEngine::DrawProcess()
+  void CEngine::PushDrawProcess()
   {
     // Draw current scene
     m_pRender->Draw(m_pSceneManager->GetCurrentScene());
   }
   // ------------------------------------
-  void CEngine::EndDraw()
+  void CEngine::PushEndDraw()
   {
     m_pRender->EndDraw(); // End 
   }
@@ -116,15 +116,6 @@ namespace engine
   {
     assert(pLight_);
     m_pSceneManager->DestroyLight(pLight_);
-  }
-  void CEngine::DestroyAllPrimimitives(uint32_t _uSceneIndex)
-  {
-    m_pSceneManager->DestroyAllPrimimitives(_uSceneIndex);
-  }
-  // ------------------------------------
-  void CEngine::DestroyAllModels(uint32_t _uSceneIndex)
-  {
-    m_pSceneManager->DestroyAllModels(_uSceneIndex);
   }
   // ------------------------------------
 }

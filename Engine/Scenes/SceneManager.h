@@ -34,9 +34,6 @@ namespace scene
     void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
     void DestroyLight(render::lights::CLight*& _pLight_, uint32_t _uSceneIndex = 0);
 
-    void DestroyAllPrimimitives(uint32_t _uSceneIndex = 0);
-    void DestroyAllModels(uint32_t _uSceneIndex = 0);
-
   private:
     void CreateScenes();
     void DestroyAllScenes();
