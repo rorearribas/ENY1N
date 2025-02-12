@@ -1,8 +1,4 @@
-﻿  Engine.cpp
-  Camera.cpp
-  InputManager.cpp
-  Model.cpp
+﻿  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredPixelShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredPixelShader.cso
   Render.cpp
-  Scene.cpp
-  SceneManager.cpp
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib

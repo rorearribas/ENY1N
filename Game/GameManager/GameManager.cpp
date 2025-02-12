@@ -36,7 +36,8 @@ namespace game
   // ------------------------------------
   CEntity* CGameManager::CreateEntity(const char* _sEntityName)
   {
-    if (m_iRegisteredEntities >= s_iMaxEntities) return nullptr;
+    if (m_iRegisteredEntities >= s_iMaxEntities) 
+      return nullptr;
 
     // Check id collision
     std::string sTargetEntityID = _sEntityName;
@@ -59,7 +60,7 @@ namespace game
   // ------------------------------------
   bool CGameManager::DestroyEntity(const char* _sEntityName)
   {
-    bool bFound = false;
+    bool bFoundEntity = false;
     for (CEntity*& pEntity : m_vctEntitiesList)
     {
       if (pEntity && pEntity->GetName() == _sEntityName)
@@ -68,10 +69,10 @@ namespace game
         pEntity = nullptr;
 
         m_iRegisteredEntities--;
-        bFound = true;
+        bFoundEntity = true;
       }
     }
-    if (bFound)
+    if (bFoundEntity)
     {
       auto oReorderFunc = std::remove_if(m_vctEntitiesList.begin(), m_vctEntitiesList.end(),
       [](CEntity* _pEntity) { return _pEntity == nullptr; }); // Reorder fixed list

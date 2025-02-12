@@ -99,6 +99,7 @@ namespace render
   {
     m_vPos += vDelta;
     UpdateViewMatrix();
+    std::cout << "Camera PosX: " << m_vPos.X << ", Camera PosY: " << m_vPos.Y << ", Camera Pos Z: " << m_vPos.Z << std::endl;
   }
   // ------------------------------------
   void CCamera::SetRotation(const maths::CVector3& _vNewRot) 
