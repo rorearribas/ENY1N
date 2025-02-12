@@ -8,6 +8,7 @@ namespace render
 {
   namespace material
   {
+    // Type of material
     enum EModifierType : uint32_t { AMBIENT, DIFFUSE, SPECULAR, SPECULAR_HIGHLIGHT, BUMP, DISPLACEMENT, ALPHA, REFLECTION, COUNT };
 
     class CMaterial
@@ -17,12 +18,12 @@ namespace render
       typedef std::map<EModifierType, render::texture::CTexture*> TMapTextures;
 
     public:
-      CMaterial(std::string _sMaterialName) : m_sMaterialName(_sMaterialName) {}
+      CMaterial(std::string _sMaterialId) : m_sMaterialId(_sMaterialId) {}
       ~CMaterial();
 
-      const std::string& GetMaterialName() const{ return m_sMaterialName; }
-      render::texture::CTexture* const GetTexture(EModifierType _eMapType);
       render::texture::CTexture* const RegisterTexture(EModifierType _eModifierType, std::string _sTextureID);
+      render::texture::CTexture* const GetTexture(EModifierType _eMapType);
+      const std::string& GetMaterialId() const{ return m_sMaterialId; }
 
       void SetAmbientColor(maths::CVector3 _vAmbientColor) { m_vAmbientColor = _vAmbientColor; }
       const maths::CVector3& GetAmbientColor() { return m_vAmbientColor; }
@@ -39,7 +40,7 @@ namespace render
       const float& GetSpecularExponent() { return m_fSpecularExponent; }
 
     private:
-      std::string m_sMaterialName = {};
+      std::string m_sMaterialId = {};
 
       maths::CVector3 m_vAmbientColor = maths::CVector3::Zero; // Ka
       maths::CVector3 m_vDiffuseColor = maths::CVector3::Zero; // Kd
@@ -51,7 +52,7 @@ namespace render
 
       int m_iIlluminationVariable = 1; // illum
 
-      TMapTextures m_dctTextures;
+      TMapTextures m_dctTextures = TMapTextures();
     };
   }
 }

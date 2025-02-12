@@ -51,7 +51,6 @@ namespace game
   void CLightComponent::DrawDebug()
   {
     ImGui::Spacing();
-
     std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
 
     switch (m_pLight->GetLightType())
@@ -59,6 +58,7 @@ namespace game
     case render::lights::ELightType::DIRECTIONAL_LIGHT:
     {
       // Generate unique ids
+      std::string sTitle = "DIRECTIONAL LIGHT";
       std::string sLightDir = "Direction" + std::string("##" + sOwnerName);
       std::string sColor = "Color" + std::string("##" + sOwnerName);
       std::string sIntensity = "Intensity" + std::string("##" + sOwnerName);
@@ -68,6 +68,7 @@ namespace game
       float color[3] = { pDirectional->GetColor().X, pDirectional->GetColor().Y, pDirectional->GetColor().Z };
       float fIntensity = pDirectional->GetIntensity();
 
+      ImGui::Text(sTitle.c_str());
       ImGui::InputFloat3(sLightDir.c_str(), dir);
       ImGui::InputFloat3(sColor.c_str(), color);
       ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
@@ -80,6 +81,7 @@ namespace game
     case render::lights::ELightType::POINT_LIGHT:
     {
       // Generate unique ids
+      std::string sTitle = "POINT LIGHT";
       std::string sColor = "Color" + std::string("##" + sOwnerName);
       std::string sRange = "Range" + std::string("##" + sOwnerName);
       std::string sIntensity = "Intensity" + std::string("##" + sOwnerName);
@@ -89,6 +91,7 @@ namespace game
       float fIntensity = pPointLight->GetIntensity();
       float fRange = pPointLight->GetRange();
 
+      ImGui::Text(sTitle.c_str());
       ImGui::InputFloat3(sColor.c_str(), color);
       ImGui::InputFloat(sRange.c_str(), &fRange);
       ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
@@ -101,6 +104,7 @@ namespace game
     case render::lights::ELightType::SPOT_LIGHT:
     {
       // Generate unique ids
+      std::string sTitle = "SPOT LIGHT";
       std::string sLightDir = "Direction" + std::string("##" + sOwnerName);
       std::string sColor = "Color" + std::string("##" + sOwnerName);
       std::string sCutOffAngle = "CutOffAngle" + std::string("##" + sOwnerName);
@@ -114,6 +118,7 @@ namespace game
       float fIntensity = pSpotLight->GetIntensity();
       float fRange = pSpotLight->GetRange();
 
+      ImGui::Text(sTitle.c_str());
       ImGui::InputFloat3(sLightDir.c_str(), dir);
       ImGui::InputFloat3(sColor.c_str(), color);
       ImGui::InputFloat(sCutOffAngle.c_str(), &fCutOffAngle);

@@ -23,17 +23,17 @@ namespace render
 
       bool operator==(const SVertexData& _other) const
       {
-        return Position == _other.Position 
-          && Normal == _other.Normal 
-          && TexCoord == _other.TexCoord 
+        return Position == _other.Position
+          && Normal == _other.Normal
+          && TexCoord == _other.TexCoord
           && Color == _other.Color;
       }
-      bool operator!=(const SVertexData& _other) const 
+      bool operator!=(const SVertexData& _other) const
       {
         return !(*this == _other);
       }
     };
-    
+
     class CMesh
     {
     public:
@@ -42,41 +42,41 @@ namespace render
       typedef std::vector<uint32_t> TIndexesList;
 
     public:
-      CMesh(const std::string& _sMeshName) : m_sMeshName(_sMeshName) {}
+      CMesh(const std::string& _sMeshName) : m_sMeshId(_sMeshName) {}
       ~CMesh();
 
       void DrawMesh();
       HRESULT AssignIndexBuffer(TIndexesList& _vctIndexes);
 
+      void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
+      void UpdateVertexColor(ID3D11Buffer* _pVertexBuffer);
+
       const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
       const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndexes.size()); }
-      const std::string& GetMeshName() const { return m_sMeshName; }
-
-      void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
-      void ApplyMaterialsColor(ID3D11Buffer* _pVertexBuffer);
+      const std::string& GetMeshId() const { return m_sMeshId; }
 
     private:
       void Clean();
 
       // Info
-      std::string m_sMeshName = std::string();
-
-      // Buffers
-      CConstantBuffer<SConstantTexture> m_oConstantTexture;
-      ID3D11Buffer* m_pIndexBuffer = nullptr;
+      std::string m_sMeshId = std::string();
 
       // Materials
       TMapMaterials m_dctMaterials = {};
       TIndexesList m_vctIndexes = {};
+
+      // Buffers
+      CConstantBuffer<SConstantTexture> m_oConstantTexture;
+      ID3D11Buffer* m_pIndexBuffer = nullptr;
     };
   }
 }
 
 namespace std {
   template <>
-  struct hash<render::graphics::SVertexData> 
+  struct hash<render::graphics::SVertexData>
   {
-    size_t operator()(const render::graphics::SVertexData& vertex) const 
+    size_t operator()(const render::graphics::SVertexData& vertex) const
     {
       return ((hash<maths::CVector3>()(vertex.Position) ^
         (hash<maths::CVector3>()(vertex.Normal) << 1)) >> 1) ^

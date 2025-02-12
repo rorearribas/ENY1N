@@ -19,6 +19,34 @@ namespace render
   {
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
+
+    struct SResources
+    {
+      // Swap char + render target
+      IDXGISwapChain* SwapChain = nullptr;
+      ID3D11RenderTargetView* RenderTargetView = nullptr;
+
+      // Depth stencil
+      ID3D11Texture2D* DepthStencilTexture = nullptr;
+      ID3D11DepthStencilState* DepthStencilState = nullptr;
+      ID3D11DepthStencilView* DepthStencilView = nullptr;
+
+      // Rasterizer
+      ID3D11RasterizerState* RasterizerState = nullptr;
+
+      // Blending
+      ID3D11BlendState* BlendState = nullptr;
+
+      // Shaders for 3D Pipeline
+      shader::CShader<shader::EShaderType::PIXEL_SHADER>* ForwardPS;
+      shader::CShader<shader::EShaderType::VERTEX_SHADER>* ForwardVS;
+
+      // Shaders for primitives
+      shader::CShader<shader::EShaderType::PIXEL_SHADER>* PrimitivesPS;
+      shader::CShader<shader::EShaderType::VERTEX_SHADER>* PrimitivesVS;
+    };
+
+    static SResources s_oDirectXResources;
   }
   // ------------------------------------
   CRender::CRender(uint32_t _uX, uint32_t _uY)
@@ -39,12 +67,12 @@ namespace render
     global::dx11::SafeRelease(global::dx11::s_pDeviceContext);
 
     // Delete internal resources
-    global::dx11::SafeRelease(m_oRenderingResources.m_pSwapChain);
-    global::dx11::SafeRelease(m_oRenderingResources.m_pRenderTargetView);
-    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilTexture);
-    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilState);
-    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilView);
-    global::dx11::SafeRelease(m_oRenderingResources.m_pRasterizerState);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.SwapChain);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.RenderTargetView);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.DepthStencilTexture);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.DepthStencilState);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.DepthStencilView);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.RasterizerState);
   }
   // ------------------------------------
   HRESULT CRender::Init(uint32_t _uX, uint32_t _uY)
@@ -65,12 +93,12 @@ namespace render
     global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
 
     // Create shaders for 3D pipeline
-    m_oRenderingResources.m_pForwardPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_DeferredPixelShader, ARRAYSIZE(g_DeferredPixelShader));
-    m_oRenderingResources.m_pForwardVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_DeferredVertexShader, ARRAYSIZE(g_DeferredVertexShader));
+    internal_render::s_oDirectXResources.ForwardPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_DeferredPixelShader, ARRAYSIZE(g_DeferredPixelShader));
+    internal_render::s_oDirectXResources.ForwardVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_DeferredVertexShader, ARRAYSIZE(g_DeferredVertexShader));
 
     // Create shaders for primitives
-    m_oRenderingResources.m_pPrimitivesPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_PixelShader, ARRAYSIZE(g_PixelShader));
-    m_oRenderingResources.m_pPrimitivesVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_VertexShader, ARRAYSIZE(g_VertexShader));
+    internal_render::s_oDirectXResources.PrimitivesPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_PixelShader, ARRAYSIZE(g_PixelShader));
+    internal_render::s_oDirectXResources.PrimitivesVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_VertexShader, ARRAYSIZE(g_VertexShader));
 
     return S_OK;
   }
@@ -154,9 +182,9 @@ namespace render
     D3D_FEATURE_LEVEL oFeatureLevel;
     UINT uNumFeatureLevels = ARRAYSIZE(vctFeatureLevels);
 
-    // Device and swapchain
+    // Device and swap chain
     HRESULT hr = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, vctFeatureLevels,
-      uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &m_oRenderingResources.m_pSwapChain,
+      uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &internal_render::s_oDirectXResources.SwapChain,
       &global::dx11::s_pDevice, &oFeatureLevel, &global::dx11::s_pDeviceContext);
     if (FAILED(hr)) return hr;
 
@@ -166,10 +194,10 @@ namespace render
   void CRender::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
   {
     // Remove current target view
-    global::dx11::SafeRelease(m_oRenderingResources.m_pRenderTargetView);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.RenderTargetView);
 
     // Resize buffers
-    HRESULT hr = m_oRenderingResources.m_pSwapChain->ResizeBuffers(0, _uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+    HRESULT hr = internal_render::s_oDirectXResources.SwapChain->ResizeBuffers(0, _uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
     assert(!FAILED(hr));
 
     // Init basic pipeline
@@ -180,10 +208,10 @@ namespace render
   HRESULT CRender::CreateRenderTargetView()
   {
     ID3D11Texture2D* pBackBuffer = nullptr;
-    m_oRenderingResources.m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(&pBackBuffer));
+    internal_render::s_oDirectXResources.SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)(&pBackBuffer));
     if (!pBackBuffer) return E_FAIL;
 
-    HRESULT hr = global::dx11::s_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &m_oRenderingResources.m_pRenderTargetView);
+    HRESULT hr = global::dx11::s_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &internal_render::s_oDirectXResources.RenderTargetView);
     if (FAILED(hr)) return hr;
 
     pBackBuffer->Release();
@@ -193,9 +221,9 @@ namespace render
   HRESULT CRender::CreateDepthStencilView(uint32_t _uX, uint32_t _uY)
   {
     // Release resources
-    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilTexture);
-    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilState);
-    global::dx11::SafeRelease(m_oRenderingResources.m_pDepthStencilView);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.DepthStencilTexture);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.DepthStencilState);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.DepthStencilView);
 
     // Create texture
     D3D11_TEXTURE2D_DESC oTextureDesc = {};
@@ -210,7 +238,7 @@ namespace render
     oTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
     oTextureDesc.CPUAccessFlags = 0;
     oTextureDesc.MiscFlags = 0;
-    HRESULT hr = global::dx11::s_pDevice->CreateTexture2D(&oTextureDesc, nullptr, &m_oRenderingResources.m_pDepthStencilTexture);
+    HRESULT hr = global::dx11::s_pDevice->CreateTexture2D(&oTextureDesc, nullptr, &internal_render::s_oDirectXResources.DepthStencilTexture);
     assert(!FAILED(hr));
 
     // Depth test parameters
@@ -235,7 +263,7 @@ namespace render
     oDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     // Create depth stencil state
-    hr = global::dx11::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &m_oRenderingResources.m_pDepthStencilState);
+    hr = global::dx11::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &internal_render::s_oDirectXResources.DepthStencilState);
 
     D3D11_DEPTH_STENCIL_VIEW_DESC oDepthStencilViewDesc = {};
     oDepthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -245,15 +273,15 @@ namespace render
     // Create the depth stencil view
     return global::dx11::s_pDevice->CreateDepthStencilView
     (
-      m_oRenderingResources.m_pDepthStencilTexture,
+      internal_render::s_oDirectXResources.DepthStencilTexture,
       &oDepthStencilViewDesc,
-      &m_oRenderingResources.m_pDepthStencilView
+      &internal_render::s_oDirectXResources.DepthStencilView
     );
   }
   // ------------------------------------
   HRESULT CRender::CreateRasterizerState(D3D11_FILL_MODE _eFillMode)
   {
-    global::dx11::SafeRelease(m_oRenderingResources.m_pRasterizerState);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.RasterizerState);
 
     D3D11_RASTERIZER_DESC oRasterizerConfig = {};
     oRasterizerConfig.FillMode = _eFillMode;
@@ -267,12 +295,12 @@ namespace render
     oRasterizerConfig.MultisampleEnable = false;
     oRasterizerConfig.AntialiasedLineEnable = false;
 
-    return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerConfig, &m_oRenderingResources.m_pRasterizerState);
+    return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerConfig, &internal_render::s_oDirectXResources.RasterizerState);
   }
 
   HRESULT CRender::CreateBlendState()
   {
-    global::dx11::SafeRelease(m_oRenderingResources.m_pBlendState);
+    global::dx11::SafeRelease(internal_render::s_oDirectXResources.BlendState);
 
     D3D11_RENDER_TARGET_BLEND_DESC rtbd;
     rtbd.BlendEnable = false;
@@ -290,7 +318,7 @@ namespace render
     oBlendDesc.AlphaToCoverageEnable = false;
     oBlendDesc.RenderTarget[0] = rtbd;
 
-    return global::dx11::s_pDevice->CreateBlendState(&oBlendDesc, &m_oRenderingResources.m_pBlendState);
+    return global::dx11::s_pDevice->CreateBlendState(&oBlendDesc, &internal_render::s_oDirectXResources.BlendState);
   }
 
   // ------------------------------------
@@ -312,8 +340,8 @@ namespace render
   {
     // Clear resources
     float background_color[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
-    global::dx11::s_pDeviceContext->ClearRenderTargetView(m_oRenderingResources.m_pRenderTargetView, background_color);
-    global::dx11::s_pDeviceContext->ClearDepthStencilView(m_oRenderingResources.m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oDirectXResources.RenderTargetView, background_color);
+    global::dx11::s_pDeviceContext->ClearDepthStencilView(internal_render::s_oDirectXResources.DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     // Prepare ImGui new frame
     ImGui_ImplDX11_NewFrame();
@@ -327,8 +355,8 @@ namespace render
   void CRender::Draw(scene::CScene* _pScene)
   {
     // Push shaders for 3D pipeline
-    m_oRenderingResources.m_pForwardPS->PushShader();
-    m_oRenderingResources.m_pForwardVS->PushShader();
+    internal_render::s_oDirectXResources.ForwardPS->PushShader();
+    internal_render::s_oDirectXResources.ForwardVS->PushShader();
 
     // Draw models
     _pScene->DrawModels();
@@ -337,8 +365,8 @@ namespace render
     _pScene->UpdateLights();
 
     // Push shaders for primitives
-    m_oRenderingResources.m_pPrimitivesPS->PushShader();
-    m_oRenderingResources.m_pPrimitivesVS->PushShader();
+    internal_render::s_oDirectXResources.PrimitivesPS->PushShader();
+    internal_render::s_oDirectXResources.PrimitivesVS->PushShader();
 
     // Draw primitives
     _pScene->DrawPrimitives();
@@ -356,16 +384,16 @@ namespace render
     }
 
     // Update resources
-    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &m_oRenderingResources.m_pRenderTargetView, m_oRenderingResources.m_pDepthStencilView);
-    global::dx11::s_pDeviceContext->OMSetDepthStencilState(m_oRenderingResources.m_pDepthStencilState, 1);
-    global::dx11::s_pDeviceContext->OMSetBlendState(m_oRenderingResources.m_pBlendState, nullptr, 0xFFFFFFFF);
-    global::dx11::s_pDeviceContext->RSSetState(m_oRenderingResources.m_pRasterizerState);
+    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &internal_render::s_oDirectXResources.RenderTargetView, internal_render::s_oDirectXResources.DepthStencilView);
+    global::dx11::s_pDeviceContext->OMSetDepthStencilState(internal_render::s_oDirectXResources.DepthStencilState, 1);
+    global::dx11::s_pDeviceContext->OMSetBlendState(internal_render::s_oDirectXResources.BlendState, nullptr, 0xFFFFFFFF);
+    global::dx11::s_pDeviceContext->RSSetState(internal_render::s_oDirectXResources.RasterizerState);
 
     // End imgui draw
     ImGui::Render();
     ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
     // Draw the current frame
-    m_oRenderingResources.m_pSwapChain->Present(m_bVerticalSync, 0);
+    internal_render::s_oDirectXResources.SwapChain->Present(m_bVerticalSync, 0);
   }
 }

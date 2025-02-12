@@ -9,28 +9,6 @@ namespace render
 {
   class CRender
   {
-  private:
-    struct SRenderingResources
-    {
-      // Swap and main render target
-      IDXGISwapChain* m_pSwapChain = nullptr;
-      ID3D11RenderTargetView* m_pRenderTargetView = nullptr;
-      // Depth stencil
-      ID3D11Texture2D* m_pDepthStencilTexture = nullptr;
-      ID3D11DepthStencilState* m_pDepthStencilState = nullptr;
-      ID3D11DepthStencilView* m_pDepthStencilView = nullptr;
-      // Rasterizer
-      ID3D11RasterizerState* m_pRasterizerState = nullptr;
-      // Blend
-      ID3D11BlendState* m_pBlendState = nullptr;
-      // Shaders for 3D Pipeline
-      shader::CShader<shader::EShaderType::PIXEL_SHADER>* m_pForwardPS;
-      shader::CShader<shader::EShaderType::VERTEX_SHADER>* m_pForwardVS;
-      // Shaders for primitives
-      shader::CShader<shader::EShaderType::PIXEL_SHADER>* m_pPrimitivesPS;
-      shader::CShader<shader::EShaderType::VERTEX_SHADER>* m_pPrimitivesVS;
-    };
-
   public:
     CRender(uint32_t _uX, uint32_t _uY);
     ~CRender();
@@ -61,7 +39,6 @@ namespace render
 
     // Data
     render::CRenderWindow* m_pRenderWindow = nullptr;
-    SRenderingResources m_oRenderingResources = {};
     bool m_bVerticalSync = false;
   };
 }

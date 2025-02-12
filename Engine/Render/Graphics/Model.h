@@ -6,7 +6,6 @@
 #include "Engine/Render/Resources/Material.h"
 #include "Engine/Render/Resources/Texture.h"
 #include "Mesh.h"
-#include "Shape.h"
 
 namespace render
 {
@@ -15,13 +14,13 @@ namespace render
     class CModel
     {
     public:
-      struct SModelData
+      struct SModelInfo
       {
         std::vector<render::graphics::CMesh*> m_vctMeshes = {};
         std::vector<render::graphics::SVertexData> m_vctVertexData = {};
       };
-    public:
 
+    public:
       CModel(const char* _sModelPath, const char* _sBaseMltDir);
       ~CModel();
 
@@ -45,8 +44,8 @@ namespace render
       // Input layout
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
-      // Model data
-      SModelData m_oModelData;
+      // Model info
+      SModelInfo m_oInternalModel;
       maths::CTransform m_oModelTransform;
     };
   }

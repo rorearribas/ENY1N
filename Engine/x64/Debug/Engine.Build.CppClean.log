@@ -21,14 +21,15 @@ c:\users\rubén\documents\github\eny1n\engine\x64\debug\material.obj
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\light.obj
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\mesh.obj
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\spotlight.obj
-c:\users\rubén\documents\github\eny1n\engine\shaders\model\deferredvertexshader.h
-c:\users\rubén\documents\github\eny1n\engine\x64\debug\deferredvertexshader.cso
+c:\users\rubén\documents\github\eny1n\engine\x64\debug\lightmanager.obj
 c:\users\rubén\documents\github\eny1n\engine\shaders\primitive\pixelshader.h
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\pixelshader.cso
 c:\users\rubén\documents\github\eny1n\engine\shaders\primitive\vertexshader.h
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\vertexshader.cso
 c:\users\rubén\documents\github\eny1n\engine\shaders\model\deferredpixelshader.h
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\deferredpixelshader.cso
+c:\users\rubén\documents\github\eny1n\engine\shaders\model\deferredvertexshader.h
+c:\users\rubén\documents\github\eny1n\engine\x64\debug\deferredvertexshader.cso
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\engine.lib
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\engine.tlog\cl.command.1.tlog
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\engine.tlog\cl.items.tlog

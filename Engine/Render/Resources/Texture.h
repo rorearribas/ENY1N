@@ -9,20 +9,21 @@ namespace render
     class CTexture 
     {
     public:
-      explicit CTexture(const std::string& _sTextureName) : m_sTextureName(_sTextureName) {}
+      explicit CTexture(const std::string& _sTextureId) : m_sTextureId(_sTextureId) {}
       ~CTexture();
 
-      HRESULT SetTexture(unsigned char* _pTexture, uint32_t _uWidth, uint32_t _uHeight);
       void BindTexture();
-      void ClearTexture();
-
+      HRESULT SetTexture(void* _pData, uint32_t _uWidth, uint32_t _uHeight);
       ID3D11Texture2D* const GetTexture() { return m_pTexture; }
+
       ID3D11SamplerState* const GetSamplerState() { return m_pSamplerState; }
       ID3D11ShaderResourceView* const GetShaderResourceView() { return m_pShaderResourceView; }
 
     private:
+      void Clear();
+
       // Info
-      std::string m_sTextureName;
+      std::string m_sTextureId;
       uint32_t m_uTextureWidth = 0;
       uint32_t m_uTextureHeight = 0;
 

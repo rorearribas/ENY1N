@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Render\Lights\WIP\LightManager.h" />
     <ClInclude Include="Shaders\Model\DeferredPixelShader.h" />
     <ClInclude Include="Shaders\Model\DeferredVertexShader.h" />
     <ClInclude Include="Render\Graphics\Mesh.h" />
@@ -173,6 +174,7 @@
     <ClInclude Include="Render\Lights\SpotLight.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Render\Lights\WIP\LightManager.cpp" />
     <ClCompile Include="Render\Graphics\Mesh.cpp" />
     <ClCompile Include="Render\Lights\Light.cpp" />
     <ClCompile Include="Render\Resources\Material.cpp" />

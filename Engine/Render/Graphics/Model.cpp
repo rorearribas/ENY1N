@@ -20,8 +20,8 @@ namespace render
     // ------------------------------------
     CModel::~CModel()
     {
-      m_oModelData.m_vctMeshes.clear();
-      m_oModelData.m_vctVertexData.clear();
+      m_oInternalModel.m_vctMeshes.clear();
+      m_oInternalModel.m_vctVertexData.clear();
 
       global::dx11::SafeRelease(m_pVertexBuffer);
       global::dx11::SafeRelease(m_pInputLayout);
@@ -51,22 +51,21 @@ namespace render
     {
       // Try to load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
-      m_oModelData = std::move(pResourceManager->LoadModel(_sModelPath, _sBaseMltDir));
-      if (m_oModelData.m_vctMeshes.empty()) return E_FAIL;
+      m_oInternalModel = std::move(pResourceManager->LoadModel(_sModelPath, _sBaseMltDir));
+      if (m_oInternalModel.m_vctMeshes.empty()) return E_FAIL;
 
       // Init constant buffer
       m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
-      oVertexBufferDescriptor.ByteWidth = static_cast<UINT>((sizeof(render::graphics::SVertexData) * m_oModelData.m_vctVertexData.size()));
+      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(render::graphics::SVertexData) * m_oInternalModel.m_vctVertexData.size()));
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-      D3D11_SUBRESOURCE_DATA oSubresourceData = { 0 };
-      oSubresourceData.pSysMem = m_oModelData.m_vctVertexData.data();
-
+      D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
+      oSubresourceData.pSysMem = m_oInternalModel.m_vctVertexData.data();
       HRESULT hr = global::dx11::s_pDevice->CreateBuffer
       (
         &oVertexBufferDescriptor,
@@ -75,10 +74,10 @@ namespace render
       );
       if (FAILED(hr)) return hr;
 
-      // Apply materials color
-      for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
+      // Update vertex color
+      for (render::graphics::CMesh* pMesh : m_oInternalModel.m_vctMeshes)
       {
-        pMesh->ApplyMaterialsColor(m_pVertexBuffer);
+        pMesh->UpdateVertexColor(m_pVertexBuffer);
       }
 
       // Create input layout
@@ -106,7 +105,7 @@ namespace render
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
       // Draw meshes
-      for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
+      for (render::graphics::CMesh* pMesh : m_oInternalModel.m_vctMeshes)
       {
         pMesh->DrawMesh();
       }

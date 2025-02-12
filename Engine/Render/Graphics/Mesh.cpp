@@ -74,7 +74,7 @@ namespace render
       return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
-    void CMesh::ApplyMaterialsColor(ID3D11Buffer* _pVertexBuffer)
+    void CMesh::UpdateVertexColor(ID3D11Buffer* _pVertexBuffer)
     {
       // Mapped vertex buffer
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
@@ -100,7 +100,7 @@ namespace render
           if (it != m_dctMaterials.end())
           {
             render::material::CMaterial* pMaterial = it->second;
-            pVertexData[uVertexDataIdx].Color = pMaterial->GetDiffuseColor();
+            pVertexData[uVertexDataIdx].Color = pMaterial->GetDiffuseColor(); // WIP Version
           }
         }
         // Add offset

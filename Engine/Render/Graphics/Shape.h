@@ -8,19 +8,22 @@ namespace render
 	{
     struct SLine 
     {
+      
     };
+
+    // WIP
 
     class CShape
     {
     public:
-      CShape(std::string _sShapeName) : m_sShapeName(_sShapeName) {}
+      CShape(std::string _sShapeName) : m_pShapeId(_sShapeName) {}
       ~CShape() {}
 
       render::graphics::CMesh* const GetMesh() { return m_pMesh; }
+      const std::string& GetShapeId() const { return m_pShapeId;}
 
     private:
-      std::string m_sShapeName = std::string();
-
+      std::string m_pShapeId = std::string();
       render::graphics::CMesh* m_pMesh = nullptr;
     };
 	}
