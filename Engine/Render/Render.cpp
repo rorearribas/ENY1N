@@ -88,10 +88,6 @@ namespace render
     hr = InitBasicPipeline(_uX, _uY);
     if (FAILED(hr)) return hr;
 
-    // Set delegate
-    utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
-    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
-
     // Create shaders for 3D pipeline
     internal_render::s_oDirectXResources.ForwardPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_DeferredPixelShader, ARRAYSIZE(g_DeferredPixelShader));
     internal_render::s_oDirectXResources.ForwardVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_DeferredVertexShader, ARRAYSIZE(g_DeferredVertexShader));
@@ -99,6 +95,10 @@ namespace render
     // Create shaders for primitives
     internal_render::s_oDirectXResources.PrimitivesPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_PixelShader, ARRAYSIZE(g_PixelShader));
     internal_render::s_oDirectXResources.PrimitivesVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_VertexShader, ARRAYSIZE(g_VertexShader));
+
+    // Set delegate
+    utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
+    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
 
     return S_OK;
   }
