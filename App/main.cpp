@@ -41,7 +41,6 @@ int main()
   game::CEntity* pRoomEntitty = pGameManager->CreateEntity("Room");
   game::CModelComponent* pModelComponent = pRoomEntitty->RegisterComponent<game::CModelComponent>();
   pModelComponent->LoadModel("..\\Assets//Models//Room//room.obj", "..\\Assets//Models//Room");
-  pRoomEntitty->SetPosition(maths::CVector3(0.0f, 0.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -50,7 +49,6 @@ int main()
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };
 
-  bool bRotateActor = false;
   while (WM_QUIT != oMsg.message)
   {
     if (PeekMessage(&oMsg, nullptr, 0, 0, PM_REMOVE))
@@ -81,65 +79,6 @@ int main()
 
       // Draw
       pEngine->PushDrawProcess();
-
-      if (bRotateActor)
-      {
-        const maths::CVector3 vRot(0.0f, 0.0f, -45.0f * pTimeManager->GetFixedDelta());
-        maths::CVector3 vCurrentRotation = pRoomEntitty->GetRotation();
-        pRoomEntitty->SetRotation(vCurrentRotation + vRot);
-      }
-
-      ImGui::ShowDemoWindow();
-
-      if (ImGui::Button("Move actor"))
-      {
-        maths::CVector3 v3Pos = pRoomEntitty->GetPosition();
-        const maths::CVector3 v3Dir(5.0f, 0.0f, 0.0f);
-        pRoomEntitty->SetPosition(v3Pos + v3Dir);
-      }
-
-      if (ImGui::Button("Rotate Actor"))
-      {
-        bRotateActor = !bRotateActor;
-
-        if (!bRotateActor)
-        {
-          pRoomEntitty->SetRotation(maths::CVector3::Zero);
-        }
-      }
-
-      if (ImGui::Button("Low scale"))
-      {
-        pRoomEntitty->SetScale(maths::CVector3(0.01f, 0.01f, 0.01f));
-      }
-
-      if (ImGui::Button("Normal scale"))
-      {
-        pRoomEntitty->SetScale(maths::CVector3(1.0f, 1.0f, 1.0f));
-      }
-
-      if (ImGui::Button("High scale"))
-      {
-        pRoomEntitty->SetScale(maths::CVector3(3.0f, 3.0f, 3.0f));
-      }
-
-      // Imgui utils
-      if (ImGui::Button("Set max fps to unlimited"))
-      {
-        pTimeManager->SetMaxFPS(9999);
-      }
-      if (ImGui::Button("Set max fps to 144"))
-      {
-        pTimeManager->SetMaxFPS(144);
-      }
-      if (ImGui::Button("Set max fps to 60"))
-      {
-        pTimeManager->SetMaxFPS(60);
-      }
-      if (ImGui::Button("Set max fps to 30"))
-      {
-        pTimeManager->SetMaxFPS(30);
-      }
 
       // End draw
       pEngine->PushEndDraw();

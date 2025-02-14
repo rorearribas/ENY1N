@@ -35,70 +35,78 @@ namespace game
     std::string sDebugEntity = m_sEntityName + "##Entity";
     ImGui::Begin(sDebugEntity.c_str());
 
-    //// Gizmo config
-    //static ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    //static ImGuizmo::MODE mCurrentGizmoMode = ImGuizmo::WORLD;
+    // Gizmo config
+    static ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    static ImGuizmo::MODE mCurrentGizmoMode = ImGuizmo::WORLD;
 
-    //if (ImGui::IsKeyPressed(ImGuiKey_W)) mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-    //if (ImGui::IsKeyPressed(ImGuiKey_E)) mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    //if (ImGui::IsKeyPressed(ImGuiKey_R)) mCurrentGizmoOperation = ImGuizmo::SCALE;
+    if (ImGui::IsKeyPressed(ImGuiKey_W)) mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    if (ImGui::IsKeyPressed(ImGuiKey_E)) mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    if (ImGui::IsKeyPressed(ImGuiKey_R)) mCurrentGizmoOperation = ImGuizmo::SCALE;
 
-    //// Generate unique ids
-    //std::string sTranslateId = "Translate##" + m_sEntityName;
-    //std::string sRotateId = "Rotate##" + m_sEntityName;
-    //std::string sScaleId = "Scale##" + m_sEntityName;
+    // Generate unique ids
+    std::string sTranslateId = "Translate##" + m_sEntityName;
+    std::string sRotateId = "Rotate##" + m_sEntityName;
+    std::string sScaleId = "Scale##" + m_sEntityName;
 
-    //if (ImGui::RadioButton(sTranslateId.c_str(), mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
-    //  mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-    //ImGui::SameLine();
-    //if (ImGui::RadioButton(sRotateId.c_str(), mCurrentGizmoOperation == ImGuizmo::ROTATE))
-    //  mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    //ImGui::SameLine();
-    //if (ImGui::RadioButton(sScaleId.c_str(), mCurrentGizmoOperation == ImGuizmo::SCALE))
-    //  mCurrentGizmoOperation = ImGuizmo::SCALE;
+    if (ImGui::RadioButton(sTranslateId.c_str(), mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+      mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    ImGui::SameLine();
+    if (ImGui::RadioButton(sRotateId.c_str(), mCurrentGizmoOperation == ImGuizmo::ROTATE))
+      mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    ImGui::SameLine();
+    if (ImGui::RadioButton(sScaleId.c_str(), mCurrentGizmoOperation == ImGuizmo::SCALE))
+      mCurrentGizmoOperation = ImGuizmo::SCALE;
 
-    //// Get view matrix and projection matrix
-    //engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    //const render::CCamera* pCamera = pEngine->GetCamera();
+    // Get view matrix and projection matrix
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    const render::CCamera* pCamera = pEngine->GetCamera();
 
-    //// get view matrix
-    //const maths::CMatrix4x4& viewMatrix = pCamera->GetViewMatrix();
-    //const maths::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
+    // get view matrix
+    const maths::CMatrix4x4& viewMatrix = pCamera->GetViewMatrix();
+    const maths::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
 
-    ////Get current model matrix
-    //maths::CMatrix4x4 mModelMatrix = m_oTransform.ComputeModelMatrix();
+    //Get current model matrix
+    maths::CMatrix4x4 mModelMatrix = m_oTransform.ComputeModelMatrix();
 
-    //// Get matrix
-    //float matrixTranslation[3] = { m_oTransform.GetPosition().X, m_oTransform.GetPosition().Y, m_oTransform.GetPosition().Z };
-    //float matrixRotation[3] = { m_oTransform.GetRotation().X, m_oTransform.GetRotation().Y, m_oTransform.GetRotation().Z };
-    //float matrixScale[3] = { m_oTransform.GetScale().X, m_oTransform.GetScale().Y, m_oTransform.GetScale().Z };
-
-    //float matrix[16];
-    //std::copy(std::begin(mModelMatrix.m), std::end(mModelMatrix.m), std::begin(matrix));
-
-    //// Set rect
-    //ImGuiIO& io = ImGui::GetIO();
-    //ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-
-    //// Manipulate gizmo
-    //ImGuizmo::Manipulate(viewMatrix.m, projectionMatrix.m, mCurrentGizmoOperation, mCurrentGizmoMode, matrix);
-
-    //if (ImGuizmo::IsUsing())
-    //{
-    //  // Decompose matrix
-    //  ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
-
-    //  // Update the entity
-    //  SetPosition(maths::CVector3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
-    //  //SetRotation(maths::CVector3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
-    //  //SetScale(maths::CVector3(matrixScale[0], matrixScale[1], matrixScale[2]));
-
-    //  ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
-    //}
-
+    // Get matrix
     float matrixTranslation[3] = { m_oTransform.GetPosition().X, m_oTransform.GetPosition().Y, m_oTransform.GetPosition().Z };
     float matrixRotation[3] = { m_oTransform.GetRotation().X, m_oTransform.GetRotation().Y, m_oTransform.GetRotation().Z };
     float matrixScale[3] = { m_oTransform.GetScale().X, m_oTransform.GetScale().Y, m_oTransform.GetScale().Z };
+      
+    float matrix[16];
+    mModelMatrix = maths::CMatrix4x4::Transpose(mModelMatrix);
+    std::memcpy(matrix, mModelMatrix.m, sizeof(matrix));
+
+    // Set rect
+    ImGuiIO& io = ImGui::GetIO();
+    ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
+
+    // Manipulate gizmo
+    ImGuizmo::Manipulate(viewMatrix.m, projectionMatrix.m, mCurrentGizmoOperation, mCurrentGizmoMode, matrix);
+
+    if (ImGuizmo::IsUsing())
+    {
+      // Decompose matrix
+      ImGuizmo::DecomposeMatrixToComponents(matrix, matrixTranslation, matrixRotation, matrixScale);
+
+      // Aplicar SOLO los valores del Gizmo correspondiente
+      switch (mCurrentGizmoOperation)
+      {
+      case ImGuizmo::TRANSLATE:
+        SetPosition(maths::CVector3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
+        break;
+      case ImGuizmo::ROTATE:
+        SetRotation(maths::CVector3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
+        break;
+      case ImGuizmo::SCALE:
+        SetScale(maths::CVector3(matrixScale[0], matrixScale[1], matrixScale[2]));
+        break;
+      default:
+        break;
+      }
+
+      ImGuizmo::RecomposeMatrixFromComponents(matrixTranslation, matrixRotation, matrixScale, matrix);
+    }
 
     // Generate unique ids
     std::string sTranslateInputId = "Translation##" + m_sEntityName;
@@ -109,6 +117,7 @@ namespace game
     ImGui::InputFloat3(sRotateInputId.c_str(), matrixRotation);
     ImGui::InputFloat3(sScaleInputId.c_str(), matrixScale);
 
+    // Update the entity
     SetPosition(maths::CVector3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
     SetRotation(maths::CVector3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
     SetScale(maths::CVector3(matrixScale[0], matrixScale[1], matrixScale[2]));

@@ -1,9 +1,11 @@
 #include "GameManager.h"
 #include <algorithm>
 #include <sstream>
+#include "Libs/ImGui/imgui.h"
 
 namespace game
 {
+
   // ------------------------------------
   CGameManager::~CGameManager()
   {
@@ -12,15 +14,40 @@ namespace game
   // ------------------------------------
   void CGameManager::Update(float _fDeltaTime)
   {
-    for (CEntity* pEntity : m_vctEntitiesList)
+    static int selectedEntityIndex = -1;
+    if (m_bDebugMode)
     {
+      ImGui::Begin("Entity Selector");
+      // Show the list of entities
+      for (int i = 0; i < m_vctEntitiesList.size(); ++i)
+      {
+        CEntity* pEntity = m_vctEntitiesList[i];
+        if (pEntity)
+        {
+          std::string entityLabel = pEntity->GetName() + "##" + std::to_string(i);
+          if (ImGui::Selectable(entityLabel.c_str(), selectedEntityIndex == (int)i))
+            selectedEntityIndex = i;
+        }
+      }
+
+      ImGui::End();
+    }
+
+    // Update
+    for (size_t i = 0; i < m_vctEntitiesList.size(); ++i)
+    {
+      CEntity* pEntity = m_vctEntitiesList[i];
       if (pEntity)
       {
         pEntity->Update(_fDeltaTime);
-        pEntity->DrawDebug();
+        if (selectedEntityIndex == i && m_bDebugMode)
+        {
+          pEntity->DrawDebug();
+        }
       }
     }
   }
+
   // ------------------------------------
   void CGameManager::DestroyAllEntities()
   {

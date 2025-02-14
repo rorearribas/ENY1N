@@ -24,7 +24,7 @@ namespace game
   private:
     void DestroyAllEntities();
 
-    bool m_bDebugMode = false;
+    bool m_bDebugMode = true;
     int m_iRegisteredEntities = 0;
     TEntitiesList m_vctEntitiesList = {};
   };
