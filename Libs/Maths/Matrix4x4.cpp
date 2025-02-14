@@ -94,30 +94,25 @@ namespace maths
     float fYaw = maths::DegreesToRadians(_vRot.Y);
     float fRoll = maths::DegreesToRadians(_vRot.Z);
 
-    float fPitchCos = cos(fPitch), fPitchSin = sin(fPitch);
-    float fYawCos = cos(fYaw), fYawSin = sin(fYaw);
-    float fRollCos = cos(fRoll), fRollSin = sin(fRoll);
-
-    // Compute pitch
     CMatrix4x4 mPitchMatrix = CMatrix4x4::Identity;
-    mPitchMatrix.m[5] = fPitchCos;
-    mPitchMatrix.m[6] = fPitchSin;
-    mPitchMatrix.m[9] = -fPitchSin;
-    mPitchMatrix.m[10] = fPitchCos;
-    // Compute yaw
-    CMatrix4x4 mYawMatrix = CMatrix4x4::Identity;
-    mYawMatrix.m[0] = fYawCos;
-    mYawMatrix.m[2] = -fYawSin;
-    mYawMatrix.m[8] = fYawSin;
-    mYawMatrix.m[10] = fYawCos;
-    // Compute roll
-    CMatrix4x4 mRollMatrix = CMatrix4x4::Identity;
-    mRollMatrix.m[0] = fRollCos;
-    mRollMatrix.m[1] = fRollSin;
-    mRollMatrix.m[4] = -fRollSin;
-    mRollMatrix.m[5] = fRollCos;
+    mPitchMatrix.m[5] = cos(fPitch);
+    mPitchMatrix.m[6] = sin(fPitch);
+    mPitchMatrix.m[9] = -sin(fPitch);
+    mPitchMatrix.m[10] = cos(fPitch);
 
-    return mYawMatrix * mPitchMatrix * mRollMatrix;
+    CMatrix4x4 mYawMatrix = CMatrix4x4::Identity;
+    mYawMatrix.m[0] = cos(fYaw);
+    mYawMatrix.m[2] = -sin(fYaw);
+    mYawMatrix.m[8] = sin(fYaw);
+    mYawMatrix.m[10] = cos(fYaw);
+
+    CMatrix4x4 mRollMatrix = CMatrix4x4::Identity;
+    mRollMatrix.m[0] = cos(fRoll);
+    mRollMatrix.m[1] = sin(fRoll);
+    mRollMatrix.m[4] = -sin(fRoll);
+    mRollMatrix.m[5] = cos(fRoll);
+
+    return mPitchMatrix * mYawMatrix * mRollMatrix;
   }
   // ------------------------------------
   maths::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)

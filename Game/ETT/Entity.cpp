@@ -67,15 +67,15 @@ namespace game
 
     //Get current model matrix
     maths::CMatrix4x4 mModelMatrix = m_oTransform.ComputeModelMatrix();
+    
+    float matrix[16];
+    mModelMatrix = maths::CMatrix4x4::Transpose(mModelMatrix);
+    std::memcpy(matrix, mModelMatrix.m, sizeof(matrix));
 
     // Get matrix
     float matrixTranslation[3] = { m_oTransform.GetPosition().X, m_oTransform.GetPosition().Y, m_oTransform.GetPosition().Z };
     float matrixRotation[3] = { m_oTransform.GetRotation().X, m_oTransform.GetRotation().Y, m_oTransform.GetRotation().Z };
     float matrixScale[3] = { m_oTransform.GetScale().X, m_oTransform.GetScale().Y, m_oTransform.GetScale().Z };
-      
-    float matrix[16];
-    mModelMatrix = maths::CMatrix4x4::Transpose(mModelMatrix);
-    std::memcpy(matrix, mModelMatrix.m, sizeof(matrix));
 
     // Set rect
     ImGuiIO& io = ImGui::GetIO();
@@ -117,10 +117,13 @@ namespace game
     ImGui::InputFloat3(sRotateInputId.c_str(), matrixRotation);
     ImGui::InputFloat3(sScaleInputId.c_str(), matrixScale);
 
-    // Update the entity
-    SetPosition(maths::CVector3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
-    SetRotation(maths::CVector3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
-    SetScale(maths::CVector3(matrixScale[0], matrixScale[1], matrixScale[2]));
+    if (!ImGuizmo::IsUsing())
+    {
+      // Update the entity
+      SetPosition(maths::CVector3(matrixTranslation[0], matrixTranslation[1], matrixTranslation[2]));
+      SetRotation(maths::CVector3(matrixRotation[0], matrixRotation[1], matrixRotation[2]));
+      SetScale(maths::CVector3(matrixScale[0], matrixScale[1], matrixScale[2]));
+    }
 
     // Draw debug on components
     for (CComponent* pComponent : m_vctComponents)
