@@ -1,15 +1,4 @@
-﻿  LightManager.cpp
-  Mesh.cpp
-  Material.cpp
-  Model.cpp
-  Engine.cpp
-  Camera.cpp
-  InputManager.cpp
-  Primitive.cpp
+﻿  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredPixelShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredPixelShader.cso
   Render.cpp
-  ResourceManager.cpp
-  SceneManager.cpp
-  Scene.cpp
-  Texture.cpp
-  Shape.cpp
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib

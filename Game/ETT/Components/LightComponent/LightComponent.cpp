@@ -166,7 +166,7 @@ namespace game
   // ------------------------------------
   const maths::CVector3& CLightComponent::GetPosition() const
   {
-    return m_pOwner->GetPosition();
+    return m_pLight ? m_pLight->GetPosition() : m_pOwner->GetPosition();
   }
   // ------------------------------------
   void CLightComponent::SetRotation(const maths::CVector3& _v3Rot)
@@ -179,7 +179,7 @@ namespace game
   // ------------------------------------
   const maths::CVector3& CLightComponent::GetRotation() const
   {
-    return m_pOwner->GetRotation();
+    return m_pLight ? m_pLight->GetRotation() : m_pOwner->GetRotation();
   }
   // ------------------------------------
 }

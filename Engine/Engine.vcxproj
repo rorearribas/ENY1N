@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Physics\Collider.h" />
     <ClInclude Include="Render\Lights\WIP\LightManager.h" />
     <ClInclude Include="Shaders\Model\DeferredPixelShader.h" />
     <ClInclude Include="Shaders\Model\DeferredVertexShader.h" />
@@ -152,7 +153,7 @@
     <ClInclude Include="Render\Lights\Light.h" />
     <ClInclude Include="Render\Resources\Material.h" />
     <ClInclude Include="Render\Graphics\Model.h" />
-    <ClInclude Include="Physics\AABB.h" />
+    <ClInclude Include="Physics\BoxCollider.h" />
     <ClInclude Include="Base\Engine.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Render\Lights\DirectionalLight.h" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Shaders\Primitive\PixelShader.h" />
     <ClInclude Include="Shaders\Primitive\VertexShader.h" />
     <ClInclude Include="Render\Lights\SpotLight.h" />
+    <ClInclude Include="Physics\SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Render\Lights\WIP\LightManager.cpp" />
@@ -179,7 +181,7 @@
     <ClCompile Include="Render\Lights\Light.cpp" />
     <ClCompile Include="Render\Resources\Material.cpp" />
     <ClCompile Include="Render\Graphics\Model.cpp" />
-    <ClCompile Include="Physics\AABB.cpp" />
+    <ClCompile Include="Physics\BoxCollider.cpp" />
     <ClCompile Include="Base\Engine.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Render\Lights\DirectionalLight.cpp" />
@@ -196,6 +198,7 @@
     <ClCompile Include="Render\Graphics\Shape.cpp" />
     <ClCompile Include="Render\Shader.cpp" />
     <ClCompile Include="Render\Lights\SpotLight.cpp" />
+    <ClCompile Include="Physics\SphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Model\DeferredPixelShader.hlsl">

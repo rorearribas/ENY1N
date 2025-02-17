@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="ETT\Components\CollisionComponent\CollisionComponent.h" />
     <ClInclude Include="ETT\Components\Component.h" />
     <ClInclude Include="ETT\Entity.h" />
     <ClInclude Include="GameManager\GameManager.h" />
@@ -148,6 +149,7 @@
     <ClInclude Include="ETT\Components\LightComponent\LightComponent.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="ETT\Components\CollisionComponent\CollisionComponent.cpp" />
     <ClCompile Include="ETT\Entity.cpp" />
     <ClCompile Include="GameManager\GameManager.cpp" />
     <ClCompile Include="ETT\Components\ModelComponent\ModelComponent.cpp" />

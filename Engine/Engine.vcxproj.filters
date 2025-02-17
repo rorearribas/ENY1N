@@ -51,7 +51,7 @@
     <ClInclude Include="Render\Lights\DirectionalLight.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Physics\AABB.h">
+    <ClInclude Include="Physics\BoxCollider.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\Graphics\Model.h">
@@ -96,6 +96,12 @@
     <ClInclude Include="Render\Lights\WIP\LightManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Physics\SphereCollider.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Collider.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp">
@@ -131,7 +137,7 @@
     <ClCompile Include="Render\Lights\DirectionalLight.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Physics\AABB.cpp">
+    <ClCompile Include="Physics\BoxCollider.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Graphics\Model.cpp">
@@ -162,6 +168,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Lights\WIP\LightManager.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\SphereCollider.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

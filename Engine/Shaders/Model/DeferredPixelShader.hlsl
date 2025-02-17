@@ -117,16 +117,16 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
 
    if (distance < spotlight.Range)
    {
-    float3 lightDirSpot = normalize(spotlight.Direction);
-    float3 lightDirToPixel = normalize(lightToPixel);
-    float spotFactor = dot(lightDirToPixel, lightDirSpot);
-
-    if (spotFactor > cos(radians(spotlight.CutOffAngle)))
-    {
-      float spotAttenuation = smoothstep(cos(radians(spotlight.CutOffAngle * 0.85f)), cos(radians(spotlight.CutOffAngle * 1.1f)), spotFactor * -1.0f);
-      float distanceAttenuation = 1.0f / (1.0f + 0.14f * distance + 0.07f * (distance * distance));
-      totalDiffuse += spotlight.Color * spotlight.Intensity * spotAttenuation * distanceAttenuation;
-    }
+      float3 lightDirSpot = normalize(spotlight.Direction);
+      float3 lightDirToPixel = normalize(lightToPixel);
+      float spotFactor = dot(lightDirToPixel, lightDirSpot);
+      
+      if (spotFactor > cos(radians(spotlight.CutOffAngle)))
+      {
+        float spotAttenuation = smoothstep(cos(radians(spotlight.CutOffAngle * 0.85f)), cos(radians(spotlight.CutOffAngle)), spotFactor * -1.0f);
+        float distanceAttenuation = 1.0f / (1.0f + 0.01f * distance + 0.001f * (distance * distance));
+        totalDiffuse += spotlight.Color * spotlight.Intensity * spotAttenuation * distanceAttenuation;
+      }
     }
   }
 

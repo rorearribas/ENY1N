@@ -9,14 +9,11 @@ namespace maths
   maths::CVector3 CVector3::Backward(0.0f, 0.0f, -1.0f);
   maths::CVector3 CVector3::Right(1.0f, 0.0f, 0.0f);
   maths::CVector3 CVector3::Up(0.0f, 1.0f, 0.0f);
-
   // ------------------------------------
   float CVector3::DotProduct(const CVector3& _v3) const
   {
     return (this->X * _v3.X) + (this->Y * _v3.Y) + (this->Z * _v3.Z);
   }
-
-
   // ------------------------------------
   CVector3 CVector3::CrossProduct(const CVector3& _v3) const
   {
@@ -35,8 +32,7 @@ namespace maths
     {
       return CVector3(X / fMagnitude, Y / fMagnitude, Z / fMagnitude);
     }
-    // Si la magnitud es cero, devuelve el vector cero.
     return CVector3::Zero;
   }
-
+  // ------------------------------------
 }
