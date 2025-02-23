@@ -2,7 +2,7 @@
 #include "Engine/Global/GlobalResources.h"
 #include "Libs/ImGui/imgui.h"
 #include "Engine/Base/Engine.h"
-#include "Engine/Input/InputManager.h"
+#include "Engine/Managers/InputManager.h"
 #include "Libs/Maths/Maths.h"
 #include <ostream>
 #include <iostream>

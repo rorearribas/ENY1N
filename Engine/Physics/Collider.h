@@ -9,11 +9,12 @@ namespace physics
   class CCollider
   {
   public:
-    CCollider() = default;
+    CCollider() {}
     CCollider(EColliderType _eColliderType) : m_eColliderType(_eColliderType) {}
     virtual ~CCollider() {}
 
     virtual bool CheckCollision(const CCollider& /*_other*/) { return false; }
+    const EColliderType& GetType() const { return m_eColliderType; }
 
     const maths::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
     void SetPosition(const maths::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }

@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Utils\FixedList.h" />
     <ClInclude Include="ImGui\GraphEditor.h" />
     <ClInclude Include="ImGui\ImCurveEdit.h" />
     <ClInclude Include="ImGui\ImGradient.h" />

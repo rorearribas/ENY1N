@@ -1,6 +1,6 @@
 #include "RenderWindow.h"
 #include "Engine/Global/GlobalResources.h"
-#include "Engine/Input/InputManager.h"
+#include "Engine/Managers/InputManager.h"
 #include <windows.h>
 #include <cassert>
 

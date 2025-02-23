@@ -9,6 +9,7 @@ namespace game
   class CCollisionComponent : public CComponent
   {
   public:
+    CCollisionComponent() = default;
     CCollisionComponent(physics::EColliderType _eColliderType);
     virtual ~CCollisionComponent() { Clean(); }
 

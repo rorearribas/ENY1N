@@ -39,7 +39,7 @@
     <ClInclude Include="Global\GlobalResources.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Input\InputManager.h">
+    <ClInclude Include="Managers\InputManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\ConstantBuffer\ConstantBuffer.h">
@@ -102,6 +102,9 @@
     <ClInclude Include="Physics\Collider.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Managers\CollisionManager.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp">
@@ -128,7 +131,7 @@
     <ClCompile Include="Global\GlobalResources.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Input\InputManager.cpp">
+    <ClCompile Include="Managers\InputManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Lights\PointLight.cpp">
@@ -171,6 +174,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Physics\SphereCollider.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\CollisionManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

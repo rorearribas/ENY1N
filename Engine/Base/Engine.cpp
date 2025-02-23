@@ -1,6 +1,6 @@
 #include "Engine.h"
 #include "Engine/Global/GlobalResources.h"
-#include "Engine/Input/InputManager.h"
+#include "Engine/Managers/InputManager.h"
 #include "Engine/Render/Shader.h"
 
 #include <cassert>

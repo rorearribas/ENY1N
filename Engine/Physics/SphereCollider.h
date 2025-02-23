@@ -13,11 +13,13 @@ namespace physics
 
     bool CheckCollision(const CCollider&) override { return false; }
     void SetRadius(float _fRadius) { m_fRadius = _fRadius; }
+
+    const maths::CVector3& GetCenter() const { return m_v3Center; }
     const float& GetRadius() const { return m_fRadius;}
 
   private:
-    float m_fRadius = 10.0f; // Radius
     maths::CVector3 m_v3Center = maths::CVector3::Zero; // World position
+    float m_fRadius = 10.0f; // Radius
   };
 }
 

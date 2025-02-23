@@ -3,6 +3,7 @@
 #include "Engine/Render/Graphics/Model.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 #include "Libs/Macros/GlobalMacros.h"
+#include "Libs/Utils/FixedList.h"
 #include <cassert>
 #include <array>
 #include <algorithm>
@@ -12,67 +13,6 @@ namespace render { namespace lights { class CSpotLight; } }
 namespace render { namespace lights { class CLight; } }
 namespace render { namespace lights { class CPointLight; } }
 namespace render { namespace lights { class CDirectionalLight; } }
-
-namespace internal
-{
-  template<typename T, size_t MAX_ITEMS>
-  class CSceneItemList
-  {
-  public:
-    template<typename ...Args>
-    T* CreateItem(Args&&... args)
-    {
-      T*& pItem = m_vctItemList[m_uRegisteredItems++];
-      pItem = new T(std::forward<Args>(args)...);
-      return pItem;
-    }
-    bool RemoveItem(T* _pItem_);
-    void ClearAll();
-
-    const uint32_t& CurrentSize() const { return m_uRegisteredItems; }
-    uint32_t MaxSize() { return static_cast<uint32_t>(MAX_ITEMS);}
-
-    std::array<T*, MAX_ITEMS>& operator()() { return m_vctItemList; }
-    T* operator[](size_t Index) { return m_vctItemList[Index]; }
-
-  private:
-    std::array<T*, MAX_ITEMS> m_vctItemList = std::array<T*, MAX_ITEMS>();
-    uint32_t m_uRegisteredItems = 0;
-  };
-
-  template<typename T, size_t MAX_ITEMS>
-  void internal::CSceneItemList<T, MAX_ITEMS>::ClearAll()
-  {
-    std::for_each(m_vctItemList.begin(), m_vctItemList.end(), [](T* _pItem)
-    {
-      if (_pItem)
-      {
-        delete _pItem;
-        _pItem = nullptr;
-      }
-    });
-    m_uRegisteredItems = 0;
-  }
-
-  template<typename T, size_t MAX_ITEMS>
-  bool internal::CSceneItemList<T, MAX_ITEMS>::RemoveItem(T* _pItem_)
-  {
-    auto it = std::find(m_vctItemList.begin(), m_vctItemList.end(), _pItem_);
-    if (it != m_vctItemList.end())
-    {
-      delete* it;
-      *it = nullptr;
-      m_uRegisteredItems--;
-
-      auto oReorderFunc = std::remove_if(m_vctItemList.begin(), m_vctItemList.end(),
-      [](T* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
-      std::fill(oReorderFunc, m_vctItemList.end(), nullptr); // Set nullptr
-
-      return true;
-    }
-    return false;
-  }
-}
 
 namespace scene
 {
@@ -86,12 +26,12 @@ namespace scene
     static int constexpr s_iMaxPointLights = 100;
 
     // Lights
-    typedef internal::CSceneItemList<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
-    typedef internal::CSceneItemList<render::lights::CSpotLight, s_iMaxSpotLights> TSpotLightsList;
+    typedef utils::CFixedList<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
+    typedef utils::CFixedList<render::lights::CSpotLight, s_iMaxSpotLights> TSpotLightsList;
 
     // Graphics
-    typedef internal::CSceneItemList<render::graphics::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
-    typedef internal::CSceneItemList<render::graphics::CModel, s_iMaxPrimitives> TModelList;
+    typedef utils::CFixedList<render::graphics::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
+    typedef utils::CFixedList<render::graphics::CModel, s_iMaxPrimitives> TModelList;
 
   public:
     CScene(const UINT32& _uIndex);
