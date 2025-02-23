@@ -1,6 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <array>
+#include <iostream>
 
 namespace utils
 {
@@ -8,11 +9,16 @@ namespace utils
   class CFixedList
   {
   public:
-    template<typename ...Args>
+    template<typename Inheritance = T, typename ...Args>
     T* CreateItem(Args&&... args)
     {
-      T*& pItem = m_vctItemList[m_uRegisteredItems++];
-      pItem = new T(std::forward<Args>(args)...);
+      if (m_uRegisteredItems >= m_vctItemList.size())
+      {
+        std::cout << "Maximum items reached!" << std::endl;
+        return nullptr;
+      }
+      Inheritance* pItem = new Inheritance(std::forward<Args>(args)...);
+      m_vctItemList[m_uRegisteredItems++] = pItem;
       return pItem;
     }
     bool RemoveItem(T* _pItem_);
@@ -47,7 +53,7 @@ namespace utils
   bool CFixedList<T, MAX_ITEMS>::RemoveItem(T* _pItem_)
   {
     auto it = std::find(m_vctItemList.begin(), m_vctItemList.end(), _pItem_);
-    if (it != m_vctItemList.end())
+    if (it != m_vctItemList.end() && *it)
     {
       delete* it;
       *it = nullptr;

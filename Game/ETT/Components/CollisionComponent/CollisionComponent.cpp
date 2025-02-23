@@ -1,7 +1,10 @@
 #include "CollisionComponent.h"
+#include "Libs/ImGui/imgui.h"
 #include "Engine/Physics/BoxCollider.h"
 #include "Engine/Physics/SphereCollider.h"
+#include "Engine/Managers/CollisionManager.h"
 #include "Game/ETT/Entity.h"
+#include <cassert>
 
 namespace game
 {
@@ -14,16 +17,10 @@ namespace game
   {
     Clean();
 
-    switch (_eColliderType)
+    physics::CCollisionManager* pCollisionManager = physics::CCollisionManager::GetInstance();
+    if (pCollisionManager)
     {
-    case physics::BOX_COLLIDER:
-      m_pCollider = new physics::CBoxCollider();
-      break;
-    case physics::SPHERE_COLLIDER:
-      m_pCollider = new physics::CSphereCollider();
-      break;
-    default:
-      break;
+      m_pCollider = pCollisionManager->CreateCollider(_eColliderType);
     }
   }
   // ------------------------------------
@@ -55,16 +52,61 @@ namespace game
   // ------------------------------------
   void CCollisionComponent::Clean()
   {
-    if (m_pCollider)
+    physics::CCollisionManager* pCollisionManager = physics::CCollisionManager::GetInstance();
+    if (m_pCollider && pCollisionManager)
     {
-      delete m_pCollider;
-      m_pCollider = nullptr;
+      pCollisionManager->DestroyCollider(m_pCollider);
     }
   }
   // ------------------------------------
   void CCollisionComponent::DrawDebug()
   {
+    ImGui::Spacing();
+    std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
 
+    switch (m_pCollider->GetType())
+    {
+    case physics::EColliderType::BOX_COLLIDER:
+    {
+      // Generate unique ids
+      std::string sTitle = "BOX COLLIDER";
+      std::string sMax = "Max" + std::string("##" + sOwnerName);
+      std::string sMin = "Min" + std::string("##" + sOwnerName);
+
+      physics::CBoxCollider* pBoxCollider = static_cast<physics::CBoxCollider*>(m_pCollider);
+      float v3Max[3] = { pBoxCollider->GetMax().X, pBoxCollider->GetMax().Y, pBoxCollider->GetMax().Z };
+      float v3Min[3] = { pBoxCollider->GetMin().X, pBoxCollider->GetMin().Y, pBoxCollider->GetMin().Z };
+
+      ImGui::Text(sTitle.c_str());
+      ImGui::InputFloat3(sMax.c_str(), v3Max);
+      ImGui::InputFloat3(sMin.c_str(), v3Min);
+
+      pBoxCollider->SetMax(maths::CVector3(v3Max[0], v3Max[1], v3Max[2]));
+      pBoxCollider->SetMin(maths::CVector3(v3Min[0], v3Min[1], v3Min[2]));
+    }
+    break;
+    case physics::EColliderType::SPHERE_COLLIDER:
+    {
+      // Generate unique ids
+      std::string sTitle = "SPHERE COLLIDER";
+      std::string sCenter = "Center" + std::string("##" + sOwnerName);
+      std::string sRadius = "Radius" + std::string("##" + sOwnerName);
+
+      physics::CSphereCollider* pSphereCollider = static_cast<physics::CSphereCollider*>(m_pCollider);
+      float v3Center[3] = { pSphereCollider->GetCenter().X, pSphereCollider->GetCenter().Y, pSphereCollider->GetCenter().Z };
+      float fRadius = pSphereCollider->GetRadius();
+
+      ImGui::Text(sTitle.c_str());
+      ImGui::InputFloat3(sCenter.c_str(), v3Center);
+      ImGui::InputFloat(sRadius.c_str(), &fRadius);
+
+      pSphereCollider->SetPosition(maths::CVector3(v3Center[0], v3Center[1], v3Center[2]));
+      pSphereCollider->SetRadius(fRadius);
+    }
+    break;
+    default:
+      break;
+    }
   }
 }
 
