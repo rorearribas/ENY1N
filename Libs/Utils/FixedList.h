@@ -25,7 +25,7 @@ namespace utils
     void ClearAll();
 
     const uint32_t& CurrentSize() const { return m_uRegisteredItems; }
-    uint32_t MaxSize() { return static_cast<uint32_t>(MAX_ITEMS); }
+    uint32_t GetMaxSize() { return static_cast<uint32_t>(MAX_ITEMS); }
 
     std::array<T*, MAX_ITEMS>& operator()() { return m_vctItemList; }
     T* operator[](size_t Index) { return m_vctItemList[Index]; }

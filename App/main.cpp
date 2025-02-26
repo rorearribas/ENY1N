@@ -53,7 +53,7 @@ int main()
 
   game::CEntity* pCube01 = pGameManager->CreateEntity("Cube");
   game::CModelComponent* pModel01 = pCube01->RegisterComponent<game::CModelComponent>();
-  pModel01->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::CUBE);
+  pModel01->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE, render::graphics::CPrimitive::ERenderMode::SOLID);
   game::CCollisionComponent* pCollisionComponent = pCube01->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponent->CreateCollider(physics::EColliderType::BOX_COLLIDER);
 
@@ -86,10 +86,12 @@ int main()
       // Update
       while (m_fFixedDeltaAccumulator >= pTimeManager->GetFixedDelta())
       {
-        pEngine->Update(pTimeManager->GetFixedDelta());
-        pGameManager->Update(pTimeManager->GetFixedDelta());
+        float fFixedDeltaTime = pTimeManager->GetFixedDelta();
+        pEngine->Update(fFixedDeltaTime);
+        pGameManager->Update(fFixedDeltaTime);
+        pCollisionManager->Update(fFixedDeltaTime);
         pInputManager->Flush();
-        m_fFixedDeltaAccumulator -= pTimeManager->GetFixedDelta();
+        m_fFixedDeltaAccumulator -= fFixedDeltaTime;
       }
 
       // Draw

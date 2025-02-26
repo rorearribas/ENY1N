@@ -70,32 +70,32 @@ namespace engine
     m_pCamera->Update(_fDeltaTime);
   }
   // ------------------------------------
-  render::graphics::CPrimitive* CEngine::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, uint32_t _uSceneIndex)
+  render::graphics::CPrimitive* const CEngine::CreatePrimitive
+  (
+    render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, 
+    render::graphics::CPrimitive::ERenderMode _eRenderMode,
+    uint32_t _uSceneIndex
+  )
   {
-    return m_pSceneManager->CreatePrimitive(_vctVertexData, _uSceneIndex);
+    return m_pSceneManager->CreatePrimitive(_ePrimitiveType, _eRenderMode,  _uSceneIndex);
   }
   // ------------------------------------
-  render::graphics::CPrimitive* CEngine::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, uint32_t _uSceneIndex)
-  {
-    return m_pSceneManager->CreatePrimitive(_ePrimitiveType, _uSceneIndex);
-  }
-  // ------------------------------------
-  render::graphics::CModel* CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
+  render::graphics::CModel* const CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreateModel(_sModelPath, _sBaseMltDir, _uSceneIndex);
   }
   // ------------------------------------
-  render::lights::CDirectionalLight* CEngine::CreateDirectionalLight(uint32_t _uSceneIndex)
+  render::lights::CDirectionalLight* const CEngine::CreateDirectionalLight(uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreateDirectionalLight(_uSceneIndex);
   }
   // ------------------------------------
-  render::lights::CPointLight* CEngine::CreatePointLight(uint32_t _uSceneIndex)
+  render::lights::CPointLight* const CEngine::CreatePointLight(uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreatePointLight(_uSceneIndex);
   }
   // ------------------------------------
-  render::lights::CSpotLight* CEngine::CreateSpotLight(uint32_t _uSceneIndex)
+  render::lights::CSpotLight* const CEngine::CreateSpotLight(uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreateSpotLight(_uSceneIndex);
   }

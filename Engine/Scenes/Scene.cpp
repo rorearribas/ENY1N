@@ -111,29 +111,19 @@ namespace scene
     m_vctSpotLights.ClearAll();
   }
   // ------------------------------------
-  render::graphics::CPrimitive* CScene::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData)
+  render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::graphics::CPrimitive::ERenderMode _eRenderMode)
   {
-    if (m_vctPrimitiveItems.CurrentSize() >= m_vctPrimitiveItems.MaxSize())
-    {
-      std::cout << "There is a directional light in the current scene" << std::endl;
-      return nullptr;
-    }
-    return m_vctPrimitiveItems.CreateItem(_vctVertexData);
-  }
-  // ------------------------------------
-  render::graphics::CPrimitive* CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType)
-  {
-    if (m_vctPrimitiveItems.CurrentSize() >= m_vctPrimitiveItems.MaxSize())
+    if (m_vctPrimitiveItems.CurrentSize() >= m_vctPrimitiveItems.GetMaxSize())
     {
       std::cout << "You have reached maximum primitives in the current scene" << std::endl;
       return nullptr;
     }
-    return m_vctPrimitiveItems.CreateItem(_ePrimitiveType);
+    return m_vctPrimitiveItems.CreateItem(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
-  render::graphics::CModel* CScene::CreateModel(const char* _sModelPath, const char* _sBaseMltDir)
+  render::graphics::CModel* const CScene::CreateModel(const char* _sModelPath, const char* _sBaseMltDir)
   {
-    if (m_vctModels.CurrentSize() >= m_vctModels.MaxSize())
+    if (m_vctModels.CurrentSize() >= m_vctModels.GetMaxSize())
     {
       std::cout << "You have reached maximum models in the current scene" << std::endl;
       return nullptr;
@@ -141,7 +131,7 @@ namespace scene
     return m_vctModels.CreateItem(_sModelPath, _sBaseMltDir);
   }
   // ------------------------------------
-  render::lights::CDirectionalLight* CScene::CreateDirectionalLight()
+  render::lights::CDirectionalLight* const CScene::CreateDirectionalLight()
   {
     if (m_pDirectionalLight)
     {
@@ -152,7 +142,7 @@ namespace scene
     return m_pDirectionalLight;
   }
   // ------------------------------------
-  render::lights::CPointLight* CScene::CreatePointLight()
+  render::lights::CPointLight* const CScene::CreatePointLight()
   {
     if (m_vctPointLights.CurrentSize() >= s_iMaxPointLights)
     {
@@ -162,7 +152,7 @@ namespace scene
     return m_vctPointLights.CreateItem();
   }
   // ------------------------------------
-  render::lights::CSpotLight* CScene::CreateSpotLight()
+  render::lights::CSpotLight* const CScene::CreateSpotLight()
   {
     if (m_vctSpotLights.CurrentSize() >= s_iMaxSpotLights)
     {

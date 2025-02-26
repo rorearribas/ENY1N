@@ -22,13 +22,12 @@ namespace scene
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
     void DisableAllScenes() const;
 
-    render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, uint32_t _uSceneIndex = 0);
-    render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, uint32_t _uSceneIndex = 0);
-    render::graphics::CModel* CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex = 0);
+    render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType&, render::graphics::CPrimitive::ERenderMode, uint32_t _uSceneIndex = 0);
+    render::graphics::CModel* const CreateModel(const char*, const char*, uint32_t _uSceneIndex = 0);
 
-    render::lights::CDirectionalLight* CreateDirectionalLight(uint32_t _uSceneIndex = 0);
-    render::lights::CPointLight* CreatePointLight(uint32_t _uSceneIndex = 0);
-    render::lights::CSpotLight* CreateSpotLight(uint32_t _uSceneIndex = 0);
+    render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
+    render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
+    render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
 
     void DestroyModel(render::graphics::CModel*& pModel_, uint32_t _uSceneIndex = 0);
     void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);

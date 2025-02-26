@@ -11,24 +11,15 @@ namespace render
   {
     namespace internal_primitive
     {
+      // Triangle Primitive
       static const std::vector<CPrimitive::SPrimitiveInfo> s_oTrianglePrimitive =
       {
-        // TRIANGLE
         { maths::CVector3(0, 1.0f, 0.0f),   maths::CVector3(1.0f, 1.0f, 1.0f) },
         { maths::CVector3(1.0f, -1.0f,  0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
         { maths::CVector3(-1.0f, -1.0f,  0.0f), maths::CVector3(1.0f, 1.0f, 1.0f) },
       };
+      // Square Primitive
       static const std::vector<CPrimitive::SPrimitiveInfo> s_oSquarePrimitive =
-      {
-        // FRONT FACE
-        { maths::CVector3(-1.0f, 1.0f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(1.0f, -1.0f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(-1.0f,-1.0f, 0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },                   
-        { maths::CVector3(-1.0f, 1.0f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) },
-        { maths::CVector3(1.0f, 1.0f, 0.0f),   maths::CVector3(1.0f,  1.0f,  1.0f) },
-        { maths::CVector3(1.0f, -1.0f, 0.0f),  maths::CVector3(1.0f,  1.0f,  1.0f) },
-      };
-      static const std::vector<CPrimitive::SPrimitiveInfo> s_oCubePrimitive =
       {
         { maths::CVector3(-1.0f,  -1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
         { maths::CVector3(-1.0f, 1.0f,  -1.0f), maths::CVector3(0.0f, 1.0f, 0.0f) },
@@ -40,7 +31,32 @@ namespace render
         { maths::CVector3(1.0f, 1.0f,  1.0f), maths::CVector3(0.0f, 0.0f, 1.0f) },
         { maths::CVector3(1.0f,  -1.0f,  1.0f), maths::CVector3(1.0f, 1.0f, 1.0f) }
       };
-      static const std::vector<uint32_t> s_oCubeIndexes = 
+
+      // 2D Square Indices
+      static const std::vector<uint32_t> s_oSquareIndices =
+      {
+        0, 1, 2, // FRONT
+        0, 2, 3, // FRONT
+      };
+      static const std::vector<uint32_t> s_oSquareWireframeIndices =
+      {
+        0, 1, 1, 2, 2, 3, 3, 0, // FRONT FACE
+      };
+
+      // 2D Triangle Indices
+      static const std::vector<uint32_t> s_oTriangleIndices =
+      {
+        0, 1, 2, // FRONT
+      };
+      static const std::vector<uint32_t> s_oTriangleWireframeIndices =
+      {
+        0, 1, // Line 1
+        1, 2, // Line 2
+        2, 0  // Line 3
+      };
+
+      // 3D Cube Indices
+      static const std::vector<uint32_t> s_oCubeIndices =
       {
         0, 1, 2, //FRONT
         0, 2, 3, //FRONT
@@ -55,38 +71,27 @@ namespace render
         0, 3, 7, //BOTTOM
         0, 7, 4, //BOTTOM
       };
+      static const std::vector<uint32_t> s_oCubeWireframeIndices =
+      {
+        0, 1, 1, 2, 2, 3, 3, 0, // FRONT FACE
+        4, 5, 5, 6, 6, 7, 7, 4, // BACK FACE
+        0, 4, 1, 5, 2, 6, 3, 7  // CONNECTING EDGES
+      };
     }
 
     // ------------------------------------
-    CPrimitive::CPrimitive(const EPrimitiveType& _ePrimitiveType)
+    CPrimitive::CPrimitive(EPrimitiveType _ePrimitiveType, ERenderMode _eRenderMode)
     {
       HRESULT hr = CreateInputLayout();
       assert(!FAILED(hr));
 
       // Create buffer from presets
-      switch (_ePrimitiveType)
-      {
-        case EPrimitiveType::SQUARE:
-          hr = CreateBufferFromVertexData(internal_primitive::s_oSquarePrimitive);
-          break;
-        case EPrimitiveType::TRIANGLE:
-          hr = CreateBufferFromVertexData(internal_primitive::s_oTrianglePrimitive);
-          break;
-        case EPrimitiveType::CUBE:
-          hr = CreateBufferFromVertexData(internal_primitive::s_oCubePrimitive, internal_primitive::s_oCubeIndexes);
-      }
-
-      assert(!FAILED(hr));
-    }
-    // ------------------------------------
-    CPrimitive::CPrimitive(const std::vector<SPrimitiveInfo>& _vctVertexData)
-    {
-      HRESULT hr = CreateInputLayout();
+      hr = CreatePrimitive(_ePrimitiveType, _eRenderMode);
       assert(!FAILED(hr));
 
-      // Create buffer from vertex data
-      hr = CreateBufferFromVertexData(_vctVertexData);
-      assert(!FAILED(hr));
+      // Set values
+      m_eRenderMode = _eRenderMode;
+      m_ePrimitiveType = _ePrimitiveType;
     }
     // ------------------------------------
     CPrimitive::~CPrimitive()
@@ -94,6 +99,42 @@ namespace render
       m_oConstantBuffer.CleanBuffer();
       global::dx11::SafeRelease(m_pVertexBuffer);
       global::dx11::SafeRelease(m_pInputLayout);
+    }
+    // ------------------------------------
+    HRESULT CPrimitive::CreatePrimitive(EPrimitiveType _ePrimitiveType, ERenderMode _eRenderMode)
+    {
+      switch (_ePrimitiveType)
+      {
+        case EPrimitiveType::E2D_SQUARE:
+        {
+          return CreateBufferFromVertexData
+          (
+            internal_primitive::s_oSquarePrimitive,
+            _eRenderMode == SOLID ? internal_primitive::s_oSquareIndices : internal_primitive::s_oSquareWireframeIndices
+          );
+        }
+        break;
+        case EPrimitiveType::E2D_TRIANGLE:
+        {
+          return CreateBufferFromVertexData
+          (
+            internal_primitive::s_oTrianglePrimitive,
+            _eRenderMode == SOLID ? internal_primitive::s_oTriangleIndices : internal_primitive::s_oTriangleWireframeIndices
+          );
+        }
+        break;
+        case EPrimitiveType::E3D_CUBE:
+        {
+          return CreateBufferFromVertexData
+          (
+            internal_primitive::s_oSquarePrimitive,
+            _eRenderMode == SOLID ? internal_primitive::s_oCubeIndices : internal_primitive::s_oCubeWireframeIndices
+          );
+        }
+        break;
+      }
+
+      return S_FALSE;
     }
     // ------------------------------------
     HRESULT CPrimitive::CreateInputLayout()
@@ -112,6 +153,15 @@ namespace render
         sizeof(g_VertexShader),
         &m_pInputLayout
       );
+    }
+    // ------------------------------------
+    void CPrimitive::SetRenderMode(ERenderMode _eRenderMode)
+    {
+      if (m_eRenderMode != _eRenderMode)
+      {
+        m_eRenderMode = _eRenderMode;
+        CreatePrimitive(m_ePrimitiveType, m_eRenderMode);
+      } 
     }
     // ------------------------------------
     void CPrimitive::SetColor(const maths::CVector3& _v3Color)
@@ -141,6 +191,9 @@ namespace render
     HRESULT CPrimitive::CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes)
     {
       if (_vctPrimitiveInfo.empty()) return -1;
+
+      // Clean buffer
+      m_oConstantBuffer.CleanBuffer();
 
       // Create constant buffer
       m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
@@ -185,7 +238,10 @@ namespace render
       UINT uVertexOffset = 0;
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
-      global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+      // Set topology
+      global::dx11::s_pDeviceContext->IASetPrimitiveTopology(m_eRenderMode == ERenderMode::SOLID ?
+        D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
       // Set model matrix
       m_oConstantBuffer.GetData().mMatrix = m_oPrimitiveTransform.ComputeModelMatrix();

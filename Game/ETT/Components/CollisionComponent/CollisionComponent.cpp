@@ -5,6 +5,7 @@
 #include "Engine/Managers/CollisionManager.h"
 #include "Game/ETT/Entity.h"
 #include <cassert>
+#include "Engine/Base/Engine.h"
 
 namespace game
 {
@@ -16,7 +17,6 @@ namespace game
   void CCollisionComponent::CreateCollider(physics::EColliderType _eColliderType)
   {
     Clean();
-
     physics::CCollisionManager* pCollisionManager = physics::CCollisionManager::GetInstance();
     if (pCollisionManager)
     {
@@ -26,6 +26,7 @@ namespace game
   // ------------------------------------
   void CCollisionComponent::Update(float _fDeltaTime)
   {
+    // Colliders are being updated in the collision manager!
     Super::Update(_fDeltaTime);
   }
   // ------------------------------------
@@ -48,14 +49,21 @@ namespace game
     {
       m_pCollider->SetPosition(_v3Pos);
     }
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetPosition(_v3Pos);
+    }
   }
   // ------------------------------------
   void CCollisionComponent::Clean()
   {
-    physics::CCollisionManager* pCollisionManager = physics::CCollisionManager::GetInstance();
-    if (m_pCollider && pCollisionManager)
+    if (m_pCollider)
     {
-      pCollisionManager->DestroyCollider(m_pCollider);
+      physics::CCollisionManager::GetInstance()->DestroyCollider(m_pCollider);
+    }
+    if (m_pPrimitive)
+    {
+      engine::CEngine::GetInstance()->DestroyPrimitive(m_pPrimitive);
     }
   }
   // ------------------------------------
@@ -68,6 +76,16 @@ namespace game
     {
     case physics::EColliderType::BOX_COLLIDER:
     {
+      if (!m_pPrimitive)
+      {
+        m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
+        (
+          render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE,
+          render::graphics::CPrimitive::ERenderMode::WIREFRAME
+        );
+        m_pPrimitive->SetColor(maths::CVector3::One);
+      }
+      
       // Generate unique ids
       std::string sTitle = "BOX COLLIDER";
       std::string sMax = "Max" + std::string("##" + sOwnerName);
@@ -83,6 +101,7 @@ namespace game
 
       pBoxCollider->SetMax(maths::CVector3(v3Max[0], v3Max[1], v3Max[2]));
       pBoxCollider->SetMin(maths::CVector3(v3Min[0], v3Min[1], v3Min[2]));
+      m_pPrimitive->SetScale(maths::CVector3(v3Max[0], v3Max[1], v3Max[2]));
     }
     break;
     case physics::EColliderType::SPHERE_COLLIDER:

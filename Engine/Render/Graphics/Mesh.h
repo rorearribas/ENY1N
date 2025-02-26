@@ -46,13 +46,13 @@ namespace render
       ~CMesh();
 
       void DrawMesh();
-      HRESULT AssignIndexBuffer(TIndexesList& _vctIndexes);
+      HRESULT AssignIndexBuffer(TIndexesList& _vctIndices);
 
       void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
       void UpdateVertexColor(ID3D11Buffer* _pVertexBuffer);
 
       const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
-      const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndexes.size()); }
+      const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndices.size()); }
       const std::string& GetMeshId() const { return m_sMeshId; }
 
     private:
@@ -63,7 +63,7 @@ namespace render
 
       // Materials
       TMapMaterials m_dctMaterials = {};
-      TIndexesList m_vctIndexes = {};
+      TIndexesList m_vctIndices = {};
 
       // Buffers
       CConstantBuffer<SConstantTexture> m_oConstantTexture;

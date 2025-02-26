@@ -42,14 +42,13 @@ namespace scene
     const bool& IsEnabled() const { return m_bEnabled; }
 
     // Graphics
-    render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData);
-    render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType);
-    render::graphics::CModel* CreateModel(const char* _sModelPath, const char* _sBaseMltDir);
+    render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::graphics::CPrimitive::ERenderMode);
+    render::graphics::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir);
 
     // Lights
-    render::lights::CDirectionalLight* CreateDirectionalLight();
-    render::lights::CPointLight* CreatePointLight();
-    render::lights::CSpotLight* CreateSpotLight();
+    render::lights::CDirectionalLight* const CreateDirectionalLight();
+    render::lights::CPointLight* const CreatePointLight();
+    render::lights::CSpotLight* const CreateSpotLight();
 
     void DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_);
     void DestroyModel(render::graphics::CModel*& pModel_);

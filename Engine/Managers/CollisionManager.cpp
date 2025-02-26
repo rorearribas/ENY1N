@@ -7,10 +7,8 @@
 
 namespace physics
 {
-  void CCollisionManager::Update(float _fDeltaTime)
+  void CCollisionManager::Update(float /*_fDeltaTime*/)
   {
-    UNUSED_VARIABLE(_fDeltaTime);
-
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
     {
       for (uint32_t uJ = uI + 1; uJ < m_vctColliders.CurrentSize(); ++uJ)
@@ -22,7 +20,7 @@ namespace physics
   // ------------------------------------
   physics::CCollider* CCollisionManager::CreateCollider(physics::EColliderType _eColliderType)
   {
-    if (m_vctColliders.CurrentSize() >= m_vctColliders.MaxSize())
+    if (m_vctColliders.CurrentSize() >= m_vctColliders.GetMaxSize())
     {
       std::cout << "You have reached maximum colliders" << std::endl;
       return nullptr;

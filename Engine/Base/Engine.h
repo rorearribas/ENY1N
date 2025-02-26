@@ -29,13 +29,12 @@ namespace engine
     render::CCamera* GetCamera() const { return m_pCamera.get(); }
 
     // Creation elements
-    render::graphics::CPrimitive* CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, uint32_t _uSceneIndex = 0);
-    render::graphics::CPrimitive* CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, uint32_t _uSceneIndex = 0);
-    render::graphics::CModel* CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex = 0);
+    render::graphics::CPrimitive* const CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType, render::graphics::CPrimitive::ERenderMode, uint32_t _uSceneIndex = 0);
+    render::graphics::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex = 0);
 
-    render::lights::CDirectionalLight* CreateDirectionalLight(uint32_t _uSceneIndex = 0);
-    render::lights::CPointLight* CreatePointLight(uint32_t _uSceneIndex = 0);
-    render::lights::CSpotLight* CreateSpotLight(uint32_t _uSceneIndex = 0);
+    render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
+    render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
+    render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
 
     void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive);
     void DestroyModel(render::graphics::CModel*& _pModel);

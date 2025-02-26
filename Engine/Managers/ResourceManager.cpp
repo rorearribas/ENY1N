@@ -121,7 +121,7 @@ render::graphics::CModel::SModelInfo CResourceManager::LoadModel(const char* _sP
     }
 
     // Mesh
-    std::vector<uint32_t> vctIndexes = {};
+    std::vector<uint32_t> vctIndices = {};
     uint32_t uIndexOffset = 0;
 
     for (uint32_t uJ = 0; uJ < static_cast<uint32_t>(mesh.num_face_vertices.size()); uJ++)
@@ -167,14 +167,14 @@ render::graphics::CModel::SModelInfo CResourceManager::LoadModel(const char* _sP
         auto it = dctVertexMap.find(oVertexData);
         if (it != dctVertexMap.end()) 
         {
-          vctIndexes.emplace_back(it->second);
+          vctIndices.emplace_back(it->second);
         }
         else 
         {
           uint32_t uNewIdx = static_cast<uint32_t>(dctVertexMap.size());
           dctVertexMap[oVertexData] = uNewIdx;
           oModelData.m_vctVertexData.emplace_back(oVertexData);
-          vctIndexes.emplace_back(uNewIdx);
+          vctIndices.emplace_back(uNewIdx);
         }
       }
 
@@ -183,7 +183,7 @@ render::graphics::CModel::SModelInfo CResourceManager::LoadModel(const char* _sP
     }
 
     // Create mesh
-    HRESULT hr = pMesh->AssignIndexBuffer(vctIndexes);
+    HRESULT hr = pMesh->AssignIndexBuffer(vctIndices);
     UNUSED_VARIABLE(hr);
     assert(!FAILED(hr));
 

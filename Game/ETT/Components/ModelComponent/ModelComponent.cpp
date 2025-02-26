@@ -33,18 +33,26 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType)
+  void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::graphics::CPrimitive::ERenderMode _eRenderMode)
   {
     if (engine::CEngine::HasSingleton())
     {
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      m_pPrimitive = pEngine->CreatePrimitive(_ePrimitiveType);
+      m_pPrimitive = pEngine->CreatePrimitive(_ePrimitiveType, _eRenderMode);
       assert(m_pPrimitive);
 
       if (m_pModel)
       {
         pEngine->DestroyModel(m_pModel);
       }
+    }
+  }
+  // ------------------------------------
+  void CModelComponent::SetPrimitiveRenderMode(render::graphics::CPrimitive::ERenderMode _eRenderMode)
+  {
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetRenderMode(_eRenderMode);
     }
   }
   // ------------------------------------

@@ -2,6 +2,7 @@
 #include "Game/ETT/Components/Component.h"
 #include "Libs/Maths/Vector3.h"
 #include "Engine/Physics/Collider.h"
+#include "Engine/Render/Graphics/Primitive.h"
 
 namespace game { class CEntity; }
 namespace game
@@ -24,5 +25,6 @@ namespace game
   private:
     void Clean();
     physics::CCollider* m_pCollider = nullptr;
+    render::graphics::CPrimitive* m_pPrimitive = nullptr;
   };
 }

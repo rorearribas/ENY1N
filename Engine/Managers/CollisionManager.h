@@ -14,8 +14,8 @@ namespace physics
   public:
     void Update(float _fDeltaTime);
 
-    physics::CCollider* CreateCollider(physics::EColliderType);
-    void DestroyCollider(physics::CCollider*&);
+    physics::CCollider* CreateCollider(physics::EColliderType _eColliderType);
+    void DestroyCollider(physics::CCollider*& _pCollider_);
 
   private:
     TColliderList m_vctColliders;

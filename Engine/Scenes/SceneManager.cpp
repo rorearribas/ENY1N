@@ -40,42 +40,40 @@ namespace scene
     m_pCurrentScene->SetSceneEnabled(_bEnabled);
   }
   // ------------------------------------
-  render::graphics::CPrimitive* CSceneManager::CreatePrimitive(const std::vector<render::graphics::CPrimitive::SPrimitiveInfo>& _vctVertexData, uint32_t _uSceneIndex)
+  render::graphics::CPrimitive* const CSceneManager::CreatePrimitive
+  (
+    const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, 
+    render::graphics::CPrimitive::ERenderMode _eRenderMode, 
+    uint32_t _uSceneIndex
+  )
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
-    return pScene->CreatePrimitive(_vctVertexData);
-  } 
-  // ------------------------------------
-  render::graphics::CPrimitive* CSceneManager::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, uint32_t _uSceneIndex)
-  {
-    if (static_cast<size_t>(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
-    scene::CScene* pScene = m_vctScenes[_uSceneIndex];
-    return pScene->CreatePrimitive(_ePrimitiveType);
+    return pScene->CreatePrimitive(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
-  render::graphics::CModel* CSceneManager::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
+  render::graphics::CModel* const CSceneManager::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreateModel(_sModelPath, _sBaseMltDir);
   }
   // ------------------------------------
-  render::lights::CDirectionalLight* CSceneManager::CreateDirectionalLight(uint32_t _uSceneIndex)
+  render::lights::CDirectionalLight* const CSceneManager::CreateDirectionalLight(uint32_t _uSceneIndex)
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreateDirectionalLight();
   }
   // ------------------------------------
-  render::lights::CPointLight* CSceneManager::CreatePointLight(uint32_t _uSceneIndex)
+  render::lights::CPointLight* const CSceneManager::CreatePointLight(uint32_t _uSceneIndex)
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
     return pScene->CreatePointLight();
   }
   // ------------------------------------
-  render::lights::CSpotLight* CSceneManager::CreateSpotLight(uint32_t _uSceneIndex)
+  render::lights::CSpotLight* const CSceneManager::CreateSpotLight(uint32_t _uSceneIndex)
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];

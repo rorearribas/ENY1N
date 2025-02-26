@@ -10,9 +10,12 @@ namespace render
 {
   namespace graphics
   {
-    class CPrimitive {
+    class CPrimitive
+    {
     public:
-      enum EPrimitiveType { SQUARE, TRIANGLE, CUBE };
+      enum EPrimitiveType { E2D_SQUARE, E2D_TRIANGLE, E3D_CUBE, INVALID };
+      enum ERenderMode { SOLID, WIREFRAME };
+
       struct SPrimitiveInfo
       {
         maths::CVector3 Position = maths::CVector3::Zero;
@@ -20,11 +23,11 @@ namespace render
       };
 
     public:
-      CPrimitive(const EPrimitiveType& _ePrimitiveType);
-      CPrimitive(const std::vector<SPrimitiveInfo>& _vctVertexData);
+      CPrimitive(EPrimitiveType _ePrimitiveType, ERenderMode _eRenderMode = SOLID);
       ~CPrimitive();
 
       void DrawPrimitive();
+      void SetRenderMode(ERenderMode _eRenderMode);
 
       void SetPosition(const maths::CVector3& _v3Position) { m_oPrimitiveTransform.SetPosition(_v3Position); }
       const maths::CVector3& GetPosition() const { return m_oPrimitiveTransform.GetPosition(); }
@@ -36,7 +39,8 @@ namespace render
       const maths::CVector3& GetColor() const { return m_v3CurrentColor; }
 
     private:
-      HRESULT CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes = {});
+      HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, ERenderMode);
+      HRESULT CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>&, const std::vector<UINT>&);
       HRESULT CreateInputLayout();
 
       // Primitive data
@@ -46,6 +50,9 @@ namespace render
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
       // Data
+      ERenderMode m_eRenderMode = SOLID;
+      EPrimitiveType m_ePrimitiveType = EPrimitiveType::INVALID;
+
       maths::CTransform m_oPrimitiveTransform;
       maths::CVector3 m_v3CurrentColor = maths::CVector3::One;
       UINT m_uVertexCount = 0;

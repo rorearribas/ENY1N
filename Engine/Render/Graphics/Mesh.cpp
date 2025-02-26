@@ -42,7 +42,7 @@ namespace render
 
       // Draw
       global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-      global::dx11::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_vctIndexes.size()), 0, 0);
+      global::dx11::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_vctIndices.size()), 0, 0);
     }
     // ------------------------------------
     void CMesh::AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx)
@@ -50,7 +50,7 @@ namespace render
       m_dctMaterials.emplace(_uMaterialIdx, _pMaterial);
     }
     // ------------------------------------
-    HRESULT CMesh::AssignIndexBuffer(TIndexesList& _vctIndexes)
+    HRESULT CMesh::AssignIndexBuffer(TIndexesList& _vctIndices)
     {
       // Clean mesh
       Clean();
@@ -59,17 +59,17 @@ namespace render
       m_oConstantTexture.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Get indexes
-      m_vctIndexes = std::move(_vctIndexes);
+      m_vctIndices = std::move(_vctIndices);
 
       // Config index buffer
       D3D11_BUFFER_DESC oIndexBufferDesc = {};
       oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-      oIndexBufferDesc.ByteWidth = static_cast<UINT>((sizeof(uint32_t) * m_vctIndexes.size()));
+      oIndexBufferDesc.ByteWidth = static_cast<UINT>((sizeof(uint32_t) * m_vctIndices.size()));
       oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
       oIndexBufferDesc.CPUAccessFlags = 0;
 
       D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = {};
-      oSubresourceIndexesData.pSysMem = m_vctIndexes.data();
+      oSubresourceIndexesData.pSysMem = m_vctIndices.data();
 
       return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
@@ -88,14 +88,14 @@ namespace render
 
       // Offset
       uint32_t uOffsetMat = 0;
-      uint32_t uMaxTriangles = static_cast<uint32_t>(m_vctIndexes.size()) / 3; // Get max triangles
+      uint32_t uMaxTriangles = static_cast<uint32_t>(m_vctIndices.size()) / 3; // Get max triangles
       for (uint32_t uIndex = 0; uIndex < uMaxTriangles; uIndex++)
       {
         // Set material color
-        uint32_t uMeshOffset = static_cast<uint32_t>(m_vctIndexes.size()) / uMaxTriangles; // Get mesh offset
+        uint32_t uMeshOffset = static_cast<uint32_t>(m_vctIndices.size()) / uMaxTriangles; // Get mesh offset
         for (uint32_t uJ = uOffsetMat; uJ < uMeshOffset + uOffsetMat; uJ++)
         {
-          uint32_t uVertexDataIdx = m_vctIndexes[uJ];
+          uint32_t uVertexDataIdx = m_vctIndices[uJ];
           auto it = m_dctMaterials.find(pVertexData[uVertexDataIdx].MaterialId);
           if (it != m_dctMaterials.end())
           {
