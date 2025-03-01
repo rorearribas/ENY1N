@@ -33,7 +33,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::graphics::CPrimitive::ERenderMode _eRenderMode)
+  void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
   {
     if (engine::CEngine::HasSingleton())
     {
@@ -48,11 +48,19 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::SetPrimitiveRenderMode(render::graphics::CPrimitive::ERenderMode _eRenderMode)
+  void CModelComponent::SetPrimitiveRenderMode(render::ERenderMode _eRenderMode)
   {
     if (m_pPrimitive)
     {
       m_pPrimitive->SetRenderMode(_eRenderMode);
+    }
+  }
+  // ------------------------------------
+  void CModelComponent::SetPrimitiveColor(const maths::CVector3& _v3Color)
+  {
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetColor(_v3Color);
     }
   }
   // ------------------------------------

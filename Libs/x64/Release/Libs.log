@@ -1,2 +1,4 @@
 ﻿  Matrix4x4.cpp
+  Transform.cpp
+  Vector3.cpp
   Libs.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Release\Libs.lib

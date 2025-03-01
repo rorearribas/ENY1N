@@ -47,15 +47,20 @@ int main()
   game::CEntity* pSpotLightEntity = pGameManager->CreateEntity("Spot light Test");
   pSpotLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
 
-  //game::CEntity* pRoomEntitty = pGameManager->CreateEntity("Room");
-  //game::CModelComponent* pModelComponent = pRoomEntitty->RegisterComponent<game::CModelComponent>();
-  //pModelComponent->LoadModel("..\\Assets//Models//Room//room.obj", "..\\Assets//Models//Room");
-
   game::CEntity* pCube01 = pGameManager->CreateEntity("Cube");
   game::CModelComponent* pModel01 = pCube01->RegisterComponent<game::CModelComponent>();
-  pModel01->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE, render::graphics::CPrimitive::ERenderMode::SOLID);
+  pModel01->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+  pModel01->SetPrimitiveColor(maths::CVector3(0.0f, 0.0f, 1.0f));
   game::CCollisionComponent* pCollisionComponent = pCube01->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponent->CreateCollider(physics::EColliderType::BOX_COLLIDER);
+
+  game::CEntity* pCube02 = pGameManager->CreateEntity("Cube");
+  game::CModelComponent* pModel02 = pCube02->RegisterComponent<game::CModelComponent>();
+  pModel02->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+  pModel02->SetPrimitiveColor(maths::CVector3(1.0f, 0.0f, 0.0f));
+  game::CCollisionComponent* pCollisionComponent2 = pCube02->RegisterComponent<game::CCollisionComponent>();
+  pCollisionComponent2->CreateCollider(physics::EColliderType::BOX_COLLIDER);
+  pCube02->SetPosition(maths::CVector3(5.0f, 0.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();

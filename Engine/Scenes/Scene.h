@@ -42,7 +42,7 @@ namespace scene
     const bool& IsEnabled() const { return m_bEnabled; }
 
     // Graphics
-    render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::graphics::CPrimitive::ERenderMode);
+    render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode = render::ERenderMode::SOLID);
     render::graphics::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir);
 
     // Lights

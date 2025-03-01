@@ -1,14 +1,15 @@
+C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Managers\CollisionManager.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\CollisionManager.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Lights\WIP\LightManager.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\LightManager.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Graphics\Mesh.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Mesh.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Lights\Light.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Light.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Resources\Material.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Material.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Graphics\Model.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Model.obj
-C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Physics\AABB.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\AABB.obj
+C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Physics\BoxCollider.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\BoxCollider.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Base\Engine.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Camera\Camera.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Camera.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Lights\DirectionalLight.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DirectionalLight.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Global\GlobalResources.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\GlobalResources.obj
-C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Input\InputManager.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\InputManager.obj
+C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Managers\InputManager.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\InputManager.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Lights\PointLight.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\PointLight.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Graphics\Primitive.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Primitive.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Render.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Render.obj
@@ -20,3 +21,4 @@ C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Resources\Texture.cpp;C:\Us
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Graphics\Shape.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Shape.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Shader.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Shader.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Lights\SpotLight.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\SpotLight.obj
+C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Physics\SphereCollider.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\SphereCollider.obj

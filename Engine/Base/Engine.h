@@ -29,7 +29,7 @@ namespace engine
     render::CCamera* GetCamera() const { return m_pCamera.get(); }
 
     // Creation elements
-    render::graphics::CPrimitive* const CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType, render::graphics::CPrimitive::ERenderMode, uint32_t _uSceneIndex = 0);
+    render::graphics::CPrimitive* const CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType, render::ERenderMode = render::ERenderMode::SOLID, uint32_t _uSceneIndex = 0);
     render::graphics::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex = 0);
 
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);

@@ -13,7 +13,11 @@ namespace physics
     {
       for (uint32_t uJ = uI + 1; uJ < m_vctColliders.CurrentSize(); ++uJ)
       {
-        m_vctColliders[uI]->CheckCollision(*m_vctColliders[uJ]);
+        bool bCollision = m_vctColliders[uI]->CheckCollision(*m_vctColliders[uJ]);
+        if (bCollision)
+        {
+          std::cout << "WORKS" << std::endl;
+        }
       }
     }
   }

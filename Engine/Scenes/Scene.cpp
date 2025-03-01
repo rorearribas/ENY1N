@@ -111,7 +111,7 @@ namespace scene
     m_vctSpotLights.ClearAll();
   }
   // ------------------------------------
-  render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::graphics::CPrimitive::ERenderMode _eRenderMode)
+  render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)
   {
     if (m_vctPrimitiveItems.CurrentSize() >= m_vctPrimitiveItems.GetMaxSize())
     {

@@ -21,16 +21,17 @@ namespace render
       // Square Primitive
       static const std::vector<CPrimitive::SPrimitiveInfo> s_oSquarePrimitive =
       {
-        { maths::CVector3(-1.0f,  -1.0f,  -1.0f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(-1.0f, 1.0f,  -1.0f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(1.0f, 1.0f,  -1.0f), maths::CVector3(0.0f, 0.0f, 1.0f)},
-        { maths::CVector3(1.0f,  -1.0f,  -1.0f), maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(-0.5f, -0.5f, -0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },
+        { maths::CVector3(-0.5f,  0.5f, -0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
+        { maths::CVector3(0.5f,  0.5f, -0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },
+        { maths::CVector3(0.5f, -0.5f, -0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) },
 
-        { maths::CVector3(-1.0f,  -1.0f,  1.0f), maths::CVector3(1.0f, 0.0f, 0.0f)},
-        { maths::CVector3(-1.0f, 1.0f,  1.0f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(1.0f, 1.0f,  1.0f), maths::CVector3(0.0f, 0.0f, 1.0f) },
-        { maths::CVector3(1.0f,  -1.0f,  1.0f), maths::CVector3(1.0f, 1.0f, 1.0f) }
+        { maths::CVector3(-0.5f, -0.5f,  0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },
+        { maths::CVector3(-0.5f,  0.5f,  0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
+        { maths::CVector3(0.5f,  0.5f,  0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },
+        { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) }
       };
+
 
       // 2D Square Indices
       static const std::vector<uint32_t> s_oSquareIndices =
@@ -101,37 +102,37 @@ namespace render
       global::dx11::SafeRelease(m_pInputLayout);
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreatePrimitive(EPrimitiveType _ePrimitiveType, ERenderMode _eRenderMode)
+    HRESULT CPrimitive::CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
     {
       switch (_ePrimitiveType)
       {
-        case EPrimitiveType::E2D_SQUARE:
-        {
-          return CreateBufferFromVertexData
-          (
-            internal_primitive::s_oSquarePrimitive,
-            _eRenderMode == SOLID ? internal_primitive::s_oSquareIndices : internal_primitive::s_oSquareWireframeIndices
-          );
-        }
-        break;
-        case EPrimitiveType::E2D_TRIANGLE:
-        {
-          return CreateBufferFromVertexData
-          (
-            internal_primitive::s_oTrianglePrimitive,
-            _eRenderMode == SOLID ? internal_primitive::s_oTriangleIndices : internal_primitive::s_oTriangleWireframeIndices
-          );
-        }
-        break;
-        case EPrimitiveType::E3D_CUBE:
-        {
-          return CreateBufferFromVertexData
-          (
-            internal_primitive::s_oSquarePrimitive,
-            _eRenderMode == SOLID ? internal_primitive::s_oCubeIndices : internal_primitive::s_oCubeWireframeIndices
-          );
-        }
-        break;
+      case EPrimitiveType::E2D_SQUARE:
+      {
+        return CreateBufferFromVertexData
+        (
+          internal_primitive::s_oSquarePrimitive,
+          _eRenderMode == SOLID ? internal_primitive::s_oSquareIndices : internal_primitive::s_oSquareWireframeIndices
+        );
+      }
+      break;
+      case EPrimitiveType::E2D_TRIANGLE:
+      {
+        return CreateBufferFromVertexData
+        (
+          internal_primitive::s_oTrianglePrimitive,
+          _eRenderMode == SOLID ? internal_primitive::s_oTriangleIndices : internal_primitive::s_oTriangleWireframeIndices
+        );
+      }
+      break;
+      case EPrimitiveType::E3D_CUBE:
+      {
+        return CreateBufferFromVertexData
+        (
+          internal_primitive::s_oSquarePrimitive,
+          _eRenderMode == SOLID ? internal_primitive::s_oCubeIndices : internal_primitive::s_oCubeWireframeIndices
+        );
+      }
+      break;
       }
 
       return S_FALSE;
@@ -155,13 +156,13 @@ namespace render
       );
     }
     // ------------------------------------
-    void CPrimitive::SetRenderMode(ERenderMode _eRenderMode)
+    void CPrimitive::SetRenderMode(render::ERenderMode _eRenderMode)
     {
       if (m_eRenderMode != _eRenderMode)
       {
         m_eRenderMode = _eRenderMode;
         CreatePrimitive(m_ePrimitiveType, m_eRenderMode);
-      } 
+      }
     }
     // ------------------------------------
     void CPrimitive::SetColor(const maths::CVector3& _v3Color)

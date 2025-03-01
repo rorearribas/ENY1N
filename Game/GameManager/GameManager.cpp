@@ -76,6 +76,7 @@ namespace game
         std::ostringstream oss;
         oss << _sEntityName << "_" << iNameSuffix++;
         sTargetEntityID = oss.str();
+        break;
       }
     }
 

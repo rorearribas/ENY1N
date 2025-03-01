@@ -37,6 +37,12 @@ namespace maths
     float DotProduct(const CVector3& _v3) const;
     CVector3 CrossProduct(const CVector3& _v3) const;
     CVector3 Normalized() const;
+
+    float Length() const
+    {
+      return std::sqrt(X * X + Y * Y + Z * Z);
+    }
+
   };
 }
 

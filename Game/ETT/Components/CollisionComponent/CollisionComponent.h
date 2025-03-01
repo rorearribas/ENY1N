@@ -18,12 +18,17 @@ namespace game
     virtual void Update(float _fDeltaTime) override;
     virtual void DrawDebug() override;
 
+    void SetPhysicsEnabled(bool _bStatus) { m_bEnablePhysics = _bStatus; }
+    const float& IsPhysicsEnabled() const { return m_bEnablePhysics; }
+
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const;
     virtual void OnPositionChanged(const maths::CVector3& _v3Pos) override;
 
   private:
     void Clean();
+    bool m_bEnablePhysics = true;
+
     physics::CCollider* m_pCollider = nullptr;
     render::graphics::CPrimitive* m_pPrimitive = nullptr;
   };

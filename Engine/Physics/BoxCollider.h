@@ -8,26 +8,37 @@ namespace physics
   class CBoxCollider : public CCollider
   {
   public:
-    CBoxCollider() : CCollider(BOX_COLLIDER) {}
-    CBoxCollider(const maths::CVector3& _v3Min, const maths::CVector3& _v3Max) 
-    : CCollider(BOX_COLLIDER), m_vMax(_v3Max), m_vMin(_v3Min) {}
+    CBoxCollider() : CCollider(BOX_COLLIDER) { ComputeMinMax(); }
+    CBoxCollider(const maths::CVector3& _v3Size) : CCollider(BOX_COLLIDER), m_vSize(_v3Size) { ComputeMinMax(); }
     virtual ~CBoxCollider() {}
 
-    bool CheckCollision(const CCollider& _other) override;
+    virtual bool CheckCollision(const CCollider& _other) override;
+    virtual void RecalculateCollider() override;
+
+    void SetSize(const maths::CVector3& _v3Size);
+    const maths::CVector3& GetSize() const { return m_vSize;}
 
     maths::CVector3 GetCenter() const { return maths::CVector3(m_vMax + m_vMin) * 0.5f; }
-    void SetMax(const maths::CVector3& _v3Max) { m_vMax = _v3Max; }
+    const std::vector<maths::CVector3>& GetExtents() const { return m_v3Extents; }
     const maths::CVector3& GetMax() const { return m_vMax; }
-    void SetMin(const maths::CVector3& _v3Min) { m_vMin = _v3Min; }
     const maths::CVector3& GetMin() const { return m_vMin; }
 
   private:
+    void ComputeExtents();
     bool CheckBoxCollision(const CBoxCollider& _other);
-    bool CheckSphereCollision(const CSphereCollider& _other);
+    bool CheckPointIntersection(const std::vector<maths::CVector3>& _v3WorldVertices) const;
+
+    bool CheckSphereCollision(const CSphereCollider& _other) const;
+    void ComputeMinMax();
 
   private:
-    maths::CVector3 m_vMax = maths::CVector3::One;
+    // Size
+    maths::CVector3 m_vSize = maths::CVector3::One;
+    // Min - Max
+    maths::CVector3 m_vMax = maths::CVector3::Zero;
     maths::CVector3 m_vMin = maths::CVector3::Zero;
+    // Extents
+    std::vector<maths::CVector3> m_v3Extents;
   };
 }
 

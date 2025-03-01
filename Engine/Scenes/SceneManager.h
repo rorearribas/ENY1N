@@ -3,6 +3,7 @@
 #include "Engine/Render/Graphics/Model.h"
 #include "Engine/Scenes/Scene.h"
 #include "Libs/Utils/Singleton.h"
+#include "Engine/Render/Render.h"
 #include <array>
 
 namespace scene
@@ -22,7 +23,7 @@ namespace scene
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
     void DisableAllScenes() const;
 
-    render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType&, render::graphics::CPrimitive::ERenderMode, uint32_t _uSceneIndex = 0);
+    render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType&, render::ERenderMode = render::ERenderMode::SOLID, uint32_t _uSceneIndex = 0);
     render::graphics::CModel* const CreateModel(const char*, const char*, uint32_t _uSceneIndex = 0);
 
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);

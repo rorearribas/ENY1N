@@ -43,7 +43,7 @@ namespace scene
   render::graphics::CPrimitive* const CSceneManager::CreatePrimitive
   (
     const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, 
-    render::graphics::CPrimitive::ERenderMode _eRenderMode, 
+    render::ERenderMode _eRenderMode,
     uint32_t _uSceneIndex
   )
   {

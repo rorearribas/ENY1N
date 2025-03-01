@@ -73,7 +73,7 @@ namespace engine
   render::graphics::CPrimitive* const CEngine::CreatePrimitive
   (
     render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, 
-    render::graphics::CPrimitive::ERenderMode _eRenderMode,
+    render::ERenderMode _eRenderMode,
     uint32_t _uSceneIndex
   )
   {

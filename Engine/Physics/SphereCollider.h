@@ -12,6 +12,7 @@ namespace physics
     virtual ~CSphereCollider() {}
 
     bool CheckCollision(const CCollider&) override { return false; }
+    virtual void RecalculateCollider() override {};
 
     const maths::CVector3& GetCenter() const { return m_v3Center; }
     void SetRadius(float _fRadius) { m_fRadius = _fRadius; }

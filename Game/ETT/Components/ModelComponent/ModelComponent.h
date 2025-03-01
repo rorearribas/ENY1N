@@ -19,8 +19,9 @@ namespace game
 
     void LoadModel(const char* _sModelPath, const char* _sBaseMltDir);
 
-    void CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::graphics::CPrimitive::ERenderMode _eRenderMode);
-    void SetPrimitiveRenderMode(render::graphics::CPrimitive::ERenderMode _eRenderMode);
+    void CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode = render::ERenderMode::SOLID);
+    void SetPrimitiveRenderMode(render::ERenderMode  _eRenderMode);
+    void SetPrimitiveColor(const maths::CVector3& _v3Color);
 
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const;

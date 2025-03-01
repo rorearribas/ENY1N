@@ -30,11 +30,16 @@ namespace game
     Super::Update(_fDeltaTime);
   }
   // ------------------------------------
-  void CCollisionComponent::SetPosition(const maths::CVector3& _v3Position)
+  void CCollisionComponent::SetPosition(const maths::CVector3& _v3Pos)
   {
     if (m_pCollider)
     {
-      m_pCollider->SetPosition(_v3Position);
+      m_pCollider->SetPosition(_v3Pos);
+      m_pCollider->RecalculateCollider();
+    }
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetPosition(_v3Pos);
     }
   }
   // ------------------------------------
@@ -45,14 +50,7 @@ namespace game
   // ------------------------------------
   void CCollisionComponent::OnPositionChanged(const maths::CVector3& _v3Pos)
   {
-    if (m_pCollider)
-    {
-      m_pCollider->SetPosition(_v3Pos);
-    }
-    if (m_pPrimitive)
-    {
-      m_pPrimitive->SetPosition(_v3Pos);
-    }
+    SetPosition(_v3Pos);
   }
   // ------------------------------------
   void CCollisionComponent::Clean()
@@ -81,27 +79,29 @@ namespace game
         m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
         (
           render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE,
-          render::graphics::CPrimitive::ERenderMode::WIREFRAME
+          render::ERenderMode::WIREFRAME
         );
         m_pPrimitive->SetColor(maths::CVector3::One);
       }
       
       // Generate unique ids
       std::string sTitle = "BOX COLLIDER";
+      std::string sSize = "Size" + std::string("##" + sOwnerName);
       std::string sMax = "Max" + std::string("##" + sOwnerName);
       std::string sMin = "Min" + std::string("##" + sOwnerName);
 
       physics::CBoxCollider* pBoxCollider = static_cast<physics::CBoxCollider*>(m_pCollider);
+      float v3Size[3] = { pBoxCollider->GetSize().X, pBoxCollider->GetSize().Y, pBoxCollider->GetSize().Z };
       float v3Max[3] = { pBoxCollider->GetMax().X, pBoxCollider->GetMax().Y, pBoxCollider->GetMax().Z };
       float v3Min[3] = { pBoxCollider->GetMin().X, pBoxCollider->GetMin().Y, pBoxCollider->GetMin().Z };
 
       ImGui::Text(sTitle.c_str());
+      ImGui::InputFloat3(sSize.c_str(), v3Size);
       ImGui::InputFloat3(sMax.c_str(), v3Max);
       ImGui::InputFloat3(sMin.c_str(), v3Min);
 
-      pBoxCollider->SetMax(maths::CVector3(v3Max[0], v3Max[1], v3Max[2]));
-      pBoxCollider->SetMin(maths::CVector3(v3Min[0], v3Min[1], v3Min[2]));
-      m_pPrimitive->SetScale(maths::CVector3(v3Max[0], v3Max[1], v3Max[2]));
+      m_pPrimitive->SetScale(maths::CVector3(v3Size[0], v3Size[1], v3Size[2]));
+      pBoxCollider->SetSize(maths::CVector3(v3Size[0], v3Size[1], v3Size[2]));
     }
     break;
     case physics::EColliderType::SPHERE_COLLIDER:
