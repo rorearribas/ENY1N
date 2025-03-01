@@ -14,7 +14,7 @@ namespace render
     class CPrimitive
     {
     public:
-      enum EPrimitiveType { E2D_SQUARE, E2D_TRIANGLE, E3D_CUBE, INVALID };
+      enum EPrimitiveType { E2D_SQUARE, E2D_TRIANGLE, E2D_SPHERE, E3D_CUBE, E3D_PLANE, E3D_SPHERE, INVALID };
 
       struct SPrimitiveInfo
       {

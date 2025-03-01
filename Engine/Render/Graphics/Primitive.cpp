@@ -32,7 +32,6 @@ namespace render
         { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) }
       };
 
-
       // 2D Square Indices
       static const std::vector<uint32_t> s_oSquareIndices =
       {
@@ -77,6 +76,20 @@ namespace render
         0, 1, 1, 2, 2, 3, 3, 0, // FRONT FACE
         4, 5, 5, 6, 6, 7, 7, 4, // BACK FACE
         0, 4, 1, 5, 2, 6, 3, 7  // CONNECTING EDGES
+      };
+
+      // 3D Plane Indices
+      static const std::vector<uint32_t> s_oPlaneIndices =
+      {
+        0, 1, 2, //FRONT
+        0, 2, 3, //FRONT
+      };
+      static const std::vector<uint32_t> s_oPlaneWireframeIndices =
+      {
+        0, 1, // TOP EDGE
+        1, 2, // RIGHT EDGE
+        2, 3, // BOTTOM EDGE
+        3, 0  // LEFT EDGE 
       };
     }
 
@@ -130,6 +143,15 @@ namespace render
         (
           internal_primitive::s_oSquarePrimitive,
           _eRenderMode == SOLID ? internal_primitive::s_oCubeIndices : internal_primitive::s_oCubeWireframeIndices
+        );
+      }
+      break;
+      case EPrimitiveType::E3D_PLANE:
+      {
+        return CreateBufferFromVertexData
+        (
+          internal_primitive::s_oSquarePrimitive,
+          _eRenderMode == SOLID ? internal_primitive::s_oPlaneIndices : internal_primitive::s_oPlaneWireframeIndices
         );
       }
       break;

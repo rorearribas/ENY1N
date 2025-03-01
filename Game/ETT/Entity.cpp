@@ -20,10 +20,6 @@ namespace game
   {
     if (!m_bTickEnabled) return;
 
-   /* maths::CVector3 v3Position = m_oTransform.GetPosition();
-    v3Position.Y += -9.8f * _fDeltaTime;
-    SetPosition(v3Position);*/
-
     // Update components
     for (CComponent* pComponent : m_vctComponents)
     {

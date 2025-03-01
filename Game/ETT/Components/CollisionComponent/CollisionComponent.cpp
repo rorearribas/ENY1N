@@ -1,27 +1,66 @@
 #include "CollisionComponent.h"
 #include "Libs/ImGui/imgui.h"
-#include "Engine/Physics/BoxCollider.h"
-#include "Engine/Physics/SphereCollider.h"
-#include "Engine/Managers/CollisionManager.h"
+#include "Engine/Collisions/CollisionManager.h"
+#include "Engine/Collisions/BoxCollider.h"
+#include "Engine/Collisions/SphereCollider.h"
 #include "Game/ETT/Entity.h"
 #include <cassert>
 #include "Engine/Base/Engine.h"
+#include "Engine/Physics/PhysicsManager.h"
 
 namespace game
 {
-  CCollisionComponent::CCollisionComponent(physics::EColliderType _eColliderType)
+  CCollisionComponent::CCollisionComponent(collisions::EColliderType _eColliderType)
   {
     CreateCollider(_eColliderType);
   }
   // ------------------------------------
-  void CCollisionComponent::CreateCollider(physics::EColliderType _eColliderType)
+  void CCollisionComponent::CreateCollider(collisions::EColliderType _eColliderType)
   {
+    // Flush
     Clean();
-    physics::CCollisionManager* pCollisionManager = physics::CCollisionManager::GetInstance();
+
+    // Create collider from collision manager
+    collisions::CCollisionManager* pCollisionManager = collisions::CCollisionManager::GetInstance();
     if (pCollisionManager)
     {
       m_pCollider = pCollisionManager->CreateCollider(_eColliderType);
     }
+    
+    // Create rigidbody
+    m_pRigidbody = physics::CPhysicsManager::GetInstance()->CreateRigidbody(GetOwner());
+    m_pCollider->m_pRidigbody = m_pRigidbody;
+    assert(m_pCollider);
+
+    // Create primitive
+    switch (_eColliderType)
+    {
+    case collisions::BOX_COLLIDER:
+    {
+      m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE, render::ERenderMode::WIREFRAME);
+      assert(m_pPrimitive);
+    }
+    break;
+    case collisions::SPHERE_COLLIDER:
+    {
+      m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE, render::ERenderMode::WIREFRAME);
+      assert(m_pPrimitive);
+    }
+    break;
+    default:
+      break;
+    }
+
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetColor(maths::CVector3::One);
+    }
+  }
+  // ------------------------------------
+  void CCollisionComponent::SetPhysicsEnabled(bool _bStatus)
+  {
+    m_pRigidbody->SetStatic(!_bStatus);
+    m_bEnablePhysics = _bStatus;
   }
   // ------------------------------------
   void CCollisionComponent::Update(float _fDeltaTime)
@@ -57,7 +96,7 @@ namespace game
   {
     if (m_pCollider)
     {
-      physics::CCollisionManager::GetInstance()->DestroyCollider(m_pCollider);
+      collisions::CCollisionManager::GetInstance()->DestroyCollider(m_pCollider);
     }
     if (m_pPrimitive)
     {
@@ -72,25 +111,15 @@ namespace game
 
     switch (m_pCollider->GetType())
     {
-    case physics::EColliderType::BOX_COLLIDER:
+    case collisions::EColliderType::BOX_COLLIDER:
     {
-      if (!m_pPrimitive)
-      {
-        m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
-        (
-          render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE,
-          render::ERenderMode::WIREFRAME
-        );
-        m_pPrimitive->SetColor(maths::CVector3::One);
-      }
-      
       // Generate unique ids
       std::string sTitle = "BOX COLLIDER";
       std::string sSize = "Size" + std::string("##" + sOwnerName);
       std::string sMax = "Max" + std::string("##" + sOwnerName);
       std::string sMin = "Min" + std::string("##" + sOwnerName);
 
-      physics::CBoxCollider* pBoxCollider = static_cast<physics::CBoxCollider*>(m_pCollider);
+      collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(m_pCollider);
       float v3Size[3] = { pBoxCollider->GetSize().X, pBoxCollider->GetSize().Y, pBoxCollider->GetSize().Z };
       float v3Max[3] = { pBoxCollider->GetMax().X, pBoxCollider->GetMax().Y, pBoxCollider->GetMax().Z };
       float v3Min[3] = { pBoxCollider->GetMin().X, pBoxCollider->GetMin().Y, pBoxCollider->GetMin().Z };
@@ -100,18 +129,19 @@ namespace game
       ImGui::InputFloat3(sMax.c_str(), v3Max);
       ImGui::InputFloat3(sMin.c_str(), v3Min);
 
-      m_pPrimitive->SetScale(maths::CVector3(v3Size[0], v3Size[1], v3Size[2]));
+      // Apply box collider size
+      if (m_pPrimitive) { m_pPrimitive->SetScale(maths::CVector3(v3Size[0], v3Size[1], v3Size[2])); }
       pBoxCollider->SetSize(maths::CVector3(v3Size[0], v3Size[1], v3Size[2]));
     }
     break;
-    case physics::EColliderType::SPHERE_COLLIDER:
+    case collisions::EColliderType::SPHERE_COLLIDER:
     {
       // Generate unique ids
       std::string sTitle = "SPHERE COLLIDER";
       std::string sCenter = "Center" + std::string("##" + sOwnerName);
       std::string sRadius = "Radius" + std::string("##" + sOwnerName);
 
-      physics::CSphereCollider* pSphereCollider = static_cast<physics::CSphereCollider*>(m_pCollider);
+      collisions::CSphereCollider* pSphereCollider = static_cast<collisions::CSphereCollider*>(m_pCollider);
       float v3Center[3] = { pSphereCollider->GetCenter().X, pSphereCollider->GetCenter().Y, pSphereCollider->GetCenter().Z };
       float fRadius = pSphereCollider->GetRadius();
 

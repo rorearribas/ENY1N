@@ -145,16 +145,18 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="Managers\CollisionManager.h" />
-    <ClInclude Include="Physics\Collider.h" />
+    <ClInclude Include="Collisions\CollisionManager.h" />
+    <ClInclude Include="Physics\PhysicsManager.h" />
+    <ClInclude Include="Collisions\Collider.h" />
     <ClInclude Include="Render\Lights\WIP\LightManager.h" />
+    <ClInclude Include="Physics\Rigidbody.h" />
     <ClInclude Include="Shaders\Model\DeferredPixelShader.h" />
     <ClInclude Include="Shaders\Model\DeferredVertexShader.h" />
     <ClInclude Include="Render\Graphics\Mesh.h" />
     <ClInclude Include="Render\Lights\Light.h" />
     <ClInclude Include="Render\Resources\Material.h" />
     <ClInclude Include="Render\Graphics\Model.h" />
-    <ClInclude Include="Physics\BoxCollider.h" />
+    <ClInclude Include="Collisions\BoxCollider.h" />
     <ClInclude Include="Base\Engine.h" />
     <ClInclude Include="Camera\Camera.h" />
     <ClInclude Include="Render\Lights\DirectionalLight.h" />
@@ -174,16 +176,17 @@
     <ClInclude Include="Shaders\Primitive\PixelShader.h" />
     <ClInclude Include="Shaders\Primitive\VertexShader.h" />
     <ClInclude Include="Render\Lights\SpotLight.h" />
-    <ClInclude Include="Physics\SphereCollider.h" />
+    <ClInclude Include="Collisions\SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Managers\CollisionManager.cpp" />
+    <ClCompile Include="Collisions\CollisionManager.cpp" />
+    <ClCompile Include="Physics\PhysicsManager.cpp" />
     <ClCompile Include="Render\Lights\WIP\LightManager.cpp" />
     <ClCompile Include="Render\Graphics\Mesh.cpp" />
     <ClCompile Include="Render\Lights\Light.cpp" />
     <ClCompile Include="Render\Resources\Material.cpp" />
     <ClCompile Include="Render\Graphics\Model.cpp" />
-    <ClCompile Include="Physics\BoxCollider.cpp" />
+    <ClCompile Include="Collisions\BoxCollider.cpp" />
     <ClCompile Include="Base\Engine.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
     <ClCompile Include="Render\Lights\DirectionalLight.cpp" />
@@ -194,13 +197,14 @@
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Render\Window\RenderWindow.cpp" />
     <ClCompile Include="Managers\ResourceManager.cpp" />
+    <ClCompile Include="Physics\Rigidbody.cpp" />
     <ClCompile Include="Scenes\SceneManager.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Render\Resources\Texture.cpp" />
     <ClCompile Include="Render\Graphics\Shape.cpp" />
     <ClCompile Include="Render\Shader.cpp" />
     <ClCompile Include="Render\Lights\SpotLight.cpp" />
-    <ClCompile Include="Physics\SphereCollider.cpp" />
+    <ClCompile Include="Collisions\SphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Model\DeferredPixelShader.hlsl">

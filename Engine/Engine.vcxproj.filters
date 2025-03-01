@@ -51,7 +51,7 @@
     <ClInclude Include="Render\Lights\DirectionalLight.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Physics\BoxCollider.h">
+    <ClInclude Include="Collisions\BoxCollider.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\Graphics\Model.h">
@@ -96,13 +96,19 @@
     <ClInclude Include="Render\Lights\WIP\LightManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Physics\SphereCollider.h">
+    <ClInclude Include="Collisions\SphereCollider.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Physics\Collider.h">
+    <ClInclude Include="Collisions\Collider.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Managers\CollisionManager.h">
+    <ClInclude Include="Collisions\CollisionManager.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\PhysicsManager.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Physics\Rigidbody.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -140,7 +146,7 @@
     <ClCompile Include="Render\Lights\DirectionalLight.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Physics\BoxCollider.cpp">
+    <ClCompile Include="Collisions\BoxCollider.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Graphics\Model.cpp">
@@ -173,10 +179,16 @@
     <ClCompile Include="Render\Lights\WIP\LightManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Physics\SphereCollider.cpp">
+    <ClCompile Include="Collisions\SphereCollider.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Managers\CollisionManager.cpp">
+    <ClCompile Include="Collisions\CollisionManager.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\PhysicsManager.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Rigidbody.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

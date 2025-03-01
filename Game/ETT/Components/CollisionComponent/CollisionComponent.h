@@ -1,8 +1,10 @@
 #pragma once
 #include "Game/ETT/Components/Component.h"
 #include "Libs/Maths/Vector3.h"
-#include "Engine/Physics/Collider.h"
+#include "Engine/Collisions/Collider.h"
 #include "Engine/Render/Graphics/Primitive.h"
+
+namespace physics { class CRigidbody; }
 
 namespace game { class CEntity; }
 namespace game
@@ -11,15 +13,17 @@ namespace game
   {
   public:
     CCollisionComponent() = default;
-    CCollisionComponent(physics::EColliderType _eColliderType);
+    CCollisionComponent(collisions::EColliderType _eColliderType);
     virtual ~CCollisionComponent() { Clean(); }
 
-    void CreateCollider(physics::EColliderType _eColliderType);
     virtual void Update(float _fDeltaTime) override;
     virtual void DrawDebug() override;
 
-    void SetPhysicsEnabled(bool _bStatus) { m_bEnablePhysics = _bStatus; }
-    const float& IsPhysicsEnabled() const { return m_bEnablePhysics; }
+    void CreateCollider(collisions::EColliderType _eColliderType);
+    collisions::CCollider* const GetCollider() { return m_pCollider; }
+
+    void SetPhysicsEnabled(bool _bStatus);
+    const bool& IsPhysicsEnabled() const { return m_bEnablePhysics; }
 
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const;
@@ -29,7 +33,8 @@ namespace game
     void Clean();
     bool m_bEnablePhysics = true;
 
-    physics::CCollider* m_pCollider = nullptr;
+    collisions::CCollider* m_pCollider = nullptr;
+    physics::CRigidbody* m_pRigidbody = nullptr;
     render::graphics::CPrimitive* m_pPrimitive = nullptr;
   };
 }
