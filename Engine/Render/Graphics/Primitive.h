@@ -14,9 +14,9 @@ namespace render
     class CPrimitive
     {
     public:
-      enum EPrimitiveType { E2D_SQUARE, E2D_TRIANGLE, E2D_SPHERE, E3D_CUBE, E3D_PLANE, E3D_SPHERE, INVALID };
+      enum EPrimitiveType { E2D_SQUARE, E2D_TRIANGLE, E2D_SPHERE, E3D_CUBE, E3D_SPHERE, INVALID };
 
-      struct SPrimitiveInfo
+      struct SPrimitiveData
       {
         maths::CVector3 Position = maths::CVector3::Zero;
         maths::CVector3 Color = maths::CVector3::One;
@@ -40,7 +40,7 @@ namespace render
 
     private:
       HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode);
-      HRESULT CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>&, const std::vector<UINT>&);
+      HRESULT CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveData>&, const std::vector<UINT>&);
       HRESULT CreateInputLayout();
 
       // Primitive data

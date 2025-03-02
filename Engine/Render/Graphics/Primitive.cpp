@@ -4,6 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include "Libs/Macros/GlobalMacros.h"
+#include "Libs/Maths/Maths.h"
 
 namespace render
 {
@@ -12,14 +13,14 @@ namespace render
     namespace internal_primitive
     {
       // Triangle Primitive
-      static const std::vector<CPrimitive::SPrimitiveInfo> s_oTrianglePrimitive =
+      static const std::vector<CPrimitive::SPrimitiveData> s_oTrianglePrimitive =
       {
-        { maths::CVector3(0, 1.0f, 0.0f),   maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(1.0f, -1.0f,  0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(-1.0f, -1.0f,  0.0f), maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(0, 0.5f, 0.0f),   maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(0.5f, -0.5f,  0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { maths::CVector3(-0.5f, -0.5f,  0.0f), maths::CVector3(1.0f, 1.0f, 1.0f) },
       };
       // Square Primitive
-      static const std::vector<CPrimitive::SPrimitiveInfo> s_oSquarePrimitive =
+      static const std::vector<CPrimitive::SPrimitiveData> s_oSquarePrimitive =
       {
         { maths::CVector3(-0.5f, -0.5f, -0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },
         { maths::CVector3(-0.5f,  0.5f, -0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
@@ -58,18 +59,12 @@ namespace render
       // 3D Cube Indices
       static const std::vector<uint32_t> s_oCubeIndices =
       {
-        0, 1, 2, //FRONT
-        0, 2, 3, //FRONT
-        4, 7, 6, //BACK 
-        4, 6, 5, //BACK
-        3, 2, 6, //RIGHT SIDE
-        3, 6, 7, //RIGHT SIDE
-        4, 5, 1, //LEFT SIDE
-        4, 1, 0, //LEFT SIDE
-        1, 5, 6, //TOP
-        1, 6, 2, //TOP
-        0, 3, 7, //BOTTOM
-        0, 7, 4, //BOTTOM
+        0, 1, 2, 0, 2, 3, //FRONT
+        4, 7, 6, 4, 6, 5, //BACK 
+        3, 2, 6,3, 6, 7, //RIGHT SIDE
+        4, 5, 1, 4, 1, 0,  //LEFT SIDE
+        1, 5, 6,  1, 6, 2, //TOP
+        0, 3, 7, 0, 7, 4 //BOTTOM
       };
       static const std::vector<uint32_t> s_oCubeWireframeIndices =
       {
@@ -91,6 +86,80 @@ namespace render
         2, 3, // BOTTOM EDGE
         3, 0  // LEFT EDGE 
       };
+
+      // 3D Sphere
+      static void GenerateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<CPrimitive::SPrimitiveData>& _vctVertices_)
+      {
+        for (int uX = 0; uX <= _iStacks; ++uX)
+        {
+          float fPhi = static_cast<float>(uX) / static_cast<float>(_iStacks) * static_cast<float>(maths::s_fPI);
+          for (int uJ = 0; uJ <= _iSlices; ++uJ)
+          {
+            // Conversion
+            float fTheta = static_cast<float>(uJ) / static_cast<float>(_iSlices) * 2.0f * (float)maths::s_fPI;
+            float fX = _fRadius * sinf(fPhi) * cosf(fTheta);
+            float fY = _fRadius * cosf(fPhi);
+            float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
+            // Add vertex
+            maths::CVector3 vVertex(fX, fY, fZ);
+            _vctVertices_.push_back({ vVertex });
+          }
+        }
+      }
+      static std::vector<uint32_t> GenerateSphereIndices(int _iStacks, int _iSlices)
+      {
+        std::vector<uint32_t> vctIndices;
+
+        // Connect vertices
+        for (int i = 0; i < _iStacks; ++i)
+        {
+          for (int j = 0; j < _iSlices; ++j)
+          {
+            int first = (i * (_iSlices + 1)) + j;
+            int second = first + _iSlices + 1;
+
+            vctIndices.push_back(first);
+            vctIndices.push_back(second);
+            vctIndices.push_back(first + 1);
+
+            vctIndices.push_back(second);
+            vctIndices.push_back(second + 1);
+            vctIndices.push_back(first + 1);
+          }
+        }
+
+        return vctIndices;
+      }
+      static std::vector<uint32_t> GenerateSphereWireframeIndices(int _iStacks, int _iSlices)
+      {
+        std::vector<uint32_t> vctWireframeIndices;
+
+        for (int i = 0; i < _iStacks; ++i)
+        {
+          for (int j = 0; j < _iSlices; ++j)
+          {
+            int current = (i * (_iSlices + 1)) + j;
+            int next = current + 1;
+            int above = current + _iSlices + 1;
+
+            // Conectar con el siguiente en la misma fila
+            if (j < _iSlices)
+            {
+              vctWireframeIndices.push_back(current);
+              vctWireframeIndices.push_back(next);
+            }
+
+            // Conectar con el de arriba
+            if (i < _iStacks)
+            {
+              vctWireframeIndices.push_back(current);
+              vctWireframeIndices.push_back(above);
+            }
+          }
+        }
+
+        return vctWireframeIndices;
+      }
     }
 
     // ------------------------------------
@@ -145,13 +214,18 @@ namespace render
           _eRenderMode == SOLID ? internal_primitive::s_oCubeIndices : internal_primitive::s_oCubeWireframeIndices
         );
       }
-      break;
-      case EPrimitiveType::E3D_PLANE:
+      case EPrimitiveType::E3D_SPHERE:
       {
+        const float fTargetRadius = 0.5f;
+        const int iStacks = 8;
+        const int iSlices = 8;
+        std::vector<CPrimitive::SPrimitiveData> vctVertices ={};
+        internal_primitive::GenerateSphere(fTargetRadius, iStacks, iSlices, vctVertices);
+
         return CreateBufferFromVertexData
         (
-          internal_primitive::s_oSquarePrimitive,
-          _eRenderMode == SOLID ? internal_primitive::s_oPlaneIndices : internal_primitive::s_oPlaneWireframeIndices
+          vctVertices,
+          _eRenderMode == SOLID ? internal_primitive::GenerateSphereIndices(iStacks, iSlices) : internal_primitive::GenerateSphereWireframeIndices(iStacks, iSlices)
         );
       }
       break;
@@ -164,8 +238,8 @@ namespace render
     {
       D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
       {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveInfo, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
       };
 
       return global::dx11::s_pDevice->CreateInputLayout
@@ -195,7 +269,7 @@ namespace render
       UNUSED_VARIABLE(hr);
       assert(!FAILED(hr));
 
-      CPrimitive::SPrimitiveInfo* pPrimitiveInfo = (CPrimitive::SPrimitiveInfo*)(oMappedSubresource.pData);
+      CPrimitive::SPrimitiveData* pPrimitiveInfo = (CPrimitive::SPrimitiveData*)(oMappedSubresource.pData);
       assert(pPrimitiveInfo);
 
       // Update color
@@ -211,7 +285,7 @@ namespace render
       m_v3CurrentColor = _v3Color;
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveInfo>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes)
+    HRESULT CPrimitive::CreateBufferFromVertexData(const std::vector<CPrimitive::SPrimitiveData>& _vctPrimitiveInfo, const std::vector<UINT>& _vctIndexes)
     {
       if (_vctPrimitiveInfo.empty()) return -1;
 
@@ -223,7 +297,7 @@ namespace render
 
       // Create vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
-      oVertexBufferDescriptor.ByteWidth = UINT(sizeof(SPrimitiveInfo) * _vctPrimitiveInfo.size());
+      oVertexBufferDescriptor.ByteWidth = UINT(sizeof(SPrimitiveData) * _vctPrimitiveInfo.size());
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -257,7 +331,7 @@ namespace render
     void CPrimitive::DrawPrimitive()
     {
       // Set general data
-      UINT uVertexStride = sizeof(render::graphics::CPrimitive::SPrimitiveInfo);
+      UINT uVertexStride = sizeof(render::graphics::CPrimitive::SPrimitiveData);
       UINT uVertexOffset = 0;
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);

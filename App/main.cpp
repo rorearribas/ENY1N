@@ -68,10 +68,10 @@ int main()
 
   game::CEntity* pCube02 = pGameManager->CreateEntity("Cube");
   game::CModelComponent* pModel02 = pCube02->RegisterComponent<game::CModelComponent>();
-  pModel02->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+  pModel02->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
   pModel02->SetPrimitiveColor(maths::CVector3(0.0f, 0.0f, 1.0f));
   game::CCollisionComponent* pCollisionComponent2 = pCube02->RegisterComponent<game::CCollisionComponent>();
-  pCollisionComponent2->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
+  pCollisionComponent2->CreateCollider(collisions::EColliderType::SPHERE_COLLIDER);
   pCube02->SetPosition(maths::CVector3(0.0f, 5.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
