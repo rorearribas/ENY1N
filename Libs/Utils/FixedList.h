@@ -60,7 +60,7 @@ namespace utils
       m_uRegisteredItems--;
 
       auto oReorderFunc = std::remove_if(m_vctItemList.begin(), m_vctItemList.end(),
-        [](T* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+      [](T* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
       std::fill(oReorderFunc, m_vctItemList.end(), nullptr); // Set nullptr
 
       return true;

@@ -12,29 +12,28 @@ namespace game
   class CCollisionComponent : public CComponent
   {
   public:
-    CCollisionComponent() = default;
+    CCollisionComponent() {}
     CCollisionComponent(collisions::EColliderType _eColliderType);
     virtual ~CCollisionComponent() { Clean(); }
 
     virtual void Update(float _fDeltaTime) override;
-    virtual void DrawDebug() override;
 
     void CreateCollider(collisions::EColliderType _eColliderType);
     collisions::CCollider* const GetCollider() { return m_pCollider; }
-
-    void SetPhysicsEnabled(bool _bStatus);
-    const bool& IsPhysicsEnabled() const { return m_bEnablePhysics; }
-
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const;
+
     virtual void OnPositionChanged(const maths::CVector3& _v3Pos) override;
+    virtual void DrawDebug() override;
+
+  protected:
+    void OnCollisionEvent(const collisions::CCollider*);
 
   private:
     void Clean();
-    bool m_bEnablePhysics = true;
 
+  private:
     collisions::CCollider* m_pCollider = nullptr;
-    physics::CRigidbody* m_pRigidbody = nullptr;
     render::graphics::CPrimitive* m_pPrimitive = nullptr;
   };
 }

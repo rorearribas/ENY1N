@@ -32,6 +32,14 @@ namespace render
         { maths::CVector3(0.5f,  0.5f,  0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },
         { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) }
       };
+      // Plane Primitive
+      static const std::vector<CPrimitive::SPrimitiveData> s_oPlanePrimitive =
+      {
+        { maths::CVector3(-0.5f, 0.0f, -0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },  // Bottom-left
+        { maths::CVector3(-0.5f, 0.0f,  0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },  // Top-left
+        { maths::CVector3(0.5f, 0.0f,  0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },  // Top-right
+        { maths::CVector3(0.5f, 0.0f, -0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) }   // Bottom-right
+      };
 
       // 2D Square Indices
       static const std::vector<uint32_t> s_oSquareIndices =
@@ -188,6 +196,7 @@ namespace render
     {
       switch (_ePrimitiveType)
       {
+      // 2D Implementation
       case EPrimitiveType::E2D_SQUARE:
       {
         return CreateBufferFromVertexData
@@ -206,6 +215,15 @@ namespace render
         );
       }
       break;
+      // 3D Implementation
+      case EPrimitiveType::E3D_PLANE:
+      {
+        return CreateBufferFromVertexData
+        (
+          internal_primitive::s_oPlanePrimitive,
+          _eRenderMode == SOLID ? internal_primitive::s_oPlaneIndices : internal_primitive::s_oPlaneWireframeIndices
+        );
+      }
       case EPrimitiveType::E3D_CUBE:
       {
         return CreateBufferFromVertexData
@@ -219,13 +237,14 @@ namespace render
         const float fTargetRadius = 0.5f;
         const int iStacks = 8;
         const int iSlices = 8;
-        std::vector<CPrimitive::SPrimitiveData> vctVertices ={};
+        std::vector<CPrimitive::SPrimitiveData> vctVertices = {};
         internal_primitive::GenerateSphere(fTargetRadius, iStacks, iSlices, vctVertices);
 
         return CreateBufferFromVertexData
         (
           vctVertices,
-          _eRenderMode == SOLID ? internal_primitive::GenerateSphereIndices(iStacks, iSlices) : internal_primitive::GenerateSphereWireframeIndices(iStacks, iSlices)
+          _eRenderMode == SOLID ? internal_primitive::GenerateSphereIndices(iStacks, iSlices) : 
+          internal_primitive::GenerateSphereWireframeIndices(iStacks, iSlices)
         );
       }
       break;

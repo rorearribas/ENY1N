@@ -19,8 +19,8 @@ namespace tick
     float GetMaxFixedDelta() const;
     float GetDeltaTime() const;
 
-    void SetMaxFPS(int maxFPS);
-    int GetMaxFPS() { return m_iMaxFPS; }
+    void SetMaxFPS(int _iMaxFPS);
+    int GetMaxFPS() const { return m_iMaxFPS; }
 
     void Reset();
     void Start();

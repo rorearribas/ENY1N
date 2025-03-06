@@ -5,7 +5,6 @@
 
 namespace game
 {
-
   // ------------------------------------
   CGameManager::~CGameManager()
   {
@@ -47,7 +46,11 @@ namespace game
       }
     }
   }
-
+  // ------------------------------------
+  void CGameManager::OnNotifyCollisions(collisions::CCollider* /*_pColliderA*/, collisions::CCollider* /*_pColliderB*/)
+  {
+    
+  }
   // ------------------------------------
   void CGameManager::DestroyAllEntities()
   {

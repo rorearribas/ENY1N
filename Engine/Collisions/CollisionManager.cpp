@@ -9,24 +9,27 @@ namespace collisions
 {
   void CCollisionManager::Update(float /*_fDeltaTime*/)
   {
-    // Update collisions
+    // Check collisions
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
     {
+      collisions::CCollider* pCurrentCollider = m_vctColliders[uI];
       for (uint32_t uJ = uI + 1; uJ < m_vctColliders.CurrentSize(); ++uJ)
       {
-        if (m_vctColliders[uI]->CheckCollision(*m_vctColliders[uJ]))
+        collisions::CCollider* pTargetCollider = m_vctColliders[uJ];
+        if (pCurrentCollider->CheckCollision(*pTargetCollider))
         {
-          ComputeCollision(m_vctColliders[uI], m_vctColliders[uJ]);
+          ComputeCollision(pCurrentCollider, pTargetCollider);
         }
       }
     }
   }
   // ------------------------------------
-  void CCollisionManager::ComputeCollision(collisions::CCollider* /*_pColliderA*/, collisions::CCollider* _pColliderB)
+  void CCollisionManager::ComputeCollision(collisions::CCollider* _pColliderA, collisions::CCollider* _pColliderB)
   {
-    /*_pColliderA->GetRigigbody()->Clear();*/
-    _pColliderB->GetRigigbody()->Clear();
-    _pColliderB->GetRigigbody()->SetImpactPoint(_pColliderB->GetPosition());
+     SHitEvent oHitEvent;
+
+    _pColliderA->m_oOnCollisionEvent.Execute(_pColliderA);
+    _pColliderB->m_oOnCollisionEvent.Execute(_pColliderA);
   }
   // ------------------------------------
   collisions::CCollider* CCollisionManager::CreateCollider(collisions::EColliderType _eColliderType)
@@ -36,12 +39,11 @@ namespace collisions
       std::cout << "You have reached maximum colliders" << std::endl;
       return nullptr;
     }
-
     switch (_eColliderType)
     {
-      case collisions::BOX_COLLIDER: return m_vctColliders.CreateItem<collisions::CBoxCollider>();
-      case collisions::SPHERE_COLLIDER: return m_vctColliders.CreateItem<collisions::CSphereCollider>();
-      default: return nullptr;
+    case collisions::BOX_COLLIDER: return m_vctColliders.CreateItem<collisions::CBoxCollider>();
+    case collisions::SPHERE_COLLIDER: return m_vctColliders.CreateItem<collisions::CSphereCollider>();
+    default: return nullptr;
     }
   }
   // ------------------------------------
@@ -52,7 +54,7 @@ namespace collisions
     _pCollider_ = nullptr;
   }
   // ------------------------------------
-  void CCollisionManager::Flush()
+  void CCollisionManager::Clean()
   {
     m_vctColliders.ClearAll();
   }

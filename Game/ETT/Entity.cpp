@@ -18,14 +18,15 @@ namespace game
   // ------------------------------------
   void CEntity::Update(float _fDeltaTime)
   {
-    if (!m_bTickEnabled) return;
-
-    // Update components
-    for (CComponent* pComponent : m_vctComponents)
+    if (m_bTickEnabled)
     {
-      if (pComponent)
+      // Update components
+      for (CComponent* pComponent : m_vctComponents)
       {
-        pComponent->Update(_fDeltaTime);
+        if (pComponent)
+        {
+          pComponent->Update(_fDeltaTime);
+        }
       }
     }
   }

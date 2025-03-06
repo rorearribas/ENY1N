@@ -8,9 +8,20 @@ namespace game
   // ------------------------------------
   CModelComponent::~CModelComponent()
   {
+    Clean();
+  }
+  // ------------------------------------
+  void CModelComponent::Clean()
+  {
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    if (m_pPrimitive && pEngine) { pEngine->DestroyPrimitive(m_pPrimitive); }
-    if (m_pModel && pEngine) { pEngine->DestroyModel(m_pModel); }
+    if (m_pPrimitive) 
+    { 
+      pEngine->DestroyPrimitive(m_pPrimitive); 
+    }
+    if (m_pModel) 
+    { 
+      pEngine->DestroyModel(m_pModel); 
+    }
   }
   // ------------------------------------
   void CModelComponent::Update(float _fDeltaTime)
@@ -20,32 +31,22 @@ namespace game
   // ------------------------------------
   void CModelComponent::LoadModel(const char* _sModelPath, const char* _sBaseMltDir)
   {
-    if (engine::CEngine::HasSingleton())
-    {
-      engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      m_pModel = pEngine->CreateModel(_sModelPath, _sBaseMltDir);
-      assert(m_pModel);
+    Clean();
 
-      if (m_pPrimitive)
-      {
-        pEngine->DestroyPrimitive(m_pPrimitive);
-      }
-    }
+    // Create model
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    m_pModel = pEngine->CreateModel(_sModelPath, _sBaseMltDir);
+    assert(m_pModel);
   }
   // ------------------------------------
   void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
   {
-    if (engine::CEngine::HasSingleton())
-    {
-      engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      m_pPrimitive = pEngine->CreatePrimitive(_ePrimitiveType, _eRenderMode);
-      assert(m_pPrimitive);
+    Clean();
 
-      if (m_pModel)
-      {
-        pEngine->DestroyModel(m_pModel);
-      }
-    }
+    // Create primitive
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    m_pPrimitive = pEngine->CreatePrimitive(_ePrimitiveType, _eRenderMode);
+    assert(m_pPrimitive);
   }
   // ------------------------------------
   void CModelComponent::SetPrimitiveRenderMode(render::ERenderMode _eRenderMode)

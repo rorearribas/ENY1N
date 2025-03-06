@@ -23,6 +23,7 @@
 #include "Engine/Collisions/BoxCollider.h"
 #include "Engine/Physics/PhysicsManager.h"
 #include "Libs/ImGui/imgui.h"
+#include "Game/ETT/Components/RigidbodyComponent/RigidbodyComponent.h"
 
 #define WIDTH 2560
 #define HEIGHT 1440
@@ -32,20 +33,18 @@ int main()
   // Engine
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->InitEngine(WIDTH, HEIGHT);
-
-  // Game manager
-  game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
-
   // Collisions manager
   collisions::CCollisionManager* pCollisionManager = collisions::CCollisionManager::CreateSingleton();
   // Physics manager
   physics::CPhysicsManager* pPhysicsManager = physics::CPhysicsManager::CreateSingleton();
-
   // Input manager
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
   // Time manager
   tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
   pTimeManager->SetMaxFPS(144);
+
+  // Game manager
+  game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
 
   // Entities
   game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("Directional Light");
@@ -57,22 +56,31 @@ int main()
 
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("PLANE");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
-  pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+  pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
   pPlaneModel->SetPrimitiveColor(maths::CVector3(0.5f, 0.5f, 0.5f));
-  pPlaneEntity->SetScale(maths::CVector3(5.0f, 0.050f, 5.0f));
+  pPlaneEntity->SetScale(maths::CVector3(5.0f, 5.0f, 5.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponent->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
-  pCollisionComponent->SetPhysicsEnabled(false);
   collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
   pBoxCollider->SetSize(maths::CVector3(5.0f, 0.050f, 5.0f));
 
-  game::CEntity* pCube02 = pGameManager->CreateEntity("Cube");
-  game::CModelComponent* pModel02 = pCube02->RegisterComponent<game::CModelComponent>();
-  pModel02->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-  pModel02->SetPrimitiveColor(maths::CVector3(0.0f, 0.0f, 1.0f));
-  game::CCollisionComponent* pCollisionComponent2 = pCube02->RegisterComponent<game::CCollisionComponent>();
-  pCollisionComponent2->CreateCollider(collisions::EColliderType::SPHERE_COLLIDER);
-  pCube02->SetPosition(maths::CVector3(0.0f, 5.0f, 0.0f));
+  //game::CEntity* pCube02 = pGameManager->CreateEntity("Sphere");
+  //game::CModelComponent* pModel02 = pCube02->RegisterComponent<game::CModelComponent>();
+  //pModel02->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
+  //pModel02->SetPrimitiveColor(maths::CVector3(0.0f, 0.0f, 1.0f));
+  //game::CCollisionComponent* pCollisionComponent2 = pCube02->RegisterComponent<game::CCollisionComponent>();
+  //pCollisionComponent2->CreateCollider(collisions::EColliderType::SPHERE_COLLIDER);
+  //pCube02->SetPosition(maths::CVector3(0.0f, 5.0f, 0.0f));
+
+  game::CEntity* pEntityCube = pGameManager->CreateEntity("Cube");
+  game::CModelComponent* pCubeModel = pEntityCube->RegisterComponent<game::CModelComponent>();
+  pCubeModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+  pCubeModel->SetPrimitiveColor(maths::CVector3(1.0f, 0.0f, 0.0f));
+  game::CCollisionComponent* pCollisionComponen2 = pEntityCube->RegisterComponent<game::CCollisionComponent>();
+  pCollisionComponen2->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
+  game::CRigidbodyComponent* pRigidbodyTest = pEntityCube->RegisterComponent<game::CRigidbodyComponent>();
+  pRigidbodyTest->SetRigidbodyType(physics::ERigidbodyType::KINEMATIC);
+  pEntityCube->SetPosition(maths::CVector3(0.0f, 8.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -90,9 +98,8 @@ int main()
     }
     else
     {
-      // Compute delta time
-      pTimeManager->BeginFrame();
       // Begin draw
+      pTimeManager->BeginFrame();
       pEngine->PushBeginDraw();
 
       // Calculate 
@@ -105,13 +112,14 @@ int main()
       {
         float fFixedDeltaTime = pTimeManager->GetFixedDelta();
 
-        pEngine->Update(fFixedDeltaTime);
-        pGameManager->Update(fFixedDeltaTime);
+        pEngine->Update(fFixedDeltaTime); // This is for update the camera.
 
-        pCollisionManager->Update(fFixedDeltaTime);
         pPhysicsManager->Update(fFixedDeltaTime);
+        pCollisionManager->Update(fFixedDeltaTime);
 
+        pGameManager->Update(fFixedDeltaTime);
         pInputManager->Flush();
+
         m_fFixedDeltaAccumulator -= fFixedDeltaTime;
       }
 
@@ -121,7 +129,7 @@ int main()
       ImGui::Begin("TEST_PHYSICS");
       if (ImGui::Button("Enabled"))
       {
-        pCollisionComponent2->SetPhysicsEnabled(pCollisionComponent2->IsPhysicsEnabled());
+        pRigidbodyTest->SetRigidbodyType(physics::ERigidbodyType::DYNAMIC);
       }
       ImGui::End();
 

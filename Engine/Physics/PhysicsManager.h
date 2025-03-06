@@ -11,23 +11,22 @@ namespace physics
   class CPhysicsManager : public utils::CSingleton<CPhysicsManager>
   {
   public:
+    static const float s_fGravityForce;
+
+  public:
     static const uint32_t s_uMaxRigidbodys = 250;
-    typedef utils::CFixedList<physics::CRigidbody, s_uMaxRigidbodys> TRigidbodysList;
+    typedef utils::CFixedList<CRigidbody, s_uMaxRigidbodys> TRigidbodysList;
 
     CPhysicsManager() {}
-    ~CPhysicsManager() {}
+    ~CPhysicsManager() {Flush();}
 
     void Update(float _fDeltaTime);
 
-    physics::CRigidbody* CreateRigidbody(game::CEntity* _pEntity);
-    void DestroyRigidbody(physics::CRigidbody*& _pRigidbody);
+    CRigidbody* CreateRigidbody(ERigidbodyType _eRigidbodyType = ERigidbodyType::KINEMATIC);
+    void DestroyRigidbody(CRigidbody*& _pRigidbody);
 
   private:
     void Flush();
-
-    float m_fGravityForce = -9.8f;
-    float m_fOverrideForce = 1.0f;
-
     TRigidbodysList m_vctRigidbodys;
   };
 }

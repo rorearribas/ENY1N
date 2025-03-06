@@ -15,6 +15,12 @@ namespace game
     CreateCollider(_eColliderType);
   }
   // ------------------------------------
+  void CCollisionComponent::Update(float _fDeltaTime)
+  {
+    // Colliders are being updated in the collision manager!
+    Super::Update(_fDeltaTime);
+  }
+  // ------------------------------------
   void CCollisionComponent::CreateCollider(collisions::EColliderType _eColliderType)
   {
     // Flush
@@ -23,14 +29,11 @@ namespace game
     // Create collider from collision manager
     collisions::CCollisionManager* pCollisionManager = collisions::CCollisionManager::GetInstance();
     if (pCollisionManager)
-    {
+    { 
       m_pCollider = pCollisionManager->CreateCollider(_eColliderType);
+      assert(m_pCollider);
+      m_pCollider->SetOnCollisionEvent(collisions::CCollider::TOnCollisionEvent(&CCollisionComponent::OnCollisionEvent, this));
     }
-    
-    // Create rigidbody
-    m_pRigidbody = physics::CPhysicsManager::GetInstance()->CreateRigidbody(GetOwner());
-    m_pCollider->m_pRidigbody = m_pRigidbody;
-    assert(m_pCollider);
 
     // Create primitive
     switch (_eColliderType)
@@ -57,18 +60,6 @@ namespace game
     }
   }
   // ------------------------------------
-  void CCollisionComponent::SetPhysicsEnabled(bool _bStatus)
-  {
-    m_pRigidbody->SetStatic(!_bStatus);
-    m_bEnablePhysics = _bStatus;
-  }
-  // ------------------------------------
-  void CCollisionComponent::Update(float _fDeltaTime)
-  {
-    // Colliders are being updated in the collision manager!
-    Super::Update(_fDeltaTime);
-  }
-  // ------------------------------------
   void CCollisionComponent::SetPosition(const maths::CVector3& _v3Pos)
   {
     if (m_pCollider)
@@ -90,6 +81,22 @@ namespace game
   void CCollisionComponent::OnPositionChanged(const maths::CVector3& _v3Pos)
   {
     SetPosition(_v3Pos);
+  }
+  // ------------------------------------
+  void CCollisionComponent::OnCollisionEvent(const collisions::CCollider* _pCollider)
+  {
+    const collisions::CBoxCollider* pBoxCollider = static_cast<const collisions::CBoxCollider*>(_pCollider);
+    maths::CVector3 vNormal = maths::CVector3::Zero;
+    if (m_pCollider)
+    {
+      const collisions::CBoxCollider* pBoxCollider2 = static_cast<const collisions::CBoxCollider*>(m_pCollider);
+      maths::CVector3 vDir = pBoxCollider->GetCenter() - pBoxCollider2->GetCenter();
+      vDir.Normalized();
+      std::cout <<"X: " << vDir.X << "Y: " << vDir.Y << "Z: " << vDir.Z << std::endl;
+    }
+
+    UNUSED_VARIABLE(_pCollider);
+    std::cout << "Collision" << std::endl;
   }
   // ------------------------------------
   void CCollisionComponent::Clean()
@@ -149,8 +156,9 @@ namespace game
       ImGui::InputFloat3(sCenter.c_str(), v3Center);
       ImGui::InputFloat(sRadius.c_str(), &fRadius);
 
-      pSphereCollider->SetPosition(maths::CVector3(v3Center[0], v3Center[1], v3Center[2]));
+      pSphereCollider->SetCenter(maths::CVector3(GetPosition().X, GetPosition().Y, GetPosition().Z));
       pSphereCollider->SetRadius(fRadius);
+      if (m_pPrimitive) { m_pPrimitive->SetScale(maths::CVector3(fRadius, fRadius, fRadius)); }
     }
     break;
     default:

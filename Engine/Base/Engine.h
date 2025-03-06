@@ -2,7 +2,6 @@
 #include "Engine/Render/Render.h"
 #include "Engine/Scenes/SceneManager.h"
 #include "Engine/Camera/Camera.h"
-#include "Engine/Render/Shader.h"
 #include "Libs/Utils/Singleton.h"
 
 namespace render { namespace lights { class CLight; } }
@@ -12,7 +11,8 @@ namespace render { class CCamera; }
 
 namespace engine 
 {
-  class CEngine : public utils::CSingleton<CEngine> {
+  class CEngine : public utils::CSingleton<CEngine> 
+  {
   public:
     CEngine() {}
     ~CEngine();

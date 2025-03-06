@@ -1,7 +1,10 @@
 #pragma once
 #include "Game/ETT/Entity.h"
 #include "Libs/Utils/Singleton.h"
+#include "Engine/Collisions/CollisionManager.h"
 #include <array>
+
+namespace collisions { class CCollider; }
 
 namespace game
 {
@@ -12,7 +15,6 @@ namespace game
     typedef std::array<CEntity*, s_iMaxEntities> TEntitiesList;
 
   public:
-    CGameManager() {}
     ~CGameManager();
 
     void Update(float _fDeltaTime);
@@ -21,12 +23,15 @@ namespace game
     CEntity* CreateEntity(const char* _sEntityName);
     bool DestroyEntity(const char* _sEntityName);
 
+  protected:
+    void OnNotifyCollisions(collisions::CCollider*, collisions::CCollider*);
+
   private:
     void DestroyAllEntities();
-
     bool m_bDebugMode = true;
-    int m_iRegisteredEntities = 0;
+
     TEntitiesList m_vctEntitiesList = {};
+    int m_iRegisteredEntities = 0;
   };
 }
 

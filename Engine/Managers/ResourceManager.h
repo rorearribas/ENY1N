@@ -13,7 +13,6 @@ public:
 private:
   void RegisterTexture(render::material::CMaterial*& pMaterial, render::material::EModifierType _eModifierType,
     const std::filesystem::path& _oBasePath, const std::string& _sTextureName);
-
 };
 
 

@@ -147,6 +147,7 @@
     <ClInclude Include="GameManager\GameManager.h" />
     <ClInclude Include="ETT\Components\ModelComponent\ModelComponent.h" />
     <ClInclude Include="ETT\Components\LightComponent\LightComponent.h" />
+    <ClInclude Include="ETT\Components\RigidbodyComponent\RigidbodyComponent.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ETT\Components\CollisionComponent\CollisionComponent.cpp" />
@@ -154,6 +155,7 @@
     <ClCompile Include="GameManager\GameManager.cpp" />
     <ClCompile Include="ETT\Components\ModelComponent\ModelComponent.cpp" />
     <ClCompile Include="ETT\Components\LightComponent\LightComponent.cpp" />
+    <ClCompile Include="ETT\Components\RigidbodyComponent\RigidbodyComponent.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,9 +2,9 @@
 
 namespace tick
 {
-  namespace internal_tickratemanager
+  namespace internal_time_manager
   {
-    const float s_fMaxFixedDelta = 1.0f / 10.f;
+    const float s_fMaxFixedDelta = 1.0f / 15.f;
   }
   // ------------------------------------
   CTimeManager::CTimeManager(int _iMaxFPS) : m_fDeltaTime(-1.0), m_llBaseTime(0), m_llPausedTime(0), m_bStopped(false)
@@ -45,7 +45,7 @@ namespace tick
   // ------------------------------------
   float CTimeManager::GetMaxFixedDelta() const
   {
-    return internal_tickratemanager::s_fMaxFixedDelta;
+    return internal_time_manager::s_fMaxFixedDelta;
   }
   // ------------------------------------
   bool CTimeManager::IsStopped() const

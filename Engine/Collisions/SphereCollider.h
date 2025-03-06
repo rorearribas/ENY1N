@@ -14,13 +14,14 @@ namespace collisions
     bool CheckCollision(const CCollider&) override { return false; }
     virtual void RecalculateCollider() override {};
 
+    void SetCenter(const maths::CVector3& _v3Center) { m_v3Center = _v3Center; }
     const maths::CVector3& GetCenter() const { return m_v3Center; }
     void SetRadius(float _fRadius) { m_fRadius = _fRadius; }
     const float& GetRadius() const { return m_fRadius;}
 
   private:
     maths::CVector3 m_v3Center = maths::CVector3::Zero; // World position
-    float m_fRadius = 10.0f; // Radius
+    float m_fRadius = 1.0f; // Radius
   };
 }
 

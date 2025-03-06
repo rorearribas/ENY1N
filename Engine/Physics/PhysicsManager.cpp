@@ -5,39 +5,46 @@
 
 namespace physics
 {
+  const float CPhysicsManager::s_fGravityForce(-9.8f);
+
   void CPhysicsManager::Update(float _fDeltaTime)
   {
     for (uint32_t uIndex = 0; uIndex < m_vctRigidbodys.CurrentSize(); ++uIndex)
     {
       physics::CRigidbody* pRigidbody = m_vctRigidbodys[uIndex];
-      if (pRigidbody->IsStatic())
-        continue;
+      bool bUpdate = pRigidbody->GetType() == physics::ERigidbodyType::DYNAMIC;
+      if (bUpdate)
+      {
+        // Apply gravity force (base)
+        maths::CVector3 v3Gravity(0.0f, s_fGravityForce, 0.0f);
+        pRigidbody->m_v3Acceleration += v3Gravity;
 
-      if(pRigidbody->m_pTargetEntity->GetPosition() == pRigidbody->m_v3ImpactPoint)
-      continue;
+        // Compute velocity
+        pRigidbody->m_v3Velocity += pRigidbody->GetAcceleration() * _fDeltaTime;
 
-      // Compute acceleration
-      pRigidbody->AddAcceleration(maths::CVector3(0.0f, (-9.8f * pRigidbody->GetMass()), 0.0f) * _fDeltaTime);
-      pRigidbody->AddVelocity(pRigidbody->GetAcceleration());
-      // Add force to entity
-      maths::CVector3 v3CurrentPosition = pRigidbody->m_pTargetEntity->GetPosition();
-      v3CurrentPosition += pRigidbody->GetVelocity() * _fDeltaTime;
-      pRigidbody->m_pTargetEntity->SetPosition(v3CurrentPosition);
+        // Set new position
+        maths::CVector3 vCurrentVelocity = pRigidbody->m_v3Velocity * _fDeltaTime;
+
+        // Notify
+        pRigidbody->OnVelocityChangedDelegate.Execute(vCurrentVelocity);
+
+        // Reset acceleration
+        pRigidbody->m_v3Acceleration = maths::CVector3::Zero;
+      }
     }
   }
   // ------------------------------------
-  physics::CRigidbody* CPhysicsManager::CreateRigidbody(game::CEntity* _pEntity)
+  CRigidbody* CPhysicsManager::CreateRigidbody(ERigidbodyType _eRigidbodyType)
   {
     if (m_vctRigidbodys.CurrentSize() >= m_vctRigidbodys.GetMaxSize())
     {
       std::cout << "You have reached maximum colliders" << std::endl;
       return nullptr;
     }
-
-    return m_vctRigidbodys.CreateItem(_pEntity);
+    return m_vctRigidbodys.CreateItem(_eRigidbodyType);
   }
   // ------------------------------------
-  void CPhysicsManager::DestroyRigidbody(physics::CRigidbody*& _pRigidbody)
+  void CPhysicsManager::DestroyRigidbody(CRigidbody*& _pRigidbody)
   {
     bool bOk = m_vctRigidbodys.RemoveItem(_pRigidbody);
     if (!bOk) { std::cout << "Error: Failed to remove rigidbody" << std::endl; }
