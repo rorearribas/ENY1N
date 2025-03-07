@@ -94,6 +94,12 @@ namespace maths
     float fYaw = maths::DegreesToRadians(_vRot.Y);
     float fRoll = maths::DegreesToRadians(_vRot.Z);
 
+    CMatrix4x4 mRollMatrix = CMatrix4x4::Identity;
+    mRollMatrix.m[0] = cos(fRoll);
+    mRollMatrix.m[1] = sin(fRoll);
+    mRollMatrix.m[4] = -sin(fRoll);
+    mRollMatrix.m[5] = cos(fRoll);
+
     CMatrix4x4 mPitchMatrix = CMatrix4x4::Identity;
     mPitchMatrix.m[5] = cos(fPitch);
     mPitchMatrix.m[6] = sin(fPitch);
@@ -106,13 +112,7 @@ namespace maths
     mYawMatrix.m[8] = sin(fYaw);
     mYawMatrix.m[10] = cos(fYaw);
 
-    CMatrix4x4 mRollMatrix = CMatrix4x4::Identity;
-    mRollMatrix.m[0] = cos(fRoll);
-    mRollMatrix.m[1] = sin(fRoll);
-    mRollMatrix.m[4] = -sin(fRoll);
-    mRollMatrix.m[5] = cos(fRoll);
-
-    return mPitchMatrix * mYawMatrix * mRollMatrix;
+    return mRollMatrix * mPitchMatrix * mYawMatrix;
   }
   // ------------------------------------
   maths::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)

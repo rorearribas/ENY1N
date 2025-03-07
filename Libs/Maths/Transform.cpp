@@ -4,7 +4,7 @@ namespace maths
 {
   const maths::CMatrix4x4 CTransform::ComputeModelMatrix() const
   {
-    return maths::CMatrix4x4::Translate(m_v3Pos) * (maths::CMatrix4x4::Scale(m_v3Scale) * maths::CMatrix4x4::Rotation(m_v3Rot));
+    return maths::CMatrix4x4::Translate(m_v3Pos) * maths::CMatrix4x4::Rotation(m_v3Rot) * maths::CMatrix4x4::Scale(m_v3Scale);
   }
   // ------------------------------------
   void CTransform::SetPosition(const maths::CVector3& _v3Pos)

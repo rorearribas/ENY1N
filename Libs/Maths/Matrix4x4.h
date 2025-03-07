@@ -21,7 +21,6 @@ namespace maths
     {
       std::memcpy(m, _mMatrix, sizeof(float) * s_iMatrixSize);
     }
-
     CMatrix4x4
     (
       float _m11, float _m12, float _m13, float _m14,
@@ -37,7 +36,6 @@ namespace maths
       float z = _v3.X * m[2] + _v3.Y * m[6] + _v3.Z * m[10] + m[14];
       return CVector3(x, y, z);
     }
-
     CMatrix4x4 operator*(const CMatrix4x4& _mMatrix) const
     {
       CMatrix4x4 mMatrix = CMatrix4x4::Identity;
@@ -53,7 +51,6 @@ namespace maths
       }
       return mMatrix;
     }
-
     CMatrix4x4& operator=(const CMatrix4x4& _other)
     {
       if (this != &_other) 
