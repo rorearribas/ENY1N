@@ -1,18 +1,20 @@
 #pragma once
 #include <windows.h>
+#include <stdint.h>
 
 namespace render
 {
   class CRenderWindow 
   {
   public:
-    CRenderWindow(const UINT32& _uWidth, const UINT32& _uHeight);
+    CRenderWindow(uint32_t _uWidth, uint32_t _uHeight);
     ~CRenderWindow() {}
 
-    void SetEnabled(bool _bEnabled) const;
+    void SetWinEnabled(bool _bEnabled) const;
+
+    const uint32_t GetWidth() const;
+    const uint32_t GetHeight() const;
     const HWND& GetHwnd() const;
-    const UINT32 GetWidth() const;
-    const UINT32 GetHeight() const;
 
   private:
     HWND m_hWnd = nullptr;

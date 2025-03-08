@@ -10,7 +10,7 @@ namespace render
 {
   namespace internal_renderwindow
   {
-    LRESULT CALLBACK WindowProc(HWND _hWnd, UINT _uMessage, WPARAM _wParam, LPARAM _lParam)
+    static LRESULT CALLBACK WindowProc(HWND _hWnd, uint32_t _uMessage, WPARAM _wParam, LPARAM _lParam)
     {
       if (ImGui_ImplWin32_WndProcHandler(_hWnd, _uMessage, _wParam, _lParam))
         return true;
@@ -29,12 +29,9 @@ namespace render
       {
         if (_wParam == SIZE_RESTORED || _wParam == SIZE_MAXIMIZED)
         {
-          UINT uWindowX = (UINT)(LOWORD(_lParam));
-          UINT uWindowY = (UINT)(HIWORD(_lParam));
           for (auto& oDelegate : global::delegates::s_vctOnWindowResizeDelegates)
           {
-            if (!oDelegate.IsValid()) continue;
-            oDelegate.Execute(uWindowX, uWindowY);
+            oDelegate((uint32_t)(LOWORD(_lParam)), (uint32_t)(HIWORD(_lParam)));
           }
         }
       }
@@ -47,7 +44,7 @@ namespace render
         if (uSize == 0)
           break;
 
-        /// Get raw input data
+        // Get raw input data
         std::unique_ptr<BYTE[]> pRawInputData(new BYTE[uSize]);
         if (GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, pRawInputData.get(), &uSize, sizeof(RAWINPUTHEADER)) != uSize)
         {
@@ -58,11 +55,11 @@ namespace render
         RAWINPUT* pRawInput = reinterpret_cast<RAWINPUT*>(pRawInputData.get());
         if (pRawInput && pRawInput->header.dwType == RIM_TYPEMOUSE)
         {
-          global::delegates::s_oUpdateMouseDelegate.Execute(&pRawInput->data.mouse);
+          global::delegates::s_oUpdateMouseDelegate(&pRawInput->data.mouse);
         }
         else if (pRawInput && pRawInput->header.dwType == RIM_TYPEKEYBOARD)
         {
-          global::delegates::s_oOnUpdateKeyboardDelegate.Execute(&pRawInput->data.keyboard);
+          global::delegates::s_oOnUpdateKeyboardDelegate(&pRawInput->data.keyboard);
         }
       }
       break;
@@ -71,8 +68,8 @@ namespace render
       // Handle any messages the switch statement didn't
       return DefWindowProc(_hWnd, _uMessage, _wParam, _lParam);
     }
-    // ------------------------------------
-    HWND WINAPI CreateWinMain(HINSTANCE hInstance, const UINT32& _uWidth, const UINT32& _uHeight)
+
+    static HWND WINAPI CreateWinMain(HINSTANCE hInstance, uint32_t _uWidth, uint32_t _uHeight)
     {
       // this struct holds information for the window class
       WNDCLASSEX wc;
@@ -113,14 +110,14 @@ namespace render
     }
   }
   // ------------------------------------
-  CRenderWindow::CRenderWindow(const UINT32& _uWidth, const UINT32& _uHeight)
+  CRenderWindow::CRenderWindow(uint32_t _uWidth, uint32_t _uHeight)
   {
-    HINSTANCE hInstance = GetModuleHandle(NULL);
+    HINSTANCE hInstance = GetModuleHandle(nullptr);
     m_hWnd = internal_renderwindow::CreateWinMain(hInstance, _uWidth, _uHeight);
     assert(m_hWnd);
   }
   // ------------------------------------
-  void CRenderWindow::SetEnabled(bool _bEnabled) const
+  void CRenderWindow::SetWinEnabled(bool _bEnabled) const
   {
     ShowWindow(m_hWnd, _bEnabled);
   }
@@ -130,18 +127,18 @@ namespace render
     return m_hWnd;
   }
   // ------------------------------------
-  const UINT32 CRenderWindow::GetWidth() const
+  const uint32_t CRenderWindow::GetWidth() const
   {
     RECT oClientRect;
     GetClientRect(m_hWnd, &oClientRect);
-    return (UINT32)(oClientRect.right - oClientRect.left);
+    return (uint32_t)(oClientRect.right - oClientRect.left);
   }
   // ------------------------------------
-  const UINT32 CRenderWindow::GetHeight() const
+  const uint32_t CRenderWindow::GetHeight() const
   {
     RECT oClientRect;
     GetClientRect(m_hWnd, &oClientRect);
-    return (UINT32)(oClientRect.bottom - oClientRect.top);
+    return (uint32_t)(oClientRect.bottom - oClientRect.top);
   }
   // ------------------------------------
 

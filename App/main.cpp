@@ -67,7 +67,7 @@ int main()
 
   const render::CRender* pRender = pEngine->GetRender();
   const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
-  pRenderWindow->SetEnabled(true);
+  pRenderWindow->SetWinEnabled(true);
 
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };

@@ -19,6 +19,15 @@ namespace utils
       Bind(MemberFunction, _pObject);
     }
 
+    template<typename Object>
+    inline void Bind(RETURN_TYPE(Object::* Method)(Args...), Object* _pObject)
+    {
+      m_oFunction = [_pObject, Method](Args... args) -> RETURN_TYPE 
+      {
+        return (_pObject->*Method)(std::forward<Args>(args)...);
+      };
+    }
+    inline void Bind(RETURN_TYPE(*func)(Args...)) { m_oFunction = func; }
     inline RETURN_TYPE operator()(Args... args) const
     {
       if (m_oFunction)
@@ -33,30 +42,6 @@ namespace utils
         }
       }
     }
-    inline RETURN_TYPE Execute(Args... args) const
-    {
-      if (m_oFunction)
-      {
-        if constexpr (!std::is_void_v<RETURN_TYPE>)
-        {
-          return m_oFunction(std::forward<Args>(args)...);
-        }
-        else
-        {
-          m_oFunction(std::forward<Args>(args)...);
-        }
-      }
-    }
-
-    template<typename Object>
-    inline void Bind(RETURN_TYPE(Object::* Method)(Args...), Object* _pObject)
-    {
-      m_oFunction = [_pObject, Method](Args... args) -> RETURN_TYPE 
-      {
-        return (_pObject->*Method)(std::forward<Args>(args)...);
-      };
-    }
-    inline void Bind(RETURN_TYPE(*func)(Args...)) { m_oFunction = func; }
 
     inline bool IsValid() { return static_cast<bool>(m_oFunction); }
     inline void Clear() { m_oFunction = nullptr; }
