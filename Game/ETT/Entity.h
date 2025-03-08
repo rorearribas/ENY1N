@@ -4,7 +4,9 @@
 #include <array>
 #include <string>
 
+namespace collisions { class CCollider; }
 namespace game { class CComponent; }
+
 namespace game
 {
   class CEntity
@@ -42,13 +44,19 @@ namespace game
     template<typename T>
     inline T* GetComponent()
     {
+      // @TODO: No hay que utilizar dynamic cast
       for (CComponent* pComp : m_vctComponents)
       {
-        T* pComponent = static_cast<T*>(pComp);
+        T* pComponent = dynamic_cast<T*>(pComp);
         if (pComponent) return pComponent;
       }
       return nullptr;
     }
+
+    // Notifications
+    void OnCollisionEnter(const collisions::CCollider*);
+    void OnCollisionStay(const collisions::CCollider*);
+    void OnCollisionExit(const collisions::CCollider*);
 
   private:
     void DestroyAllComponents();

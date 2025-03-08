@@ -189,15 +189,51 @@ namespace game
     }
   }
   // ------------------------------------
+  void CEntity::OnCollisionEnter(const collisions::CCollider* _pCollider)
+  {
+    // Notify to components
+    for (game::CComponent* pComponent : m_vctComponents)
+    {
+      if (pComponent)
+      {
+        pComponent->OnCollisionEnter(_pCollider);
+      }
+    }
+  }
+  // ------------------------------------
+  void CEntity::OnCollisionStay(const collisions::CCollider* _pCollider)
+  {
+    // Notify to components
+    for (game::CComponent* pComponent : m_vctComponents)
+    {
+      if (pComponent)
+      {
+        pComponent->OnCollisionStay(_pCollider);
+      }
+    }
+  }
+  // ------------------------------------
+  void CEntity::OnCollisionExit(const collisions::CCollider* _pCollider)
+  {
+    // Notify to components
+    for (game::CComponent* pComponent : m_vctComponents)
+    {
+      if (pComponent)
+      {
+        pComponent->OnCollisionExit(_pCollider);
+      }
+    }
+  }
+  // ------------------------------------
   void CEntity::DestroyAllComponents()
   {
     std::for_each(m_vctComponents.begin(), m_vctComponents.end(), [](CComponent*& _pComponent)
+    {
+      if (_pComponent)
       {
-        if (_pComponent)
-        {
-          delete _pComponent;
-          _pComponent = nullptr;
-        }
-      });
+        delete _pComponent;
+        _pComponent = nullptr;
+      }
+    });
   }
 }

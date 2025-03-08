@@ -1,6 +1,7 @@
 #include "RigidbodyComponent.h"
 #include "Engine/Physics/PhysicsManager.h"
 #include "Game/ETT/Entity.h"
+#include "Libs/Macros/GlobalMacros.h"
 
 namespace game
 {
@@ -24,6 +25,17 @@ namespace game
   {
     assert(m_pRigidbody);
     m_pRigidbody->SetRigidbodyType(_eRigidbodyType);
+  }
+  // ------------------------------------
+  void CRigidbodyComponent::OnCollisionEnter(const collisions::CCollider*)
+  {
+    m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
+  }
+  // ------------------------------------
+  void CRigidbodyComponent::OnCollisionExit(const collisions::CCollider*)
+  {
+    m_pRigidbody->SetCurrentState(physics::ERigidbodyState::IN_THE_AIR);
+    m_pRigidbody->ResetVelocity();
   }
   // ------------------------------------
   void CRigidbodyComponent::OnVelocityChanged(const maths::CVector3& _v3Velocity)

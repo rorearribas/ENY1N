@@ -24,10 +24,10 @@ namespace collisions
     const maths::CVector3& GetMin() const { return m_vMin; }
 
   private:
-    void ComputeExtents();
-    bool CheckBoxCollision(const CBoxCollider& _other);
-
+    bool CheckBoxCollision(const CBoxCollider& _other) const;
     bool CheckSphereCollision(const CSphereCollider& _other) const;
+
+    void ComputeExtents();
     void ComputeMinMax();
 
   private:

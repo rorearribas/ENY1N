@@ -1,6 +1,7 @@
 #pragma once
 #include "Libs/Maths/Vector3.h"
 
+namespace collisions { class CCollider; }
 namespace game { class CEntity; }
 
 // Component definition
@@ -20,9 +21,13 @@ namespace game
     void SetOwner(CEntity* _pOwner) { m_pOwner = _pOwner; }
     CEntity* GetOwner() const { return m_pOwner; }
 
-    virtual void OnPositionChanged(const maths::CVector3& /*_v3Pos*/) {}
-    virtual void OnRotationChanged(const maths::CVector3& /*_v3Rot*/) {}
-    virtual void OnScaleChanged(const maths::CVector3& /*_v3Scale*/) {}
+    virtual void OnPositionChanged(const maths::CVector3&) {}
+    virtual void OnRotationChanged(const maths::CVector3&) {}
+    virtual void OnScaleChanged(const maths::CVector3&) {}
+  
+    virtual void OnCollisionEnter(const collisions::CCollider*) {}
+    virtual void OnCollisionStay(const collisions::CCollider*) {}
+    virtual void OnCollisionExit(const collisions::CCollider*) {}
 
   protected:
     CEntity* m_pOwner = nullptr;

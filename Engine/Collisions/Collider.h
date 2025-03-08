@@ -9,6 +9,9 @@ namespace collisions
 
   class CCollider
   {
+  private:
+    static constexpr int s_iMaxEvents = 3;
+
   public:
     typedef utils::CDelegate<void(const collisions::CCollider*)> TOnCollisionEvent;
 
@@ -28,11 +31,15 @@ namespace collisions
     void SetScale(maths::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
 
     // Notifications
-    void SetOnCollisionEvent(const TOnCollisionEvent& _oDelegate) { m_oOnCollisionEvent = _oDelegate; }
+    void SetOnCollisionEnter(const TOnCollisionEvent& _oDelegate) { m_oOnCollisionEnter = _oDelegate; }
+    void SetOnCollisionStay(const TOnCollisionEvent& _oDelegate) { m_oOnCollisionStay = _oDelegate; }
+    void SetOnCollisionExit(const TOnCollisionEvent& _oDelegate) { m_oOnCollisionExit = _oDelegate; }
 
   private:
     friend class CCollisionManager;
-    TOnCollisionEvent m_oOnCollisionEvent;
+    TOnCollisionEvent m_oOnCollisionEnter;
+    TOnCollisionEvent m_oOnCollisionStay;
+    TOnCollisionEvent m_oOnCollisionExit;
 
   private:
     maths::CTransform m_oTransform;

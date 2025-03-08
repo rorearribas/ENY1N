@@ -13,19 +13,16 @@ namespace collisions
     maths::CVector3 ImpactPoint;
   };
 
-  class CCollisionManager : public utils::CSingleton<CCollisionManager>
-  {
+  class CCollisionManager : public utils::CSingleton<CCollisionManager> {
   public:
     static const uint32_t s_uMaxColliders = 250;
     typedef utils::CFixedList<collisions::CCollider, s_uMaxColliders> TColliderList;
-    typedef utils::CDelegate<void(collisions::CCollider*, collisions::CCollider*)> TOnNotifyCollisionDelegate;
 
   public:
     CCollisionManager() {}
     ~CCollisionManager() { Clean(); }
 
     void Update(float _fDeltaTime);
-
     collisions::CCollider* CreateCollider(collisions::EColliderType _eColliderType);
     void DestroyCollider(collisions::CCollider*& _pCollider_);
 

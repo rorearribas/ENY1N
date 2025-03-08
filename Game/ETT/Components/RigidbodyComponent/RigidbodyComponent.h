@@ -21,13 +21,16 @@ namespace game
 
     void SetRigidbodyType(physics::ERigidbodyType _eRigidbodyType);
     const physics::ERigidbodyType& GetRigidbodyType() const { return m_pRigidbody->GetType(); }
+
     const float& GetMass() const { return m_pRigidbody->GetMass(); }
     void SetMass(float _fMass) { m_pRigidbody->SetMass(_fMass); }
 
   protected:
-    void OnVelocityChanged(const maths::CVector3& _v3Velocity);
+    virtual void OnCollisionEnter(const collisions::CCollider*) override;
+    virtual void OnCollisionExit(const collisions::CCollider*) override;
 
   private:
+    void OnVelocityChanged(const maths::CVector3& _v3Velocity);
     void CreateRigidbody(physics::ERigidbodyType _eRigidbodyType);
     void Clean();
 

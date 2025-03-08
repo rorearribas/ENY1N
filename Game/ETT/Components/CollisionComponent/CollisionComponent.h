@@ -13,7 +13,6 @@ namespace game
   {
   public:
     CCollisionComponent() {}
-    CCollisionComponent(collisions::EColliderType _eColliderType);
     virtual ~CCollisionComponent() { Clean(); }
 
     virtual void Update(float _fDeltaTime) override;
@@ -25,9 +24,6 @@ namespace game
 
     virtual void OnPositionChanged(const maths::CVector3& _v3Pos) override;
     virtual void DrawDebug() override;
-
-  protected:
-    void OnCollisionEvent(const collisions::CCollider*);
 
   private:
     void Clean();

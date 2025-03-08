@@ -19,6 +19,20 @@ namespace utils
       Bind(MemberFunction, _pObject);
     }
 
+    inline RETURN_TYPE operator()(Args... args) const
+    {
+      if (m_oFunction)
+      {
+        if constexpr (!std::is_void_v<RETURN_TYPE>)
+        {
+          return m_oFunction(std::forward<Args>(args)...);
+        }
+        else
+        {
+          m_oFunction(std::forward<Args>(args)...);
+        }
+      }
+    }
     inline RETURN_TYPE Execute(Args... args) const
     {
       if (m_oFunction)
@@ -42,8 +56,8 @@ namespace utils
         return (_pObject->*Method)(std::forward<Args>(args)...);
       };
     }
-
     inline void Bind(RETURN_TYPE(*func)(Args...)) { m_oFunction = func; }
+
     inline bool IsValid() { return static_cast<bool>(m_oFunction); }
     inline void Clear() { m_oFunction = nullptr; }
 

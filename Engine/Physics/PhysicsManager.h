@@ -11,14 +11,11 @@ namespace physics
   class CPhysicsManager : public utils::CSingleton<CPhysicsManager>
   {
   public:
-    static const float s_fGravityForce;
-
-  public:
     static const uint32_t s_uMaxRigidbodys = 250;
     typedef utils::CFixedList<CRigidbody, s_uMaxRigidbodys> TRigidbodysList;
 
     CPhysicsManager() {}
-    ~CPhysicsManager() {Flush();}
+    ~CPhysicsManager();
 
     void Update(float _fDeltaTime);
 
@@ -26,7 +23,7 @@ namespace physics
     void DestroyRigidbody(CRigidbody*& _pRigidbody);
 
   private:
-    void Flush();
+    void Clear();
     TRigidbodysList m_vctRigidbodys;
   };
 }

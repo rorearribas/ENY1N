@@ -7,13 +7,10 @@
 #include <cassert>
 #include "Engine/Base/Engine.h"
 #include "Engine/Physics/PhysicsManager.h"
+#include "../RigidbodyComponent/RigidbodyComponent.h"
 
 namespace game
 {
-  CCollisionComponent::CCollisionComponent(collisions::EColliderType _eColliderType)
-  {
-    CreateCollider(_eColliderType);
-  }
   // ------------------------------------
   void CCollisionComponent::Update(float _fDeltaTime)
   {
@@ -32,7 +29,12 @@ namespace game
     { 
       m_pCollider = pCollisionManager->CreateCollider(_eColliderType);
       assert(m_pCollider);
-      m_pCollider->SetOnCollisionEvent(collisions::CCollider::TOnCollisionEvent(&CCollisionComponent::OnCollisionEvent, this));
+
+      // Assign notifications
+      CEntity* pOwner = GetOwner();
+      m_pCollider->SetOnCollisionEnter(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionEnter, pOwner));
+      m_pCollider->SetOnCollisionStay(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionStay, pOwner));
+      m_pCollider->SetOnCollisionExit(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionExit, pOwner));
     }
 
     // Create primitive
@@ -82,22 +84,29 @@ namespace game
   {
     SetPosition(_v3Pos);
   }
-  // ------------------------------------
-  void CCollisionComponent::OnCollisionEvent(const collisions::CCollider* _pCollider)
-  {
-    const collisions::CBoxCollider* pBoxCollider = static_cast<const collisions::CBoxCollider*>(_pCollider);
-    maths::CVector3 vNormal = maths::CVector3::Zero;
-    if (m_pCollider)
-    {
-      const collisions::CBoxCollider* pBoxCollider2 = static_cast<const collisions::CBoxCollider*>(m_pCollider);
-      maths::CVector3 vDir = pBoxCollider->GetCenter() - pBoxCollider2->GetCenter();
-      vDir.Normalized();
-      std::cout <<"X: " << vDir.X << "Y: " << vDir.Y << "Z: " << vDir.Z << std::endl;
-    }
+  //// ------------------------------------
+  //void CCollisionComponent::OnCollisionEvent(const collisions::CCollider* _pCollider)
+  //{
+  //  /*const collisions::CBoxCollider* pBoxCollider = static_cast<const collisions::CBoxCollider*>(_pCollider);
+  //  maths::CVector3 vNormal = maths::CVector3::Zero;*/
 
-    UNUSED_VARIABLE(_pCollider);
-    std::cout << "Collision" << std::endl;
-  }
+  //  CEntity* pOwner = GetOwner();
+  //  CRigidbodyComponent* pRigidbodyComponent = pOwner->GetComponent<CRigidbodyComponent>();
+  //  if (pRigidbodyComponent)
+  //  {
+  //  }
+
+  //  if (m_pCollider)
+  //  {
+  //  /*  const collisions::CBoxCollider* pBoxCollider2 = static_cast<const collisions::CBoxCollider*>(m_pCollider);
+  //    maths::CVector3 vDir = pBoxCollider->GetCenter() - pBoxCollider2->GetCenter();
+  //    vDir.Normalized();
+  //    std::cout <<"X: " << vDir.X << "Y: " << vDir.Y << "Z: " << vDir.Z << std::endl;*/
+  //  }
+
+  //  UNUSED_VARIABLE(_pCollider);
+  //  std::cout << "Collision" << std::endl;
+  //}
   // ------------------------------------
   void CCollisionComponent::Clean()
   {

@@ -62,7 +62,7 @@ namespace collisions
     m_vMax = GetPosition() + (m_vSize * 0.5f);
   }
   // ------------------------------------
-  bool CBoxCollider::CheckBoxCollision(const CBoxCollider& _other)
+  bool CBoxCollider::CheckBoxCollision(const CBoxCollider& _other) const
   {
     return (m_vMin.X <= _other.m_vMax.X && m_vMax.X >= _other.m_vMin.X) &&
       (m_vMin.Y <= _other.m_vMax.Y && m_vMax.Y >= _other.m_vMin.Y) &&

@@ -5,8 +5,17 @@
 
 namespace physics
 {
-  const float CPhysicsManager::s_fGravityForce(-9.8f);
+  namespace internal_physics_manager
+  {
+    const float s_fGravityForce(-9.8f);
+  }
 
+  // ------------------------------------
+  CPhysicsManager::~CPhysicsManager()
+  {
+    Clear();
+  }
+  // ------------------------------------
   void CPhysicsManager::Update(float _fDeltaTime)
   {
     for (uint32_t uIndex = 0; uIndex < m_vctRigidbodys.CurrentSize(); ++uIndex)
@@ -15,18 +24,29 @@ namespace physics
       bool bUpdate = pRigidbody->GetType() == physics::ERigidbodyType::DYNAMIC;
       if (bUpdate)
       {
-        // Apply gravity force (base)
-        maths::CVector3 v3Gravity(0.0f, s_fGravityForce, 0.0f);
-        pRigidbody->m_v3Acceleration += v3Gravity;
+        const ERigidbodyState& eRigidbodyState = pRigidbody->GetRigidbodyState();
+        if (eRigidbodyState == ERigidbodyState::IN_THE_AIR)
+        {
+          // Apply gravity force (base)
+          maths::CVector3 v3Gravity(0.0f, internal_physics_manager::s_fGravityForce, 0.0f);
+          pRigidbody->m_v3Acceleration += v3Gravity;
+        }
 
-        // Compute velocity
+        // Cache current velocity
+        maths::CVector3 vCurrentVelocity = pRigidbody->m_v3Velocity;
+
+        // Increase velocity
         pRigidbody->m_v3Velocity += pRigidbody->GetAcceleration() * _fDeltaTime;
 
-        // Set new position
-        maths::CVector3 vCurrentVelocity = pRigidbody->m_v3Velocity * _fDeltaTime;
+        // Valid new velicity
+        if (vCurrentVelocity != pRigidbody->m_v3Velocity)
+        {
+          // Compute new displacement
+          maths::CVector3 vDisplacement = pRigidbody->m_v3Velocity * _fDeltaTime;
 
-        // Notify
-        pRigidbody->OnVelocityChangedDelegate.Execute(vCurrentVelocity);
+          // Notify
+          pRigidbody->OnVelocityChangedDelegate.Execute(vDisplacement);
+        }
 
         // Reset acceleration
         pRigidbody->m_v3Acceleration = maths::CVector3::Zero;
@@ -51,7 +71,7 @@ namespace physics
     _pRigidbody = nullptr;
   }
   // ------------------------------------
-  void CPhysicsManager::Flush()
+  void CPhysicsManager::Clear()
   {
     m_vctRigidbodys.ClearAll();
   }
