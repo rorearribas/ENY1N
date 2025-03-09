@@ -35,7 +35,7 @@ namespace game
   void CRigidbodyComponent::OnCollisionStay(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent)
   {
     m_pRigidbody->ResetVelocity();
-    m_pRigidbody->AddForce(_oHitEvent.Normal * 1000.0f); // TESTING
+    m_pRigidbody->AddForce(_oHitEvent.Normal * 10.0f); // TESTING
 
     CEntity* pOwner = GetOwner();
     if (pOwner)

@@ -235,8 +235,8 @@ namespace render
       case EPrimitiveType::E3D_SPHERE:
       {
         const float fTargetRadius = 0.5f;
-        const int iStacks = 8;
-        const int iSlices = 8;
+        const int iStacks = 12;
+        const int iSlices = 12;
         std::vector<CPrimitive::SPrimitiveData> vctVertices = {};
         internal_primitive::GenerateSphere(fTargetRadius, iStacks, iSlices, vctVertices);
 
@@ -292,7 +292,7 @@ namespace render
       assert(pPrimitiveInfo);
 
       // Update color
-      for (UINT uIndex = 0; uIndex < m_uVertexCount; ++uIndex)
+      for (uint32_t uIndex = 0; uIndex < m_uVertices; ++uIndex)
       {
         pPrimitiveInfo[uIndex].Color = _v3Color;
       }
@@ -316,14 +316,14 @@ namespace render
 
       // Create vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
-      oVertexBufferDescriptor.ByteWidth = UINT(sizeof(SPrimitiveData) * _vctPrimitiveInfo.size());
+      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>(sizeof(SPrimitiveData) * _vctPrimitiveInfo.size());
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = { 0 };
       oSubresourceData.pSysMem = _vctPrimitiveInfo.data();
-      m_uVertexCount = (UINT)_vctPrimitiveInfo.size();
+      m_uVertices = static_cast<uint32_t>(_vctPrimitiveInfo.size());
 
       HRESULT hr = global::dx11::s_pDevice->CreateBuffer
       (
@@ -336,10 +336,10 @@ namespace render
       // Config index buffer
       D3D11_BUFFER_DESC oIndexBufferDesc = {};
       oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-      oIndexBufferDesc.ByteWidth = (UINT)(sizeof(UINT) * _vctIndexes.size());
+      oIndexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(uint32_t) * _vctIndexes.size()));
       oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
       oIndexBufferDesc.CPUAccessFlags = 0;
-      m_uVertexCount = (UINT)_vctIndexes.size();
+      m_uIndices = static_cast<uint32_t>(_vctIndexes.size());
 
       D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = {};
       oSubresourceIndexesData.pSysMem = _vctIndexes.data();
@@ -356,8 +356,8 @@ namespace render
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
 
       // Set topology
-      global::dx11::s_pDeviceContext->IASetPrimitiveTopology(m_eRenderMode == ERenderMode::SOLID ?
-        D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+      D3D_PRIMITIVE_TOPOLOGY ePrimitiveTopology = m_eRenderMode == ERenderMode::SOLID ? D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+      global::dx11::s_pDeviceContext->IASetPrimitiveTopology(ePrimitiveTopology);
 
       // Set model matrix
       m_oConstantBuffer.GetData().mMatrix = m_oPrimitiveTransform.ComputeModelMatrix();
@@ -367,16 +367,9 @@ namespace render
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
-      // 3D or 2D
-      if (m_pIndexBuffer)
-      {
-        global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-        global::dx11::s_pDeviceContext->DrawIndexed(m_uVertexCount, 0, 0);
-      }
-      else
-      {
-        global::dx11::s_pDeviceContext->Draw(m_uVertexCount, 0);
-      }
+      // Draw
+      global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+      global::dx11::s_pDeviceContext->DrawIndexed(m_uIndices, 0, 0);
     }
   }
 }

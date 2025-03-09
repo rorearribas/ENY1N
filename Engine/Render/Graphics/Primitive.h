@@ -55,7 +55,9 @@ namespace render
 
       maths::CTransform m_oPrimitiveTransform;
       maths::CVector3 m_v3CurrentColor = maths::CVector3::One;
-      UINT m_uVertexCount = 0;
+
+      uint32_t m_uVertices = 0;
+      uint32_t m_uIndices = 0;
     };
   }
 }
