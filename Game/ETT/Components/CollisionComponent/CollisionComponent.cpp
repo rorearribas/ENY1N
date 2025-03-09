@@ -167,7 +167,7 @@ namespace game
 
       pSphereCollider->SetCenter(maths::CVector3(GetPosition().X, GetPosition().Y, GetPosition().Z));
       pSphereCollider->SetRadius(fRadius);
-      if (m_pPrimitive) { m_pPrimitive->SetScale(maths::CVector3(fRadius, fRadius, fRadius)); }
+      if (m_pPrimitive) { m_pPrimitive->SetScale(maths::CVector3(fRadius * 2.0f, fRadius * 2.0f, fRadius * 2.0f)); }
     }
     break;
     default:

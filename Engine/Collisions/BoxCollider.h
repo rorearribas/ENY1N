@@ -1,7 +1,8 @@
 #pragma once
 #include "Collider.h"
 #include "Libs/Maths/Vector3.h"
-#include "SphereCollider.h"
+
+namespace collisions { class CSphereCollider; }
 
 namespace collisions
 {
@@ -24,8 +25,8 @@ namespace collisions
     const maths::CVector3& GetMin() const { return m_vMin; }
 
   private:
-    bool CheckBoxCollision(const CBoxCollider& _other) const;
-    bool CheckSphereCollision(const CSphereCollider& _other) const;
+    bool CheckBoxCollision(const CBoxCollider* _other) const;
+    bool CheckSphereCollision(const CSphereCollider* _other) const;
 
     void ComputeExtents();
     void ComputeMinMax();

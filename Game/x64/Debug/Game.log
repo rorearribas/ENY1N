@@ -3,5 +3,6 @@
   ModelComponent.cpp
   RigidbodyComponent.cpp
   Entity.cpp
+  GameManager.cpp
   Generating Code...
   Game.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Game\x64\Debug\Game.lib

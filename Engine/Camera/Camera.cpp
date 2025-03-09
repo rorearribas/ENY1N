@@ -44,9 +44,6 @@ namespace render
       float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed;
       float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed;
 
-      std::cout << "x value delta: " << xValue << std::endl;
-      std::cout << "y value delta: " << yValue << std::endl;
-
       maths::CVector3 v3AddedRot(maths::RadiansToDegrees(yValue), maths::RadiansToDegrees(xValue), 0.0f);
       AddRotation(v3AddedRot);
     }

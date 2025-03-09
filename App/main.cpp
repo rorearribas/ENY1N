@@ -66,6 +66,15 @@ int main()
   game::CRigidbodyComponent* pRigidbodyTest = pEntityCube->RegisterComponent<game::CRigidbodyComponent>();
   pEntityCube->SetPosition(maths::CVector3(0.0f, 8.0f, 0.0f));
 
+  game::CEntity* pSphereEntity2 = pGameManager->CreateEntity("Sphere2");
+  game::CModelComponent* pSphereModel2 = pSphereEntity2->RegisterComponent<game::CModelComponent>();
+  pSphereModel2->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
+  pSphereModel2->SetPrimitiveColor(maths::CVector3(0.0f, 1.0f, 0.0f));
+  game::CCollisionComponent* pCollisionComponent4 = pSphereEntity2->RegisterComponent<game::CCollisionComponent>();
+  pCollisionComponent4->CreateCollider(collisions::EColliderType::SPHERE_COLLIDER);
+  game::CRigidbodyComponent* pRigidbodyTest2 = pSphereEntity2->RegisterComponent<game::CRigidbodyComponent>();
+  pSphereEntity2->SetPosition(maths::CVector3(0.0f, 6.0f, 0.0f));
+
   const render::CRender* pRender = pEngine->GetRender();
   pRender->GetRenderWindow()->SetEnabled(true);
 
@@ -95,7 +104,7 @@ int main()
       {
         float fFixedDeltaTime = pTimeManager->GetFixedDelta();
 
-        pEngine->Update(fFixedDeltaTime); // This is for update the camera.
+        pEngine->Update(fFixedDeltaTime); // Update camera.
 
         pPhysicsManager->Update(fFixedDeltaTime);
         pCollisionManager->Update(fFixedDeltaTime);
@@ -123,6 +132,7 @@ int main()
           break;
         }
         pRigidbodyTest->SetRigidbodyType(eRigidbodyType);
+        pRigidbodyTest2->SetRigidbodyType(eRigidbodyType);
       }
 
       if (ImGui::Button("30"))

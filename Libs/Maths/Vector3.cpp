@@ -15,6 +15,12 @@ namespace maths
     return (this->X * _v3.X) + (this->Y * _v3.Y) + (this->Z * _v3.Z);
   }
   // ------------------------------------
+  float CVector3::Distance(const CVector3& _vDest, const CVector3& _vOrigin)
+  {
+    maths::CVector3 vDist = _vDest - _vOrigin;
+    return vDist.X * vDist.X + vDist.Y * vDist.Y + vDist.Z * vDist.Z;
+  }
+  // ------------------------------------
   CVector3 CVector3::CrossProduct(const CVector3& _v3) const
   {
     return CVector3

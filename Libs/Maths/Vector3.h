@@ -35,6 +35,8 @@ namespace maths
     bool operator!=(const CVector3& other) const { return !(*this == other); }
 
     float DotProduct(const CVector3& _v3) const;
+    static float Distance(const CVector3& _vDest, const CVector3& _vOrigin);
+
     CVector3 CrossProduct(const CVector3& _v3) const;
     CVector3 Normalized() const;
 
