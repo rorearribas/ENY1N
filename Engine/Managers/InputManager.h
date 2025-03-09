@@ -11,8 +11,8 @@ namespace input
     CMouse();
     ~CMouse();
 
-    const maths::CVector2 GetMouseDelta() const;
     const maths::CVector2 GetMousePosition() const;
+    const maths::CVector2 GetMouseDelta() const;
     const float GetMouseWheelDelta() const;
 
     const bool IsRightButtonPressed();
@@ -26,22 +26,38 @@ namespace input
     float m_fMouseWheelDelta = 0.0f;
   };
 
+  class CKeyboard
+  {
+  public:
+    CKeyboard();
+    ~CKeyboard();
+
+    bool IsKeyPressed(USHORT _uKey) const;
+
+  protected:
+    void OnUpdateKeyboard(RAWKEYBOARD*);
+  private:
+    void RegisterKeys();
+    std::map<USHORT, bool> m_mapKeyStates;
+  };
+
   class CInputManager : public utils::CSingleton<CInputManager> 
   {
   public:
     CInputManager();
     ~CInputManager();
 
+    CMouse* GetMouse() const { return m_pMouse; }
+    CKeyboard* GetKeyboard() const { return m_pKeyboard; }
+
     void Flush();
     bool IsKeyPressed(USHORT _uKey) const;
-    CMouse* GetMouse() const { return m_pMouse; }
 
   private:
-    void RegisterKeys();
-    void OnUpdateKeyboard(RAWKEYBOARD*);
+    void Clean();
 
-    std::map<USHORT, bool> m_mapKeyStates;
     CMouse* m_pMouse = nullptr;
+    CKeyboard* m_pKeyboard = nullptr;
   };
 }
 

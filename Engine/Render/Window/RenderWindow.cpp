@@ -39,25 +39,26 @@ namespace render
 
       case WM_INPUT:
       {
-        unsigned uSize = 0;
+        uint32_t uSize = 0;
         GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, nullptr, &uSize, sizeof(RAWINPUTHEADER));
-        if (uSize == 0)
-          break;
+        if (uSize == 0) break;
 
         // Get raw input data
-        std::unique_ptr<BYTE[]> pRawInputData(new BYTE[uSize]);
-        if (GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, pRawInputData.get(), &uSize, sizeof(RAWINPUTHEADER)) != uSize)
+        std::unique_ptr<BYTE[]> pData(new BYTE[uSize]);
+        if (GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, pData.get(), &uSize, sizeof(RAWINPUTHEADER)) != uSize)
         {
           assert(false && "Failed to retrieve RAWINPUT data.");
           break;
         }
 
-        RAWINPUT* pRawInput = reinterpret_cast<RAWINPUT*>(pRawInputData.get());
+        RAWINPUT* pRawInput = reinterpret_cast<RAWINPUT*>(pData.get());
+        // Mouse
         if (pRawInput && pRawInput->header.dwType == RIM_TYPEMOUSE)
         {
           global::delegates::s_oUpdateMouseDelegate(&pRawInput->data.mouse);
         }
-        else if (pRawInput && pRawInput->header.dwType == RIM_TYPEKEYBOARD)
+        // Keyboard
+        if (pRawInput && pRawInput->header.dwType == RIM_TYPEKEYBOARD)
         {
           global::delegates::s_oOnUpdateKeyboardDelegate(&pRawInput->data.keyboard);
         }
@@ -117,7 +118,7 @@ namespace render
     assert(m_hWnd);
   }
   // ------------------------------------
-  void CRenderWindow::SetWinEnabled(bool _bEnabled) const
+  void CRenderWindow::SetEnabled(bool _bEnabled) const
   {
     ShowWindow(m_hWnd, _bEnabled);
   }

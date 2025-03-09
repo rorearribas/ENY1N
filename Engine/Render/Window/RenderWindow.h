@@ -10,7 +10,7 @@ namespace render
     CRenderWindow(uint32_t _uWidth, uint32_t _uHeight);
     ~CRenderWindow() {}
 
-    void SetWinEnabled(bool _bEnabled) const;
+    void SetEnabled(bool _bEnabled) const;
 
     const uint32_t GetWidth() const;
     const uint32_t GetHeight() const;

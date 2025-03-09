@@ -11,7 +11,7 @@ namespace render
 {
   namespace internal_camera
   {
-    const float s_fPI = 3.14159265358979323846f;
+    const float s_fInterpolateSpeed = 10.0f;
   }
   // ------------------------------------
   CCamera::CCamera()
@@ -41,28 +41,31 @@ namespace render
       if (pInputManager->IsKeyPressed('A') && bMousePressed) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
 
       // Rotation
-      float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed * _fDeltaTime;
-      float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed * _fDeltaTime;
-      maths::CVector3 v3Rot(maths::RadiansToDegrees(yValue), maths::RadiansToDegrees(xValue), 0.0f);
-      AddRotation(v3Rot);
+      float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed;
+      float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed;
+
+      std::cout << "x value delta: " << xValue << std::endl;
+      std::cout << "y value delta: " << yValue << std::endl;
+
+      maths::CVector3 v3AddedRot(maths::RadiansToDegrees(yValue), maths::RadiansToDegrees(xValue), 0.0f);
+      AddRotation(v3AddedRot);
     }
 
     // Wheel 
     if (!bMousePressed)
     {
       float fMouseDelta = pMouse->GetMouseWheelDelta();
-      MovePosition(fMouseDelta != 0 ? vForward * (fMouseDelta * 100.0f) * _fDeltaTime : maths::CVector3::Zero);
+      MovePosition(fMouseDelta != 0 ? vForward * (fMouseDelta * m_fMovementSpeed) * _fDeltaTime : maths::CVector3::Zero);
     }
 
     // Interpolate FOV
-    m_fTargetFov = maths::Lerp(m_fTargetFov, m_fFov, 10.f * _fDeltaTime);
+    m_fTargetFov = maths::lerp(m_fTargetFov, m_fFov, internal_camera::s_fInterpolateSpeed * _fDeltaTime);
 
     // Update perspective matrix
     UpdatePerspectiveMatrix();
 
     // Update constant buffer
-    maths::CMatrix4x4 mViewProjection = m_mViewMatrix * m_mProjectionMatrix;
-    m_oConstantBuffer.GetData().mMatrix = maths::CMatrix4x4::Transpose(mViewProjection);
+    m_oConstantBuffer.GetData().mMatrix = maths::CMatrix4x4::Transpose(m_mViewMatrix * m_mProjectionMatrix);
     m_oConstantBuffer.UpdateBuffer();
 
     ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();

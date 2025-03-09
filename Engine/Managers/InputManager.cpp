@@ -7,19 +7,32 @@
 #include "Libs/ImGui/imgui.h"
 #include "Libs/Macros/GlobalMacros.h"
 
+#ifndef HID_USAGE_PAGE_GENERIC
+#define HID_USAGE_PAGE_GENERIC         ((USHORT) 0x01)
+#endif
+#ifndef HID_USAGE_GENERIC_MOUSE
+#define HID_USAGE_GENERIC_MOUSE        ((USHORT) 0x02)
+#endif
+#ifndef HID_USAGE_GENERIC_KEYBOARD
+#define HID_USAGE_GENERIC_KEYBOARD        ((USHORT) 0x06)
+#endif
+
 namespace input
 {
+  // ------------------------------------
+  // --------------MOUSE-----------------
+  // ------------------------------------
   CMouse::CMouse()
   {
     // Raw input config
-    RAWINPUTDEVICE oRawInputDevice = {};
-    oRawInputDevice.usUsagePage = 0x01;
-    oRawInputDevice.usUsage = 0x02;
-    oRawInputDevice.dwFlags = RIDEV_INPUTSINK;
-    oRawInputDevice.hwndTarget = global::window::s_oHwnd;
+    RAWINPUTDEVICE Rid = RAWINPUTDEVICE();
+    Rid.usUsagePage = HID_USAGE_PAGE_GENERIC;
+    Rid.usUsage = HID_USAGE_GENERIC_MOUSE;
+    Rid.dwFlags = RIDEV_INPUTSINK;
+    Rid.hwndTarget = global::window::s_oHwnd;
 
     // Register raw input
-    bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
+    bool bOk = RegisterRawInputDevices(&Rid, 1, sizeof(Rid));
     UNUSED_VARIABLE(bOk);
     assert(bOk);
 
@@ -39,7 +52,7 @@ namespace input
   // ------------------------------------
   const maths::CVector2 CMouse::GetMousePosition() const
   {
-    POINT oScreenPoint = {};
+    POINT oScreenPoint = POINT();
     if (ScreenToClient(global::window::s_oHwnd, &oScreenPoint))
     {
       return maths::CVector2((float)oScreenPoint.x, (float)oScreenPoint.y);
@@ -68,9 +81,9 @@ namespace input
     if (_pRawMouse && _pRawMouse->usButtonFlags == MOUSE_MOVE_RELATIVE)
     {
       // Get values
-      const float fSmoothDelta = 0.05f;
-      m_vMouseDelta.X = static_cast<float>(_pRawMouse->lLastX) * fSmoothDelta;
-      m_vMouseDelta.Y = static_cast<float>(_pRawMouse->lLastY) * fSmoothDelta;
+      const float fPollingRate = 1.0f / 1000.0f;
+      m_vMouseDelta.X += static_cast<float>(_pRawMouse->lLastX) * fPollingRate;
+      m_vMouseDelta.Y += static_cast<float>(_pRawMouse->lLastY) * fPollingRate;
     }
 
     // Set mouse wheel delta
@@ -80,20 +93,19 @@ namespace input
     }
   }
   // ------------------------------------
-  CInputManager::CInputManager()
+  // ------------KEYBOARD----------------
+  // ------------------------------------
+  CKeyboard::CKeyboard()
   {
-    // Create mouse instance
-    m_pMouse = new CMouse();
-
     // Raw input config
-    RAWINPUTDEVICE oRawInputDevice = {};
-    oRawInputDevice.usUsagePage = 0x01;
-    oRawInputDevice.usUsage = 0x06;
-    oRawInputDevice.dwFlags = RIDEV_INPUTSINK;
-    oRawInputDevice.hwndTarget = global::window::s_oHwnd;
+    RAWINPUTDEVICE Rid = {};
+    Rid.usUsagePage = HID_USAGE_PAGE_GENERIC;
+    Rid.usUsage = HID_USAGE_GENERIC_KEYBOARD;
+    Rid.dwFlags = RIDEV_INPUTSINK;
+    Rid.hwndTarget = global::window::s_oHwnd;
 
     // Register keyboard input
-    bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
+    bool bOk = RegisterRawInputDevices(&Rid, 1, sizeof(Rid));
     UNUSED_VARIABLE(bOk);
     assert(bOk);
 
@@ -101,28 +113,55 @@ namespace input
     RegisterKeys();
 
     // Bind delegate
-    global::delegates::s_oOnUpdateKeyboardDelegate.Bind(&CInputManager::OnUpdateKeyboard, this);
+    global::delegates::s_oOnUpdateKeyboardDelegate.Bind(&CKeyboard::OnUpdateKeyboard, this);
   }
-  void CInputManager::RegisterKeys()
+  // ------------------------------------
+  CKeyboard::~CKeyboard()
+  {
+    m_mapKeyStates.clear();
+    global::delegates::s_oOnUpdateKeyboardDelegate.Clear();
+  }
+  // ------------------------------------
+  bool CKeyboard::IsKeyPressed(USHORT _uKey) const
+  {
+    return m_mapKeyStates.count(_uKey) ? m_mapKeyStates.at(_uKey) : false;
+  }
+  // ------------------------------------
+  void CKeyboard::OnUpdateKeyboard(RAWKEYBOARD* _pPtr)
+  {
+    if (_pPtr && !m_mapKeyStates.empty())
+    {
+      // Set value
+      auto it = m_mapKeyStates.find(_pPtr->VKey);
+      it->second = !(_pPtr->Flags & RI_KEY_BREAK);
+    }
+  }
+  // ------------------------------------
+  void CKeyboard::RegisterKeys()
   {
     // Register all keys
-    for (USHORT uKey = VK_LBUTTON; uKey <= VK_OEM_CLEAR; ++uKey) 
+    for (USHORT uKey = VK_LBUTTON; uKey <= VK_OEM_CLEAR; ++uKey)
     {
-      RAWKEYBOARD oRawKeyboard = {};
+      RAWKEYBOARD oRawKeyboard = RAWKEYBOARD();
       oRawKeyboard.VKey = uKey;
       oRawKeyboard.Flags = 0;
       m_mapKeyStates[oRawKeyboard.VKey] = false;
     }
   }
   // ------------------------------------
+  // -----------INPUT_MANAGER------------
+  // ------------------------------------
+  CInputManager::CInputManager()
+  {
+    // Create mouse instance
+    m_pMouse = new CMouse();
+    // Create keyboard instance
+    m_pKeyboard = new CKeyboard();
+  }
+  // ------------------------------------
   CInputManager::~CInputManager()
   {
-    if (m_pMouse)
-    {
-      delete m_pMouse;
-      m_pMouse = nullptr;
-    }
-    m_mapKeyStates.clear();
+    Clean();
   }
   // ------------------------------------
   void CInputManager::Flush()
@@ -134,18 +173,22 @@ namespace input
     }
   }
   // ------------------------------------
+  void CInputManager::Clean()
+  {
+    if (m_pMouse)
+    {
+      delete m_pMouse;
+      m_pMouse = nullptr;
+    }
+    if (m_pKeyboard)
+    {
+      delete m_pKeyboard;
+      m_pKeyboard = nullptr;
+    }
+  }
+  // ------------------------------------
   bool CInputManager::IsKeyPressed(USHORT _uKey) const
   {
-    return m_mapKeyStates.count(_uKey) ? m_mapKeyStates.at(_uKey) : false;
-  }
-// ------------------------------------
-  void CInputManager::OnUpdateKeyboard(RAWKEYBOARD* _pRawKeyboard)
-  {
-    if (_pRawKeyboard && !m_mapKeyStates.empty())
-    {
-      // Set value
-      auto it = m_mapKeyStates.find(_pRawKeyboard->VKey);
-      it->second = !(_pRawKeyboard->Flags & RI_KEY_BREAK);
-    }
+    return m_pKeyboard ? m_pKeyboard->IsKeyPressed(_uKey) : false;
   }
 }

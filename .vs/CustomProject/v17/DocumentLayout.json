@@ -3,8 +3,36 @@
   "WorkspaceRootPath": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Managers\\InputManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Camera\\Camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Camera\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Maths.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Maths\\Maths.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Material.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\Resources\\Material.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|solutionrelative:App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\LIBS\\MATHS\\VECTOR2.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:LIBS\\MATHS\\VECTOR2.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Base\\Engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Base\\Engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Window\\RenderWindow.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -15,8 +43,27 @@
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\Window\\RenderWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\USERS\\RUB\u00C9N\\DOCUMENTS\\GITHUB\\ENY1N\\LIBS\\UTILS\\DELEGATE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:LIBS\\UTILS\\DELEGATE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\LIBS\\UTILS\\DELEGATE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:LIBS\\UTILS\\DELEGATE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Managers\\InputManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Time\\TimeManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Time\\TimeManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm||{3B902123-F8A7-4915-9F01-361F908088D0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\GameManager\\GameManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\GameManager\\GameManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Render.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\Render.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\ENGINE\\PHYSICS\\RIGIDBODY.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -37,10 +84,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\Rigidbody.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Physics\\Rigidbody.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Maths.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Maths\\Maths.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -99,10 +142,6 @@
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\Graphics\\Primitive.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Base\\Engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Base\\Engine.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Render.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\Render.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
@@ -127,23 +166,11 @@
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Maths\\Matrix4x4.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\GameManager\\GameManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\GameManager\\GameManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Camera\\Camera.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xstring||{3B902123-F8A7-4915-9F01-361F908088D0}|"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Material.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\Resources\\Material.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Material.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -198,20 +225,12 @@
       "RelativeMoniker": "D:0:0:{D8691100-CB9B-4CEC-B516-7940E960261B}|Game\\Game.vcxproj|solutionrelative:Game\\GameManager\\GameManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Render.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\Render.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\LIBS\\THIRD-PARTY\\STB\\STB_IMAGE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:LIBS\\THIRD-PARTY\\STB\\STB_IMAGE.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Time\\TimeManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Time\\TimeManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Time\\TimeManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Time\\TimeManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\ResourceManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -268,20 +287,12 @@
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\ImGui\\imgui_internal.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Managers\\InputManager.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\ImGui\\imgui_demo.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\ImGui\\imgui_demo.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\ConstantBuffer\\ConstantBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\ConstantBuffer\\ConstantBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Camera\\Camera.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Graphics\\Mesh.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -308,9 +319,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\map||{3B902123-F8A7-4915-9F01-361F908088D0}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Lights\\DirectionalLight.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -350,14 +358,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Graphics\\Shape.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Render\\Graphics\\Shape.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\LIBS\\MATHS\\VECTOR2.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:LIBS\\MATHS\\VECTOR2.H||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Managers\\InputManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Lights\\SpotLight.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -481,17 +481,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 15,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 70,
+              "DocumentIndex": 2,
               "Title": "Camera.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.h",
               "RelativeDocumentMoniker": "Engine\\Camera\\Camera.h",
               "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.h",
               "RelativeToolTip": "Engine\\Camera\\Camera.h",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAAADEAAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAADEAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-10-29T23:04:40.071Z",
               "IsPinned": true,
@@ -503,98 +503,72 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 8,
               "Title": "RenderWindow.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Window\\RenderWindow.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Window\\RenderWindow.h",
               "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Window\\RenderWindow.h",
               "RelativeToolTip": "Engine\\Render\\Window\\RenderWindow.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-03-08T21:31:58.534Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "CollisionManager.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\CollisionManager.cpp",
-              "RelativeDocumentMoniker": "Engine\\Collisions\\CollisionManager.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\CollisionManager.cpp",
-              "RelativeToolTip": "Engine\\Collisions\\CollisionManager.cpp",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABcAAAA8AAAAAAAAAA==",
+              "DocumentIndex": 0,
+              "Title": "InputManager.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.cpp",
+              "RelativeDocumentMoniker": "Engine\\Managers\\InputManager.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.cpp",
+              "RelativeToolTip": "Engine\\Managers\\InputManager.cpp",
+              "ViewState": "AgIAAEQAAAAAAAAAAAArwFMAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-23T19:22:11.428Z",
+              "WhenOpened": "2024-11-17T21:22:43.991Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Rigidbody.h",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\Rigidbody.h",
-              "RelativeDocumentMoniker": "Engine\\Physics\\Rigidbody.h",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\Rigidbody.h",
-              "RelativeToolTip": "Engine\\Physics\\Rigidbody.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAcAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-01T14:40:57.787Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "RigidbodyComponent.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
-              "RelativeDocumentMoniker": "Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
-              "RelativeToolTip": "Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAACQAAABEAAAAAAAAAA==",
+              "DocumentIndex": 12,
+              "Title": "TimeManager.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Time\\TimeManager.cpp",
+              "RelativeDocumentMoniker": "Libs\\Time\\TimeManager.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Time\\TimeManager.cpp",
+              "RelativeToolTip": "Libs\\Time\\TimeManager.cpp",
+              "ViewState": "AgIAACEAAAAAAAAAAAAMwC8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-05T17:14:08.739Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Delegate.h",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Utils\\Delegate.h",
-              "RelativeDocumentMoniker": "Libs\\Utils\\Delegate.h",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Utils\\Delegate.h",
-              "RelativeToolTip": "Libs\\Utils\\Delegate.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T17:08:54.336Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "BoxCollider.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp",
-              "RelativeDocumentMoniker": "Engine\\Collisions\\BoxCollider.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp",
-              "RelativeToolTip": "Engine\\Collisions\\BoxCollider.cpp",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAAAEEAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-06T21:17:12.536Z",
+              "WhenOpened": "2024-11-19T17:01:00.464Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 13,
-              "Title": "CollisionComponent.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.cpp",
-              "RelativeDocumentMoniker": "Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.cpp",
-              "RelativeToolTip": "Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.cpp",
-              "ViewState": "AgIAAA4AAAAAAAAAAAAMwB8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-17T17:21:14.125Z",
+              "Title": "algorithm",
+              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm",
+              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm",
+              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm",
+              "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2025-02-11T18:43:24.659Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 1,
+              "Title": "Camera.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.cpp",
+              "RelativeDocumentMoniker": "Engine\\Camera\\Camera.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.cpp",
+              "RelativeToolTip": "Engine\\Camera\\Camera.cpp",
+              "ViewState": "AgIAABUAAAAAAAAAAAAMwCsAAAAkAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-10-29T23:04:58.953Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
               "Title": "BoxCollider.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.h",
               "RelativeDocumentMoniker": "Engine\\Collisions\\BoxCollider.h",
@@ -607,33 +581,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
-              "Title": "Component.h",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\Component.h",
-              "RelativeDocumentMoniker": "Game\\ETT\\Components\\Component.h",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\Component.h",
-              "RelativeToolTip": "Game\\ETT\\Components\\Component.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAA9AAAAAAAAAA==",
+              "DocumentIndex": 11,
+              "Title": "InputManager.h",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.h",
+              "RelativeDocumentMoniker": "Engine\\Managers\\InputManager.h",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.h",
+              "RelativeToolTip": "Engine\\Managers\\InputManager.h",
+              "ViewState": "AgIAACMAAAAAAAAAAAAcwDQAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T11:19:23.449Z",
+              "WhenOpened": "2024-11-11T17:43:58.277Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Rigidbody.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\Rigidbody.cpp",
-              "RelativeDocumentMoniker": "Engine\\Physics\\Rigidbody.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\Rigidbody.cpp",
-              "RelativeToolTip": "Engine\\Physics\\Rigidbody.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAVAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-01T14:40:59.898Z",
+              "DocumentIndex": 10,
+              "Title": "Delegate.h",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Utils\\Delegate.h",
+              "RelativeDocumentMoniker": "Libs\\Utils\\Delegate.h",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Utils\\Delegate.h",
+              "RelativeToolTip": "Libs\\Utils\\Delegate.h",
+              "ViewState": "AgIAAAsAAAAAAAAAAAAAAAsAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-10T17:08:54.336Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 17,
               "Title": "PhysicsManager.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\PhysicsManager.cpp",
               "RelativeDocumentMoniker": "Engine\\Physics\\PhysicsManager.cpp",
@@ -646,39 +620,78 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 20,
+              "Title": "Rigidbody.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\Rigidbody.cpp",
+              "RelativeDocumentMoniker": "Engine\\Physics\\Rigidbody.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\Rigidbody.cpp",
+              "RelativeToolTip": "Engine\\Physics\\Rigidbody.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-01T14:40:59.898Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "Engine.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Base\\Engine.cpp",
+              "RelativeDocumentMoniker": "Engine\\Base\\Engine.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Base\\Engine.cpp",
+              "RelativeToolTip": "Engine\\Base\\Engine.cpp",
+              "ViewState": "AgIAADYAAAAAAAAAAAArwEUAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-10-24T19:07:52.732Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Maths.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Maths.h",
               "RelativeDocumentMoniker": "Libs\\Maths\\Maths.h",
               "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Maths.h",
               "RelativeToolTip": "Libs\\Maths\\Maths.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAeAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-01-17T22:45:36.043Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "RenderWindow.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Window\\RenderWindow.cpp",
-              "RelativeDocumentMoniker": "Engine\\Render\\Window\\RenderWindow.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Window\\RenderWindow.cpp",
-              "RelativeToolTip": "Engine\\Render\\Window\\RenderWindow.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAASAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-18T01:22:37.203Z",
+              "DocumentIndex": 6,
+              "Title": "Vector2.h",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Vector2.h",
+              "RelativeDocumentMoniker": "Libs\\Maths\\Vector2.h",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Vector2.h",
+              "RelativeToolTip": "Libs\\Maths\\Vector2.h",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAAEAAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-26T09:07:16.197Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 4,
+              "Title": "Material.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Material.cpp",
+              "RelativeDocumentMoniker": "Engine\\Render\\Resources\\Material.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Material.cpp",
+              "RelativeToolTip": "Engine\\Render\\Resources\\Material.cpp",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAkwBEAAAARAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2024-12-01T19:48:10.2Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp",
               "RelativeDocumentMoniker": "App\\main.cpp",
               "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp",
               "RelativeToolTip": "App\\main.cpp",
-              "ViewState": "AgIAADUAAAAAAAAAAAAUwEcAAAAeAAAAAAAAAA==",
+              "ViewState": "AgIAABkAAAAAAAAAAAAAACMAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-01-09T22:10:15.465Z",
               "EditorCaption": ""
@@ -686,6 +699,19 @@
             {
               "$type": "Document",
               "DocumentIndex": 15,
+              "Title": "Render.h",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Render.h",
+              "RelativeDocumentMoniker": "Engine\\Render\\Render.h",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Render.h",
+              "RelativeToolTip": "Engine\\Render\\Render.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-10-25T15:41:48.958Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 26,
               "Title": "Entity.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Entity.h",
               "RelativeDocumentMoniker": "Game\\ETT\\Entity.h",
@@ -698,7 +724,111 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 9,
+              "Title": "RenderWindow.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Window\\RenderWindow.cpp",
+              "RelativeDocumentMoniker": "Engine\\Render\\Window\\RenderWindow.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Window\\RenderWindow.cpp",
+              "RelativeToolTip": "Engine\\Render\\Window\\RenderWindow.cpp",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAACkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-01-18T01:22:37.203Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 24,
+              "Title": "CollisionComponent.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.cpp",
+              "RelativeDocumentMoniker": "Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.cpp",
+              "RelativeToolTip": "Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.cpp",
+              "ViewState": "AgIAAA4AAAAAAAAAAAAMwB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-02-17T17:21:14.125Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "BoxCollider.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp",
+              "RelativeDocumentMoniker": "Engine\\Collisions\\BoxCollider.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp",
+              "RelativeToolTip": "Engine\\Collisions\\BoxCollider.cpp",
+              "ViewState": "AgIAAC0AAAAAAAAAAAAAAEEAAAADAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-02-06T21:17:12.536Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 25,
+              "Title": "Component.h",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\Component.h",
+              "RelativeDocumentMoniker": "Game\\ETT\\Components\\Component.h",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\Component.h",
+              "RelativeToolTip": "Game\\ETT\\Components\\Component.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABcAAAA9AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2024-11-23T11:19:23.449Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "GameManager.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\GameManager\\GameManager.cpp",
+              "RelativeDocumentMoniker": "Game\\GameManager\\GameManager.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\GameManager\\GameManager.cpp",
+              "RelativeToolTip": "Game\\GameManager\\GameManager.cpp",
+              "ViewState": "AgIAABsAAAAAAAAAAAAAABUAAAAHAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-01-25T00:49:24.978Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "RigidbodyComponent.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
+              "RelativeDocumentMoniker": "Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
+              "RelativeToolTip": "Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAACQAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-05T17:14:08.739Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "Rigidbody.h",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\Rigidbody.h",
+              "RelativeDocumentMoniker": "Engine\\Physics\\Rigidbody.h",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\Rigidbody.h",
+              "RelativeToolTip": "Engine\\Physics\\Rigidbody.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
+              "WhenOpened": "2025-03-01T14:40:57.787Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "CollisionManager.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\CollisionManager.cpp",
+              "RelativeDocumentMoniker": "Engine\\Collisions\\CollisionManager.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\CollisionManager.cpp",
+              "RelativeToolTip": "Engine\\Collisions\\CollisionManager.cpp",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABcAAAA8AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-02-23T19:22:11.428Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 23,
               "Title": "CollisionManager.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\CollisionManager.h",
               "RelativeDocumentMoniker": "Engine\\Collisions\\CollisionManager.h",
@@ -711,7 +841,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 30,
               "Title": "PhysicsManager.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Physics\\PhysicsManager.h",
               "RelativeDocumentMoniker": "Engine\\Physics\\PhysicsManager.h",
@@ -724,7 +854,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 28,
               "Title": "Entity.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Entity.cpp",
               "RelativeDocumentMoniker": "Game\\ETT\\Entity.cpp",
@@ -750,7 +880,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 27,
               "Title": "CollisionComponent.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.h",
               "RelativeDocumentMoniker": "Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.h",
@@ -776,7 +906,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 34,
               "Title": "Primitive.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Graphics\\Primitive.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Graphics\\Primitive.h",
@@ -789,7 +919,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 29,
               "Title": "Vector3.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Vector3.h",
               "RelativeDocumentMoniker": "Libs\\Maths\\Vector3.h",
@@ -802,7 +932,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 39,
               "Title": "ImGuizmo.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\ImGui\\ImGuizmo.h",
               "RelativeDocumentMoniker": "Libs\\ImGui\\ImGuizmo.h",
@@ -815,7 +945,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 33,
               "Title": "Engine.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Base\\Engine.h",
               "RelativeDocumentMoniker": "Engine\\Base\\Engine.h",
@@ -828,7 +958,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 32,
               "Title": "Model.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Graphics\\Model.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Graphics\\Model.h",
@@ -841,7 +971,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 35,
               "Title": "Render.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Render.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Render.cpp",
@@ -854,7 +984,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 37,
               "Title": "Transform.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Transform.cpp",
               "RelativeDocumentMoniker": "Libs\\Maths\\Transform.cpp",
@@ -867,7 +997,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 31,
               "Title": "Singleton.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Utils\\Singleton.h",
               "RelativeDocumentMoniker": "Libs\\Utils\\Singleton.h",
@@ -880,20 +1010,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
-              "Title": "Engine.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Base\\Engine.cpp",
-              "RelativeDocumentMoniker": "Engine\\Base\\Engine.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Base\\Engine.cpp",
-              "RelativeToolTip": "Engine\\Base\\Engine.cpp",
-              "ViewState": "AgIAADYAAAAAAAAAAAArwEMAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T19:07:52.732Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 41,
               "Title": "xstring",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xstring",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xstring",
@@ -906,7 +1023,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 51,
               "Title": "Shader.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Shader.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Shader.h",
@@ -919,7 +1036,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 50,
               "Title": "DeferredPixelShader.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Shaders\\Model\\DeferredPixelShader.h",
               "RelativeDocumentMoniker": "Engine\\Shaders\\Model\\DeferredPixelShader.h",
@@ -932,7 +1049,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 47,
               "Title": "PixelShader.hlsl",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Shaders\\Primitive\\PixelShader.hlsl",
               "RelativeDocumentMoniker": "Engine\\Shaders\\Primitive\\PixelShader.hlsl",
@@ -945,7 +1062,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 45,
               "Title": "VertexShader.hlsl",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Shaders\\Primitive\\VertexShader.hlsl",
               "RelativeDocumentMoniker": "Engine\\Shaders\\Primitive\\VertexShader.hlsl",
@@ -958,7 +1075,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 40,
               "Title": "Matrix4x4.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Matrix4x4.h",
               "RelativeDocumentMoniker": "Libs\\Maths\\Matrix4x4.h",
@@ -971,7 +1088,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 38,
               "Title": "Matrix4x4.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Matrix4x4.cpp",
               "RelativeDocumentMoniker": "Libs\\Maths\\Matrix4x4.cpp",
@@ -984,7 +1101,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 36,
               "Title": "ImGuizmo.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\ImGui\\ImGuizmo.cpp",
               "RelativeDocumentMoniker": "Libs\\ImGui\\ImGuizmo.cpp",
@@ -997,33 +1114,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
-              "Title": "GameManager.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\GameManager\\GameManager.cpp",
-              "RelativeDocumentMoniker": "Game\\GameManager\\GameManager.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\GameManager\\GameManager.cpp",
-              "RelativeToolTip": "Game\\GameManager\\GameManager.cpp",
-              "ViewState": "AgIAACEAAAAAAAAAAAAAwCsAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T00:49:24.978Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
-              "Title": "Material.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Material.cpp",
-              "RelativeDocumentMoniker": "Engine\\Render\\Resources\\Material.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Material.cpp",
-              "RelativeToolTip": "Engine\\Render\\Resources\\Material.cpp",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAkwBEAAAARAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-01T19:48:10.2Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 43,
               "Title": "Material.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Material.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Resources\\Material.h",
@@ -1031,12 +1122,11 @@
               "RelativeToolTip": "Engine\\Render\\Resources\\Material.h",
               "ViewState": "AgIAACIAAAAAAAAAAAAAADQAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-01T19:19:25.001Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:19:25.001Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 44,
               "Title": "Primitive.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Graphics\\Primitive.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Graphics\\Primitive.cpp",
@@ -1044,25 +1134,11 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\Primitive.cpp",
               "ViewState": "AgIAALwAAAAAAAAAAAAkwMUAAAAHAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-26T17:58:50.925Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-26T17:58:50.925Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "Camera.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.cpp",
-              "RelativeDocumentMoniker": "Engine\\Camera\\Camera.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Camera\\Camera.cpp",
-              "RelativeToolTip": "Engine\\Camera\\Camera.cpp",
-              "ViewState": "AgIAAAUAAAAAAAAAAAAAAB4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-29T23:04:58.953Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 34,
+              "DocumentIndex": 42,
               "Title": "ModelComponent.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp",
               "RelativeDocumentMoniker": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp",
@@ -1070,12 +1146,11 @@
               "RelativeToolTip": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp",
               "ViewState": "AgIAAFMAAAAAAAAAAAAhwG0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-29T17:24:45.366Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T17:24:45.366Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 52,
               "Title": "Shader.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Shader.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Shader.cpp",
@@ -1083,12 +1158,11 @@
               "RelativeToolTip": "Engine\\Render\\Shader.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T01:44:24.841Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T01:44:24.841Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 49,
               "Title": "DeferredPixelShader.hlsl",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Shaders\\Model\\DeferredPixelShader.hlsl",
               "RelativeDocumentMoniker": "Engine\\Shaders\\Model\\DeferredPixelShader.hlsl",
@@ -1096,12 +1170,11 @@
               "RelativeToolTip": "Engine\\Shaders\\Model\\DeferredPixelShader.hlsl",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2025-03-06T21:30:02.55Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-06T21:30:02.55Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 46,
               "Title": "DeferredVertexShader.hlsl",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Shaders\\Model\\DeferredVertexShader.hlsl",
               "RelativeDocumentMoniker": "Engine\\Shaders\\Model\\DeferredVertexShader.hlsl",
@@ -1109,12 +1182,11 @@
               "RelativeToolTip": "Engine\\Shaders\\Model\\DeferredVertexShader.hlsl",
               "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2025-03-06T21:30:13.016Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-06T21:30:13.016Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 48,
               "Title": "DeferredVertexShader.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Shaders\\Model\\DeferredVertexShader.h",
               "RelativeDocumentMoniker": "Engine\\Shaders\\Model\\DeferredVertexShader.h",
@@ -1122,12 +1194,11 @@
               "RelativeToolTip": "Engine\\Shaders\\Model\\DeferredVertexShader.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-01-25T12:57:25.481Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T12:57:25.481Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 53,
               "Title": "ModelComponent.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\ModelComponent\\ModelComponent.h",
               "RelativeDocumentMoniker": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.h",
@@ -1135,25 +1206,11 @@
               "RelativeToolTip": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.h",
               "ViewState": "AgIAABAAAAAAAAAAAAAAACkAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T16:13:01.298Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T16:13:01.298Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
-              "Title": "TimeManager.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Time\\TimeManager.cpp",
-              "RelativeDocumentMoniker": "Libs\\Time\\TimeManager.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Time\\TimeManager.cpp",
-              "RelativeToolTip": "Libs\\Time\\TimeManager.cpp",
-              "ViewState": "AgIAAAwAAAAAAAAAAAAUwBUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-19T17:01:00.464Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 55,
               "Title": "GameManager.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\GameManager\\GameManager.h",
               "RelativeDocumentMoniker": "Game\\GameManager\\GameManager.h",
@@ -1161,12 +1218,11 @@
               "RelativeToolTip": "Game\\GameManager\\GameManager.h",
               "ViewState": "AgIAAA0AAAAAAAAAAAAhwBMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T11:17:13.802Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T11:17:13.802Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 54,
               "Title": "Vector3.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Vector3.cpp",
               "RelativeDocumentMoniker": "Libs\\Maths\\Vector3.cpp",
@@ -1174,25 +1230,11 @@
               "RelativeToolTip": "Libs\\Maths\\Vector3.cpp",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAAA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-26T11:39:28.559Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-26T11:39:28.559Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
-              "Title": "Render.h",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Render.h",
-              "RelativeDocumentMoniker": "Engine\\Render\\Render.h",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Render.h",
-              "RelativeToolTip": "Engine\\Render\\Render.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAaAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-25T15:41:48.958Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 56,
               "Title": "stb_image.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Third-Party\\stb\\stb_image.h",
               "RelativeDocumentMoniker": "Libs\\Third-Party\\stb\\stb_image.h",
@@ -1200,12 +1242,11 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb_image.h",
               "ViewState": "AgIAALAaAAAAAAAAAAAowL4aAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-29T17:58:57.811Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T17:58:57.811Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 57,
               "Title": "TimeManager.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Time\\TimeManager.h",
               "RelativeDocumentMoniker": "Libs\\Time\\TimeManager.h",
@@ -1213,12 +1254,11 @@
               "RelativeToolTip": "Libs\\Time\\TimeManager.h",
               "ViewState": "AgIAABUAAAAAAAAAAAAAACcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T19:26:23.39Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T19:26:23.39Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 58,
               "Title": "ResourceManager.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\ResourceManager.cpp",
               "RelativeDocumentMoniker": "Engine\\Managers\\ResourceManager.cpp",
@@ -1226,12 +1266,11 @@
               "RelativeToolTip": "Engine\\Managers\\ResourceManager.cpp",
               "ViewState": "AgIAALkAAAAAAAAAAAD4v8YAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-26T17:24:04.032Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-26T17:24:04.032Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 59,
               "Title": "ResourceManager.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\ResourceManager.h",
               "RelativeDocumentMoniker": "Engine\\Managers\\ResourceManager.h",
@@ -1239,12 +1278,11 @@
               "RelativeToolTip": "Engine\\Managers\\ResourceManager.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAABPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-26T17:21:50.728Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-26T17:21:50.728Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 60,
               "Title": "Scene.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Scenes\\Scene.cpp",
               "RelativeDocumentMoniker": "Engine\\Scenes\\Scene.cpp",
@@ -1252,12 +1290,11 @@
               "RelativeToolTip": "Engine\\Scenes\\Scene.cpp",
               "ViewState": "AgIAAGgAAAAAAAAAAIAxwHsAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-23T19:27:29.875Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-23T19:27:29.875Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 61,
               "Title": "SceneManager.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Scenes\\SceneManager.cpp",
               "RelativeDocumentMoniker": "Engine\\Scenes\\SceneManager.cpp",
@@ -1265,12 +1302,11 @@
               "RelativeToolTip": "Engine\\Scenes\\SceneManager.cpp",
               "ViewState": "AgIAADAAAAAAAAAAAAAAADoAAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-01T14:27:05.316Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:27:05.316Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 62,
               "Title": "Entity.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Reflection\\Types\\Game\\Entity.h",
               "RelativeDocumentMoniker": "Reflection\\Types\\Game\\Entity.h",
@@ -1278,12 +1314,11 @@
               "RelativeToolTip": "Reflection\\Types\\Game\\Entity.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:30:33.575Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:30:33.575Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 64,
               "Title": "GlobalResources.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Global\\GlobalResources.h",
               "RelativeDocumentMoniker": "Engine\\Global\\GlobalResources.h",
@@ -1291,12 +1326,11 @@
               "RelativeToolTip": "Engine\\Global\\GlobalResources.h",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAB0AAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-01T14:57:35.42Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:57:35.42Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 63,
               "Title": "GlobalResources.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Global\\GlobalResources.cpp",
               "RelativeDocumentMoniker": "Engine\\Global\\GlobalResources.cpp",
@@ -1304,12 +1338,11 @@
               "RelativeToolTip": "Engine\\Global\\GlobalResources.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-01T15:32:05.772Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T15:32:05.772Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 65,
               "Title": "Microsoft.CppBuild.targets",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets",
@@ -1317,12 +1350,11 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppBuild.targets",
               "ViewState": "AgIAAAECAAAAAAAAAIAxwBICAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2025-02-12T22:35:07.534Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-12T22:35:07.534Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 66,
               "Title": "SceneManager.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Scenes\\SceneManager.h",
               "RelativeDocumentMoniker": "Engine\\Scenes\\SceneManager.h",
@@ -1330,12 +1362,11 @@
               "RelativeToolTip": "Engine\\Scenes\\SceneManager.h",
               "ViewState": "AgIAAAMAAAAAAAAAAAAcwCQAAAAKAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-01T14:26:45.565Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:26:45.565Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 62,
+              "DocumentIndex": 67,
               "Title": "Scene.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Scenes\\Scene.h",
               "RelativeDocumentMoniker": "Engine\\Scenes\\Scene.h",
@@ -1343,12 +1374,11 @@
               "RelativeToolTip": "Engine\\Scenes\\Scene.h",
               "ViewState": "AgIAAAkAAAAAAAAAAAAqwCEAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-01T14:26:18.394Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:26:18.394Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 63,
+              "DocumentIndex": 68,
               "Title": "SphereCollider.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\SphereCollider.h",
               "RelativeDocumentMoniker": "Engine\\Collisions\\SphereCollider.h",
@@ -1356,12 +1386,11 @@
               "RelativeToolTip": "Engine\\Collisions\\SphereCollider.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-17T16:59:37.871Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-17T16:59:37.871Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 64,
+              "DocumentIndex": 69,
               "Title": "vector",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\vector",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\vector",
@@ -1369,12 +1398,11 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\vector",
               "ViewState": "AgIAAE8HAAAAAAAAAAAqwF8HAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-01-18T02:15:43.662Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-18T02:15:43.662Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 65,
+              "DocumentIndex": 70,
               "Title": "Transform.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Transform.h",
               "RelativeDocumentMoniker": "Libs\\Maths\\Transform.h",
@@ -1382,12 +1410,11 @@
               "RelativeToolTip": "Libs\\Maths\\Transform.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T13:05:43.062Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T13:05:43.062Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 66,
+              "DocumentIndex": 71,
               "Title": "imgui_internal.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\ImGui\\imgui_internal.h",
               "RelativeDocumentMoniker": "Libs\\ImGui\\imgui_internal.h",
@@ -1395,25 +1422,11 @@
               "RelativeToolTip": "Libs\\ImGui\\imgui_internal.h",
               "ViewState": "AgIAAEkNAAAAAAAAAAAawFsNAABQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-01T14:04:47.378Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-01T14:04:47.378Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 67,
-              "Title": "InputManager.h",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.h",
-              "RelativeDocumentMoniker": "Engine\\Managers\\InputManager.h",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.h",
-              "RelativeToolTip": "Engine\\Managers\\InputManager.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAAOAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-11T17:43:58.277Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 69,
+              "DocumentIndex": 73,
               "Title": "ConstantBuffer.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\ConstantBuffer\\ConstantBuffer.h",
               "RelativeDocumentMoniker": "Engine\\Render\\ConstantBuffer\\ConstantBuffer.h",
@@ -1421,12 +1434,11 @@
               "RelativeToolTip": "Engine\\Render\\ConstantBuffer\\ConstantBuffer.h",
               "ViewState": "AgIAAAIAAAAAAAAAAIAwwBAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-11T22:14:10.563Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-11T22:14:10.563Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 68,
+              "DocumentIndex": 72,
               "Title": "imgui_demo.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\ImGui\\imgui_demo.cpp",
               "RelativeDocumentMoniker": "Libs\\ImGui\\imgui_demo.cpp",
@@ -1434,12 +1446,11 @@
               "RelativeToolTip": "Libs\\ImGui\\imgui_demo.cpp",
               "ViewState": "AgIAADUCAAAAAAAAAAAhwEUCAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-10T16:11:10.267Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T16:11:10.267Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 72,
+              "DocumentIndex": 75,
               "Title": "Mesh.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Graphics\\Mesh.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Graphics\\Mesh.h",
@@ -1447,12 +1458,11 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\Mesh.h",
               "ViewState": "AgIAAC0AAAAAAAAAAAAAADAAAAAuAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-06T10:38:37.828Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-06T10:38:37.828Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 71,
+              "DocumentIndex": 74,
               "Title": "Mesh.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Graphics\\Mesh.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Graphics\\Mesh.cpp",
@@ -1460,12 +1470,11 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\Mesh.cpp",
               "ViewState": "AgIAAA0AAAAAAAAAAIAywBwAAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-17T23:11:07.889Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-17T23:11:07.889Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 73,
+              "DocumentIndex": 76,
               "Title": "d3d11.h",
               "DocumentMoniker": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\d3d11.h",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\d3d11.h",
@@ -1473,12 +1482,11 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\d3d11.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-13T16:19:58.547Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-13T16:19:58.547Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 74,
+              "DocumentIndex": 77,
               "Title": "LightComponent.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\LightComponent\\LightComponent.h",
               "RelativeDocumentMoniker": "Game\\ETT\\Components\\LightComponent\\LightComponent.h",
@@ -1486,12 +1494,11 @@
               "RelativeToolTip": "Game\\ETT\\Components\\LightComponent\\LightComponent.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-01-25T18:40:33.393Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T18:40:33.393Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 75,
+              "DocumentIndex": 78,
               "Title": "LightComponent.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Game\\ETT\\Components\\LightComponent\\LightComponent.cpp",
               "RelativeDocumentMoniker": "Game\\ETT\\Components\\LightComponent\\LightComponent.cpp",
@@ -1499,12 +1506,11 @@
               "RelativeToolTip": "Game\\ETT\\Components\\LightComponent\\LightComponent.cpp",
               "ViewState": "AgIAAGkAAAAAAAAAAAAEwG8AAABMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T18:41:35.798Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T18:41:35.798Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 77,
+              "DocumentIndex": 80,
               "Title": "map",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\map",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\map",
@@ -1512,12 +1518,11 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\map",
               "ViewState": "AgIAAGQBAAAAAAAAAAAUwHQBAABPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-08T17:09:44.318Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-08T17:09:44.318Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 76,
+              "DocumentIndex": 79,
               "Title": "Light.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Lights\\Light.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Lights\\Light.h",
@@ -1525,12 +1530,11 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\Light.h",
               "ViewState": "AgIAAAIAAAAAAAAAAAAAAAkAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-01-18T00:02:24.031Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-18T00:02:24.031Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 79,
+              "DocumentIndex": 81,
               "Title": "DirectionalLight.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Lights\\DirectionalLight.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Lights\\DirectionalLight.h",
@@ -1538,12 +1542,11 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\DirectionalLight.h",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABMAAAAsAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-12T20:34:54.362Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-12T20:34:54.362Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 85,
+              "DocumentIndex": 87,
               "Title": "Texture.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Texture.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Resources\\Texture.cpp",
@@ -1551,12 +1554,11 @@
               "RelativeToolTip": "Engine\\Render\\Resources\\Texture.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-01T19:49:32.036Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:49:32.036Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 80,
+              "DocumentIndex": 82,
               "Title": "DirectionalLight.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Lights\\DirectionalLight.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Lights\\DirectionalLight.cpp",
@@ -1564,12 +1566,11 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\DirectionalLight.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-28T18:54:57.248Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-28T18:54:57.248Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 81,
+              "DocumentIndex": 83,
               "Title": "LightManager.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Lights\\WIP\\LightManager.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Lights\\WIP\\LightManager.cpp",
@@ -1577,25 +1578,11 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\WIP\\LightManager.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-12T20:33:48.349Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-12T20:33:48.349Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 78,
-              "Title": "algorithm",
-              "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm",
-              "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm",
-              "ToolTip": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm",
-              "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm",
-              "ViewState": "AgIAAKQBAAAAAAAAAAAiwLQBAAAIAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-11T18:43:24.659Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 86,
+              "DocumentIndex": 88,
               "Title": "Texture.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Resources\\Texture.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Resources\\Texture.h",
@@ -1603,12 +1590,11 @@
               "RelativeToolTip": "Engine\\Render\\Resources\\Texture.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-01T19:49:32.707Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:49:32.707Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 82,
+              "DocumentIndex": 84,
               "Title": "LightManager.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Lights\\WIP\\LightManager.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Lights\\WIP\\LightManager.h",
@@ -1616,12 +1602,11 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\WIP\\LightManager.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-12T20:33:40.021Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-12T20:33:40.021Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 84,
+              "DocumentIndex": 86,
               "Title": "Light.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Lights\\Light.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Lights\\Light.cpp",
@@ -1629,12 +1614,11 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\Light.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-18T00:02:24.679Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-18T00:02:24.679Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 88,
+              "DocumentIndex": 90,
               "Title": "Shape.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Graphics\\Shape.h",
               "RelativeDocumentMoniker": "Engine\\Render\\Graphics\\Shape.h",
@@ -1642,12 +1626,11 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\Shape.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAyAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-01T19:21:12.025Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:21:12.025Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 87,
+              "DocumentIndex": 89,
               "Title": "xtree",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xtree",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xtree",
@@ -1655,12 +1638,11 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xtree",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-01-17T23:28:03.21Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-17T23:28:03.21Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 83,
+              "DocumentIndex": 85,
               "Title": "PointLight.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Lights\\PointLight.cpp",
               "RelativeDocumentMoniker": "Engine\\Render\\Lights\\PointLight.cpp",
@@ -1668,34 +1650,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\PointLight.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T01:34:06.663Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 89,
-              "Title": "Vector2.h",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Vector2.h",
-              "RelativeDocumentMoniker": "Libs\\Maths\\Vector2.h",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Vector2.h",
-              "RelativeToolTip": "Libs\\Maths\\Vector2.h",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAWwBIAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-26T09:07:16.197Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 90,
-              "Title": "InputManager.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.cpp",
-              "RelativeDocumentMoniker": "Engine\\Managers\\InputManager.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Managers\\InputManager.cpp",
-              "RelativeToolTip": "Engine\\Managers\\InputManager.cpp",
-              "ViewState": "AgIAAAkAAAAAAAAAAAAAABIAAAA5AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-17T21:22:43.991Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T01:34:06.663Z"
             },
             {
               "$type": "Document",
@@ -1707,8 +1662,7 @@
               "RelativeToolTip": "Reflection\\Types\\Base\\Type.h",
               "ViewState": "AgIAAC0AAAAAAAAAAAAowD4AAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:30:19.842Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:30:19.842Z"
             },
             {
               "$type": "Document",
@@ -1720,8 +1674,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\SpotLight.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T18:29:41.223Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T18:29:41.223Z"
             },
             {
               "$type": "Document",
@@ -1733,8 +1686,7 @@
               "RelativeToolTip": "Libs\\ImGui\\imgui_impl_dx11.h",
               "ViewState": "AgIAAA8AAAAAAAAAAAAAABoAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T15:50:20.831Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T15:50:20.831Z"
             },
             {
               "$type": "Document",
@@ -1746,8 +1698,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\DirectXMath.h",
               "ViewState": "AgIAAFYBAAAAAAAAAAAxwGUBAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-12T18:08:03.053Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-12T18:08:03.053Z"
             },
             {
               "$type": "Document",
@@ -1770,8 +1721,7 @@
               "RelativeToolTip": "Reflection\\Types\\Functions\\Functions.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T18:28:44.665Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:28:44.665Z"
             },
             {
               "$type": "Document",
@@ -1801,8 +1751,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb.h",
               "ViewState": "AgIAABoaAAAAAAAAAIAywCsaAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-29T17:55:43.901Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T17:55:43.901Z"
             },
             {
               "$type": "Document",
@@ -1814,8 +1763,7 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\Shape.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-01T19:21:56.294Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:21:56.294Z"
             },
             {
               "$type": "Document",
@@ -1827,8 +1775,7 @@
               "RelativeToolTip": "Libs\\ImGui\\GraphEditor.cpp",
               "ViewState": "AgIAABoCAAAAAAAAAIAwwCwCAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-22T19:24:50.657Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-22T19:24:50.657Z"
             },
             {
               "$type": "Document",
@@ -1840,8 +1787,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\objloader\\tiny_obj_loader.h",
               "ViewState": "AgIAAOQJAAAAAAAAAAAIwPcJAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-06T10:21:38.172Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-06T10:21:38.172Z"
             },
             {
               "$type": "Document",
@@ -1853,8 +1799,7 @@
               "RelativeToolTip": "Libs\\ImGui\\imgui_draw.cpp",
               "ViewState": "AgIAAFUCAAAAAAAAAAAjwF4CAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-19T21:19:01.887Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-19T21:19:01.887Z"
             },
             {
               "$type": "Document",
@@ -1908,8 +1853,7 @@
               "RelativeToolTip": "Libs\\Maths\\Vector2.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-26T09:07:55.383Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-26T09:07:55.383Z"
             },
             {
               "$type": "Document",
@@ -1932,8 +1876,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb_vorbis.c",
               "ViewState": "AgIAACAEAAAAAAAAAAAEwC4EAAAmAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-11-29T17:55:56.476Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T17:55:56.476Z"
             },
             {
               "$type": "Document",
@@ -1945,8 +1888,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb_c_lexer.h",
               "ViewState": "AgIAAAAAAAAAAAAAAADwvwsAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-29T18:00:49.008Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T18:00:49.008Z"
             },
             {
               "$type": "Document",
@@ -1958,8 +1900,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb_herringbone_wang_tile.h",
               "ViewState": "AgIAAE0AAAAAAAAAAAAIwFcAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-29T18:02:20.224Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T18:02:20.224Z"
             },
             {
               "$type": "Document",
@@ -1971,8 +1912,7 @@
               "RelativeToolTip": "Reflection\\Types\\Game\\Entity.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAADwvwcAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T18:49:17.603Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:49:17.603Z"
             },
             {
               "$type": "Document",
@@ -1984,8 +1924,7 @@
               "RelativeToolTip": "Reflection\\Types\\Functions\\Functions.h",
               "ViewState": "AgIAAAYAAAAAAAAAAAAQwB8AAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:30:38.303Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:30:38.303Z"
             },
             {
               "$type": "Document",
@@ -1997,8 +1936,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\winnt.h",
               "ViewState": "AgIAAMcBAAAAAAAAAADwv9ABAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-11T22:27:56.506Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-11T22:27:56.506Z"
             },
             {
               "$type": "Document",
@@ -2010,8 +1948,7 @@
               "RelativeToolTip": "Reflection\\Types\\TypeManager\\TypeManager.h",
               "ViewState": "AgIAAAIAAAAAAAAAAAAIwBEAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:38:37.368Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:38:37.368Z"
             },
             {
               "$type": "Document",
@@ -2023,8 +1960,7 @@
               "RelativeToolTip": "Reflection\\Types\\TypeManager\\TypeManager.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T18:38:00.847Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:38:00.847Z"
             },
             {
               "$type": "Document",
@@ -2036,8 +1972,7 @@
               "RelativeToolTip": "Reflection\\Types\\Property\\Property.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:45:29.601Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:45:29.601Z"
             },
             {
               "$type": "Document",
@@ -2049,8 +1984,7 @@
               "RelativeToolTip": "Reflection\\Types\\Base\\Type.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T18:28:48.375Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:28:48.375Z"
             }
           ]
         }

@@ -1,4 +1,6 @@
 #pragma once
+#include "Vector2.h"
+#include "Vector3.h"
 
 namespace maths
 {
@@ -6,7 +8,7 @@ namespace maths
   static const double s_fPI = 3.14159265358979323846;
 
   // Functions
-  inline float Lerp(float a, float b, float f)
+  inline float lerp(float a, float b, float f)
   {
     return static_cast<float>(a * (1.0 - f) + (b * f));
   }
@@ -32,6 +34,13 @@ namespace maths
     return maths::CVector3(fX, fY, fZ);
   }
 
+  inline maths::CVector2 DegreesToRadians(const maths::CVector2& _v2Degrees)
+  {
+    float fX = DegreesToRadians(_v2Degrees.X);
+    float fY = DegreesToRadians(_v2Degrees.Y);
+    return maths::CVector2(fX, fY);
+  }
+
   inline float RadiansToDegrees(float _fRadians)
   {
     return _fRadians * static_cast<float>((180.0f / s_fPI));
@@ -43,5 +52,12 @@ namespace maths
     float fY = RadiansToDegrees(_v3Delta.Y);
     float fZ = RadiansToDegrees(_v3Delta.Z);
     return maths::CVector3(fX, fY, fZ);
+  }
+
+  inline maths::CVector2 RadiansToDegrees(const maths::CVector2& _v2Delta)
+  {
+    float fX = RadiansToDegrees(_v2Delta.X);
+    float fY = RadiansToDegrees(_v2Delta.Y);
+    return  maths::CVector2(fX, fY);
   }
 }

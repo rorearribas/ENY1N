@@ -24,6 +24,7 @@
 #include "Engine/Physics/PhysicsManager.h"
 #include "Libs/ImGui/imgui.h"
 #include "Game/ETT/Components/RigidbodyComponent/RigidbodyComponent.h"
+#include "Libs/Maths/Maths.h"
 
 #define WIDTH 2560
 #define HEIGHT 1440
@@ -66,8 +67,7 @@ int main()
   pEntityCube->SetPosition(maths::CVector3(0.0f, 8.0f, 0.0f));
 
   const render::CRender* pRender = pEngine->GetRender();
-  const render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
-  pRenderWindow->SetWinEnabled(true);
+  pRender->GetRenderWindow()->SetEnabled(true);
 
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };
@@ -87,8 +87,8 @@ int main()
 
       // Calculate 
       float fDeltaTime = pTimeManager->GetDeltaTime();
-      float fSeconds = std::clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
-      m_fFixedDeltaAccumulator += fSeconds;
+      float fOffset = maths::clamp<float>(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
+      m_fFixedDeltaAccumulator += fOffset;
 
       // Update
       while (m_fFixedDeltaAccumulator >= pTimeManager->GetFixedDelta())
@@ -124,6 +124,25 @@ int main()
         }
         pRigidbodyTest->SetRigidbodyType(eRigidbodyType);
       }
+
+      if (ImGui::Button("30"))
+      {
+        pTimeManager->SetMaxFPS(30);
+      }
+      if (ImGui::Button("60"))
+      {
+        pTimeManager->SetMaxFPS(60);
+      }
+      if (ImGui::Button("144"))
+      {
+        pTimeManager->SetMaxFPS(144);
+      }
+      if (ImGui::Button("1000"))
+      {
+        pTimeManager->SetMaxFPS(1000);
+      }
+
+
       ImGui::End();
 
       // End draw
