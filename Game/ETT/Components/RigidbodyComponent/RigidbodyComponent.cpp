@@ -27,15 +27,29 @@ namespace game
     m_pRigidbody->SetRigidbodyType(_eRigidbodyType);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionEnter(const collisions::CCollider*)
+  void CRigidbodyComponent::OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent& /*_oHitEvent*/)
   {
+    m_pRigidbody->ResetVelocity();
+  }
+  // ------------------------------------
+  void CRigidbodyComponent::OnCollisionStay(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent)
+  {
+    m_pRigidbody->ResetVelocity();
+    m_pRigidbody->AddForce(_oHitEvent.Normal * 1000.0f); // TESTING
+
+    CEntity* pOwner = GetOwner();
+    if (pOwner)
+    {
+      maths::CVector3 v3Offset = _oHitEvent.Normal * _oHitEvent.Depth;
+      maths::CVector3 vNewPosition = pOwner->GetPosition() + v3Offset;
+      pOwner->SetPosition(vNewPosition);
+    }
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionExit(const collisions::CCollider*)
+  void CRigidbodyComponent::OnCollisionExit(const collisions::CCollider*, const collisions::SHitEvent& /*_oHitEvent*/)
   {
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::IN_THE_AIR);
-    m_pRigidbody->ResetVelocity();
   }
   // ------------------------------------
   void CRigidbodyComponent::OnVelocityChanged(const maths::CVector3& _v3Velocity)

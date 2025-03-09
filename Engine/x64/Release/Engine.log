@@ -1,4 +1,13 @@
 ﻿  CollisionManager.cpp
+  PhysicsManager.cpp
   BoxCollider.cpp
-  Engine.cpp
-  Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib
+C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\BoxCollider.cpp(8,77): error C2220: the following warning is treated as an error
+C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\BoxCollider.cpp(8,77): warning C4100: '_oHitEvent_': unreferenced formal parameter
+  Rigidbody.cpp
+  SphereCollider.cpp
+C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\SphereCollider.cpp(25,14): error C2660: 'collisions::CSphereCollider::CheckSphereCollision': function does not take 1 arguments
+      C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\SphereCollider.h(25,10):
+      see declaration of 'collisions::CSphereCollider::CheckSphereCollision'
+      C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\SphereCollider.cpp(25,14):
+      while trying to match the argument list '(const collisions::CSphereCollider *)'
+  

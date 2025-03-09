@@ -2,6 +2,7 @@
 #include "Libs/Maths/Vector3.h"
 #include "Libs/Maths/Matrix4x4.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Libs/Maths/Vector2.h"
 
 namespace render
 {
@@ -41,7 +42,7 @@ namespace render
     void UpdateViewMatrix();
 
     void AddRotation(const maths::CVector3& _v3Delta);
-    void ShowCursor(bool _bMousePressed);
+    void ShowCursor(bool _bMousePressed, const maths::CVector2& _vMousePos);
 
     CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
     maths::CMatrix4x4 m_mViewMatrix = maths::CMatrix4x4::Identity;

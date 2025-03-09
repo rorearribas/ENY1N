@@ -5,7 +5,7 @@
 
 namespace collisions
 {
-  bool CBoxCollider::CheckCollision(const CCollider& _oCollider)
+  bool CBoxCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& /*_oHitEvent_*/)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
     assert(eColliderType != EColliderType::INVALID);

@@ -7,7 +7,7 @@ namespace physics
 {
   namespace internal_physics_manager
   {
-    const float s_fGravityForce(-9.8f);
+    const float s_fGravityForce(9.8f);
   }
 
   // ------------------------------------
@@ -28,8 +28,8 @@ namespace physics
       if (eRigidbodyState == ERigidbodyState::IN_THE_AIR)
       {
         // Apply gravity force (base)
-        maths::CVector3 v3Gravity(0.0f, internal_physics_manager::s_fGravityForce, 0.0f);
-        pRigidbody->m_v3Acceleration += v3Gravity;
+        maths::CVector3 v3Gravity(0.0f, -internal_physics_manager::s_fGravityForce, 0.0f);
+        pRigidbody->m_v3Acceleration += v3Gravity * pRigidbody->m_fMass;
       }
 
       // Cache current velocity

@@ -26,8 +26,9 @@ namespace game
     void SetMass(float _fMass) { m_pRigidbody->SetMass(_fMass); }
 
   protected:
-    virtual void OnCollisionEnter(const collisions::CCollider*) override;
-    virtual void OnCollisionExit(const collisions::CCollider*) override;
+    virtual void OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent) override;
+    virtual void OnCollisionStay(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent) override;
+    virtual void OnCollisionExit(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent) override;
 
   private:
     void OnVelocityChanged(const maths::CVector3& _v3Velocity);

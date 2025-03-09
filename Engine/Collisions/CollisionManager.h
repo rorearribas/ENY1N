@@ -6,13 +6,6 @@
 
 namespace collisions
 {
-  struct SHitEvent 
-  {
-    CCollider* Object;
-    maths::CVector3 Normal;
-    maths::CVector3 ImpactPoint;
-  };
-
   class CCollisionManager : public utils::CSingleton<CCollisionManager> {
   public:
     static const uint32_t s_uMaxColliders = 250;
@@ -23,7 +16,7 @@ namespace collisions
     ~CCollisionManager() { Clean(); }
 
     void Update(float _fDeltaTime);
-    collisions::CCollider* CreateCollider(collisions::EColliderType _eColliderType);
+    collisions::CCollider* CreateCollider(collisions::EColliderType _eColliderType, void* _pOwner);
     void DestroyCollider(collisions::CCollider*& _pCollider_);
 
   private:

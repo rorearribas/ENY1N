@@ -23,15 +23,19 @@ namespace game
     // Flush
     Clean();
 
+    // Get owner
+    CEntity* pOwner = GetOwner();
+    assert(pOwner);
+
     // Create collider from collision manager
     collisions::CCollisionManager* pCollisionManager = collisions::CCollisionManager::GetInstance();
     if (pCollisionManager)
     { 
-      m_pCollider = pCollisionManager->CreateCollider(_eColliderType);
+      // Create collider
+      m_pCollider = pCollisionManager->CreateCollider(_eColliderType, pOwner);
       assert(m_pCollider);
 
       // Assign notifications
-      CEntity* pOwner = GetOwner();
       m_pCollider->SetOnCollisionEnter(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionEnter, pOwner));
       m_pCollider->SetOnCollisionStay(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionStay, pOwner));
       m_pCollider->SetOnCollisionExit(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionExit, pOwner));
@@ -42,13 +46,21 @@ namespace game
     {
     case collisions::BOX_COLLIDER:
     {
-      m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE, render::ERenderMode::WIREFRAME);
+      m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
+      (
+        render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE, 
+        render::ERenderMode::WIREFRAME
+      );
       assert(m_pPrimitive);
     }
     break;
     case collisions::SPHERE_COLLIDER:
     {
-      m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE, render::ERenderMode::WIREFRAME);
+      m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
+      (
+        render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE, 
+        render::ERenderMode::WIREFRAME
+      );
       assert(m_pPrimitive);
     }
     break;
@@ -59,6 +71,7 @@ namespace game
     if (m_pPrimitive)
     {
       m_pPrimitive->SetColor(maths::CVector3::One);
+      m_pPrimitive->SetScale(pOwner->GetScale());
     }
   }
   // ------------------------------------
@@ -84,29 +97,6 @@ namespace game
   {
     SetPosition(_v3Pos);
   }
-  //// ------------------------------------
-  //void CCollisionComponent::OnCollisionEvent(const collisions::CCollider* _pCollider)
-  //{
-  //  /*const collisions::CBoxCollider* pBoxCollider = static_cast<const collisions::CBoxCollider*>(_pCollider);
-  //  maths::CVector3 vNormal = maths::CVector3::Zero;*/
-
-  //  CEntity* pOwner = GetOwner();
-  //  CRigidbodyComponent* pRigidbodyComponent = pOwner->GetComponent<CRigidbodyComponent>();
-  //  if (pRigidbodyComponent)
-  //  {
-  //  }
-
-  //  if (m_pCollider)
-  //  {
-  //  /*  const collisions::CBoxCollider* pBoxCollider2 = static_cast<const collisions::CBoxCollider*>(m_pCollider);
-  //    maths::CVector3 vDir = pBoxCollider->GetCenter() - pBoxCollider2->GetCenter();
-  //    vDir.Normalized();
-  //    std::cout <<"X: " << vDir.X << "Y: " << vDir.Y << "Z: " << vDir.Z << std::endl;*/
-  //  }
-
-  //  UNUSED_VARIABLE(_pCollider);
-  //  std::cout << "Collision" << std::endl;
-  //}
   // ------------------------------------
   void CCollisionComponent::Clean()
   {

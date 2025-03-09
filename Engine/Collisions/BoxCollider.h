@@ -9,11 +9,10 @@ namespace collisions
   class CBoxCollider : public CCollider
   {
   public:
-    CBoxCollider() : CCollider(BOX_COLLIDER) { ComputeMinMax(); }
-    CBoxCollider(const maths::CVector3& _v3Size) : CCollider(BOX_COLLIDER), m_vSize(_v3Size) { ComputeMinMax(); }
+    CBoxCollider(void* _pOwner) : CCollider(BOX_COLLIDER, _pOwner) { ComputeMinMax(); }
     virtual ~CBoxCollider() {}
 
-    virtual bool CheckCollision(const CCollider& _other) override;
+    virtual bool CheckCollision(const CCollider& _other, SHitEvent& _oHitEvent_) override;
     virtual void RecalculateCollider() override;
 
     void SetSize(const maths::CVector3& _v3Size);

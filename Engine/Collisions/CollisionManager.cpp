@@ -28,21 +28,33 @@ namespace collisions
       {
         // Check collision
         collisions::CCollider* pTargetCollider = m_vctColliders[uJ];
-        if (pCurrentCollider->CheckCollision(*pTargetCollider))
+
+        collisions::SHitEvent oHitEvent = collisions::SHitEvent();
+        if (pCurrentCollider->CheckCollision(*pTargetCollider, oHitEvent))
         {
           // Collision Enter
           bool bCollisionEnter = s_dctCollisions[pCurrentCollider].find(pTargetCollider) != s_dctCollisions[pCurrentCollider].end();
           if (!bCollisionEnter)
           {
-            pCurrentCollider->m_oOnCollisionEnter(pTargetCollider);
-            pTargetCollider->m_oOnCollisionEnter(pCurrentCollider);
+            // Notification to target collider
+            pTargetCollider->m_oOnCollisionEnter(pCurrentCollider, oHitEvent);
+
+            // Notify to current collider
+            oHitEvent.Normal *= -1.0f;
+            pCurrentCollider->m_oOnCollisionEnter(pTargetCollider, oHitEvent);
+
+            // Register collision
             s_dctCollisions[pCurrentCollider].insert(pTargetCollider);
           }
           // Collision Stay
           else
           {
-            pCurrentCollider->m_oOnCollisionStay(pTargetCollider);
-            pTargetCollider->m_oOnCollisionStay(pCurrentCollider);
+            // Notification to target collider
+            pTargetCollider->m_oOnCollisionStay(pCurrentCollider, oHitEvent);
+
+            // Notify to current collider
+            oHitEvent.Normal *= -1.0f;
+            pCurrentCollider->m_oOnCollisionStay(pTargetCollider, oHitEvent);
           }
         }
         else
@@ -50,10 +62,14 @@ namespace collisions
           // Collision Exit
           if (s_dctCollisions[pCurrentCollider].find(pTargetCollider) != s_dctCollisions[pCurrentCollider].end())
           {
-            pCurrentCollider->m_oOnCollisionExit(pTargetCollider);
-            pTargetCollider->m_oOnCollisionExit(pCurrentCollider);
+            // Notification to target collider
+            pTargetCollider->m_oOnCollisionExit(pCurrentCollider, oHitEvent);
 
-            // Remove from the previous collisions set as they are no longer colliding
+            // Notify to current collider
+            oHitEvent.Normal *= -1.0f;
+            pCurrentCollider->m_oOnCollisionExit(pTargetCollider, oHitEvent);
+
+            // Remove from the previous collisions
             s_dctCollisions[pCurrentCollider].erase(pTargetCollider);
           }
         }
@@ -61,13 +77,13 @@ namespace collisions
     }
   }
   // ------------------------------------
-  void CCollisionManager::ComputeCollision(collisions::CCollider* _pColliderA, collisions::CCollider* _pColliderB)
+  void CCollisionManager::ComputeCollision(collisions::CCollider* /*_pColliderA*/, collisions::CCollider* /*_pColliderB*/)
   {
-    _pColliderA->m_oOnCollisionEnter(_pColliderA);
-    _pColliderB->m_oOnCollisionEnter(_pColliderA);
+    /* _pColliderA->m_oOnCollisionEnter(_pColliderA);
+     _pColliderB->m_oOnCollisionEnter(_pColliderA);*/
   }
   // ------------------------------------
-  collisions::CCollider* CCollisionManager::CreateCollider(collisions::EColliderType _eColliderType)
+  collisions::CCollider* CCollisionManager::CreateCollider(collisions::EColliderType _eColliderType, void* _pOwner)
   {
     if (m_vctColliders.CurrentSize() >= m_vctColliders.GetMaxSize())
     {
@@ -76,8 +92,8 @@ namespace collisions
     }
     switch (_eColliderType)
     {
-    case collisions::BOX_COLLIDER: return m_vctColliders.CreateItem<collisions::CBoxCollider>();
-    case collisions::SPHERE_COLLIDER: return m_vctColliders.CreateItem<collisions::CSphereCollider>();
+    case collisions::BOX_COLLIDER: return m_vctColliders.CreateItem<collisions::CBoxCollider>(_pOwner);
+    case collisions::SPHERE_COLLIDER: return m_vctColliders.CreateItem<collisions::CSphereCollider>(_pOwner);
     default: return nullptr;
     }
   }

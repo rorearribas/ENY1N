@@ -189,7 +189,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::OnCollisionEnter(const collisions::CCollider* _pCollider)
+  void CEntity::OnCollisionEnter(const collisions::CCollider* _pCollider, const collisions::SHitEvent& _oHitEvent)
   {
     std::cout << "On collision enter: " << GetName() << std::endl;
     
@@ -198,12 +198,12 @@ namespace game
     {
       if (pComponent)
       {
-        pComponent->OnCollisionEnter(_pCollider);
+        pComponent->OnCollisionEnter(_pCollider, _oHitEvent);
       }
     }
   }
   // ------------------------------------
-  void CEntity::OnCollisionStay(const collisions::CCollider* _pCollider)
+  void CEntity::OnCollisionStay(const collisions::CCollider* _pCollider, const collisions::SHitEvent& _oHitEvent)
   {
     std::cout << "On collision stay: " << GetName() << std::endl;
 
@@ -212,12 +212,12 @@ namespace game
     {
       if (pComponent)
       {
-        pComponent->OnCollisionStay(_pCollider);
+        pComponent->OnCollisionStay(_pCollider, _oHitEvent);
       }
     }
   }
   // ------------------------------------
-  void CEntity::OnCollisionExit(const collisions::CCollider* _pCollider)
+  void CEntity::OnCollisionExit(const collisions::CCollider* _pCollider, const collisions::SHitEvent& _oHitEvent)
   {
     std::cout << "On collision exit: " << GetName() << std::endl;
 
@@ -226,7 +226,7 @@ namespace game
     {
       if (pComponent)
       {
-        pComponent->OnCollisionExit(_pCollider);
+        pComponent->OnCollisionExit(_pCollider, _oHitEvent);
       }
     }
   }

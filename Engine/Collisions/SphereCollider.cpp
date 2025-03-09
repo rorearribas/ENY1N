@@ -5,7 +5,7 @@
 
 namespace collisions
 {
-  bool CSphereCollider::CheckCollision(const CCollider& _oCollider)
+  bool CSphereCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
     assert(eColliderType != EColliderType::INVALID);
@@ -22,7 +22,7 @@ namespace collisions
     {
       const CSphereCollider& oSphereCollider = static_cast<const CSphereCollider&>(_oCollider);
       assert(&oSphereCollider);
-      return CheckSphereCollision(&oSphereCollider);
+      return CheckSphereCollision(&oSphereCollider, _oHitEvent_);
     }
     }
     return false;
@@ -49,10 +49,28 @@ namespace collisions
     return fDist <= GetRadius() * GetRadius();
   }
   // ------------------------------------
-  bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther) const
+  bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
-    float fDist = maths::CVector3::Distance(_pOther->GetCenter(), GetCenter());
-    float fRadiusSquared = (GetRadius() + _pOther->GetRadius()) * (GetRadius() + _pOther->GetRadius());
-    return fDist <= fRadiusSquared;
+    maths::CVector3 vOffset = _pOther->GetCenter() - GetCenter();
+    maths::CVector3 vNormalize = vOffset.Normalized();
+    float fDistanceSquared = (vOffset.X * vOffset.X) + (vOffset.Y * vOffset.Y) + (vOffset.Z * vOffset.Z);
+
+    float fRadiusSum = GetRadius() + _pOther->GetRadius();
+    float fRadiusSquared = fRadiusSum * fRadiusSum;
+
+    // Valid collision
+    if (fDistanceSquared <= fRadiusSquared)
+    {
+      float fDistance = sqrt(fDistanceSquared);
+      if (fDistance > 0.0f)
+      {
+        _oHitEvent_.Normal = vNormalize;
+      }
+      _oHitEvent_.Depth = fRadiusSum - fDistance;
+      _oHitEvent_.ImpactPoint = GetCenter() + (_oHitEvent_.Normal * _oHitEvent_.Depth);
+      return true;
+    }
+
+    return false;
   }
 }

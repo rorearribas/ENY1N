@@ -1,10 +1,10 @@
 #pragma once
 #include "Components/Component.h"
 #include "Libs/Maths/Transform.h"
+#include "Engine/Collisions/Collider.h"
 #include <array>
 #include <string>
 
-namespace collisions { class CCollider; }
 namespace game { class CComponent; }
 
 namespace game
@@ -23,7 +23,7 @@ namespace game
     void DrawDebug();
 
     void SetTickEnabled(bool _bStatus) { m_bTickEnabled = _bStatus; }
-    const std::string& GetName() { return m_sEntityName; }
+    const std::string& GetName() const { return m_sEntityName; }
 
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
@@ -54,9 +54,9 @@ namespace game
     }
 
     // Notifications
-    void OnCollisionEnter(const collisions::CCollider*);
-    void OnCollisionStay(const collisions::CCollider*);
-    void OnCollisionExit(const collisions::CCollider*);
+    void OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent&);
+    void OnCollisionStay(const collisions::CCollider*, const collisions::SHitEvent&);
+    void OnCollisionExit(const collisions::CCollider*, const collisions::SHitEvent&);
 
   private:
     void DestroyAllComponents();

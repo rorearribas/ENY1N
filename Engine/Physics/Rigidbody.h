@@ -22,7 +22,7 @@ namespace physics
     void SetCurrentState(ERigidbodyState _eRigidbodyState) { m_eRidibodyState = _eRigidbodyState; }
     const ERigidbodyState& GetRigidbodyState() const { return m_eRidibodyState; }
 
-    void AddForce(const maths::CVector3& _v3Force) { m_v3AccumulatedForces += _v3Force; }
+    void AddForce(const maths::CVector3& _v3Force);
     const maths::CVector3& GetAcceleration() { return m_v3Acceleration; }
 
     const maths::CVector3& GetVelocity() { return m_v3Velocity; }
@@ -42,7 +42,7 @@ namespace physics
   private:
     maths::CVector3 m_v3Velocity = maths::CVector3::Zero;
     maths::CVector3 m_v3Acceleration = maths::CVector3::Zero;
-    maths::CVector3 m_v3AccumulatedForces = maths::CVector3::One;
+    maths::CVector3 m_v3AccumulatedForces = maths::CVector3::Zero;
 
     TOnVelocityChangedDelegate OnVelocityChangedDelegate;
     ERigidbodyType m_eRigidbodyType = KINEMATIC;
@@ -50,8 +50,6 @@ namespace physics
 
     float m_fMass = 1.0f;
     float m_fDrag = 0.0f;
-
-    bool m_bIsOnCollision = false;
   };
 }
 

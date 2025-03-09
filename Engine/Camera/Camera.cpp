@@ -12,6 +12,9 @@ namespace render
   namespace internal_camera
   {
     const float s_fInterpolateSpeed = 10.0f;
+
+    static bool s_bWasRightButtonPressed = false;
+    static maths::CVector2 s_v2LastPosition = maths::CVector2::Zero;
   }
   // ------------------------------------
   CCamera::CCamera()
@@ -29,16 +32,17 @@ namespace render
     // Show cursor
     input::CInputManager* pInputManager = input::CInputManager::GetInstance();
     input::CMouse* pMouse = pInputManager->GetMouse();
-    bool bMousePressed = pMouse->IsRightButtonPressed();
-    ShowCursor(bMousePressed);
+
+    bool bRightButtonPressed = pMouse->IsRightButtonPressed();
+    ShowCursor(bRightButtonPressed, pMouse->GetMousePosition());
 
     // Movement + rotation
-    if (bMousePressed)
+    if (bRightButtonPressed)
     {
-      if (pInputManager->IsKeyPressed('W') && bMousePressed) MovePosition(vForward * m_fMovementSpeed * _fDeltaTime);
-      if (pInputManager->IsKeyPressed('S') && bMousePressed) MovePosition(-vForward * m_fMovementSpeed * _fDeltaTime);
-      if (pInputManager->IsKeyPressed('D') && bMousePressed) MovePosition(vRight * m_fMovementSpeed * _fDeltaTime);
-      if (pInputManager->IsKeyPressed('A') && bMousePressed) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
+      if (pInputManager->IsKeyPressed('W') && bRightButtonPressed) MovePosition(vForward * m_fMovementSpeed * _fDeltaTime);
+      if (pInputManager->IsKeyPressed('S') && bRightButtonPressed) MovePosition(-vForward * m_fMovementSpeed * _fDeltaTime);
+      if (pInputManager->IsKeyPressed('D') && bRightButtonPressed) MovePosition(vRight * m_fMovementSpeed * _fDeltaTime);
+      if (pInputManager->IsKeyPressed('A') && bRightButtonPressed) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
 
       // Rotation
       float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed;
@@ -49,7 +53,7 @@ namespace render
     }
 
     // Wheel 
-    if (!bMousePressed)
+    if (!bRightButtonPressed)
     {
       float fMouseDelta = pMouse->GetMouseWheelDelta();
       MovePosition(fMouseDelta != 0 ? vForward * (fMouseDelta * m_fMovementSpeed) * _fDeltaTime : maths::CVector3::Zero);
@@ -69,23 +73,21 @@ namespace render
     global::dx11::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
   }
   // ------------------------------------
-  void CCamera::ShowCursor(bool _bMousePressed)
+  void CCamera::ShowCursor(bool _bMousePressed, const maths::CVector2& _vMousePos)
   {
-    if (_bMousePressed)
+    if (!internal_camera::s_bWasRightButtonPressed && _bMousePressed)
     {
-      // Get rect
-      RECT oRect = {};
-      GetClientRect(global::window::s_oHwnd, &oRect);
-
-      // Calculate center
-      POINT oCenter = {};
-      oCenter.x = (oRect.left + oRect.right) / 2;
-      oCenter.y = (oRect.top + oRect.bottom) / 2;
-
-      // Set cursor in the middle of the screen
-      ClientToScreen(global::window::s_oHwnd, &oCenter);
-      SetCursorPos(oCenter.x, oCenter.y);
+      internal_camera::s_v2LastPosition = _vMousePos;
+      internal_camera::s_bWasRightButtonPressed = true;
     }
+    else if (internal_camera::s_bWasRightButtonPressed && !_bMousePressed)
+    {
+      int iLastX = static_cast<int>(internal_camera::s_v2LastPosition.X);
+      int iLastY = static_cast<int>(internal_camera::s_v2LastPosition.Y);
+      SetCursorPos(iLastX, iLastY);
+      internal_camera::s_bWasRightButtonPressed = false;
+    }
+
     while (_bMousePressed ? ::ShowCursor(!_bMousePressed) >= 0 : ::ShowCursor(!_bMousePressed) < 0);
   }
   // ------------------------------------

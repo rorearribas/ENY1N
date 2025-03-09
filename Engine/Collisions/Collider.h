@@ -7,22 +7,32 @@ namespace collisions
 {
   enum EColliderType { BOX_COLLIDER, SPHERE_COLLIDER, INVALID };
 
+  struct SHitEvent
+  {
+    maths::CVector3 Normal = maths::CVector3::Zero;
+    maths::CVector3 ImpactPoint = maths::CVector3::Zero;
+    float Depth = 0.0f;
+  };
+
   class CCollider
   {
   private:
     static constexpr int s_iMaxEvents = 3;
 
   public:
-    typedef utils::CDelegate<void(const collisions::CCollider*)> TOnCollisionEvent;
+    typedef utils::CDelegate<void(const collisions::CCollider*, const SHitEvent&)> TOnCollisionEvent;
 
   public:
-    explicit CCollider(EColliderType _eColliderType) : m_eColliderType(_eColliderType) {}
+    explicit CCollider(EColliderType _eColliderType, void* _pOwner) : 
+    m_eColliderType(_eColliderType), m_pOwner(_pOwner) {}
     virtual ~CCollider() {}
 
-    virtual bool CheckCollision(const CCollider&) = 0;
+    virtual bool CheckCollision(const CCollider&, SHitEvent&) = 0;
     virtual void RecalculateCollider() = 0;
 
+    const void* GetOwner() const { return m_pOwner; }
     const EColliderType& GetType() const { return m_eColliderType; }
+
     const maths::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
     void SetPosition(const maths::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }
     const maths::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
@@ -42,6 +52,7 @@ namespace collisions
     TOnCollisionEvent m_oOnCollisionExit;
 
   private:
+    void* m_pOwner = nullptr;
     maths::CTransform m_oTransform;
     EColliderType m_eColliderType = INVALID;
   };

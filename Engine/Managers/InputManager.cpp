@@ -53,11 +53,8 @@ namespace input
   const maths::CVector2 CMouse::GetMousePosition() const
   {
     POINT oScreenPoint = POINT();
-    if (ScreenToClient(global::window::s_oHwnd, &oScreenPoint))
-    {
-      return maths::CVector2((float)oScreenPoint.x, (float)oScreenPoint.y);
-    }
-    return maths::CVector2::Zero;
+    return GetCursorPos(&oScreenPoint) ?
+    maths::CVector2(static_cast<float>(oScreenPoint.x), static_cast<float>(oScreenPoint.y)) : maths::CVector2::Zero;
   }
   // ------------------------------------
   const float CMouse::GetMouseWheelDelta() const
