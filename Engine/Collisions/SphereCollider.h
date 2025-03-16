@@ -21,7 +21,7 @@ namespace collisions
     const float& GetRadius() const { return m_fRadius;}
 
   private:
-    bool CheckBoxCollision(const CBoxCollider* _pOther) const;
+    bool CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
     bool CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const;
 
     maths::CVector3 m_v3Center = maths::CVector3::Zero; // World position

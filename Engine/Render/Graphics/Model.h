@@ -14,10 +14,10 @@ namespace render
     class CModel
     {
     public:
-      struct SModelInfo
+      struct SModelData
       {
-        std::vector<render::graphics::CMesh*> m_vctMeshes = {};
-        std::vector<render::graphics::SVertexData> m_vctVertexData = {};
+        std::vector<render::graphics::CMesh*> m_vctMeshes;
+        std::vector<render::graphics::SVertexData> m_vctVertexData;
       };
 
     public:
@@ -45,8 +45,8 @@ namespace render
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
       // Model info
-      SModelInfo m_oInternalModel;
-      maths::CTransform m_oModelTransform;
+      SModelData m_oModelData = SModelData();
+      maths::CTransform m_oModelTransform = maths::CTransform();
     };
   }
 }

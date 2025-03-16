@@ -190,9 +190,7 @@ namespace game
   }
   // ------------------------------------
   void CEntity::OnCollisionEnter(const collisions::CCollider* _pCollider, const collisions::SHitEvent& _oHitEvent)
-  {
-    std::cout << "On collision enter: " << GetName() << std::endl;
-    
+  {    
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)
     {
@@ -205,8 +203,6 @@ namespace game
   // ------------------------------------
   void CEntity::OnCollisionStay(const collisions::CCollider* _pCollider, const collisions::SHitEvent& _oHitEvent)
   {
-    std::cout << "On collision stay: " << GetName() << std::endl;
-
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)
     {
@@ -219,8 +215,6 @@ namespace game
   // ------------------------------------
   void CEntity::OnCollisionExit(const collisions::CCollider* _pCollider, const collisions::SHitEvent& _oHitEvent)
   {
-    std::cout << "On collision exit: " << GetName() << std::endl;
-
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)
     {

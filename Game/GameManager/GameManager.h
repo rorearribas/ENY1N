@@ -31,7 +31,7 @@ namespace game
     bool m_bDebugMode = true;
 
     TEntitiesList m_vctEntitiesList = {};
-    int m_iRegisteredEntities = 0;
+    uint32_t m_uRegisteredEntities = 0;
   };
 }
 

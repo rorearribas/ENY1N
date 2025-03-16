@@ -66,25 +66,26 @@ namespace game
   // ------------------------------------
   CEntity* CGameManager::CreateEntity(const char* _sEntityName)
   {
-    if (m_iRegisteredEntities >= s_iMaxEntities) 
+    if (m_uRegisteredEntities >= s_iMaxEntities) 
       return nullptr;
 
     // Check id collision
     std::string sTargetEntityID = _sEntityName;
     int iNameSuffix = 1;
-    for (const auto& entity : m_vctEntitiesList) 
+
+    for (uint32_t uIndex = 0; uIndex < m_uRegisteredEntities; uIndex++)
     {
-      if (entity && entity->GetName() == sTargetEntityID) 
+      CEntity* pEntity = m_vctEntitiesList[uIndex];
+      if (pEntity && pEntity->GetName() == sTargetEntityID)
       {
         std::ostringstream oss;
         oss << _sEntityName << "_" << iNameSuffix++;
         sTargetEntityID = oss.str();
-        break;
       }
     }
 
     // Register entity
-    CEntity*& pEntity = m_vctEntitiesList[m_iRegisteredEntities++];
+    CEntity*& pEntity = m_vctEntitiesList[m_uRegisteredEntities++];
     pEntity = new CEntity(sTargetEntityID.c_str());
     return pEntity;
   }
@@ -99,7 +100,7 @@ namespace game
         delete pEntity;
         pEntity = nullptr;
 
-        m_iRegisteredEntities--;
+        m_uRegisteredEntities--;
         bFoundEntity = true;
       }
     }

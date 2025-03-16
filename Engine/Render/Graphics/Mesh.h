@@ -62,8 +62,8 @@ namespace render
       std::string m_sMeshId = std::string();
 
       // Materials
-      TMapMaterials m_dctMaterials = {};
-      TIndexesList m_vctIndices = {};
+      TMapMaterials m_dctMaterials = TMapMaterials();
+      TIndexesList m_vctIndices = TIndexesList();
 
       // Buffers
       CConstantBuffer<SConstantTexture> m_oConstantTexture;

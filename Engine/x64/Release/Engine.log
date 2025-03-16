@@ -1,13 +1,24 @@
 ﻿  CollisionManager.cpp
   PhysicsManager.cpp
+  LightManager.cpp
+  Mesh.cpp
+  Light.cpp
+  Material.cpp
+  Model.cpp
   BoxCollider.cpp
-C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\BoxCollider.cpp(8,77): error C2220: the following warning is treated as an error
-C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\BoxCollider.cpp(8,77): warning C4100: '_oHitEvent_': unreferenced formal parameter
+  Engine.cpp
+  Camera.cpp
+  DirectionalLight.cpp
+  InputManager.cpp
+  PointLight.cpp
+  Primitive.cpp
+  Render.cpp
+  ResourceManager.cpp
   Rigidbody.cpp
+  SceneManager.cpp
+  Scene.cpp
+  Shape.cpp
+  Compiling...
+  SpotLight.cpp
   SphereCollider.cpp
-C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\SphereCollider.cpp(25,14): error C2660: 'collisions::CSphereCollider::CheckSphereCollision': function does not take 1 arguments
-      C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\SphereCollider.h(25,10):
-      see declaration of 'collisions::CSphereCollider::CheckSphereCollision'
-      C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\SphereCollider.cpp(25,14):
-      while trying to match the argument list '(const collisions::CSphereCollider *)'
-  
+  Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib

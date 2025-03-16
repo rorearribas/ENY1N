@@ -25,6 +25,8 @@ namespace maths
     inline void operator /=(const float& _fValue) { X /= _fValue; Y /= _fValue; Z /= _fValue; }
 
     inline CVector3 operator*(const float& _fValue) const { return CVector3(X * _fValue, Y * _fValue, Z * _fValue); }
+    inline CVector3 operator*(const CVector3& _v3) const { return CVector3(X * _v3.X, Y * _v3.Y, Z * _v3.Z); }
+
     inline CVector3 operator/(const float& _fValue) const {  return CVector3(X / _fValue, Y / _fValue, Z / _fValue); }
     inline CVector3 operator+(const CVector3& _other) const { return CVector3(X + _other.X, Y + _other.Y, Z + _other.Z); }
     inline CVector3 operator-(const CVector3& _other) const { return CVector3(X - _other.X, Y - _other.Y, Z - _other.Z); }
@@ -39,9 +41,12 @@ namespace maths
     }
     bool operator!=(const CVector3& other) const { return !(*this == other); }
 
-    float DotProduct(const CVector3& _v3) const;
     static float Distance(const CVector3& _vDest, const CVector3& _vOrigin);
 
+    void Abs();
+    static CVector3 Abs(const CVector3& _v3);
+
+    float DotProduct(const CVector3& _v3) const;
     CVector3 CrossProduct(const CVector3& _v3) const;
     CVector3 Normalized() const;
 

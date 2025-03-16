@@ -16,7 +16,7 @@ namespace collisions
     {
       const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
       assert(&oBoxCollider);
-      return CheckBoxCollision(&oBoxCollider);
+      return CheckBoxCollision(&oBoxCollider, _oHitEvent_);
     }
     case EColliderType::SPHERE_COLLIDER:
     {
@@ -33,7 +33,7 @@ namespace collisions
     m_v3Center = GetPosition();
   }
   // ------------------------------------
-  bool CSphereCollider::CheckBoxCollision(const CBoxCollider* _pOther) const
+  bool CSphereCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     // We have to find the closest point.
     float fClosestX = std::max(_pOther->GetMin().X, std::min(GetCenter().X, _pOther->GetMax().X));
@@ -46,15 +46,24 @@ namespace collisions
       (fClosestZ - GetCenter().Z) * (fClosestZ - GetCenter().Z);
 
     // We check if the distance is less than or equal to the radius squared of the sphere.
-    return fDist <= GetRadius() * GetRadius();
+    float fSquareRadius = GetRadius() * GetRadius();
+    if (fDist <= fSquareRadius)
+    {
+      maths::CVector3 vImpactPoint(fClosestX, fClosestY, fClosestZ);
+      _oHitEvent_.ImpactPoint = vImpactPoint;
+      _oHitEvent_.Depth = fSquareRadius - fDist;
+      _oHitEvent_.Normal = (vImpactPoint - GetCenter()).Normalized();
+      return true;
+    }
+    return false;
   }
   // ------------------------------------
   bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
-    maths::CVector3 vOffset = _pOther->GetCenter() - GetCenter();
-    maths::CVector3 vNormalize = vOffset.Normalized();
-    float fDistanceSquared = (vOffset.X * vOffset.X) + (vOffset.Y * vOffset.Y) + (vOffset.Z * vOffset.Z);
+    maths::CVector3 vDist = _pOther->GetCenter() - GetCenter();
+    maths::CVector3 vNormalize = vDist.Normalized();
 
+    float fDistanceSquared = (vDist.X * vDist.X) + (vDist.Y * vDist.Y) + (vDist.Z * vDist.Z);
     float fRadiusSum = GetRadius() + _pOther->GetRadius();
     float fRadiusSquared = fRadiusSum * fRadiusSum;
 

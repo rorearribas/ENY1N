@@ -25,7 +25,7 @@ namespace collisions
 
   private:
     bool CheckBoxCollision(const CBoxCollider* _other) const;
-    bool CheckSphereCollision(const CSphereCollider* _other) const;
+    bool CheckSphereCollision(const CSphereCollider* _other, SHitEvent& _oHitEvent_) const;
 
     void ComputeExtents();
     void ComputeMinMax();

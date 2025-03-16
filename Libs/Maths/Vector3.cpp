@@ -17,17 +17,29 @@ namespace maths
   // ------------------------------------
   float CVector3::Distance(const CVector3& _vDest, const CVector3& _vOrigin)
   {
-    maths::CVector3 vDist = _vDest - _vOrigin;
-    return vDist.X * vDist.X + vDist.Y * vDist.Y + vDist.Z * vDist.Z;
+    maths::CVector3 v3Substract = _vDest - _vOrigin;
+    return sqrt(v3Substract.X * v3Substract.X + v3Substract.Y * v3Substract.Y + v3Substract.Z * v3Substract.Z);
+  }
+  // ------------------------------------
+  void CVector3::Abs()
+  {
+    X = abs(X);
+    Z = abs(Y);
+    Y = abs(Z);
+  }
+  // ------------------------------------
+  CVector3 CVector3::Abs(const CVector3& _v3)
+  {
+    return CVector3(abs(_v3.X), abs(_v3.Y), abs(_v3.Z));
   }
   // ------------------------------------
   CVector3 CVector3::CrossProduct(const CVector3& _v3) const
   {
     return CVector3
     (
-      this->Y * _v3.Z - this->Z * _v3.Y, // X
-      this->Z * _v3.X - this->X * _v3.Z, // Y
-      this->X * _v3.Y - this->Y * _v3.X  // Z
+      (this->Y * _v3.Z - this->Z * _v3.Y), // X
+      (this->Z * _v3.X - this->X * _v3.Z), // Y
+      (this->X * _v3.Y - this->Y * _v3.X)  // Z
     );
   }
   // ------------------------------------

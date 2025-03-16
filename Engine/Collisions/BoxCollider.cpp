@@ -2,15 +2,16 @@
 #include <cassert>
 #include "SphereCollider.h"
 #include <algorithm>
+#include <iostream>
 
 namespace collisions
 {
-  bool CBoxCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& /*_oHitEvent_*/)
+  bool CBoxCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
     assert(eColliderType != EColliderType::INVALID);
-
-    switch (eColliderType) {
+    switch (eColliderType) 
+    {
     case EColliderType::BOX_COLLIDER:
     {
       const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
@@ -21,7 +22,7 @@ namespace collisions
     {
       const CSphereCollider& oSphereCollider = static_cast<const CSphereCollider&>(_oCollider);
       assert(&oSphereCollider);
-      return CheckSphereCollision(&oSphereCollider);
+      return CheckSphereCollision(&oSphereCollider, _oHitEvent_);
     }
     }
     return false;
@@ -46,7 +47,7 @@ namespace collisions
       (m_vMin.Z <= _pOther->m_vMax.Z && m_vMax.Z >= _pOther->m_vMin.Z);
   }
   // ------------------------------------
-  bool CBoxCollider::CheckSphereCollision(const CSphereCollider* _pOther) const
+  bool CBoxCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     // We have to find the closest point.
     float fClosestX = std::max(m_vMin.X, std::min(_pOther->GetCenter().X, m_vMax.X));
@@ -59,7 +60,16 @@ namespace collisions
       (fClosestZ - _pOther->GetCenter().Z) * (fClosestZ - _pOther->GetCenter().Z);
 
     // We check if the distance is less than or equal to the radius squared of the sphere.
-    return fDist <= _pOther->GetRadius() * _pOther->GetRadius();
+    float fSquareRadius = _pOther->GetRadius() * _pOther->GetRadius();
+    if (fDist <= fSquareRadius)
+    {
+      maths::CVector3 vImpactPoint(fClosestX, fClosestY, fClosestZ);
+      _oHitEvent_.ImpactPoint = vImpactPoint;
+      _oHitEvent_.Depth = fSquareRadius - fDist;
+      _oHitEvent_.Normal = (_pOther->GetCenter() - vImpactPoint).Normalized();
+      return true;
+    }
+    return false;
   }
   // ------------------------------------
   void CBoxCollider::ComputeExtents()

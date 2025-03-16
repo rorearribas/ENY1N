@@ -50,10 +50,10 @@ unsigned char* CResourceManager::LoadTexture(const char* _sPath, int& _iWidth_, 
   return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, 4);
 }
 // ------------------------------------
-render::graphics::CModel::SModelInfo CResourceManager::LoadModel(const char* _sPath, const char* _sBaseModelMtlDir)
+render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sPath, const char* _sBaseModelMtlDir)
 {
   // Create a model data instance
-  render::graphics::CModel::SModelInfo oModelData = {};
+  render::graphics::CModel::SModelData oModelData = {};
 
   // Tiny obj declarations
   tinyobj::attrib_t attributes;

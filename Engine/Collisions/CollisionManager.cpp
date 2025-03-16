@@ -28,7 +28,6 @@ namespace collisions
       {
         // Check collision
         collisions::CCollider* pTargetCollider = m_vctColliders[uJ];
-
         collisions::SHitEvent oHitEvent = collisions::SHitEvent();
         if (pCurrentCollider->CheckCollision(*pTargetCollider, oHitEvent))
         {
