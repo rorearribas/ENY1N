@@ -28,7 +28,8 @@
 #include "Game/ETT/Components/RigidbodyComponent/RigidbodyComponent.h"
 #include "Libs/Maths/Maths.h"
 
-float GenerateFloat(float min, float max) {
+float GenerateFloat(float min, float max) 
+{
   static std::random_device rd;
   static std::mt19937 gen(rd());
   std::uniform_real_distribution<float> dist(min, max);
@@ -81,35 +82,23 @@ int main()
     game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
     game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
     pSphereModel2->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-    pSphereModel2->SetPrimitiveColor(maths::CVector3(0.5f, 0.5f, 1.0f));
+
+    float fColorX = GenerateFloat(0.01f, 0.99f);
+    float fColorY = GenerateFloat(0.01f, 0.99f);
+    float fColorZ = GenerateFloat(0.01f, 0.99f);
+
+    pSphereModel2->SetPrimitiveColor(maths::CVector3(fColorX, fColorY, fColorZ));
     game::CCollisionComponent* pCollisionComponent4 = pSphereEntity->RegisterComponent<game::CCollisionComponent>();
     pCollisionComponent4->CreateCollider(collisions::EColliderType::SPHERE_COLLIDER);
     pSphereEntity->RegisterComponent<game::CRigidbodyComponent>();
 
     float fRandomY = GenerateFloat(5.0f, 50.0f);
     float fRandomX = GenerateFloat(-10.0f, 10.0f);
-    pSphereEntity->SetPosition(maths::CVector3(fRandomX, fRandomY, 0.0f));
+    float fRandomZ = GenerateFloat(-0.5f, 0.5f);
+
+    pSphereEntity->SetPosition(maths::CVector3(fRandomX, fRandomY, fRandomZ));
     vctEntitiesAlFallo.emplace_back(pSphereEntity);
   }
-
-  /*game::CEntity* pSphereEntity2 = pGameManager->CreateEntity("Sphere2");
-  game::CModelComponent* pSphereModel2 = pSphereEntity2->RegisterComponent<game::CModelComponent>();
-  pSphereModel2->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-  pSphereModel2->SetPrimitiveColor(maths::CVector3(0.5f, 0.5f, 1.0f));
-  game::CCollisionComponent* pCollisionComponent4 = pSphereEntity2->RegisterComponent<game::CCollisionComponent>();
-  pCollisionComponent4->CreateCollider(collisions::EColliderType::SPHERE_COLLIDER);
-  game::CRigidbodyComponent* pRigidbodyTest2 = pSphereEntity2->RegisterComponent<game::CRigidbodyComponent>();
-  pSphereEntity2->SetPosition(maths::CVector3(0.0f, 6.0f, 0.0f));
-
-   game::CEntity* pSphereEntity3 = pGameManager->CreateEntity("Sphere3");
-   game::CModelComponent* pSphereModel3 = pSphereEntity3->RegisterComponent<game::CModelComponent>();
-   pSphereModel3->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-   pSphereModel3->SetPrimitiveColor(maths::CVector3(1.0f, 0.5f, 1.0f));
-   game::CCollisionComponent* pCollisionComponent5 = pSphereEntity3->RegisterComponent<game::CCollisionComponent>();
-   pCollisionComponent5->CreateCollider(collisions::EColliderType::SPHERE_COLLIDER);
-   game::CRigidbodyComponent* pRigidbodyTest3 = pSphereEntity3->RegisterComponent<game::CRigidbodyComponent>();
-   pSphereEntity3->SetPosition(maths::CVector3(0.0f, 4.0f, 0.0f));
-   UNUSED_VARIABLE(pRigidbodyTest3);*/
 
   const render::CRender* pRender = pEngine->GetRender();
   pRender->GetRenderWindow()->SetEnabled(true);

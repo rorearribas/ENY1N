@@ -21,6 +21,11 @@ namespace maths
     return sqrt(v3Substract.X * v3Substract.X + v3Substract.Y * v3Substract.Y + v3Substract.Z * v3Substract.Z);
   }
   // ------------------------------------
+  bool CVector3::Equal(const maths::CVector3& _v3, float _fEpsilon) const
+  {
+    return (fabs(X - _v3.X) < _fEpsilon) && (fabs(Y - _v3.Y) < _fEpsilon) && (fabs(Z - _v3.Z) < _fEpsilon);
+  }
+  // ------------------------------------
   void CVector3::Abs()
   {
     X = abs(X);
@@ -43,7 +48,7 @@ namespace maths
     );
   }
   // ------------------------------------
-  maths::CVector3 CVector3::Normalized() const
+  maths::CVector3 CVector3::Normalize() const
   {
     float fMagnitude = sqrt((X * X) + (Y * Y) + (Z * Z));
     if (fMagnitude > 0)
@@ -52,5 +57,4 @@ namespace maths
     }
     return CVector3::Zero;
   }
-  // ------------------------------------
 }

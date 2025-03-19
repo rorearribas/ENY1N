@@ -18,4 +18,12 @@ namespace physics
       m_v3Acceleration += _v3Force / m_fMass;
     }
   }
+  // ------------------------------------
+  void CRigidbody::AddTorque(const maths::CVector3& _v3Torque)
+  {
+    if (m_fMass > 0.0f)
+    {
+      m_v3Torque += _v3Torque;
+    }
+  }
 }

@@ -1,2 +1,7 @@
-﻿  RigidbodyComponent.cpp
+﻿  CollisionComponent.cpp
+  Entity.cpp
+  GameManager.cpp
+  ModelComponent.cpp
+  LightComponent.cpp
+  RigidbodyComponent.cpp
   Game.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Game\x64\Release\Game.lib

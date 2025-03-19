@@ -26,8 +26,8 @@ namespace render
   {
     // Keyboard movement
     maths::CMatrix4x4 mRotMatrix = maths::CMatrix4x4::Rotation(m_vRot);
-    maths::CVector3 vForward = (mRotMatrix * maths::CVector3::Forward).Normalized();
-    maths::CVector3 vRight = (mRotMatrix * maths::CVector3::Right).Normalized();
+    maths::CVector3 vForward = (mRotMatrix * maths::CVector3::Forward).Normalize();
+    maths::CVector3 vRight = (mRotMatrix * maths::CVector3::Right).Normalize();
 
     // Show cursor
     input::CInputManager* pInputManager = input::CInputManager::GetInstance();

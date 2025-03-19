@@ -98,6 +98,14 @@ namespace game
     SetPosition(_v3Pos);
   }
   // ------------------------------------
+  void CCollisionComponent::OnRotationChanged(const maths::CVector3& _v3Rot)
+  {
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetRotation(_v3Rot);
+    }
+  }
+  // ------------------------------------
   void CCollisionComponent::Clean()
   {
     if (m_pCollider)

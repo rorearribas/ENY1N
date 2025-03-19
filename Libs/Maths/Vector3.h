@@ -46,9 +46,10 @@ namespace maths
     void Abs();
     static CVector3 Abs(const CVector3& _v3);
 
+    bool Equal(const maths::CVector3& _v3, float _fEpsilon = 0.0001f) const;
     float DotProduct(const CVector3& _v3) const;
     CVector3 CrossProduct(const CVector3& _v3) const;
-    CVector3 Normalized() const;
+    CVector3 Normalize() const;
 
     float Length() const
     {

@@ -21,35 +21,51 @@ namespace physics
     for (uint32_t uIndex = 0; uIndex < m_vctRigidbodys.CurrentSize(); ++uIndex)
     {
       physics::CRigidbody* pRigidbody = m_vctRigidbodys[uIndex];
-      bool bDynamic = pRigidbody->GetType() == physics::ERigidbodyType::DYNAMIC;
+      bool bDynamic = pRigidbody->GetRigidbodyType() == physics::ERigidbodyType::DYNAMIC;
       if(!bDynamic) continue;
 
-      const ERigidbodyState& eRigidbodyState = pRigidbody->GetRigidbodyState();
-      if (eRigidbodyState == ERigidbodyState::IN_THE_AIR)
-      {
-        // Apply gravity force (base)
-        maths::CVector3 v3Gravity(0.0f, -internal_physics_manager::s_fGravityForce, 0.0f);
-        pRigidbody->m_v3Acceleration += v3Gravity * pRigidbody->m_fMass;
-      }
+      // Apply gravity force (base)
+      maths::CVector3 v3Gravity(0.0f, -internal_physics_manager::s_fGravityForce, 0.0f);
+      pRigidbody->m_v3Acceleration += v3Gravity * pRigidbody->m_fMass;
+
+      // Apply drag/deceleration (Physics - REVIEW)
+      const float fLinearDrag = powf(0.99f, _fDeltaTime * 60.0f);
+      pRigidbody->m_v3Velocity *= fLinearDrag;
+      const float fAngularDrag = powf(0.98f, _fDeltaTime * 60.0f);
+      pRigidbody->m_v3AngularVelocity *= fAngularDrag;
 
       // Cache current velocity
       maths::CVector3 vCurrentVelocity = pRigidbody->m_v3Velocity;
 
       // Increase velocity
-      pRigidbody->m_v3Velocity += pRigidbody->GetAcceleration() * _fDeltaTime;
+      pRigidbody->m_v3Velocity += pRigidbody->m_v3Acceleration * _fDeltaTime;
 
-      // Valid new velicity
-      if (vCurrentVelocity != pRigidbody->m_v3Velocity)
+      // Valid new velocity
+      if (!vCurrentVelocity.Equal(pRigidbody->m_v3Velocity))
       {
         // Compute new displacement
         maths::CVector3 vDisplacement = pRigidbody->m_v3Velocity * _fDeltaTime;
-
         // Notify
-        pRigidbody->OnVelocityChangedDelegate(vDisplacement);
+        pRigidbody->m_OnVelocityChangedDelegate(vDisplacement);
       }
 
-      // Reset acceleration
+      // Cache current angular velocity
+      maths::CVector3 v3AngularVelocity = pRigidbody->m_v3AngularVelocity;
+
+      // Compute angular displacement
+      pRigidbody->m_v3AngularVelocity += (pRigidbody->m_v3Torque / pRigidbody->m_fInertia) * _fDeltaTime;
+
+      if (!v3AngularVelocity.Equal(pRigidbody->m_v3AngularVelocity))
+      {
+        // Compute angular displacement
+        maths::CVector3 vAngularDisplacement = pRigidbody->m_v3AngularVelocity * _fDeltaTime;
+        // Notify
+        pRigidbody->m_OnRotationChangedDelegate(vAngularDisplacement);
+      }
+      
+      // Reset torque + acceleration
       pRigidbody->m_v3Acceleration = maths::CVector3::Zero;
+      pRigidbody->m_v3Torque = maths::CVector3::Zero;
     }
   }
   // ------------------------------------

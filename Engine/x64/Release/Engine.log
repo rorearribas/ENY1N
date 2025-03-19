@@ -1,4 +1,12 @@
-﻿  CollisionManager.cpp
+﻿  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredPixelShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredPixelShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Model\DeferredVertexShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredVertexShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Primitive\PixelShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\PixelShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Primitive\VertexShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\VertexShader.cso
+  CollisionManager.cpp
   PhysicsManager.cpp
   LightManager.cpp
   Mesh.cpp
@@ -9,16 +17,20 @@
   Engine.cpp
   Camera.cpp
   DirectionalLight.cpp
+  GlobalResources.cpp
   InputManager.cpp
   PointLight.cpp
   Primitive.cpp
   Render.cpp
+  RenderWindow.cpp
   ResourceManager.cpp
   Rigidbody.cpp
   SceneManager.cpp
-  Scene.cpp
-  Shape.cpp
   Compiling...
+  Scene.cpp
+  Texture.cpp
+  Shape.cpp
+  Shader.cpp
   SpotLight.cpp
   SphereCollider.cpp
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib

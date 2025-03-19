@@ -12,11 +12,13 @@ namespace physics
   {
   public:
     typedef utils::CDelegate<void(const maths::CVector3&)> TOnVelocityChangedDelegate;
+    typedef utils::CDelegate<void(const maths::CVector3&)> TOnRotationChangedDelegate;
+
   public:
     explicit CRigidbody(const ERigidbodyType _eRigidbodyType = KINEMATIC) : m_eRigidbodyType(_eRigidbodyType) {}
     ~CRigidbody() {}
 
-    const ERigidbodyType& GetType() const { return m_eRigidbodyType; }
+    const ERigidbodyType& GetRigidbodyType() const { return m_eRigidbodyType; }
     void SetRigidbodyType(ERigidbodyType _eRigidbodyType);
 
     void SetCurrentState(ERigidbodyState _eRigidbodyState) { m_eRidibodyState = _eRigidbodyState; }
@@ -25,6 +27,10 @@ namespace physics
     void AddForce(const maths::CVector3& _v3Force);
     const maths::CVector3& GetAcceleration() { return m_v3Acceleration; }
 
+    void AddTorque(const maths::CVector3& _v3Torque);
+    const maths::CVector3& GetTorque() const { return m_v3Torque; }
+
+    const maths::CVector3& GetAngularVelocity() const { return m_v3AngularVelocity; }
     const maths::CVector3& GetVelocity() { return m_v3Velocity; }
     void ResetVelocity() { m_v3Velocity = maths::CVector3::Zero; }
 
@@ -34,7 +40,8 @@ namespace physics
     const float& GetDrag() const { return m_fDrag; }
 
     // Notifications
-    void SetOnVelocityChangedDelegate(const TOnVelocityChangedDelegate& _oDelegate) { OnVelocityChangedDelegate = _oDelegate; }
+    void SetOnVelocityChangedDelegate(const TOnVelocityChangedDelegate& _oDelegate) { m_OnVelocityChangedDelegate = _oDelegate; }
+    void SetOnRotationChangedDelegate(const TOnRotationChangedDelegate& _oDelegate) { m_OnRotationChangedDelegate = _oDelegate; }
 
   private:
     friend class CPhysicsManager;
@@ -42,12 +49,17 @@ namespace physics
   private:
     maths::CVector3 m_v3Velocity = maths::CVector3::Zero;
     maths::CVector3 m_v3Acceleration = maths::CVector3::Zero;
-    maths::CVector3 m_v3AccumulatedForces = maths::CVector3::Zero;
 
-    TOnVelocityChangedDelegate OnVelocityChangedDelegate;
+    maths::CVector3 m_v3AngularVelocity = maths::CVector3::Zero;
+    maths::CVector3 m_v3Torque = maths::CVector3::Zero;
+
+    TOnVelocityChangedDelegate m_OnVelocityChangedDelegate;
+    TOnRotationChangedDelegate m_OnRotationChangedDelegate;
+
     ERigidbodyType m_eRigidbodyType = KINEMATIC;
     ERigidbodyState m_eRidibodyState = IN_THE_AIR;
 
+    float m_fInertia = 1.0f;
     float m_fMass = 1.0f;
     float m_fDrag = 0.0f;
   };

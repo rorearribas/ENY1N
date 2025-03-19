@@ -66,7 +66,7 @@ namespace collisions
       maths::CVector3 vImpactPoint(fClosestX, fClosestY, fClosestZ);
       _oHitEvent_.ImpactPoint = vImpactPoint;
       _oHitEvent_.Depth = fSquareRadius - fDist;
-      _oHitEvent_.Normal = (_pOther->GetCenter() - vImpactPoint).Normalized();
+      _oHitEvent_.Normal = (_pOther->GetCenter() - vImpactPoint).Normalize();
       return true;
     }
     return false;

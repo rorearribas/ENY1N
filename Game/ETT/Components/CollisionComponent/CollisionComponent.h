@@ -23,6 +23,7 @@ namespace game
     const maths::CVector3& GetPosition() const;
 
     virtual void OnPositionChanged(const maths::CVector3& _v3Pos) override;
+    virtual void OnRotationChanged(const maths::CVector3& _v3Rot) override;
     virtual void DrawDebug() override;
 
   private:
