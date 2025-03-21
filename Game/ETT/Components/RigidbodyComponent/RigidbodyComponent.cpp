@@ -8,8 +8,8 @@ namespace game
 {
   namespace internal_rigidbody_component
   {
-    const float s_fMaxReboundForce(50.0f);
-    const float s_fMaxAngularForce(1000.0f);
+    const float s_fMaxReboundForce(25.0f);
+    const float s_fMaxAngularForce(100.0f);
   }
   // ------------------------------------
   CRigidbodyComponent::CRigidbodyComponent(physics::ERigidbodyType _eRigidbodyType) : CComponent()
@@ -50,7 +50,7 @@ namespace game
     {
       if (m_pRigidbody)
       {
-        m_pRigidbody->AddForce(maths::CVector3(0.0, 0.0f, 1000.0f));
+        m_pRigidbody->AddForce(maths::CVector3(0.0, 0.0f, 500.0f));
       }
     }
 
@@ -81,13 +81,28 @@ namespace game
     maths::CVector3 v3CurrentVelocity = maths::CVector3::Abs(m_pRigidbody->GetVelocity());
     if (!v3CurrentVelocity.Equal(maths::CVector3::Zero, 0.1f))
     {
-      m_pRigidbody->AddForce(_oHitEvent.Normal * (v3CurrentVelocity * internal_rigidbody_component::s_fMaxReboundForce));
-      maths::CVector3 v3Cross = _oHitEvent.ImpactPoint.CrossProduct(_oHitEvent.Normal).Normalize();
-      maths::CVector3 v3AngularImpulse = v3Cross * internal_rigidbody_component::s_fMaxAngularForce;
-      m_pRigidbody->AddTorque(v3AngularImpulse);
+      float fImpactVelocity = v3CurrentVelocity.DotProduct(_oHitEvent.Normal);
+      // Compute rebound
+      if (fImpactVelocity > 1.0f)
+      {
+        // Rebound direction
+        maths::CVector3 vReboundDir = _oHitEvent.Normal * -fImpactVelocity;
+        maths::CVector3 v3ReboundDir = v3CurrentVelocity - (vReboundDir * 2.0f);
+        v3ReboundDir.Normalize();
+
+        maths::CVector3 v3ReboundForce = v3ReboundDir * internal_rigidbody_component::s_fMaxReboundForce;
+        m_pRigidbody->AddForce(v3ReboundForce);
+        m_pRigidbody->ResetVelocity();
+      }
     }
 
-    // Corrige la penetración si es necesario
+    // Apply friction
+    float fFrictionCoefficient = 0.99f; // Max coefficient
+    maths::CVector3 vTangentVelocity = v3CurrentVelocity - (_oHitEvent.Normal * v3CurrentVelocity.DotProduct(_oHitEvent.Normal));
+    maths::CVector3 vFrictionForce = -vTangentVelocity * fFrictionCoefficient;
+    m_pRigidbody->AddForce(vFrictionForce);
+
+    // Fixed impacted position
     CEntity* pOwner = GetOwner();
     if (pOwner)
     {
@@ -98,8 +113,9 @@ namespace game
         pOwner->SetPosition(vNewPosition);
       }
     }
+
+    // Set state
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
-    m_pRigidbody->ResetVelocity();
   }
   // ------------------------------------
   void CRigidbodyComponent::OnCollisionExit(const collisions::CCollider*, const collisions::SHitEvent& /*_oHitEvent*/)
@@ -117,7 +133,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnAddedRotation(const maths::CVector3& _v3Rot)
+  void CRigidbodyComponent::OnApplyRotation(const maths::CVector3& _v3Rot)
   {
     CEntity* pOwner = GetOwner();
     if (pOwner)
@@ -137,7 +153,7 @@ namespace game
 
     // Set notifications
     m_pRigidbody->SetOnVelocityChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnVelocityChanged, this));
-    m_pRigidbody->SetOnRotationChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnAddedRotation, this));
+    m_pRigidbody->SetOnRotationChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnApplyRotation, this));
   }
   // ------------------------------------
   void CRigidbodyComponent::Clean()

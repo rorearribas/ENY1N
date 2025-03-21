@@ -33,7 +33,7 @@ namespace game
 
   private:
     void OnVelocityChanged(const maths::CVector3& _v3Velocity);
-    void OnAddedRotation(const maths::CVector3& _v3Rot);
+    void OnApplyRotation(const maths::CVector3& _v3Rot);
 
     void CreateRigidbody(physics::ERigidbodyType _eRigidbodyType);
     void Clean();

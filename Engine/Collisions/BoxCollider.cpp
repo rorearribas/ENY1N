@@ -10,13 +10,13 @@ namespace collisions
   {
     const EColliderType& eColliderType = _oCollider.GetType();
     assert(eColliderType != EColliderType::INVALID);
-    switch (eColliderType) 
+    switch (eColliderType)
     {
     case EColliderType::BOX_COLLIDER:
     {
       const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
       assert(&oBoxCollider);
-      return CheckBoxCollision(&oBoxCollider);
+      return CheckBoxCollision(&oBoxCollider, _oHitEvent_);
     }
     case EColliderType::SPHERE_COLLIDER:
     {
@@ -40,11 +40,19 @@ namespace collisions
     RecalculateCollider();
   }
   // ------------------------------------
-  bool CBoxCollider::CheckBoxCollision(const CBoxCollider* _pOther) const
+  bool CBoxCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
-    return (m_vMin.X <= _pOther->m_vMax.X && m_vMax.X >= _pOther->m_vMin.X) &&
+    bool bCollision = (m_vMin.X <= _pOther->m_vMax.X && m_vMax.X >= _pOther->m_vMin.X) &&
       (m_vMin.Y <= _pOther->m_vMax.Y && m_vMax.Y >= _pOther->m_vMin.Y) &&
       (m_vMin.Z <= _pOther->m_vMax.Z && m_vMax.Z >= _pOther->m_vMin.Z);
+
+    if (bCollision)
+    {
+      // Not implemented yet
+      return true;
+    }
+
+    return false;
   }
   // ------------------------------------
   bool CBoxCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
