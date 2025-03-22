@@ -28,34 +28,41 @@ namespace physics
       {
         // Apply gravity force (base)
         maths::CVector3 v3Gravity(0.0f, -internal_physics_manager::s_fGravityForce, 0.0f);
-        pRigidbody->m_v3Acceleration += v3Gravity /** pRigidbody->m_fMass*/;
+        pRigidbody->m_v3Acceleration += v3Gravity * pRigidbody->m_fMass;
       }
 
-      // Cache current velocity
-      maths::CVector3 vCurrentVelocity = pRigidbody->m_v3Velocity;
-
       // Add acceleration
-      const float fLinearDrag = powf(0.99f, _fDeltaTime * 60.0f);
-      pRigidbody->m_v3Velocity += pRigidbody->m_v3Acceleration * _fDeltaTime;
-      pRigidbody->m_v3Velocity *= fLinearDrag;
+      if (!pRigidbody->m_v3Acceleration.Equal(maths::CVector3::Zero))
+      {
+        pRigidbody->m_v3Velocity += pRigidbody->m_v3Acceleration * _fDeltaTime;
+      }
+      else
+      {
+        // Decrease velocity
+        const float fLinearDrag = powf(0.99f, _fDeltaTime * 60.0f);
+        pRigidbody->m_v3Velocity *= fLinearDrag;
+      }
 
-      // Compute new displacement + notify
-      maths::CVector3 vDisplacement = pRigidbody->m_v3Velocity * _fDeltaTime;
-      pRigidbody->m_OnVelocityChangedDelegate(vDisplacement);
-
-      // Cache current angular velocity
-      maths::CVector3 v3AngularVelocity = pRigidbody->m_v3AngularVelocity;
+      // Notify displacement
+      maths::CVector3 v3Displacement = pRigidbody->m_v3Velocity * _fDeltaTime;
+      pRigidbody->m_OnVelocityChangedDelegate(v3Displacement);
 
       // Compute angular displacement
-      const float fAngularDrag = powf(0.99f, _fDeltaTime * 60.0f);
-      pRigidbody->m_v3AngularVelocity += (pRigidbody->m_v3Torque / pRigidbody->m_fInertia) * _fDeltaTime;
-      pRigidbody->m_v3AngularVelocity *= fAngularDrag;
+      if (!pRigidbody->m_v3Torque.Equal(maths::CVector3::Zero))
+      {
+        pRigidbody->m_v3AngularVelocity += (pRigidbody->m_v3Torque / pRigidbody->m_fInertia) * _fDeltaTime;
+      }
+      else
+      {
+        // Decrease velocity
+        const float fAngularDrag = powf(0.99f, _fDeltaTime * 60.0f);
+        pRigidbody->m_v3AngularVelocity *= fAngularDrag;
+      }
 
-      // Compute angular displacement
-      maths::CVector3 vAngularDisplacement = pRigidbody->m_v3AngularVelocity * _fDeltaTime;
-      // Notify
-      pRigidbody->m_OnRotationChangedDelegate(vAngularDisplacement);
-      
+      // Notify angular displacement
+      maths::CVector3 v3AngularDisplacement = pRigidbody->m_v3AngularVelocity * _fDeltaTime;
+      pRigidbody->m_OnRotationChangedDelegate(v3AngularDisplacement);
+
       // Reset torque + acceleration
       pRigidbody->m_v3Acceleration = maths::CVector3::Zero;
       pRigidbody->m_v3Torque = maths::CVector3::Zero;

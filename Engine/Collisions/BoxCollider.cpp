@@ -40,7 +40,7 @@ namespace collisions
     RecalculateCollider();
   }
   // ------------------------------------
-  bool CBoxCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CBoxCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& /*_oHitEvent_*/) const
   {
     bool bCollision = (m_vMin.X <= _pOther->m_vMax.X && m_vMax.X >= _pOther->m_vMin.X) &&
       (m_vMin.Y <= _pOther->m_vMax.Y && m_vMax.Y >= _pOther->m_vMin.Y) &&

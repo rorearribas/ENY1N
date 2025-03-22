@@ -30,9 +30,11 @@ namespace physics
     void AddTorque(const maths::CVector3& _v3Torque);
     const maths::CVector3& GetTorque() const { return m_v3Torque; }
 
+    void SetAngularVelocity(const maths::CVector3& _v3Velocity) { m_v3AngularVelocity = _v3Velocity; }
     const maths::CVector3& GetAngularVelocity() const { return m_v3AngularVelocity; }
+
+    void SetVelocity(const maths::CVector3& _v3Velocity) { m_v3Velocity = _v3Velocity; }
     const maths::CVector3& GetVelocity() { return m_v3Velocity; }
-    void ResetVelocity() { m_v3Velocity = maths::CVector3::Zero; }
 
     void SetMass(float _fValue) { m_fMass = _fValue; }
     const float& GetMass() const { return m_fMass; }

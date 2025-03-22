@@ -4,8 +4,9 @@ namespace physics
 {
   void CRigidbody::SetRigidbodyType(ERigidbodyType _eRigidbodyType)
   {
-    // Reset velocity
-    ResetVelocity();
+    // Reset values
+    SetVelocity(maths::CVector3::Zero);
+    SetAngularVelocity(maths::CVector3::Zero);
 
     // Set new state
     m_eRigidbodyType = _eRigidbodyType;

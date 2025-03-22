@@ -8,8 +8,8 @@ namespace game
 {
   namespace internal_rigidbody_component
   {
-    const float s_fMaxReboundForce(25.0f);
-    const float s_fMaxAngularForce(100.0f);
+    const float s_fMaxReboundForce(50.0f);
+    const float s_fMaxAngularForce(50.0f);
   }
   // ------------------------------------
   CRigidbodyComponent::CRigidbodyComponent(physics::ERigidbodyType _eRigidbodyType) : CComponent()
@@ -23,84 +23,50 @@ namespace game
     Super::Update(_fDeltaTime);
   }
   // ------------------------------------
-  void CRigidbodyComponent::DrawDebug()
-  {
-    ImGui::Spacing();
-    std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
-    if (!m_pRigidbody) return;
-
-    // Generate unique ids
-    std::string sTitle = "RIGIDBODY";
-    std::string sMass = "Mass" + std::string("##" + sOwnerName);
-    std::string sDrag = "Drag" + std::string("##" + sOwnerName);
-    std::string sKinematic = "Kinematic" + std::string("##" + sOwnerName);
-    std::string sAddForce = "Add Force" + std::string("##" + sOwnerName);
-
-    ImGui::Text(sTitle.c_str());
-
-    float fMass = GetMass();
-    float fDrag = GetDrag();
-    bool bKinematic = GetRigidbodyType() == physics::ERigidbodyType::KINEMATIC;
-
-    ImGui::InputFloat(sMass.c_str(), &fMass);
-    ImGui::InputFloat(sDrag.c_str(), &fDrag);
-    ImGui::Checkbox(sKinematic.c_str(), &bKinematic);
-
-    if (ImGui::Button(sAddForce.c_str()))
-    {
-      if (m_pRigidbody)
-      {
-        m_pRigidbody->AddForce(maths::CVector3(0.0, 0.0f, 500.0f));
-      }
-    }
-
-    // Apply rigidbody cfg
-    if (m_pRigidbody)
-    {
-      SetMass(fMass);
-      SetDrag(fDrag);
-      physics::ERigidbodyType eRbType = bKinematic ? physics::ERigidbodyType::KINEMATIC : physics::ERigidbodyType::DYNAMIC;
-      if (eRbType != GetRigidbodyType()) { SetRigidbodyType(eRbType); }
-    }
-
-  }
-  // ------------------------------------
   void CRigidbodyComponent::SetRigidbodyType(physics::ERigidbodyType _eRigidbodyType)
   {
     assert(m_pRigidbody);
     m_pRigidbody->SetRigidbodyType(_eRigidbodyType);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent& /*_oHitEvent*/)
+  void CRigidbodyComponent::OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent)
   {
+    // Apply torque
+    maths::CVector3 v3RigidbodyDir = m_pRigidbody->GetVelocity().Normalize();
+    maths::CVector3 vTorqueDir = _oHitEvent.Normal.CrossProduct(v3RigidbodyDir) * -1.0f;
+    m_pRigidbody->AddTorque(vTorqueDir * internal_rigidbody_component::s_fMaxAngularForce);
+
+    // Set new state
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
   }
   // ------------------------------------
   void CRigidbodyComponent::OnCollisionStay(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent)
   {
+    // Compute values
     maths::CVector3 v3CurrentVelocity = maths::CVector3::Abs(m_pRigidbody->GetVelocity());
+    maths::CVector3 v3VelocityDir = v3CurrentVelocity.Normalize(); 
+    maths::CVector3 v3RigidbodyDir = m_pRigidbody->GetVelocity().Normalize();
+
     if (!v3CurrentVelocity.Equal(maths::CVector3::Zero, 0.1f))
     {
-      float fImpactVelocity = v3CurrentVelocity.DotProduct(_oHitEvent.Normal);
       // Compute rebound
+      float fImpactVelocity = v3CurrentVelocity.DotProduct(_oHitEvent.Normal);
       if (fImpactVelocity > 1.0f)
       {
-        // Rebound direction
-        maths::CVector3 vReboundDir = _oHitEvent.Normal * -fImpactVelocity;
-        maths::CVector3 v3ReboundDir = v3CurrentVelocity - (vReboundDir * 2.0f);
-        v3ReboundDir.Normalize();
-
-        maths::CVector3 v3ReboundForce = v3ReboundDir * internal_rigidbody_component::s_fMaxReboundForce;
-        m_pRigidbody->AddForce(v3ReboundForce);
-        m_pRigidbody->ResetVelocity();
+        // Apply
+        maths::CVector3 v3Force = (v3VelocityDir * fImpactVelocity) * internal_rigidbody_component::s_fMaxReboundForce;
+        m_pRigidbody->AddForce(v3Force);
+        m_pRigidbody->SetVelocity(maths::CVector3::Zero);
       }
     }
 
-    // Apply friction
-    float fFrictionCoefficient = 0.99f; // Max coefficient
-    maths::CVector3 vTangentVelocity = v3CurrentVelocity - (_oHitEvent.Normal * v3CurrentVelocity.DotProduct(_oHitEvent.Normal));
-    maths::CVector3 vFrictionForce = -vTangentVelocity * fFrictionCoefficient;
-    m_pRigidbody->AddForce(vFrictionForce);
+    // Apply 
+    float fVelocity = v3CurrentVelocity.DotProduct(v3RigidbodyDir);
+    if (fVelocity > 1.0f)
+    {
+      maths::CVector3 vTorqueDir = _oHitEvent.Normal.CrossProduct(v3RigidbodyDir) * -1.0f; // Inverse dir
+      m_pRigidbody->AddTorque((vTorqueDir * fVelocity) * internal_rigidbody_component::s_fMaxAngularForce);
+    }
 
     // Fixed impacted position
     CEntity* pOwner = GetOwner();
@@ -161,6 +127,47 @@ namespace game
     if (m_pRigidbody)
     {
       physics::CPhysicsManager::GetInstance()->DestroyRigidbody(m_pRigidbody);
+    }
+  }
+  // ------------------------------------
+  void CRigidbodyComponent::DrawDebug()
+  {
+    ImGui::Spacing();
+    std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
+    if (!m_pRigidbody) return;
+
+    // Generate unique ids
+    std::string sTitle = "RIGIDBODY";
+    std::string sMass = "Mass" + std::string("##" + sOwnerName);
+    std::string sDrag = "Drag" + std::string("##" + sOwnerName);
+    std::string sKinematic = "Kinematic" + std::string("##" + sOwnerName);
+    std::string sAddForce = "Add Force" + std::string("##" + sOwnerName);
+
+    ImGui::Text(sTitle.c_str());
+
+    float fMass = GetMass();
+    float fDrag = GetDrag();
+    bool bKinematic = GetRigidbodyType() == physics::ERigidbodyType::KINEMATIC;
+
+    ImGui::InputFloat(sMass.c_str(), &fMass);
+    ImGui::InputFloat(sDrag.c_str(), &fDrag);
+    ImGui::Checkbox(sKinematic.c_str(), &bKinematic);
+
+    if (ImGui::Button(sAddForce.c_str()))
+    {
+      if (m_pRigidbody)
+      {
+        m_pRigidbody->AddForce(maths::CVector3(500.0f, 0.0f, 0.0f));
+      }
+    }
+
+    // Apply rigidbody cfg
+    if (m_pRigidbody)
+    {
+      SetMass(fMass);
+      SetDrag(fDrag);
+      physics::ERigidbodyType eRbType = bKinematic ? physics::ERigidbodyType::KINEMATIC : physics::ERigidbodyType::DYNAMIC;
+      if (eRbType != GetRigidbodyType()) { SetRigidbodyType(eRbType); }
     }
   }
 }
