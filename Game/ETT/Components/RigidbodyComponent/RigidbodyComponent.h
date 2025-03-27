@@ -23,8 +23,6 @@ namespace game
     const physics::ERigidbodyType& GetRigidbodyType() const { return m_pRigidbody->GetRigidbodyType(); }
     const float& GetMass() const { return m_pRigidbody->GetMass(); }
     void SetMass(float _fMass) { m_pRigidbody->SetMass(_fMass); }
-    const float& GetDrag() const { return m_pRigidbody->GetDrag();}
-    void SetDrag(float _fDrag){ return m_pRigidbody->SetDrag(_fDrag);}
 
   protected:
     virtual void OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent) override;
@@ -32,7 +30,7 @@ namespace game
     virtual void OnCollisionExit(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent) override;
 
   private:
-    void OnVelocityChanged(const maths::CVector3& _v3Velocity);
+    void OnApplyVelocity(const maths::CVector3& _v3Velocity);
     void OnApplyRotation(const maths::CVector3& _v3Rot);
 
     void CreateRigidbody(physics::ERigidbodyType _eRigidbodyType);

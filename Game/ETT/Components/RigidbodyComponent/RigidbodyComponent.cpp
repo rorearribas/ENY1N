@@ -3,13 +3,14 @@
 #include "Engine/Physics/PhysicsManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/ImGui/imgui.h"
+#include "Libs/Maths/Maths.h"
 
 namespace game
 {
-  namespace internal_rigidbody_component
+  namespace internal_rb
   {
-    const float s_fMaxReboundForce(50.0f);
     const float s_fMaxAngularForce(50.0f);
+    const float s_fCoefficientRebound(2.0f);
   }
   // ------------------------------------
   CRigidbodyComponent::CRigidbodyComponent(physics::ERigidbodyType _eRigidbodyType) : CComponent()
@@ -19,7 +20,7 @@ namespace game
   // ------------------------------------
   void CRigidbodyComponent::Update(float _fDeltaTime)
   {
-    // Rigidbody are being updated in the physics manager!
+    // Rigidbody is being updated in the physics manager!
     Super::Update(_fDeltaTime);
   }
   // ------------------------------------
@@ -29,43 +30,32 @@ namespace game
     m_pRigidbody->SetRigidbodyType(_eRigidbodyType);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent)
-  {
-    // Apply torque
-    maths::CVector3 v3RigidbodyDir = m_pRigidbody->GetVelocity().Normalize();
-    maths::CVector3 vTorqueDir = _oHitEvent.Normal.CrossProduct(v3RigidbodyDir) * -1.0f;
-    m_pRigidbody->AddTorque(vTorqueDir * internal_rigidbody_component::s_fMaxAngularForce);
-
+  void CRigidbodyComponent::OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent& /*_oHitEvent*/)
+  { 
     // Set new state
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
   }
   // ------------------------------------
   void CRigidbodyComponent::OnCollisionStay(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent)
   {
-    // Compute values
-    maths::CVector3 v3CurrentVelocity = maths::CVector3::Abs(m_pRigidbody->GetVelocity());
-    maths::CVector3 v3VelocityDir = v3CurrentVelocity.Normalize(); 
-    maths::CVector3 v3RigidbodyDir = m_pRigidbody->GetVelocity().Normalize();
+    maths::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
+    maths::CVector3 v3VelocityDir = v3CurrentVelocity.Normalize();
 
-    if (!v3CurrentVelocity.Equal(maths::CVector3::Zero, 0.1f))
+    // Get impact velocity
+    float fImpactVelocity = abs(v3CurrentVelocity.DotProduct(_oHitEvent.Normal));
+    if (fImpactVelocity > 0.0f)
     {
-      // Compute rebound
-      float fImpactVelocity = v3CurrentVelocity.DotProduct(_oHitEvent.Normal);
-      if (fImpactVelocity > 1.0f)
-      {
-        // Apply
-        maths::CVector3 v3Force = (v3VelocityDir * fImpactVelocity) * internal_rigidbody_component::s_fMaxReboundForce;
-        m_pRigidbody->AddForce(v3Force);
-        m_pRigidbody->SetVelocity(maths::CVector3::Zero);
-      }
+      // Apply velocity
+      maths::CVector3 v3Velocity = v3CurrentVelocity - _oHitEvent.Normal * (-fImpactVelocity * internal_rb::s_fCoefficientRebound);
+      m_pRigidbody->SetVelocity(v3Velocity);
     }
 
-    // Apply 
-    float fVelocity = v3CurrentVelocity.DotProduct(v3RigidbodyDir);
-    if (fVelocity > 1.0f)
+    // Apply torque
+    float fVelocity = v3CurrentVelocity.Length();
+    if (fVelocity > 0.0f)
     {
-      maths::CVector3 vTorqueDir = _oHitEvent.Normal.CrossProduct(v3RigidbodyDir) * -1.0f; // Inverse dir
-      m_pRigidbody->AddTorque((vTorqueDir * fVelocity) * internal_rigidbody_component::s_fMaxAngularForce);
+      maths::CVector3 v3TorqueDir = _oHitEvent.Normal.CrossProduct(v3VelocityDir);
+      m_pRigidbody->AddTorque((v3TorqueDir * -fVelocity) * internal_rb::s_fMaxAngularForce);
     }
 
     // Fixed impacted position
@@ -89,7 +79,7 @@ namespace game
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::IN_THE_AIR);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnVelocityChanged(const maths::CVector3& _v3Velocity)
+  void CRigidbodyComponent::OnApplyVelocity(const maths::CVector3& _v3Velocity)
   {
     CEntity* pOwner = GetOwner();
     if (pOwner)
@@ -118,7 +108,7 @@ namespace game
     assert(m_pRigidbody);
 
     // Set notifications
-    m_pRigidbody->SetOnVelocityChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnVelocityChanged, this));
+    m_pRigidbody->SetOnVelocityChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnApplyVelocity, this));
     m_pRigidbody->SetOnRotationChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnApplyRotation, this));
   }
   // ------------------------------------
@@ -139,18 +129,15 @@ namespace game
     // Generate unique ids
     std::string sTitle = "RIGIDBODY";
     std::string sMass = "Mass" + std::string("##" + sOwnerName);
-    std::string sDrag = "Drag" + std::string("##" + sOwnerName);
     std::string sKinematic = "Kinematic" + std::string("##" + sOwnerName);
     std::string sAddForce = "Add Force" + std::string("##" + sOwnerName);
 
     ImGui::Text(sTitle.c_str());
 
     float fMass = GetMass();
-    float fDrag = GetDrag();
     bool bKinematic = GetRigidbodyType() == physics::ERigidbodyType::KINEMATIC;
 
     ImGui::InputFloat(sMass.c_str(), &fMass);
-    ImGui::InputFloat(sDrag.c_str(), &fDrag);
     ImGui::Checkbox(sKinematic.c_str(), &bKinematic);
 
     if (ImGui::Button(sAddForce.c_str()))
@@ -165,7 +152,6 @@ namespace game
     if (m_pRigidbody)
     {
       SetMass(fMass);
-      SetDrag(fDrag);
       physics::ERigidbodyType eRbType = bKinematic ? physics::ERigidbodyType::KINEMATIC : physics::ERigidbodyType::DYNAMIC;
       if (eRbType != GetRigidbodyType()) { SetRigidbodyType(eRbType); }
     }

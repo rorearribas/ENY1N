@@ -18,10 +18,11 @@ namespace maths
     CVector3(float _x, float _y, float _z) : X(_x), Y(_y), Z(_z) {}
     ~CVector3() {}
 
+    inline void operator*=(const CVector3& _v3) { X *= _v3.X; Y *= _v3.Y; Z *= _v3.Z; }
     inline void operator+=(const CVector3& _v3) { X += _v3.X; Y += _v3.Y; Z += _v3.Z; }
     inline void operator-=(const CVector3& _v3) { X -= _v3.X; Y -= _v3.Y; Z -= _v3.Z; }
 
-    inline void operator *=(float _fValue) { X *= _fValue; Y *= _fValue; Z *= _fValue;}
+    inline void operator *=(float _fValue) { X *= _fValue; Y *= _fValue; Z *= _fValue; }
     inline void operator /=(float _fValue) { X /= _fValue; Y /= _fValue; Z /= _fValue; }
 
     inline CVector3 operator*(float _fValue) const { return CVector3(X * _fValue, Y * _fValue, Z * _fValue); }

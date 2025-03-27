@@ -19,6 +19,7 @@ namespace render
   {
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
+    static const float s_v4ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     struct SRenderPipeline
     {
@@ -159,7 +160,7 @@ namespace render
   // ------------------------------------
   HRESULT CRender::CreateDevice(uint32_t _uX, uint32_t _uY)
   {
-    DXGI_SWAP_CHAIN_DESC oSwapChainDescriptor = {};
+    DXGI_SWAP_CHAIN_DESC oSwapChainDescriptor = DXGI_SWAP_CHAIN_DESC();
     oSwapChainDescriptor.BufferCount = 1;
     oSwapChainDescriptor.BufferDesc.Width = _uX;
     oSwapChainDescriptor.BufferDesc.Height = _uY;
@@ -283,44 +284,43 @@ namespace render
   {
     global::dx11::SafeRelease(internal_render::s_oRenderPipeline.RasterizerState);
 
-    D3D11_RASTERIZER_DESC oRasterizerConfig = {};
-    oRasterizerConfig.FillMode = _eFillMode;
-    oRasterizerConfig.CullMode = D3D11_CULL_BACK;
-    oRasterizerConfig.FrontCounterClockwise = false;
-    oRasterizerConfig.DepthBias = false;
-    oRasterizerConfig.DepthBiasClamp = 0;
-    oRasterizerConfig.SlopeScaledDepthBias = 0;
-    oRasterizerConfig.DepthClipEnable = true;
-    oRasterizerConfig.ScissorEnable = true;
-    oRasterizerConfig.MultisampleEnable = false;
-    oRasterizerConfig.AntialiasedLineEnable = false;
+    D3D11_RASTERIZER_DESC oRasterizerDesc = D3D11_RASTERIZER_DESC();
+    oRasterizerDesc.FillMode = _eFillMode;
+    oRasterizerDesc.CullMode = D3D11_CULL_BACK;
+    oRasterizerDesc.FrontCounterClockwise = false;
+    oRasterizerDesc.DepthBias = false;
+    oRasterizerDesc.DepthBiasClamp = 0;
+    oRasterizerDesc.SlopeScaledDepthBias = 0;
+    oRasterizerDesc.DepthClipEnable = true;
+    oRasterizerDesc.ScissorEnable = true;
+    oRasterizerDesc.MultisampleEnable = false;
+    oRasterizerDesc.AntialiasedLineEnable = false;
 
-    return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerConfig, &internal_render::s_oRenderPipeline.RasterizerState);
+    return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerDesc, &internal_render::s_oRenderPipeline.RasterizerState);
   }
-
+  // ------------------------------------
   HRESULT CRender::CreateBlendState()
   {
     global::dx11::SafeRelease(internal_render::s_oRenderPipeline.BlendState);
 
-    D3D11_RENDER_TARGET_BLEND_DESC rtbd;
-    rtbd.BlendEnable = false;
-    rtbd.SrcBlend = D3D11_BLEND_ONE;
-    rtbd.DestBlend = D3D11_BLEND_BLEND_FACTOR;
-    rtbd.BlendOp = D3D11_BLEND_OP_ADD;
-    rtbd.SrcBlendAlpha = D3D11_BLEND_ONE;
-    rtbd.DestBlendAlpha = D3D11_BLEND_ZERO;
-    rtbd.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    rtbd.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
+    D3D11_RENDER_TARGET_BLEND_DESC oRenderTargetBlendDesc = D3D11_RENDER_TARGET_BLEND_DESC();
+    oRenderTargetBlendDesc.BlendEnable = false;
+    oRenderTargetBlendDesc.SrcBlend = D3D11_BLEND_ONE;
+    oRenderTargetBlendDesc.DestBlend = D3D11_BLEND_BLEND_FACTOR;
+    oRenderTargetBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
+    oRenderTargetBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
+    oRenderTargetBlendDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
+    oRenderTargetBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    oRenderTargetBlendDesc.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
 
     D3D11_BLEND_DESC oBlendDesc;
     ZeroMemory(&oBlendDesc, sizeof(oBlendDesc));
 
     oBlendDesc.AlphaToCoverageEnable = false;
-    oBlendDesc.RenderTarget[0] = rtbd;
+    oBlendDesc.RenderTarget[0] = oRenderTargetBlendDesc;
 
     return global::dx11::s_pDevice->CreateBlendState(&oBlendDesc, &internal_render::s_oRenderPipeline.BlendState);
   }
-
   // ------------------------------------
   void CRender::ConfigureViewport(uint32_t _uX, uint32_t _uY)
   {
@@ -339,16 +339,15 @@ namespace render
   void CRender::BeginDraw()
   {
     // Clear resources
-    float background_color[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
-    global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oRenderPipeline.RenderTargetView, background_color);
+    global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oRenderPipeline.RenderTargetView, internal_render::s_v4ClearColor);
     global::dx11::s_pDeviceContext->ClearDepthStencilView(internal_render::s_oRenderPipeline.DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    // Prepare ImGui new frame
+    // Prepare ImGu
     ImGui_ImplDX11_NewFrame();
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    // Prepare ImGuizmo new frame
+    // Begin frame
     ImGuizmo::BeginFrame();
   }
   // ------------------------------------
@@ -374,15 +373,6 @@ namespace render
   // ------------------------------------
   void CRender::EndDraw()
   {
-    if (ImGui::Button("Show wireframe"))
-    {
-      CreateRasterizerState(D3D11_FILL_WIREFRAME);
-    }
-    if (ImGui::Button("Show lit"))
-    {
-      CreateRasterizerState(D3D11_FILL_SOLID);
-    }
-
     // Update resources
     global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &internal_render::s_oRenderPipeline.RenderTargetView, internal_render::s_oRenderPipeline.DepthStencilView);
     global::dx11::s_pDeviceContext->OMSetDepthStencilState(internal_render::s_oRenderPipeline.DepthStencilState, 1);

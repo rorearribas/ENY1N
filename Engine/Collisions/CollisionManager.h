@@ -13,7 +13,7 @@ namespace collisions
 
   public:
     CCollisionManager() {}
-    ~CCollisionManager() { Clean(); }
+    ~CCollisionManager();
 
     void Update(float _fDeltaTime);
     collisions::CCollider* CreateCollider(collisions::EColliderType _eColliderType, void* _pOwner);

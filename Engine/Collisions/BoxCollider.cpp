@@ -3,6 +3,7 @@
 #include "SphereCollider.h"
 #include <algorithm>
 #include <iostream>
+#include "Libs/Macros/GlobalMacros.h"
 
 namespace collisions
 {
@@ -40,15 +41,51 @@ namespace collisions
     RecalculateCollider();
   }
   // ------------------------------------
-  bool CBoxCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& /*_oHitEvent_*/) const
+  bool CBoxCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
-    bool bCollision = (m_vMin.X <= _pOther->m_vMax.X && m_vMax.X >= _pOther->m_vMin.X) &&
+    bool bCheckCollision = (m_vMin.X <= _pOther->m_vMax.X && m_vMax.X >= _pOther->m_vMin.X) &&
       (m_vMin.Y <= _pOther->m_vMax.Y && m_vMax.Y >= _pOther->m_vMin.Y) &&
       (m_vMin.Z <= _pOther->m_vMax.Z && m_vMax.Z >= _pOther->m_vMin.Z);
 
-    if (bCollision)
+    if (bCheckCollision)
     {
-      // Not implemented yet
+      // Half size AABB
+      maths::CVector3 v3HalfSize = (m_vMax - m_vMin) * 0.5f;
+      maths::CVector3 v3OtherHalfSize = (_pOther->m_vMax - _pOther->m_vMin) * 0.5f;
+
+      // Compute offset
+      maths::CVector3 v3Offset = _pOther->GetCenter() - GetCenter();
+      maths::CVector3 v3AbsDelta = maths::CVector3::Abs(v3Offset);
+
+      // Calculate overlap
+      float fOverlapX = (v3HalfSize.X + v3OtherHalfSize.X) - v3AbsDelta.X;
+      float fOverlapY = (v3HalfSize.Y + v3OtherHalfSize.Y) - v3AbsDelta.Y;
+      float fOverlapZ = (v3HalfSize.Z + v3OtherHalfSize.Z) - v3AbsDelta.Z;
+
+      maths::CVector3 v3Normal(0, 0, 0);
+      float fDepth = 0.0f;
+
+      if (fOverlapX < fOverlapY && fOverlapX < fOverlapZ)
+      {
+        v3Normal = maths::CVector3((v3Offset.X < 0) ? -1.0f : 1.0f, 0, 0);
+        fDepth = fOverlapX;
+      }
+      else if (fOverlapY < fOverlapZ)
+      {
+        v3Normal = maths::CVector3(0, (v3Offset.Y < 0) ? -1.0f : 1.0f, 0);
+        fDepth = fOverlapY;
+      }
+      else
+      {
+        v3Normal = maths::CVector3(0, 0, (v3Offset.Z < 0) ? -1.0f : 1.0f);
+        fDepth = fOverlapZ;
+      }
+
+      // Fill values
+      _oHitEvent_.ImpactPoint = (_pOther->GetCenter() - v3Normal) * v3OtherHalfSize;
+      _oHitEvent_.Normal = v3Normal;
+      _oHitEvent_.Depth = fDepth;
+
       return true;
     }
 
@@ -58,11 +95,12 @@ namespace collisions
   bool CBoxCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     // We have to find the closest point.
-    float fClosestX = std::max(m_vMin.X, std::min(_pOther->GetCenter().X, m_vMax.X));
-    float fClosestY = std::max(m_vMin.Y, std::min(_pOther->GetCenter().Y, m_vMax.Y));
-    float fClosestZ = std::max(m_vMin.Z, std::min(_pOther->GetCenter().Z, m_vMax.Z));
+    const maths::CVector3& v3Center = _pOther->GetCenter();
+    float fClosestX = std::max(m_vMin.X, std::min(v3Center.X, m_vMax.X));
+    float fClosestY = std::max(m_vMin.Y, std::min(v3Center.Y, m_vMax.Y));
+    float fClosestZ = std::max(m_vMin.Z, std::min(v3Center.Z, m_vMax.Z));
 
-    // We calculate the squared distance between the center of the sphere and the nearest point.
+    // We have to calculate the squared distance between the center of the sphere and the nearest point.
     float fDist = (fClosestX - _pOther->GetCenter().X) * (fClosestX - _pOther->GetCenter().X) +
       (fClosestY - _pOther->GetCenter().Y) * (fClosestY - _pOther->GetCenter().Y) +
       (fClosestZ - _pOther->GetCenter().Z) * (fClosestZ - _pOther->GetCenter().Z);

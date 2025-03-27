@@ -11,8 +11,15 @@ namespace collisions
 {
   static std::unordered_map<collisions::CCollider*, std::unordered_set<collisions::CCollider*>> s_dctCollisions;
 
-  void CCollisionManager::Update(float /*_fDeltaTime*/)
+  CCollisionManager::~CCollisionManager()
   {
+    Clean();
+  }
+  // ------------------------------------
+  void CCollisionManager::Update(float _fDeltaTime)
+  {
+    UNUSED_VARIABLE(_fDeltaTime);
+
     // Check collisions
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
     {

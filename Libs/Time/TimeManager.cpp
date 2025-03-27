@@ -7,7 +7,11 @@ namespace tick
     const float s_fMaxFixedDelta = 1.0f / 15.f;
   }
   // ------------------------------------
-  CTimeManager::CTimeManager(int _iMaxFPS) : m_fDeltaTime(-1.0), m_llBaseTime(0), m_llPausedTime(0), m_bStopped(false)
+  CTimeManager::CTimeManager(int _iMaxFPS) :  
+    m_fDeltaTime(-1.0), 
+    m_llBaseTime(0), 
+    m_llPausedTime(0), 
+    m_bStopped(false)
   {
     QueryPerformanceCounter(&m_llPrevTime);
     QueryPerformanceCounter(&m_llTicksPerFrame);
@@ -16,9 +20,9 @@ namespace tick
   // ------------------------------------
   void CTimeManager::SetMaxFPS(int _iMaxFPS)
   {
-    __int64 lCountsPerSec;
-    QueryPerformanceFrequency((LARGE_INTEGER*)&lCountsPerSec);
-    m_llTargetTick = lCountsPerSec / _iMaxFPS;
+    __int64 i64CountsPerSec = 0;
+    QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER*>(&i64CountsPerSec));
+    m_llTargetTick = i64CountsPerSec / _iMaxFPS;
 
     m_fFixedDelta = static_cast<float>(1.0f / _iMaxFPS);
     m_iMaxFPS = _iMaxFPS;
@@ -26,10 +30,10 @@ namespace tick
   // ------------------------------------
   void CTimeManager::Reset()
   {
-    __int64 lCurrentTime;
-    QueryPerformanceCounter((LARGE_INTEGER*)&lCurrentTime);
+    __int64 i64CurrentTime = 0;
+    QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&i64CurrentTime));
 
-    m_llBaseTime = lCurrentTime;
+    m_llBaseTime = i64CurrentTime;
     m_llStopTime = 0;
     m_bStopped = false;
   }
@@ -57,11 +61,11 @@ namespace tick
   {
     if (m_bStopped)
     {
-      __int64 lStartTime;
-      QueryPerformanceCounter((LARGE_INTEGER*)&lStartTime);
+      __int64 i64StartTime = 0;
+      QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&i64StartTime));
 
       // Ajustar tiempo pausado
-      m_llPausedTime += (lStartTime - m_llStopTime);
+      m_llPausedTime += (i64StartTime - m_llStopTime);
 
       //m_llPrevTime = lStartTime;
       m_llStopTime = 0;
@@ -73,10 +77,10 @@ namespace tick
   {
     if (!m_bStopped)
     {
-      __int64 lCurrentTime;
-      QueryPerformanceCounter((LARGE_INTEGER*)&lCurrentTime);
+      __int64 i64CurrentTime = 0;
+      QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&i64CurrentTime));
 
-      m_llStopTime = lCurrentTime;
+      m_llStopTime = i64CurrentTime;
       m_bStopped = true;
     }
   }

@@ -6,6 +6,7 @@ namespace maths
 {
   // Static values
   static const double s_fPI = 3.14159265358979323846;
+  static const double s_fEpsilon = 1.192092896e-07F;
 
   // Functions
   inline float lerp(float a, float b, float f)

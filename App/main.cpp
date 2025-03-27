@@ -71,19 +71,20 @@ int main()
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
   pPlaneModel->SetPrimitiveColor(maths::CVector3(0.5f, 0.5f, 0.5f));
-  pPlaneEntity->SetScale(maths::CVector3(25.0f, 0.0f, 25.0f));
+  pPlaneEntity->SetScale(maths::CVector3(200.0f, 0.0f, 200.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponent->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
   collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
-  pBoxCollider->SetSize(maths::CVector3(25.0f, 0.0f, 25.0f));
+  pBoxCollider->SetSize(maths::CVector3(200.0f, 0.0f, 200.0f));
 
   game::CEntity* pBoxTest = pGameManager->CreateEntity("BOX");
   game::CModelComponent* pBoxTestModel = pBoxTest->RegisterComponent<game::CModelComponent>();
   pBoxTestModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
   game::CCollisionComponent* pCollisionComponentBoxTest = pBoxTest->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponentBoxTest->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
+  pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
 
-  for (uint32_t uIndex = 0; uIndex < 100; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 150; uIndex++)
   {
     game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
     game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
@@ -150,6 +151,15 @@ int main()
       // Draw
       pEngine->PushDrawProcess();
 
+      if (ImGui::Button("Show wireframe"))
+      {
+        pEngine->GetRender()->SetFillMode(D3D11_FILL_WIREFRAME);
+      }
+      if (ImGui::Button("Show lit"))
+      {
+        pEngine->GetRender()->SetFillMode(D3D11_FILL_SOLID);
+      }
+
       ImGui::Begin("TEST_PHYSICS");
       if (ImGui::Button("Enabled"))
       {
@@ -182,11 +192,10 @@ int main()
       {
         pTimeManager->SetMaxFPS(144);
       }
-      if (ImGui::Button("1000"))
+      if (ImGui::Button("300"))
       {
-        pTimeManager->SetMaxFPS(1000);
+        pTimeManager->SetMaxFPS(300);
       }
-
 
       ImGui::End();
 

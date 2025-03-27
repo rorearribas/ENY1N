@@ -44,6 +44,5 @@ namespace tick
 
     std::chrono::steady_clock::time_point m_oBeginFrame;
     std::chrono::steady_clock::time_point m_oEndFrame;
-
   };
 }

@@ -19,9 +19,11 @@ namespace render
     void Draw(scene::CScene* _pScene);
     void EndDraw();
 
-    render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
+    void SetFillMode(D3D11_FILL_MODE _eFillMode) { CreateRasterizerState(_eFillMode); }
     void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
-    bool IsVSyncEnabled() { return m_bVerticalSync; }
+
+    render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
+    bool IsVSyncEnabled() const { return m_bVerticalSync; }
 
   private:
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);

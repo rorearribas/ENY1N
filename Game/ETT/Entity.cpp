@@ -92,7 +92,8 @@ namespace game
       ImGuizmo::DecomposeMatrixToComponents(matrix, fTranslation, fRotation, fScale);
 
       // Apply modifications
-      switch (mCurrentGizmoOperation) {
+      switch (mCurrentGizmoOperation) 
+      {
       case ImGuizmo::TRANSLATE:
       {
         SetPosition(maths::CVector3(fTranslation[0], fTranslation[1], fTranslation[2]));
@@ -101,9 +102,9 @@ namespace game
       case ImGuizmo::ROTATE:
       {
         maths::CVector3 vNewRot = m_oTransform.GetRotation();
-        vNewRot.X += fRotation[0] - vNewRot.X;
-        vNewRot.Y += fRotation[1] - vNewRot.Y;
-        vNewRot.Z += fRotation[2] - vNewRot.Z;
+        vNewRot.X += (fRotation[0] - vNewRot.X) * -1.0f;
+        vNewRot.Y += (fRotation[1] - vNewRot.Y) * -1.0f;
+        vNewRot.Z += (fRotation[2] - vNewRot.Z) * -1.0f;
         SetRotation(vNewRot);
       }
       break;
@@ -112,8 +113,6 @@ namespace game
         SetScale(maths::CVector3(fScale[0], fScale[1], fScale[2]));
       }
       break;
-      default:
-        break;
       }
     }
 
