@@ -1,12 +1,19 @@
 #include "BoxCollider.h"
-#include <cassert>
+#include "Engine/Base/Engine.h"
 #include "SphereCollider.h"
-#include <algorithm>
-#include <iostream>
 #include "Libs/Macros/GlobalMacros.h"
+#include "Libs/Maths/Maths.h"
+#include <algorithm>
+#include <cassert>
 
 namespace collisions
 {
+  CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(BOX_COLLIDER, _pOwner)
+  {
+    ComputeMinMax();
+    ComputeExtents();
+  }
+  // ------------------------------------
   bool CBoxCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
@@ -96,9 +103,9 @@ namespace collisions
   {
     // We have to find the closest point.
     const maths::CVector3& v3Center = _pOther->GetCenter();
-    float fClosestX = std::max(m_vMin.X, std::min(v3Center.X, m_vMax.X));
-    float fClosestY = std::max(m_vMin.Y, std::min(v3Center.Y, m_vMax.Y));
-    float fClosestZ = std::max(m_vMin.Z, std::min(v3Center.Z, m_vMax.Z));
+    float fClosestX = maths::Max<float>(m_vMin.X, maths::Min<float>(v3Center.X, m_vMax.X));
+    float fClosestY = maths::Max<float>(m_vMin.Y, maths::Min<float>(v3Center.Y, m_vMax.Y));
+    float fClosestZ = maths::Max<float>(m_vMin.Z, maths::Min<float>(v3Center.Z, m_vMax.Z));
 
     // We have to calculate the squared distance between the center of the sphere and the nearest point.
     float fDist = (fClosestX - _pOther->GetCenter().X) * (fClosestX - _pOther->GetCenter().X) +
@@ -131,6 +138,25 @@ namespace collisions
       maths::CVector3(m_vMax.X, m_vMax.Y, m_vMin.Z),
       m_vMax
     };
+
+    // Create debug
+    if (m_vctPrimitives.empty())
+    {
+      for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+      {
+        engine::CEngine* pEngine = engine::CEngine::GetInstance();
+        auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
+        pPrimitive->SetColor(maths::CVector3::Right);
+        pPrimitive->SetScale(maths::CVector3::One / 8.0f);
+        m_vctPrimitives.emplace_back(pPrimitive);
+      }
+    }
+
+    // Update position
+    for (int iIndex = 0; iIndex < static_cast<uint32_t>(m_v3Extents.size()); iIndex++)
+    {
+      m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
+    }
   }
   // ------------------------------------
   void CBoxCollider::ComputeMinMax()

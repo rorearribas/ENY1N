@@ -58,6 +58,9 @@ namespace physics
 
     float m_fInertia = 1.0f;
     float m_fMass = 1.0f;
+
+    float m_fLinearDrag = 0.01f;
+    float m_fAngularDrag = 0.01f;
   };
 }
 

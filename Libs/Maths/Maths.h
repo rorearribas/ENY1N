@@ -22,6 +22,18 @@ namespace maths
     return value;
   }
 
+  template <typename T>
+  T Max(const T& Object1, const T& Object2)
+  {
+    return Object1 > Object2 ? Object1 : Object2;
+  }
+
+  template <typename T>
+  T Min(const T& Object1, const T& Object2)
+  {
+    return Object1 < Object2 ? Object1 : Object2;
+  }
+
   inline float DegreesToRadians(float _fDegree)
   {
     return _fDegree * static_cast<float>((s_fPI / 180.0f));

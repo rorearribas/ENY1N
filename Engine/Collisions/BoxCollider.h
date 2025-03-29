@@ -2,6 +2,7 @@
 #include "Collider.h"
 #include "Libs/Maths/Vector3.h"
 
+namespace render { namespace graphics { class CPrimitive; } }
 namespace collisions { class CSphereCollider; }
 
 namespace collisions
@@ -9,7 +10,7 @@ namespace collisions
   class CBoxCollider : public CCollider
   {
   public:
-    CBoxCollider(void* _pOwner) : CCollider(BOX_COLLIDER, _pOwner) { ComputeMinMax(); }
+    CBoxCollider(void* _pOwner);
     virtual ~CBoxCollider() {}
 
     virtual bool CheckCollision(const CCollider& _other, SHitEvent& _oHitEvent_) override;
@@ -33,11 +34,14 @@ namespace collisions
   private:
     // Size
     maths::CVector3 m_vSize = maths::CVector3::One;
+
     // Min - Max
     maths::CVector3 m_vMax = maths::CVector3::Zero;
     maths::CVector3 m_vMin = maths::CVector3::Zero;
+
     // Extents
     std::vector<maths::CVector3> m_v3Extents;
+    std::vector<render::graphics::CPrimitive*> m_vctPrimitives;
   };
 }
 

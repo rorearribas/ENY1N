@@ -37,8 +37,7 @@ namespace physics
 
       // Decrease velocity
       int iMaxFPS = tick::CTimeManager::GetInstance()->GetMaxFPS();
-      const float fLinearDrag = expf(-0.002f * _fDeltaTime * iMaxFPS);
-      pRigidbody->m_v3Velocity *= fLinearDrag;
+      pRigidbody->m_v3Velocity *= expf(-0.001f * _fDeltaTime * iMaxFPS);
 
       // Notify displacement -> i extracted this equation from the internet
       maths::CVector3 v3Displacement = (pRigidbody->m_v3Velocity * _fDeltaTime) + (pRigidbody->m_v3Acceleration * _fDeltaTime * _fDeltaTime * 0.5f);

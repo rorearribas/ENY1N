@@ -1,10 +1,14 @@
 #pragma once
 #include "Engine/Render/Render.h"
-#include "Engine/Scenes/SceneManager.h"
-#include "Engine/Camera/Camera.h"
 #include "Libs/Utils/Singleton.h"
+#include "Engine/Render/Graphics/Primitive.h"
+#include "Engine/Scenes/SceneManager.h"
 
 namespace render { namespace lights { class CLight; } }
+namespace render { namespace lights { class CSpotLight; } }
+namespace render { namespace lights { class CPointLight; } }
+namespace render { namespace lights { class CDirectionalLight; } }
+
 namespace render { namespace graphics { class CModel; } }
 namespace render { namespace graphics { class CPrimitive; } }
 namespace render { class CCamera; }

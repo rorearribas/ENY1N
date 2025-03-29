@@ -144,7 +144,10 @@ namespace game
       ImGui::InputFloat3(sMin.c_str(), v3Min);
 
       // Apply box collider size
-      if (m_pPrimitive) { m_pPrimitive->SetScale(maths::CVector3(v3Size[0], v3Size[1], v3Size[2])); }
+      if (m_pPrimitive) 
+      { 
+        m_pPrimitive->SetScale(maths::CVector3(v3Size[0], v3Size[1], v3Size[2])); 
+      }
       pBoxCollider->SetSize(maths::CVector3(v3Size[0], v3Size[1], v3Size[2]));
     }
     break;

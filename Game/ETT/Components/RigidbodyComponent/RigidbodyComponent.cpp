@@ -10,7 +10,7 @@ namespace game
   namespace internal_rb
   {
     const float s_fMaxAngularForce(50.0f);
-    const float s_fCoefficientRebound(2.0f);
+    const float s_fRebound(2.0f);
   }
   // ------------------------------------
   CRigidbodyComponent::CRigidbodyComponent(physics::ERigidbodyType _eRigidbodyType) : CComponent()
@@ -30,10 +30,17 @@ namespace game
     m_pRigidbody->SetRigidbodyType(_eRigidbodyType);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent& /*_oHitEvent*/)
+  void CRigidbodyComponent::OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent)
   { 
     // Set new state
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
+
+    maths::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
+    maths::CVector3 v3VelocityDir = v3CurrentVelocity.Normalize();
+
+    float fVelocity = v3CurrentVelocity.Length();
+    maths::CVector3 v3TorqueDir = _oHitEvent.Normal.CrossProduct(v3VelocityDir);
+    m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * internal_rb::s_fMaxAngularForce * 2.0f);
   }
   // ------------------------------------
   void CRigidbodyComponent::OnCollisionStay(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent)
@@ -46,8 +53,8 @@ namespace game
     if (fImpactVelocity > 0.0f)
     {
       // Apply velocity
-      maths::CVector3 v3Velocity = v3CurrentVelocity - _oHitEvent.Normal * (-fImpactVelocity * internal_rb::s_fCoefficientRebound);
-      m_pRigidbody->SetVelocity(v3Velocity);
+      v3CurrentVelocity = v3CurrentVelocity - _oHitEvent.Normal * (-fImpactVelocity * internal_rb::s_fRebound);
+      m_pRigidbody->SetVelocity(v3CurrentVelocity);
     }
 
     // Apply torque
@@ -55,7 +62,7 @@ namespace game
     if (fVelocity > 0.0f)
     {
       maths::CVector3 v3TorqueDir = _oHitEvent.Normal.CrossProduct(v3VelocityDir);
-      m_pRigidbody->AddTorque((v3TorqueDir * -fVelocity) * internal_rb::s_fMaxAngularForce);
+      m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * internal_rb::s_fMaxAngularForce);
     }
 
     // Fixed impacted position

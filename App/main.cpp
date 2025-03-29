@@ -84,7 +84,7 @@ int main()
   pCollisionComponentBoxTest->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
   pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
 
-  for (uint32_t uIndex = 0; uIndex < 150; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 100; uIndex++)
   {
     game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
     game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
