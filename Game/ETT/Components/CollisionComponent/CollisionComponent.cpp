@@ -90,7 +90,25 @@ namespace game
   // ------------------------------------
   const maths::CVector3& CCollisionComponent::GetPosition() const
   {
-    return m_pCollider ? m_pCollider->GetPosition() : m_pOwner->GetPosition();
+    return m_pCollider->GetPosition();
+  }
+  // ------------------------------------
+  void CCollisionComponent::SetRotation(const maths::CVector3& _v3Rot)
+  {
+    if (m_pCollider)
+    {
+      m_pCollider->SetRotation(_v3Rot);
+      m_pCollider->RecalculateCollider();
+    }
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetRotation(_v3Rot);
+    }
+  }
+  // ------------------------------------
+  const maths::CVector3& CCollisionComponent::GetRotation() const
+  {
+    return m_pCollider->GetRotation();
   }
   // ------------------------------------
   void CCollisionComponent::OnPositionChanged(const maths::CVector3& _v3Pos)
@@ -100,10 +118,7 @@ namespace game
   // ------------------------------------
   void CCollisionComponent::OnRotationChanged(const maths::CVector3& _v3Rot)
   {
-    if (m_pPrimitive)
-    {
-      m_pPrimitive->SetRotation(_v3Rot);
-    }
+    SetRotation(_v3Rot);
   }
   // ------------------------------------
   void CCollisionComponent::Clean()

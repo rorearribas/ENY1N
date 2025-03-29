@@ -39,7 +39,7 @@ namespace game
     maths::CVector3 v3VelocityDir = v3CurrentVelocity.Normalize();
 
     float fVelocity = v3CurrentVelocity.Length();
-    maths::CVector3 v3TorqueDir = _oHitEvent.Normal.CrossProduct(v3VelocityDir);
+    maths::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
     m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * internal_rb::s_fMaxAngularForce * 2.0f);
   }
   // ------------------------------------
@@ -49,7 +49,7 @@ namespace game
     maths::CVector3 v3VelocityDir = v3CurrentVelocity.Normalize();
 
     // Get impact velocity
-    float fImpactVelocity = abs(v3CurrentVelocity.DotProduct(_oHitEvent.Normal));
+    float fImpactVelocity = abs(v3CurrentVelocity.Dot(_oHitEvent.Normal));
     if (fImpactVelocity > 0.0f)
     {
       // Apply velocity
@@ -61,7 +61,7 @@ namespace game
     float fVelocity = v3CurrentVelocity.Length();
     if (fVelocity > 0.0f)
     {
-      maths::CVector3 v3TorqueDir = _oHitEvent.Normal.CrossProduct(v3VelocityDir);
+      maths::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
       m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * internal_rb::s_fMaxAngularForce);
     }
 

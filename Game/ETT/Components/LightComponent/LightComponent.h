@@ -21,6 +21,7 @@ namespace game
     void SetRotation(const maths::CVector3& _v3Rot);
     const maths::CVector3& GetRotation() const;
 
+  protected:
     virtual void OnPositionChanged(const maths::CVector3& _v3Pos) override;
     virtual void OnRotationChanged(const maths::CVector3& _v3Rot) override;
 

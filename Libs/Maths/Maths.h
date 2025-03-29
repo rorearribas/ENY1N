@@ -6,7 +6,15 @@ namespace maths
 {
   // Static values
   static const double s_fPI = 3.14159265358979323846;
-  static const double s_fEpsilon = 1.192092896e-07F;
+
+  // Epsilon
+  static const float s_fEpsilon1 = 1e-1f;
+  static const float s_fEpsilon2 = 1e-2f;
+  static const float s_fEpsilon3 = 1e-3f;
+  static const float s_fEpsilon4 = 1e-4f;
+  static const float s_fEpsilon5 = 1e-5f;
+  static const float s_fEpsilon6 = 1e-6f;
+  static const float s_fEpsilon7 = 1e-7f;
 
   // Functions
   inline float lerp(float a, float b, float f)
@@ -39,18 +47,18 @@ namespace maths
     return _fDegree * static_cast<float>((s_fPI / 180.0f));
   }
 
-  inline maths::CVector3 DegreesToRadians(const maths::CVector3& _v3Degrees)
+  inline maths::CVector3 DegreesToRadians(const maths::CVector3& _v3)
   {
-    float fX = DegreesToRadians(_v3Degrees.X);
-    float fY = DegreesToRadians(_v3Degrees.Y);
-    float fZ = DegreesToRadians(_v3Degrees.Z);
+    float fX = DegreesToRadians(_v3.X);
+    float fY = DegreesToRadians(_v3.Y);
+    float fZ = DegreesToRadians(_v3.Z);
     return maths::CVector3(fX, fY, fZ);
   }
 
-  inline maths::CVector2 DegreesToRadians(const maths::CVector2& _v2Degrees)
+  inline maths::CVector2 DegreesToRadians(const maths::CVector2& _v2)
   {
-    float fX = DegreesToRadians(_v2Degrees.X);
-    float fY = DegreesToRadians(_v2Degrees.Y);
+    float fX = DegreesToRadians(_v2.X);
+    float fY = DegreesToRadians(_v2.Y);
     return maths::CVector2(fX, fY);
   }
 
@@ -59,18 +67,18 @@ namespace maths
     return _fRadians * static_cast<float>((180.0f / s_fPI));
   }
 
-  inline maths::CVector3 RadiansToDegrees(const maths::CVector3& _v3Delta)
+  inline maths::CVector3 RadiansToDegrees(const maths::CVector3& _v3)
   {
-    float fX = RadiansToDegrees(_v3Delta.X);
-    float fY = RadiansToDegrees(_v3Delta.Y);
-    float fZ = RadiansToDegrees(_v3Delta.Z);
+    float fX = RadiansToDegrees(_v3.X);
+    float fY = RadiansToDegrees(_v3.Y);
+    float fZ = RadiansToDegrees(_v3.Z);
     return maths::CVector3(fX, fY, fZ);
   }
 
-  inline maths::CVector2 RadiansToDegrees(const maths::CVector2& _v2Delta)
+  inline maths::CVector2 RadiansToDegrees(const maths::CVector2& _v2)
   {
-    float fX = RadiansToDegrees(_v2Delta.X);
-    float fY = RadiansToDegrees(_v2Delta.Y);
+    float fX = RadiansToDegrees(_v2.X);
+    float fY = RadiansToDegrees(_v2.Y);
     return  maths::CVector2(fX, fY);
   }
 }

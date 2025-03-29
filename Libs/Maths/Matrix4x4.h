@@ -16,10 +16,9 @@ namespace maths
     static const CMatrix4x4 Zero;
 
     CMatrix4x4() = default;
-
     CMatrix4x4(const float _mMatrix[s_iMatrixSize])
     {
-      std::memcpy(m, _mMatrix, sizeof(float) * s_iMatrixSize);
+      memcpy(m, _mMatrix, sizeof(float) * s_iMatrixSize);
     }
     CMatrix4x4
     (
@@ -31,10 +30,10 @@ namespace maths
 
     maths::CVector3 operator*(const CVector3& _v3) const
     {
-      float x = _v3.X * m[0] + _v3.Y * m[4] + _v3.Z * m[8] + m[12];
-      float y = _v3.X * m[1] + _v3.Y * m[5] + _v3.Z * m[9] + m[13];
-      float z = _v3.X * m[2] + _v3.Y * m[6] + _v3.Z * m[10] + m[14];
-      return CVector3(x, y, z);
+      float fX = _v3.X * m[0] + _v3.Y * m[4] + _v3.Z * m[8] + m[12];
+      float fY = _v3.X * m[1] + _v3.Y * m[5] + _v3.Z * m[9] + m[13];
+      float fZ = _v3.X * m[2] + _v3.Y * m[6] + _v3.Z * m[10] + m[14];
+      return CVector3(fX, fY, fZ);
     }
     CMatrix4x4 operator*(const CMatrix4x4& _mMatrix) const
     {

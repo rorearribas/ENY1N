@@ -18,8 +18,7 @@ namespace game
     virtual void DrawDebug() override {};
 
     void LoadModel(const char* _sModelPath, const char* _sBaseMltDir);
-    void CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, 
-    render::ERenderMode _eRenderMode = render::ERenderMode::SOLID);
+    void CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode = render::ERenderMode::SOLID);
 
     void SetPrimitiveRenderMode(render::ERenderMode _eRenderMode);
     void SetPrimitiveColor(const maths::CVector3& _v3Color);
@@ -31,6 +30,7 @@ namespace game
     void SetScale(const maths::CVector3& _v3Scale);
     const maths::CVector3& GetScale() const;
 
+  protected:
     virtual void OnPositionChanged(const maths::CVector3& _v3Pos) override;
     virtual void OnRotationChanged(const maths::CVector3& _v3Rot) override;
     virtual void OnScaleChanged(const maths::CVector3& _v3Scale) override;

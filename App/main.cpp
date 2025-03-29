@@ -57,17 +57,7 @@ int main()
   // Game manager
   game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
 
-  std::vector<game::CEntity*> vctEntitiesAlFallo;
-
-  // Entities
-  game::CEntity* pDirectionalEntity = pGameManager->CreateEntity("Directional Light");
-  pDirectionalEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
-  game::CEntity* pPointLightEntity = pGameManager->CreateEntity("Point Light Test");
-  pPointLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
-  game::CEntity* pSpotLightEntity = pGameManager->CreateEntity("Spot light Test");
-  pSpotLightEntity->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
-
-  game::CEntity* pPlaneEntity = pGameManager->CreateEntity("PLANE");
+  game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
   pPlaneModel->SetPrimitiveColor(maths::CVector3(0.5f, 0.5f, 0.5f));
@@ -77,13 +67,14 @@ int main()
   collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
   pBoxCollider->SetSize(maths::CVector3(200.0f, 0.0f, 200.0f));
 
-  game::CEntity* pBoxTest = pGameManager->CreateEntity("BOX");
+  game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
   game::CModelComponent* pBoxTestModel = pBoxTest->RegisterComponent<game::CModelComponent>();
   pBoxTestModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
   game::CCollisionComponent* pCollisionComponentBoxTest = pBoxTest->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponentBoxTest->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
   pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
 
+  std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 100; uIndex++)
   {
     game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
@@ -105,7 +96,7 @@ int main()
     float fRandomZ = GenerateFloat(-0.5f, 0.5f);
 
     pSphereEntity->SetPosition(maths::CVector3(fRandomX, fRandomY, fRandomZ));
-    vctEntitiesAlFallo.emplace_back(pSphereEntity);
+    vctPhysics.emplace_back(pSphereEntity);
   }
 
   const render::CRender* pRender = pEngine->GetRender();
@@ -163,7 +154,7 @@ int main()
       ImGui::Begin("TEST_PHYSICS");
       if (ImGui::Button("Enabled"))
       {
-        for (auto& pEntity : vctEntitiesAlFallo)
+        for (auto& pEntity : vctPhysics)
         {
           auto* pComponent = pEntity->GetComponent<game::CRigidbodyComponent>();
           physics::ERigidbodyType eRigidbodyType = pComponent->GetRigidbodyType();

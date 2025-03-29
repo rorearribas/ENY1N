@@ -36,29 +36,29 @@ namespace maths
 
     inline CVector3 operator-() const { return CVector3(-X, -Y, -Z); }
 
-    inline bool operator<(const CVector3& _other) const { return this->DotProduct(*this) < _other.DotProduct(_other); }
-    inline bool operator==(const CVector3& _v3) const
-    {
-      constexpr float EPSILON = 1e-5f;
-      return std::fabs(X - _v3.X) < EPSILON && std::fabs(Y - _v3.Y) < EPSILON && std::fabs(Z - _v3.Z) < EPSILON;
-    }
+    inline bool operator<(const CVector3& _other) const { return this->Dot(*this) < _other.Dot(_other); }
     bool operator!=(const CVector3& other) const { return !(*this == other); }
+    bool operator==(const CVector3& _v3) const;
 
-    static float Distance(const CVector3& _vDest, const CVector3& _vOrigin);
-
-    void Abs();
     static CVector3 Abs(const CVector3& _v3);
+    void Abs();
 
-    bool Equal(const maths::CVector3& _v3, float _fEpsilon = 0.0001f) const;
-    float DotProduct(const CVector3& _v3) const;
-    CVector3 CrossProduct(const CVector3& _v3) const;
+    static CVector3 Normalize(const CVector3& _v3);
     CVector3 Normalize() const;
 
-    float Length() const
-    {
-      return std::sqrt(X * X + Y * Y + Z * Z);
-    }
+    static float Dot(const CVector3& _vA, const CVector3& _vB);
+    float Dot(const CVector3& _v3) const;
 
+    static CVector3 Cross(const CVector3& _vA, const CVector3& _vB);
+    CVector3 Cross(const CVector3& _v3) const;
+
+    static float Distance(const CVector3& _v3Dest, const CVector3& _v3Origin);
+    float Distance(const CVector3& _v3Dest) const;
+
+    bool Equal(const CVector3& _v3, float _fEpsilon = 0.0001f) const;
+
+    static float Length(const CVector3& _v3);
+    float Length() const;
   };
 }
 

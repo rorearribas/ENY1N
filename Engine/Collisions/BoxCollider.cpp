@@ -127,16 +127,21 @@ namespace collisions
   // ------------------------------------
   void CBoxCollider::ComputeExtents()
   {
+    // Calculate matrix
+    maths::CMatrix4x4 mRot = maths::CMatrix4x4::Rotation(GetRotation());
+    mRot = maths::CMatrix4x4::Transpose(mRot);
+
+    // Calculate extents
     m_v3Extents =
     {
-      m_vMin,
-      maths::CVector3(m_vMin.X, m_vMin.Y, m_vMax.Z),
-      maths::CVector3(m_vMin.X, m_vMax.Y, m_vMin.Z),
-      maths::CVector3(m_vMin.X, m_vMax.Y, m_vMax.Z),
-      maths::CVector3(m_vMax.X, m_vMin.Y, m_vMin.Z),
-      maths::CVector3(m_vMax.X, m_vMin.Y, m_vMax.Z),
-      maths::CVector3(m_vMax.X, m_vMax.Y, m_vMin.Z),
-      m_vMax
+      GetCenter() + mRot * (maths::CVector3(m_vMin.X, m_vMin.Y, m_vMin.Z) - GetCenter()),
+      GetCenter() + mRot * (maths::CVector3(m_vMin.X, m_vMin.Y, m_vMax.Z) - GetCenter()),
+      GetCenter() + mRot * (maths::CVector3(m_vMin.X, m_vMax.Y, m_vMin.Z) - GetCenter()),
+      GetCenter() + mRot * (maths::CVector3(m_vMin.X, m_vMax.Y, m_vMax.Z) - GetCenter()),
+      GetCenter() + mRot * (maths::CVector3(m_vMax.X, m_vMin.Y, m_vMin.Z) - GetCenter()),
+      GetCenter() + mRot * (maths::CVector3(m_vMax.X, m_vMin.Y, m_vMax.Z) - GetCenter()),
+      GetCenter() + mRot * (maths::CVector3(m_vMax.X, m_vMax.Y, m_vMin.Z) - GetCenter()),
+      GetCenter() + mRot * (maths::CVector3(m_vMax.X, m_vMax.Y, m_vMax.Z) - GetCenter())
     };
 
     // Create debug
@@ -153,7 +158,7 @@ namespace collisions
     }
 
     // Update position
-    for (int iIndex = 0; iIndex < static_cast<uint32_t>(m_v3Extents.size()); iIndex++)
+    for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
     {
       m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
     }
@@ -161,7 +166,8 @@ namespace collisions
   // ------------------------------------
   void CBoxCollider::ComputeMinMax()
   {
-    m_vMin = GetPosition() - (m_vSize * 0.5f);
-    m_vMax = GetPosition() + (m_vSize * 0.5f);
+    maths::CVector3 v3HalfSize = m_vSize * 0.5f;
+    m_vMin = GetPosition() - v3HalfSize;
+    m_vMax = GetPosition() + v3HalfSize;
   }
 }

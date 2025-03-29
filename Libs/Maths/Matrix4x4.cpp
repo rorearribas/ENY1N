@@ -1,4 +1,4 @@
-#include "Matrix4x4.h"
+﻿#include "Matrix4x4.h"
 #include "Maths.h"
 
 namespace maths
@@ -55,18 +55,18 @@ namespace maths
     CVector3 zAxis = vDir.Normalize();
 
     // X axis
-    CVector3 vCross = _vUp.CrossProduct(zAxis);
+    CVector3 vCross = _vUp.Cross(zAxis);
     CVector3 xAxis = vCross.Normalize();
 
     // Y axis
-    CVector3 yAxis = zAxis.CrossProduct(xAxis);
+    CVector3 yAxis = zAxis.Cross(xAxis);
 
     CMatrix4x4 mMatrix = CMatrix4x4::Identity;
     mMatrix.m[0] = xAxis.X; mMatrix.m[1] = yAxis.X; mMatrix.m[2] = zAxis.X; mMatrix.m[3] = 0.0f;
     mMatrix.m[4] = xAxis.Y; mMatrix.m[5] = yAxis.Y; mMatrix.m[6] = zAxis.Y; mMatrix.m[7] = 0.0f;
     mMatrix.m[4] = xAxis.Y; mMatrix.m[5] = yAxis.Y; mMatrix.m[6] = zAxis.Y; mMatrix.m[7] = 0.0f;
     mMatrix.m[8] = xAxis.Z; mMatrix.m[9] = yAxis.Z; mMatrix.m[10] = zAxis.Z; mMatrix.m[11] = 0.0f;
-    mMatrix.m[12] = -xAxis.DotProduct(_vEye); mMatrix.m[13] = -yAxis.DotProduct(_vEye); mMatrix.m[14] = -zAxis.DotProduct(_vEye); mMatrix.m[15] = 1.0f;
+    mMatrix.m[12] = -xAxis.Dot(_vEye); mMatrix.m[13] = -yAxis.Dot(_vEye); mMatrix.m[14] = -zAxis.Dot(_vEye); mMatrix.m[15] = 1.0f;
     return mMatrix;
   }
   // ------------------------------------

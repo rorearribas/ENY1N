@@ -1,5 +1,5 @@
 #include "Vector3.h"
-#include <cmath>
+#include "Maths.h"
 
 namespace maths
 {
@@ -10,9 +10,14 @@ namespace maths
   maths::CVector3 CVector3::Right(1.0f, 0.0f, 0.0f);
   maths::CVector3 CVector3::Up(0.0f, 1.0f, 0.0f);
   // ------------------------------------
-  float CVector3::DotProduct(const CVector3& _v3) const
+  float CVector3::Dot(const CVector3& _v3) const
   {
     return (this->X * _v3.X) + (this->Y * _v3.Y) + (this->Z * _v3.Z);
+  }
+  // ------------------------------------
+  float CVector3::Dot(const CVector3& _vA, const CVector3& _vB)
+  {
+    return _vA.Dot(_vB);
   }
   // ------------------------------------
   float CVector3::Distance(const CVector3& _vDest, const CVector3& _vOrigin)
@@ -21,9 +26,31 @@ namespace maths
     return sqrt(v3Substract.X * v3Substract.X + v3Substract.Y * v3Substract.Y + v3Substract.Z * v3Substract.Z);
   }
   // ------------------------------------
+  float CVector3::Distance(const CVector3& _v3Dest) const
+  {
+     return Distance(_v3Dest, *this);
+  }
+  // ------------------------------------
   bool CVector3::Equal(const maths::CVector3& _v3, float _fEpsilon) const
   {
     return (fabs(X - _v3.X) < _fEpsilon) && (fabs(Y - _v3.Y) < _fEpsilon) && (fabs(Z - _v3.Z) < _fEpsilon);
+  }
+  // ------------------------------------
+  float CVector3::Length(const CVector3& _v3)
+  {
+    return _v3.Length();
+  }
+  // ------------------------------------
+  float CVector3::Length() const
+  {
+    return sqrt(X * X + Y * Y + Z * Z);
+  }
+
+  bool CVector3::operator==(const CVector3& _v3) const
+  {
+    return std::fabs(X - _v3.X) < maths::s_fEpsilon5 &&
+      std::fabs(Y - _v3.Y) < maths::s_fEpsilon5 &&
+      std::fabs(Z - _v3.Z) < maths::s_fEpsilon5;
   }
   // ------------------------------------
   void CVector3::Abs()
@@ -38,7 +65,7 @@ namespace maths
     return CVector3(abs(_v3.X), abs(_v3.Y), abs(_v3.Z));
   }
   // ------------------------------------
-  CVector3 CVector3::CrossProduct(const CVector3& _v3) const
+  CVector3 CVector3::Cross(const CVector3& _v3) const
   {
     return CVector3
     (
@@ -48,13 +75,19 @@ namespace maths
     );
   }
   // ------------------------------------
+  maths::CVector3 CVector3::Cross(const CVector3& _vA, const CVector3& _vB)
+  {
+    return _vA.Cross(_vB);
+  }
+  // ------------------------------------
   maths::CVector3 CVector3::Normalize() const
   {
     float fMagnitude = sqrt((X * X) + (Y * Y) + (Z * Z));
-    if (fMagnitude > 0)
-    {
-      return CVector3(X / fMagnitude, Y / fMagnitude, Z / fMagnitude);
-    }
-    return CVector3::Zero;
+    return fMagnitude > 0.0f ? CVector3(X / fMagnitude, Y / fMagnitude, Z / fMagnitude) : CVector3::Zero;
+  }
+  // ------------------------------------
+  maths::CVector3 CVector3::Normalize(const CVector3& _v3)
+  {
+    return _v3.Normalize();
   }
 }
