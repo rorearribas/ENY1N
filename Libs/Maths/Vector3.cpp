@@ -80,14 +80,20 @@ namespace maths
     return _vA.Cross(_vB);
   }
   // ------------------------------------
-  maths::CVector3 CVector3::Normalize() const
+  void CVector3::Normalize()
   {
     float fMagnitude = sqrt((X * X) + (Y * Y) + (Z * Z));
-    return fMagnitude > 0.0f ? CVector3(X / fMagnitude, Y / fMagnitude, Z / fMagnitude) : CVector3::Zero;
+    if (fMagnitude > maths::s_fEpsilon7)
+    {
+      X /= fMagnitude;
+      Y /= fMagnitude;
+      Z /= fMagnitude;
+    }
   }
   // ------------------------------------
   maths::CVector3 CVector3::Normalize(const CVector3& _v3)
   {
-    return _v3.Normalize();
+    float fMagnitude = sqrt((_v3.X * _v3.X) + (_v3.Y * _v3.Y) + (_v3.Z * _v3.Z));
+    return fMagnitude > 0.0f ? CVector3(_v3.X / fMagnitude, _v3.Y / fMagnitude, _v3.Z / fMagnitude) : CVector3::Zero;
   }
 }

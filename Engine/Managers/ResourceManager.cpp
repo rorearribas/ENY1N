@@ -11,7 +11,7 @@
 
 namespace internal_resource_manager
 {
-  std::vector<int> GetUniqueMaterials(const std::vector<int>& _vctInput)
+  static std::vector<int> GetUniqueMaterialsIDs(const std::vector<int>& _vctInput)
   {
     std::unordered_set<int> uniqueSet(_vctInput.begin(), _vctInput.end());
     return std::vector<int>(uniqueSet.begin(), uniqueSet.end());
@@ -75,6 +75,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
   // Register material
   auto oRegisterMaterial = [=](const tinyobj::material_t& _tMaterial, std::vector< render::material::CMaterial*>& _vctMaterials_)
   {
+    // Create material
     render::material::CMaterial* pMaterial = new render::material::CMaterial(_tMaterial.name.c_str());
 
     // Set colors
@@ -187,16 +188,15 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     UNUSED_VARIABLE(hr);
     assert(!FAILED(hr));
 
-    std::vector<int> vctMaterialIds = internal_resource_manager::GetUniqueMaterials(mesh.material_ids);
-    for (uint32_t uMaterialIdx = 0; uMaterialIdx < vctMaterialIds.size(); uMaterialIdx++)
+    std::vector<int> vctMaterialIds = internal_resource_manager::GetUniqueMaterialsIDs(mesh.material_ids);
+    for (uint32_t uMatIndx = 0; uMatIndx < static_cast<uint32_t>(vctMaterialIds.size()); uMatIndx++)
     {
-      int iMaterialIdx = vctMaterialIds[uMaterialIdx];
+      int iMaterialIdx = vctMaterialIds[uMatIndx];
       pMesh->AddMaterial(vctMaterials[iMaterialIdx], static_cast<uint32_t>(iMaterialIdx));
     }
     oModelData.m_vctMeshes.emplace_back(pMesh); // Add mesh
   }
 
-  std::cout << "loaded" << std::endl;  
   return oModelData;
 }
 

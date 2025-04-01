@@ -6,7 +6,7 @@ namespace maths
 {
   class CMatrix4x4
   {
-  public:
+  private:
     static constexpr int s_iMatrixSize = 16;
     typedef float TMatrix4x4[s_iMatrixSize];
     TMatrix4x4 m;
@@ -58,6 +58,12 @@ namespace maths
       }
       return *this;
     }
+
+    const float* operator()() const { return m; }
+    float* operator()() { return m; }
+
+    float& operator[](size_t index) { return m[index]; }
+    const float& operator[](size_t index) const { return m[index]; }
 
     static CMatrix4x4 CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar);
     static CMatrix4x4 LookAt(const CVector3& _vEye, const CVector3& _vTarget, const CVector3& _vUp);

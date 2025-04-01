@@ -52,7 +52,7 @@ namespace collisions
       maths::CVector3 vImpactPoint(fClosestX, fClosestY, fClosestZ);
       _oHitEvent_.ImpactPoint = vImpactPoint;
       _oHitEvent_.Depth = fSquareRadius - fDist;
-      _oHitEvent_.Normal = (vImpactPoint - GetCenter()).Normalize();
+      _oHitEvent_.Normal = maths::CVector3::Normalize(vImpactPoint - GetCenter());
       return true;
     }
     return false;
@@ -61,7 +61,7 @@ namespace collisions
   bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     maths::CVector3 vDist = _pOther->GetCenter() - GetCenter();
-    maths::CVector3 vNormalize = vDist.Normalize();
+    maths::CVector3 v3Dir = maths::CVector3::Normalize(vDist);
 
     float fDistanceSquared = (vDist.X * vDist.X) + (vDist.Y * vDist.Y) + (vDist.Z * vDist.Z);
     float fRadiusSum = GetRadius() + _pOther->GetRadius();
@@ -70,12 +70,8 @@ namespace collisions
     // Valid collision
     if (fDistanceSquared <= fRadiusSquared)
     {
-      float fDistance = sqrt(fDistanceSquared);
-      if (fDistance > 0.0f)
-      {
-        _oHitEvent_.Normal = vNormalize;
-      }
-      _oHitEvent_.Depth = fRadiusSum - fDistance;
+      _oHitEvent_.Normal = v3Dir;
+      _oHitEvent_.Depth = fRadiusSum - fDistanceSquared;
       _oHitEvent_.ImpactPoint = GetCenter() + (_oHitEvent_.Normal * _oHitEvent_.Depth);
       return true;
     }

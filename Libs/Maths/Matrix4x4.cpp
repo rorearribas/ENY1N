@@ -52,11 +52,11 @@ namespace maths
   {
     // Z Axis
     CVector3 vDir = _vTarget - _vEye;
-    CVector3 zAxis = vDir.Normalize();
+    CVector3 zAxis = maths::CVector3::Normalize(vDir);
 
     // X axis
     CVector3 vCross = _vUp.Cross(zAxis);
-    CVector3 xAxis = vCross.Normalize();
+    CVector3 xAxis = maths::CVector3::Normalize(vCross);
 
     // Y axis
     CVector3 yAxis = zAxis.Cross(xAxis);

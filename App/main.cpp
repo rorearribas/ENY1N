@@ -67,12 +67,15 @@ int main()
   collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
   pBoxCollider->SetSize(maths::CVector3(200.0f, 0.0f, 200.0f));
 
-  game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-  game::CModelComponent* pBoxTestModel = pBoxTest->RegisterComponent<game::CModelComponent>();
-  pBoxTestModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
-  game::CCollisionComponent* pCollisionComponentBoxTest = pBoxTest->RegisterComponent<game::CCollisionComponent>();
-  pCollisionComponentBoxTest->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
-  pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
+  for (uint32_t uIndex = 0; uIndex < 2; uIndex++)
+  {
+    game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
+    game::CModelComponent* pBoxTestModel = pBoxTest->RegisterComponent<game::CModelComponent>();
+    pBoxTestModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+    game::CCollisionComponent* pCollisionComponentBoxTest = pBoxTest->RegisterComponent<game::CCollisionComponent>();
+    pCollisionComponentBoxTest->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
+    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
+  }
 
   std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 100; uIndex++)

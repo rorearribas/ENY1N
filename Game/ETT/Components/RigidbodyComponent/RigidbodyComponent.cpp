@@ -36,7 +36,7 @@ namespace game
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
 
     maths::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
-    maths::CVector3 v3VelocityDir = v3CurrentVelocity.Normalize();
+    maths::CVector3 v3VelocityDir = maths::CVector3::Normalize(v3CurrentVelocity);
 
     float fVelocity = v3CurrentVelocity.Length();
     maths::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
@@ -46,7 +46,7 @@ namespace game
   void CRigidbodyComponent::OnCollisionStay(const collisions::CCollider*, const collisions::SHitEvent& _oHitEvent)
   {
     maths::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
-    maths::CVector3 v3VelocityDir = v3CurrentVelocity.Normalize();
+    maths::CVector3 v3VelocityDir = maths::CVector3::Normalize(v3CurrentVelocity);
 
     // Get impact velocity
     float fImpactVelocity = abs(v3CurrentVelocity.Dot(_oHitEvent.Normal));

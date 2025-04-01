@@ -16,11 +16,9 @@ namespace collisions
 
   class CCollider
   {
-  private:
-    static constexpr int s_iMaxEvents = 3;
-
   public:
     typedef utils::CDelegate<void(const collisions::CCollider*, const SHitEvent&)> TOnCollisionEvent;
+    friend class CCollisionManager;
 
   public:
     explicit CCollider(EColliderType _eColliderType, void* _pOwner) : 
@@ -46,14 +44,13 @@ namespace collisions
     void SetOnCollisionExit(const TOnCollisionEvent& _oDelegate) { m_oOnCollisionExit = _oDelegate; }
 
   private:
-    friend class CCollisionManager;
     TOnCollisionEvent m_oOnCollisionEnter;
     TOnCollisionEvent m_oOnCollisionStay;
     TOnCollisionEvent m_oOnCollisionExit;
 
   private:
     void* m_pOwner = nullptr;
-    maths::CTransform m_oTransform;
+    maths::CTransform m_oTransform = maths::CTransform();
     EColliderType m_eColliderType = INVALID;
   };
 }

@@ -65,7 +65,8 @@ namespace game
 
     // Transpose matrix
     float matrix[16];
-    std::memcpy(matrix, maths::CMatrix4x4::Transpose(m_oTransform.ComputeModelMatrix()).m, sizeof(matrix));
+    maths::CMatrix4x4 mTranspose = maths::CMatrix4x4::Transpose(m_oTransform.ComputeModelMatrix());
+    memcpy(matrix, mTranspose(), sizeof(matrix));
 
     // Get matrix
     float fTranslation[3] = { m_oTransform.GetPosition().X, m_oTransform.GetPosition().Y, m_oTransform.GetPosition().Z };
@@ -84,7 +85,7 @@ namespace game
     ImGuizmo::RecomposeMatrixFromComponents(fTranslation, fRotation, fScale, matrix);
 
     // Manipulate gizmo
-    ImGuizmo::Manipulate(viewMatrix.m, projectionMatrix.m, mCurrentGizmoOperation, mCurrentGizmoMode, matrix);
+    ImGuizmo::Manipulate(viewMatrix(), projectionMatrix(), mCurrentGizmoOperation, mCurrentGizmoMode, matrix);
 
     if (ImGuizmo::IsUsing())
     {
