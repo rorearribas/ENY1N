@@ -6,13 +6,14 @@ namespace maths
   class CVector3
   {
   public:
+    static CVector3 Zero, One;
+    static CVector3 Forward, Backward, Right, Up;
+
     float X = 0.0f;
     float Y = 0.0f;
     float Z = 0.0f;
 
   public:
-    static CVector3 Zero, One;
-    static CVector3 Forward, Backward, Right, Up;
 
     CVector3() = default;
     CVector3(float _x, float _y, float _z) : X(_x), Y(_y), Z(_z) {}
@@ -28,7 +29,7 @@ namespace maths
     inline CVector3 operator*(float _fValue) const { return CVector3(X * _fValue, Y * _fValue, Z * _fValue); }
     inline CVector3 operator*(const CVector3& _v3) const { return CVector3(X * _v3.X, Y * _v3.Y, Z * _v3.Z); }
 
-    inline CVector3 operator/(float _fValue) const {  return CVector3(X / _fValue, Y / _fValue, Z / _fValue); }
+    inline CVector3 operator/(float _fValue) const { return CVector3(X / _fValue, Y / _fValue, Z / _fValue); }
     inline CVector3 operator+(const CVector3& _other) const { return CVector3(X + _other.X, Y + _other.Y, Z + _other.Z); }
 
     inline CVector3 operator-(const CVector3& _other) const { return CVector3(X - _other.X, Y - _other.Y, Z - _other.Z); }

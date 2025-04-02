@@ -52,7 +52,7 @@ unsigned char* CResourceManager::LoadTexture(const char* _sPath, int& _iWidth_, 
 // ------------------------------------
 render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sPath, const char* _sBaseModelMtlDir)
 {
-  // Create a model data instance
+  // Create a model data
   render::graphics::CModel::SModelData oModelData = {};
 
   // Tiny obj declarations
@@ -73,27 +73,29 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
   }
 
   // Register material
-  auto oRegisterMaterial = [=](const tinyobj::material_t& _tMaterial, std::vector< render::material::CMaterial*>& _vctMaterials_)
+  auto oRegisterMaterialFunc = [=](const tinyobj::material_t& _oMaterial, std::vector<render::material::CMaterial*>& _vctMaterials_)
   {
     // Create material
-    render::material::CMaterial* pMaterial = new render::material::CMaterial(_tMaterial.name.c_str());
+    render::material::CMaterial* pMaterial = new render::material::CMaterial(_oMaterial.name.c_str());
 
     // Set colors
-    pMaterial->SetAmbientColor({ _tMaterial.ambient[0], _tMaterial.ambient[1], _tMaterial.ambient[2] });
-    pMaterial->SetDiffuseColor({ _tMaterial.diffuse[0], _tMaterial.diffuse[1], _tMaterial.diffuse[2] });
-    pMaterial->SetSpecularColor({ _tMaterial.specular[0], _tMaterial.specular[1], _tMaterial.specular[2] });
+    pMaterial->SetAmbientColor({ _oMaterial.ambient[0], _oMaterial.ambient[1], _oMaterial.ambient[2] });
+    pMaterial->SetDiffuseColor({ _oMaterial.diffuse[0], _oMaterial.diffuse[1], _oMaterial.diffuse[2] });
+    pMaterial->SetSpecularColor({ _oMaterial.specular[0], _oMaterial.specular[1], _oMaterial.specular[2] });
 
-    // Register textures
+    // Get path
     using EType = render::material::EModifierType;
     std::filesystem::path oBasePath(_sBaseModelMtlDir);
-    RegisterTexture(pMaterial, EType::AMBIENT, oBasePath, _tMaterial.ambient_texname);
-    RegisterTexture(pMaterial, EType::DIFFUSE, oBasePath, _tMaterial.diffuse_texname);
-    RegisterTexture(pMaterial, EType::SPECULAR, oBasePath, _tMaterial.specular_texname);
-    RegisterTexture(pMaterial, EType::DISPLACEMENT, oBasePath, _tMaterial.displacement_texname);
-    RegisterTexture(pMaterial, EType::SPECULAR_HIGHLIGHT, oBasePath, _tMaterial.specular_highlight_texname);
-    RegisterTexture(pMaterial, EType::REFLECTION, oBasePath, _tMaterial.reflection_texname);
-    RegisterTexture(pMaterial, EType::ALPHA, oBasePath, _tMaterial.alpha_texname);
-    RegisterTexture(pMaterial, EType::BUMP, oBasePath, _tMaterial.bump_texname);
+
+    // Register textures
+    RegisterTexture(pMaterial, EType::AMBIENT, oBasePath, _oMaterial.ambient_texname);
+    RegisterTexture(pMaterial, EType::DIFFUSE, oBasePath, _oMaterial.diffuse_texname);
+    RegisterTexture(pMaterial, EType::SPECULAR, oBasePath, _oMaterial.specular_texname);
+    RegisterTexture(pMaterial, EType::DISPLACEMENT, oBasePath, _oMaterial.displacement_texname);
+    RegisterTexture(pMaterial, EType::SPECULAR_HIGHLIGHT, oBasePath, _oMaterial.specular_highlight_texname);
+    RegisterTexture(pMaterial, EType::REFLECTION, oBasePath, _oMaterial.reflection_texname);
+    RegisterTexture(pMaterial, EType::ALPHA, oBasePath, _oMaterial.alpha_texname);
+    RegisterTexture(pMaterial, EType::BUMP, oBasePath, _oMaterial.bump_texname);
 
     // Add material
     _vctMaterials_.emplace_back(pMaterial);
@@ -101,7 +103,10 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
 
   std::vector<render::material::CMaterial*> vctMaterials;
   vctMaterials.reserve(materials.size());
-  for (const tinyobj::material_t& tMaterial : materials) { oRegisterMaterial(tMaterial, vctMaterials); }
+  for (const tinyobj::material_t& tMaterial : materials) 
+  { 
+    oRegisterMaterialFunc(tMaterial, vctMaterials);
+  }
 
   // Register vertex data
   std::unordered_map<render::graphics::SVertexData, uint32_t> dctVertexMap;
@@ -122,7 +127,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     }
 
     // Mesh
-    std::vector<uint32_t> vctIndices = {};
+    std::vector<uint32_t> vctIndices = std::vector<uint32_t>();
     uint32_t uIndexOffset = 0;
 
     for (uint32_t uJ = 0; uJ < static_cast<uint32_t>(mesh.num_face_vertices.size()); uJ++)
@@ -199,7 +204,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
 
   return oModelData;
 }
-
+// ------------------------------------
 void CResourceManager::RegisterTexture(render::material::CMaterial*& pMaterial, render::material::EModifierType _eModifierType,
   const std::filesystem::path& _oBasePath, const std::string& _sTextureName)
 {

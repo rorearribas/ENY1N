@@ -8,6 +8,54 @@
 
 namespace collisions
 {
+  namespace internal_boxcollider
+  {
+    static bool SeparatedAxis
+    (
+      const std::vector<maths::CVector3>& _vctExtentsA,
+      const std::vector<maths::CVector3>& _vctExtentsB,
+      const maths::CVector3& _v3Axis, float& _fDepth_, maths::CVector3& _v3Normal_
+    )
+    {
+      if (_v3Axis == maths::CVector3::Zero) return false;
+
+      float fMinA = FLT_MAX, fMaxA = -FLT_MAX;
+      float fMinB = FLT_MAX, fMaxB = -FLT_MAX;
+
+      // Get MinA/MaxA
+      for (const maths::CVector3& v3Vertex : _vctExtentsA)
+      {
+        float fProjection = maths::CVector3::Dot(v3Vertex, _v3Axis);
+        fMinA = maths::Min(fMinA, fProjection);
+        fMaxA = maths::Max(fMaxA, fProjection);
+      }
+      // Get MinB/MaxB
+      for (const maths::CVector3& v3Vertex : _vctExtentsB)
+      {
+        float fProjection = maths::CVector3::Dot(v3Vertex, _v3Axis);
+        fMinB = maths::Min(fMinB, fProjection);
+        fMaxB = maths::Max(fMaxB, fProjection);
+      }
+
+      float fSize = maths::Max(fMaxA, fMaxB) - maths::Min(fMinA, fMinB);
+      float fSum = (fMaxA - fMinA) + (fMaxB - fMinB);
+
+      if (fSize > fSum)
+      {
+        return true;
+      }
+
+      float fCurrentDepth = fSum - fSize;
+      if (fCurrentDepth < _fDepth_)
+      {
+        _fDepth_ = fCurrentDepth;
+        _v3Normal_ = _v3Axis;
+      }
+
+      return false;
+    }
+  }
+  // ------------------------------------
   CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(BOX_COLLIDER, _pOwner)
   {
     ComputeMinMax();
@@ -24,7 +72,7 @@ namespace collisions
     {
       const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
       assert(&oBoxCollider);
-      return CheckBoxCollision(&oBoxCollider, _oHitEvent_);
+      return CheckOBB(&oBoxCollider, _oHitEvent_);
     }
     case EColliderType::SPHERE_COLLIDER:
     {
@@ -55,7 +103,7 @@ namespace collisions
       (m_v3Min.Z <= _pOther->m_v3Max.Z && m_v3Max.Z >= _pOther->m_v3Min.Z);
 
     if (bCheckCollision)
-    { 
+    {
       maths::CVector3 v3HalfSize = (m_v3Max - m_v3Min) * 0.5f;
       maths::CVector3 v3OtherHalfSize = (_pOther->m_v3Max - _pOther->m_v3Min) * 0.5f;
 
@@ -73,17 +121,17 @@ namespace collisions
       maths::CVector3 v3Normal = maths::CVector3::Zero;
       float fDepth = fOverlapX;
 
-      if (fOverlapY < fDepth) 
+      if (fOverlapY < fDepth)
       {
         fDepth = fOverlapY;
         v3Normal = maths::CVector3(0, (v3Dir.Y < 0) ? -1.0f : 1.0f, 0);
       }
-      if (fOverlapZ < fDepth) 
+      if (fOverlapZ < fDepth)
       {
         fDepth = fOverlapZ;
         v3Normal = maths::CVector3(0, 0, (v3Dir.Z < 0) ? -1.0f : 1.0f);
       }
-      if (fOverlapX == fDepth) 
+      if (fOverlapX == fDepth)
       {
         v3Normal = maths::CVector3((v3Dir.X < 0) ? -1.0f : 1.0f, 0, 0);
       }
@@ -96,6 +144,49 @@ namespace collisions
       return true;
     }
     return false;
+  }
+  // ------------------------------------
+  
+  // ------------------------------------
+  bool CBoxCollider::CheckOBB(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  {
+    const std::vector<maths::CVector3>& v3Extents = GetExtents();
+    const std::vector<maths::CVector3>& v3OtherExtents = _pOther->GetExtents();
+
+    // 15 axes
+    std::vector<maths::CVector3> vctAxes =
+    {
+      m_v3Right, m_v3Up, m_v3Forward,
+      _pOther->m_v3Right, _pOther->m_v3Up, _pOther->m_v3Forward,
+      maths::CVector3::Cross(m_v3Right, _pOther->m_v3Right),
+      maths::CVector3::Cross(m_v3Right, _pOther->m_v3Up),
+      maths::CVector3::Cross(m_v3Right, _pOther->m_v3Forward),
+      maths::CVector3::Cross(m_v3Up, _pOther->m_v3Right),
+      maths::CVector3::Cross(m_v3Up, _pOther->m_v3Up),
+      maths::CVector3::Cross(m_v3Up, _pOther->m_v3Forward),
+      maths::CVector3::Cross(m_v3Forward, _pOther->m_v3Right),
+      maths::CVector3::Cross(m_v3Forward, _pOther->m_v3Up),
+      maths::CVector3::Cross(m_v3Forward, _pOther->m_v3Forward)
+    };
+
+    maths::CVector3 v3Normal = maths::CVector3::Zero;
+    float fDepth = FLT_MAX;
+
+    for (const maths::CVector3& v3Axis : vctAxes)
+    {
+      if (internal_boxcollider::SeparatedAxis(v3Extents, v3OtherExtents, v3Axis, fDepth, v3Normal))
+      {
+        return false;
+      }
+    }
+
+    // Compute impact point
+    maths::CVector3 v3ImpactPoint = (GetCenter() + _pOther->GetCenter()) * 0.5f;
+    _oHitEvent_.ImpactPoint = v3ImpactPoint;
+    _oHitEvent_.Normal = v3Normal;
+    _oHitEvent_.Depth = fDepth;
+
+    return true;
   }
   // ------------------------------------
   bool CBoxCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const

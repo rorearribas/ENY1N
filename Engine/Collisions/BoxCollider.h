@@ -26,6 +26,7 @@ namespace collisions
 
   private:
     bool CheckBoxCollision(const CBoxCollider* _other, SHitEvent& _oHitEvent_) const;
+    bool CheckOBB(const CBoxCollider* _other, SHitEvent& _oHitEvent_) const;
     bool CheckSphereCollision(const CSphereCollider* _other, SHitEvent& _oHitEvent_) const;
 
     void ComputeExtents();
