@@ -28,7 +28,7 @@ namespace maths
   // ------------------------------------
   float CVector3::Distance(const CVector3& _v3Dest) const
   {
-     return Distance(_v3Dest, *this);
+    return Distance(_v3Dest, *this);
   }
   // ------------------------------------
   bool CVector3::Equal(const maths::CVector3& _v3, float _fEpsilon) const
@@ -51,6 +51,16 @@ namespace maths
     return std::fabs(X - _v3.X) < maths::s_fEpsilon5 &&
       std::fabs(Y - _v3.Y) < maths::s_fEpsilon5 &&
       std::fabs(Z - _v3.Z) < maths::s_fEpsilon5;
+  }
+  // ------------------------------------
+  bool CVector3::IsZero(const CVector3& _v3)
+  {
+    return _v3.IsZero();
+  }
+  // ------------------------------------
+  bool CVector3::IsZero() const
+  {
+    return abs(X) <= s_fEpsilon2 && abs(Y) <= s_fEpsilon2 && abs(Z) <= s_fEpsilon2;
   }
   // ------------------------------------
   void CVector3::Abs()

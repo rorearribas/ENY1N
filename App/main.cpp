@@ -78,12 +78,12 @@ int main()
   }
 
   std::vector<game::CEntity*> vctPhysics = {};
-  for (uint32_t uIndex = 0; uIndex < 100; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 50; uIndex++)
   {
     game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
     game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
 
-    pSphereModel2->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
+    pSphereModel2->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
 
     float fColorX = GenerateFloat(0.01f, 0.99f);
     float fColorY = GenerateFloat(0.01f, 0.99f);
@@ -91,10 +91,10 @@ int main()
 
     pSphereModel2->SetPrimitiveColor(maths::CVector3(fColorX, fColorY, fColorZ));
     game::CCollisionComponent* pCollisionComponent4 = pSphereEntity->RegisterComponent<game::CCollisionComponent>();
-    pCollisionComponent4->CreateCollider(collisions::EColliderType::SPHERE_COLLIDER);
+    pCollisionComponent4->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
     pSphereEntity->RegisterComponent<game::CRigidbodyComponent>();
 
-    float fRandomY = GenerateFloat(5.0f, 50.0f);
+    float fRandomY = GenerateFloat(5.0f, 10.f);
     float fRandomX = GenerateFloat(-10.0f, 10.0f);
     float fRandomZ = GenerateFloat(-0.5f, 0.5f);
 

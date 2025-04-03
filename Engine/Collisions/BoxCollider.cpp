@@ -17,7 +17,8 @@ namespace collisions
       const maths::CVector3& _v3Axis, float& _fDepth_, maths::CVector3& _v3Normal_
     )
     {
-      if (_v3Axis == maths::CVector3::Zero) return false;
+      if (_v3Axis.IsZero())
+        return false;
 
       float fMinA = FLT_MAX, fMaxA = -FLT_MAX;
       float fMinB = FLT_MAX, fMaxB = -FLT_MAX;
@@ -29,6 +30,7 @@ namespace collisions
         fMinA = maths::Min(fMinA, fProjection);
         fMaxA = maths::Max(fMaxA, fProjection);
       }
+
       // Get MinB/MaxB
       for (const maths::CVector3& v3Vertex : _vctExtentsB)
       {
@@ -37,22 +39,25 @@ namespace collisions
         fMaxB = maths::Max(fMaxB, fProjection);
       }
 
-      float fSize = maths::Max(fMaxA, fMaxB) - maths::Min(fMinA, fMinB);
-      float fSum = (fMaxA - fMinA) + (fMaxB - fMinB);
-
-      if (fSize > fSum)
+      // Check separation
+      if (fMinA > fMaxB || fMinB > fMaxA)
       {
-        return true;
+        return true; // No collision
       }
 
-      float fCurrentDepth = fSum - fSize;
+      // Compute depth
+      float fOverlapA = fMaxB - fMinA;
+      float fOverlapB = fMaxA - fMinB;
+      float fCurrentDepth = maths::Min(fOverlapA, fOverlapB);
+
+      // Update current depth
       if (fCurrentDepth < _fDepth_)
       {
         _fDepth_ = fCurrentDepth;
-        _v3Normal_ = _v3Axis;
+        _v3Normal_ = (_fDepth_ == fOverlapA) ? _v3Axis : -_v3Axis;
       }
 
-      return false;
+      return false; // Valid
     }
   }
   // ------------------------------------
@@ -146,18 +151,23 @@ namespace collisions
     return false;
   }
   // ------------------------------------
-  
+
   // ------------------------------------
   bool CBoxCollider::CheckOBB(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     const std::vector<maths::CVector3>& v3Extents = GetExtents();
     const std::vector<maths::CVector3>& v3OtherExtents = _pOther->GetExtents();
 
-    // 15 axes
-    std::vector<maths::CVector3> vctAxes =
+    std::vector<maths::CVector3> vctAxis =
     {
-      m_v3Right, m_v3Up, m_v3Forward,
-      _pOther->m_v3Right, _pOther->m_v3Up, _pOther->m_v3Forward,
+      // Normals 
+      this->m_v3Right,
+      this->m_v3Up,
+      this->m_v3Forward,
+      _pOther->m_v3Right,
+      _pOther->m_v3Up,
+      _pOther->m_v3Forward,
+      // Cross Product
       maths::CVector3::Cross(m_v3Right, _pOther->m_v3Right),
       maths::CVector3::Cross(m_v3Right, _pOther->m_v3Up),
       maths::CVector3::Cross(m_v3Right, _pOther->m_v3Forward),
@@ -172,7 +182,7 @@ namespace collisions
     maths::CVector3 v3Normal = maths::CVector3::Zero;
     float fDepth = FLT_MAX;
 
-    for (const maths::CVector3& v3Axis : vctAxes)
+    for (const maths::CVector3& v3Axis : vctAxis)
     {
       if (internal_boxcollider::SeparatedAxis(v3Extents, v3OtherExtents, v3Axis, fDepth, v3Normal))
       {
@@ -181,10 +191,10 @@ namespace collisions
     }
 
     // Compute impact point
-    maths::CVector3 v3ImpactPoint = (GetCenter() + _pOther->GetCenter()) * 0.5f;
-    _oHitEvent_.ImpactPoint = v3ImpactPoint;
+    maths::CVector3 v3CenterPoint = (_pOther->GetCenter() + GetCenter()) * 0.5f;
+    _oHitEvent_.ImpactPoint = v3CenterPoint - (v3Normal * (fDepth * 0.5f));
     _oHitEvent_.Normal = v3Normal;
-    _oHitEvent_.Depth = fDepth;
+    _oHitEvent_.Depth = std::abs(fDepth);
 
     return true;
   }
@@ -209,7 +219,7 @@ namespace collisions
       maths::CVector3 v3ImpactPoint(fClosestX, fClosestY, fClosestZ);
       _oHitEvent_.ImpactPoint = v3ImpactPoint;
       _oHitEvent_.Depth = fSquareRadius - fDist;
-      _oHitEvent_.Normal = maths::CVector3::Normalize(_pOther->GetCenter() - v3ImpactPoint);
+      _oHitEvent_.Normal = maths::CVector3::Normalize(v3ImpactPoint - _pOther->GetCenter());
       return true;
     }
     return false;
@@ -241,23 +251,23 @@ namespace collisions
     m_v3Up = mRot * maths::CVector3::Up;
 
     // Create debug
-    if (m_vctPrimitives.empty())
-    {
-      for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
-      {
-        engine::CEngine* pEngine = engine::CEngine::GetInstance();
-        auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-        pPrimitive->SetColor(maths::CVector3::Right);
-        pPrimitive->SetScale(maths::CVector3::One / 8.0f);
-        m_vctPrimitives.emplace_back(pPrimitive);
-      }
-    }
+    //if (m_vctPrimitives.empty())
+    //{
+    //  for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+    //  {
+    //    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    //    auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
+    //    pPrimitive->SetColor(maths::CVector3::Right);
+    //    pPrimitive->SetScale(maths::CVector3::One / 8.0f);
+    //    m_vctPrimitives.emplace_back(pPrimitive);
+    //  }
+    //}
 
     // Update position
-    for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+  /*  for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
     {
       m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
-    }
+    }*/
   }
   // ------------------------------------
   void CBoxCollider::ComputeMinMax()

@@ -50,7 +50,7 @@ namespace game
 
     // Get impact velocity
     float fImpactVelocity = abs(v3CurrentVelocity.Dot(_oHitEvent.Normal));
-    if (fImpactVelocity > maths::s_fEpsilon3)
+    if (fImpactVelocity > maths::s_fEpsilon5)
     {
       // Apply velocity
       v3CurrentVelocity = v3CurrentVelocity - _oHitEvent.Normal * (-fImpactVelocity * internal_rb::s_fRebound);
@@ -59,7 +59,7 @@ namespace game
 
     // Apply torque
     float fVelocity = v3CurrentVelocity.Length();
-    if (fVelocity > maths::s_fEpsilon3)
+    if (fVelocity > maths::s_fEpsilon5)
     {
       maths::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
       m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * internal_rb::s_fMaxAngularForce);
@@ -70,7 +70,7 @@ namespace game
     if (pOwner)
     {
       maths::CVector3 v3Offset = _oHitEvent.Normal * _oHitEvent.Depth;
-      if (!v3Offset.Equal(maths::CVector3::Zero))
+      if (!v3Offset.Equal(maths::CVector3::Zero, maths::s_fEpsilon5))
       {
         maths::CVector3 vNewPosition = pOwner->GetPosition() + v3Offset;
         pOwner->SetPosition(vNewPosition);

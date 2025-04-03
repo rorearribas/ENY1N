@@ -42,12 +42,12 @@ namespace collisions
           bool bCollisionEnter = s_dctCollisions[pCurrentCollider].find(pTargetCollider) != s_dctCollisions[pCurrentCollider].end();
           if (!bCollisionEnter)
           {
-            // Notification to target collider
-            pTargetCollider->m_oOnCollisionEnter(pCurrentCollider, oHitEvent);
-
             // Notify to current collider
-            oHitEvent.Normal *= -1.0f;
             pCurrentCollider->m_oOnCollisionEnter(pTargetCollider, oHitEvent);
+
+            // Notification to target collider
+            oHitEvent.Normal *= -1.0f;
+            pTargetCollider->m_oOnCollisionEnter(pCurrentCollider, oHitEvent);
 
             // Register collision
             s_dctCollisions[pCurrentCollider].insert(pTargetCollider);
@@ -55,12 +55,12 @@ namespace collisions
           // Collision Stay
           else
           {
-            // Notification to target collider
-            pTargetCollider->m_oOnCollisionStay(pCurrentCollider, oHitEvent);
-
             // Notify to current collider
-            oHitEvent.Normal *= -1.0f;
             pCurrentCollider->m_oOnCollisionStay(pTargetCollider, oHitEvent);
+
+            // Notification to target collider
+            oHitEvent.Normal *= -1.0f;
+            pTargetCollider->m_oOnCollisionStay(pCurrentCollider, oHitEvent);
           }
         }
         else
