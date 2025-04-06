@@ -36,15 +36,14 @@ namespace game
     inline T* RegisterComponent(Args&&... args)
     {
       if (m_iRegisteredComponents >= s_iMaxComponents) return nullptr;
-      CComponent* pComponent = new T(std::forward<Args>(args)...);
-      pComponent->SetOwner(this);
+      T* pComponent = new T(this, std::forward<Args>(args)...);
       m_vctComponents[m_iRegisteredComponents++] = pComponent;
       return static_cast<T*>(pComponent);
     }
     template<typename T>
     inline T* GetComponent()
     {
-      // @TODO: No hay que utilizar dynamic cast
+      // @TODO: Hay que evitar usar dynamic cast!!
       for (CComponent* pComp : m_vctComponents)
       {
         T* pComponent = dynamic_cast<T*>(pComp);
@@ -54,9 +53,9 @@ namespace game
     }
 
     // Notifications
-    void OnCollisionEnter(const collisions::CCollider*, const collisions::SHitEvent&);
-    void OnCollisionStay(const collisions::CCollider*, const collisions::SHitEvent&);
-    void OnCollisionExit(const collisions::CCollider*, const collisions::SHitEvent&);
+    void OnCollisionEnter(const collisions::SHitEvent&);
+    void OnCollisionStay(const collisions::SHitEvent&);
+    void OnCollisionExit(const collisions::SHitEvent&);
 
   private:
     void DestroyAllComponents();

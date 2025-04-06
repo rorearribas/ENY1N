@@ -189,38 +189,38 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::OnCollisionEnter(const collisions::CCollider* _pCollider, const collisions::SHitEvent& _oHitEvent)
+  void CEntity::OnCollisionEnter(const collisions::SHitEvent& _oHitEvent)
   {    
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)
     {
       if (pComponent)
       {
-        pComponent->OnCollisionEnter(_pCollider, _oHitEvent);
+        pComponent->OnCollisionEnter(_oHitEvent);
       }
     }
   }
   // ------------------------------------
-  void CEntity::OnCollisionStay(const collisions::CCollider* _pCollider, const collisions::SHitEvent& _oHitEvent)
+  void CEntity::OnCollisionStay(const collisions::SHitEvent& _oHitEvent)
   {
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)
     {
       if (pComponent)
       {
-        pComponent->OnCollisionStay(_pCollider, _oHitEvent);
+        pComponent->OnCollisionStay(_oHitEvent);
       }
     }
   }
   // ------------------------------------
-  void CEntity::OnCollisionExit(const collisions::CCollider* _pCollider, const collisions::SHitEvent& _oHitEvent)
+  void CEntity::OnCollisionExit(const collisions::SHitEvent& _oHitEvent)
   {
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)
     {
       if (pComponent)
       {
-        pComponent->OnCollisionExit(_pCollider, _oHitEvent);
+        pComponent->OnCollisionExit(_oHitEvent);
       }
     }
   }

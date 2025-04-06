@@ -151,8 +151,6 @@ namespace collisions
     return false;
   }
   // ------------------------------------
-
-  // ------------------------------------
   bool CBoxCollider::CheckOBB(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     const std::vector<maths::CVector3>& v3Extents = GetExtents();

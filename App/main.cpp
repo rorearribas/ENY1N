@@ -70,10 +70,9 @@ int main()
   for (uint32_t uIndex = 0; uIndex < 2; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    game::CModelComponent* pBoxTestModel = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pBoxTestModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
-    game::CCollisionComponent* pCollisionComponentBoxTest = pBoxTest->RegisterComponent<game::CCollisionComponent>();
-    pCollisionComponentBoxTest->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
+    game::CModelComponent* pModelComp = pBoxTest->RegisterComponent<game::CModelComponent>();
+    pModelComp->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+    pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
@@ -82,7 +81,6 @@ int main()
   {
     game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
     game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
-
     pSphereModel2->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
 
     float fColorX = GenerateFloat(0.01f, 0.99f);
@@ -90,8 +88,7 @@ int main()
     float fColorZ = GenerateFloat(0.01f, 0.99f);
 
     pSphereModel2->SetPrimitiveColor(maths::CVector3(fColorX, fColorY, fColorZ));
-    game::CCollisionComponent* pCollisionComponent4 = pSphereEntity->RegisterComponent<game::CCollisionComponent>();
-    pCollisionComponent4->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
+    pSphereEntity->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
     pSphereEntity->RegisterComponent<game::CRigidbodyComponent>();
 
     float fRandomY = GenerateFloat(5.0f, 10.f);
@@ -131,14 +128,13 @@ int main()
       {
         float fFixedDeltaTime = pTimeManager->GetFixedDelta();
 
-        pEngine->Update(fFixedDeltaTime); // Update camera.
+        pEngine->Update(fFixedDeltaTime);
+        pGameManager->Update(fFixedDeltaTime);
 
         pPhysicsManager->Update(fFixedDeltaTime);
         pCollisionManager->Update(fFixedDeltaTime);
 
-        pGameManager->Update(fFixedDeltaTime);
         pInputManager->Flush();
-
         m_fFixedDeltaAccumulator -= fFixedDeltaTime;
       }
 

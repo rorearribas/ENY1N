@@ -31,6 +31,7 @@ namespace game
   // ------------------------------------
   void CModelComponent::LoadModel(const char* _sModelPath, const char* _sBaseMltDir)
   {
+    // Flush
     Clean();
 
     // Create model
@@ -41,6 +42,7 @@ namespace game
   // ------------------------------------
   void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
   {
+    // Flush
     Clean();
 
     // Create primitive

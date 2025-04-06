@@ -6,7 +6,8 @@
 
 namespace collisions
 {
-  class CCollisionManager : public utils::CSingleton<CCollisionManager> {
+  class CCollisionManager : public utils::CSingleton<CCollisionManager> 
+  {
   public:
     static const uint32_t s_uMaxColliders = 250;
     typedef utils::CFixedList<collisions::CCollider, s_uMaxColliders> TColliderList;
@@ -16,11 +17,12 @@ namespace collisions
     ~CCollisionManager();
 
     void Update(float _fDeltaTime);
+
+    const TColliderList& GetColliderList() { return m_vctColliders; }
     collisions::CCollider* CreateCollider(collisions::EColliderType _eColliderType, void* _pOwner);
     void DestroyCollider(collisions::CCollider*& _pCollider_);
 
   private:
-    void ComputeCollision(collisions::CCollider* _pColliderA, collisions::CCollider* _pColliderB);
     void Clean();
 
   private:

@@ -4,18 +4,14 @@
 #include "Engine/Collisions/BoxCollider.h"
 #include "Engine/Collisions/SphereCollider.h"
 #include "Game/ETT/Entity.h"
-#include <cassert>
 #include "Engine/Base/Engine.h"
-#include "Engine/Physics/PhysicsManager.h"
-#include "../RigidbodyComponent/RigidbodyComponent.h"
+#include <cassert>
 
 namespace game
 {
-  // ------------------------------------
-  void CCollisionComponent::Update(float _fDeltaTime)
+  CCollisionComponent::CCollisionComponent(CEntity* _pOwner, collisions::EColliderType _eColliderType) : CComponent(_pOwner)
   {
-    // Colliders are being updated in the collision manager!
-    Super::Update(_fDeltaTime);
+    CreateCollider(_eColliderType);
   }
   // ------------------------------------
   void CCollisionComponent::CreateCollider(collisions::EColliderType _eColliderType)
@@ -27,7 +23,7 @@ namespace game
     CEntity* pOwner = GetOwner();
     assert(pOwner);
 
-    // Create collider from collision manager
+    // Create collider usin coll manager
     collisions::CCollisionManager* pCollisionManager = collisions::CCollisionManager::GetInstance();
     if (pCollisionManager)
     { 

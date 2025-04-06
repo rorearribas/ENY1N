@@ -12,13 +12,13 @@ namespace game
   class CCollisionComponent : public CComponent
   {
   public:
-    CCollisionComponent() {}
+    CCollisionComponent(CEntity* _pOwner) : CComponent(_pOwner) {}
+    explicit CCollisionComponent(CEntity* _pOwner, collisions::EColliderType _eColliderType);
     virtual ~CCollisionComponent() { Clean(); }
-
-    virtual void Update(float _fDeltaTime) override;
 
     void CreateCollider(collisions::EColliderType _eColliderType);
     collisions::CCollider* const GetCollider() { return m_pCollider; }
+
     void SetPosition(const maths::CVector3& _v3Position);
     const maths::CVector3& GetPosition() const;
     void SetRotation(const maths::CVector3& _v3Rotation);

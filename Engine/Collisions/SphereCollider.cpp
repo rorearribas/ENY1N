@@ -30,6 +30,7 @@ namespace collisions
   // ------------------------------------
   void CSphereCollider::RecalculateCollider()
   {
+    // Set world center
     m_v3Center = GetPosition();
   }
   // ------------------------------------

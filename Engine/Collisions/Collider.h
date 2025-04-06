@@ -12,24 +12,25 @@ namespace collisions
     maths::CVector3 Normal = maths::CVector3::Zero;
     maths::CVector3 ImpactPoint = maths::CVector3::Zero;
     float Depth = 0.0f;
+    void* Object = nullptr;
   };
 
   class CCollider
   {
   public:
-    typedef utils::CDelegate<void(const collisions::CCollider*, const SHitEvent&)> TOnCollisionEvent;
+    typedef utils::CDelegate<void(const SHitEvent&)> TOnCollisionEvent;
     friend class CCollisionManager;
 
   public:
-    explicit CCollider(EColliderType _eColliderType, void* _pOwner) : 
-    m_eColliderType(_eColliderType), m_pOwner(_pOwner) {}
+    explicit CCollider(EColliderType _eColliderType, void* _pOwner) 
+    : m_eColliderType(_eColliderType), m_pOwner(_pOwner) {}
     virtual ~CCollider() {}
 
     virtual bool CheckCollision(const CCollider&, SHitEvent&) = 0;
     virtual void RecalculateCollider() = 0;
 
-    const void* GetOwner() const { return m_pOwner; }
     const EColliderType& GetType() const { return m_eColliderType; }
+    void* GetOwner() const { return m_pOwner; }
 
     const maths::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
     void SetPosition(const maths::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }
@@ -48,10 +49,11 @@ namespace collisions
     TOnCollisionEvent m_oOnCollisionStay;
     TOnCollisionEvent m_oOnCollisionExit;
 
-  private:
-    void* m_pOwner = nullptr;
     maths::CTransform m_oTransform = maths::CTransform();
     EColliderType m_eColliderType = INVALID;
+
+  private:
+    void* m_pOwner = nullptr;
   };
 }
 

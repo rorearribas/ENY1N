@@ -9,7 +9,7 @@
 
 namespace collisions
 {
-  static std::unordered_map<collisions::CCollider*, std::unordered_set<collisions::CCollider*>> s_dctCollisions;
+  static std::unordered_map<collisions::CCollider*, std::unordered_set<collisions::CCollider*>> s_dctHandleCollisions;
 
   CCollisionManager::~CCollisionManager()
   {
@@ -23,70 +23,71 @@ namespace collisions
     // Check collisions
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
     {
-      collisions::CCollider* pCurrentCollider = m_vctColliders[uI];
+      // Get current collider
+      collisions::CCollider* pCollider = m_vctColliders[uI];
 
       // Initialize the set of previous colliders for this collider if not already done
-      if (s_dctCollisions.find(pCurrentCollider) == s_dctCollisions.end())
+      if (s_dctHandleCollisions.find(pCollider) == s_dctHandleCollisions.end())
       {
-        s_dctCollisions[pCurrentCollider] = std::unordered_set<collisions::CCollider*>();
+        s_dctHandleCollisions[pCollider] = std::unordered_set<collisions::CCollider*>();
       }
 
       for (uint32_t uJ = uI + 1; uJ < m_vctColliders.CurrentSize(); ++uJ)
       {
-        // Check collision
+        // Get target collider
         collisions::CCollider* pTargetCollider = m_vctColliders[uJ];
+
+        // Create hit event data
         collisions::SHitEvent oHitEvent = collisions::SHitEvent();
-        if (pCurrentCollider->CheckCollision(*pTargetCollider, oHitEvent))
+
+        if (pCollider->CheckCollision(*pTargetCollider, oHitEvent))
         {
           // Collision Enter
-          bool bCollisionEnter = s_dctCollisions[pCurrentCollider].find(pTargetCollider) != s_dctCollisions[pCurrentCollider].end();
+          bool bCollisionEnter = s_dctHandleCollisions[pCollider].find(pTargetCollider) != s_dctHandleCollisions[pCollider].end();
           if (!bCollisionEnter)
           {
             // Notify to current collider
-            pCurrentCollider->m_oOnCollisionEnter(pTargetCollider, oHitEvent);
+            oHitEvent.Object = pTargetCollider->GetOwner();
+            pCollider->m_oOnCollisionEnter(oHitEvent);
 
             // Notification to target collider
             oHitEvent.Normal *= -1.0f;
-            pTargetCollider->m_oOnCollisionEnter(pCurrentCollider, oHitEvent);
+            oHitEvent.Object = pCollider->GetOwner();
+            pTargetCollider->m_oOnCollisionEnter(oHitEvent);
 
             // Register collision
-            s_dctCollisions[pCurrentCollider].insert(pTargetCollider);
+            s_dctHandleCollisions[pCollider].insert(pTargetCollider);
           }
-          // Collision Stay
-          else
+          else // Collision Stay
           {
             // Notify to current collider
-            pCurrentCollider->m_oOnCollisionStay(pTargetCollider, oHitEvent);
+            oHitEvent.Object = pTargetCollider->GetOwner();
+            pCollider->m_oOnCollisionStay(oHitEvent);
 
             // Notification to target collider
             oHitEvent.Normal *= -1.0f;
-            pTargetCollider->m_oOnCollisionStay(pCurrentCollider, oHitEvent);
+            oHitEvent.Object = pCollider->GetOwner();
+            pTargetCollider->m_oOnCollisionStay(oHitEvent);
           }
         }
-        else
+        else // Collision Exit
         {
-          // Collision Exit
-          if (s_dctCollisions[pCurrentCollider].find(pTargetCollider) != s_dctCollisions[pCurrentCollider].end())
+          if (s_dctHandleCollisions[pCollider].find(pTargetCollider) != s_dctHandleCollisions[pCollider].end())
           {
-            // Notification to target collider
-            pTargetCollider->m_oOnCollisionExit(pCurrentCollider, oHitEvent);
-
             // Notify to current collider
-            oHitEvent.Normal *= -1.0f;
-            pCurrentCollider->m_oOnCollisionExit(pTargetCollider, oHitEvent);
+            oHitEvent.Object = pTargetCollider->GetOwner();
+            pCollider->m_oOnCollisionExit(oHitEvent);
+
+            // Notification to target collider
+            oHitEvent.Object = pCollider->GetOwner();
+            pTargetCollider->m_oOnCollisionExit(oHitEvent);
 
             // Remove from the previous collisions
-            s_dctCollisions[pCurrentCollider].erase(pTargetCollider);
+            s_dctHandleCollisions[pCollider].erase(pTargetCollider);
           }
         }
       }
     }
-  }
-  // ------------------------------------
-  void CCollisionManager::ComputeCollision(collisions::CCollider* /*_pColliderA*/, collisions::CCollider* /*_pColliderB*/)
-  {
-    /* _pColliderA->m_oOnCollisionEnter(_pColliderA);
-     _pColliderB->m_oOnCollisionEnter(_pColliderA);*/
   }
   // ------------------------------------
   collisions::CCollider* CCollisionManager::CreateCollider(collisions::EColliderType _eColliderType, void* _pOwner)
@@ -98,9 +99,9 @@ namespace collisions
     }
     switch (_eColliderType)
     {
-    case collisions::BOX_COLLIDER: return m_vctColliders.CreateItem<collisions::CBoxCollider>(_pOwner);
-    case collisions::SPHERE_COLLIDER: return m_vctColliders.CreateItem<collisions::CSphereCollider>(_pOwner);
-    default: return nullptr;
+      case collisions::BOX_COLLIDER: return m_vctColliders.CreateItem<collisions::CBoxCollider>(_pOwner);
+      case collisions::SPHERE_COLLIDER: return m_vctColliders.CreateItem<collisions::CSphereCollider>(_pOwner);
+      default: return nullptr;
     }
   }
   // ------------------------------------

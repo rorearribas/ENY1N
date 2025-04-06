@@ -10,7 +10,7 @@ namespace game
   class CLightComponent : public CComponent
   {
   public:
-    CLightComponent(render::lights::ELightType _eLightType);
+    CLightComponent(CEntity* _pOwner, render::lights::ELightType _eLightType);
     virtual ~CLightComponent();
 
     virtual void Update(float _fDeltaTime) override;

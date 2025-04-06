@@ -37,9 +37,8 @@ namespace physics
 
       // Decrease velocity
       bool bInTheAir = pRigidbody->GetRigidbodyState() == physics::ERigidbodyState::IN_THE_AIR;
-      const float fExpCoefficient = bInTheAir ? 0.001f : 0.002f;
-      int iMaxFPS = tick::CTimeManager::GetInstance()->GetMaxFPS();
-      pRigidbody->m_v3Velocity *= expf(-fExpCoefficient * _fDeltaTime * iMaxFPS);
+      const float fExpCoefficient = bInTheAir ? 0.1f : 0.2f;
+      pRigidbody->m_v3Velocity *= expf(-fExpCoefficient * _fDeltaTime);
 
       // Notify displacement -> i extracted this equation from the internet
       maths::CVector3 v3Displacement = (pRigidbody->m_v3Velocity * _fDeltaTime) + (pRigidbody->m_v3Acceleration * _fDeltaTime * _fDeltaTime * 0.5f);
@@ -52,8 +51,7 @@ namespace physics
       }
 
       // Decrease angular velocity
-
-      const float fAngularDrag = expf(-fExpCoefficient * _fDeltaTime * iMaxFPS);
+      const float fAngularDrag = expf(-fExpCoefficient * _fDeltaTime);
       pRigidbody->m_v3AngularVelocity *= fAngularDrag;
 
       // Notify angular displacement
