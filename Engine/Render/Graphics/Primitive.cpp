@@ -173,12 +173,12 @@ namespace render
     // ------------------------------------
     CPrimitive::CPrimitive(EPrimitiveType _ePrimitiveType, ERenderMode _eRenderMode)
     {
-      HRESULT hr = CreateInputLayout();
-      assert(!FAILED(hr));
+      HRESULT hResult = CreateInputLayout();
+      assert(!FAILED(hResult));
 
       // Create buffer from presets
-      hr = CreatePrimitive(_ePrimitiveType, _eRenderMode);
-      assert(!FAILED(hr));
+      hResult = CreatePrimitive(_ePrimitiveType, _eRenderMode);
+      assert(!FAILED(hResult));
 
       // Set values
       m_eRenderMode = _eRenderMode;
@@ -284,9 +284,9 @@ namespace render
     {
       // Map
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
-      HRESULT hr = global::dx11::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
-      UNUSED_VARIABLE(hr);
-      assert(!FAILED(hr));
+      HRESULT hResult = global::dx11::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      UNUSED_VARIABLE(hResult);
+      assert(!FAILED(hResult));
 
       CPrimitive::SPrimitiveData* pPrimitiveInfo = (CPrimitive::SPrimitiveData*)(oMappedSubresource.pData);
       assert(pPrimitiveInfo);
@@ -325,13 +325,13 @@ namespace render
       oSubresourceData.pSysMem = _vctPrimitiveInfo.data();
       m_uVertices = static_cast<uint32_t>(_vctPrimitiveInfo.size());
 
-      HRESULT hr = global::dx11::s_pDevice->CreateBuffer
+      HRESULT hResult = global::dx11::s_pDevice->CreateBuffer
       (
         &oVertexBufferDescriptor,
         &oSubresourceData,
         &m_pVertexBuffer
       );
-      if (_vctIndexes.empty()) return hr;
+      if (_vctIndexes.empty()) return hResult;
 
       // Config index buffer
       D3D11_BUFFER_DESC oIndexBufferDesc = {};

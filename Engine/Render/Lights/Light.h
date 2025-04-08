@@ -9,12 +9,11 @@ namespace render
   {
     enum ELightType { DIRECTIONAL_LIGHT, POINT_LIGHT, SPOT_LIGHT, INVALID };
 
-    class CLight {
+    class CLight 
+    {
     public:
       CLight(ELightType _eLightType) : m_eLightType(_eLightType) { assert(m_eLightType != INVALID); }
       virtual ~CLight() {}
-
-      virtual void UpdateLight () {}
 
       const ELightType& GetLightType() const { return m_eLightType; }
       void SetPosition(const maths::CVector3& _v3Position) { m_oLightTransform.SetPosition(_v3Position); }

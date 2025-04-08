@@ -13,9 +13,9 @@ namespace render
     // ------------------------------------
     CModel::CModel(const char* _sModelPath, const char* _sBaseMltDir)
     {
-      HRESULT hr = InitModel(_sModelPath, _sBaseMltDir);
-      UNUSED_VARIABLE(hr);
-      assert(!FAILED(hr));
+      HRESULT hResult = InitModel(_sModelPath, _sBaseMltDir);
+      UNUSED_VARIABLE(hResult);
+      assert(!FAILED(hResult));
     }
     // ------------------------------------
     CModel::~CModel()
@@ -31,10 +31,10 @@ namespace render
     {
       D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
       {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::graphics::SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
       };
 
       return global::dx11::s_pDevice->CreateInputLayout
@@ -58,7 +58,7 @@ namespace render
       m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // We create here the vertex buffer
-      D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
+      D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
       oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(render::graphics::SVertexData) * m_oModelData.m_vctVertexData.size()));
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -66,13 +66,13 @@ namespace render
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
       oSubresourceData.pSysMem = m_oModelData.m_vctVertexData.data();
-      HRESULT hr = global::dx11::s_pDevice->CreateBuffer
+      HRESULT hResult = global::dx11::s_pDevice->CreateBuffer
       (
         &oVertexBufferDescriptor,
         &oSubresourceData,
         &m_pVertexBuffer
       );
-      if (FAILED(hr)) return hr;
+      if (FAILED(hResult)) return hResult;
 
       // Update vertex color
       for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
@@ -81,10 +81,10 @@ namespace render
       }
 
       // Create input layout
-      hr = CreateInputLayout();
-      if (FAILED(hr)) return hr;
+      hResult = CreateInputLayout();
+      if (FAILED(hResult)) return hResult;
 
-      return hr;
+      return hResult;
     }
     // ------------------------------------
     void CModel::DrawModel()

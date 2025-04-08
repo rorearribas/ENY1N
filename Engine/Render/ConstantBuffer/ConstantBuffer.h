@@ -108,8 +108,8 @@ public:
   bool UpdateBuffer()
   {
     D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
-    HRESULT hr = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
-    if (FAILED(hr)) { return false; }
+    HRESULT hResult = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
+    if (FAILED(hResult)) { return false; }
     // Copy memory into buffer
     CopyMemory(oMappedSubresource.pData, &m_oData, sizeof(T));
     m_pDeviceContext->Unmap(m_pBuffer, 0);

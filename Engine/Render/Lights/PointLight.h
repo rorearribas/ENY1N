@@ -14,9 +14,6 @@ namespace render
       // Color
       void SetColor(const maths::CVector3& _v3Color) { m_v3LightColor = _v3Color; }
       const maths::CVector3& GetColor() { return m_v3LightColor; }
-      // Attenuation
-      /*void SetAttenuation(float _fAttenuation) { m_fAttenuation = _fAttenuation; }
-      const float& GetAttenuation() { return m_fAttenuation; }*/
       // Range
       void SetRange(float _fRange) { m_fRange = _fRange; }
       const float& GetRange() { return m_fRange; }

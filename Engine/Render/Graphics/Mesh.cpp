@@ -78,9 +78,9 @@ namespace render
     {
       // Mapped vertex buffer
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
-      HRESULT hr = global::dx11::s_pDeviceContext->Map(_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
-      UNUSED_VARIABLE(hr);
-      assert(!FAILED(hr));
+      HRESULT hResult = global::dx11::s_pDeviceContext->Map(_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      UNUSED_VARIABLE(hResult);
+      assert(!FAILED(hResult));
 
       // Get vertex data
       SVertexData* pVertexData = static_cast<SVertexData*>(oMappedSubresource.pData);

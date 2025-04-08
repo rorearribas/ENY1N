@@ -48,6 +48,16 @@ namespace game
     Super::Update(_fDeltaTime);
   }
   // ------------------------------------
+  void CLightComponent::SetLightType(render::lights::ELightType _eLightType)
+  {
+    CreateLight(_eLightType);
+  }
+  // ------------------------------------
+  render::lights::ELightType CLightComponent::GetLightType() const
+  {
+    return m_pLight ? m_pLight->GetLightType() : render::lights::ELightType::INVALID;
+  }
+  // ------------------------------------
   void CLightComponent::DrawDebug()
   {
     ImGui::Spacing();

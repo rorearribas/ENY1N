@@ -57,6 +57,9 @@ int main()
   // Game manager
   game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
 
+  game::CEntity* pDirectionaLight = pGameManager->CreateEntity("Directional Light");
+  pDirectionaLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
+
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
@@ -72,32 +75,34 @@ int main()
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     game::CModelComponent* pModelComp = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelComp->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+    pModelComp->SetPrimitiveColor(maths::CVector3::Forward);
+
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
   std::vector<game::CEntity*> vctPhysics = {};
-  for (uint32_t uIndex = 0; uIndex < 50; uIndex++)
-  {
-    game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
-    game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
-    pSphereModel2->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+  //for (uint32_t uIndex = 0; uIndex < 50; uIndex++)
+  //{
+  //  game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
+  //  game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
+  //  pSphereModel2->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
 
-    float fColorX = GenerateFloat(0.01f, 0.99f);
-    float fColorY = GenerateFloat(0.01f, 0.99f);
-    float fColorZ = GenerateFloat(0.01f, 0.99f);
+  //  float fColorX = GenerateFloat(0.01f, 0.99f);
+  //  float fColorY = GenerateFloat(0.01f, 0.99f);
+  //  float fColorZ = GenerateFloat(0.01f, 0.99f);
 
-    pSphereModel2->SetPrimitiveColor(maths::CVector3(fColorX, fColorY, fColorZ));
-    pSphereEntity->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
-    pSphereEntity->RegisterComponent<game::CRigidbodyComponent>();
+  //  pSphereModel2->SetPrimitiveColor(maths::CVector3(fColorX, fColorY, fColorZ));
+  //  pSphereEntity->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
+  //  pSphereEntity->RegisterComponent<game::CRigidbodyComponent>();
 
-    float fRandomY = GenerateFloat(5.0f, 10.f);
-    float fRandomX = GenerateFloat(-10.0f, 10.0f);
-    float fRandomZ = GenerateFloat(-0.5f, 0.5f);
+  //  float fRandomY = GenerateFloat(5.0f, 10.f);
+  //  float fRandomX = GenerateFloat(-10.0f, 10.0f);
+  //  float fRandomZ = GenerateFloat(-0.5f, 0.5f);
 
-    pSphereEntity->SetPosition(maths::CVector3(fRandomX, fRandomY, fRandomZ));
-    vctPhysics.emplace_back(pSphereEntity);
-  }
+  //  pSphereEntity->SetPosition(maths::CVector3(fRandomX, fRandomY, fRandomZ));
+  //  vctPhysics.emplace_back(pSphereEntity);
+  //}
 
   const render::CRender* pRender = pEngine->GetRender();
   pRender->GetRenderWindow()->SetEnabled(true);

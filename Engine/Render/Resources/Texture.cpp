@@ -52,11 +52,11 @@ namespace render
       subresource_data.pSysMem = _pData;
       subresource_data.SysMemPitch = m_uTextureWidth * internal_texture::s_iRGBA;
 
-      HRESULT hr = global::dx11::s_pDevice->CreateTexture2D(&oTextureDesc, &subresource_data, &m_pTexture);
-      if (FAILED(hr))
+      HRESULT hResult = global::dx11::s_pDevice->CreateTexture2D(&oTextureDesc, &subresource_data, &m_pTexture);
+      if (FAILED(hResult))
       {
         std::cout << "Error creating texture 2D" << std::endl;
-        return hr;
+        return hResult;
       }
 
       // Create texture view
@@ -64,11 +64,11 @@ namespace render
       oShaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
       oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
       oShaderResourceViewDesc.Texture2D.MipLevels = 1;
-      hr = global::dx11::s_pDevice->CreateShaderResourceView(m_pTexture, &oShaderResourceViewDesc, &m_pShaderResourceView);
-      if (FAILED(hr))
+      hResult = global::dx11::s_pDevice->CreateShaderResourceView(m_pTexture, &oShaderResourceViewDesc, &m_pShaderResourceView);
+      if (FAILED(hResult))
       {
         std::cout << "Error creating render target view" << std::endl;
-        return hr;
+        return hResult;
       }
 
       // Create sampler state
@@ -77,11 +77,11 @@ namespace render
       oSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
       oSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
       oSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;
-      hr = global::dx11::s_pDevice->CreateSamplerState(&oSamplerDesc, &m_pSamplerState);
-      if (FAILED(hr))
+      hResult = global::dx11::s_pDevice->CreateSamplerState(&oSamplerDesc, &m_pSamplerState);
+      if (FAILED(hResult))
       {
         std::cout << "Failed to create sampler state" << std::endl;
-        return hr;
+        return hResult;
       }
 
       return S_OK;

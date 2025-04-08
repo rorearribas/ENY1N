@@ -189,9 +189,9 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     }
 
     // Create mesh
-    HRESULT hr = pMesh->AssignIndexBuffer(vctIndices);
-    UNUSED_VARIABLE(hr);
-    assert(!FAILED(hr));
+    HRESULT hResult = pMesh->AssignIndexBuffer(vctIndices);
+    UNUSED_VARIABLE(hResult);
+    assert(!FAILED(hResult));
 
     std::vector<int> vctMaterialIds = internal_resource_manager::GetUniqueMaterialsIDs(mesh.material_ids);
     for (uint32_t uMatIndx = 0; uMatIndx < static_cast<uint32_t>(vctMaterialIds.size()); uMatIndx++)

@@ -57,13 +57,13 @@ namespace render
     template<EShaderType eShaderType>
     render::shader::CShader<eShaderType>::CShader(const BYTE* _pData, size_t _tSize)
     {
-      HRESULT hr = S_OK;
+      HRESULT hResult = S_OK;
       switch (eShaderType)
       {
       case render::shader::PIXEL_SHADER:
       {
         ID3D11PixelShader* pPixelShader = nullptr;
-        hr = global::dx11::s_pDevice->CreatePixelShader
+        hResult = global::dx11::s_pDevice->CreatePixelShader
         (
           _pData,
           _tSize,
@@ -76,7 +76,7 @@ namespace render
       case render::shader::VERTEX_SHADER:
       {
         ID3D11VertexShader* pVertexShader = nullptr;
-        hr = global::dx11::s_pDevice->CreateVertexShader
+        hResult = global::dx11::s_pDevice->CreateVertexShader
         (
           _pData,
           _tSize,
@@ -88,7 +88,7 @@ namespace render
         break;
       }
 
-      assert(!FAILED(hr));
+      assert(!FAILED(hResult));
     }
   }
 }

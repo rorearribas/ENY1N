@@ -30,7 +30,7 @@ namespace render
     const float& GetNear() const { return m_fNear; }
 
     void SetCameraSpeed(float _fCameraSpeed) { m_fCameraSpeed = _fCameraSpeed; }
-    const float& GetCameraSpeed() { return m_fCameraSpeed; }
+    const float& GetCameraSpeed() const { return m_fCameraSpeed; }
     void SetAspectRatio(float _fAspectRatio) { m_fAspectRatio = _fAspectRatio; }
     const float& GetAspectRatio() const { return m_fAspectRatio; }
 

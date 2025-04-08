@@ -13,9 +13,9 @@ namespace render
     // ------------------------------------
     CLightManager::CLightManager()
     {
-      HRESULT hr = m_oLightningBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
-      UNUSED_VARIABLE(hr);
-      assert(!FAILED(hr));
+      HRESULT hResult = m_oLightningBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      UNUSED_VARIABLE(hResult);
+      assert(!FAILED(hResult));
     }
     // ------------------------------------
     CLightManager::~CLightManager()
