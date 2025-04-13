@@ -7,10 +7,10 @@
 
 namespace game
 {
-  namespace internal_rb
+  namespace internal_rigidbody
   {
     const float s_fMaxAngularForce(50.0f);
-    const float s_fRebound(2.0f);
+    const float s_fRebound(1.75f);
   }
   // ------------------------------------
   CRigidbodyComponent::CRigidbodyComponent(CEntity* _pOwner, physics::ERigidbodyType _eRigidbodyType) : CComponent(_pOwner)
@@ -34,7 +34,7 @@ namespace game
 
     float fVelocity = v3CurrentVelocity.Length();
     maths::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
-    m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * (internal_rb::s_fMaxAngularForce * 2.0f));
+    m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * (internal_rigidbody::s_fMaxAngularForce * 2.0f));
   }
   // ------------------------------------
   void CRigidbodyComponent::OnCollisionStay(const collisions::SHitEvent& _oHitEvent)
@@ -47,7 +47,7 @@ namespace game
     if (fImpactVelocity > maths::s_fEpsilon5)
     {
       // Apply velocity
-      v3CurrentVelocity = v3CurrentVelocity - _oHitEvent.Normal * (-fImpactVelocity * internal_rb::s_fRebound);
+      v3CurrentVelocity = v3CurrentVelocity - _oHitEvent.Normal * (-fImpactVelocity * internal_rigidbody::s_fRebound);
       m_pRigidbody->SetVelocity(v3CurrentVelocity);
     }
 
@@ -56,7 +56,7 @@ namespace game
     if (fVelocity > maths::s_fEpsilon5)
     {
       maths::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
-      m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * internal_rb::s_fMaxAngularForce);
+      m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * internal_rigidbody::s_fMaxAngularForce);
     }
 
     // Fixed impacted position

@@ -8,13 +8,15 @@
 
 namespace collisions
 {
-  namespace internal_boxcollider
+  namespace internal_box_collider
   {
     static bool SeparatedAxis
     (
-      const std::vector<maths::CVector3>& _vctExtentsA,
-      const std::vector<maths::CVector3>& _vctExtentsB,
-      const maths::CVector3& _v3Axis, float& _fDepth_, maths::CVector3& _v3Normal_
+      const std::vector<maths::CVector3>& _vctExtentsA, const std::vector<maths::CVector3>& _vctExtentsB,
+      const maths::CVector3& _v3Axis,
+      maths::CVector3& v3ImpactPoint_,
+      maths::CVector3& v3Normal_,
+      float& fDepth_
     )
     {
       if (_v3Axis.IsZero())
@@ -24,17 +26,21 @@ namespace collisions
       float fMinB = FLT_MAX, fMaxB = -FLT_MAX;
 
       // Get MinA/MaxA
+      maths::CVector3 v3MinA = maths::CVector3::Zero;
       for (const maths::CVector3& v3Vertex : _vctExtentsA)
       {
         float fProjection = maths::CVector3::Dot(v3Vertex, _v3Axis);
+        if (fProjection < fMinA) { v3MinA = v3Vertex; }
         fMinA = maths::Min(fMinA, fProjection);
         fMaxA = maths::Max(fMaxA, fProjection);
       }
 
       // Get MinB/MaxB
+      maths::CVector3 v3MinB = maths::CVector3::Zero;
       for (const maths::CVector3& v3Vertex : _vctExtentsB)
       {
         float fProjection = maths::CVector3::Dot(v3Vertex, _v3Axis);
+        if (fProjection < fMinB) { v3MinB = v3Vertex; }
         fMinB = maths::Min(fMinB, fProjection);
         fMaxB = maths::Max(fMaxB, fProjection);
       }
@@ -51,10 +57,18 @@ namespace collisions
       float fCurrentDepth = maths::Min(fOverlapA, fOverlapB);
 
       // Update current depth
-      if (fCurrentDepth < _fDepth_)
+      if (fCurrentDepth < fDepth_)
       {
-        _fDepth_ = fCurrentDepth;
-        _v3Normal_ = (_fDepth_ == fOverlapA) ? _v3Axis : -_v3Axis;
+        fDepth_ = fCurrentDepth;
+        v3Normal_ = (fDepth_ == fOverlapA) ? _v3Axis : -_v3Axis;
+        if (fDepth_ == fOverlapA)
+        {
+          v3ImpactPoint_ = v3MinA + v3Normal_ * (fDepth_ * 0.5f);
+        }
+        else
+        {
+          v3ImpactPoint_ = v3MinB - v3Normal_ * (fDepth_ * 0.5f);
+        }
       }
 
       return false; // Valid
@@ -162,35 +176,38 @@ namespace collisions
       this->m_v3Right,
       this->m_v3Up,
       this->m_v3Forward,
+
+      // Other normals
       _pOther->m_v3Right,
       _pOther->m_v3Up,
       _pOther->m_v3Forward,
+
       // Cross Product
-      maths::CVector3::Cross(m_v3Right, _pOther->m_v3Right),
-      maths::CVector3::Cross(m_v3Right, _pOther->m_v3Up),
-      maths::CVector3::Cross(m_v3Right, _pOther->m_v3Forward),
-      maths::CVector3::Cross(m_v3Up, _pOther->m_v3Right),
-      maths::CVector3::Cross(m_v3Up, _pOther->m_v3Up),
-      maths::CVector3::Cross(m_v3Up, _pOther->m_v3Forward),
-      maths::CVector3::Cross(m_v3Forward, _pOther->m_v3Right),
-      maths::CVector3::Cross(m_v3Forward, _pOther->m_v3Up),
-      maths::CVector3::Cross(m_v3Forward, _pOther->m_v3Forward)
+      maths::CVector3::Cross(this->m_v3Right, _pOther->m_v3Right),
+      maths::CVector3::Cross(this->m_v3Right, _pOther->m_v3Up),
+      maths::CVector3::Cross(this->m_v3Right, _pOther->m_v3Forward),
+      maths::CVector3::Cross(this->m_v3Up, _pOther->m_v3Right),
+      maths::CVector3::Cross(this->m_v3Up, _pOther->m_v3Up),
+      maths::CVector3::Cross(this->m_v3Up, _pOther->m_v3Forward),
+      maths::CVector3::Cross(this->m_v3Forward, _pOther->m_v3Right),
+      maths::CVector3::Cross(this->m_v3Forward, _pOther->m_v3Up),
+      maths::CVector3::Cross(this->m_v3Forward, _pOther->m_v3Forward)
     };
 
+    maths::CVector3 v3ImpactPoint = maths::CVector3::Zero;
     maths::CVector3 v3Normal = maths::CVector3::Zero;
     float fDepth = FLT_MAX;
 
     for (const maths::CVector3& v3Axis : vctAxis)
     {
-      if (internal_boxcollider::SeparatedAxis(v3Extents, v3OtherExtents, v3Axis, fDepth, v3Normal))
+      if (internal_box_collider::SeparatedAxis(v3Extents, v3OtherExtents, v3Axis, v3ImpactPoint, v3Normal, fDepth))
       {
         return false;
       }
     }
 
     // Compute impact point
-    maths::CVector3 v3CenterPoint = (_pOther->GetCenter() + GetCenter()) * 0.5f;
-    _oHitEvent_.ImpactPoint = v3CenterPoint - (v3Normal * (fDepth * 0.5f));
+    _oHitEvent_.ImpactPoint = v3ImpactPoint;
     _oHitEvent_.Normal = v3Normal;
     _oHitEvent_.Depth = std::abs(fDepth);
 
@@ -249,23 +266,23 @@ namespace collisions
     m_v3Up = mRot * maths::CVector3::Up;
 
     // Create debug
-    //if (m_vctPrimitives.empty())
-    //{
-    //  for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
-    //  {
-    //    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    //    auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-    //    pPrimitive->SetColor(maths::CVector3::Right);
-    //    pPrimitive->SetScale(maths::CVector3::One / 8.0f);
-    //    m_vctPrimitives.emplace_back(pPrimitive);
-    //  }
-    //}
+    if (m_vctPrimitives.empty())
+    {
+      for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+      {
+        engine::CEngine* pEngine = engine::CEngine::GetInstance();
+        auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
+        pPrimitive->SetColor(maths::CVector3::Right);
+        pPrimitive->SetScale(maths::CVector3::One / 8.0f);
+        m_vctPrimitives.emplace_back(pPrimitive);
+      }
+    }
 
     // Update position
-  /*  for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+    for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
     {
       m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
-    }*/
+    }
   }
   // ------------------------------------
   void CBoxCollider::ComputeMinMax()

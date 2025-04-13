@@ -27,7 +27,7 @@ namespace physics
       if(!bDynamic) continue;
 
       // Apply gravity force
-      pRigidbody->AddForce(internal_physics_manager::s_v3GravityForce);
+      pRigidbody->m_v3Acceleration += internal_physics_manager::s_v3GravityForce;
 
       // Add acceleration
       if (!pRigidbody->m_v3Acceleration.Equal(maths::CVector3::Zero))

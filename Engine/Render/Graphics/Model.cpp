@@ -47,6 +47,7 @@ namespace render
       );
     }
     // ------------------------------------
+
     HRESULT CModel::InitModel(const char* _sModelPath, const char* _sBaseMltDir)
     {
       // Try to load model
