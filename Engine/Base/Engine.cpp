@@ -64,12 +64,6 @@ namespace engine
     m_pRender->EndDraw(); // End 
   }
   // ------------------------------------
-  void CEngine::Update(float _fDeltaTime)
-  {
-    // Update camera
-    m_pCamera->Update(_fDeltaTime);
-  }
-  // ------------------------------------
   render::graphics::CPrimitive* const CEngine::CreatePrimitive
   (
     render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, 

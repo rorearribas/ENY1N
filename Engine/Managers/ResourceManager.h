@@ -11,7 +11,7 @@ public:
   [[nodiscard]] render::graphics::CModel::SModelData LoadModel(const char* _sPath, const char* _sBaseModelMtlDir);
 
 private:
-  void RegisterTexture(render::material::CMaterial*& pMaterial, render::material::EModifierType _eModifierType,
+  void RegisterTexture(render::material::CMaterial*& pMaterial, render::material::CMaterial::EModifierType _eModifierType,
     const std::filesystem::path& _oBasePath, const std::string& _sTextureName);
 };
 

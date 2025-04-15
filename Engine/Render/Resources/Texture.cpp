@@ -60,7 +60,7 @@ namespace render
       }
 
       // Create texture view
-      D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = {};
+      D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
       oShaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
       oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
       oShaderResourceViewDesc.Texture2D.MipLevels = 1;

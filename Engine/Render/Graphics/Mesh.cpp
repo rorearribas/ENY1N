@@ -20,9 +20,9 @@ namespace render
       for (auto& it : m_dctMaterials)
       {
         render::texture::CTexture* pTexture = nullptr;
-        for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(render::material::EModifierType::COUNT); uIndex++)
+        for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(render::material::CMaterial::EModifierType::COUNT); uIndex++)
         {
-          render::material::EModifierType eModifierType = static_cast<render::material::EModifierType>(uIndex);
+          render::material::CMaterial::EModifierType eModifierType = static_cast<render::material::CMaterial::EModifierType>(uIndex);
           pTexture = it.second->GetTexture(eModifierType);
           if (pTexture) 
           { 

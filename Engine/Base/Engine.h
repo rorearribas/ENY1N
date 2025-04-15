@@ -22,7 +22,6 @@ namespace engine
     ~CEngine();
 
     void InitEngine(uint32_t _uWidth, uint32_t _uHeight);
-    void Update(float _fDeltaTime);
 
     void PushBeginDraw();
     void PushDrawProcess();

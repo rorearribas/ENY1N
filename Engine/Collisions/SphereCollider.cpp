@@ -34,6 +34,11 @@ namespace collisions
     m_v3Center = GetPosition();
   }
   // ------------------------------------
+  bool CSphereCollider::CheckOBBCollision(const CBoxCollider* /*_pOther*/, SHitEvent& /*_oHitEvent_*/) const
+  {
+    return false;
+  }
+  // ------------------------------------
   bool CSphereCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     // We have to find the closest point.

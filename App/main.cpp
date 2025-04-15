@@ -77,8 +77,6 @@ int main()
   game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
   pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
   pTestModel->RegisterComponent<game::CRigidbodyComponent>();
-  //collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
-  //pBoxCollider->SetSize(maths::CVector3(200.0f, 0.0f, 200.0f));
 
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
@@ -114,7 +112,8 @@ int main()
     vctPhysics.emplace_back(pSphereEntity);
   }
 
-  const render::CRender* pRender = pEngine->GetRender();
+  render::CRender* const pRender = pEngine->GetRender();
+  render::CCamera* const pRenderCamera = pEngine->GetCamera();
   pRender->GetRenderWindow()->SetEnabled(true);
 
   float m_fFixedDeltaAccumulator = 0.0f;
@@ -143,7 +142,7 @@ int main()
       {
         float fFixedDeltaTime = pTimeManager->GetFixedDelta();
 
-        pEngine->Update(fFixedDeltaTime);
+        pRenderCamera->Update(fFixedDeltaTime);
         pGameManager->Update(fFixedDeltaTime);
 
         pPhysicsManager->Update(fFixedDeltaTime);

@@ -28,8 +28,8 @@ char* CResourceManager::LoadResource(const char* _sPath, const char* _sMode)
   long lFileSize = ftell(pFile);
   rewind(pFile);
 
-  const size_t iMaxFileSize = lFileSize + 1;
-  char* cBuffer = new char[iMaxFileSize];
+  const size_t tMaxSize = lFileSize;
+  char* cBuffer = new char[tMaxSize + 1];
   if (cBuffer == nullptr)
   {
     perror("Error allocating memory");
@@ -38,8 +38,8 @@ char* CResourceManager::LoadResource(const char* _sPath, const char* _sMode)
   }
 
   // Leer el archivo completo
-  size_t iTotalSize = fread_s(cBuffer, iMaxFileSize, 1, lFileSize, pFile);
-  cBuffer[iTotalSize] = '\0';
+  size_t tSize = fread_s(cBuffer, tMaxSize, 1, lFileSize, pFile);
+  cBuffer[tSize] = '\0';
   fclose(pFile);
 
   return cBuffer;
@@ -58,15 +58,15 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
   // Tiny obj declarations
   tinyobj::attrib_t attributes;
   std::vector<tinyobj::shape_t> shapes;
-  std::vector<tinyobj::material_t> materials;
-  std::string warnings;
-  std::string errors;
+  std::vector<tinyobj::material_t> vctMaterialsIds;
+  std::string sWarnings;
+  std::string sErrors;
 
   // Load obj
-  tinyobj::LoadObj(&attributes, &shapes, &materials, &warnings, &errors, _sPath, _sBaseModelMtlDir);
+  tinyobj::LoadObj(&attributes, &shapes, &vctMaterialsIds, &sWarnings, &sErrors, _sPath, _sBaseModelMtlDir);
 
   // Check errors
-  if (errors.size() > 0)
+  if (sErrors.size() > 0)
   {
     std::cout << "Error loading OBJ" << std::endl;
     return oModelData;
@@ -84,7 +84,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     pMaterial->SetSpecularColor({ _oMaterial.specular[0], _oMaterial.specular[1], _oMaterial.specular[2] });
 
     // Get path
-    using EType = render::material::EModifierType;
+    using EType = render::material::CMaterial::EModifierType;
     std::filesystem::path oBasePath(_sBaseModelMtlDir);
 
     // Register textures
@@ -102,8 +102,8 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
   };
 
   std::vector<render::material::CMaterial*> vctMaterials;
-  vctMaterials.reserve(materials.size());
-  for (const tinyobj::material_t& tMaterial : materials) 
+  vctMaterials.reserve(vctMaterialsIds.size());
+  for (const tinyobj::material_t& tMaterial : vctMaterialsIds) 
   { 
     oRegisterMaterialFunc(tMaterial, vctMaterials);
   }
@@ -205,7 +205,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
   return oModelData;
 }
 // ------------------------------------
-void CResourceManager::RegisterTexture(render::material::CMaterial*& pMaterial, render::material::EModifierType _eModifierType,
+void CResourceManager::RegisterTexture(render::material::CMaterial*& pMaterial, render::material::CMaterial::EModifierType _eModifierType,
   const std::filesystem::path& _oBasePath, const std::string& _sTextureName)
 {
   std::filesystem::path oTargetTexturePath = _oBasePath / std::filesystem::path(_sTextureName);

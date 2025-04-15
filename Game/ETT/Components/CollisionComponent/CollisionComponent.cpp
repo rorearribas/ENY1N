@@ -143,8 +143,11 @@ namespace game
       std::string sSize = "Size" + std::string("##" + sOwnerName);
       std::string sMax = "Max" + std::string("##" + sOwnerName);
       std::string sMin = "Min" + std::string("##" + sOwnerName);
+      std::string sOBB = "OBB Enabled" + std::string("##" + sOwnerName);
 
       collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(m_pCollider);
+      bool bOBBEnabled = pBoxCollider->IsOBBEnabled();
+
       float v3Size[3] = { pBoxCollider->GetSize().X, pBoxCollider->GetSize().Y, pBoxCollider->GetSize().Z };
       float v3Max[3] = { pBoxCollider->GetMax().X, pBoxCollider->GetMax().Y, pBoxCollider->GetMax().Z };
       float v3Min[3] = { pBoxCollider->GetMin().X, pBoxCollider->GetMin().Y, pBoxCollider->GetMin().Z };
@@ -153,6 +156,7 @@ namespace game
       ImGui::InputFloat3(sSize.c_str(), v3Size);
       ImGui::InputFloat3(sMax.c_str(), v3Max);
       ImGui::InputFloat3(sMin.c_str(), v3Min);
+      ImGui::Checkbox(sOBB.c_str(), &bOBBEnabled);
 
       // Apply box collider size
       if (m_pPrimitive) 
@@ -160,6 +164,7 @@ namespace game
         m_pPrimitive->SetScale(maths::CVector3(v3Size[0], v3Size[1], v3Size[2])); 
       }
       pBoxCollider->SetSize(maths::CVector3(v3Size[0], v3Size[1], v3Size[2]));
+      pBoxCollider->SetOBBEnabled(bOBBEnabled);
     }
     break;
     case collisions::EColliderType::SPHERE_COLLIDER:

@@ -9,11 +9,21 @@ namespace render
   namespace material
   {
     // Type of material
-    enum EModifierType : uint32_t { AMBIENT, DIFFUSE, SPECULAR, SPECULAR_HIGHLIGHT, BUMP, DISPLACEMENT, ALPHA, REFLECTION, COUNT };
-
     class CMaterial
     {
     public:
+      enum EModifierType : uint32_t 
+      {
+        AMBIENT, 
+        DIFFUSE, 
+        SPECULAR, 
+        SPECULAR_HIGHLIGHT, 
+        BUMP, 
+        DISPLACEMENT, 
+        ALPHA, 
+        REFLECTION, 
+        COUNT 
+      };
       typedef std::map<EModifierType, render::texture::CTexture*> TMapTextures;
 
     public:
