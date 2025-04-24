@@ -70,15 +70,7 @@ int main()
   collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
   pBoxCollider->SetSize(maths::CVector3(200.0f, 0.0f, 200.0f));
 
-  game::CEntity* pTestModel = pGameManager->CreateEntity("Model");
-  pTestModel->SetRotation(maths::CVector3(-90.0f, 0.0f, 180.0f));
-  game::CModelComponent* pModelComp = pTestModel->RegisterComponent<game::CModelComponent>();
-  pModelComp->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
-  game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
-  pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
-  pTestModel->RegisterComponent<game::CRigidbodyComponent>();
-
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 2; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
@@ -88,6 +80,14 @@ int main()
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
+
+  //game::CEntity* pTestModel = pGameManager->CreateEntity("Model");
+  //pTestModel->SetRotation(maths::CVector3(-90.0f, 0.0f, 180.0f));
+  //game::CModelComponent* pModelComp = pTestModel->RegisterComponent<game::CModelComponent>();
+  //pModelComp->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
+  //game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
+  //pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
+  //pTestModel->RegisterComponent<game::CRigidbodyComponent>();
 
   std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 50; uIndex++)

@@ -16,7 +16,7 @@ namespace collisions
     {
       const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
       assert(&oBoxCollider);
-      return CheckBoxCollision(&oBoxCollider, _oHitEvent_);
+      return oBoxCollider.IsOBBEnabled() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckBoxCollision(&oBoxCollider, _oHitEvent_);
     }
     case EColliderType::SPHERE_COLLIDER:
     {
@@ -36,6 +36,7 @@ namespace collisions
   // ------------------------------------
   bool CSphereCollider::CheckOBBCollision(const CBoxCollider* /*_pOther*/, SHitEvent& /*_oHitEvent_*/) const
   {
+    // Not implemented yet!
     return false;
   }
   // ------------------------------------

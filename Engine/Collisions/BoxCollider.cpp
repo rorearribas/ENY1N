@@ -59,16 +59,13 @@ namespace collisions
       // Update current depth
       if (fCurrentDepth < fDepth_)
       {
+        // Set depth
         fDepth_ = fCurrentDepth;
+        // Set normal
         v3Normal_ = (fDepth_ == fOverlapA) ? _v3Axis : -_v3Axis;
-        if (fDepth_ == fOverlapA)
-        {
-          v3ImpactPoint_ = v3MinA + v3Normal_ * (fDepth_ * 0.5f);
-        }
-        else
-        {
-          v3ImpactPoint_ = v3MinB - v3Normal_ * (fDepth_ * 0.5f);
-        }
+        // Calculate impact point
+        maths::CVector3 v3Offset = v3Normal_ * (fDepth_ * 0.5f);
+        v3ImpactPoint_ = (fDepth_ == fOverlapA) ? v3MinA + v3Offset : v3MinB - v3Offset;
       }
 
       return false; // Valid
@@ -192,16 +189,16 @@ namespace collisions
       if (fOverlapY < fDepth)
       {
         fDepth = fOverlapY;
-        v3Normal = maths::CVector3(0, (v3Dir.Y < 0) ? -1.0f : 1.0f, 0);
+        v3Normal = maths::CVector3(0, (v3Dir.Y < 0) ? 1.0f : -1.0f, 0);
       }
       if (fOverlapZ < fDepth)
       {
         fDepth = fOverlapZ;
-        v3Normal = maths::CVector3(0, 0, (v3Dir.Z < 0) ? -1.0f : 1.0f);
+        v3Normal = maths::CVector3(0, 0, (v3Dir.Z < 0) ? 1.0f : -1.0f);
       }
       if (fOverlapX == fDepth)
       {
-        v3Normal = maths::CVector3((v3Dir.X < 0) ? -1.0f : 1.0f, 0, 0);
+        v3Normal = maths::CVector3((v3Dir.X < 0) ? 1.0f : -1.0f, 0, 0);
       }
 
       // Fill hit event
@@ -242,9 +239,6 @@ namespace collisions
   // ------------------------------------
   void CBoxCollider::ComputeExtents()
   {
-    if (!IsOBBEnabled())
-      return;
-
     // Calculate matrix
     maths::CMatrix4x4 mRot = maths::CMatrix4x4::Rotation(GetRotation());
     mRot = maths::CMatrix4x4::Transpose(mRot);
