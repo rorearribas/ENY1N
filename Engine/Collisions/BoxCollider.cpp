@@ -1,4 +1,4 @@
-#include "BoxCollider.h"
+﻿#include "BoxCollider.h"
 #include "Engine/Base/Engine.h"
 #include "SphereCollider.h"
 #include "Libs/Macros/GlobalMacros.h"
@@ -112,6 +112,11 @@ namespace collisions
     RecalculateCollider();
   }
   // ------------------------------------
+  std::vector<maths::CVector3> CBoxCollider::GetAxisDirectors() const
+  {
+    return std::vector<maths::CVector3> { m_v3Right, m_v3Up, m_v3Forward };
+  }
+  // ------------------------------------
   bool CBoxCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     const std::vector<maths::CVector3>& v3Extents = GetExtents();
@@ -211,27 +216,62 @@ namespace collisions
     return false;
   }
   // ------------------------------------
+  bool CBoxCollider::CheckOBBSphereCollision(const CSphereCollider* /*_pOther*/, SHitEvent& /*_oHitEvent_*/) const
+  {
+    //const std::vector<maths::CVector3>& v3Extents = GetExtents();
+
+    //float fClosestX = FLT_MAX;
+    //float fClosestY = FLT_MAX;
+    //float fClosestZ = FLT_MAX;
+
+    //for (const maths::CVector3& v3Vertex : v3Extents)
+    //{
+    //  fClosestX = maths::Min(v3Vertex.X, _pOther->GetCenter().X);
+    //  fClosestY = maths::Min(v3Vertex.Y, _pOther->GetCenter().Y);
+    //  fClosestZ = maths::Min(v3Vertex.Z, _pOther->GetCenter().Z);
+    //}
+
+    //// We calculate the squared distance between the center of the sphere and the nearest point.
+    //float fDist = (fClosestX - _pOther->GetCenter().X) * (fClosestX - _pOther->GetCenter().X) +
+    //  (fClosestY - _pOther->GetCenter().Y) * (fClosestY - _pOther->GetCenter().Y) +
+    //  (fClosestZ - _pOther->GetCenter().Z) * (fClosestZ - _pOther->GetCenter().Z);
+
+    //// We check if the distance is less than or equal to the radius squared of the sphere.
+    //float fSquareRadius = _pOther->GetRadius() * _pOther->GetRadius();
+    //if (fDist <= fSquareRadius)
+    //{
+    //  maths::CVector3 vImpactPoint(fClosestX, fClosestY, fClosestZ);
+    //  _oHitEvent_.ImpactPoint = vImpactPoint;
+    //  _oHitEvent_.Depth = fSquareRadius - fDist;
+    //  _oHitEvent_.Normal = maths::CVector3::Normalize(vImpactPoint - GetCenter());
+    //  return true;
+    //}
+
+    return false;
+  }
+  // ------------------------------------
   bool CBoxCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     // We have to find the closest point.
-    const maths::CVector3& v3Center = _pOther->GetCenter();
-    float fClosestX = maths::Max<float>(m_v3Min.X, maths::Min<float>(v3Center.X, m_v3Max.X));
-    float fClosestY = maths::Max<float>(m_v3Min.Y, maths::Min<float>(v3Center.Y, m_v3Max.Y));
-    float fClosestZ = maths::Max<float>(m_v3Min.Z, maths::Min<float>(v3Center.Z, m_v3Max.Z));
+    const maths::CVector3& v3SphereCenter = _pOther->GetCenter();
+    float fClosestX = maths::Max(m_v3Min.X, maths::Min(v3SphereCenter.X, m_v3Max.X));
+    float fClosestY = maths::Max(m_v3Min.Y, maths::Min(v3SphereCenter.Y, m_v3Max.Y));
+    float fClosestZ = maths::Max(m_v3Min.Z, maths::Min(v3SphereCenter.Z, m_v3Max.Z));
 
     // We have to calculate the squared distance between the center of the sphere and the nearest point.
-    float fDist = (fClosestX - _pOther->GetCenter().X) * (fClosestX - _pOther->GetCenter().X) +
-      (fClosestY - _pOther->GetCenter().Y) * (fClosestY - _pOther->GetCenter().Y) +
-      (fClosestZ - _pOther->GetCenter().Z) * (fClosestZ - _pOther->GetCenter().Z);
+    float fSquaredDist = (fClosestX - v3SphereCenter.X) * (fClosestX - v3SphereCenter.X) +
+      (fClosestY - v3SphereCenter.Y) * (fClosestY - v3SphereCenter.Y) +
+      (fClosestZ - v3SphereCenter.Z) * (fClosestZ - v3SphereCenter.Z);
 
     // We check if the distance is less than or equal to the radius squared of the sphere.
-    float fSquareRadius = _pOther->GetRadius() * _pOther->GetRadius();
-    if (fDist <= fSquareRadius)
+    const float& fRadius = _pOther->GetRadius();
+    float fSquareRadius = fRadius * fRadius;
+    if (fSquaredDist <= fSquareRadius)
     {
       maths::CVector3 v3ImpactPoint(fClosestX, fClosestY, fClosestZ);
       _oHitEvent_.ImpactPoint = v3ImpactPoint;
-      _oHitEvent_.Depth = fSquareRadius - fDist;
-      _oHitEvent_.Normal = maths::CVector3::Normalize(v3ImpactPoint - _pOther->GetCenter());
+      _oHitEvent_.Depth = fRadius - sqrt(fSquaredDist);
+      _oHitEvent_.Normal = maths::CVector3::Normalize(v3ImpactPoint - v3SphereCenter);
       return true;
     }
     return false;

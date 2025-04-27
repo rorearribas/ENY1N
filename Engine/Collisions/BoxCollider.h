@@ -23,17 +23,23 @@ namespace collisions
     const maths::CVector3& GetSize() const { return m_v3Size; }
 
     maths::CVector3 GetCenter() const { return maths::CVector3(m_v3Max + m_v3Min) * 0.5f; }
+    maths::CVector3 GetHalfSize() const { return maths::CVector3(m_v3Max - m_v3Min) * 0.5f; }
+
     const maths::CVector3& GetMax() const { return m_v3Max; }
     const maths::CVector3& GetMin() const { return m_v3Min; }
 
     const std::vector<maths::CVector3>& GetExtents() const { return m_v3Extents; }
-    const maths::CVector3& GetRight() const { return m_v3Right; }
-    const maths::CVector3& GetUp() const { return m_v3Up; }
-    const maths::CVector3& GetForward() const { return m_v3Forward; }
+    std::vector<maths::CVector3> GetAxisDirectors() const;
+
+    const maths::CVector3& GetRightAxis() const { return m_v3Right; }
+    const maths::CVector3& GetUpAxis() const { return m_v3Up; }
+    const maths::CVector3& GetForwardAxis() const { return m_v3Forward; }
 
   private:
     bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
     bool CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
+
+    bool CheckOBBSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const;
     bool CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const;
 
     void ComputeExtents();
