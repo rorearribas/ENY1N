@@ -61,6 +61,7 @@ namespace collisions
 
     // Extents
     std::vector<maths::CVector3> m_v3Extents;
+    std::vector<render::graphics::CPrimitive*> m_vctPrimitives;
   };
 }
 

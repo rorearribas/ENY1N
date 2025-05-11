@@ -94,7 +94,7 @@ namespace collisions
     {
       const CSphereCollider& oSphereCollider = static_cast<const CSphereCollider&>(_oCollider);
       assert(&oSphereCollider);
-      return CheckSphereCollision(&oSphereCollider, _oHitEvent_);
+      return IsOBBEnabled() ? CheckOBBSphereCollision(&oSphereCollider, _oHitEvent_) : CheckSphereCollision(&oSphereCollider, _oHitEvent_);
     }
     }
     return false;
@@ -216,37 +216,40 @@ namespace collisions
     return false;
   }
   // ------------------------------------
-  bool CBoxCollider::CheckOBBSphereCollision(const CSphereCollider* /*_pOther*/, SHitEvent& /*_oHitEvent_*/) const
+  bool CBoxCollider::CheckOBBSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
-    //const std::vector<maths::CVector3>& v3Extents = GetExtents();
+    // Get OBB data
+    const maths::CVector3& v3OBBCenter = GetCenter();
+    const maths::CVector3 v3HalfSize = GetHalfSize();
+    const std::vector<maths::CVector3> v3Axis = GetAxisDirectors();
 
-    //float fClosestX = FLT_MAX;
-    //float fClosestY = FLT_MAX;
-    //float fClosestZ = FLT_MAX;
+    // Calculate dir
+    const maths::CVector3& v3SphereCenter = _pOther->GetCenter();
+    maths::CVector3 v3Dir = maths::CVector3::Normalize(v3SphereCenter - v3OBBCenter);
 
-    //for (const maths::CVector3& v3Vertex : v3Extents)
-    //{
-    //  fClosestX = maths::Min(v3Vertex.X, _pOther->GetCenter().X);
-    //  fClosestY = maths::Min(v3Vertex.Y, _pOther->GetCenter().Y);
-    //  fClosestZ = maths::Min(v3Vertex.Z, _pOther->GetCenter().Z);
-    //}
+    // Project dir using axis directors from box collider
+    float fProjX = maths::CVector3::Dot(v3Dir, v3Axis[0]); // Axis X
+    float fProjY = maths::CVector3::Dot(v3Dir, v3Axis[1]); // Axis Y
+    float fProjZ = maths::CVector3::Dot(v3Dir, v3Axis[2]); // Axis Z
 
-    //// We calculate the squared distance between the center of the sphere and the nearest point.
-    //float fDist = (fClosestX - _pOther->GetCenter().X) * (fClosestX - _pOther->GetCenter().X) +
-    //  (fClosestY - _pOther->GetCenter().Y) * (fClosestY - _pOther->GetCenter().Y) +
-    //  (fClosestZ - _pOther->GetCenter().Z) * (fClosestZ - _pOther->GetCenter().Z);
+    // Clamp axis
+    float fClampedX = maths::Clamp(fProjX, -v3HalfSize.X, v3HalfSize.X);
+    float fClampedY = maths::Clamp(fProjY, -v3HalfSize.Y, v3HalfSize.Y);
+    float fClampedZ = maths::Clamp(fProjZ, -v3HalfSize.Z, v3HalfSize.Z);
 
-    //// We check if the distance is less than or equal to the radius squared of the sphere.
-    //float fSquareRadius = _pOther->GetRadius() * _pOther->GetRadius();
-    //if (fDist <= fSquareRadius)
-    //{
-    //  maths::CVector3 vImpactPoint(fClosestX, fClosestY, fClosestZ);
-    //  _oHitEvent_.ImpactPoint = vImpactPoint;
-    //  _oHitEvent_.Depth = fSquareRadius - fDist;
-    //  _oHitEvent_.Normal = maths::CVector3::Normalize(vImpactPoint - GetCenter());
-    //  return true;
-    //}
+    // Compute closest point
+    maths::CVector3 v3ClosestPoint = (v3OBBCenter + v3Axis[0] * fClampedX) + (v3Axis[1] * fClampedY) + (v3Axis[2] * fClampedZ);
 
+    // Check distance
+    float fRadius = _pOther->GetRadius();
+    float fDistance = maths::CVector3::Distance(v3ClosestPoint, v3SphereCenter);
+    if (fDistance <= fRadius)
+    {
+      _oHitEvent_.ImpactPoint = v3ClosestPoint;
+      _oHitEvent_.Depth = std::abs(fRadius - fDistance);
+      _oHitEvent_.Normal = maths::CVector3::Normalize(v3ClosestPoint - v3SphereCenter);
+      return true;
+    }
     return false;
   }
   // ------------------------------------
@@ -302,24 +305,24 @@ namespace collisions
     m_v3Right = mRot * maths::CVector3::Right;
     m_v3Up = mRot * maths::CVector3::Up;
 
-    //// Create debug
-    //if (m_vctPrimitives.empty())
-    //{
-    //  for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
-    //  {
-    //    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    //    auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-    //    pPrimitive->SetColor(maths::CVector3::Right);
-    //    pPrimitive->SetScale(maths::CVector3::One / 8.0f);
-    //    m_vctPrimitives.emplace_back(pPrimitive);
-    //  }
-    //}
+    // Create debug
+    if (m_vctPrimitives.empty())
+    {
+      for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+      {
+        engine::CEngine* pEngine = engine::CEngine::GetInstance();
+        auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
+        pPrimitive->SetColor(maths::CVector3::Right);
+        pPrimitive->SetScale(maths::CVector3::One / 8.0f);
+        m_vctPrimitives.emplace_back(pPrimitive);
+      }
+    }
 
-    //// Update position
-    //for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
-    //{
-    //  m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
-    //}
+    // Update position
+    for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+    {
+      m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
+    }
   }
   // ------------------------------------
   void CBoxCollider::ComputeMinMax()

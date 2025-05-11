@@ -39,82 +39,38 @@ namespace collisions
   // ------------------------------------
   bool CSphereCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
-    UNUSED_VARIABLE(_oHitEvent_);
+    // Get OBB data
+    const maths::CVector3& v3OBBCenter = _pOther->GetCenter();
+    const maths::CVector3 v3HalfSize = _pOther->GetHalfSize();
+    const std::vector<maths::CVector3> v3Axis = _pOther->GetAxisDirectors(); 
 
-    // Data about OBB
-    const std::vector<maths::CVector3>& v3Extents = _pOther->GetExtents();
-    UNUSED_VARIABLE(v3Extents);
-    std::vector<maths::CVector3> v3AxisDirectors = _pOther->GetAxisDirectors();
-
-    maths::CVector3 v3OBBCenter = _pOther->GetCenter();
+    // Calculate dir
     const maths::CVector3& v3SphereCenter = GetCenter();
-    UNUSED_VARIABLE(v3SphereCenter);
+    maths::CVector3 v3Dir = maths::CVector3::Normalize(v3SphereCenter - v3OBBCenter);
 
-    maths::CVector3 v3Dir = maths::CVector3::Normalize(v3OBBCenter - v3SphereCenter);
-    float fDist = maths::CVector3::Distance(v3OBBCenter, v3SphereCenter);
-    UNUSED_VARIABLE(fDist);
+    // Project dir using axis directors from box collider
+    float fProjX = maths::CVector3::Dot(v3Dir, v3Axis[0]); // Axis X
+    float fProjY = maths::CVector3::Dot(v3Dir, v3Axis[1]); // Axis Y
+    float fProjZ = maths::CVector3::Dot(v3Dir, v3Axis[2]); // Axis Z
 
-    std::cout << "Distance: " << fDist << std::endl;
+    // Clamp axis
+    float fClampedX = maths::Clamp(fProjX, -v3HalfSize.X, v3HalfSize.X);
+    float fClampedY = maths::Clamp(fProjY, -v3HalfSize.Y, v3HalfSize.Y);
+    float fClampedZ = maths::Clamp(fProjZ, -v3HalfSize.Z, v3HalfSize.Z);
 
-    maths::CVector3 v3HalfSize = _pOther->GetHalfSize();
-    float fLenght = v3HalfSize.Length();
-    UNUSED_VARIABLE(fLenght);
+    // Compute closest point
+    maths::CVector3 v3ClosestPoint = (v3OBBCenter + v3Axis[0] * fClampedX) + (v3Axis[1] * fClampedY) + (v3Axis[2] * fClampedZ);
 
-    float fSquareRadius = GetRadius() * GetRadius();
-    UNUSED_VARIABLE(fSquareRadius);
-
-    float fSum = fSquareRadius + fLenght;
-
-    if (fDist <= fSum)
+    // Check distance
+    float fRadius = GetRadius();
+    float fDistance = maths::CVector3::Distance(v3ClosestPoint, v3SphereCenter);
+    if (fDistance <= fRadius)
     {
-      std::cout << "entra" << std::endl;
+      _oHitEvent_.ImpactPoint = v3ClosestPoint;
+      _oHitEvent_.Depth = std::abs(fRadius - fDistance);
+      _oHitEvent_.Normal = maths::CVector3::Normalize(v3SphereCenter - v3ClosestPoint);
+      return true;
     }
-
-    //float fClosestX = FLT_MAX;
-    //float fClosestY = FLT_MAX;
-    //float fClosestZ = FLT_MAX;
-
-    /*for (const maths::CVector3& v3Axis : v3AxisDirectors)
-    {
-      UNUSED_VARIABLE(v3Axis);
-      float fDot = maths::CVector3::Dot(v3Dir, v3Axis);
-      std::cout << "Dot: " << fDot << std::endl;
-    }*/
-
-    maths::CVector3 v3AxisDir = maths::CVector3::Normalize(v3AxisDirectors[0] - GetCenter());
-    float fDotX = maths::CVector3::Dot(v3AxisDir, v3AxisDirectors[0]);
-
-    std::cout << "Dot X: " << fDotX << std::endl;
-
-    float fDotY = maths::CVector3::Dot(v3Dir, v3AxisDirectors[1]);
-    std::cout << "Dot Y: " << fDotY << std::endl;
-
-    float fDotZ = maths::CVector3::Dot(v3Dir, v3AxisDirectors[2]);
-    std::cout << "Dot Z: " << fDotZ << std::endl;
-
-    //for (const maths::CVector3& v3Vertex : v3Extents)
-    //{
-    //  fClosestX = maths::Min(v3Vertex.X, GetCenter().X);
-    //  fClosestY = maths::Min(v3Vertex.Y, GetCenter().Y);
-    //  fClosestZ = maths::Min(v3Vertex.Z, GetCenter().Z);
-    //}
-
-    //// We calculate the squared distance between the center of the sphere and the nearest point.
-    //fDist = (fClosestX - GetCenter().X) * (fClosestX - GetCenter().X) + 
-    //  (fClosestY - GetCenter().Y) * (fClosestY - GetCenter().Y) +
-    //  (fClosestZ - GetCenter().Z) * (fClosestZ - GetCenter().Z);
-
-    //// We check if the distance is less than or equal to the radius squared of the sphere.
-    //float fSquareRadius = GetRadius() * GetRadius();
-    //if (fDist <= fSquareRadius)
-    //{
-    //  maths::CVector3 vImpactPoint(fClosestX, fClosestY, fClosestZ);
-    //  _oHitEvent_.ImpactPoint = vImpactPoint;
-    //  _oHitEvent_.Depth = fSquareRadius - fDist;
-    //  _oHitEvent_.Normal = maths::CVector3::Normalize(vImpactPoint - GetCenter());
-    //  return true;
-    //}
-
     return false;
   }
   // ------------------------------------

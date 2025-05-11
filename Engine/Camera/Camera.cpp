@@ -137,7 +137,7 @@ namespace render
   void CCamera::UpdateViewMatrix() 
   {
     // Clamp pitch value
-    m_vRot.X = maths::clamp<float>(m_vRot.X, -90.0f, 90.0f);
+    m_vRot.X = maths::Clamp(m_vRot.X, -90.0f, 90.0f);
 
     // Create the rotation matrix
     maths::CMatrix4x4 mRotationMatrix = maths::CMatrix4x4::Rotation(m_vRot);

@@ -79,6 +79,17 @@ int main()
   //pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
   //pTestModel->RegisterComponent<game::CRigidbodyComponent>();
 
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  {
+    game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
+    game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
+    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+    pModelCompTest->SetPrimitiveColor(maths::CVector3::Forward);
+
+    pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
+    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
+  }
+
   std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
@@ -100,17 +111,6 @@ int main()
 
     pSphereEntity->SetPosition(maths::CVector3(fRandomX, fRandomY, fRandomZ));
     vctPhysics.emplace_back(pSphereEntity);
-  }
-
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
-  {
-    game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
-    pModelCompTest->SetPrimitiveColor(maths::CVector3::Forward);
-
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
-    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
   render::CRender* const pRender = pEngine->GetRender();
@@ -135,7 +135,7 @@ int main()
 
       // Calculate 
       float fDeltaTime = pTimeManager->GetDeltaTime();
-      float fOffset = maths::clamp<float>(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
+      float fOffset = maths::Clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
       m_fFixedDeltaAccumulator += fOffset;
 
       // Update
