@@ -14,7 +14,7 @@ namespace game
   // ------------------------------------
   void CGameManager::Update(float _fDeltaTime)
   {
-    static int selectedEntityIndex = -1;
+    static int iSelectedIdx = -1;
 #ifdef DEBUG_MODE
     ImGui::Begin("Entity Selector");
     // Show the list of entities
@@ -24,8 +24,8 @@ namespace game
       if (pEntity)
       {
         std::string entityLabel = pEntity->GetName() + "##" + std::to_string(uIndex);
-        if (ImGui::Selectable(entityLabel.c_str(), selectedEntityIndex == (int)uIndex))
-          selectedEntityIndex = uIndex;
+        if (ImGui::Selectable(entityLabel.c_str(), iSelectedIdx == static_cast<int>(uIndex)))
+          iSelectedIdx = uIndex;
       }
     }
     ImGui::End();
@@ -38,7 +38,10 @@ namespace game
       {
         pEntity->Update(_fDeltaTime);
 #ifdef DEBUG_MODE
-        pEntity->DrawDebug();
+        if (uIndex == static_cast<uint32_t>(iSelectedIdx))
+        {
+          pEntity->DrawDebug();
+        }
 #endif
       }
     }
