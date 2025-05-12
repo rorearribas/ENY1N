@@ -3,7 +3,6 @@
 #include "SphereCollider.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/Maths/Maths.h"
-#include <algorithm>
 #include <cassert>
 
 namespace collisions
@@ -76,6 +75,11 @@ namespace collisions
   {
     ComputeMinMax();
     ComputeExtents();
+  }
+  // ------------------------------------
+  CBoxCollider::~CBoxCollider()
+  {
+    m_vctPrimitives.clear();
   }
   // ------------------------------------
   bool CBoxCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
@@ -305,7 +309,7 @@ namespace collisions
     m_v3Right = mRot * maths::CVector3::Right;
     m_v3Up = mRot * maths::CVector3::Up;
 
-    // Create debug
+#ifdef DEBUG_MODE
     if (m_vctPrimitives.empty())
     {
       for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
@@ -323,6 +327,7 @@ namespace collisions
     {
       m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
     }
+#endif
   }
   // ------------------------------------
   void CBoxCollider::ComputeMinMax()

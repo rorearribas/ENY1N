@@ -11,7 +11,7 @@ namespace collisions
   {
   public:
     CBoxCollider(void* _pOwner);
-    virtual ~CBoxCollider() {}
+    virtual ~CBoxCollider();
 
     virtual bool CheckCollision(const CCollider& _pOther, SHitEvent& _oHitEvent_) override;
     virtual void RecalculateCollider() override;
