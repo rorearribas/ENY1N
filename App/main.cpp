@@ -69,7 +69,6 @@ int main()
   pCollisionComponent->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
   collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
   pBoxCollider->SetSize(maths::CVector3(200.0f, 0.0f, 200.0f));
-  pBoxCollider->SetOBBEnabled(false);
 
   //game::CEntity* pTestModel = pGameManager->CreateEntity("Model");
   //pTestModel->SetRotation(maths::CVector3(-90.0f, 0.0f, 180.0f));
@@ -78,17 +77,6 @@ int main()
   //game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
   //pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
   //pTestModel->RegisterComponent<game::CRigidbodyComponent>();
-
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
-  {
-    game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
-    pModelCompTest->SetPrimitiveColor(maths::CVector3::Forward);
-
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
-    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
-  }
 
   std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
@@ -111,6 +99,17 @@ int main()
 
     pSphereEntity->SetPosition(maths::CVector3(fRandomX, fRandomY, fRandomZ));
     vctPhysics.emplace_back(pSphereEntity);
+  }
+
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  {
+    game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
+    game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
+    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+    pModelCompTest->SetPrimitiveColor(maths::CVector3::Forward);
+
+    pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
+    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
   render::CRender* const pRender = pEngine->GetRender();

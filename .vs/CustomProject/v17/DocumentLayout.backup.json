@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Collisions\\BoxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|solutionrelative:App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\SphereCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Collisions\\SphereCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|solutionrelative:App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Collisions\\BoxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Maths\\Vector3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -515,12 +515,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 228,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 7,
           "Children": [
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
             {
               "$type": "Document",
               "DocumentIndex": 19,
@@ -550,17 +546,8 @@
               "EditorCaption": ""
             },
             {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "SphereCollider.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\SphereCollider.cpp",
-              "RelativeDocumentMoniker": "Engine\\Collisions\\SphereCollider.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\SphereCollider.cpp",
-              "RelativeToolTip": "Engine\\Collisions\\SphereCollider.cpp",
-              "ViewState": "AgIAADoAAAAAAAAAAAAAAEEAAABQAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-09T11:24:23.871Z",
-              "EditorCaption": ""
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
               "$type": "Document",
@@ -573,6 +560,32 @@
               "ViewState": "AgIAABkAAAAAAAAAAAAmwCIAAABPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-03-20T19:29:23.119Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "BoxCollider.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp",
+              "RelativeDocumentMoniker": "Engine\\Collisions\\BoxCollider.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp",
+              "RelativeToolTip": "Engine\\Collisions\\BoxCollider.cpp",
+              "ViewState": "AgIAAN4AAAAAAAAAAAArwPQAAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-27T20:18:40.007Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "SphereCollider.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\SphereCollider.cpp",
+              "RelativeDocumentMoniker": "Engine\\Collisions\\SphereCollider.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\SphereCollider.cpp",
+              "RelativeToolTip": "Engine\\Collisions\\SphereCollider.cpp",
+              "ViewState": "AgIAACUAAAAAAAAAAAAAACcAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-03-09T11:24:23.871Z",
               "EditorCaption": ""
             },
             {
@@ -590,13 +603,13 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp",
               "RelativeDocumentMoniker": "App\\main.cpp",
               "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp",
               "RelativeToolTip": "App\\main.cpp",
-              "ViewState": "AgIAAFMAAAAAAAAAAAASwFYAAAAbAAAAAAAAAA==",
+              "ViewState": "AgIAAEcAAAAAAAAAAAAAAHAAAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-01-09T22:10:15.465Z",
               "EditorCaption": ""
@@ -635,8 +648,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
               "ViewState": "AgIAABQAAAAAAAAAAAAcwCIAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-05T17:14:08.739Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-05T17:14:08.739Z"
             },
             {
               "$type": "Document",
@@ -648,8 +660,7 @@
               "RelativeToolTip": "Engine\\Physics\\Rigidbody.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-01T14:40:59.898Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-01T14:40:59.898Z"
             },
             {
               "$type": "Document",
@@ -661,8 +672,7 @@
               "RelativeToolTip": "Libs\\Maths\\Vector3.cpp",
               "ViewState": "AgIAAFMAAAAAAAAAAAASwGgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-26T11:39:28.559Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-26T11:39:28.559Z"
             },
             {
               "$type": "Document",
@@ -674,8 +684,7 @@
               "RelativeToolTip": "Libs\\Time\\TimeManager.cpp",
               "ViewState": "AgIAAGAAAAAAAAAAAAAMwGwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-19T17:01:00.464Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-19T17:01:00.464Z"
             },
             {
               "$type": "Document",
@@ -2079,40 +2088,6 @@
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-10-26T09:07:55.383Z"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "Orientation": 0,
-      "VerticalTabListWidth": 256,
-      "FloatingWindowState": {
-        "Id": "214186ef-d3f8-468d-9418-e34c7c71894b",
-        "Display": 0,
-        "X": 732,
-        "Y": 270,
-        "Width": 1488,
-        "Height": 788,
-        "WindowState": 2
-      },
-      "DocumentGroups": [
-        {
-          "DockedWidth": 200,
-          "SelectedChildIndex": 0,
-          "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "BoxCollider.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp",
-              "RelativeDocumentMoniker": "Engine\\Collisions\\BoxCollider.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp",
-              "RelativeToolTip": "Engine\\Collisions\\BoxCollider.cpp",
-              "ViewState": "AgIAAOIAAAAAAAAAAAAUwPUAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-27T20:18:40.007Z",
-              "EditorCaption": ""
             }
           ]
         }

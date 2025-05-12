@@ -225,7 +225,7 @@ namespace collisions
 
     // Calculate dir
     const maths::CVector3& v3SphereCenter = _pOther->GetCenter();
-    maths::CVector3 v3Dir = maths::CVector3::Normalize(v3SphereCenter - v3OBBCenter);
+    maths::CVector3 v3Dir = v3SphereCenter - v3OBBCenter;
 
     // Project dir using axis directors from box collider
     float fProjX = maths::CVector3::Dot(v3Dir, v3Axis[0]); // Axis X
