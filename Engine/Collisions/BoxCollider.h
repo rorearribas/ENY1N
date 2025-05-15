@@ -1,6 +1,6 @@
 #pragma once
 #include "Collider.h"
-#include "Libs/Maths/Vector3.h"
+#include "Libs/Math/Vector3.h"
 
 namespace render { namespace graphics { class CPrimitive; } }
 namespace collisions { class CSphereCollider; }
@@ -19,21 +19,21 @@ namespace collisions
     void SetOBBEnabled(bool _bEnabled) { m_bOBBEnabled = _bEnabled; }
     const bool& IsOBBEnabled() const { return m_bOBBEnabled; }
 
-    void SetSize(const maths::CVector3& _v3Size);
-    const maths::CVector3& GetSize() const { return m_v3Size; }
+    void SetSize(const math::CVector3& _v3Size);
+    const math::CVector3& GetSize() const { return m_v3Size; }
 
-    maths::CVector3 GetCenter() const { return maths::CVector3(m_v3Max + m_v3Min) * 0.5f; }
-    maths::CVector3 GetHalfSize() const { return maths::CVector3(m_v3Max - m_v3Min) * 0.5f; }
+    math::CVector3 GetCenter() const { return math::CVector3(m_v3Max + m_v3Min) * 0.5f; }
+    math::CVector3 GetHalfSize() const { return math::CVector3(m_v3Max - m_v3Min) * 0.5f; }
 
-    const maths::CVector3& GetMax() const { return m_v3Max; }
-    const maths::CVector3& GetMin() const { return m_v3Min; }
+    const math::CVector3& GetMax() const { return m_v3Max; }
+    const math::CVector3& GetMin() const { return m_v3Min; }
 
-    const std::vector<maths::CVector3>& GetExtents() const { return m_v3Extents; }
-    std::vector<maths::CVector3> GetAxisDirectors() const;
+    const std::vector<math::CVector3>& GetExtents() const { return m_v3Extents; }
+    std::vector<math::CVector3> GetAxisDirectors() const;
 
-    const maths::CVector3& GetRightAxis() const { return m_v3Right; }
-    const maths::CVector3& GetUpAxis() const { return m_v3Up; }
-    const maths::CVector3& GetForwardAxis() const { return m_v3Forward; }
+    const math::CVector3& GetRightAxis() const { return m_v3Right; }
+    const math::CVector3& GetUpAxis() const { return m_v3Up; }
+    const math::CVector3& GetForwardAxis() const { return m_v3Forward; }
 
   private:
     bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
@@ -47,20 +47,20 @@ namespace collisions
 
   private:
     // Size
-    maths::CVector3 m_v3Size = maths::CVector3::One;
+    math::CVector3 m_v3Size = math::CVector3::One;
 
     // Min - Max
-    maths::CVector3 m_v3Max = maths::CVector3::Zero;
-    maths::CVector3 m_v3Min = maths::CVector3::Zero;
+    math::CVector3 m_v3Max = math::CVector3::Zero;
+    math::CVector3 m_v3Min = math::CVector3::Zero;
 
     // OBB
-    maths::CVector3 m_v3Right = maths::CVector3::Right;
-    maths::CVector3 m_v3Up = maths::CVector3::Up;
-    maths::CVector3 m_v3Forward = maths::CVector3::Forward;
+    math::CVector3 m_v3Right = math::CVector3::Right;
+    math::CVector3 m_v3Up = math::CVector3::Up;
+    math::CVector3 m_v3Forward = math::CVector3::Forward;
     bool m_bOBBEnabled = true;
 
     // Extents
-    std::vector<maths::CVector3> m_v3Extents;
+    std::vector<math::CVector3> m_v3Extents;
     std::vector<render::graphics::CPrimitive*> m_vctPrimitives;
   };
 }

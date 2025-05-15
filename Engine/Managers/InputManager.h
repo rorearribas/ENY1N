@@ -1,7 +1,7 @@
 #pragma once
 #include "Libs/Utils/Singleton.h"
 #include <windows.h>
-#include "Libs/Maths/Vector2.h"
+#include "Libs/Math/Vector2.h"
 #include <map>
 
 namespace input
@@ -11,8 +11,8 @@ namespace input
     CMouse();
     ~CMouse();
 
-    const maths::CVector2 GetMousePosition() const;
-    const maths::CVector2 GetMouseDelta() const;
+    const math::CVector2 GetMousePosition() const;
+    const math::CVector2 GetMouseDelta() const;
     const float GetMouseWheelDelta() const;
 
     const bool IsRightButtonPressed();
@@ -22,7 +22,7 @@ namespace input
     void OnUpdateMouse(RAWMOUSE*);
     friend class CInputManager;
 
-    maths::CVector2 m_vMouseDelta = maths::CVector2::Zero;
+    math::CVector2 m_vMouseDelta = math::CVector2::Zero;
     float m_fMouseWheelDelta = 0.0f;
   };
 

@@ -21,7 +21,7 @@ namespace engine
     CEngine() {}
     ~CEngine();
 
-    void InitEngine(uint32_t _uWidth, uint32_t _uHeight);
+    void Init(uint32_t _uWidth, uint32_t _uHeight);
 
     void PushBeginDraw();
     void PushDrawProcess();

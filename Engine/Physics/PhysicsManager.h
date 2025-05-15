@@ -1,7 +1,7 @@
 #pragma once
 #include "Libs/Utils/Singleton.h"
 #include "Libs/Utils/FixedList.h"
-#include "Libs/Maths/Vector3.h"
+#include "Libs/Math/Vector3.h"
 #include "Rigidbody.h"
 
 namespace game { class CEntity; }

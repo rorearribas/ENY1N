@@ -1,8 +1,8 @@
 #pragma once
-#include "Libs/Maths/Vector3.h"
-#include "Libs/Maths/Matrix4x4.h"
+#include "Libs/Math/Vector3.h"
+#include "Libs/Math/Matrix4x4.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-#include "Libs/Maths/Transform.h"
+#include "Libs/Math/Transform.h"
 #include "Engine/Render/Render.h"
 #include <d3d11.h>
 #include <vector>
@@ -18,8 +18,8 @@ namespace render
 
       struct SPrimitiveData
       {
-        maths::CVector3 Position = maths::CVector3::Zero;
-        maths::CVector3 Color = maths::CVector3::One;
+        math::CVector3 Position = math::CVector3::Zero;
+        math::CVector3 Color = math::CVector3::One;
       };
 
     public:
@@ -29,14 +29,14 @@ namespace render
       void DrawPrimitive();
       void SetRenderMode(render::ERenderMode _eRenderMode);
 
-      void SetPosition(const maths::CVector3& _v3Position) { m_oPrimitiveTransform.SetPosition(_v3Position); }
-      const maths::CVector3& GetPosition() const { return m_oPrimitiveTransform.GetPosition(); }
-      void SetRotation(const maths::CVector3& _v3Rot) { m_oPrimitiveTransform.SetRotation(_v3Rot); }
-      const maths::CVector3& GetRotation() const { return m_oPrimitiveTransform.GetRotation(); }
-      void SetScale(const maths::CVector3& _v3Scale) { m_oPrimitiveTransform.SetScale(_v3Scale); }
-      const maths::CVector3& GetScale() const { return m_oPrimitiveTransform.GetScale(); }
-      void SetColor(const maths::CVector3& _v3Color);
-      const maths::CVector3& GetColor() const { return m_v3CurrentColor; }
+      void SetPosition(const math::CVector3& _v3Position) { m_oPrimitiveTransform.SetPosition(_v3Position); }
+      const math::CVector3& GetPosition() const { return m_oPrimitiveTransform.GetPosition(); }
+      void SetRotation(const math::CVector3& _v3Rot) { m_oPrimitiveTransform.SetRotation(_v3Rot); }
+      const math::CVector3& GetRotation() const { return m_oPrimitiveTransform.GetRotation(); }
+      void SetScale(const math::CVector3& _v3Scale) { m_oPrimitiveTransform.SetScale(_v3Scale); }
+      const math::CVector3& GetScale() const { return m_oPrimitiveTransform.GetScale(); }
+      void SetColor(const math::CVector3& _v3Color);
+      const math::CVector3& GetColor() const { return m_v3CurrentColor; }
 
     private:
       HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode);
@@ -53,8 +53,8 @@ namespace render
       render::ERenderMode m_eRenderMode = SOLID;
       EPrimitiveType m_ePrimitiveType = EPrimitiveType::INVALID;
 
-      maths::CTransform m_oPrimitiveTransform;
-      maths::CVector3 m_v3CurrentColor = maths::CVector3::One;
+      math::CTransform m_oPrimitiveTransform;
+      math::CVector3 m_v3CurrentColor = math::CVector3::One;
 
       uint32_t m_uVertices = 0;
       uint32_t m_uIndices = 0;

@@ -142,7 +142,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
         oVertexData.MaterialId = iMaterialId; // Set material id
 
         // Set position
-        oVertexData.Position = maths::CVector3
+        oVertexData.Position = math::CVector3
         (
           attributes.vertices[3 * idx.vertex_index + 0], 
           attributes.vertices[3 * idx.vertex_index + 1], 
@@ -152,22 +152,22 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
         // Set normal
         bool bHasNormal = idx.normal_index >= 0 && idx.normal_index < (attributes.normals.size() / 3);
         oVertexData.Normal = bHasNormal ? 
-        maths::CVector3
+        math::CVector3
         (
           attributes.normals[3 * idx.normal_index + 0],
           attributes.normals[3 * idx.normal_index + 1],
           attributes.normals[3 * idx.normal_index + 2]
 
-        ) : maths::CVector3::Forward;
+        ) : math::CVector3::Forward;
 
         // Set texture coord
         bool bHasTexCoord = idx.texcoord_index >= 0 && idx.texcoord_index < (attributes.texcoords.size() / 2);
-        oVertexData.TexCoord = bHasTexCoord ? maths::CVector2
+        oVertexData.TexCoord = bHasTexCoord ? math::CVector2
         (
           attributes.texcoords[2 * idx.texcoord_index + 0],
           1.0f - attributes.texcoords[2 * idx.texcoord_index + 1] // We have to invert this value
 
-        ) : maths::CVector2::Zero;
+        ) : math::CVector2::Zero;
 
         // Check if the vertex already exists
         auto it = dctVertexMap.find(oVertexData);

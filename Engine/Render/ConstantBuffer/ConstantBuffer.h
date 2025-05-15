@@ -1,12 +1,12 @@
 #pragma once
 #include <d3d11.h>
-#include "Libs/Maths/Matrix4x4.h"
+#include "Libs/Math/Matrix4x4.h"
 #include "Engine/Global/GlobalResources.h"
 
 // Model matrix
 struct __declspec(align(16)) SConstantMatrix
 {
-  maths::CMatrix4x4 mMatrix = maths::CMatrix4x4::Identity;
+  math::CMatrix4x4 mMatrix = math::CMatrix4x4::Identity;
 };
 
 // Check textures
@@ -23,20 +23,20 @@ namespace internal
   struct __declspec(align(16)) SDirectionaLight
   {
     // 12 + 4 Bytes
-    maths::CVector3 Direction;
+    math::CVector3 Direction;
     float Padding0;
     // 12 + 4 bytes
-    maths::CVector3 Color;
+    math::CVector3 Color;
     float Intensity;
   };
   // Point lights
   struct __declspec(align(16)) SPointLight
   {
     // 12 + 4 Bytes
-    maths::CVector3 Position;
+    math::CVector3 Position;
     float Padding0;
     // 12 + 4 Bytes
-    maths::CVector3 Color;
+    math::CVector3 Color;
     float Padding1;
     // 12 + 4 Bytes
     float Intensity;
@@ -48,13 +48,13 @@ namespace internal
   struct __declspec(align(16)) SSpotLight
   {
     // 12 + 4 Bytes
-    maths::CVector3 Position;
+    math::CVector3 Position;
     float Padding0;
     // 12 + 4 Bytes
-    maths::CVector3 Direction;
+    math::CVector3 Direction;
     float Padding1;
     // 12 + 4 Bytes
-    maths::CVector3 Color;
+    math::CVector3 Color;
     float Padding2;
     // 12 + 4 Bytes
     float Range;

@@ -59,7 +59,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::SetPrimitiveColor(const maths::CVector3& _v3Color)
+  void CModelComponent::SetPrimitiveColor(const math::CVector3& _v3Color)
   {
     if (m_pPrimitive)
     {
@@ -67,22 +67,22 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::OnPositionChanged(const maths::CVector3& _v3Pos)
+  void CModelComponent::OnPositionChanged(const math::CVector3& _v3Pos)
   {
     SetPosition(_v3Pos);
   }
   // ------------------------------------
-  void CModelComponent::OnRotationChanged(const maths::CVector3& _v3Rot)
+  void CModelComponent::OnRotationChanged(const math::CVector3& _v3Rot)
   {
     SetRotation(_v3Rot);
   }
   // ------------------------------------
-  void CModelComponent::OnScaleChanged(const maths::CVector3& _v3Scale)
+  void CModelComponent::OnScaleChanged(const math::CVector3& _v3Scale)
   {
     SetScale(_v3Scale);
   }
   // ------------------------------------
-  void CModelComponent::SetPosition(const maths::CVector3& _v3Position)
+  void CModelComponent::SetPosition(const math::CVector3& _v3Position)
   {
     if (m_pPrimitive)
     {
@@ -94,12 +94,12 @@ namespace game
     }
   }
   // ------------------------------------
-  const maths::CVector3& CModelComponent::GetPosition() const
+  const math::CVector3& CModelComponent::GetPosition() const
   {
     return m_pOwner->GetPosition();
   }
   // ------------------------------------
-  void CModelComponent::SetRotation(const maths::CVector3& _v3Rot)
+  void CModelComponent::SetRotation(const math::CVector3& _v3Rot)
   {
     if (m_pPrimitive)
     {
@@ -111,12 +111,12 @@ namespace game
     }
   }
   // ------------------------------------
-  const maths::CVector3& CModelComponent::GetRotation() const
+  const math::CVector3& CModelComponent::GetRotation() const
   {
     return m_pOwner->GetRotation();
   }
   // ------------------------------------
-  void CModelComponent::SetScale(const maths::CVector3& _v3Scale)
+  void CModelComponent::SetScale(const math::CVector3& _v3Scale)
   {
     if (m_pPrimitive)
     {
@@ -128,7 +128,7 @@ namespace game
     }
   }
   // ------------------------------------
-  const maths::CVector3& CModelComponent::GetScale() const
+  const math::CVector3& CModelComponent::GetScale() const
   {
     return m_pOwner->GetScale();
   }

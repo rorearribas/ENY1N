@@ -12,11 +12,11 @@ namespace render
       virtual ~CSpotLight() {}
 
       // Direction
-      void SetDirection(const maths::CVector3& _v3Dir) { m_v3Direction = _v3Dir; }
-      const maths::CVector3& GetDirection() const { return m_v3Direction; }
+      void SetDirection(const math::CVector3& _v3Dir) { m_v3Direction = _v3Dir; }
+      const math::CVector3& GetDirection() const { return m_v3Direction; }
       // Color
-      void SetColor(const maths::CVector3& _v3Color) { m_v3LightColor = _v3Color; }
-      const maths::CVector3& GetColor() { return m_v3LightColor; }
+      void SetColor(const math::CVector3& _v3Color) { m_v3LightColor = _v3Color; }
+      const math::CVector3& GetColor() { return m_v3LightColor; }
       // CutOffAngle
       void SetCutOffAngle(float _fValue) { m_fCutOffAngle = _fValue; }
       const float& GetCutOffAngle() const { return m_fCutOffAngle; }
@@ -28,8 +28,8 @@ namespace render
       const float& GetIntensity() const { return m_fIntensity; }
 
     private:
-      maths::CVector3 m_v3Direction = maths::CVector3::Up;
-      maths::CVector3 m_v3LightColor = maths::CVector3::One;
+      math::CVector3 m_v3Direction = math::CVector3::Up;
+      math::CVector3 m_v3LightColor = math::CVector3::One;
       float m_fCutOffAngle = 45.0f;
       float m_fRange = 10.0f;
       float m_fIntensity = 1.0f;

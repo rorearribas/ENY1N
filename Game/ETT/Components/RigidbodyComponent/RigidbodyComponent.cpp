@@ -3,7 +3,7 @@
 #include "Engine/Physics/PhysicsManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/ImGui/imgui.h"
-#include "Libs/Maths/Maths.h"
+#include "Libs/Math/Math.h"
 
 namespace game
 {
@@ -29,22 +29,22 @@ namespace game
     // Set new state
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
 
-    maths::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
-    maths::CVector3 v3VelocityDir = maths::CVector3::Normalize(v3CurrentVelocity);
+    math::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
+    math::CVector3 v3VelocityDir = math::CVector3::Normalize(v3CurrentVelocity);
 
     float fVelocity = v3CurrentVelocity.Length();
-    maths::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
+    math::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
     m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * (internal_rigidbody::s_fMaxAngularForce * 2.0f));
   }
   // ------------------------------------
   void CRigidbodyComponent::OnCollisionStay(const collisions::SHitEvent& _oHitEvent)
   {
-    maths::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
-    maths::CVector3 v3VelocityDir = maths::CVector3::Normalize(v3CurrentVelocity);
+    math::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
+    math::CVector3 v3VelocityDir = math::CVector3::Normalize(v3CurrentVelocity);
 
     // Get impact velocity
     float fImpactVelocity = abs(v3CurrentVelocity.Dot(_oHitEvent.Normal));
-    if (fImpactVelocity > maths::s_fEpsilon5)
+    if (fImpactVelocity > math::s_fEpsilon5)
     {
       // Apply velocity
       v3CurrentVelocity = v3CurrentVelocity - _oHitEvent.Normal * (-fImpactVelocity * internal_rigidbody::s_fRebound);
@@ -53,9 +53,9 @@ namespace game
 
     // Apply torque
     float fVelocity = v3CurrentVelocity.Length();
-    if (fVelocity > maths::s_fEpsilon5)
+    if (fVelocity > math::s_fEpsilon5)
     {
-      maths::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
+      math::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
       m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * internal_rigidbody::s_fMaxAngularForce);
     }
 
@@ -63,10 +63,10 @@ namespace game
     CEntity* pOwner = GetOwner();
     if (pOwner)
     {
-      maths::CVector3 v3Offset = _oHitEvent.Normal * _oHitEvent.Depth;
-      if (!v3Offset.Equal(maths::CVector3::Zero, maths::s_fEpsilon5))
+      math::CVector3 v3Offset = _oHitEvent.Normal * _oHitEvent.Depth;
+      if (!v3Offset.Equal(math::CVector3::Zero, math::s_fEpsilon5))
       {
-        maths::CVector3 vNewPosition = pOwner->GetPosition() + v3Offset;
+        math::CVector3 vNewPosition = pOwner->GetPosition() + v3Offset;
         pOwner->SetPosition(vNewPosition);
       }
     }
@@ -80,22 +80,22 @@ namespace game
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::IN_THE_AIR);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnApplyVelocity(const maths::CVector3& _v3Velocity)
+  void CRigidbodyComponent::OnApplyVelocity(const math::CVector3& _v3Velocity)
   {
     CEntity* pOwner = GetOwner();
     if (pOwner)
     {
-      maths::CVector3 vNewPosition = pOwner->GetPosition() + _v3Velocity;
+      math::CVector3 vNewPosition = pOwner->GetPosition() + _v3Velocity;
       pOwner->SetPosition(vNewPosition);
     }
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnApplyRotation(const maths::CVector3& _v3Rot)
+  void CRigidbodyComponent::OnApplyRotation(const math::CVector3& _v3Rot)
   {
     CEntity* pOwner = GetOwner();
     if (pOwner)
     {
-      maths::CVector3 vNewRot = pOwner->GetRotation() + _v3Rot;
+      math::CVector3 vNewRot = pOwner->GetRotation() + _v3Rot;
       pOwner->SetRotation(vNewRot);
     }
   }
@@ -145,7 +145,7 @@ namespace game
     {
       if (m_pRigidbody)
       {
-        m_pRigidbody->AddForce(maths::CVector3(500.0f, 0.0f, 0.0f));
+        m_pRigidbody->AddForce(math::CVector3(500.0f, 0.0f, 0.0f));
       }
     }
 

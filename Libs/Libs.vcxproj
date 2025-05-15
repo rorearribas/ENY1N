@@ -147,7 +147,7 @@
     <ClInclude Include="ImGui\ImSequencer.h" />
     <ClInclude Include="ImGui\ImZoomSlider.h" />
     <ClInclude Include="Macros\GlobalMacros.h" />
-    <ClInclude Include="Maths\Maths.h" />
+    <ClInclude Include="Math\Math.h" />
     <ClInclude Include="Third-Party\objloader\tiny_obj_loader.h" />
     <ClInclude Include="Third-Party\stb\stb.h" />
     <ClInclude Include="Third-Party\stb\stb_connected_components.h" />
@@ -179,10 +179,10 @@
     <ClInclude Include="ImGui\imstb_rectpack.h" />
     <ClInclude Include="ImGui\imstb_textedit.h" />
     <ClInclude Include="ImGui\imstb_truetype.h" />
-    <ClInclude Include="Maths\Vector2.h" />
-    <ClInclude Include="Maths\Vector3.h" />
-    <ClInclude Include="Maths\Matrix4x4.h" />
-    <ClInclude Include="Maths\Transform.h" />
+    <ClInclude Include="Math\Vector2.h" />
+    <ClInclude Include="Math\Vector3.h" />
+    <ClInclude Include="Math\Matrix4x4.h" />
+    <ClInclude Include="Math\Transform.h" />
     <ClInclude Include="Utils\Delegate.h" />
     <ClInclude Include="Utils\Singleton.h" />
   </ItemGroup>
@@ -202,10 +202,10 @@
     <ClCompile Include="ImGui\imgui_tables.cpp" />
     <ClCompile Include="ImGui\imgui_widgets.cpp" />
     <ClCompile Include="ImGui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="Maths\Vector2.cpp" />
-    <ClCompile Include="Maths\Vector3.cpp" />
-    <ClCompile Include="Maths\Matrix4x4.cpp" />
-    <ClCompile Include="Maths\Transform.cpp" />
+    <ClCompile Include="Math\Vector2.cpp" />
+    <ClCompile Include="Math\Vector3.cpp" />
+    <ClCompile Include="Math\Matrix4x4.cpp" />
+    <ClCompile Include="Math\Transform.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

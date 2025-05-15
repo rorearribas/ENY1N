@@ -1,7 +1,7 @@
 #pragma once
 #include <d3d11.h>
-#include "Libs/Maths/Transform.h"
-#include "Libs/Maths/Vector2.h"
+#include "Libs/Math/Transform.h"
+#include "Libs/Math/Vector2.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 #include "Engine/Render/Resources/Material.h"
 #include "Engine/Render/Resources/Texture.h"
@@ -26,12 +26,12 @@ namespace render
 
       void DrawModel();
 
-      void SetPosition(const maths::CVector3& _v3Position) { m_oModelTransform.SetPosition(_v3Position); }
-      const maths::CVector3& GetPosition() const { return m_oModelTransform.GetPosition(); }
-      void SetRotation(const maths::CVector3& _v3Rot) { m_oModelTransform.SetRotation(_v3Rot); }
-      const maths::CVector3& GetRotation() const { return m_oModelTransform.GetRotation(); }
-      void SetScale(const maths::CVector3& _v3Scale) { m_oModelTransform.SetScale(_v3Scale); }
-      const maths::CVector3& GetScale() const { return m_oModelTransform.GetScale(); }
+      void SetPosition(const math::CVector3& _v3Position) { m_oModelTransform.SetPosition(_v3Position); }
+      const math::CVector3& GetPosition() const { return m_oModelTransform.GetPosition(); }
+      void SetRotation(const math::CVector3& _v3Rot) { m_oModelTransform.SetRotation(_v3Rot); }
+      const math::CVector3& GetRotation() const { return m_oModelTransform.GetRotation(); }
+      void SetScale(const math::CVector3& _v3Scale) { m_oModelTransform.SetScale(_v3Scale); }
+      const math::CVector3& GetScale() const { return m_oModelTransform.GetScale(); }
 
     private: 
       HRESULT InitModel(const char* _sModelPath, const char* _sBaseMltDir);
@@ -46,7 +46,7 @@ namespace render
 
       // Model info
       SModelData m_oModelData = SModelData();
-      maths::CTransform m_oModelTransform = maths::CTransform();
+      math::CTransform m_oModelTransform = math::CTransform();
     };
   }
 }

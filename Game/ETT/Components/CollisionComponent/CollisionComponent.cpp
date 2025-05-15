@@ -66,12 +66,12 @@ namespace game
 
     if (m_pPrimitive)
     {
-      m_pPrimitive->SetColor(maths::CVector3::One);
+      m_pPrimitive->SetColor(math::CVector3::One);
       m_pPrimitive->SetScale(pOwner->GetScale());
     }
   }
   // ------------------------------------
-  void CCollisionComponent::SetPosition(const maths::CVector3& _v3Pos)
+  void CCollisionComponent::SetPosition(const math::CVector3& _v3Pos)
   {
     if (m_pCollider)
     {
@@ -84,12 +84,12 @@ namespace game
     }
   }
   // ------------------------------------
-  const maths::CVector3& CCollisionComponent::GetPosition() const
+  const math::CVector3& CCollisionComponent::GetPosition() const
   {
     return m_pCollider->GetPosition();
   }
   // ------------------------------------
-  void CCollisionComponent::SetRotation(const maths::CVector3& _v3Rot)
+  void CCollisionComponent::SetRotation(const math::CVector3& _v3Rot)
   {
     if (m_pCollider)
     {
@@ -102,17 +102,17 @@ namespace game
     }
   }
   // ------------------------------------
-  const maths::CVector3& CCollisionComponent::GetRotation() const
+  const math::CVector3& CCollisionComponent::GetRotation() const
   {
     return m_pCollider->GetRotation();
   }
   // ------------------------------------
-  void CCollisionComponent::OnPositionChanged(const maths::CVector3& _v3Pos)
+  void CCollisionComponent::OnPositionChanged(const math::CVector3& _v3Pos)
   {
     SetPosition(_v3Pos);
   }
   // ------------------------------------
-  void CCollisionComponent::OnRotationChanged(const maths::CVector3& _v3Rot)
+  void CCollisionComponent::OnRotationChanged(const math::CVector3& _v3Rot)
   {
     SetRotation(_v3Rot);
   }
@@ -161,9 +161,9 @@ namespace game
       // Apply box collider size
       if (m_pPrimitive) 
       { 
-        m_pPrimitive->SetScale(maths::CVector3(v3Size[0], v3Size[1], v3Size[2])); 
+        m_pPrimitive->SetScale(math::CVector3(v3Size[0], v3Size[1], v3Size[2])); 
       }
-      pBoxCollider->SetSize(maths::CVector3(v3Size[0], v3Size[1], v3Size[2]));
+      pBoxCollider->SetSize(math::CVector3(v3Size[0], v3Size[1], v3Size[2]));
       pBoxCollider->SetOBBEnabled(bOBBEnabled);
     }
     break;
@@ -182,9 +182,9 @@ namespace game
       ImGui::InputFloat3(sCenter.c_str(), v3Center);
       ImGui::InputFloat(sRadius.c_str(), &fRadius);
 
-      pSphereCollider->SetCenter(maths::CVector3(GetPosition().X, GetPosition().Y, GetPosition().Z));
+      pSphereCollider->SetCenter(math::CVector3(GetPosition().X, GetPosition().Y, GetPosition().Z));
       pSphereCollider->SetRadius(fRadius);
-      if (m_pPrimitive) { m_pPrimitive->SetScale(maths::CVector3(fRadius * 2.0f, fRadius * 2.0f, fRadius * 2.0f)); }
+      if (m_pPrimitive) { m_pPrimitive->SetScale(math::CVector3(fRadius * 2.0f, fRadius * 2.0f, fRadius * 2.0f)); }
     }
     break;
     default:

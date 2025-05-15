@@ -4,7 +4,7 @@
 #include <cassert>
 #include <iostream>
 #include "Libs/Macros/GlobalMacros.h"
-#include "Libs/Maths/Maths.h"
+#include "Libs/Math/Math.h"
 
 namespace render
 {
@@ -15,30 +15,30 @@ namespace render
       // Triangle Primitive
       static const std::vector<CPrimitive::SPrimitiveData> s_oTrianglePrimitive =
       {
-        { maths::CVector3(0, 0.5f, 0.0f),   maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f,  0.0f),  maths::CVector3(1.0f, 1.0f, 1.0f) },
-        { maths::CVector3(-0.5f, -0.5f,  0.0f), maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { math::CVector3(0, 0.5f, 0.0f),   math::CVector3(1.0f, 1.0f, 1.0f) },
+        { math::CVector3(0.5f, -0.5f,  0.0f),  math::CVector3(1.0f, 1.0f, 1.0f) },
+        { math::CVector3(-0.5f, -0.5f,  0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
       };
       // Square Primitive
       static const std::vector<CPrimitive::SPrimitiveData> s_oSquarePrimitive =
       {
-        { maths::CVector3(-0.5f, -0.5f, -0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(-0.5f,  0.5f, -0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(0.5f,  0.5f, -0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f, -0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) },
+        { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(1.0f, 0.0f, 0.0f) },
+        { math::CVector3(-0.5f,  0.5f, -0.5f), math::CVector3(0.0f, 1.0f, 0.0f) },
+        { math::CVector3(0.5f,  0.5f, -0.5f), math::CVector3(0.0f, 0.0f, 1.0f) },
+        { math::CVector3(0.5f, -0.5f, -0.5f), math::CVector3(1.0f, 1.0f, 1.0f) },
 
-        { maths::CVector3(-0.5f, -0.5f,  0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },
-        { maths::CVector3(-0.5f,  0.5f,  0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },
-        { maths::CVector3(0.5f,  0.5f,  0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },
-        { maths::CVector3(0.5f, -0.5f,  0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) }
+        { math::CVector3(-0.5f, -0.5f,  0.5f), math::CVector3(1.0f, 0.0f, 0.0f) },
+        { math::CVector3(-0.5f,  0.5f,  0.5f), math::CVector3(0.0f, 1.0f, 0.0f) },
+        { math::CVector3(0.5f,  0.5f,  0.5f), math::CVector3(0.0f, 0.0f, 1.0f) },
+        { math::CVector3(0.5f, -0.5f,  0.5f), math::CVector3(1.0f, 1.0f, 1.0f) }
       };
       // Plane Primitive
       static const std::vector<CPrimitive::SPrimitiveData> s_oPlanePrimitive =
       {
-        { maths::CVector3(-0.5f, 0.0f, -0.5f), maths::CVector3(1.0f, 0.0f, 0.0f) },  // Bottom-left
-        { maths::CVector3(-0.5f, 0.0f,  0.5f), maths::CVector3(0.0f, 1.0f, 0.0f) },  // Top-left
-        { maths::CVector3(0.5f, 0.0f,  0.5f), maths::CVector3(0.0f, 0.0f, 1.0f) },  // Top-right
-        { maths::CVector3(0.5f, 0.0f, -0.5f), maths::CVector3(1.0f, 1.0f, 1.0f) }   // Bottom-right
+        { math::CVector3(-0.5f, 0.0f, -0.5f), math::CVector3(1.0f, 0.0f, 0.0f) },  // Bottom-left
+        { math::CVector3(-0.5f, 0.0f,  0.5f), math::CVector3(0.0f, 1.0f, 0.0f) },  // Top-left
+        { math::CVector3(0.5f, 0.0f,  0.5f), math::CVector3(0.0f, 0.0f, 1.0f) },  // Top-right
+        { math::CVector3(0.5f, 0.0f, -0.5f), math::CVector3(1.0f, 1.0f, 1.0f) }   // Bottom-right
       };
 
       // 2D Square Indices
@@ -100,16 +100,16 @@ namespace render
       {
         for (int uX = 0; uX <= _iStacks; ++uX)
         {
-          float fPhi = static_cast<float>(uX) / static_cast<float>(_iStacks) * static_cast<float>(maths::s_fPI);
+          float fPhi = static_cast<float>(uX) / static_cast<float>(_iStacks) * static_cast<float>(math::s_fPI);
           for (int uJ = 0; uJ <= _iSlices; ++uJ)
           {
             // Conversion
-            float fTheta = static_cast<float>(uJ) / static_cast<float>(_iSlices) * 2.0f * (float)maths::s_fPI;
+            float fTheta = static_cast<float>(uJ) / static_cast<float>(_iSlices) * 2.0f * (float)math::s_fPI;
             float fX = _fRadius * sinf(fPhi) * cosf(fTheta);
             float fY = _fRadius * cosf(fPhi);
             float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
             // Add vertex
-            maths::CVector3 vVertex(fX, fY, fZ);
+            math::CVector3 vVertex(fX, fY, fZ);
             _vctVertices_.push_back({ vVertex });
           }
         }
@@ -280,7 +280,7 @@ namespace render
       }
     }
     // ------------------------------------
-    void CPrimitive::SetColor(const maths::CVector3& _v3Color)
+    void CPrimitive::SetColor(const math::CVector3& _v3Color)
     {
       // Map
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;

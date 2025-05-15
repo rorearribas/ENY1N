@@ -29,8 +29,8 @@ namespace game
     void Clean();
     void CreateRigidbody(physics::ERigidbodyType _eRigidbodyType);
 
-    void OnApplyVelocity(const maths::CVector3& _v3Velocity);
-    void OnApplyRotation(const maths::CVector3& _v3Rot);
+    void OnApplyVelocity(const math::CVector3& _v3Velocity);
+    void OnApplyRotation(const math::CVector3& _v3Rot);
 
   private:
     physics::CRigidbody* m_pRigidbody = nullptr;

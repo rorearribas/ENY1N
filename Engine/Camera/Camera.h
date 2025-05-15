@@ -1,8 +1,8 @@
 #pragma once
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-#include "Libs/Maths/Matrix4x4.h"
-#include "Libs/Maths/Vector3.h"
-#include "Libs/Maths/Vector2.h"
+#include "Libs/Math/Matrix4x4.h"
+#include "Libs/Math/Vector3.h"
+#include "Libs/Math/Vector2.h"
 
 namespace render
 {
@@ -14,13 +14,13 @@ namespace render
 
     void Update(float _fDeltaTime);
 
-    const maths::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
-    const maths::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
+    const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
+    const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
 
-    void SetPosition(const maths::CVector3& _v3Pos);
-    const maths::CVector3& GetPosition() const { return m_vPos; }
-    void SetRotation(const maths::CVector3& _v3Rot);
-    const maths::CVector3& GetRotation() const { return m_vRot; }
+    void SetPosition(const math::CVector3& _v3Pos);
+    const math::CVector3& GetPosition() const { return m_vPos; }
+    void SetRotation(const math::CVector3& _v3Rot);
+    const math::CVector3& GetRotation() const { return m_vRot; }
 
     void SetFov(float _fFov) { m_fFov = _fFov; }
     const float& GetFov() const { return m_fFov; }
@@ -35,21 +35,21 @@ namespace render
     const float& GetAspectRatio() const { return m_fAspectRatio; }
 
   private:
-    void MovePosition(const maths::CVector3& _v3Move);
-    void SetLookAtPos(const maths::CVector3& _v3LookAtPos);
+    void MovePosition(const math::CVector3& _v3Move);
+    void SetLookAtPos(const math::CVector3& _v3LookAtPos);
 
     void UpdatePerspectiveMatrix();
     void UpdateViewMatrix();
 
-    void AddRotation(const maths::CVector3& _v3Delta);
-    void ShowCursor(bool _bMousePressed, const maths::CVector2& _vMousePos);
+    void AddRotation(const math::CVector3& _v3Delta);
+    void ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos);
 
     CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
-    maths::CMatrix4x4 m_mViewMatrix = maths::CMatrix4x4::Identity;
-    maths::CMatrix4x4 m_mProjectionMatrix = maths::CMatrix4x4::Identity;
+    math::CMatrix4x4 m_mViewMatrix = math::CMatrix4x4::Identity;
+    math::CMatrix4x4 m_mProjectionMatrix = math::CMatrix4x4::Identity;
 
-    maths::CVector3 m_vPos = maths::CVector3::Zero;
-    maths::CVector3 m_vRot = maths::CVector3::Zero;
+    math::CVector3 m_vPos = math::CVector3::Zero;
+    math::CVector3 m_vRot = math::CVector3::Zero;
 
     float m_fCameraSpeed = 1.0f;
     float m_fMovementSpeed = 50.0f;

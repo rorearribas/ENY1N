@@ -83,8 +83,8 @@ namespace game
       ImGui::InputFloat3(sColor.c_str(), color);
       ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
 
-      pDirectional->SetDirection(maths::CVector3(dir[0], dir[1], dir[2]));
-      pDirectional->SetColor(maths::CVector3(color[0], color[1], color[2]));
+      pDirectional->SetDirection(math::CVector3(dir[0], dir[1], dir[2]));
+      pDirectional->SetColor(math::CVector3(color[0], color[1], color[2]));
       pDirectional->SetIntensity(fIntensity);
     }
     break;
@@ -106,7 +106,7 @@ namespace game
       ImGui::InputFloat(sRange.c_str(), &fRange);
       ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
 
-      pPointLight->SetColor(maths::CVector3(color[0], color[1], color[2]));
+      pPointLight->SetColor(math::CVector3(color[0], color[1], color[2]));
       pPointLight->SetRange(fRange);
       pPointLight->SetIntensity(fIntensity);
     }
@@ -135,8 +135,8 @@ namespace game
       ImGui::InputFloat(sRange.c_str(), &fRange);
       ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
 
-      pSpotLight->SetDirection(maths::CVector3(dir[0], dir[1], dir[2]));
-      pSpotLight->SetColor(maths::CVector3(color[0], color[1], color[2]));
+      pSpotLight->SetDirection(math::CVector3(dir[0], dir[1], dir[2]));
+      pSpotLight->SetColor(math::CVector3(color[0], color[1], color[2]));
       pSpotLight->SetIntensity(fIntensity);
       pSpotLight->SetCutOffAngle(fCutOffAngle);
       pSpotLight->SetRange(fRange);
@@ -147,12 +147,12 @@ namespace game
     }
   }
   // ------------------------------------
-  void CLightComponent::OnPositionChanged(const maths::CVector3& _v3Pos)
+  void CLightComponent::OnPositionChanged(const math::CVector3& _v3Pos)
   {
     SetPosition(_v3Pos);
   }
   // ------------------------------------
-  void CLightComponent::OnRotationChanged(const maths::CVector3& _v3Rot)
+  void CLightComponent::OnRotationChanged(const math::CVector3& _v3Rot)
   {
     SetRotation(_v3Rot);
   }
@@ -166,7 +166,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CLightComponent::SetPosition(const maths::CVector3& _v3Position)
+  void CLightComponent::SetPosition(const math::CVector3& _v3Position)
   {
     if (m_pLight)
     {
@@ -174,12 +174,12 @@ namespace game
     }
   }
   // ------------------------------------
-  const maths::CVector3& CLightComponent::GetPosition() const
+  const math::CVector3& CLightComponent::GetPosition() const
   {
     return m_pLight ? m_pLight->GetPosition() : m_pOwner->GetPosition();
   }
   // ------------------------------------
-  void CLightComponent::SetRotation(const maths::CVector3& _v3Rot)
+  void CLightComponent::SetRotation(const math::CVector3& _v3Rot)
   {
     if(m_pLight)
     {
@@ -187,7 +187,7 @@ namespace game
     }
   }
   // ------------------------------------
-  const maths::CVector3& CLightComponent::GetRotation() const
+  const math::CVector3& CLightComponent::GetRotation() const
   {
     return m_pLight ? m_pLight->GetRotation() : m_pOwner->GetRotation();
   }

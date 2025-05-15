@@ -20,7 +20,7 @@ namespace engine
     m_pRender.reset();
   }
   // ------------------------------------
-  void CEngine::InitEngine(uint32_t _uWidth, uint32_t _uHeight)
+  void CEngine::Init(uint32_t _uWidth, uint32_t _uHeight)
   {
     assert(!m_bInitialized);
 
@@ -29,7 +29,6 @@ namespace engine
 
     // Create camera
     m_pCamera = std::make_unique<render::CCamera>();
-    m_pCamera->SetPosition({ 0.0f, 0.0f, -10.0f });
 
     // Create scene manager
     m_pSceneManager = std::make_unique<scene::CSceneManager>();

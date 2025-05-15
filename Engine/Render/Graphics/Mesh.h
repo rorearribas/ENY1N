@@ -1,12 +1,12 @@
 #pragma once
-#include "Libs/Maths/Vector3.h"
-#include "Libs/Maths/Vector2.h"
+#include "Libs/Math/Vector3.h"
+#include "Libs/Math/Vector2.h"
 #include "Engine/Render/Resources/Material.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 
 #include <vector>
 #include <functional>
-#include "Libs/Maths/Transform.h"
+#include "Libs/Math/Transform.h"
 #include <d3d11.h>
 
 namespace render
@@ -15,10 +15,10 @@ namespace render
   {
     struct SVertexData
     {
-      maths::CVector3 Position = maths::CVector3::Zero;
-      maths::CVector3 Normal = maths::CVector3::Zero;
-      maths::CVector2 TexCoord = maths::CVector2::Zero;
-      maths::CVector3 Color = maths::CVector3::One;
+      math::CVector3 Position = math::CVector3::Zero;
+      math::CVector3 Normal = math::CVector3::Zero;
+      math::CVector2 TexCoord = math::CVector2::Zero;
+      math::CVector3 Color = math::CVector3::One;
       uint32_t MaterialId = 0;
 
       bool operator==(const SVertexData& _other) const
@@ -78,10 +78,10 @@ namespace std {
   {
     size_t operator()(const render::graphics::SVertexData& vertex) const
     {
-      return ((hash<maths::CVector3>()(vertex.Position) ^
-        (hash<maths::CVector3>()(vertex.Normal) << 1)) >> 1) ^
-        (hash<maths::CVector2>()(vertex.TexCoord) << 1) ^
-        (hash<maths::CVector3>()(vertex.Color) << 1) ^
+      return ((hash<math::CVector3>()(vertex.Position) ^
+        (hash<math::CVector3>()(vertex.Normal) << 1)) >> 1) ^
+        (hash<math::CVector2>()(vertex.TexCoord) << 1) ^
+        (hash<math::CVector3>()(vertex.Color) << 1) ^
         (hash<int>()(vertex.MaterialId) << 1);
     }
   };

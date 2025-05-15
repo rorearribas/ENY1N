@@ -1,6 +1,6 @@
 #pragma once
 #include "Components/Component.h"
-#include "Libs/Maths/Transform.h"
+#include "Libs/Math/Transform.h"
 #include "Engine/Collisions/Collider.h"
 #include <array>
 #include <string>
@@ -25,12 +25,12 @@ namespace game
     void SetTickEnabled(bool _bStatus) { m_bTickEnabled = _bStatus; }
     const std::string& GetName() const { return m_sEntityName; }
 
-    void SetPosition(const maths::CVector3& _v3Position);
-    const maths::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-    void SetRotation(const maths::CVector3& _v3Rot);
-    const maths::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-    void SetScale(const maths::CVector3& _v3Scale);
-    const maths::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+    void SetPosition(const math::CVector3& _v3Position);
+    const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+    void SetRotation(const math::CVector3& _v3Rot);
+    const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
+    void SetScale(const math::CVector3& _v3Scale);
+    const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
     template<typename T, typename ...Args>
     inline T* RegisterComponent(Args&&... args)
@@ -61,7 +61,7 @@ namespace game
     void DestroyAllComponents();
 
     TComponentsList m_vctComponents = {};
-    maths::CTransform m_oTransform;
+    math::CTransform m_oTransform;
 
     std::string m_sEntityName = {};
     int m_iRegisteredComponents = 0;

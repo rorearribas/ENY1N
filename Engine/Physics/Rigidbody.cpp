@@ -5,14 +5,14 @@ namespace physics
   void CRigidbody::SetRigidbodyType(ERigidbodyType _eRigidbodyType)
   {
     // Reset values
-    SetVelocity(maths::CVector3::Zero);
-    SetAngularVelocity(maths::CVector3::Zero);
+    SetVelocity(math::CVector3::Zero);
+    SetAngularVelocity(math::CVector3::Zero);
 
     // Set new state
     m_eRigidbodyType = _eRigidbodyType;
   }
   // ------------------------------------
-  void CRigidbody::AddForce(const maths::CVector3& _v3Force)
+  void CRigidbody::AddForce(const math::CVector3& _v3Force)
   {
     if (m_fMass > 0.0f)
     {
@@ -20,7 +20,7 @@ namespace physics
     }
   }
   // ------------------------------------
-  void CRigidbody::AddTorque(const maths::CVector3& _v3Torque)
+  void CRigidbody::AddTorque(const math::CVector3& _v3Torque)
   {
     if (m_fMass > 0.0f)
     {

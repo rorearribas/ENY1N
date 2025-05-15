@@ -1,5 +1,5 @@
 #pragma once
-#include "Libs/Maths/Vector3.h"
+#include "Libs/Math/Vector3.h"
 #include "Texture.h"
 #include <string>
 #include <map>
@@ -34,12 +34,12 @@ namespace render
       render::texture::CTexture* const GetTexture(EModifierType _eModifierType);
       const std::string& GetMaterialId() const { return m_sMaterialId; }
 
-      void SetAmbientColor(maths::CVector3 _vAmbientColor) { m_vAmbientColor = _vAmbientColor; }
-      const maths::CVector3& GetAmbientColor() const { return m_vAmbientColor; }
-      void SetDiffuseColor(maths::CVector3 _vDiffuseColor) { m_vDiffuseColor = _vDiffuseColor; }
-      const maths::CVector3& GetDiffuseColor() const { return m_vDiffuseColor; }
-      void SetSpecularColor(maths::CVector3 _vSpecularColor) { m_vSpecularColor = _vSpecularColor; }
-      const maths::CVector3& GetSpecularColor() const { return m_vSpecularColor; }
+      void SetAmbientColor(math::CVector3 _vAmbientColor) { m_vAmbientColor = _vAmbientColor; }
+      const math::CVector3& GetAmbientColor() const { return m_vAmbientColor; }
+      void SetDiffuseColor(math::CVector3 _vDiffuseColor) { m_vDiffuseColor = _vDiffuseColor; }
+      const math::CVector3& GetDiffuseColor() const { return m_vDiffuseColor; }
+      void SetSpecularColor(math::CVector3 _vSpecularColor) { m_vSpecularColor = _vSpecularColor; }
+      const math::CVector3& GetSpecularColor() const { return m_vSpecularColor; }
 
       void SetOpacity(float _fTransparent) { m_fOpacity = _fTransparent; }
       const float& GetOpacity() const { return m_fOpacity; }
@@ -52,9 +52,9 @@ namespace render
       TMapTextures m_dctTextures = TMapTextures();
       std::string m_sMaterialId = {};
 
-      maths::CVector3 m_vAmbientColor = maths::CVector3::Zero; // Ka
-      maths::CVector3 m_vDiffuseColor = maths::CVector3::Zero; // Kd
-      maths::CVector3 m_vSpecularColor = maths::CVector3::Zero; // Ks
+      math::CVector3 m_vAmbientColor = math::CVector3::Zero; // Ka
+      math::CVector3 m_vDiffuseColor = math::CVector3::Zero; // Kd
+      math::CVector3 m_vSpecularColor = math::CVector3::Zero; // Ks
 
       float m_fOpticalDensity = 1.0f; // Ni
       float m_fSpecularExponent = 1.0f; // Ns

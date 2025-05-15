@@ -9,7 +9,7 @@ namespace physics
   namespace internal_physics_manager
   {
     const float s_fGravityForce(9.8f);
-    static maths::CVector3 s_v3GravityForce(0.0f, -internal_physics_manager::s_fGravityForce, 0.0f);
+    static math::CVector3 s_v3GravityForce(0.0f, -internal_physics_manager::s_fGravityForce, 0.0f);
   }
 
   // ------------------------------------
@@ -30,7 +30,7 @@ namespace physics
       pRigidbody->m_v3Acceleration += internal_physics_manager::s_v3GravityForce;
 
       // Add acceleration
-      if (!pRigidbody->m_v3Acceleration.Equal(maths::CVector3::Zero))
+      if (!pRigidbody->m_v3Acceleration.Equal(math::CVector3::Zero))
       {
         pRigidbody->m_v3Velocity += pRigidbody->m_v3Acceleration * _fDeltaTime;
       }
@@ -41,11 +41,11 @@ namespace physics
       pRigidbody->m_v3Velocity *= expf(-fExpCoefficient * _fDeltaTime);
 
       // Notify displacement -> i extracted this equation from the internet
-      maths::CVector3 v3Displacement = (pRigidbody->m_v3Velocity * _fDeltaTime) + (pRigidbody->m_v3Acceleration * _fDeltaTime * _fDeltaTime * 0.5f);
+      math::CVector3 v3Displacement = (pRigidbody->m_v3Velocity * _fDeltaTime) + (pRigidbody->m_v3Acceleration * _fDeltaTime * _fDeltaTime * 0.5f);
       pRigidbody->m_OnVelocityChangedDelegate(v3Displacement);
 
       // Compute angular displacement
-      if (!pRigidbody->m_v3Torque.Equal(maths::CVector3::Zero))
+      if (!pRigidbody->m_v3Torque.Equal(math::CVector3::Zero))
       {
         pRigidbody->m_v3AngularVelocity += (pRigidbody->m_v3Torque / pRigidbody->m_fInertia) * _fDeltaTime;
       }
@@ -58,8 +58,8 @@ namespace physics
       pRigidbody->m_OnRotationChangedDelegate(pRigidbody->m_v3AngularVelocity * _fDeltaTime);
 
       // Reset acceleration + torque
-      pRigidbody->m_v3Acceleration = maths::CVector3::Zero;
-      pRigidbody->m_v3Torque = maths::CVector3::Zero;
+      pRigidbody->m_v3Acceleration = math::CVector3::Zero;
+      pRigidbody->m_v3Torque = math::CVector3::Zero;
     }
   }
   // ------------------------------------

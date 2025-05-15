@@ -97,7 +97,7 @@ Index of this file:
 #pragma GCC diagnostic ignored "-Wdeprecated-enum-enum-conversion"  // warning: bitwise operation between different enumeration types ('XXXFlags_' and 'XXXFlagsPrivate_') is deprecated
 #endif
 
-// In 1.89.4, we moved the implementation of "courtesy maths operators" from imgui_internal.h in imgui.h
+// In 1.89.4, we moved the implementation of "courtesy math operators" from imgui_internal.h in imgui.h
 // As they are frequently requested, we do not want to encourage to many people using imgui_internal.h
 #if defined(IMGUI_DEFINE_MATH_OPERATORS) && !defined(IMGUI_DEFINE_MATH_OPERATORS_IMPLEMENTED)
 #error Please '#define IMGUI_DEFINE_MATH_OPERATORS' _BEFORE_ including imgui.h!
@@ -326,7 +326,7 @@ extern IMGUI_API ImGuiContext* GImGui;  // Current implicit context pointer
 // - Helpers: Formatting
 // - Helpers: UTF-8 <> wchar conversions
 // - Helpers: ImVec2/ImVec4 operators
-// - Helpers: Maths
+// - Helpers: Math
 // - Helpers: Geometry
 // - Helper: ImVec1
 // - Helper: ImVec2ih
@@ -422,7 +422,7 @@ IMGUI_API ImU64             ImFileWrite(const void* data, ImU64 size, ImU64 coun
 #endif
 IMGUI_API void*             ImFileLoadToMemory(const char* filename, const char* mode, size_t* out_file_size = NULL, int padding_bytes = 0);
 
-// Helpers: Maths
+// Helpers: Math
 IM_MSVC_RUNTIME_CHECKS_OFF
 // - Wrapper for standard libs functions. (Note that imgui_demo.cpp does _not_ use them to keep the code easy to copy)
 #ifndef IMGUI_DISABLE_DEFAULT_MATH_FUNCTIONS
@@ -460,7 +460,7 @@ template<typename T> static inline T ImLerp(T a, T b, float t)                  
 template<typename T> static inline void ImSwap(T& a, T& b)                      { T tmp = a; a = b; b = tmp; }
 template<typename T> static inline T ImAddClampOverflow(T a, T b, T mn, T mx)   { if (b < 0 && (a < mn - b)) return mn; if (b > 0 && (a > mx - b)) return mx; return a + b; }
 template<typename T> static inline T ImSubClampOverflow(T a, T b, T mn, T mx)   { if (b > 0 && (a < mn + b)) return mn; if (b < 0 && (a > mx + b)) return mx; return a - b; }
-// - Misc maths helpers
+// - Misc math helpers
 static inline ImVec2 ImMin(const ImVec2& lhs, const ImVec2& rhs)                { return ImVec2(lhs.x < rhs.x ? lhs.x : rhs.x, lhs.y < rhs.y ? lhs.y : rhs.y); }
 static inline ImVec2 ImMax(const ImVec2& lhs, const ImVec2& rhs)                { return ImVec2(lhs.x >= rhs.x ? lhs.x : rhs.x, lhs.y >= rhs.y ? lhs.y : rhs.y); }
 static inline ImVec2 ImClamp(const ImVec2& v, const ImVec2&mn, const ImVec2&mx) { return ImVec2((v.x < mn.x) ? mn.x : (v.x > mx.x) ? mx.x : v.x, (v.y < mn.y) ? mn.y : (v.y > mx.y) ? mx.y : v.y); }

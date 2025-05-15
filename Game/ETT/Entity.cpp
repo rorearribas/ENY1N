@@ -7,7 +7,7 @@
 #include <typeinfo>
 #include "Engine/Base/Engine.h"
 #include <iostream>
-#include "Libs/Maths/Maths.h"
+#include "Libs/Math/Math.h"
 
 namespace game
 {
@@ -65,7 +65,7 @@ namespace game
 
     // Transpose matrix
     float matrix[16];
-    maths::CMatrix4x4 mTranspose = maths::CMatrix4x4::Transpose(m_oTransform.ComputeModelMatrix());
+    math::CMatrix4x4 mTranspose = math::CMatrix4x4::Transpose(m_oTransform.ComputeModelMatrix());
     memcpy(matrix, mTranspose(), sizeof(matrix));
 
     // Get matrix
@@ -78,8 +78,8 @@ namespace game
     ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
     // get view matrix
-    const maths::CMatrix4x4& viewMatrix = pCamera->GetViewMatrix();
-    const maths::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
+    const math::CMatrix4x4& viewMatrix = pCamera->GetViewMatrix();
+    const math::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
 
     // Recompose matrix
     ImGuizmo::RecomposeMatrixFromComponents(fTranslation, fRotation, fScale, matrix);
@@ -97,12 +97,12 @@ namespace game
       {
       case ImGuizmo::TRANSLATE:
       {
-        SetPosition(maths::CVector3(fTranslation[0], fTranslation[1], fTranslation[2]));
+        SetPosition(math::CVector3(fTranslation[0], fTranslation[1], fTranslation[2]));
       }
       break;
       case ImGuizmo::ROTATE:
       {
-        maths::CVector3 vNewRot = m_oTransform.GetRotation();
+        math::CVector3 vNewRot = m_oTransform.GetRotation();
         vNewRot.X += (fRotation[0] - vNewRot.X) * -1.0f;
         vNewRot.Y += (fRotation[1] - vNewRot.Y) * -1.0f;
         vNewRot.Z += (fRotation[2] - vNewRot.Z) * -1.0f;
@@ -111,7 +111,7 @@ namespace game
       break;
       case ImGuizmo::SCALE:
       {
-        SetScale(maths::CVector3(fScale[0], fScale[1], fScale[2]));
+        SetScale(math::CVector3(fScale[0], fScale[1], fScale[2]));
       }
       break;
       }
@@ -129,9 +129,9 @@ namespace game
     if (!ImGuizmo::IsUsing())
     {
       // Update the entity
-      SetPosition(maths::CVector3(fTranslation[0], fTranslation[1], fTranslation[2]));
-      SetRotation(maths::CVector3(fRotation[0], fRotation[1], fRotation[2]));
-      SetScale(maths::CVector3(fScale[0], fScale[1], fScale[2]));
+      SetPosition(math::CVector3(fTranslation[0], fTranslation[1], fTranslation[2]));
+      SetRotation(math::CVector3(fRotation[0], fRotation[1], fRotation[2]));
+      SetScale(math::CVector3(fScale[0], fScale[1], fScale[2]));
     }
 
     // Draw debug on components
@@ -147,7 +147,7 @@ namespace game
     ImGui::End();
   }
   // ------------------------------------
-  void CEntity::SetPosition(const maths::CVector3& _v3Position)
+  void CEntity::SetPosition(const math::CVector3& _v3Position)
   {
     m_oTransform.SetPosition(_v3Position);
 
@@ -161,7 +161,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::SetRotation(const maths::CVector3& _v3Rot)
+  void CEntity::SetRotation(const math::CVector3& _v3Rot)
   {
     m_oTransform.SetRotation(_v3Rot);
 
@@ -175,7 +175,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::SetScale(const maths::CVector3& _v3Scale)
+  void CEntity::SetScale(const math::CVector3& _v3Scale)
   {
     m_oTransform.SetScale(_v3Scale);
 

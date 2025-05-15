@@ -2,7 +2,7 @@
 #include "Game/ETT/Components/Component.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
-#include "Libs/Maths/Vector3.h"
+#include "Libs/Math/Vector3.h"
 
 namespace game { class CEntity; }
 
@@ -21,19 +21,19 @@ namespace game
     void CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode = render::ERenderMode::SOLID);
 
     void SetPrimitiveRenderMode(render::ERenderMode _eRenderMode);
-    void SetPrimitiveColor(const maths::CVector3& _v3Color);
+    void SetPrimitiveColor(const math::CVector3& _v3Color);
 
-    void SetPosition(const maths::CVector3& _v3Position);
-    const maths::CVector3& GetPosition() const;
-    void SetRotation(const maths::CVector3& _v3Rot);
-    const maths::CVector3& GetRotation() const;
-    void SetScale(const maths::CVector3& _v3Scale);
-    const maths::CVector3& GetScale() const;
+    void SetPosition(const math::CVector3& _v3Position);
+    const math::CVector3& GetPosition() const;
+    void SetRotation(const math::CVector3& _v3Rot);
+    const math::CVector3& GetRotation() const;
+    void SetScale(const math::CVector3& _v3Scale);
+    const math::CVector3& GetScale() const;
 
   protected:
-    virtual void OnPositionChanged(const maths::CVector3& _v3Pos) override;
-    virtual void OnRotationChanged(const maths::CVector3& _v3Rot) override;
-    virtual void OnScaleChanged(const maths::CVector3& _v3Scale) override;
+    virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;
+    virtual void OnRotationChanged(const math::CVector3& _v3Rot) override;
+    virtual void OnScaleChanged(const math::CVector3& _v3Scale) override;
 
   private:
     void Clean();

@@ -1,7 +1,7 @@
 #pragma once
 #include "Game/ETT/Components/Component.h"
 #include "Engine/Render/Lights/Light.h"
-#include "Libs/Maths/Vector3.h"
+#include "Libs/Math/Vector3.h"
 
 namespace game { class CEntity; }
 
@@ -20,14 +20,14 @@ namespace game
     void SetLightType(render::lights::ELightType _eLightType);
     render::lights::ELightType GetLightType() const;
 
-    void SetPosition(const maths::CVector3& _v3Position);
-    const maths::CVector3& GetPosition() const;
-    void SetRotation(const maths::CVector3& _v3Rot);
-    const maths::CVector3& GetRotation() const;
+    void SetPosition(const math::CVector3& _v3Position);
+    const math::CVector3& GetPosition() const;
+    void SetRotation(const math::CVector3& _v3Rot);
+    const math::CVector3& GetRotation() const;
 
   protected:
-    virtual void OnPositionChanged(const maths::CVector3& _v3Pos) override;
-    virtual void OnRotationChanged(const maths::CVector3& _v3Rot) override;
+    virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;
+    virtual void OnRotationChanged(const math::CVector3& _v3Rot) override;
 
   private:
     void Clean();

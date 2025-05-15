@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Maths\Vector3.h">
+    <ClInclude Include="Math\Vector3.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Maths\Vector2.h">
+    <ClInclude Include="Math\Vector2.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Maths\Matrix4x4.h">
+    <ClInclude Include="Math\Matrix4x4.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Utils\Singleton.h">
@@ -57,10 +57,10 @@
     <ClInclude Include="Time\TimeManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Maths\Maths.h">
+    <ClInclude Include="Math\Math.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Maths\Transform.h">
+    <ClInclude Include="Math\Transform.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Macros\GlobalMacros.h">
@@ -155,13 +155,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Maths\Vector3.cpp">
+    <ClCompile Include="Math\Vector3.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Maths\Vector2.cpp">
+    <ClCompile Include="Math\Vector2.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Maths\Matrix4x4.cpp">
+    <ClCompile Include="Math\Matrix4x4.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="ImGui\imgui_demo.cpp">
@@ -188,7 +188,7 @@
     <ClCompile Include="Time\TimeManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Maths\Transform.cpp">
+    <ClCompile Include="Math\Transform.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Third-Party\stb\stb_vorbis.c">

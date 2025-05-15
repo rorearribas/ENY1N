@@ -2,8 +2,8 @@
 #include <random>
 
 #include "Engine/Base/Engine.h"
-#include "Libs/Maths/Vector2.h"
-#include "Libs/Maths/Vector3.h"
+#include "Libs/Math/Vector2.h"
+#include "Libs/Math/Vector3.h"
 #include "Libs/Macros/GlobalMacros.h"
 
 #include "Engine/Render/Graphics/Primitive.h"
@@ -26,7 +26,7 @@
 #include "Engine/Physics/PhysicsManager.h"
 #include "Libs/ImGui/imgui.h"
 #include "Game/ETT/Components/RigidbodyComponent/RigidbodyComponent.h"
-#include "Libs/Maths/Maths.h"
+#include "Libs/Math/Math.h"
 
 float GenerateFloat(float min, float max) 
 {
@@ -41,9 +41,11 @@ float GenerateFloat(float min, float max)
 
 int main()
 {
-  // Engine
+  // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
-  pEngine->InitEngine(WIDTH, HEIGHT);
+  pEngine->Init(WIDTH, HEIGHT);
+  pEngine->GetCamera()->SetPosition(math::CVector3(0.0f, 0.0f, 10.0f));
+
   // Collisions manager
   collisions::CCollisionManager* pCollisionManager = collisions::CCollisionManager::CreateSingleton();
   // Physics manager
@@ -57,21 +59,22 @@ int main()
   // Game manager
   game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
 
+  // Create directional light
   game::CEntity* pDirectionaLight = pGameManager->CreateEntity("Directional Light");
   pDirectionaLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
-  pPlaneModel->SetPrimitiveColor(maths::CVector3(0.5f, 0.5f, 0.5f));
-  pPlaneEntity->SetScale(maths::CVector3(200.0f, 0.0f, 200.0f));
+  pPlaneModel->SetPrimitiveColor(math::CVector3(0.5f, 0.5f, 0.5f));
+  pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponent->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
   collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
-  pBoxCollider->SetSize(maths::CVector3(200.0f, 0.0f, 200.0f));
+  pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
   //game::CEntity* pTestModel = pGameManager->CreateEntity("Model");
-  //pTestModel->SetRotation(maths::CVector3(-90.0f, 0.0f, 180.0f));
+  //pTestModel->SetRotation(math::CVector3(-90.0f, 0.0f, 180.0f));
   //game::CModelComponent* pModelComp = pTestModel->RegisterComponent<game::CModelComponent>();
   //pModelComp->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
   //game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
@@ -89,7 +92,7 @@ int main()
     float fColorY = GenerateFloat(0.01f, 0.99f);
     float fColorZ = GenerateFloat(0.01f, 0.99f);
 
-    pSphereModel2->SetPrimitiveColor(maths::CVector3(fColorX, fColorY, fColorZ));
+    pSphereModel2->SetPrimitiveColor(math::CVector3(fColorX, fColorY, fColorZ));
     pSphereEntity->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::SPHERE_COLLIDER);
     pSphereEntity->RegisterComponent<game::CRigidbodyComponent>();
 
@@ -97,7 +100,7 @@ int main()
     float fRandomX = GenerateFloat(-10.0f, 10.0f);
     float fRandomZ = GenerateFloat(-0.5f, 0.5f);
 
-    pSphereEntity->SetPosition(maths::CVector3(fRandomX, fRandomY, fRandomZ));
+    pSphereEntity->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
     vctPhysics.emplace_back(pSphereEntity);
   }
 
@@ -106,7 +109,7 @@ int main()
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
-    pModelCompTest->SetPrimitiveColor(maths::CVector3::Forward);
+    pModelCompTest->SetPrimitiveColor(math::CVector3::Forward);
 
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
@@ -134,7 +137,7 @@ int main()
 
       // Calculate 
       float fDeltaTime = pTimeManager->GetDeltaTime();
-      float fOffset = maths::Clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
+      float fOffset = math::Clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
       m_fFixedDeltaAccumulator += fOffset;
 
       // Update
@@ -209,6 +212,7 @@ int main()
     }
   }
 
+  // Destroy
   pGameManager->DestroySingleton();
   pCollisionManager->DestroySingleton();
   pTimeManager->DestroySingleton();

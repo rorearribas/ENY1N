@@ -25,14 +25,14 @@ namespace input
   CMouse::CMouse()
   {
     // Raw input config
-    RAWINPUTDEVICE Rid = RAWINPUTDEVICE();
-    Rid.usUsagePage = HID_USAGE_PAGE_GENERIC;
-    Rid.usUsage = HID_USAGE_GENERIC_MOUSE;
-    Rid.dwFlags = RIDEV_INPUTSINK;
-    Rid.hwndTarget = global::window::s_oHwnd;
+    RAWINPUTDEVICE oRawInputDevice = RAWINPUTDEVICE();
+    oRawInputDevice.usUsagePage = HID_USAGE_PAGE_GENERIC;
+    oRawInputDevice.usUsage = HID_USAGE_GENERIC_MOUSE;
+    oRawInputDevice.dwFlags = RIDEV_INPUTSINK;
+    oRawInputDevice.hwndTarget = global::window::s_oHwnd;
 
     // Register raw input
-    bool bOk = RegisterRawInputDevices(&Rid, 1, sizeof(Rid));
+    bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
     UNUSED_VARIABLE(bOk);
     assert(bOk);
 
@@ -45,16 +45,16 @@ namespace input
     global::delegates::s_oUpdateMouseDelegate.Clear();
   }
   // ------------------------------------
-  const maths::CVector2 CMouse::GetMouseDelta() const
+  const math::CVector2 CMouse::GetMouseDelta() const
   {
     return m_vMouseDelta;
   }
   // ------------------------------------
-  const maths::CVector2 CMouse::GetMousePosition() const
+  const math::CVector2 CMouse::GetMousePosition() const
   {
     POINT oScreenPoint = POINT();
     return GetCursorPos(&oScreenPoint) ?
-    maths::CVector2(static_cast<float>(oScreenPoint.x), static_cast<float>(oScreenPoint.y)) : maths::CVector2::Zero;
+    math::CVector2(static_cast<float>(oScreenPoint.x), static_cast<float>(oScreenPoint.y)) : math::CVector2::Zero;
   }
   // ------------------------------------
   const float CMouse::GetMouseWheelDelta() const
@@ -95,14 +95,14 @@ namespace input
   CKeyboard::CKeyboard()
   {
     // Raw input config
-    RAWINPUTDEVICE Rid = {};
-    Rid.usUsagePage = HID_USAGE_PAGE_GENERIC;
-    Rid.usUsage = HID_USAGE_GENERIC_KEYBOARD;
-    Rid.dwFlags = RIDEV_INPUTSINK;
-    Rid.hwndTarget = global::window::s_oHwnd;
+    RAWINPUTDEVICE oRawInputDevice = RAWINPUTDEVICE();
+    oRawInputDevice.usUsagePage = HID_USAGE_PAGE_GENERIC;
+    oRawInputDevice.usUsage = HID_USAGE_GENERIC_KEYBOARD;
+    oRawInputDevice.dwFlags = RIDEV_INPUTSINK;
+    oRawInputDevice.hwndTarget = global::window::s_oHwnd;
 
     // Register keyboard input
-    bool bOk = RegisterRawInputDevices(&Rid, 1, sizeof(Rid));
+    bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
     UNUSED_VARIABLE(bOk);
     assert(bOk);
 
@@ -165,7 +165,7 @@ namespace input
   {
     if (m_pMouse)
     {
-      m_pMouse->m_vMouseDelta = maths::CVector2::Zero;
+      m_pMouse->m_vMouseDelta = math::CVector2::Zero;
       m_pMouse->m_fMouseWheelDelta = 0.0f;
     }
   }

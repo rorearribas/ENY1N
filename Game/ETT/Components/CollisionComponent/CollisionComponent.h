@@ -1,6 +1,6 @@
 #pragma once
 #include "Game/ETT/Components/Component.h"
-#include "Libs/Maths/Vector3.h"
+#include "Libs/Math/Vector3.h"
 #include "Engine/Collisions/Collider.h"
 #include "Engine/Render/Graphics/Primitive.h"
 
@@ -19,14 +19,14 @@ namespace game
     void CreateCollider(collisions::EColliderType _eColliderType);
     collisions::CCollider* const GetCollider() { return m_pCollider; }
 
-    void SetPosition(const maths::CVector3& _v3Position);
-    const maths::CVector3& GetPosition() const;
-    void SetRotation(const maths::CVector3& _v3Rotation);
-    const maths::CVector3& GetRotation() const;
+    void SetPosition(const math::CVector3& _v3Position);
+    const math::CVector3& GetPosition() const;
+    void SetRotation(const math::CVector3& _v3Rotation);
+    const math::CVector3& GetRotation() const;
 
   protected:
-    virtual void OnPositionChanged(const maths::CVector3& _v3Pos) override;
-    virtual void OnRotationChanged(const maths::CVector3& _v3Rot) override;
+    virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;
+    virtual void OnRotationChanged(const math::CVector3& _v3Rot) override;
     virtual void DrawDebug() override;
 
   private:

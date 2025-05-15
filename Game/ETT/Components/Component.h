@@ -1,5 +1,5 @@
 #pragma once
-#include "Libs/Maths/Vector3.h"
+#include "Libs/Math/Vector3.h"
 #include "Engine/Collisions/Collider.h"
 
 namespace collisions { class CCollider; }
@@ -21,9 +21,9 @@ namespace game
 
     CEntity* GetOwner() const { return m_pOwner; }
 
-    virtual void OnPositionChanged(const maths::CVector3&) {}
-    virtual void OnRotationChanged(const maths::CVector3&) {}
-    virtual void OnScaleChanged(const maths::CVector3&) {}
+    virtual void OnPositionChanged(const math::CVector3&) {}
+    virtual void OnRotationChanged(const math::CVector3&) {}
+    virtual void OnScaleChanged(const math::CVector3&) {}
 
     virtual void OnCollisionEnter(const collisions::SHitEvent&) {}
     virtual void OnCollisionStay(const collisions::SHitEvent&) {}

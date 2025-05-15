@@ -13,7 +13,7 @@ C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\imgui_impl_win32.cpp;C:\Users\
 C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\imgui_tables.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\imgui_tables.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\imgui_widgets.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\imgui_widgets.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\imgui_impl_dx11.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\imgui_impl_dx11.obj
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\Maths\Vector2.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Vector2.obj
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\Maths\Vector3.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Vector3.obj
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\Maths\Matrix4x4.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Matrix4x4.obj
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\Maths\Transform.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Transform.obj
+C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\Math\Vector2.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Vector2.obj
+C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\Math\Vector3.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Vector3.obj
+C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\Math\Matrix4x4.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Matrix4x4.obj
+C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\Math\Transform.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Transform.obj

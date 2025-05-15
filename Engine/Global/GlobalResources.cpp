@@ -17,7 +17,7 @@ namespace global
   namespace delegates
   {
     std::vector<utils::CDelegate<void(uint32_t, uint32_t)>> s_vctOnWindowResizeDelegates;
-    utils::CDelegate<void(RAWKEYBOARD*)> s_oOnUpdateKeyboardDelegate = {};
-    utils::CDelegate<void(RAWMOUSE*)> s_oUpdateMouseDelegate = {};
+    utils::CDelegate<void(RAWKEYBOARD*)> s_oOnUpdateKeyboardDelegate;
+    utils::CDelegate<void(RAWMOUSE*)> s_oUpdateMouseDelegate;
   }
 }
