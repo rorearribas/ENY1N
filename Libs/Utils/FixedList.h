@@ -38,14 +38,15 @@ namespace utils
   template<typename T, size_t MAX_ITEMS>
   void CFixedList<T, MAX_ITEMS>::ClearAll()
   {
-    std::for_each(m_vctItemList.begin(), m_vctItemList.end(), [](T* _pItem)
+    for (uint32_t uIndex = 0; uIndex < m_uRegisteredItems; uIndex++)
     {
-      if (_pItem)
+      T*& pItem = m_vctItemList[uIndex];
+      if (pItem)
       {
-        delete _pItem;
-        _pItem = nullptr;
+        delete pItem;
+        pItem = nullptr;
       }
-    });
+    }
     m_uRegisteredItems = 0;
   }
 

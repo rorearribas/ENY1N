@@ -61,7 +61,9 @@ namespace game
   void CLightComponent::DrawDebug()
   {
     ImGui::Spacing();
-    std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
+
+    CEntity* pEntity = GetOwner();
+    std::string sOwnerName = pEntity->GetName();
 
     switch (m_pLight->GetLightType())
     {

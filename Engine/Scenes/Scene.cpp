@@ -10,6 +10,7 @@
 #include <random>
 #include <cassert>
 #include <iostream>
+#include "../Render/Graphics/PrimitiveUtils.h"
 
 namespace scene
 {
@@ -30,11 +31,23 @@ namespace scene
   // ------------------------------------
   void CScene::DrawPrimitives()
   {
+    // Draw primitives
     for (uint32_t uIndex = 0; uIndex < m_vctPrimitiveItems.CurrentSize(); uIndex++)
     {
       render::graphics::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[uIndex];
       pPrimitiveItem->DrawPrimitive();
     }
+
+    // Draw temporal primitives
+    for (uint32_t uIndex = 0; uIndex < m_vctTemporalItems.CurrentSize(); uIndex++)
+    {
+      render::graphics::CPrimitive* pPrimitiveItem = m_vctTemporalItems[uIndex];
+      if (pPrimitiveItem)
+      {
+        pPrimitiveItem->DrawPrimitive();
+      }
+    }
+    m_vctTemporalItems.ClearAll();
   }
   // ------------------------------------
   void CScene::DrawModels()
@@ -46,7 +59,7 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::UpdateLights()
+  void CScene::ApplyLights()
   {
     // Fill data
     auto& oGlobalLightningData = m_oLightningBuffer.GetData();
@@ -62,7 +75,7 @@ namespace scene
     // Point lights
     for (uint32_t uIndex = 0; uIndex < m_vctPointLights.CurrentSize(); uIndex++)
     {
-      render::lights::CPointLight* pPointLight = m_vctPointLights[uIndex];
+      const render::lights::CPointLight* pPointLight = m_vctPointLights[uIndex];
       oGlobalLightningData.PointLights[uIndex].Position = pPointLight->GetPosition();
       oGlobalLightningData.PointLights[uIndex].Color = pPointLight->GetColor();
       oGlobalLightningData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
@@ -74,7 +87,7 @@ namespace scene
     // Spot lights
     for (uint32_t uIndex = 0; uIndex < m_vctSpotLights.CurrentSize(); uIndex++)
     {
-      render::lights::CSpotLight* pSpotLight = m_vctSpotLights[uIndex];
+      const render::lights::CSpotLight* pSpotLight = m_vctSpotLights[uIndex];
       oGlobalLightningData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
       oGlobalLightningData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
       oGlobalLightningData.SpotLights[uIndex].Color = pSpotLight->GetColor();
@@ -85,8 +98,10 @@ namespace scene
     // Set the number of registered spot lights
     oGlobalLightningData.RegisteredSpotLights = static_cast<int>(m_vctSpotLights.CurrentSize());
 
-    // Update buffer
-    m_oLightningBuffer.UpdateBuffer();
+    // Write buffer
+    bool bOk = m_oLightningBuffer.WriteBuffer();
+    UNUSED_VARIABLE(bOk);
+    assert(bOk);
 
     // Apply constant buffer
     ID3D11Buffer* pConstantBuffer = m_oLightningBuffer.GetBuffer();
@@ -109,6 +124,74 @@ namespace scene
     if (m_pDirectionalLight) { delete m_pDirectionalLight; m_pDirectionalLight = nullptr; }
     m_vctPointLights.ClearAll();
     m_vctSpotLights.ClearAll();
+  }
+  // ------------------------------------
+  void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode, bool /*_bPermanent*/)
+  {
+    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
+    {
+      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      return;
+    }
+
+    // Create vertex data
+    render::graphics::CPrimitive::SVertexData oVertexData = render::graphics::CPrimitive::SVertexData();
+
+    // Fill primitive data
+    render::graphics::CPrimitiveUtils::CreateSphere(_fRadius, _iStacks, _iSlices, oVertexData.m_vctPrimitiveData);
+    
+    // Fill indices
+    oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::GetSphereIndices(_iStacks, _iSlices) :
+    render::graphics::CPrimitiveUtils::GetWireframeSphereIndices(_iStacks, _iSlices);
+
+    // Create temporal item + set pos
+    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
+    assert(pPrimitive);
+    pPrimitive->SetPosition(_v3Pos);
+  }
+  // ------------------------------------
+  void CScene::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool /*_bPermanent*/)
+  {
+    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
+    {
+      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      return;
+    }
+
+    // Create line
+    render::graphics::CPrimitive::SVertexData oVertexData = render::graphics::CPrimitive::SVertexData();
+    render::graphics::CPrimitiveUtils::CreateLine(_v3Origin, _v3Dest, _v3Color, oVertexData);
+
+    // Create temporal item
+    m_vctTemporalItems.CreateItem(oVertexData, render::ERenderMode::WIREFRAME);
+  }
+  // ------------------------------------
+  void CScene::DrawCube(const math::CVector3& _v3Pos, float _fSize, render::ERenderMode _eRenderMode, bool /*_bPermanent*/)
+  {
+    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
+    {
+      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      return;
+    }
+
+    // Create vertex data
+    render::graphics::CPrimitive::SVertexData oVertexData = render::graphics::CPrimitive::SVertexData();
+
+    // Set primitive data
+    oVertexData.m_vctPrimitiveData = render::graphics::CPrimitiveUtils::s_oCubePrimitive;
+
+    // Set indices
+    oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::s_oCubeIndices :
+    render::graphics::CPrimitiveUtils::s_oCubeWireframeIndices;
+
+    // Create item + set pos
+    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
+    assert(pPrimitive);
+
+    // Set values
+    pPrimitive->SetPosition(_v3Pos);
+    pPrimitive->SetColor(math::CVector3::One);
+    pPrimitive->SetScale(math::CVector3::One * _fSize);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)

@@ -5,7 +5,7 @@ namespace math
   namespace internal_transform
   {
     const float fMaxDegrees = 360.0f;
-    static float ComputeValidAngle(float fAngle)
+    static float AdjustAngle(float fAngle)
     {
       fAngle = fmod(fAngle, fMaxDegrees);
       fAngle = (fAngle > fMaxDegrees / 2.0f) ? (fAngle - fMaxDegrees) : (fAngle < -(fMaxDegrees / 2.0f) ? (fAngle + fMaxDegrees) : fAngle);
@@ -30,9 +30,9 @@ namespace math
   // ------------------------------------
   void CTransform::SetRotation(const math::CVector3& _v3Rotation)
   {
-    m_v3Rot.X = internal_transform::ComputeValidAngle(_v3Rotation.X);
-    m_v3Rot.Y = internal_transform::ComputeValidAngle(_v3Rotation.Y);
-    m_v3Rot.Z = internal_transform::ComputeValidAngle(_v3Rotation.Z);
+    m_v3Rot.X = internal_transform::AdjustAngle(_v3Rotation.X);
+    m_v3Rot.Y = internal_transform::AdjustAngle(_v3Rotation.Y);
+    m_v3Rot.Z = internal_transform::AdjustAngle(_v3Rotation.Z);
   }
   // ------------------------------------
   const math::CVector3& CTransform::GetRotation() const

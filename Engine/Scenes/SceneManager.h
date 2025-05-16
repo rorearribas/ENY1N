@@ -23,6 +23,12 @@ namespace scene
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
     void DisableAllScenes() const;
 
+    // Debug creation
+    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode = render::ERenderMode::SOLID, bool _bPermanent = false);
+    void DrawCube(const math::CVector3& _v3Origin, float _fSize, render::ERenderMode = render::ERenderMode::SOLID, bool _bPermanent = false);
+    void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool _bPermanent = false);
+
+    // Element creation
     render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType&, render::ERenderMode = render::ERenderMode::SOLID, uint32_t _uSceneIndex = 0);
     render::graphics::CModel* const CreateModel(const char*, const char*, uint32_t _uSceneIndex = 0);
 

@@ -7,8 +7,8 @@ namespace render
   namespace lights
   {
     // Static values
-    math::CVector3 CDirectionalLight::s_vDefaultDirectionalColor(1.0f, 0.9f, 0.6f);
-    math::CVector3 CDirectionalLight::s_vDefaultDirection(0.8f, -1.0f, 0.6f);
+    math::CVector3 CDirectionalLight::s_vDefaultDirectionalColor(1.0f, 1.0f, 1.0f);
+    math::CVector3 CDirectionalLight::s_vDefaultDirection(1.0f, 1.0f, 1.0f);
     // ------------------------------------
   }
 }

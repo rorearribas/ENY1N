@@ -17,8 +17,8 @@ namespace render
     {
       math::CVector3 Position = math::CVector3::Zero;
       math::CVector3 Normal = math::CVector3::Zero;
-      math::CVector2 TexCoord = math::CVector2::Zero;
       math::CVector3 Color = math::CVector3::One;
+      math::CVector2 TexCoord = math::CVector2::Zero;
       uint32_t MaterialId = 0;
 
       bool operator==(const SVertexData& _other) const

@@ -148,10 +148,11 @@
     <ClInclude Include="Collisions\CollisionManager.h" />
     <ClInclude Include="Physics\PhysicsManager.h" />
     <ClInclude Include="Collisions\Collider.h" />
+    <ClInclude Include="Render\Graphics\PrimitiveUtils.h" />
     <ClInclude Include="Render\Lights\WIP\LightManager.h" />
     <ClInclude Include="Physics\Rigidbody.h" />
-    <ClInclude Include="Shaders\Model\DeferredPixelShader.h" />
-    <ClInclude Include="Shaders\Model\DeferredVertexShader.h" />
+    <ClInclude Include="Shaders\Standard\ForwardPixelShader.h" />
+    <ClInclude Include="Shaders\Standard\ForwardVertexShader.h" />
     <ClInclude Include="Render\Graphics\Mesh.h" />
     <ClInclude Include="Render\Lights\Light.h" />
     <ClInclude Include="Render\Resources\Material.h" />
@@ -181,6 +182,7 @@
   <ItemGroup>
     <ClCompile Include="Collisions\CollisionManager.cpp" />
     <ClCompile Include="Physics\PhysicsManager.cpp" />
+    <ClCompile Include="Render\Graphics\PrimitiveUtils.cpp" />
     <ClCompile Include="Render\Lights\WIP\LightManager.cpp" />
     <ClCompile Include="Render\Graphics\Mesh.cpp" />
     <ClCompile Include="Render\Lights\Light.cpp" />
@@ -207,11 +209,11 @@
     <ClCompile Include="Collisions\SphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\Model\DeferredPixelShader.hlsl">
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_DeferredPixelShader</VariableName>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_DeferredPixelShader</VariableName>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Shaders\Model\DeferredPixelShader.h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Shaders\Model\DeferredPixelShader.h</HeaderFileOutput>
+    <FxCompile Include="Shaders\Standard\ForwardPixelShader.hlsl">
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_ForwardPixelShader</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_ForwardPixelShader</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Shaders\Standard\ForwardPixelShader.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Shaders\Standard\ForwardPixelShader.h</HeaderFileOutput>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">PSMain</EntryPointName>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">PSMain</EntryPointName>
@@ -219,17 +221,17 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
     </FxCompile>
-    <FxCompile Include="Shaders\Model\DeferredVertexShader.hlsl">
+    <FxCompile Include="Shaders\Standard\ForwardVertexShader.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VSMain</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Shaders\Model\DeferredVertexShader.h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Shaders\Model\DeferredVertexShader.h</HeaderFileOutput>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_DeferredVertexShader</VariableName>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_DeferredVertexShader</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Shaders\Standard\ForwardVertexShader.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Shaders\Standard\ForwardVertexShader.h</HeaderFileOutput>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_ForwardVertexShader</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_ForwardVertexShader</VariableName>
     </FxCompile>
     <FxCompile Include="Shaders\Primitive\PixelShader.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>

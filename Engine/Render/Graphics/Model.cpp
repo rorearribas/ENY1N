@@ -1,9 +1,9 @@
 #include "Model.h"
+#include "Engine/Shaders/Standard/ForwardVertexShader.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include "Engine/Base/Engine.h"
-#include "Engine/Shaders/Model/DeferredVertexShader.h"
 #include <cassert>
 
 namespace render
@@ -33,16 +33,16 @@ namespace render
       {
         { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
         { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
       };
 
       return global::dx11::s_pDevice->CreateInputLayout
       (
         oInputElementDesc,
         ARRAYSIZE(oInputElementDesc),
-        g_DeferredVertexShader,
-        sizeof(g_DeferredVertexShader),
+        g_ForwardVertexShader,
+        sizeof(g_ForwardVertexShader),
         &m_pInputLayout
       );
     }
@@ -98,8 +98,10 @@ namespace render
       global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
       // Set model matrix
-      m_oConstantBuffer.GetData().mMatrix = m_oModelTransform.ComputeModelMatrix();
-      m_oConstantBuffer.UpdateBuffer();
+      m_oConstantBuffer.GetData().Matrix = m_oModelTransform.ComputeModelMatrix();
+      bool bOk = m_oConstantBuffer.WriteBuffer();
+      UNUSED_VARIABLE(bOk);
+      assert(bOk);
 
       // Apply constant buffer
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();

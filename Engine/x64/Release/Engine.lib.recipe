@@ -3,10 +3,10 @@
   <ProjectOutputs />
   <ContentFiles>
     <ContentFile>
-      <FullPath>C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredPixelShader.cso</FullPath>
+      <FullPath>C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\ForwardPixelShader.cso</FullPath>
     </ContentFile>
     <ContentFile>
-      <FullPath>C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\DeferredVertexShader.cso</FullPath>
+      <FullPath>C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\ForwardVertexShader.cso</FullPath>
     </ContentFile>
     <ContentFile>
       <FullPath>C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\PixelShader.cso</FullPath>

@@ -73,14 +73,6 @@ int main()
   collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
   pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
-  //game::CEntity* pTestModel = pGameManager->CreateEntity("Model");
-  //pTestModel->SetRotation(math::CVector3(-90.0f, 0.0f, 180.0f));
-  //game::CModelComponent* pModelComp = pTestModel->RegisterComponent<game::CModelComponent>();
-  //pModelComp->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
-  //game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
-  //pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
-  //pTestModel->RegisterComponent<game::CRigidbodyComponent>();
-
   std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
@@ -115,12 +107,22 @@ int main()
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
+  game::CEntity* pTestModel = pGameManager->CreateEntity("Model");
+  pTestModel->SetRotation(math::CVector3(-90.0f, 0.0f, 180.0f));
+  game::CModelComponent* pModelComp = pTestModel->RegisterComponent<game::CModelComponent>();
+  pModelComp->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
+  game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
+  pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
+  pTestModel->RegisterComponent<game::CRigidbodyComponent>();
+
   render::CRender* const pRender = pEngine->GetRender();
   render::CCamera* const pRenderCamera = pEngine->GetCamera();
   pRender->GetRenderWindow()->SetEnabled(true);
 
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };
+
+  static bool bDraw = false;
 
   while (WM_QUIT != oMsg.message)
   {
@@ -198,6 +200,7 @@ int main()
       if (ImGui::Button("144"))
       {
         pTimeManager->SetMaxFPS(144);
+        bDraw = !bDraw;
       }
       if (ImGui::Button("300"))
       {

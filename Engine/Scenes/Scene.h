@@ -18,18 +18,20 @@ namespace scene
 {
   class CScene
   {
-  public:
+  private:
     static int constexpr s_iMaxSpotLights = 100;
-    static int constexpr s_iMaxLights = 200;
-    static int constexpr s_iMaxModels = 2500;
-    static int constexpr s_iMaxPrimitives = 500;
     static int constexpr s_iMaxPointLights = 100;
+
+    static int constexpr s_iMaxModels = 500;
+    static int constexpr s_iMaxPrimitives = 500;
+    static int constexpr s_iMaxTemporalItems = 500;
 
     // Lights
     typedef utils::CFixedList<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
     typedef utils::CFixedList<render::lights::CSpotLight, s_iMaxSpotLights> TSpotLightsList;
 
     // Graphics
+    typedef utils::CFixedList<render::graphics::CPrimitive, s_iMaxTemporalItems> TTemporalItemList;
     typedef utils::CFixedList<render::graphics::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
     typedef utils::CFixedList<render::graphics::CModel, s_iMaxPrimitives> TModelList;
 
@@ -41,11 +43,15 @@ namespace scene
     void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
     const bool& IsEnabled() const { return m_bEnabled; }
 
-    // Graphics
+    // Debug creation
+    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode = render::ERenderMode::SOLID, bool _bPermanent = false);
+    void DrawCube(const math::CVector3& _v3Pos, float _fSize, render::ERenderMode = render::ERenderMode::SOLID, bool _bPermanent = false);
+    void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool _bPermanent = false);
+
+    // Element creation
     render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode = render::ERenderMode::SOLID);
     render::graphics::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir);
 
-    // Lights
     render::lights::CDirectionalLight* const CreateDirectionalLight();
     render::lights::CPointLight* const CreatePointLight();
     render::lights::CSpotLight* const CreateSpotLight();
@@ -67,20 +73,21 @@ namespace scene
 
     void DrawPrimitives();
     void DrawModels();
-    void UpdateLights();
+    void ApplyLights();
 
   private:
     bool m_bEnabled = false;
     UINT32 m_uSceneIdx = 0;
 
     // Graphics
-    TModelList m_vctModels = {};
-    TPrimitiveList m_vctPrimitiveItems = {};
+    TModelList m_vctModels = TModelList();
+    TPrimitiveList m_vctPrimitiveItems = TPrimitiveList();
+    TTemporalItemList m_vctTemporalItems = TTemporalItemList();
 
     // Lights
     render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
-    TPointLightsList m_vctPointLights = {};
-    TSpotLightsList m_vctSpotLights = {};
+    TPointLightsList m_vctPointLights = TPointLightsList();
+    TSpotLightsList m_vctSpotLights = TSpotLightsList();
 
     // Global lightning buffer
     CConstantBuffer<SGlobalLightningData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightningBuffer;

@@ -66,8 +66,10 @@ namespace render
     UpdatePerspectiveMatrix();
 
     // Update constant buffer
-    m_oConstantBuffer.GetData().mMatrix = math::CMatrix4x4::Transpose(m_mViewMatrix * m_mProjectionMatrix);
-    m_oConstantBuffer.UpdateBuffer();
+    m_oConstantBuffer.GetData().Matrix = math::CMatrix4x4::Transpose(m_mViewMatrix * m_mProjectionMatrix);
+    bool bOk = m_oConstantBuffer.WriteBuffer();
+    UNUSED_VARIABLE(bOk);
+    assert(bOk);
 
     ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
     global::dx11::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);

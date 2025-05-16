@@ -62,8 +62,10 @@ namespace render
       // Set the number of registered spot lights
       oGlobalLightningData.RegisteredSpotLights = static_cast<int>(m_uRegisteredSpotLights);
 
-      // Update buffer
-      m_oLightningBuffer.UpdateBuffer();
+      // Write buffer
+      bool bOk = m_oLightningBuffer.WriteBuffer();
+      UNUSED_VARIABLE(bOk);
+      assert(bOk);
 
       // Push buffer
       ID3D11Buffer* pConstantBuffer = m_oLightningBuffer.GetBuffer();

@@ -8,8 +8,8 @@
 #include "Libs/ImGui/ImGuizmo.h"
 
 // Shaders
-#include "Engine/Shaders/Model/DeferredPixelShader.h"
-#include "Engine/Shaders/Model/DeferredVertexShader.h"
+#include "Engine/Shaders/Standard/ForwardPixelShader.h"
+#include "Engine/Shaders/Standard/ForwardVertexShader.h"
 #include "Engine/Shaders/Primitive/PixelShader.h"
 #include "Engine/Shaders/Primitive/VertexShader.h"
 
@@ -17,9 +17,9 @@ namespace render
 {
   namespace internal_render
   {
+    static const float s_v4ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
-    static const float s_v4ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     struct SRenderPipeline
     {
@@ -90,8 +90,8 @@ namespace render
     if (FAILED(hResult)) return hResult;
 
     // Create shaders for 3D pipeline
-    internal_render::s_oPipeline.ForwardPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_DeferredPixelShader, ARRAYSIZE(g_DeferredPixelShader));
-    internal_render::s_oPipeline.ForwardVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_DeferredVertexShader, ARRAYSIZE(g_DeferredVertexShader));
+    internal_render::s_oPipeline.ForwardPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_ForwardPixelShader, ARRAYSIZE(g_ForwardPixelShader));
+    internal_render::s_oPipeline.ForwardVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_ForwardVertexShader, ARRAYSIZE(g_ForwardVertexShader));
 
     // Create shaders for primitives
     internal_render::s_oPipeline.PrimitivesPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_PixelShader, ARRAYSIZE(g_PixelShader));
@@ -100,6 +100,10 @@ namespace render
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
     global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
+
+    // Push shaders for standard 3D pipeline
+    internal_render::s_oPipeline.ForwardPS->PushShader();
+    internal_render::s_oPipeline.ForwardVS->PushShader();
 
     return S_OK;
   }
@@ -336,7 +340,7 @@ namespace render
     }
   }
   // ------------------------------------
-  void CRender::BeginDraw()
+  void CRender::BeginDraw() const
   {
     // Clear resources
     global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oPipeline.RenderTargetView, internal_render::s_v4ClearColor);
@@ -351,27 +355,19 @@ namespace render
     ImGuizmo::BeginFrame();
   }
   // ------------------------------------
-  void CRender::Draw(scene::CScene* _pScene)
+  void CRender::Draw(scene::CScene* _pScene) const
   {
-    // Push shaders for 3D pipeline
-    internal_render::s_oPipeline.ForwardPS->PushShader();
-    internal_render::s_oPipeline.ForwardVS->PushShader();
+    // Update lights
+    _pScene->ApplyLights();
 
     // Draw models
     _pScene->DrawModels();
-
-    // Update lights
-    _pScene->UpdateLights();
-
-    // Push shaders for primitives
-    internal_render::s_oPipeline.PrimitivesPS->PushShader();
-    internal_render::s_oPipeline.PrimitivesVS->PushShader();
 
     // Draw primitives
     _pScene->DrawPrimitives();
   }
   // ------------------------------------
-  void CRender::EndDraw()
+  void CRender::EndDraw() const
   {
     // Update resources
     global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &internal_render::s_oPipeline.RenderTargetView, internal_render::s_oPipeline.DepthStencilView);

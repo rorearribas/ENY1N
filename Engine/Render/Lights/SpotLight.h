@@ -16,7 +16,7 @@ namespace render
       const math::CVector3& GetDirection() const { return m_v3Direction; }
       // Color
       void SetColor(const math::CVector3& _v3Color) { m_v3LightColor = _v3Color; }
-      const math::CVector3& GetColor() { return m_v3LightColor; }
+      const math::CVector3& GetColor() const { return m_v3LightColor; }
       // CutOffAngle
       void SetCutOffAngle(float _fValue) { m_fCutOffAngle = _fValue; }
       const float& GetCutOffAngle() const { return m_fCutOffAngle; }

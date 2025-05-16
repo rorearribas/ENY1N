@@ -33,7 +33,9 @@ namespace render
 
         // Update buffer
         m_oConstantTexture.GetData().bHasTexture = pTexture;
-        m_oConstantTexture.UpdateBuffer();
+        bool bOk = m_oConstantTexture.WriteBuffer();
+        UNUSED_VARIABLE(bOk);
+        assert(bOk);
 
         // Set constant buffer
         ID3D11Buffer* pConstantBuffer = m_oConstantTexture.GetBuffer();

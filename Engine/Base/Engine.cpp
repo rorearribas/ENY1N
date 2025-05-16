@@ -42,11 +42,6 @@ namespace engine
     m_bInitialized = true;
   }
   // ------------------------------------
-  void CEngine::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
-  {
-    m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
-  }
-  // ------------------------------------
   void CEngine::PushBeginDraw()
   {
     m_pRender->BeginDraw(); // Begin
@@ -61,6 +56,21 @@ namespace engine
   void CEngine::PushEndDraw()
   {
     m_pRender->EndDraw(); // End 
+  }
+  // ------------------------------------
+  void CEngine::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool _bPermanent)
+  {
+    m_pSceneManager->DrawLine(_v3Origin, _v3Dest, _v3Color, _bPermanent);
+  }
+  // ------------------------------------
+  void CEngine::DrawCube(const math::CVector3& _v3Pos, float _fSize, render::ERenderMode _eRenderMode, bool _bPermanent)
+  {
+    m_pSceneManager->DrawCube(_v3Pos, _fSize, _eRenderMode, _bPermanent);
+  }
+  // ------------------------------------
+  void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode, bool _bPermanent)
+  {
+    m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _eRenderMode, _bPermanent);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CEngine::CreatePrimitive
@@ -109,6 +119,11 @@ namespace engine
   {
     assert(pLight_);
     m_pSceneManager->DestroyLight(pLight_);
+  }
+  // ------------------------------------
+  void CEngine::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
+  {
+    m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
   }
   // ------------------------------------
 }

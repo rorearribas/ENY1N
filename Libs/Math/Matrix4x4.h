@@ -37,18 +37,18 @@ namespace math
     }
     CMatrix4x4 operator*(const CMatrix4x4& _mMatrix) const
     {
-      CMatrix4x4 mMatrix = CMatrix4x4::Identity;
+      CMatrix4x4 Matrix = CMatrix4x4::Identity;
       for (int i = 0; i < 4; ++i)
       {
         for (int j = 0; j < 4; ++j)
         {
-          mMatrix.m[i * 4 + j] = m[i * 4 + 0] * _mMatrix.m[0 * 4 + j] +
+          Matrix.m[i * 4 + j] = m[i * 4 + 0] * _mMatrix.m[0 * 4 + j] +
             m[i * 4 + 1] * _mMatrix.m[1 * 4 + j] +
             m[i * 4 + 2] * _mMatrix.m[2 * 4 + j] +
             m[i * 4 + 3] * _mMatrix.m[3 * 4 + j];
         }
       }
-      return mMatrix;
+      return Matrix;
     }
     CMatrix4x4& operator=(const CMatrix4x4& _other)
     {

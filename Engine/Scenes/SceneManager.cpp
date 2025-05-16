@@ -33,6 +33,30 @@ namespace scene
     });
   }
   // ------------------------------------
+  void CSceneManager::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode, bool _bPermanent /*= false*/)
+  {
+    if (m_pCurrentScene)
+    {
+      m_pCurrentScene->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _eRenderMode, _bPermanent);
+    }
+  }
+  // ------------------------------------
+  void CSceneManager::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool _bPermanent)
+  {
+    if (m_pCurrentScene)
+    {
+      m_pCurrentScene->DrawLine(_v3Origin, _v3Dest, _v3Color, _bPermanent);
+    }
+  }
+  // ------------------------------------
+  void CSceneManager::DrawCube(const math::CVector3& _v3Origin, float _fSize, render::ERenderMode _eRenderMode, bool _bPermanent)
+  {
+    if (m_pCurrentScene)
+    {
+      m_pCurrentScene->DrawCube(_v3Origin, _fSize, _eRenderMode, _bPermanent);
+    }
+  }
+  // ------------------------------------
   void CSceneManager::SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const
   {
     if (_uIndex > (s_iMaxScenes - 1)) return;

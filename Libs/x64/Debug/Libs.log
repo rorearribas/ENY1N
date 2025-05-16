@@ -1,36 +1,4 @@
-﻿  GraphEditor.cpp
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(369,21): warning C4245: '=': conversion from 'int' to 'GraphEditor::SlotIndex', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(370,22): warning C4245: '=': conversion from 'int' to 'GraphEditor::SlotIndex', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(377,31): warning C4245: 'initializing': conversion from 'int' to 'GraphEditor::SlotIndex', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(556,18): warning C4189: 'InputsCount': local variable is initialized but not referenced
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(557,18): warning C4189: 'OutputsCount': local variable is initialized but not referenced
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(870,38): warning C4245: 'initializing': conversion from 'int' to 'GraphEditor::NodeIndex', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(899,23): warning C4245: '=': conversion from 'int' to 'GraphEditor::NodeIndex', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(901,33): warning C4245: 'initializing': conversion from 'int' to 'GraphEditor::SlotIndex', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(902,34): warning C4245: 'initializing': conversion from 'int' to 'GraphEditor::SlotIndex', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(903,28): warning C4245: 'initializing': conversion from 'int' to 'GraphEditor::NodeIndex', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(927,37): warning C4245: 'initializing': conversion from 'int' to 'GraphEditor::SlotIndex', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\GraphEditor.cpp(928,38): warning C4245: 'initializing': conversion from 'int' to 'GraphEditor::SlotIndex', signed/unsigned mismatch
-  ImCurveEdit.cpp
-  ImGradient.cpp
-  ImGuizmo.cpp
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(765,28): warning C4245: 'initializing': conversion from 'int' to 'ImGuiID', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(775,32): warning C4245: 'argument': conversion from 'int' to 'const T', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(775,32): warning C4245:         with
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(775,32): warning C4245:         [
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(775,32): warning C4245:             T=ImU32
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(775,32): warning C4245:         ]
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(1911,35): warning C4245: '=': conversion from 'int' to 'ImGuiID', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(2494,35): warning C4245: '=': conversion from 'int' to 'ImGuiID', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(2559,38): warning C4245: 'argument': conversion from 'int' to 'const T', signed/unsigned mismatch
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(2559,38): warning C4245:         with
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(2559,38): warning C4245:         [
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(2559,38): warning C4245:             T=ImU32
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\ImGui\ImGuizmo.cpp(2559,38): warning C4245:         ]
-  ImSequencer.cpp
-  imgui.cpp
-  imgui_draw.cpp
-  imgui_tables.cpp
-  imgui_widgets.cpp
+﻿  Matrix4x4.cpp
+  Transform.cpp
   Generating Code...
   Libs.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Libs.lib

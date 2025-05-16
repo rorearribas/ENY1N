@@ -13,13 +13,13 @@ namespace render
 
       // Color
       void SetColor(const math::CVector3& _v3Color) { m_v3LightColor = _v3Color; }
-      const math::CVector3& GetColor() { return m_v3LightColor; }
+      const math::CVector3& GetColor() const { return m_v3LightColor; }
       // Range
       void SetRange(float _fRange) { m_fRange = _fRange; }
-      const float& GetRange() { return m_fRange; }
+      const float& GetRange() const { return m_fRange; }
       // Intensity
       void SetIntensity(float _fIntensity) { m_fIntensity = _fIntensity; }
-      const float& GetIntensity() { return m_fIntensity; }
+      const float& GetIntensity() const { return m_fIntensity; }
 
     private:
       math::CVector3 m_v3LightColor = math::CVector3::One;

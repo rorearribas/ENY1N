@@ -61,31 +61,30 @@ namespace math
     // Y axis
     CVector3 yAxis = zAxis.Cross(xAxis);
 
-    CMatrix4x4 mMatrix = CMatrix4x4::Identity;
-    mMatrix.m[0] = xAxis.X; mMatrix.m[1] = yAxis.X; mMatrix.m[2] = zAxis.X; mMatrix.m[3] = 0.0f;
-    mMatrix.m[4] = xAxis.Y; mMatrix.m[5] = yAxis.Y; mMatrix.m[6] = zAxis.Y; mMatrix.m[7] = 0.0f;
-    mMatrix.m[4] = xAxis.Y; mMatrix.m[5] = yAxis.Y; mMatrix.m[6] = zAxis.Y; mMatrix.m[7] = 0.0f;
-    mMatrix.m[8] = xAxis.Z; mMatrix.m[9] = yAxis.Z; mMatrix.m[10] = zAxis.Z; mMatrix.m[11] = 0.0f;
-    mMatrix.m[12] = -xAxis.Dot(_vEye); mMatrix.m[13] = -yAxis.Dot(_vEye); mMatrix.m[14] = -zAxis.Dot(_vEye); mMatrix.m[15] = 1.0f;
-    return mMatrix;
+    CMatrix4x4 Matrix = CMatrix4x4::Identity;
+    Matrix.m[0] = xAxis.X; Matrix.m[1] = yAxis.X; Matrix.m[2] = zAxis.X; Matrix.m[3] = 0.0f;
+    Matrix.m[4] = xAxis.Y; Matrix.m[5] = yAxis.Y; Matrix.m[6] = zAxis.Y; Matrix.m[7] = 0.0f;
+    Matrix.m[8] = xAxis.Z; Matrix.m[9] = yAxis.Z; Matrix.m[10] = zAxis.Z; Matrix.m[11] = 0.0f;
+    Matrix.m[12] = -xAxis.Dot(_vEye); Matrix.m[13] = -yAxis.Dot(_vEye); Matrix.m[14] = -zAxis.Dot(_vEye); Matrix.m[15] = 1.0f;
+    return Matrix;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Translate(const CVector3& _vTranslate)
   {
-    CMatrix4x4 mMatrix = CMatrix4x4::Identity;
-    mMatrix.m[3] = _vTranslate.X;
-    mMatrix.m[7] = _vTranslate.Y;
-    mMatrix.m[11] = _vTranslate.Z;
-    return mMatrix;
+    CMatrix4x4 Matrix = CMatrix4x4::Identity;
+    Matrix.m[3] = _vTranslate.X;
+    Matrix.m[7] = _vTranslate.Y;
+    Matrix.m[11] = _vTranslate.Z;
+    return Matrix;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Scale(const CVector3& _vScale)
   {
-    CMatrix4x4 mMatrix = CMatrix4x4::Identity;
-    mMatrix.m[0] = _vScale.X;
-    mMatrix.m[5] = _vScale.Y;
-    mMatrix.m[10] = _vScale.Z;
-    return mMatrix;
+    CMatrix4x4 Matrix = CMatrix4x4::Identity;
+    Matrix.m[0] = _vScale.X;
+    Matrix.m[5] = _vScale.Y;
+    Matrix.m[10] = _vScale.Z;
+    return Matrix;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _vRot)
@@ -117,12 +116,12 @@ namespace math
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)
   {
-    CMatrix4x4 mMatrix = CMatrix4x4::Identity;
+    CMatrix4x4 Matrix = CMatrix4x4::Identity;
     for (int i = 0; i < 4; ++i) {
       for (int j = 0; j < 4; ++j) {
-        mMatrix.m[i * 4 + j] = _mMatrix.m[j * 4 + i];
+        Matrix.m[i * 4 + j] = _mMatrix.m[j * 4 + i];
       }
     }
-    return mMatrix;
+    return Matrix;
   }
 }

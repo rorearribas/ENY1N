@@ -326,6 +326,23 @@ namespace collisions
     for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
     {
       m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
+    } 
+    if (m_vctPrimitives.empty())
+    {
+      for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+      {
+        engine::CEngine* pEngine = engine::CEngine::GetInstance();
+        auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
+        pPrimitive->SetColor(math::CVector3::Right);
+        pPrimitive->SetScale(math::CVector3::One / 8.0f);
+        m_vctPrimitives.emplace_back(pPrimitive);
+      }
+    }
+
+    // Update position
+    for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+    {
+      m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
     }
 #endif
   }

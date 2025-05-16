@@ -78,10 +78,10 @@
     <ClInclude Include="Render\Shader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\Model\DeferredPixelShader.h">
+    <ClInclude Include="Shaders\Standard\ForwardPixelShader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\Model\DeferredVertexShader.h">
+    <ClInclude Include="Shaders\Standard\ForwardVertexShader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\Primitive\VertexShader.h">
@@ -109,6 +109,9 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Physics\Rigidbody.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Graphics\PrimitiveUtils.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -191,11 +194,14 @@
     <ClCompile Include="Physics\Rigidbody.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Render\Graphics\PrimitiveUtils.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Primitive\VertexShader.hlsl" />
     <FxCompile Include="Shaders\Primitive\PixelShader.hlsl" />
-    <FxCompile Include="Shaders\Model\DeferredVertexShader.hlsl" />
-    <FxCompile Include="Shaders\Model\DeferredPixelShader.hlsl" />
+    <FxCompile Include="Shaders\Standard\ForwardVertexShader.hlsl" />
+    <FxCompile Include="Shaders\Standard\ForwardPixelShader.hlsl" />
   </ItemGroup>
 </Project>

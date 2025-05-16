@@ -1,8 +1,10 @@
-﻿  CollisionManager.cpp
-  LightManager.cpp
-  Mesh.cpp
+﻿  Model.cpp
+  BoxCollider.cpp
+  Engine.cpp
+  Camera.cpp
+  InputManager.cpp
+  Render.cpp
+  SceneManager.cpp
   Scene.cpp
-  SpotLight.cpp
-  SphereCollider.cpp
   Generating Code...
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\Engine.lib

@@ -6,7 +6,7 @@
 // Model matrix
 struct __declspec(align(16)) SConstantMatrix
 {
-  math::CMatrix4x4 mMatrix = math::CMatrix4x4::Identity;
+  math::CMatrix4x4 Matrix = math::CMatrix4x4::Identity;
 };
 
 // Check textures
@@ -105,11 +105,15 @@ public:
     return _pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
   }
 
-  bool UpdateBuffer()
+  bool WriteBuffer()
   {
     D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
     HRESULT hResult = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
-    if (FAILED(hResult)) { return false; }
+    if (FAILED(hResult)) 
+    { 
+      return false; 
+    }
+
     // Copy memory into buffer
     CopyMemory(oMappedSubresource.pData, &m_oData, sizeof(T));
     m_pDeviceContext->Unmap(m_pBuffer, 0);

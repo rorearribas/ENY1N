@@ -15,9 +15,9 @@ namespace render
     CRender(uint32_t _uX, uint32_t _uY);
     ~CRender();
 
-    void BeginDraw();
-    void Draw(scene::CScene* _pScene);
-    void EndDraw();
+    void BeginDraw() const;
+    void Draw(scene::CScene* _pScene) const;
+    void EndDraw() const;
 
     void SetFillMode(D3D11_FILL_MODE _eFillMode) { CreateRasterizerState(_eFillMode); }
     void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
