@@ -229,11 +229,7 @@ namespace game
   {
     std::for_each(m_vctComponents.begin(), m_vctComponents.end(), [](CComponent*& _pComponent)
     {
-      if (_pComponent)
-      {
-        delete _pComponent;
-        _pComponent = nullptr;
-      }
+      global::ReleaseObject(_pComponent);
     });
   }
 }

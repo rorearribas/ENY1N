@@ -11,7 +11,7 @@ namespace render
 {
   namespace graphics
   {
-    CPrimitive::CPrimitive(const SVertexData& _oVertexData, render::ERenderMode _eRenderMode)
+    CPrimitive::CPrimitive(const SCustomPrimitive& _oVertexData, render::ERenderMode _eRenderMode)
     {
       HRESULT hResult = CreateInputLayout();
       assert(!FAILED(hResult));
@@ -20,7 +20,7 @@ namespace render
       m_oConstantTexture.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Create from custom data
-      hResult = CreateBufferFromPrimitiveData(_oVertexData.m_vctPrimitiveData, _oVertexData.m_vctIndices);
+      hResult = CreateBufferFromPrimitiveData(_oVertexData.m_vctVertexData, _oVertexData.m_vctIndices);
       assert(!FAILED(hResult));
 
       // Set values
@@ -104,7 +104,7 @@ namespace render
         const int iStacks = 12;
         const int iSlices = 12;
 
-        std::vector<CPrimitive::SPrimitiveData> vctPrimitiveData = std::vector<CPrimitive::SPrimitiveData>();
+        std::vector<render::graphics::SVertexData> vctPrimitiveData = std::vector<render::graphics::SVertexData>();
         CPrimitiveUtils::CreateSphere(fTargetRadius, iStacks, iSlices, vctPrimitiveData);
 
         return CreateBufferFromPrimitiveData
@@ -122,18 +122,10 @@ namespace render
     // ------------------------------------
     HRESULT CPrimitive::CreateInputLayout()
     {
-      D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
-      {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SPrimitiveData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SPrimitiveData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-      };
-
       return global::dx11::s_pDevice->CreateInputLayout
       (
-        oInputElementDesc,
-        ARRAYSIZE(oInputElementDesc),
+        render::graphics::SVertexData::s_vctInputElementDesc.data(),
+        static_cast<uint32_t>(render::graphics::SVertexData::s_vctInputElementDesc.size()),
         g_ForwardVertexShader,
         sizeof(g_ForwardVertexShader),
         &m_pInputLayout
@@ -158,7 +150,7 @@ namespace render
       assert(!FAILED(hResult));
 
       // Get data
-      CPrimitive::SPrimitiveData* pPrimitiveData = (CPrimitive::SPrimitiveData*)(oMappedSubresource.pData);
+      render::graphics::SVertexData* pPrimitiveData = (render::graphics::SVertexData*)(oMappedSubresource.pData);
       assert(pPrimitiveData);
 
       // Update color
@@ -174,7 +166,7 @@ namespace render
       m_v3Color = _v3Color;
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBufferFromPrimitiveData(const std::vector<CPrimitive::SPrimitiveData>& _vctPrimitiveData, const std::vector<uint32_t>& _vctIndexes)
+    HRESULT CPrimitive::CreateBufferFromPrimitiveData(const std::vector<render::graphics::SVertexData>& _vctPrimitiveData, const std::vector<uint32_t>& _vctIndexes)
     {
       if (_vctPrimitiveData.empty()) return E_FAIL;
 
@@ -186,7 +178,7 @@ namespace render
 
       // Create vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
-      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>(sizeof(SPrimitiveData) * _vctPrimitiveData.size());
+      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>(sizeof(render::graphics::SVertexData) * _vctPrimitiveData.size());
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -220,7 +212,7 @@ namespace render
     void CPrimitive::DrawPrimitive()
     {
       // Set general data
-      UINT uVertexStride = sizeof(render::graphics::CPrimitive::SPrimitiveData);
+      UINT uVertexStride = sizeof(render::graphics::SVertexData);
       UINT uVertexOffset = 0;
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);

@@ -12,7 +12,7 @@ namespace render
     class CMaterial
     {
     public:
-      enum EModifierType : uint32_t 
+      enum EType : uint32_t 
       {
         AMBIENT, 
         DIFFUSE, 
@@ -24,14 +24,14 @@ namespace render
         REFLECTION, 
         COUNT 
       };
-      typedef std::map<EModifierType, render::texture::CTexture*> TMapTextures;
+      typedef std::map<CMaterial::EType, texture::CTexture*> TMapTextures;
 
     public:
       CMaterial(std::string _sMaterialId) : m_sMaterialId(_sMaterialId) {}
       ~CMaterial();
 
-      render::texture::CTexture* const RegisterTexture(EModifierType _eModifierType, std::string _sTextureID);
-      render::texture::CTexture* const GetTexture(EModifierType _eModifierType);
+      render::texture::CTexture* const RegisterTexture(CMaterial::EType _eType, std::string _sTextureID);
+      render::texture::CTexture* const GetTexture(CMaterial::EType _eType);
       const std::string& GetMaterialId() const { return m_sMaterialId; }
 
       void SetAmbientColor(math::CVector3 _vAmbientColor) { m_vAmbientColor = _vAmbientColor; }

@@ -7,13 +7,19 @@ namespace render
 {
   namespace lights
   {
-    enum ELightType { DIRECTIONAL_LIGHT, POINT_LIGHT, SPOT_LIGHT, INVALID };
+    enum ELightType
+    {
+      DIRECTIONAL_LIGHT,
+      POINT_LIGHT,
+      SPOT_LIGHT,
+      INVALID
+    };
 
-    class CLight 
+    class CBaseLight
     {
     public:
-      CLight(ELightType _eLightType) : m_eLightType(_eLightType) { assert(m_eLightType != INVALID); }
-      virtual ~CLight() {}
+      CBaseLight(ELightType _eLightType) : m_eLightType(_eLightType) { assert(m_eLightType != INVALID); }
+      virtual ~CBaseLight() {}
 
       const ELightType& GetLightType() const { return m_eLightType; }
       void SetPosition(const math::CVector3& _v3Position) { m_oLightTransform.SetPosition(_v3Position); }

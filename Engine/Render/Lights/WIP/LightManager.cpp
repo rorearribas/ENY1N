@@ -72,28 +72,24 @@ namespace render
       global::dx11::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
     }
     // ------------------------------------
-    void CLightManager::DestroyLight(render::lights::CLight*& pLight_)
+    void CLightManager::DestroyLight(render::lights::CBaseLight*& _pLight_)
     {
-      switch (pLight_->GetLightType())
+      switch (_pLight_->GetLightType())
       {
       case render::lights::ELightType::DIRECTIONAL_LIGHT:
       {
-        if (m_pDirectionalLight)
-        {
-          delete m_pDirectionalLight;
-          m_pDirectionalLight = nullptr;
-          pLight_ = nullptr;
-        }
+        global::ReleaseObject(m_pDirectionalLight);
+        _pLight_ = nullptr;
       }
       break;
       case render::lights::ELightType::POINT_LIGHT:
       {
-        DestroyPointLight(pLight_);
+        DestroyPointLight(_pLight_);
       }
       break;
       case render::lights::ELightType::SPOT_LIGHT:
       {
-        DestroySpotLight(pLight_);
+        DestroySpotLight(_pLight_);
       }
       break;
       default:
@@ -139,60 +135,48 @@ namespace render
     void CLightManager::Clean()
     {
       // Destroy directional light
-      if (m_pDirectionalLight)
-      {
-        delete m_pDirectionalLight;
-        m_pDirectionalLight = nullptr;
-      }
+      global::ReleaseObject(m_pDirectionalLight);
+
       // Destroy point lights
       std::for_each(m_vctPointLights.begin(), m_vctPointLights.end(), [](render::lights::CPointLight*& _pLight)
       {
-        if (_pLight)
-        {
-          delete _pLight;
-          _pLight = nullptr;
-        }
+        global::ReleaseObject(_pLight);
       });
       m_uRegisteredPointLights = 0;
+
       // Destroy spot lights
       std::for_each(m_vctSpotLights.begin(), m_vctSpotLights.end(), [](render::lights::CSpotLight*& _pLight)
       {
-        if (_pLight)
-        {
-          delete _pLight;
-          _pLight = nullptr;
-        }
+        global::ReleaseObject(_pLight);
       });
       m_uRegisteredSpotLights = 0;
     }
     // ------------------------------------
-    void CLightManager::DestroyPointLight(render::lights::CLight*& pLight_)
+    void CLightManager::DestroyPointLight(render::lights::CBaseLight*& pLight_)
     {
       auto it = std::find(m_vctPointLights.begin(), m_vctPointLights.end(), pLight_);
       if (it != m_vctPointLights.end())
       {
-        delete* it;
-        *it = nullptr;
+        global::ReleaseObject(*it);
         m_uRegisteredPointLights--;
 
         auto oReorderFunc = std::remove_if(m_vctPointLights.begin(), m_vctPointLights.end(),
-        [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+        [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
         std::fill(oReorderFunc, m_vctPointLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;
     }
     // ------------------------------------
-    void CLightManager::DestroySpotLight(render::lights::CLight*& pLight_)
+    void CLightManager::DestroySpotLight(render::lights::CBaseLight*& pLight_)
     {
       auto it = std::find(m_vctSpotLights.begin(), m_vctSpotLights.end(), pLight_);
       if (it != m_vctSpotLights.end())
       {
-        delete* it;
-        *it = nullptr;
+        global::ReleaseObject(*it);
         m_uRegisteredSpotLights--;
 
         auto oReorderFunc = std::remove_if(m_vctSpotLights.begin(), m_vctSpotLights.end(),
-        [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+        [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
         std::fill(oReorderFunc, m_vctSpotLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;

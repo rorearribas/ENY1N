@@ -33,27 +33,27 @@ namespace scene
     });
   }
   // ------------------------------------
-  void CSceneManager::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode, bool _bPermanent /*= false*/)
+  void CSceneManager::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _eRenderMode, _bPermanent);
+      m_pCurrentScene->DrawLine(_v3Origin, _v3Dest, _v3Color);
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool _bPermanent)
+  void CSceneManager::DrawCube(const math::CVector3& _v3Origin, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawLine(_v3Origin, _v3Dest, _v3Color, _bPermanent);
+      m_pCurrentScene->DrawCube(_v3Origin, _fSize, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawCube(const math::CVector3& _v3Origin, float _fSize, render::ERenderMode _eRenderMode, bool _bPermanent)
+  void CSceneManager::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawCube(_v3Origin, _fSize, _eRenderMode, _bPermanent);
+      m_pCurrentScene->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------
@@ -112,7 +112,7 @@ namespace scene
     pScene->DestroyPrimitive(_pPrimitive_);
   }
   // ------------------------------------
-  void CSceneManager::DestroyLight(render::lights::CLight*& _pLight_, uint32_t _uIndex)
+  void CSceneManager::DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uIndex)
   {
     if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
     assert(_pLight_);
@@ -130,10 +130,9 @@ namespace scene
   // ------------------------------------
   void CSceneManager::DestroyAllScenes()
   {
-    std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [](CScene* _pScene)
+    std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [](CScene*& _pScene)
     {
-      delete _pScene;
-      _pScene = nullptr;
+      global::ReleaseObject(_pScene);
     });
   }
 }

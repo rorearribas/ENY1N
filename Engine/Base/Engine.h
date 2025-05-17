@@ -4,7 +4,7 @@
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Scenes/SceneManager.h"
 
-namespace render { namespace lights { class CLight; } }
+namespace render { namespace lights { class CBaseLight; } }
 namespace render { namespace lights { class CSpotLight; } }
 namespace render { namespace lights { class CPointLight; } }
 namespace render { namespace lights { class CDirectionalLight; } }
@@ -32,9 +32,9 @@ namespace engine
     render::CCamera* GetCamera() const { return m_pCamera.get(); }
 
     // Debug creation
-    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode = render::ERenderMode::SOLID, bool _bPermanent = false);
-    void DrawCube(const math::CVector3& _v3Origin, float _fSize, render::ERenderMode = render::ERenderMode::SOLID, bool _bPermanent = false);
-    void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool _bPermanent = false);
+    void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
+    void DrawCube(const math::CVector3& _v3Origin, float _fSize, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::SOLID);
+    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::SOLID);
 
     // Element creation
     render::graphics::CPrimitive* const CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType, render::ERenderMode = render::ERenderMode::SOLID, uint32_t _uSceneIndex = 0);
@@ -46,7 +46,7 @@ namespace engine
 
     void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive);
     void DestroyModel(render::graphics::CModel*& _pModel);
-    void DestroyLight(render::lights::CLight*& pLight_);
+    void DestroyLight(render::lights::CBaseLight*& pLight_);
 
   private:
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);

@@ -173,7 +173,7 @@
     <ClInclude Include="Scenes\Scene.h" />
     <ClInclude Include="Render\Resources\Texture.h" />
     <ClInclude Include="Render\Graphics\Shape.h" />
-    <ClInclude Include="Render\Shader.h" />
+    <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Shaders\Primitive\PixelShader.h" />
     <ClInclude Include="Shaders\Primitive\VertexShader.h" />
     <ClInclude Include="Render\Lights\SpotLight.h" />
@@ -204,7 +204,7 @@
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Render\Resources\Texture.cpp" />
     <ClCompile Include="Render\Graphics\Shape.cpp" />
-    <ClCompile Include="Render\Shader.cpp" />
+    <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="Render\Lights\SpotLight.cpp" />
     <ClCompile Include="Collisions\SphereCollider.cpp" />
   </ItemGroup>
@@ -220,6 +220,8 @@
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+      </ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shaders\Standard\ForwardVertexShader.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VSMain</EntryPointName>

@@ -84,7 +84,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     pMaterial->SetSpecularColor({ _oMaterial.specular[0], _oMaterial.specular[1], _oMaterial.specular[2] });
 
     // Get path
-    using EType = render::material::CMaterial::EModifierType;
+    using EType = render::material::CMaterial::EType;
     std::filesystem::path oBasePath(_sBaseModelMtlDir);
 
     // Register textures
@@ -205,7 +205,7 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
   return oModelData;
 }
 // ------------------------------------
-void CResourceManager::RegisterTexture(render::material::CMaterial*& pMaterial, render::material::CMaterial::EModifierType _eModifierType,
+void CResourceManager::RegisterTexture(render::material::CMaterial*& pMaterial, render::material::CMaterial::EType _eModifierType,
   const std::filesystem::path& _oBasePath, const std::string& _sTextureName)
 {
   std::filesystem::path oTargetTexturePath = _oBasePath / std::filesystem::path(_sTextureName);

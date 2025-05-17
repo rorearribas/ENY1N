@@ -1,7 +1,7 @@
 #pragma once
 #include "Window/RenderWindow.h"
 #include "Engine/Camera/Camera.h"
-#include "Shader.h"
+#include "Engine/Shaders/Shader.h"
 
 namespace scene { class CScene; }
 

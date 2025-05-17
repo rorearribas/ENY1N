@@ -56,8 +56,7 @@ namespace utils
     auto it = std::find(m_vctItemList.begin(), m_vctItemList.end(), _pItem_);
     if (it != m_vctItemList.end() && *it)
     {
-      delete* it;
-      *it = nullptr;
+      global::ReleaseObject(*it);
       m_uRegisteredItems--;
 
       auto oReorderFunc = std::remove_if(m_vctItemList.begin(), m_vctItemList.end(),

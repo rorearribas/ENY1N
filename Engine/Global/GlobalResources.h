@@ -9,6 +9,7 @@ namespace global
   {
     extern HWND s_oHwnd;
   }
+
   // DirectX
   namespace dx11
   {
@@ -24,6 +25,19 @@ namespace global
       }
     }
   }
+
+  // Release objects
+  template<typename T>
+  inline bool ReleaseObject(T*& _pPtr)
+  {
+    if (_pPtr)
+    {
+      delete _pPtr;
+      _pPtr = nullptr;
+    }
+    return !_pPtr;
+  }
+
   // Global delegates
   namespace delegates
   {

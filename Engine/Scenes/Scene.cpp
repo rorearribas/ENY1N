@@ -120,37 +120,12 @@ namespace scene
   // ------------------------------------
   void CScene::DestroyAllLights()
   {
-    // Destroy all lights
-    if (m_pDirectionalLight) { delete m_pDirectionalLight; m_pDirectionalLight = nullptr; }
+    global::ReleaseObject(m_pDirectionalLight);
     m_vctPointLights.ClearAll();
     m_vctSpotLights.ClearAll();
   }
   // ------------------------------------
-  void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode, bool /*_bPermanent*/)
-  {
-    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
-    {
-      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
-      return;
-    }
-
-    // Create vertex data
-    render::graphics::CPrimitive::SVertexData oVertexData = render::graphics::CPrimitive::SVertexData();
-
-    // Fill primitive data
-    render::graphics::CPrimitiveUtils::CreateSphere(_fRadius, _iStacks, _iSlices, oVertexData.m_vctPrimitiveData);
-    
-    // Fill indices
-    oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::GetSphereIndices(_iStacks, _iSlices) :
-    render::graphics::CPrimitiveUtils::GetWireframeSphereIndices(_iStacks, _iSlices);
-
-    // Create temporal item + set pos
-    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
-    assert(pPrimitive);
-    pPrimitive->SetPosition(_v3Pos);
-  }
-  // ------------------------------------
-  void CScene::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool /*_bPermanent*/)
+  void CScene::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
     if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
     {
@@ -159,14 +134,14 @@ namespace scene
     }
 
     // Create line
-    render::graphics::CPrimitive::SVertexData oVertexData = render::graphics::CPrimitive::SVertexData();
-    render::graphics::CPrimitiveUtils::CreateLine(_v3Origin, _v3Dest, _v3Color, oVertexData);
+    render::graphics::CPrimitive::SCustomPrimitive oCustomData = render::graphics::CPrimitive::SCustomPrimitive();
+    render::graphics::CPrimitiveUtils::CreateLine(_v3Origin, _v3Dest, _v3Color, oCustomData);
 
     // Create temporal item
-    m_vctTemporalItems.CreateItem(oVertexData, render::ERenderMode::WIREFRAME);
+    m_vctTemporalItems.CreateItem(oCustomData, render::ERenderMode::WIREFRAME);
   }
   // ------------------------------------
-  void CScene::DrawCube(const math::CVector3& _v3Pos, float _fSize, render::ERenderMode _eRenderMode, bool /*_bPermanent*/)
+  void CScene::DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
     {
@@ -175,10 +150,14 @@ namespace scene
     }
 
     // Create vertex data
-    render::graphics::CPrimitive::SVertexData oVertexData = render::graphics::CPrimitive::SVertexData();
+    render::graphics::CPrimitive::SCustomPrimitive oVertexData = render::graphics::CPrimitive::SCustomPrimitive();
 
-    // Set primitive data
-    oVertexData.m_vctPrimitiveData = render::graphics::CPrimitiveUtils::s_oCubePrimitive;
+    // Set primitive data + update pos
+    oVertexData.m_vctVertexData = render::graphics::CPrimitiveUtils::s_oCubePrimitive;
+    for (auto& oPrimitiveData : oVertexData.m_vctVertexData)
+    {
+      oPrimitiveData.Position *= _fSize;
+    }
 
     // Set indices
     oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::s_oCubeIndices :
@@ -190,8 +169,30 @@ namespace scene
 
     // Set values
     pPrimitive->SetPosition(_v3Pos);
-    pPrimitive->SetColor(math::CVector3::One);
-    pPrimitive->SetScale(math::CVector3::One * _fSize);
+    pPrimitive->SetColor(_v3Color);
+  }
+  // ------------------------------------
+  void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  {
+    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
+    {
+      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      return;
+    }
+
+    // Fill primitive data
+    render::graphics::CPrimitive::SCustomPrimitive oVertexData = render::graphics::CPrimitive::SCustomPrimitive();
+    render::graphics::CPrimitiveUtils::CreateSphere(_fRadius, _iStacks, _iSlices, oVertexData.m_vctVertexData);
+
+    // Fill indices
+    oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::GetSphereIndices(_iStacks, _iSlices) :
+    render::graphics::CPrimitiveUtils::GetWireframeSphereIndices(_iStacks, _iSlices);
+
+    // Create temporal item + set pos
+    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
+    assert(pPrimitive);
+    pPrimitive->SetPosition(_v3Pos);
+    pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)
@@ -261,19 +262,14 @@ namespace scene
     _pModel_ = nullptr; // Set as nullptr
   }
   // ------------------------------------
-  void CScene::DestroyLight(render::lights::CLight*& _pLight_)
+  void CScene::DestroyLight(render::lights::CBaseLight*& _pLight_)
   {
     bool bOk = false;
     switch (_pLight_->GetLightType())
     {
     case render::lights::ELightType::DIRECTIONAL_LIGHT:
     {
-      if (m_pDirectionalLight)
-      {
-        delete m_pDirectionalLight;
-        m_pDirectionalLight = nullptr;
-        bOk = true;
-      }
+      bOk = global::ReleaseObject(m_pDirectionalLight);
     }
     break;
     case render::lights::ELightType::POINT_LIGHT:

@@ -5,10 +5,10 @@ namespace render
 {
   namespace lights
   {
-    class CSpotLight : public CLight
+    class CSpotLight : public CBaseLight
     {
     public:
-      CSpotLight() : CLight(SPOT_LIGHT) {}
+      CSpotLight() : CBaseLight(SPOT_LIGHT) {}
       virtual ~CSpotLight() {}
 
       // Direction

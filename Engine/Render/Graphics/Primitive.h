@@ -6,6 +6,7 @@
 #include "Engine/Render/Render.h"
 #include <d3d11.h>
 #include <vector>
+#include "Mesh.h"
 
 namespace render
 {
@@ -25,26 +26,14 @@ namespace render
         INVALID
       };
 
-      struct SPrimitiveData
+      struct SCustomPrimitive
       {
-        math::CVector3 Position = math::CVector3::Zero;
-        math::CVector3 Normal = math::CVector3::One;
-        math::CVector3 Color = math::CVector3::One;
-        math::CVector2 TexCoord = math::CVector2::Zero;
-
-  /*      SPrimitiveData() = default;
-        SPrimitiveData(const math::CVector3& _v3Pos, const math::CVector3& _v3Normal, const math::CVector3& _v3Color) :
-        Position(_v3Pos), Normal(_v3Normal), Color(_v3Color) {}*/
-      };
-
-      struct SVertexData
-      {
-        std::vector<CPrimitive::SPrimitiveData> m_vctPrimitiveData; 
+        std::vector<render::graphics::SVertexData> m_vctVertexData;
         std::vector<uint32_t> m_vctIndices;
       };
 
     public:
-      CPrimitive(const SVertexData& _oVertexData, render::ERenderMode _eRenderMode = SOLID);
+      CPrimitive(const SCustomPrimitive& _oVertexData, render::ERenderMode _eRenderMode = SOLID);
       CPrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode = SOLID);
       ~CPrimitive();
 
@@ -62,7 +51,7 @@ namespace render
 
     private:
       HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode);
-      HRESULT CreateBufferFromPrimitiveData(const std::vector<CPrimitive::SPrimitiveData>&, const std::vector<uint32_t>&);
+      HRESULT CreateBufferFromPrimitiveData(const std::vector<render::graphics::SVertexData>&, const std::vector<uint32_t>&);
       HRESULT CreateInputLayout();
 
       // Primitive data

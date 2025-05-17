@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Global/GlobalResources.h"
 #include <mutex>
 
 namespace utils
@@ -45,10 +46,6 @@ namespace utils
   void utils::CSingleton<T>::DestroySingleton()
   {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (m_pInstance)
-    {
-      delete m_pInstance;
-      m_pInstance = nullptr;
-    }
+    global::ReleaseObject(m_pInstance);
   }
 }

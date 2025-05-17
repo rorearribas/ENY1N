@@ -8,6 +8,28 @@ namespace render
 {
   namespace graphics
   {
+    std::vector<D3D11_INPUT_ELEMENT_DESC> SVertexData::s_vctInputElementDesc =
+    {
+       { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+       { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+       { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+       { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::graphics::SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+    };
+    // ------------------------------------
+    bool SVertexData::operator==(const SVertexData& _other) const
+    {
+      return Position == _other.Position && // Pos
+      Normal == _other.Normal && // Normal
+      TexCoord == _other.TexCoord && // TexCoord
+      Color == _other.Color && // Color
+      MaterialId == _other.MaterialId; // Material ID
+    }
+    // ------------------------------------
+    bool SVertexData::operator!=(const SVertexData& _other) const
+    {
+      return !(*this == _other);
+    }
+
     // ------------------------------------
     CMesh::~CMesh()
     {
@@ -19,10 +41,10 @@ namespace render
       // Draw textures
       for (auto& it : m_dctMaterials)
       {
-        render::texture::CTexture* pTexture = nullptr;
-        for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(render::material::CMaterial::EModifierType::COUNT); uIndex++)
+        texture::CTexture* pTexture = nullptr;
+        for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(material::CMaterial::EType::COUNT); uIndex++)
         {
-          render::material::CMaterial::EModifierType eModifierType = static_cast<render::material::CMaterial::EModifierType>(uIndex);
+          material::CMaterial::EType eModifierType = static_cast<material::CMaterial::EType>(uIndex);
           pTexture = it.second->GetTexture(eModifierType);
           if (pTexture) 
           { 

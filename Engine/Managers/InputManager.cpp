@@ -172,16 +172,8 @@ namespace input
   // ------------------------------------
   void CInputManager::Clean()
   {
-    if (m_pMouse)
-    {
-      delete m_pMouse;
-      m_pMouse = nullptr;
-    }
-    if (m_pKeyboard)
-    {
-      delete m_pKeyboard;
-      m_pKeyboard = nullptr;
-    }
+    global::ReleaseObject(m_pMouse);
+    global::ReleaseObject(m_pKeyboard);
   }
   // ------------------------------------
   bool CInputManager::IsKeyPressed(USHORT _uKey) const

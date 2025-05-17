@@ -6,9 +6,9 @@ namespace render
 {
   namespace lights
   {
-    class CPointLight : public CLight {
+    class CPointLight : public CBaseLight {
     public:
-      CPointLight() : CLight(POINT_LIGHT) {}
+      CPointLight() : CBaseLight(POINT_LIGHT) {}
       virtual ~CPointLight() {}
 
       // Color

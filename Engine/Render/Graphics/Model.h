@@ -37,12 +37,10 @@ namespace render
       HRESULT InitModel(const char* _sModelPath, const char* _sBaseMltDir);
       HRESULT CreateInputLayout();
 
-      // Buffer
+      // DirectX
       ID3D11Buffer* m_pVertexBuffer = nullptr;
-      CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
-
-      // Input layout
       ID3D11InputLayout* m_pInputLayout = nullptr;
+      CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
 
       // Model info
       SModelData m_oModelData = SModelData();

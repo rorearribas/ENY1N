@@ -1,7 +1,7 @@
 #include "Engine.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/InputManager.h"
-#include "Engine/Render/Shader.h"
+#include "Engine/Shaders/Shader.h"
 
 #include <cassert>
 #include <iostream>
@@ -58,19 +58,19 @@ namespace engine
     m_pRender->EndDraw(); // End 
   }
   // ------------------------------------
-  void CEngine::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool _bPermanent)
+  void CEngine::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
-    m_pSceneManager->DrawLine(_v3Origin, _v3Dest, _v3Color, _bPermanent);
+    m_pSceneManager->DrawLine(_v3Origin, _v3Dest, _v3Color);
   }
   // ------------------------------------
-  void CEngine::DrawCube(const math::CVector3& _v3Pos, float _fSize, render::ERenderMode _eRenderMode, bool _bPermanent)
+  void CEngine::DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    m_pSceneManager->DrawCube(_v3Pos, _fSize, _eRenderMode, _bPermanent);
+    m_pSceneManager->DrawCube(_v3Pos, _fSize, _v3Color, _eRenderMode);
   }
   // ------------------------------------
-  void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode, bool _bPermanent)
+  void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _eRenderMode, _bPermanent);
+    m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _v3Color, _eRenderMode);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CEngine::CreatePrimitive
@@ -115,7 +115,7 @@ namespace engine
     m_pSceneManager->DestroyModel(pModel_);
   }
   // ------------------------------------
-  void CEngine::DestroyLight(render::lights::CLight*& pLight_)
+  void CEngine::DestroyLight(render::lights::CBaseLight*& pLight_)
   {
     assert(pLight_);
     m_pSceneManager->DestroyLight(pLight_);

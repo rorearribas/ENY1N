@@ -6,14 +6,14 @@ namespace render
 {
   namespace lights
   {
-    class CDirectionalLight : public CLight
+    class CDirectionalLight : public CBaseLight
     {
     public:
       static math::CVector3 s_vDefaultDirectionalColor;
       static math::CVector3 s_vDefaultDirection;
 
     public:
-      CDirectionalLight() : CLight(DIRECTIONAL_LIGHT) {}
+      CDirectionalLight() : CBaseLight(DIRECTIONAL_LIGHT) {}
       virtual ~CDirectionalLight() {}
 
       // Direction

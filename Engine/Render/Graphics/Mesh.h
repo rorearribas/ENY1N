@@ -15,30 +15,26 @@ namespace render
   {
     struct SVertexData
     {
+      // Input element desc
+      static std::vector<D3D11_INPUT_ELEMENT_DESC> s_vctInputElementDesc;
+
+      // Vertex data
       math::CVector3 Position = math::CVector3::Zero;
-      math::CVector3 Normal = math::CVector3::Zero;
+      math::CVector3 Normal = math::CVector3::One;
       math::CVector3 Color = math::CVector3::One;
       math::CVector2 TexCoord = math::CVector2::Zero;
+
+      // Material ID
       uint32_t MaterialId = 0;
 
-      bool operator==(const SVertexData& _other) const
-      {
-        return Position == _other.Position
-          && Normal == _other.Normal
-          && TexCoord == _other.TexCoord
-          && Color == _other.Color;
-      }
-      bool operator!=(const SVertexData& _other) const
-      {
-        return !(*this == _other);
-      }
+      bool operator==(const SVertexData& _other) const;
+      bool operator!=(const SVertexData& _other) const;
     };
 
     class CMesh
     {
     public:
       typedef std::map<uint32_t, render::material::CMaterial*> TMapMaterials;
-      typedef std::vector<render::graphics::SVertexData> TVertexDataList;
       typedef std::vector<uint32_t> TIndexesList;
 
     public:
@@ -72,7 +68,8 @@ namespace render
   }
 }
 
-namespace std {
+namespace std 
+{
   template <>
   struct hash<render::graphics::SVertexData>
   {

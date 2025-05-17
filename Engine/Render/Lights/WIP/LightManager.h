@@ -7,7 +7,7 @@ namespace render
   namespace lights
   {
     // Forward declaration
-    class CLight;
+    class CBaseLight;
     class CSpotLight;
     class CPointLight;
     class CDirectionalLight;
@@ -30,7 +30,7 @@ namespace render
       void Update();
 
       // Destruction
-      void DestroyLight(render::lights::CLight*& pLight_);
+      void DestroyLight(render::lights::CBaseLight*& pLight_);
 
       // Creation methods
       render::lights::CDirectionalLight* CreateDirectionalLight();
@@ -39,8 +39,8 @@ namespace render
 
     private:
       void Clean();
-      void DestroyPointLight(render::lights::CLight*& pLight_);
-      void DestroySpotLight(render::lights::CLight*& pLight_);
+      void DestroyPointLight(render::lights::CBaseLight*& pLight_);
+      void DestroySpotLight(render::lights::CBaseLight*& pLight_);
 
       // Directional light
       render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;

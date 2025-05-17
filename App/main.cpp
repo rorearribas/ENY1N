@@ -28,7 +28,7 @@
 #include "Game/ETT/Components/RigidbodyComponent/RigidbodyComponent.h"
 #include "Libs/Math/Math.h"
 
-float GenerateFloat(float min, float max) 
+static float GenerateFloat(float min, float max) 
 {
   static std::random_device rd;
   static std::mt19937 gen(rd());
@@ -60,8 +60,17 @@ int main()
   game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
 
   // Create directional light
-  game::CEntity* pDirectionaLight = pGameManager->CreateEntity("Directional Light");
-  pDirectionaLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
+  game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
+  pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
+
+  // Create spot light
+  game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot light");
+  pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
+  pSpotLight->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+
+  //// Create point light
+  //game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
+  //pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
@@ -121,8 +130,6 @@ int main()
 
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };
-
-  static bool bDraw = false;
 
   while (WM_QUIT != oMsg.message)
   {
@@ -200,7 +207,6 @@ int main()
       if (ImGui::Button("144"))
       {
         pTimeManager->SetMaxFPS(144);
-        bDraw = !bDraw;
       }
       if (ImGui::Button("300"))
       {

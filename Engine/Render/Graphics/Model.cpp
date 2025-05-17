@@ -20,34 +20,24 @@ namespace render
     // ------------------------------------
     CModel::~CModel()
     {
-      m_oModelData.m_vctMeshes.clear();
-      m_oModelData.m_vctVertexData.clear();
-
       global::dx11::SafeRelease(m_pVertexBuffer);
       global::dx11::SafeRelease(m_pInputLayout);
+      m_oModelData.m_vctMeshes.clear();
+      m_oModelData.m_vctVertexData.clear();
     }
     // ------------------------------------
     HRESULT CModel::CreateInputLayout()
     {
-      D3D11_INPUT_ELEMENT_DESC oInputElementDesc[] =
-      {
-        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-        { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-      };
-
       return global::dx11::s_pDevice->CreateInputLayout
       (
-        oInputElementDesc,
-        ARRAYSIZE(oInputElementDesc),
+        render::graphics::SVertexData::s_vctInputElementDesc.data(),
+        static_cast<uint32_t>(render::graphics::SVertexData::s_vctInputElementDesc.size()),
         g_ForwardVertexShader,
         sizeof(g_ForwardVertexShader),
         &m_pInputLayout
       );
     }
     // ------------------------------------
-
     HRESULT CModel::InitModel(const char* _sModelPath, const char* _sBaseMltDir)
     {
       // Try to load model

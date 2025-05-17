@@ -6,7 +6,7 @@ namespace render
 	namespace graphics
 	{
     // Triangle Primitive
-    const std::vector<CPrimitive::SPrimitiveData> CPrimitiveUtils::s_oTrianglePrimitive =
+    const std::vector<render::graphics::SVertexData> CPrimitiveUtils::s_oTrianglePrimitive =
     {
       { math::CVector3(0, 0.5f, 0.0f), math::CVector3::One, math::CVector3::One },
       { math::CVector3(0.5f, -0.5f,  0.0f),  math::CVector3::One, math::CVector3::One },
@@ -14,7 +14,7 @@ namespace render
     };
 
     // Cube Primitive
-    const std::vector<CPrimitive::SPrimitiveData> CPrimitiveUtils::s_oCubePrimitive =
+    const std::vector<render::graphics::SVertexData> CPrimitiveUtils::s_oCubePrimitive =
     {
       { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(1.0f, 0.0f, 0.0f), math::CVector3::One },
       { math::CVector3(-0.5f,  0.5f, -0.5f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3::One },
@@ -28,7 +28,7 @@ namespace render
     };
 
     // Plane Primitive
-    const std::vector<CPrimitive::SPrimitiveData> CPrimitiveUtils::s_oPlanePrimitive =
+    const std::vector<render::graphics::SVertexData> CPrimitiveUtils::s_oPlanePrimitive =
     {
       { math::CVector3(-0.5f, 0.0f, -0.5f), math::CVector3(1.0f, 0.0f, 0.0f), math::CVector3::One },  // Bottom-left
       { math::CVector3(-0.5f, 0.0f,  0.5f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3::One },  // Top-left
@@ -91,31 +91,31 @@ namespace render
     };
 
     // 3D Line
-    void CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, CPrimitive::SVertexData& _oVertexData_)
+    void CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, CPrimitive::SCustomPrimitive& _oVertexData_)
     { 
       // Clean
-      _oVertexData_.m_vctPrimitiveData.clear();
+      _oVertexData_.m_vctVertexData.clear();
       _oVertexData_.m_vctIndices.clear();
 
       // Fill data 
-      CPrimitive::SPrimitiveData oOrigin = CPrimitive::SPrimitiveData();
+      render::graphics::SVertexData oOrigin = render::graphics::SVertexData();
       oOrigin.Position = _v3Origin;
       oOrigin.Color = _v3Color;
 
-      _oVertexData_.m_vctPrimitiveData.emplace_back(oOrigin);
+      _oVertexData_.m_vctVertexData.emplace_back(oOrigin);
       _oVertexData_.m_vctIndices.emplace_back(0);
 
       // Fill data 
-      CPrimitive::SPrimitiveData oDest = CPrimitive::SPrimitiveData();
+      render::graphics::SVertexData oDest = render::graphics::SVertexData();
       oDest.Position = _v3Dest;
       oDest.Color = _v3Color;
 
-      _oVertexData_.m_vctPrimitiveData.emplace_back(oDest);
+      _oVertexData_.m_vctVertexData.emplace_back(oDest);
       _oVertexData_.m_vctIndices.emplace_back(1);
     }
 
     // 3D Sphere
-    void CPrimitiveUtils::CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<CPrimitive::SPrimitiveData>& _vctPrimitiveData)
+    void CPrimitiveUtils::CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::graphics::SVertexData>& _vctPrimitiveData)
     {
       for (int uX = 0; uX <= _iStacks; ++uX)
       {
@@ -129,9 +129,9 @@ namespace render
           float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
 
           // Add vertex
-          CPrimitive::SPrimitiveData oPrimitiveData = {};
-          oPrimitiveData.Position = math::CVector3(fX, fY, fZ);
-          _vctPrimitiveData.push_back(oPrimitiveData);
+          render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
+          oVertexData.Position = math::CVector3(fX, fY, fZ);
+          _vctPrimitiveData.push_back(oVertexData);
         }
       }
     }

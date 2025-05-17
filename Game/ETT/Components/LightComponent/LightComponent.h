@@ -16,7 +16,7 @@ namespace game
     virtual void Update(float _fDeltaTime) override;
     virtual void DrawDebug() override;
 
-    render::lights::CLight* GetLight() const { return m_pLight; }
+    render::lights::CBaseLight* GetLight() const { return m_pLight; }
     void SetLightType(render::lights::ELightType _eLightType);
     render::lights::ELightType GetLightType() const;
 
@@ -34,7 +34,7 @@ namespace game
     void CreateLight(render::lights::ELightType _eLightType);
 
   private:
-    render::lights::CLight* m_pLight = nullptr;
+    render::lights::CBaseLight* m_pLight = nullptr;
   };
 }
 

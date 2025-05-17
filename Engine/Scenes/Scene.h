@@ -10,7 +10,7 @@
 
 namespace render { class CRender; }
 namespace render { namespace lights { class CSpotLight; } }
-namespace render { namespace lights { class CLight; } }
+namespace render { namespace lights { class CBaseLight; } }
 namespace render { namespace lights { class CPointLight; } }
 namespace render { namespace lights { class CDirectionalLight; } }
 
@@ -44,9 +44,9 @@ namespace scene
     const bool& IsEnabled() const { return m_bEnabled; }
 
     // Debug creation
-    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, render::ERenderMode = render::ERenderMode::SOLID, bool _bPermanent = false);
-    void DrawCube(const math::CVector3& _v3Pos, float _fSize, render::ERenderMode = render::ERenderMode::SOLID, bool _bPermanent = false);
-    void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, bool _bPermanent = false);
+    void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
+    void DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::SOLID);
+    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::SOLID);
 
     // Element creation
     render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode = render::ERenderMode::SOLID);
@@ -58,7 +58,7 @@ namespace scene
 
     void DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_);
     void DestroyModel(render::graphics::CModel*& pModel_);
-    void DestroyLight(render::lights::CLight*& pLight_);
+    void DestroyLight(render::lights::CBaseLight*& pLight_);
 
   private:
     friend class render::CRender;
