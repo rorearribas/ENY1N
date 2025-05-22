@@ -1,19 +1,17 @@
 #pragma once
 #include "Light.h"
-#include "../ConstantBuffer/ConstantBuffer.h"
+#include "Libs/Math/Vector3.h"
 
 namespace render
 {
   namespace lights
   {
-    class CPointLight : public CBaseLight {
+    class CPointLight : public CBaseLight 
+    {
     public:
       CPointLight() : CBaseLight(POINT_LIGHT) {}
       virtual ~CPointLight() {}
 
-      // Color
-      void SetColor(const math::CVector3& _v3Color) { m_v3LightColor = _v3Color; }
-      const math::CVector3& GetColor() const { return m_v3LightColor; }
       // Range
       void SetRange(float _fRange) { m_fRange = _fRange; }
       const float& GetRange() const { return m_fRange; }
@@ -22,7 +20,7 @@ namespace render
       const float& GetIntensity() const { return m_fIntensity; }
 
     private:
-      math::CVector3 m_v3LightColor = math::CVector3::One;
+      // Properties
       float m_fRange = 10.0f;
       float m_fIntensity = 1.0f;
     };

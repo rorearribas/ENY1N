@@ -37,6 +37,9 @@ namespace render
       static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::graphics::SVertexData>& _vctVertices_);
       static std::vector<uint32_t> GetSphereIndices(int _iStacks, int _iSlices);
       static std::vector<uint32_t> GetWireframeSphereIndices(int _iStacks, int _iSlices);
+
+      // Normals
+      static void ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _vctIndices);
     };
 
   }

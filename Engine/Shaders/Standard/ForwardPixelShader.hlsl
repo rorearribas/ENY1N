@@ -22,8 +22,8 @@ struct PointLight
   float Padding1;
   
   // 4 + 4 bytes = 8 bytes
-  float Intensity;
   float Range;
+  float Intensity;
   float2 Padding;
 };
 
@@ -42,8 +42,8 @@ struct Spotlight
   float Padding2;
   
   // 4 + 4 + 4 + 4 = 16 bytes
-  float CutOffAngle;
   float Range;
+  float CutOffAngle;
   float Intensity;
   float Padding3;
 };
@@ -56,7 +56,7 @@ SamplerState cSamplerState : register(s0);
 struct PS_INPUT
 {
   float4 position : SV_POSITION;
-  float3 positionWS : POSITION;
+  float3 worldpos : POSITION;
   float3 normal : NORMAL;
   float3 color: COLOR;
   float2 uv : TEXCOORD;
@@ -66,7 +66,10 @@ struct PS_INPUT
 cbuffer ConstantTexture : register(b0)
 {
   bool HasTexture;
-  float3 Padding0;
+  float Padding0;
+
+  bool HasModel;
+  float Padding1;
 }
 
 // Constant buffer global lightning
@@ -83,28 +86,44 @@ cbuffer GlobalLightningData : register(b1)
 
 float4 PSMain(PS_INPUT input) : SV_TARGET
 {
-  float3 vNormal = normalize(input.normal);
-  float3 vTotalDiffuse = float3(0.0f, 0.0f, 0.0f);
+  float4 v4TextureColor = cTexture2D.Sample(cSamplerState, input.uv);
+  float3 v3TotalDiffuse = float3(0.0f, 0.0f, 0.0f);
+  float3 v3Normal = normalize(input.normal);
+
+  // Ambient light
+  float3 v3AmbientColor = 0.02f * float3(1.0f, 1.0f, 1.0f);
+  v3TotalDiffuse += v3AmbientColor;
+
+  if(!HasModel)
+  {
+    float3 dp1 = ddx(input.worldpos);
+    float3 dp2 = ddy(input.worldpos);
+    v3Normal = normalize(cross(dp1, dp2));
+  }
 
   // Directional light
-  float3 vLightDir = normalize(directionalLight.Direction);
-  float vDiff = max(dot(vNormal, vLightDir), 0.0f);
-  vTotalDiffuse += vDiff * directionalLight.Color * directionalLight.Intensity;
+  if(directionalLight.Intensity > 0.001f)
+  {
+    float3 v3LightDir = normalize(directionalLight.Direction);
+    float fDot = max(dot(v3Normal, v3LightDir), 0.0f);
+    v3TotalDiffuse += fDot * directionalLight.Color * directionalLight.Intensity;
+  }
   
   // Point Lights
   for (int i = 0; i < RegisteredLights.x; i++)
   {
     PointLight pointLight = pointLights[i];
-    float3 vlightToPixel = pointLight.Position - input.positionWS;
-    float fDistance = length(vlightToPixel);
+    float3 v3Diff = pointLight.Position - input.worldpos;
+    float fDistance = length(v3Diff);
 
-    if (fDistance < pointLight.Range)
+    float3 v3LightDir = normalize(v3Diff);
+    float fDot = max(dot(v3Normal, v3LightDir), 0.0f);
+    if(fDot > 0.0f)
     {
-      float3 vLightDirPoint = normalize(vlightToPixel);
-      float fSmoothFactor = smoothstep(pointLight.Range * 0.75f, pointLight.Range, fDistance);
-      float fAttenuation = (1.0f - fSmoothFactor) / (1.0f + 0.14f * fDistance + 0.07f * (fDistance * fDistance));
-      float fDiffPoint = max(dot(vNormal, vLightDirPoint), 0.0f);
-      vTotalDiffuse += fDiffPoint * pointLight.Color * pointLight.Intensity * fAttenuation;
+      float fAttenuation = 1.0f / (1.0f + 0.001f * fDistance + 0.001f * fDistance * fDistance);
+      float fIntensityFalloff = saturate(1.0f - pow(fDistance / pointLight.Range, 0.25f));
+      float3 vPointDiffuse = fDot * pointLight.Color * pointLight.Intensity * fAttenuation * fIntensityFalloff;
+      v3TotalDiffuse += vPointDiffuse;
     }
   }
   
@@ -112,29 +131,29 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   for (int j = 0; j < RegisteredLights.y; j++)
   {
     Spotlight spotlight = spotLights[j];
-    float3 vLightToPixel = spotlight.Position - input.positionWS;
-    float fDistance = length(vLightToPixel);
+    float3 v3Diff = spotlight.Position - input.worldpos;
+    float fDistance = length(v3Diff); // Distance
 
-   if (fDistance < spotlight.Range)
-   {
-      float3 vLightDirSpot = normalize(spotlight.Direction);
-      float3 vLightDirToPixel = normalize(vLightToPixel);
-      float fSpotFactor = dot(vLightDirToPixel, vLightDirSpot);
-      
-      if (fSpotFactor > cos(radians(spotlight.CutOffAngle)))
-      {
-        float fSpotAttenuation = smoothstep(cos(radians(spotlight.CutOffAngle * 0.85f)), cos(radians(spotlight.CutOffAngle)), fSpotFactor * -1.0f);
-        float fDistanceAttenuation = 1.0f / (1.0f + 0.01f * fDistance + 0.001f * (fDistance * fDistance));
-        vTotalDiffuse += spotlight.Color * spotlight.Intensity * fSpotAttenuation * fDistanceAttenuation;
-      }
+    if(fDistance > spotlight.Range)
+    {
+      continue;
+    }
+
+    // Directions
+    float3 v3LightDirSpot = normalize(spotlight.Direction);
+    float3 v3LightDirToPixel = normalize(v3Diff);
+
+    // Dots
+    float fSpotDot = dot(v3LightDirToPixel, v3LightDirSpot);
+    float fDiffuseDot = max(dot(v3Normal, v3LightDirToPixel), 0.0f);
+    
+    if (fSpotDot > cos(radians(spotlight.CutOffAngle)))
+    {
+      float fSpotAttenuation = smoothstep(cos(radians(spotlight.CutOffAngle * 0.85f)), cos(radians(spotlight.CutOffAngle)), fSpotDot);
+      float fDistanceAttenuation = 1.0f / (1.0f + 0.045f * fDistance + 0.0075f * fDistance * fDistance);
+      v3TotalDiffuse += spotlight.Color * spotlight.Intensity * fSpotAttenuation * fDistanceAttenuation * fDiffuseDot;
     }
   }
-
-  if (HasTexture)
-  {
-    float4 texColor = cTexture2D.Sample(cSamplerState, input.uv);
-    return float4(vTotalDiffuse, 1.0f) * texColor;
-  }
   
-  return float4(vTotalDiffuse, 1.0f) * float4(input.color, 1.0f);
+  return float4(v3TotalDiffuse, 1.0f) * (HasTexture ? v4TextureColor : float4(input.color, 1.0f));
 }

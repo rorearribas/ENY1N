@@ -18,16 +18,6 @@ namespace math
     CVector3(float _x, float _y, float _z) : X(_x), Y(_y), Z(_z) {}
     ~CVector3() {}
 
-    inline void operator+=(const CVector3& _v3) { X += _v3.X; Y += _v3.Y; Z += _v3.Z; }
-    inline void operator-=(const CVector3& _v3) { X -= _v3.X; Y -= _v3.Y; Z -= _v3.Z; }
-    inline void operator*=(const CVector3& _v3) { X *= _v3.X; Y *= _v3.Y; Z *= _v3.Z; }
-    inline void operator/=(const CVector3& _v3) { X /= _v3.X; Y /= _v3.Y; Z /= _v3.Z; }
-
-    inline void operator +=(float _fValue) { X += _fValue; Y += _fValue; Z += _fValue; }
-    inline void operator -=(float _fValue) { X -= _fValue; Y -= _fValue; Z -= _fValue; }
-    inline void operator *=(float _fValue) { X *= _fValue; Y *= _fValue; Z *= _fValue; }
-    inline void operator /=(float _fValue) { X /= _fValue; Y /= _fValue; Z /= _fValue; }
-
     inline CVector3 operator+(const CVector3& _v3) const { return CVector3(X + _v3.X, Y + _v3.Y, Z + _v3.Z); }
     inline CVector3 operator-(const CVector3& _v3) const { return CVector3(X - _v3.X, Y - _v3.Y, Z - _v3.Z); }
     inline CVector3 operator*(const CVector3& _v3) const { return CVector3(X * _v3.X, Y * _v3.Y, Z * _v3.Z); }
@@ -37,6 +27,16 @@ namespace math
     inline CVector3 operator-(float _fValue) const { return CVector3(X - _fValue, Y - _fValue, Z - _fValue); }
     inline CVector3 operator*(float _fValue) const { return CVector3(X * _fValue, Y * _fValue, Z * _fValue); }
     inline CVector3 operator/(float _fValue) const { return CVector3(X / _fValue, Y / _fValue, Z / _fValue); }
+
+    inline void operator+=(const CVector3& _v3) { X += _v3.X; Y += _v3.Y; Z += _v3.Z; }
+    inline void operator-=(const CVector3& _v3) { X -= _v3.X; Y -= _v3.Y; Z -= _v3.Z; }
+    inline void operator*=(const CVector3& _v3) { X *= _v3.X; Y *= _v3.Y; Z *= _v3.Z; }
+    inline void operator/=(const CVector3& _v3) { X /= _v3.X; Y /= _v3.Y; Z /= _v3.Z; }
+
+    inline void operator +=(float _fValue) { X += _fValue; Y += _fValue; Z += _fValue; }
+    inline void operator -=(float _fValue) { X -= _fValue; Y -= _fValue; Z -= _fValue; }
+    inline void operator *=(float _fValue) { X *= _fValue; Y *= _fValue; Z *= _fValue; }
+    inline void operator /=(float _fValue) { X /= _fValue; Y /= _fValue; Z /= _fValue; }
 
     inline CVector3 operator-() const { return CVector3(-X, -Y, -Z); }
     inline CVector3 operator+() const { return CVector3(+X, +Y, +Z); }
@@ -65,8 +65,8 @@ namespace math
 
     bool Equal(const CVector3& _v3, float _fEpsilon = 0.0001f) const;
 
-    static float Length(const CVector3& _v3);
-    float Length() const;
+    static float Magnitude(const CVector3& _v3);
+    float Magnitude() const;
   };
 }
 

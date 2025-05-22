@@ -32,9 +32,9 @@ namespace game
     math::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
     math::CVector3 v3VelocityDir = math::CVector3::Normalize(v3CurrentVelocity);
 
-    float fVelocity = v3CurrentVelocity.Length();
+    float fMagnitude = v3CurrentVelocity.Magnitude();
     math::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
-    m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * (internal_rigidbody::s_fMaxAngularForce * 2.0f));
+    m_pRigidbody->AddTorque(v3TorqueDir * -fMagnitude * (internal_rigidbody::s_fMaxAngularForce * 2.0f));
   }
   // ------------------------------------
   void CRigidbodyComponent::OnCollisionStay(const collisions::SHitEvent& _oHitEvent)
@@ -52,11 +52,11 @@ namespace game
     }
 
     // Apply torque
-    float fVelocity = v3CurrentVelocity.Length();
-    if (fVelocity > math::s_fEpsilon5)
+    float fMagnitude = v3CurrentVelocity.Magnitude();
+    if (fMagnitude > math::s_fEpsilon5)
     {
       math::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
-      m_pRigidbody->AddTorque(v3TorqueDir * -fVelocity * internal_rigidbody::s_fMaxAngularForce);
+      m_pRigidbody->AddTorque(v3TorqueDir * -fMagnitude * internal_rigidbody::s_fMaxAngularForce);
     }
 
     // Fixed impacted position

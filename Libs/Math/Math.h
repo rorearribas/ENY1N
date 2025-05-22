@@ -17,34 +17,37 @@ namespace math
   static const float s_fEpsilon7 = 1e-7f;
 
   // Functions
-  inline float lerp(float a, float b, float f)
+  inline float Lerp(float a, float b, float f)
   {
     return static_cast<float>(a * (1.0 - f) + (b * f));
   }
 
   template <typename T>
-  T Clamp(T value, T min, T max)
+  inline T Clamp(T Value, T Min, T Max)
   {
-    if (value < min) return min;
-    if (value > max) return max;
-    return value;
+    return Value < Min ? Min : Value > Max ? Max : Value;
   }
 
   template <typename T>
-  T Max(const T& Object1, const T& Object2)
+  inline T Max(const T& Object1, const T& Object2)
   {
     return Object1 > Object2 ? Object1 : Object2;
   }
 
   template <typename T>
-  T Min(const T& Object1, const T& Object2)
+  inline T Min(const T& Object1, const T& Object2)
   {
     return Object1 < Object2 ? Object1 : Object2;
   }
 
-  inline float DegreesToRadians(float _fDegree)
+  inline float DegreesToRadians(float _fDegrees)
   {
-    return _fDegree * static_cast<float>((s_fPI / 180.0f));
+    return _fDegrees * static_cast<float>(s_fPI / 180.0f);
+  }
+
+  inline float RadiansToDegrees(float _fRadians)
+  {
+    return _fRadians * static_cast<float>(180.0f / s_fPI);
   }
 
   inline math::CVector3 DegreesToRadians(const math::CVector3& _v3)
@@ -60,11 +63,6 @@ namespace math
     float fX = DegreesToRadians(_v2.X);
     float fY = DegreesToRadians(_v2.Y);
     return math::CVector2(fX, fY);
-  }
-
-  inline float RadiansToDegrees(float _fRadians)
-  {
-    return _fRadians * static_cast<float>((180.0f / s_fPI));
   }
 
   inline math::CVector3 RadiansToDegrees(const math::CVector3& _v3)

@@ -68,9 +68,9 @@ int main()
   pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
   pSpotLight->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
 
-  //// Create point light
-  //game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
-  //pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
+  // Create point light
+  game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
+  pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();

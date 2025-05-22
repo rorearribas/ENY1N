@@ -1645,7 +1645,7 @@ struct IMGUI_API ImGuiTypingSelectRequest
     const char*             SearchBuffer;       // Search buffer contents (use full string. unless SingleCharMode is set, in which case use SingleCharSize).
     bool                    SelectRequest;      // Set when buffer was modified this frame, requesting a selection.
     bool                    SingleCharMode;     // Notify when buffer contains same character repeated, to implement special mode. In this situation it preferred to not display any on-screen search indication.
-    ImS8                    SingleCharSize;     // Length in bytes of first letter codepoint (1 for ascii, 2-4 for UTF-8). If (SearchBufferLen==RepeatCharSize) only 1 letter has been input.
+    ImS8                    SingleCharSize;     // Magnitude in bytes of first letter codepoint (1 for ascii, 2-4 for UTF-8). If (SearchBufferLen==RepeatCharSize) only 1 letter has been input.
 };
 
 // Storage for GetTypingSelectRequest()

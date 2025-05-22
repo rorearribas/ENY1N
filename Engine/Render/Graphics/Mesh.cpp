@@ -54,13 +54,13 @@ namespace render
         }
 
         // Update buffer
-        m_oConstantTexture.GetData().bHasTexture = pTexture;
-        bool bOk = m_oConstantTexture.WriteBuffer();
+        m_oConstantModelData.GetData().bHasTexture = pTexture;
+        bool bOk = m_oConstantModelData.WriteBuffer();
         UNUSED_VARIABLE(bOk);
         assert(bOk);
 
         // Set constant buffer
-        ID3D11Buffer* pConstantBuffer = m_oConstantTexture.GetBuffer();
+        ID3D11Buffer* pConstantBuffer = m_oConstantModelData.GetBuffer();
         global::dx11::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
       }
 
@@ -80,7 +80,7 @@ namespace render
       Clean();
 
       // Init constant check texture
-      m_oConstantTexture.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Get indexes
       m_vctIndices = std::move(_vctIndices);
@@ -138,7 +138,7 @@ namespace render
     void CMesh::Clean()
     {
       global::dx11::SafeRelease(m_pIndexBuffer);
-      m_oConstantTexture.CleanBuffer();
+      m_oConstantModelData.CleanBuffer();
     }
   }
 }

@@ -1,12 +1,5 @@
 #include "PointLight.h"
-
-namespace render
-{
-  namespace lights
-  {
-
-  }
-}
+#include "Libs/Math/Math.h"
 
 
 

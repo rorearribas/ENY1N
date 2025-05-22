@@ -22,12 +22,11 @@ namespace game
 
     void SetPosition(const math::CVector3& _v3Position);
     const math::CVector3& GetPosition() const;
-    void SetRotation(const math::CVector3& _v3Rot);
-    const math::CVector3& GetRotation() const;
+    void SetDirection(const math::CVector3& _v3Rot);
+    const math::CVector3& GetDirection() const;
 
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;
-    virtual void OnRotationChanged(const math::CVector3& _v3Rot) override;
 
   private:
     void Clean();

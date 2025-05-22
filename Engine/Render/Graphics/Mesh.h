@@ -20,7 +20,7 @@ namespace render
 
       // Vertex data
       math::CVector3 Position = math::CVector3::Zero;
-      math::CVector3 Normal = math::CVector3::One;
+      math::CVector3 Normal = math::CVector3::Zero;
       math::CVector3 Color = math::CVector3::One;
       math::CVector2 TexCoord = math::CVector2::Zero;
 
@@ -62,7 +62,7 @@ namespace render
       TIndexesList m_vctIndices = TIndexesList();
 
       // Buffers
-      CConstantBuffer<SConstantTexture> m_oConstantTexture;
+      CConstantBuffer<SConstantModelData> m_oConstantModelData;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
     };
   }

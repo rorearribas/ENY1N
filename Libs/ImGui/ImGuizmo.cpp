@@ -217,9 +217,9 @@ namespace IMGUIZMO_NAMESPACE
       vec_t operator * (const vec_t& v) const;
 
       const vec_t& operator + () const { return (*this); }
-      float Length() const { return sqrtf(x * x + y * y + z * z); };
+      float Magnitude() const { return sqrtf(x * x + y * y + z * z); };
       float LengthSq() const { return (x * x + y * y + z * z); };
-      vec_t Normalize() { (*this) *= (1.f / ( Length() > FLT_EPSILON ? Length() : FLT_EPSILON ) ); return (*this); }
+      vec_t Normalize() { (*this) *= (1.f / ( Magnitude() > FLT_EPSILON ? Magnitude() : FLT_EPSILON ) ); return (*this); }
       vec_t Normalize(const vec_t& v) { this->Set(v.x, v.y, v.z, v.w); this->Normalize(); return (*this); }
       vec_t Abs() const;
 
@@ -899,7 +899,7 @@ namespace IMGUIZMO_NAMESPACE
       vec_t V;
 
       V.Normalize(vertPos2 - vertPos1);
-      float d = (vertPos2 - vertPos1).Length();
+      float d = (vertPos2 - vertPos1).Magnitude();
       float t = V.Dot3(c);
 
       if (t < 0.f)
@@ -1081,7 +1081,7 @@ namespace IMGUIZMO_NAMESPACE
          gContext.mModel.Translation(((matrix_t*)matrix)->v.position);
       }
       gContext.mModelSource = *(matrix_t*)matrix;
-      gContext.mModelScaleOrigin.Set(gContext.mModelSource.v.right.Length(), gContext.mModelSource.v.up.Length(), gContext.mModelSource.v.dir.Length());
+      gContext.mModelScaleOrigin.Set(gContext.mModelSource.v.right.Magnitude(), gContext.mModelSource.v.up.Magnitude(), gContext.mModelSource.v.dir.Magnitude());
 
       gContext.mModelInverse.Inverse(gContext.mModel);
       gContext.mModelSourceInverse.Inverse(gContext.mModelSource);
@@ -1898,9 +1898,9 @@ namespace IMGUIZMO_NAMESPACE
             char tmps[512];
             ImVec2 destinationPosOnScreen = worldToPos(gContext.mModel.v.position, gContext.mViewProjection);
             ImFormatString(tmps, sizeof(tmps), "X: %.2f Y: %.2f Z: %.2f"
-               , (bounds[3] - bounds[0]) * gContext.mBoundsMatrix.component[0].Length() * scale.component[0].Length()
-               , (bounds[4] - bounds[1]) * gContext.mBoundsMatrix.component[1].Length() * scale.component[1].Length()
-               , (bounds[5] - bounds[2]) * gContext.mBoundsMatrix.component[2].Length() * scale.component[2].Length()
+               , (bounds[3] - bounds[0]) * gContext.mBoundsMatrix.component[0].Magnitude() * scale.component[0].Magnitude()
+               , (bounds[4] - bounds[1]) * gContext.mBoundsMatrix.component[1].Magnitude() * scale.component[1].Magnitude()
+               , (bounds[5] - bounds[2]) * gContext.mBoundsMatrix.component[2].Magnitude() * scale.component[2].Magnitude()
             );
             drawList->AddText(ImVec2(destinationPosOnScreen.x + 15, destinationPosOnScreen.y + 15), GetColorU32(TEXT_SHADOW), tmps);
             drawList->AddText(ImVec2(destinationPosOnScreen.x + 14, destinationPosOnScreen.y + 14), GetColorU32(TEXT), tmps);
@@ -1964,7 +1964,7 @@ namespace IMGUIZMO_NAMESPACE
 
          vec_t closestPointOnAxis = PointOnSegment(makeVect(posOnPlanScreen), makeVect(axisStartOnScreen), makeVect(axisEndOnScreen));
 
-         if ((closestPointOnAxis - makeVect(posOnPlanScreen)).Length() < 12.f) // pixel size
+         if ((closestPointOnAxis - makeVect(posOnPlanScreen)).Magnitude() < 12.f) // pixel size
          {
             if (!isAxisMasked)
                type = MT_SCALE_X + i;
@@ -1974,7 +1974,7 @@ namespace IMGUIZMO_NAMESPACE
       // universal
 
       vec_t deltaScreen = { io.MousePos.x - gContext.mScreenSquareCenter.x, io.MousePos.y - gContext.mScreenSquareCenter.y, 0.f, 0.f };
-      float dist = deltaScreen.Length();
+      float dist = deltaScreen.Magnitude();
       if (Contains(op, SCALEU) && dist >= 17.0f && dist < 23.0f)
       {
          type = MT_SCALE_XYZ;
@@ -2024,7 +2024,7 @@ namespace IMGUIZMO_NAMESPACE
       int type = MT_NONE;
 
       vec_t deltaScreen = { io.MousePos.x - gContext.mScreenSquareCenter.x, io.MousePos.y - gContext.mScreenSquareCenter.y, 0.f, 0.f };
-      float dist = deltaScreen.Length();
+      float dist = deltaScreen.Magnitude();
       if (Intersects(op, ROTATE_SCREEN) && dist >= (gContext.mRadiusSquareCenter - 4.0f) && dist < (gContext.mRadiusSquareCenter + 4.0f))
       {
          if (!isNoAxesMasked)
@@ -2065,7 +2065,7 @@ namespace IMGUIZMO_NAMESPACE
          //gContext.mDrawList->AddCircle(idealPosOnCircleScreen, 5.f, IM_COL32_WHITE);
          const ImVec2 distanceOnScreen = idealPosOnCircleScreen - io.MousePos;
 
-         const float distance = makeVect(distanceOnScreen).Length();
+         const float distance = makeVect(distanceOnScreen).Magnitude();
          if (distance < 8.f) // pixel size
          {
             if ((!isAxisMasked || isMultipleAxesMasked) && !isNoAxesMasked)
@@ -2118,7 +2118,7 @@ namespace IMGUIZMO_NAMESPACE
          const ImVec2 axisEndOnScreen = worldToPos(gContext.mModel.v.position + dirAxis * gContext.mScreenFactor, gContext.mViewProjection) - ImVec2(gContext.mX, gContext.mY);
 
          vec_t closestPointOnAxis = PointOnSegment(screenCoord, makeVect(axisStartOnScreen), makeVect(axisEndOnScreen));
-         if ((closestPointOnAxis - screenCoord).Length() < 12.f && Intersects(op, static_cast<OPERATION>(TRANSLATE_X << i))) // pixel size
+         if ((closestPointOnAxis - screenCoord).Magnitude() < 12.f && Intersects(op, static_cast<OPERATION>(TRANSLATE_X << i))) // pixel size
          {
             if (isAxisMasked)
                break;
@@ -2302,7 +2302,7 @@ namespace IMGUIZMO_NAMESPACE
             gContext.mMatrixOrigin = gContext.mModelLocal.v.position;
             gContext.mScale.Set(1.f, 1.f, 1.f);
             gContext.mRelativeOrigin = (gContext.mTranslationPlanOrigin - gContext.mModelLocal.v.position) * (1.f / gContext.mScreenFactor);
-            gContext.mScaleValueOrigin = makeVect(gContext.mModelSource.v.right.Length(), gContext.mModelSource.v.up.Length(), gContext.mModelSource.v.dir.Length());
+            gContext.mScaleValueOrigin = makeVect(gContext.mModelSource.v.right.Magnitude(), gContext.mModelSource.v.up.Magnitude(), gContext.mModelSource.v.dir.Magnitude());
             gContext.mSaveMousePosx = io.MousePos.x;
          }
       }
@@ -2502,9 +2502,9 @@ namespace IMGUIZMO_NAMESPACE
    {
       matrix_t mat = *(matrix_t*)matrix;
 
-      scale[0] = mat.v.right.Length();
-      scale[1] = mat.v.up.Length();
-      scale[2] = mat.v.dir.Length();
+      scale[0] = mat.v.right.Magnitude();
+      scale[1] = mat.v.up.Magnitude();
+      scale[2] = mat.v.dir.Magnitude();
 
       mat.OrthoNormalize();
 

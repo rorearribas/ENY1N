@@ -16,8 +16,8 @@ namespace render
       HRESULT hResult = CreateInputLayout();
       assert(!FAILED(hResult));
 
-      m_oConstantTexture.CleanBuffer();
-      m_oConstantTexture.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantModelData.CleanBuffer();
+      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Create from custom data
       hResult = CreateBufferFromPrimitiveData(_oVertexData.m_vctVertexData, _oVertexData.m_vctIndices);
@@ -33,8 +33,8 @@ namespace render
       HRESULT hResult = CreateInputLayout();
       assert(!FAILED(hResult));
 
-      m_oConstantTexture.CleanBuffer();
-      m_oConstantTexture.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantModelData.CleanBuffer();
+      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Create buffer from presets
       hResult = CreatePrimitive(_ePrimitiveType, _eRenderMode);
@@ -49,7 +49,7 @@ namespace render
     {
       // Release constant buffers
       m_oConstantBuffer.CleanBuffer();
-      m_oConstantTexture.CleanBuffer();
+      m_oConstantModelData.CleanBuffer();
 
       // Release dx
       global::dx11::SafeRelease(m_pVertexBuffer);
@@ -91,6 +91,9 @@ namespace render
       }
       case EPrimitiveType::E3D_CUBE:
       {
+        std::vector<render::graphics::SVertexData> vctVertexData = CPrimitiveUtils::s_oCubePrimitive;
+        CPrimitiveUtils::ComputeNormals(vctVertexData, _eRenderMode == SOLID ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oCubeWireframeIndices);
+
         return CreateBufferFromPrimitiveData
         (
           CPrimitiveUtils::s_oCubePrimitive,
@@ -231,12 +234,13 @@ namespace render
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
       // Set invalid texture
-      m_oConstantTexture.GetData().bHasTexture = false;
-      bOk = m_oConstantTexture.WriteBuffer();
+      m_oConstantModelData.GetData().bHasTexture = false;
+      m_oConstantModelData.GetData().bHasModel = false;
+      bOk = m_oConstantModelData.WriteBuffer();
       assert(bOk);
 
       // Apply constant buffer
-      pConstantBuffer = m_oConstantTexture.GetBuffer();
+      pConstantBuffer = m_oConstantModelData.GetBuffer();
       global::dx11::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
 
       // Draw

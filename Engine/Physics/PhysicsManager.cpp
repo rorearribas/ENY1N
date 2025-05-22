@@ -11,7 +11,6 @@ namespace physics
     const float s_fGravityForce(9.8f);
     static math::CVector3 s_v3GravityForce(0.0f, -internal_physics_manager::s_fGravityForce, 0.0f);
   }
-
   // ------------------------------------
   CPhysicsManager::~CPhysicsManager()
   {

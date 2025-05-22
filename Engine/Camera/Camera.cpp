@@ -60,7 +60,7 @@ namespace render
     }
 
     // Interpolate FOV
-    m_fTargetFov = math::lerp(m_fTargetFov, m_fFov, internal_camera::s_fInterpolateSpeed * _fDeltaTime);
+    m_fTargetFov = math::Lerp(m_fTargetFov, m_fFov, internal_camera::s_fInterpolateSpeed * _fDeltaTime);
 
     // Update perspective matrix
     UpdatePerspectiveMatrix();

@@ -23,7 +23,7 @@ namespace math
   float CVector3::Distance(const CVector3& _vDest, const CVector3& _vOrigin)
   {
     math::CVector3 v3Substract = _vDest - _vOrigin;
-    return sqrt(v3Substract.X * v3Substract.X + v3Substract.Y * v3Substract.Y + v3Substract.Z * v3Substract.Z);
+    return v3Substract.Magnitude();
   }
   // ------------------------------------
   float CVector3::Distance(const CVector3& _v3Dest) const
@@ -36,21 +36,21 @@ namespace math
     return (fabs(X - _v3.X) < _fEpsilon) && (fabs(Y - _v3.Y) < _fEpsilon) && (fabs(Z - _v3.Z) < _fEpsilon);
   }
   // ------------------------------------
-  float CVector3::Length(const CVector3& _v3)
+  float CVector3::Magnitude(const CVector3& _v3)
   {
-    return _v3.Length();
+    return _v3.Magnitude();
   }
   // ------------------------------------
-  float CVector3::Length() const
+  float CVector3::Magnitude() const
   {
-    return sqrt(X * X + Y * Y + Z * Z);
+    return sqrt((X * X) + (Y * Y) + (Z * Z));
   }
-
+  // ------------------------------------
   bool CVector3::operator==(const CVector3& _v3) const
   {
-    return std::fabs(X - _v3.X) < math::s_fEpsilon5 &&
-      std::fabs(Y - _v3.Y) < math::s_fEpsilon5 &&
-      std::fabs(Z - _v3.Z) < math::s_fEpsilon5;
+    return std::fabs(this->X - _v3.X) < math::s_fEpsilon5 &&
+      std::fabs(this->Y - _v3.Y) < math::s_fEpsilon5 &&
+      std::fabs(this->Z - _v3.Z) < math::s_fEpsilon5;
   }
   // ------------------------------------
   bool CVector3::IsZero(const CVector3& _v3)
@@ -60,19 +60,19 @@ namespace math
   // ------------------------------------
   bool CVector3::IsZero() const
   {
-    return abs(X) <= s_fEpsilon2 && abs(Y) <= s_fEpsilon2 && abs(Z) <= s_fEpsilon2;
+    return std::abs(X) <= s_fEpsilon2 && std::abs(Y) <= s_fEpsilon2 && std::abs(Z) <= s_fEpsilon2;
   }
   // ------------------------------------
   void CVector3::Abs()
   {
-    X = abs(X);
-    Z = abs(Y);
-    Y = abs(Z);
+    this->X = std::abs(this->X);
+    this->Z = std::abs(this->Y);
+    this->Y = std::abs(this->Z);
   }
   // ------------------------------------
   CVector3 CVector3::Abs(const CVector3& _v3)
   {
-    return CVector3(abs(_v3.X), abs(_v3.Y), abs(_v3.Z));
+    return CVector3(std::abs(_v3.X), std::abs(_v3.Y), std::abs(_v3.Z));
   }
   // ------------------------------------
   CVector3 CVector3::Cross(const CVector3& _v3) const
@@ -92,18 +92,19 @@ namespace math
   // ------------------------------------
   void CVector3::Normalize()
   {
-    float fMagnitude = sqrt((X * X) + (Y * Y) + (Z * Z));
+    float fMagnitude = Magnitude();
     if (fMagnitude > math::s_fEpsilon7)
     {
-      X /= fMagnitude;
-      Y /= fMagnitude;
-      Z /= fMagnitude;
+      this->X /= fMagnitude;
+      this->Y /= fMagnitude;
+      this->Z /= fMagnitude;
     }
   }
   // ------------------------------------
   math::CVector3 CVector3::Normalize(const CVector3& _v3)
   {
-    float fMagnitude = sqrt((_v3.X * _v3.X) + (_v3.Y * _v3.Y) + (_v3.Z * _v3.Z));
-    return fMagnitude > 0.0f ? CVector3(_v3.X / fMagnitude, _v3.Y / fMagnitude, _v3.Z / fMagnitude) : CVector3::Zero;
+    CVector3 v3Dir = _v3;
+    v3Dir.Normalize();
+    return v3Dir;
   }
 }

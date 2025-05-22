@@ -8,32 +8,32 @@ namespace render
     // Triangle Primitive
     const std::vector<render::graphics::SVertexData> CPrimitiveUtils::s_oTrianglePrimitive =
     {
-      { math::CVector3(0, 0.5f, 0.0f), math::CVector3::One, math::CVector3::One },
-      { math::CVector3(0.5f, -0.5f,  0.0f),  math::CVector3::One, math::CVector3::One },
-      { math::CVector3(-0.5f, -0.5f,  0.0f), math::CVector3::One, math::CVector3::One },
+      { math::CVector3(0, 0.5f, 0.0f), math::CVector3(1.0f, 0.0f, 0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
+      { math::CVector3(0.5f, -0.5f,  0.0f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
+      { math::CVector3(-0.5f, -0.5f,  0.0f), math::CVector3(0.0f, 0.0f, 1.0f), math::CVector3(1.0f, 1.0f, 1.0f)},
     };
 
     // Cube Primitive
     const std::vector<render::graphics::SVertexData> CPrimitiveUtils::s_oCubePrimitive =
     {
-      { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(1.0f, 0.0f, 0.0f), math::CVector3::One },
-      { math::CVector3(-0.5f,  0.5f, -0.5f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3::One },
-      { math::CVector3(0.5f,  0.5f, -0.5f), math::CVector3(0.0f, 0.0f, 1.0f), math::CVector3::One },
-      { math::CVector3(0.5f, -0.5f, -0.5f), math::CVector3(1.0f, 1.0f, 1.0f), math::CVector3::One },
+      { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(1.0f, 0.0f, 0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
+      { math::CVector3(-0.5f,  0.5f, -0.5f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
+      { math::CVector3(0.5f,  0.5f, -0.5f), math::CVector3(0.0f, 0.0f, 1.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
+      { math::CVector3(0.5f, -0.5f, -0.5f), math::CVector3(1.0f, 1.0f, 1.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
 
-      { math::CVector3(-0.5f, -0.5f,  0.5f), math::CVector3(1.0f, 0.0f, 0.0f), math::CVector3::One },
-      { math::CVector3(-0.5f,  0.5f,  0.5f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3::One },
-      { math::CVector3(0.5f,  0.5f,  0.5f), math::CVector3(0.0f, 0.0f, 1.0f), math::CVector3::One},
-      { math::CVector3(0.5f, -0.5f,  0.5f), math::CVector3(1.0f, 1.0f, 1.0f), math::CVector3::One}
+      { math::CVector3(-0.5f, -0.5f,  0.5f), math::CVector3(1.0f, 0.0f, 0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
+      { math::CVector3(-0.5f,  0.5f,  0.5f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
+      { math::CVector3(0.5f,  0.5f,  0.5f), math::CVector3(0.0f, 0.0f, 1.0f), math::CVector3(1.0f, 1.0f, 1.0f) },
+      { math::CVector3(0.5f, -0.5f,  0.5f), math::CVector3(1.0f, 1.0f, 1.0f), math::CVector3(1.0f, 1.0f, 1.0f) }
     };
 
     // Plane Primitive
     const std::vector<render::graphics::SVertexData> CPrimitiveUtils::s_oPlanePrimitive =
     {
-      { math::CVector3(-0.5f, 0.0f, -0.5f), math::CVector3(1.0f, 0.0f, 0.0f), math::CVector3::One },  // Bottom-left
-      { math::CVector3(-0.5f, 0.0f,  0.5f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3::One },  // Top-left
-      { math::CVector3(0.5f, 0.0f,  0.5f), math::CVector3(0.0f, 0.0f, 1.0f), math::CVector3::One },  // Top-right
-      { math::CVector3(0.5f, 0.0f, -0.5f), math::CVector3(1.0f, 1.0f, 1.0f), math::CVector3::One }   // Bottom-right
+      { math::CVector3(-0.5f, 0.0f, -0.5f), math::CVector3(1.0f, 0.0f, 0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },  // Bottom-left
+      { math::CVector3(-0.5f, 0.0f,  0.5f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },  // Top-left
+      { math::CVector3(0.5f, 0.0f,  0.5f), math::CVector3(0.0f, 0.0f, 1.0f), math::CVector3(1.0f, 1.0f, 1.0f) },  // Top-right
+      { math::CVector3(0.5f, 0.0f, -0.5f), math::CVector3(1.0f, 1.0f, 1.0f), math::CVector3(1.0f, 1.0f, 1.0f) }   // Bottom-right
     };
 
     // 2D Square Indices
@@ -64,10 +64,10 @@ namespace render
     {
       0, 1, 2, 0, 2, 3, //FRONT
       4, 7, 6, 4, 6, 5, //BACK 
-      3, 2, 6,3, 6, 7, //RIGHT SIDE
+      3, 2, 6, 3, 6, 7, //RIGHT SIDE
       4, 5, 1, 4, 1, 0, //LEFT SIDE
-      1, 5, 6,  1, 6, 2, //TOP
-      0, 3, 7, 0, 7, 4 //BOTTOM
+      1, 5, 6, 1, 6, 2, //TOP
+      0, 3, 7, 0, 7, 4  //BOTTOM
     };
     const std::vector<uint32_t> CPrimitiveUtils::s_oCubeWireframeIndices =
     {
@@ -130,7 +130,9 @@ namespace render
 
           // Add vertex
           render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
-          oVertexData.Position = math::CVector3(fX, fY, fZ);
+          math::CVector3 v3VertexPos = math::CVector3(fX, fY, fZ);
+          oVertexData.Position = v3VertexPos;
+          oVertexData.Normal = math::CVector3::Normalize(v3VertexPos);
           _vctPrimitiveData.push_back(oVertexData);
         }
       }
@@ -185,5 +187,46 @@ namespace render
       }
       return vctWireframeIndices;
     }
-	}
+
+    // Compute normals
+    void CPrimitiveUtils::ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _vctIndices)
+    {
+      // Reset normals
+      for (auto& oVertex : _oVertexData)
+      {
+        oVertex.Normal = math::CVector3(0.0f, 0.0f, 0.0f);
+      }
+
+      // Calculate normals
+      for (uint32_t uIndex = 0; uIndex < _vctIndices.size(); uIndex += 3)
+      {
+        uint32_t i0 = _vctIndices[uIndex];
+        uint32_t i1 = _vctIndices[uIndex + 1];
+        uint32_t i2 = _vctIndices[uIndex + 2];
+
+        math::CVector3& v0 = _oVertexData[i0].Position;
+        math::CVector3& v1 = _oVertexData[i1].Position;
+        math::CVector3& v2 = _oVertexData[i2].Position;
+
+        math::CVector3 v3Edge01 = v1 - v0;
+        math::CVector3 v3Edge02 = v2 - v0;
+        math::CVector3 v3Normal = math::CVector3::Normalize(math::CVector3::Cross(v3Edge01, v3Edge02));
+
+        if (math::CVector3::Magnitude(v3Normal) < 0.001f)
+        {
+          v3Normal = math::CVector3(0, 1, 0);
+        }
+
+        _oVertexData[i0].Normal += v3Normal;
+        _oVertexData[i1].Normal += v3Normal;
+        _oVertexData[i2].Normal += v3Normal;
+      }
+
+      // Normalize
+      for (auto& vertex : _oVertexData)
+      {
+        vertex.Normal = math::CVector3::Normalize(vertex.Normal);
+      }
+    }
+  }
 }

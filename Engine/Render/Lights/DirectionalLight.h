@@ -13,12 +13,9 @@ namespace render
       static math::CVector3 s_vDefaultDirection;
 
     public:
-      CDirectionalLight() : CBaseLight(DIRECTIONAL_LIGHT) {}
+      CDirectionalLight() : CBaseLight(DIRECTIONAL_LIGHT) { SetDirection(s_vDefaultDirection); }
       virtual ~CDirectionalLight() {}
 
-      // Direction
-      void SetDirection(const math::CVector3& _v3Dir) { m_v3Direction = _v3Dir; }
-      const math::CVector3& GetDirection() const { return m_v3Direction; }
       // Color
       void SetColor(const math::CVector3& _v3Color) { m_v3LightColor = _v3Color; }
       const math::CVector3& GetColor() const { return m_v3LightColor; }
@@ -28,7 +25,6 @@ namespace render
 
     private:
       // Properties
-      math::CVector3 m_v3Direction = s_vDefaultDirection;
       math::CVector3 m_v3LightColor = s_vDefaultDirectionalColor;
       float m_fIntensity = 1.0f;
     };

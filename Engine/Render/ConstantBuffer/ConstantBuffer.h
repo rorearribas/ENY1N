@@ -9,11 +9,16 @@ struct __declspec(align(16)) SConstantMatrix
   math::CMatrix4x4 Matrix = math::CMatrix4x4::Identity;
 };
 
-// Check textures
-struct __declspec(align(16)) SConstantTexture
+// Check model data
+struct __declspec(align(16)) SConstantModelData
 {
+  // 8 Bytes
   bool bHasTexture = false;
-  char padding[15];
+  float Padding0;
+
+  // 8 Bytes
+  bool bHasModel = true;
+  float Padding1;
 };
 
 #pragma region Lights
@@ -39,8 +44,8 @@ namespace internal
     math::CVector3 Color;
     float Padding1;
     // 12 + 4 Bytes
-    float Intensity;
     float Range;
+    float Intensity;
     // 12 + 4 Bytes
     float Padding[2];
   };

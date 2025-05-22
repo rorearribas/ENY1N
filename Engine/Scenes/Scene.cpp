@@ -14,7 +14,7 @@
 
 namespace scene
 {
-  CScene::CScene(const UINT32& _uIndex) : m_uSceneIdx(_uIndex)
+  CScene::CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex)
   {
     HRESULT hResult = m_oLightningBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
     UNUSED_VARIABLE(hResult);
@@ -23,10 +23,10 @@ namespace scene
   // ------------------------------------
   CScene::~CScene()
   {
+    m_oLightningBuffer.CleanBuffer();
     DestroyAllPrimitives();
     DestroyAllModels();
     DestroyAllLights();
-    m_oLightningBuffer.CleanBuffer();
   }
   // ------------------------------------
   void CScene::DrawPrimitives()

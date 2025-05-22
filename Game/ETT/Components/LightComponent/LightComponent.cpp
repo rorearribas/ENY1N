@@ -22,6 +22,7 @@ namespace game
   // ------------------------------------
   void CLightComponent::CreateLight(render::lights::ELightType _eLightType)
   {
+    // Clean
     Clean();
 
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
@@ -154,11 +155,6 @@ namespace game
     SetPosition(_v3Pos);
   }
   // ------------------------------------
-  void CLightComponent::OnRotationChanged(const math::CVector3& _v3Rot)
-  {
-    SetRotation(_v3Rot);
-  }
-  // ------------------------------------
   void CLightComponent::Clean()
   {
     if (m_pLight)
@@ -181,17 +177,14 @@ namespace game
     return m_pLight ? m_pLight->GetPosition() : m_pOwner->GetPosition();
   }
   // ------------------------------------
-  void CLightComponent::SetRotation(const math::CVector3& _v3Rot)
+  void CLightComponent::SetDirection(const math::CVector3& _v3Dir)
   {
-    if(m_pLight)
-    {
-      m_pLight->SetRotation(_v3Rot);
-    }
+    m_pLight->SetDirection(_v3Dir);
   }
   // ------------------------------------
-  const math::CVector3& CLightComponent::GetRotation() const
+  const math::CVector3& CLightComponent::GetDirection() const
   {
-    return m_pLight ? m_pLight->GetRotation() : m_pOwner->GetRotation();
+    return m_pLight->GetDirection();
   }
   // ------------------------------------
 }

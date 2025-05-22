@@ -50,7 +50,15 @@ namespace math
     bool operator!=(const CVector2& other) const { return !(*this == other); }
 
     float DotProduct(const CVector2& _v2) const;
-    float CrossProduct(const CVector2& _v2) const;
+    static float DotProduct(const CVector2& _vA, const CVector2& _vB);
+
+    float Cross(const CVector2& _v2) const;
+    static float Cross(const CVector2& _vA, const CVector2& _vB);
+
+    static float Magnitude(const CVector2& _v2);
+    float Magnitude() const;
+
+    static CVector2 Normalize(const CVector2& _v2);
     void Normalize();
   };
 }

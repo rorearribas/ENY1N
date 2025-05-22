@@ -5,6 +5,7 @@
 #include "Engine/Render/Lights/SpotLight.h"
 #include <algorithm>
 #include <iostream>
+#include <cassert>
 
 namespace render
 {

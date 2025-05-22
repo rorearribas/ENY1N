@@ -36,7 +36,7 @@ namespace scene
     typedef utils::CFixedList<render::graphics::CModel, s_iMaxPrimitives> TModelList;
 
   public:
-    CScene(const UINT32& _uIndex);
+    CScene(uint32_t _uIndex);
     ~CScene();
 
     const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
