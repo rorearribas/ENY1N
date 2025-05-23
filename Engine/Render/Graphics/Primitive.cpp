@@ -146,7 +146,7 @@ namespace render
       }
     }
     // ------------------------------------
-    void CPrimitive::SetGlobalLightning(bool _bState)
+    void CPrimitive::UseGlobalLightning(bool _bState)
     {
       m_bUseGlobalLightning = _bState;
     }
@@ -240,10 +240,10 @@ namespace render
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
-      // Mark unnecessary constants as false
+      // Set constants
+      m_oConstantModelData.GetData().bUseGlobalLightning = static_cast<int>(m_bUseGlobalLightning);
       m_oConstantModelData.GetData().bHasTexture = 0;
       m_oConstantModelData.GetData().bHasModel = 0;
-      m_oConstantModelData.GetData().bUseGlobalLightning = static_cast<int>(m_bUseGlobalLightning);
       bOk = m_oConstantModelData.WriteBuffer();
       assert(bOk);
 

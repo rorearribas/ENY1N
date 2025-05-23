@@ -1,31 +1,29 @@
-﻿  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Standard\ForwardPixelShader.h
-  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\ForwardPixelShader.cso
-  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Standard\ForwardVertexShader.h
-  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\ForwardVertexShader.cso
+﻿  CollisionManager.cpp
+  PhysicsManager.cpp
+  PrimitiveUtils.cpp
+  LightManager.cpp
+  Mesh.cpp
+  Light.cpp
+  Material.cpp
+  Model.cpp
+  BoxCollider.cpp
   Engine.cpp
   Camera.cpp
-  BoxCollider.cpp
-  CollisionManager.cpp
-  SphereCollider.cpp
+  DirectionalLight.cpp
   GlobalResources.cpp
   InputManager.cpp
-  ResourceManager.cpp
-  PhysicsManager.cpp
-  Rigidbody.cpp
-  Mesh.cpp
-  Model.cpp
-  Primitive.cpp
-  Shape.cpp
-  DirectionalLight.cpp
-  Light.cpp
   PointLight.cpp
-  SpotLight.cpp
-  LightManager.cpp
+  Primitive.cpp
   Render.cpp
-  Compiling...
-  Material.cpp
-  Texture.cpp
   RenderWindow.cpp
-  Scene.cpp
+  ResourceManager.cpp
+  Rigidbody.cpp
+  Compiling...
   SceneManager.cpp
+  Scene.cpp
+  Texture.cpp
+  Shape.cpp
+  Shader.cpp
+  SpotLight.cpp
+  SphereCollider.cpp
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib

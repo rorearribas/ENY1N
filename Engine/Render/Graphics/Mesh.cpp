@@ -55,9 +55,9 @@ namespace render
       }
 
       // Update buffer
+      m_oConstantModelData.GetData().bUseGlobalLightning = static_cast<int>(m_bUseGlobalLightning);
       m_oConstantModelData.GetData().bHasTexture = pTargetTexture ? 1 : 0;
       m_oConstantModelData.GetData().bHasModel = 1;
-      m_oConstantModelData.GetData().bUseGlobalLightning = 1;
       bool bOk = m_oConstantModelData.WriteBuffer();
       UNUSED_VARIABLE(bOk);
       assert(bOk);
@@ -98,6 +98,11 @@ namespace render
       oSubresourceIndexesData.pSysMem = m_vctIndices.data();
 
       return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
+    }
+    // ------------------------------------
+    void CMesh::UseGlobalLightning(bool _bState)
+    {
+      m_bUseGlobalLightning = _bState;
     }
     // ------------------------------------
     void CMesh::UpdateVertexColor(ID3D11Buffer* _pVertexBuffer)

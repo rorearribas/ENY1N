@@ -144,7 +144,7 @@ namespace scene
     assert(pPrimitive);
 
     // Set values
-    pPrimitive->SetGlobalLightning(false);
+    pPrimitive->UseGlobalLightning(false);
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
@@ -177,7 +177,7 @@ namespace scene
     // Set values
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetColor(_v3Color);
-    pPrimitive->SetGlobalLightning(false);
+    pPrimitive->UseGlobalLightning(false);
   }
   // ------------------------------------
   void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -206,7 +206,7 @@ namespace scene
     // Set values
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetColor(_v3Color);
-    pPrimitive->SetGlobalLightning(false);
+    pPrimitive->UseGlobalLightning(false);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)

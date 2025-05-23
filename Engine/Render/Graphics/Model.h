@@ -25,6 +25,7 @@ namespace render
       ~CModel();
 
       void DrawModel();
+      void UseGlobalLightning(bool _bState);
 
       void SetPosition(const math::CVector3& _v3Position) { m_oModelTransform.SetPosition(_v3Position); }
       const math::CVector3& GetPosition() const { return m_oModelTransform.GetPosition(); }

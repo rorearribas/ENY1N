@@ -40,7 +40,7 @@ namespace render
       void DrawPrimitive();
 
       void SetRenderMode(render::ERenderMode _eRenderMode);
-      void SetGlobalLightning(bool _bUse);
+      void UseGlobalLightning(bool _bState);
 
       void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
       const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }

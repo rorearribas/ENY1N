@@ -44,6 +44,7 @@ namespace render
       void DrawMesh();
       HRESULT AssignIndexBuffer(TIndexesList& _vctIndices);
 
+      void UseGlobalLightning(bool _bState);
       void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
       void UpdateVertexColor(ID3D11Buffer* _pVertexBuffer);
 
@@ -56,6 +57,7 @@ namespace render
 
       // Info
       std::string m_sMeshId = std::string();
+      bool m_bUseGlobalLightning = true;
 
       // Materials
       TMapMaterials m_dctMaterials = TMapMaterials();

@@ -2,13 +2,9 @@
   Camera.cpp
   BoxCollider.cpp
   InputManager.cpp
-  ResourceManager.cpp
-  Mesh.cpp
   Model.cpp
   Primitive.cpp
   PrimitiveUtils.cpp
-  Shape.cpp
-  LightManager.cpp
   Render.cpp
   Scene.cpp
   SceneManager.cpp

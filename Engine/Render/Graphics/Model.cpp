@@ -104,5 +104,14 @@ namespace render
         pMesh->DrawMesh();
       }
     }
+    // ------------------------------------
+    void CModel::UseGlobalLightning(bool _bState)
+    {
+      // Draw meshes
+      for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
+      {
+        pMesh->UseGlobalLightning(_bState);
+      }
+    }
   }
 }

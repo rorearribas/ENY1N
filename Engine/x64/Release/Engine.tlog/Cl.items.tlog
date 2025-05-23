@@ -1,5 +1,6 @@
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\CollisionManager.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\CollisionManager.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Physics\PhysicsManager.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\PhysicsManager.obj
+C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Graphics\PrimitiveUtils.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\PrimitiveUtils.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Lights\WIP\LightManager.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\LightManager.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Graphics\Mesh.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Mesh.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Lights\Light.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Light.obj
@@ -21,6 +22,6 @@ C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Scenes\SceneManager.cpp;C:\Users\R
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Scenes\Scene.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Scene.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Resources\Texture.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Texture.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Graphics\Shape.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Shape.obj
-C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Shader.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Shader.obj
+C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Shader.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Shader.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Render\Lights\SpotLight.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\SpotLight.obj
 C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Collisions\SphereCollider.cpp;C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\SphereCollider.obj
