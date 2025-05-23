@@ -116,13 +116,12 @@ int main()
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
-  game::CEntity* pTestModel = pGameManager->CreateEntity("Model");
-  pTestModel->SetRotation(math::CVector3(-90.0f, 0.0f, 180.0f));
-  game::CModelComponent* pModelComp = pTestModel->RegisterComponent<game::CModelComponent>();
-  pModelComp->LoadModel("..\\Assets//Models//Skull//12140_Skull_v3_L2.obj", "..\\Assets//Models//Skull");
-  game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
-  pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
-  pTestModel->RegisterComponent<game::CRigidbodyComponent>();
+  //game::CEntity* pTestModel = pGameManager->CreateEntity("Model");
+  //game::CModelComponent* pModelComp = pTestModel->RegisterComponent<game::CModelComponent>();
+  //pModelComp->LoadModel("..\\Assets//Models//Room//room.obj", "..\\Assets//Room//room");
+  //game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
+  //pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
+  //pTestModel->RegisterComponent<game::CRigidbodyComponent>();
 
   render::CRender* const pRender = pEngine->GetRender();
   render::CCamera* const pRenderCamera = pEngine->GetCamera();

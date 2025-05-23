@@ -3,6 +3,22 @@
 #include "Libs/Math/Matrix4x4.h"
 #include "Engine/Global/GlobalResources.h"
 
+/* Reference table
+
+| HLSL Type       | Size (bytes)   | Equivalent             
+|-----------------|----------------|------------------------
+| bool            | 1              | bool            
+| int             | 4              | int                    
+| uint            | 4              | unsigned int           
+| float           | 4              | float                  
+| float2          | 8              | math::CVector2     
+| float3          | 12             | math::CVector3      
+| float4          | 16             | math::CVector4      
+| float3x3        | 48             | math::CVector3 * 3    
+| float4x4        | 64             | math::CMatrix4x4      
+| matriz NxM      | N×16 bytes     |                        
+*/
+
 // Model matrix
 struct __declspec(align(16)) SConstantMatrix
 {
@@ -12,13 +28,13 @@ struct __declspec(align(16)) SConstantMatrix
 // Check model data
 struct __declspec(align(16)) SConstantModelData
 {
-  // 8 Bytes
-  bool bHasTexture = false;
-  float Padding0;
+  // 4 byte + 4 byte + 4 byte
+  int bHasTexture = 0;
+  int bHasModel = 0;
+  int bUseGlobalLightning = 0;
 
-  // 8 Bytes
-  bool bHasModel = true;
-  float Padding1;
+  // 12 + 4 Bytes
+  int Padding0 = 0;
 };
 
 #pragma region Lights

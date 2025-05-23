@@ -91,7 +91,7 @@ namespace render
     };
 
     // 3D Line
-    void CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, CPrimitive::SCustomPrimitive& _oVertexData_)
+    void CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, CPrimitive::SCustomPrimitive& _oVertexData_)
     { 
       // Clean
       _oVertexData_.m_vctVertexData.clear();
@@ -100,7 +100,6 @@ namespace render
       // Fill data 
       render::graphics::SVertexData oOrigin = render::graphics::SVertexData();
       oOrigin.Position = _v3Origin;
-      oOrigin.Color = _v3Color;
 
       _oVertexData_.m_vctVertexData.emplace_back(oOrigin);
       _oVertexData_.m_vctIndices.emplace_back(0);
@@ -108,7 +107,6 @@ namespace render
       // Fill data 
       render::graphics::SVertexData oDest = render::graphics::SVertexData();
       oDest.Position = _v3Dest;
-      oDest.Color = _v3Color;
 
       _oVertexData_.m_vctVertexData.emplace_back(oDest);
       _oVertexData_.m_vctIndices.emplace_back(1);
@@ -130,9 +128,7 @@ namespace render
 
           // Add vertex
           render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
-          math::CVector3 v3VertexPos = math::CVector3(fX, fY, fZ);
-          oVertexData.Position = v3VertexPos;
-          oVertexData.Normal = math::CVector3::Normalize(v3VertexPos);
+          oVertexData.Position = math::CVector3(fX, fY, fZ);
           _vctPrimitiveData.push_back(oVertexData);
         }
       }
@@ -211,11 +207,6 @@ namespace render
         math::CVector3 v3Edge01 = v1 - v0;
         math::CVector3 v3Edge02 = v2 - v0;
         math::CVector3 v3Normal = math::CVector3::Normalize(math::CVector3::Cross(v3Edge01, v3Edge02));
-
-        if (math::CVector3::Magnitude(v3Normal) < 0.001f)
-        {
-          v3Normal = math::CVector3(0, 1, 0);
-        }
 
         _oVertexData[i0].Normal += v3Normal;
         _oVertexData[i1].Normal += v3Normal;

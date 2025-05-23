@@ -31,7 +31,7 @@ namespace render
       static const std::vector<uint32_t> s_oPlaneWireframeIndices;
 
       // 3D Line
-      static void CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color, CPrimitive::SCustomPrimitive& _oVertexData_);
+      static void CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, CPrimitive::SCustomPrimitive& _oVertexData_);
 
       // 3D Sphere
       static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::graphics::SVertexData>& _vctVertices_);

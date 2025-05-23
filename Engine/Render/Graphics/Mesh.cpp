@@ -38,31 +38,33 @@ namespace render
     // ------------------------------------
     void CMesh::DrawMesh()
     {
-      // Draw textures
+      // Draw texture
+      texture::CTexture* pTargetTexture = nullptr;
       for (auto& it : m_dctMaterials)
       {
-        texture::CTexture* pTexture = nullptr;
         for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(material::CMaterial::EType::COUNT); uIndex++)
         {
           material::CMaterial::EType eModifierType = static_cast<material::CMaterial::EType>(uIndex);
-          pTexture = it.second->GetTexture(eModifierType);
-          if (pTexture) 
+          pTargetTexture = it.second->GetTexture(eModifierType);
+          if (pTargetTexture) 
           { 
-            pTexture->BindTexture(); 
+            pTargetTexture->BindTexture(); 
             break;
           }
         }
-
-        // Update buffer
-        m_oConstantModelData.GetData().bHasTexture = pTexture;
-        bool bOk = m_oConstantModelData.WriteBuffer();
-        UNUSED_VARIABLE(bOk);
-        assert(bOk);
-
-        // Set constant buffer
-        ID3D11Buffer* pConstantBuffer = m_oConstantModelData.GetBuffer();
-        global::dx11::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
       }
+
+      // Update buffer
+      m_oConstantModelData.GetData().bHasTexture = pTargetTexture ? 1 : 0;
+      m_oConstantModelData.GetData().bHasModel = 1;
+      m_oConstantModelData.GetData().bUseGlobalLightning = 1;
+      bool bOk = m_oConstantModelData.WriteBuffer();
+      UNUSED_VARIABLE(bOk);
+      assert(bOk);
+
+      // Set constant buffer
+      ID3D11Buffer* pConstantBuffer = m_oConstantModelData.GetBuffer();
+      global::dx11::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
 
       // Draw
       global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);

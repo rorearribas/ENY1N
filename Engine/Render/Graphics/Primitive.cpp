@@ -16,12 +16,12 @@ namespace render
       HRESULT hResult = CreateInputLayout();
       assert(!FAILED(hResult));
 
-      m_oConstantModelData.CleanBuffer();
-      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
-
       // Create from custom data
       hResult = CreateBufferFromPrimitiveData(_oVertexData.m_vctVertexData, _oVertexData.m_vctIndices);
       assert(!FAILED(hResult));
+
+      // Create constant model data buffer
+      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Set values
       m_eRenderMode = _eRenderMode;
@@ -33,12 +33,12 @@ namespace render
       HRESULT hResult = CreateInputLayout();
       assert(!FAILED(hResult));
 
-      m_oConstantModelData.CleanBuffer();
-      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
-
       // Create buffer from presets
       hResult = CreatePrimitive(_ePrimitiveType, _eRenderMode);
       assert(!FAILED(hResult));
+
+      // Create constant model data buffer
+      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Set values
       m_eRenderMode = _eRenderMode;
@@ -108,13 +108,15 @@ namespace render
         const int iSlices = 12;
 
         std::vector<render::graphics::SVertexData> vctPrimitiveData = std::vector<render::graphics::SVertexData>();
+        const auto& vctIndices = _eRenderMode == SOLID ? CPrimitiveUtils::GetSphereIndices(iStacks, iSlices) : CPrimitiveUtils::GetWireframeSphereIndices(iStacks, iSlices);
+
         CPrimitiveUtils::CreateSphere(fTargetRadius, iStacks, iSlices, vctPrimitiveData);
+        CPrimitiveUtils::ComputeNormals(vctPrimitiveData, vctIndices);
 
         return CreateBufferFromPrimitiveData
         (
           vctPrimitiveData,
-          _eRenderMode == SOLID ? CPrimitiveUtils::GetSphereIndices(iStacks, iSlices) :
-          CPrimitiveUtils::GetWireframeSphereIndices(iStacks, iSlices)
+          vctIndices
         );
       }
       break;
@@ -142,6 +144,11 @@ namespace render
         m_eRenderMode = _eRenderMode;
         CreatePrimitive(m_ePrimitiveType, m_eRenderMode);
       }
+    }
+    // ------------------------------------
+    void CPrimitive::SetGlobalLightning(bool _bState)
+    {
+      m_bUseGlobalLightning = _bState;
     }
     // ------------------------------------
     void CPrimitive::SetColor(const math::CVector3& _v3Color)
@@ -233,9 +240,10 @@ namespace render
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
-      // Set invalid texture
-      m_oConstantModelData.GetData().bHasTexture = false;
-      m_oConstantModelData.GetData().bHasModel = false;
+      // Mark unnecessary constants as false
+      m_oConstantModelData.GetData().bHasTexture = 0;
+      m_oConstantModelData.GetData().bHasModel = 0;
+      m_oConstantModelData.GetData().bUseGlobalLightning = static_cast<int>(m_bUseGlobalLightning);
       bOk = m_oConstantModelData.WriteBuffer();
       assert(bOk);
 

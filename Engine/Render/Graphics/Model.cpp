@@ -57,13 +57,11 @@ namespace render
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
       oSubresourceData.pSysMem = m_oModelData.m_vctVertexData.data();
-      HRESULT hResult = global::dx11::s_pDevice->CreateBuffer
-      (
-        &oVertexBufferDescriptor,
-        &oSubresourceData,
-        &m_pVertexBuffer
-      );
-      if (FAILED(hResult)) return hResult;
+      HRESULT hResult = global::dx11::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
+      if (FAILED(hResult)) 
+      {
+        return hResult;
+      }
 
       // Update vertex color
       for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
@@ -73,7 +71,10 @@ namespace render
 
       // Create input layout
       hResult = CreateInputLayout();
-      if (FAILED(hResult)) return hResult;
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
 
       return hResult;
     }

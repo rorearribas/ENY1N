@@ -6,6 +6,7 @@
 #include "Engine/Render/Lights/DirectionalLight.h"
 #include <cassert>
 #include "Libs/ImGui/imgui.h"
+#include "Libs/Math/Math.h"
 
 namespace game
 {
@@ -100,18 +101,22 @@ namespace game
       std::string sIntensity = "Intensity" + std::string("##" + sOwnerName);
 
       render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(m_pLight);
-      float color[3] = { pPointLight->GetColor().X, pPointLight->GetColor().Y, pPointLight->GetColor().Z };
+      float vctColor[3] = { pPointLight->GetColor().X, pPointLight->GetColor().Y, pPointLight->GetColor().Z };
       float fIntensity = pPointLight->GetIntensity();
       float fRange = pPointLight->GetRange();
 
       ImGui::Text(sTitle.c_str());
-      ImGui::InputFloat3(sColor.c_str(), color);
+      ImGui::InputFloat3(sColor.c_str(), vctColor);
       ImGui::InputFloat(sRange.c_str(), &fRange);
       ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
 
-      pPointLight->SetColor(math::CVector3(color[0], color[1], color[2]));
+      math::CVector3 v3Color(vctColor[0], vctColor[1], vctColor[2]);
+      pPointLight->SetColor(v3Color);
       pPointLight->SetRange(fRange);
       pPointLight->SetIntensity(fIntensity);
+
+      // Draw sphere
+      engine::CEngine::GetInstance()->DrawSphere(pPointLight->GetPosition(), fRange, 12, 12, v3Color, render::ERenderMode::WIREFRAME);
     }
     break;
     case render::lights::ELightType::SPOT_LIGHT:
@@ -125,24 +130,30 @@ namespace game
       std::string sIntensity = "Intensity" + std::string("##" + sOwnerName);
 
       render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight);
-      float dir[3] = { pSpotLight->GetDirection().X, pSpotLight->GetDirection().Y, pSpotLight->GetDirection().Z };
-      float color[3] = { pSpotLight->GetColor().X, pSpotLight->GetColor().Y, pSpotLight->GetColor().Z };
+      float vctDir[3] = { pSpotLight->GetDirection().X, pSpotLight->GetDirection().Y, pSpotLight->GetDirection().Z };
+      float vctColor[3] = { pSpotLight->GetColor().X, pSpotLight->GetColor().Y, pSpotLight->GetColor().Z };
       float fCutOffAngle = pSpotLight->GetCutOffAngle();
       float fIntensity = pSpotLight->GetIntensity();
       float fRange = pSpotLight->GetRange();
 
       ImGui::Text(sTitle.c_str());
-      ImGui::InputFloat3(sLightDir.c_str(), dir);
-      ImGui::InputFloat3(sColor.c_str(), color);
+      ImGui::InputFloat3(sLightDir.c_str(), vctDir);
+      ImGui::InputFloat3(sColor.c_str(), vctColor);
       ImGui::InputFloat(sCutOffAngle.c_str(), &fCutOffAngle);
       ImGui::InputFloat(sRange.c_str(), &fRange);
       ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
 
-      pSpotLight->SetDirection(math::CVector3(dir[0], dir[1], dir[2]));
-      pSpotLight->SetColor(math::CVector3(color[0], color[1], color[2]));
+      math::CVector3 v3Dir(vctDir[0], vctDir[1], vctDir[2]);
+      math::CVector3 v3Color(vctColor[0], vctColor[1], vctColor[2]);
+
+      pSpotLight->SetDirection(v3Dir);
+      pSpotLight->SetColor(v3Color);
       pSpotLight->SetIntensity(fIntensity);
       pSpotLight->SetCutOffAngle(fCutOffAngle);
       pSpotLight->SetRange(fRange);
+
+      // Draw line
+      engine::CEngine::GetInstance()->DrawLine(pSpotLight->GetPosition(), pSpotLight->GetPosition() + (v3Dir * fRange), v3Color);
     }
     break;
     default:

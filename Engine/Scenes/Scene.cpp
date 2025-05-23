@@ -47,6 +47,8 @@ namespace scene
         pPrimitiveItem->DrawPrimitive();
       }
     }
+
+    // Clean after draw
     m_vctTemporalItems.ClearAll();
   }
   // ------------------------------------
@@ -135,10 +137,15 @@ namespace scene
 
     // Create line
     render::graphics::CPrimitive::SCustomPrimitive oCustomData = render::graphics::CPrimitive::SCustomPrimitive();
-    render::graphics::CPrimitiveUtils::CreateLine(_v3Origin, _v3Dest, _v3Color, oCustomData);
+    render::graphics::CPrimitiveUtils::CreateLine(_v3Origin, _v3Dest, oCustomData);
 
     // Create temporal item
-    m_vctTemporalItems.CreateItem(oCustomData, render::ERenderMode::WIREFRAME);
+    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oCustomData, render::ERenderMode::WIREFRAME);
+    assert(pPrimitive);
+
+    // Set values
+    pPrimitive->SetGlobalLightning(false);
+    pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
   void CScene::DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -170,6 +177,7 @@ namespace scene
     // Set values
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetColor(_v3Color);
+    pPrimitive->SetGlobalLightning(false);
   }
   // ------------------------------------
   void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -188,11 +196,17 @@ namespace scene
     oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::GetSphereIndices(_iStacks, _iSlices) :
     render::graphics::CPrimitiveUtils::GetWireframeSphereIndices(_iStacks, _iSlices);
 
+    // Compute normals
+    render::graphics::CPrimitiveUtils::ComputeNormals(oVertexData.m_vctVertexData, oVertexData.m_vctIndices);
+
     // Create temporal item + set pos
     render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
     assert(pPrimitive);
+
+    // Set values
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetColor(_v3Color);
+    pPrimitive->SetGlobalLightning(false);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)

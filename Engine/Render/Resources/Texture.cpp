@@ -74,9 +74,9 @@ namespace render
       // Create sampler state
       D3D11_SAMPLER_DESC oSamplerDesc = D3D11_SAMPLER_DESC();
       oSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-      oSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_MIRROR;
-      oSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_MIRROR;
-      oSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_MIRROR;
+      oSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+      oSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+      oSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
       hResult = global::dx11::s_pDevice->CreateSamplerState(&oSamplerDesc, &m_pSamplerState);
       if (FAILED(hResult))
       {

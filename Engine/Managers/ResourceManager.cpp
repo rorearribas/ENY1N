@@ -197,7 +197,10 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     for (uint32_t uMatIndx = 0; uMatIndx < static_cast<uint32_t>(vctMaterialIds.size()); uMatIndx++)
     {
       int iMaterialIdx = vctMaterialIds[uMatIndx];
-      pMesh->AddMaterial(vctMaterials[iMaterialIdx], static_cast<uint32_t>(iMaterialIdx));
+      if (iMaterialIdx >= 0)
+      {
+        pMesh->AddMaterial(vctMaterials[iMaterialIdx], static_cast<uint32_t>(iMaterialIdx));
+      }
     }
     oModelData.m_vctMeshes.emplace_back(pMesh); // Add mesh
   }
