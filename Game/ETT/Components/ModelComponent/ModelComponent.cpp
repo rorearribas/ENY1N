@@ -14,13 +14,13 @@ namespace game
   void CModelComponent::Clean()
   {
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    if (m_pPrimitive) 
-    { 
-      pEngine->DestroyPrimitive(m_pPrimitive); 
+    if (m_pPrimitive)
+    {
+      pEngine->DestroyPrimitive(m_pPrimitive);
     }
-    if (m_pModel) 
-    { 
-      pEngine->DestroyModel(m_pModel); 
+    if (m_pModel)
+    {
+      pEngine->DestroyModel(m_pModel);
     }
   }
   // ------------------------------------
@@ -37,7 +37,9 @@ namespace game
     // Create model
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     m_pModel = pEngine->CreateModel(_sModelPath, _sBaseMltDir);
+#ifdef _DEBUG
     assert(m_pModel);
+#endif
   }
   // ------------------------------------
   void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
@@ -48,7 +50,9 @@ namespace game
     // Create primitive
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     m_pPrimitive = pEngine->CreatePrimitive(_ePrimitiveType, _eRenderMode);
+#ifdef _DEBUG
     assert(m_pPrimitive);
+#endif
   }
   // ------------------------------------
   void CModelComponent::SetPrimitiveRenderMode(render::ERenderMode _eRenderMode)

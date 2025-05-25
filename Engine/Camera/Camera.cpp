@@ -4,8 +4,7 @@
 #include "Engine/Base/Engine.h"
 #include "Engine/Managers/InputManager.h"
 #include "Libs/Math/Math.h"
-#include <ostream>
-#include <iostream>
+#include "Libs/Macros/GlobalMacros.h"
 
 namespace render
 {

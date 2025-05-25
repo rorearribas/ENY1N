@@ -20,7 +20,6 @@ namespace game
   // ------------------------------------
   void CRigidbodyComponent::SetRigidbodyType(physics::ERigidbodyType _eRigidbodyType)
   {
-    assert(m_pRigidbody);
     m_pRigidbody->SetRigidbodyType(_eRigidbodyType);
   }
   // ------------------------------------
@@ -106,7 +105,9 @@ namespace game
 
     // Create rigidbody
     m_pRigidbody = physics::CPhysicsManager::GetInstance()->CreateRigidbody(_eRigidbodyType);
+#ifdef _DEBUG
     assert(m_pRigidbody);
+#endif
 
     // Set notifications
     m_pRigidbody->SetOnVelocityChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnApplyVelocity, this));

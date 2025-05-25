@@ -2,9 +2,7 @@
   Camera.cpp
   BoxCollider.cpp
   InputManager.cpp
-  Mesh.cpp
   Model.cpp
-  Primitive.cpp
   Render.cpp
   Scene.cpp
   SceneManager.cpp

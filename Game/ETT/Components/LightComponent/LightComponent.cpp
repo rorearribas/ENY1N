@@ -27,7 +27,9 @@ namespace game
     Clean();
 
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
+#ifdef _DEBUG
     assert(pEngine);
+#endif
 
     switch (_eLightType)
     {

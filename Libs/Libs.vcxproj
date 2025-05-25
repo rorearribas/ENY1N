@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Utils\CircularPool.h" />
     <ClInclude Include="Utils\FixedList.h" />
     <ClInclude Include="ImGui\GraphEditor.h" />
     <ClInclude Include="ImGui\ImCurveEdit.h" />
@@ -184,7 +185,7 @@
     <ClInclude Include="Math\Matrix4x4.h" />
     <ClInclude Include="Math\Transform.h" />
     <ClInclude Include="Utils\Delegate.h" />
-    <ClInclude Include="Utils\MemoryPool.h" />
+    <ClInclude Include="Utils\FixedPool.h" />
     <ClInclude Include="Utils\Singleton.h" />
   </ItemGroup>
   <ItemGroup>

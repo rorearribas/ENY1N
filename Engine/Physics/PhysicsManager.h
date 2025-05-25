@@ -1,6 +1,6 @@
 #pragma once
 #include "Libs/Utils/Singleton.h"
-#include "Libs/Utils/FixedList.h"
+#include "Libs/Utils/FixedPool.h"
 #include "Libs/Math/Vector3.h"
 #include "Rigidbody.h"
 
@@ -12,7 +12,7 @@ namespace physics
   {
   public:
     static const uint32_t s_uMaxRigidbodys = 250;
-    typedef utils::CFixedList<CRigidbody, s_uMaxRigidbodys> TRigidbodysList;
+    typedef utils::CFixedPool<CRigidbody, s_uMaxRigidbodys> TRigidbodysList;
 
     CPhysicsManager() {}
     ~CPhysicsManager();

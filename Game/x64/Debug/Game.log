@@ -1,2 +1,6 @@
-﻿  GameManager.cpp
+﻿  CollisionComponent.cpp
+  LightComponent.cpp
+  ModelComponent.cpp
+  Entity.cpp
+  Generating Code...
   Game.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Game\x64\Debug\Game.lib

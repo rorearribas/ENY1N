@@ -52,8 +52,6 @@ unsigned char* CResourceManager::LoadTexture(const char* _sPath, int& _iWidth_, 
 // ------------------------------------
 render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sPath, const char* _sBaseModelMtlDir)
 {
-  // Create a model data
-  render::graphics::CModel::SModelData oModelData = {};
 
   // Tiny obj declarations
   tinyobj::attrib_t attributes;
@@ -69,11 +67,11 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
   if (sErrors.size() > 0)
   {
     std::cout << "Error loading OBJ" << std::endl;
-    return oModelData;
+    return render::graphics::CModel::SModelData();
   }
 
   // Register material
-  auto oRegisterMaterialFunc = [=](const tinyobj::material_t& _oMaterial, std::vector<render::material::CMaterial*>& _vctMaterials_)
+  auto oRegisterMaterialFunc = [&](const tinyobj::material_t& _oMaterial, std::vector<render::material::CMaterial*>& _vctMaterials_)
   {
     // Create material
     render::material::CMaterial* pMaterial = new render::material::CMaterial(_oMaterial.name.c_str());
@@ -101,6 +99,11 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
     _vctMaterials_.emplace_back(pMaterial);
   };
 
+  // Create a model data
+  size_t tTotalVertices = attributes.vertices.size() / 3;
+  render::graphics::CModel::SModelData oModelData = render::graphics::CModel::SModelData();
+  oModelData.m_vctVertexData.reserve(tTotalVertices);
+
   std::vector<render::material::CMaterial*> vctMaterials;
   vctMaterials.reserve(vctMaterialsIds.size());
   for (const tinyobj::material_t& tMaterial : vctMaterialsIds) 
@@ -110,6 +113,8 @@ render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sP
 
   // Register vertex data
   std::unordered_map<render::graphics::SVertexData, uint32_t> dctVertexMap;
+  dctVertexMap.reserve(tTotalVertices);
+
   for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(shapes.size()); uIndex++)
   {
     tinyobj::shape_t& shape = shapes[uIndex];

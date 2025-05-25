@@ -20,12 +20,12 @@
 #include "Game/ETT/Components/ModelComponent/ModelComponent.h"
 #include "Game/ETT/Components/LightComponent/LightComponent.h"
 #include "Game/ETT/Components/CollisionComponent/CollisionComponent.h"
+#include "Game/ETT/Components/RigidbodyComponent/RigidbodyComponent.h"
 
 #include "Engine/Collisions/CollisionManager.h"
 #include "Engine/Collisions/BoxCollider.h"
 #include "Engine/Physics/PhysicsManager.h"
 #include "Libs/ImGui/imgui.h"
-#include "Game/ETT/Components/RigidbodyComponent/RigidbodyComponent.h"
 #include "Libs/Math/Math.h"
 
 float GenerateFloat(float min, float max) 
@@ -115,13 +115,6 @@ int main()
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
-
-  //game::CEntity* pTestModel = pGameManager->CreateEntity("Model");
-  //game::CModelComponent* pModelComp = pTestModel->RegisterComponent<game::CModelComponent>();
-  //pModelComp->LoadModel("..\\Assets//Models//Room//room.obj", "..\\Assets//Room//room");
-  //game::CCollisionComponent* pTestCollisionComp = pTestModel->RegisterComponent<game::CCollisionComponent>();
-  //pTestCollisionComp->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
-  //pTestModel->RegisterComponent<game::CRigidbodyComponent>();
 
   render::CRender* const pRender = pEngine->GetRender();
   render::CCamera* const pRenderCamera = pEngine->GetCamera();

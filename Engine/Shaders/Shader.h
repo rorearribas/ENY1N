@@ -78,7 +78,9 @@ namespace render
       {
         ID3D11PixelShader* pPixelShader = nullptr;
         hResult = global::dx11::s_pDevice->CreatePixelShader(_pData, _tSize, nullptr, &pPixelShader);
+#ifdef _DEBUG
         assert(!FAILED(hResult));
+#endif
         m_pShaderData = pPixelShader;
       }
       break;
@@ -86,7 +88,9 @@ namespace render
       {
         ID3D11VertexShader* pVertexShader = nullptr;
         hResult = global::dx11::s_pDevice->CreateVertexShader(_pData, _tSize, nullptr, &pVertexShader);
+#ifdef _DEBUG
         assert(!FAILED(hResult));
+#endif
         m_pShaderData = pVertexShader;
       }
       break;
@@ -94,7 +98,9 @@ namespace render
       {
         ID3D11ComputeShader* pComputeShader = nullptr;
         hResult = global::dx11::s_pDevice->CreateComputeShader(_pData, _tSize, nullptr, &pComputeShader);
+#ifdef _DEBUG
         assert(!FAILED(hResult));
+#endif
         m_pShaderData = pComputeShader;
       }
       break;

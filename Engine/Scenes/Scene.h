@@ -1,19 +1,12 @@
 #pragma once
+#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
-#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 #include "Engine/Render/Lights/SpotLight.h"
 #include "Engine/Render/Lights/PointLight.h"
-#include "Libs/Macros/GlobalMacros.h"
-#include "Libs/Utils/FixedList.h"
-#include <cassert>
-#include <array>
-#include <algorithm>
+#include "Libs/Utils/FixedPool.h"
 
 namespace render { class CRender; }
-namespace render { namespace lights { class CSpotLight; } }
-namespace render { namespace lights { class CBaseLight; } }
-namespace render { namespace lights { class CPointLight; } }
 namespace render { namespace lights { class CDirectionalLight; } }
 
 namespace scene
@@ -21,21 +14,21 @@ namespace scene
   class CScene
   {
   private:
-    static int constexpr s_iMaxSpotLights = 100;
-    static int constexpr s_iMaxPointLights = 100;
+    static int constexpr s_iMaxSpotLights = 250;
+    static int constexpr s_iMaxPointLights = 250;
 
     static int constexpr s_iMaxModels = 500;
     static int constexpr s_iMaxPrimitives = 500;
     static int constexpr s_iMaxTemporalItems = 500;
 
     // Lights
-    typedef utils::CFixedList<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
-    typedef utils::CFixedList<render::lights::CSpotLight, s_iMaxSpotLights> TSpotLightsList;
+    typedef utils::CFixedPool<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
+    typedef utils::CFixedPool<render::lights::CSpotLight, s_iMaxSpotLights> TSpotLightsList;
 
     // Graphics
-    typedef utils::CFixedList<render::graphics::CPrimitive, s_iMaxTemporalItems> TTemporalItemList;
-    typedef utils::CFixedList<render::graphics::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
-    typedef utils::CFixedList<render::graphics::CModel, s_iMaxPrimitives> TModelList;
+    typedef utils::CFixedPool<render::graphics::CPrimitive, s_iMaxTemporalItems> TTemporalItemList;
+    typedef utils::CFixedPool<render::graphics::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
+    typedef utils::CFixedPool<render::graphics::CModel, s_iMaxPrimitives> TModelList;
 
   public:
     CScene(uint32_t _uIndex);

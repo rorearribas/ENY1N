@@ -21,7 +21,6 @@ namespace game
 
     // Get owner
     CEntity* pOwner = GetOwner();
-    assert(pOwner);
 
     // Create collider usin coll manager
     collisions::CCollisionManager* pCollisionManager = collisions::CCollisionManager::GetInstance();
@@ -29,7 +28,9 @@ namespace game
     { 
       // Create collider
       m_pCollider = pCollisionManager->CreateCollider(_eColliderType, pOwner);
+#ifdef _DEBUG
       assert(m_pCollider);
+#endif
 
       // Assign notifications
       m_pCollider->SetOnCollisionEnter(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionEnter, pOwner));

@@ -4,13 +4,13 @@
 #include "Engine/Render/Render.h"
 #include "Engine/Render/Lights/Light.h"
 #include "Engine/Render/Lights/DirectionalLight.h"
-#include "Engine/Render/Lights/PointLight.h"
-#include "Engine/Render/Lights/SpotLight.h"
+#include "Engine/Render/Graphics/PrimitiveUtils.h"
+#include "Libs/Macros/GlobalMacros.h"
+
 #include <algorithm>
 #include <random>
 #include <cassert>
 #include <iostream>
-#include "../Render/Graphics/PrimitiveUtils.h"
 
 namespace scene
 {
@@ -18,7 +18,9 @@ namespace scene
   {
     HRESULT hResult = m_oLightingBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
     UNUSED_VARIABLE(hResult);
+#ifdef _DEBUG
     assert(!FAILED(hResult));
+#endif
   }
   // ------------------------------------
   CScene::~CScene()
@@ -102,7 +104,9 @@ namespace scene
     // Write buffer
     bool bOk = m_oLightingBuffer.WriteBuffer();
     UNUSED_VARIABLE(bOk);
-    assert(bOk);
+#ifdef _DEBUG
+    assert(bOk); // Sanity check
+#endif
 
     // Apply constant buffer
     ID3D11Buffer* pConstantBuffer = m_oLightingBuffer.GetBuffer();
@@ -140,7 +144,9 @@ namespace scene
 
     // Create temporal item
     render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oCustomData, render::ERenderMode::WIREFRAME);
-    assert(pPrimitive);
+#ifdef _DEBUG
+    assert(pPrimitive); // Sanity check
+#endif
 
     // Set values
     pPrimitive->UseGlobalLighting(false);
@@ -170,7 +176,9 @@ namespace scene
 
     // Create item + set pos
     render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
-    assert(pPrimitive);
+#ifdef _DEBUG
+    assert(pPrimitive); // Sanity check
+#endif
 
     // Set values
     pPrimitive->SetPosition(_v3Pos);
@@ -192,14 +200,16 @@ namespace scene
 
     // Fill indices
     oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::GetSphereIndices(_iStacks, _iSlices) :
-    render::graphics::CPrimitiveUtils::GetWireframeSphereIndices(_iStacks, _iSlices);
+      render::graphics::CPrimitiveUtils::GetWireframeSphereIndices(_iStacks, _iSlices);
 
     // Compute normals
     render::graphics::CPrimitiveUtils::ComputeNormals(oVertexData.m_vctVertexData, oVertexData.m_vctIndices);
 
     // Create temporal item + set pos
     render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
-    assert(pPrimitive);
+#ifdef _DEBUG
+    assert(pPrimitive); // Sanity check
+#endif
 
     // Set values
     pPrimitive->SetPosition(_v3Pos);
@@ -262,7 +272,9 @@ namespace scene
   {
     bool bOk = m_vctPrimitiveItems.RemoveItem(_pPrimitive_);
     UNUSED_VARIABLE(bOk);
+#ifdef _DEBUG
     assert(bOk); // Sanity check
+#endif
     _pPrimitive_ = nullptr; // Set as nullptr
   }
   // ------------------------------------
@@ -270,7 +282,9 @@ namespace scene
   {
     bool bOk = m_vctModels.RemoveItem(_pModel_);
     UNUSED_VARIABLE(bOk);
+#ifdef _DEBUG
     assert(bOk); // Sanity check
+#endif
     _pModel_ = nullptr; // Set as nullptr
   }
   // ------------------------------------
@@ -298,7 +312,9 @@ namespace scene
       break;
     }
 
+#ifdef _DEBUG
     assert(bOk); // Sanity check
+#endif
     _pLight_ = nullptr; // Assign to nullptr
   }
   // ------------------------------------
