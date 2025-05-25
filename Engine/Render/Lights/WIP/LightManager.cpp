@@ -57,7 +57,6 @@ namespace render
         oGlobalLightningData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
         oGlobalLightningData.SpotLights[uIndex].Color = pSpotLight->GetColor();
         oGlobalLightningData.SpotLights[uIndex].Range = pSpotLight->GetRange();
-        oGlobalLightningData.SpotLights[uIndex].CutOffAngle = pSpotLight->GetCutOffAngle();
         oGlobalLightningData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
       }
       // Set the number of registered spot lights

@@ -44,7 +44,7 @@ namespace render
       void DrawMesh();
       HRESULT AssignIndexBuffer(TIndexesList& _vctIndices);
 
-      void UseGlobalLightning(bool _bState);
+      void UseGlobalLighting(bool _bEnabled);
       void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
       void UpdateVertexColor(ID3D11Buffer* _pVertexBuffer);
 

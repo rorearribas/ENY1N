@@ -24,7 +24,6 @@ namespace render
 
       // 3D Cube
       static const std::vector<uint32_t> s_oCubeIndices;
-      static const std::vector<uint32_t> s_oCubeWireframeIndices;
 
       // 3D Plane
       static const std::vector<uint32_t> s_oPlaneIndices;
@@ -34,12 +33,13 @@ namespace render
       static void CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, CPrimitive::SCustomPrimitive& _oVertexData_);
 
       // 3D Sphere
-      static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::graphics::SVertexData>& _vctVertices_);
+      static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::graphics::SVertexData>& _vctVertexData_);
       static std::vector<uint32_t> GetSphereIndices(int _iStacks, int _iSlices);
       static std::vector<uint32_t> GetWireframeSphereIndices(int _iStacks, int _iSlices);
 
       // Normals
       static void ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _vctIndices);
+      static void ComputeBasicNormals(std::vector<SVertexData>& _oVertexData);
     };
 
   }

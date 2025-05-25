@@ -44,7 +44,7 @@ namespace scene
     void CreateScenes();
     void DestroyAllScenes();
 
-    TSceneList m_vctScenes = {};
+    TSceneList m_vctScenes = TSceneList();
     mutable scene::CScene* m_pCurrentScene = nullptr;
   };
 }

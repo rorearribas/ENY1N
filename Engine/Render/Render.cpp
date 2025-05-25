@@ -358,7 +358,7 @@ namespace render
   void CRender::Draw(scene::CScene* _pScene) const
   {
     // Update lights
-    _pScene->ApplyLights();
+    _pScene->UpdateLighting();
 
     // Draw models
     _pScene->DrawModels();

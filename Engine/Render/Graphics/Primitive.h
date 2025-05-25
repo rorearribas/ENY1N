@@ -40,7 +40,7 @@ namespace render
       void DrawPrimitive();
 
       void SetRenderMode(render::ERenderMode _eRenderMode);
-      void UseGlobalLightning(bool _bState);
+      void UseGlobalLighting(bool _bEnabled);
 
       void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
       const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
@@ -70,7 +70,7 @@ namespace render
 
       math::CTransform m_oTransform = math::CTransform();
       math::CVector3 m_v3Color = math::CVector3::One;
-      bool m_bUseGlobalLightning = true;
+      bool m_bUseGlobalLighting  = true;
 
       uint32_t m_uVertices = 0;
       uint32_t m_uIndices = 0;

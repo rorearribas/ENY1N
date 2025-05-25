@@ -28,7 +28,7 @@
 #include "Game/ETT/Components/RigidbodyComponent/RigidbodyComponent.h"
 #include "Libs/Math/Math.h"
 
-static float GenerateFloat(float min, float max) 
+float GenerateFloat(float min, float max) 
 {
   static std::random_device rd;
   static std::mt19937 gen(rd());
@@ -75,7 +75,7 @@ int main()
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
-  pPlaneModel->SetPrimitiveColor(math::CVector3(0.5f, 0.5f, 0.5f));
+  pPlaneModel->SetPrimitiveColor(math::CVector3(1.0f, 1.0f, 1.0f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponent->CreateCollider(collisions::EColliderType::BOX_COLLIDER);

@@ -73,7 +73,7 @@ namespace scene
 
     void DrawPrimitives();
     void DrawModels();
-    void ApplyLights();
+    void UpdateLighting();
 
   private:
     bool m_bEnabled = false;
@@ -90,6 +90,6 @@ namespace scene
     TSpotLightsList m_vctSpotLights = TSpotLightsList();
 
     // Global lightning buffer
-    CConstantBuffer<SGlobalLightningData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightningBuffer;
+    CConstantBuffer<SGlobalLightingData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightingBuffer;
   };
 }

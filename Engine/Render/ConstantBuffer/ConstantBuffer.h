@@ -31,7 +31,7 @@ struct __declspec(align(16)) SConstantModelData
   // 4 byte + 4 byte + 4 byte
   int bHasTexture = 0;
   int bHasModel = 0;
-  int bUseGlobalLightning = 0;
+  int bUseGlobalLighting = 0;
 
   // 12 + 4 Bytes
   int Padding0 = 0;
@@ -77,17 +77,17 @@ namespace internal
     // 12 + 4 Bytes
     math::CVector3 Color;
     float Padding2;
-    // 12 + 4 Bytes
+    // 4 + 4 Bytes
     float Range;
-    float CutOffAngle;
-    // 12 + 4 Bytes
-    float Intensity;
     float Padding3;
+    // 4 + 4 Bytes
+    float Intensity;
+    float Padding4;
   };
 }
 
 template<size_t MAX_POINT_LIGHTS, size_t MAX_SPOT_LIGHTS>
-struct __declspec(align(16)) SGlobalLightningData
+struct __declspec(align(16)) SGlobalLightingData
 {
   // Lights [144 Bytes]
   internal::SDirectionaLight DirectionalLight;

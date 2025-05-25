@@ -105,12 +105,12 @@ namespace render
       }
     }
     // ------------------------------------
-    void CModel::UseGlobalLightning(bool _bState)
+    void CModel::UseGlobalLighting(bool _bEnabled)
     {
       // Draw meshes
       for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
       {
-        pMesh->UseGlobalLightning(_bState);
+        pMesh->UseGlobalLighting(_bEnabled);
       }
     }
   }

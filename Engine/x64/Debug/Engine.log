@@ -1,12 +1,9 @@
-﻿  Engine.cpp
-  Camera.cpp
-  BoxCollider.cpp
-  InputManager.cpp
+﻿  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Standard\ForwardPixelShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\ForwardPixelShader.cso
+  compilation header save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\Shaders\Standard\ForwardVertexShader.h
+  compilation object save succeeded; see C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\ForwardVertexShader.cso
   Model.cpp
   Primitive.cpp
-  PrimitiveUtils.cpp
   Render.cpp
-  Scene.cpp
-  SceneManager.cpp
   Generating Code...
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\Engine.lib

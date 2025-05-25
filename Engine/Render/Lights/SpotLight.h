@@ -14,9 +14,6 @@ namespace render
       CSpotLight() : CBaseLight(SPOT_LIGHT) { SetDirection(s_vDefaultDirection); }
       virtual ~CSpotLight() {}
 
-      // CutOffAngle
-      void SetCutOffAngle(float _fValue) { m_fCutOffAngle = _fValue; }
-      const float& GetCutOffAngle() const { return m_fCutOffAngle; }
       // Range
       void SetRange(float _fRange) { m_fRange = _fRange; }
       const float& GetRange() const { return m_fRange; }
@@ -27,7 +24,6 @@ namespace render
     private:
       // Properties
       math::CVector3 m_v3LightColor = math::CVector3::One;
-      float m_fCutOffAngle = 45.0f;
       float m_fRange = 10.0f;
       float m_fIntensity = 1.0f;
     };

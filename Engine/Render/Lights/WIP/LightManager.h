@@ -54,7 +54,7 @@ namespace render
       uint32_t m_uRegisteredSpotLights = 0;
 
       // Global lightning buffer
-      CConstantBuffer<SGlobalLightningData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightningBuffer;
+      CConstantBuffer<SGlobalLightingData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightningBuffer;
     };
   }
 }

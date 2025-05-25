@@ -132,14 +132,12 @@ namespace game
       render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight);
       float vctDir[3] = { pSpotLight->GetDirection().X, pSpotLight->GetDirection().Y, pSpotLight->GetDirection().Z };
       float vctColor[3] = { pSpotLight->GetColor().X, pSpotLight->GetColor().Y, pSpotLight->GetColor().Z };
-      float fCutOffAngle = pSpotLight->GetCutOffAngle();
       float fIntensity = pSpotLight->GetIntensity();
       float fRange = pSpotLight->GetRange();
 
       ImGui::Text(sTitle.c_str());
       ImGui::InputFloat3(sLightDir.c_str(), vctDir);
       ImGui::InputFloat3(sColor.c_str(), vctColor);
-      ImGui::InputFloat(sCutOffAngle.c_str(), &fCutOffAngle);
       ImGui::InputFloat(sRange.c_str(), &fRange);
       ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
 
@@ -149,7 +147,6 @@ namespace game
       pSpotLight->SetDirection(v3Dir);
       pSpotLight->SetColor(v3Color);
       pSpotLight->SetIntensity(fIntensity);
-      pSpotLight->SetCutOffAngle(fCutOffAngle);
       pSpotLight->SetRange(fRange);
 
       // Draw line

@@ -8,7 +8,6 @@ namespace scene
   {
     CreateScenes();
   }
-
   // ------------------------------------
   CSceneManager::~CSceneManager()
   {
@@ -104,10 +103,16 @@ namespace scene
     return pScene->CreateSpotLight();
   }
   // ------------------------------------
+  void CSceneManager::DestroyModel(render::graphics::CModel*& _pModel_, uint32_t _uIndex)
+  {
+    if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
+    scene::CScene* pScene = m_vctScenes.at(_uIndex);
+    pScene->DestroyModel(_pModel_);
+  }
+  // ------------------------------------
   void CSceneManager::DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uIndex)
   {
     if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
-    assert(_pPrimitive_);
     scene::CScene* pScene = m_vctScenes.at(_uIndex);
     pScene->DestroyPrimitive(_pPrimitive_);
   }
@@ -115,17 +120,8 @@ namespace scene
   void CSceneManager::DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uIndex)
   {
     if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
-    assert(_pLight_);
     scene::CScene* pScene = m_vctScenes.at(_uIndex);
     pScene->DestroyLight(_pLight_);
-  }
-  // ------------------------------------
-  void CSceneManager::DestroyModel(render::graphics::CModel*& _pModel_, uint32_t _uIndex)
-  {
-    if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
-    assert(_pModel_);
-    scene::CScene* pScene = m_vctScenes.at(_uIndex);
-    pScene->DestroyModel(_pModel_);
   }
   // ------------------------------------
   void CSceneManager::DestroyAllScenes()

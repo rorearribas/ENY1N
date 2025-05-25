@@ -91,13 +91,10 @@ namespace render
       }
       case EPrimitiveType::E3D_CUBE:
       {
-        std::vector<render::graphics::SVertexData> vctVertexData = CPrimitiveUtils::s_oCubePrimitive;
-        CPrimitiveUtils::ComputeNormals(vctVertexData, _eRenderMode == SOLID ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oCubeWireframeIndices);
-
         return CreateBufferFromPrimitiveData
         (
           CPrimitiveUtils::s_oCubePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oCubeWireframeIndices
+          CPrimitiveUtils::s_oCubeIndices
         );
       }
       case EPrimitiveType::E3D_SPHERE:
@@ -109,9 +106,7 @@ namespace render
 
         std::vector<render::graphics::SVertexData> vctPrimitiveData = std::vector<render::graphics::SVertexData>();
         const auto& vctIndices = _eRenderMode == SOLID ? CPrimitiveUtils::GetSphereIndices(iStacks, iSlices) : CPrimitiveUtils::GetWireframeSphereIndices(iStacks, iSlices);
-
         CPrimitiveUtils::CreateSphere(fTargetRadius, iStacks, iSlices, vctPrimitiveData);
-        CPrimitiveUtils::ComputeNormals(vctPrimitiveData, vctIndices);
 
         return CreateBufferFromPrimitiveData
         (
@@ -146,9 +141,9 @@ namespace render
       }
     }
     // ------------------------------------
-    void CPrimitive::UseGlobalLightning(bool _bState)
+    void CPrimitive::UseGlobalLighting(bool _bEnabled)
     {
-      m_bUseGlobalLightning = _bState;
+      m_bUseGlobalLighting  = _bEnabled;
     }
     // ------------------------------------
     void CPrimitive::SetColor(const math::CVector3& _v3Color)
@@ -187,7 +182,7 @@ namespace render
       m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // Create vertex buffer
-      D3D11_BUFFER_DESC oVertexBufferDescriptor = {};
+      D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
       oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>(sizeof(render::graphics::SVertexData) * _vctPrimitiveData.size());
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -206,7 +201,7 @@ namespace render
       if (_vctIndexes.empty()) return hResult;
 
       // Config index buffer
-      D3D11_BUFFER_DESC oIndexBufferDesc = {};
+      D3D11_BUFFER_DESC oIndexBufferDesc = D3D11_BUFFER_DESC();
       oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
       oIndexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(uint32_t) * _vctIndexes.size()));
       oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -241,9 +236,9 @@ namespace render
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
       // Set constants
-      m_oConstantModelData.GetData().bUseGlobalLightning = static_cast<int>(m_bUseGlobalLightning);
-      m_oConstantModelData.GetData().bHasTexture = 0;
-      m_oConstantModelData.GetData().bHasModel = 0;
+      m_oConstantModelData.GetData().bUseGlobalLighting = m_bUseGlobalLighting;
+      m_oConstantModelData.GetData().bHasTexture = false;
+      m_oConstantModelData.GetData().bHasModel = false;
       bOk = m_oConstantModelData.WriteBuffer();
       assert(bOk);
 

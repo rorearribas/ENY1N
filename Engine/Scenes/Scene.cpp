@@ -16,14 +16,14 @@ namespace scene
 {
   CScene::CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex)
   {
-    HRESULT hResult = m_oLightningBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+    HRESULT hResult = m_oLightingBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
     UNUSED_VARIABLE(hResult);
     assert(!FAILED(hResult));
   }
   // ------------------------------------
   CScene::~CScene()
   {
-    m_oLightningBuffer.CleanBuffer();
+    m_oLightingBuffer.CleanBuffer();
     DestroyAllPrimitives();
     DestroyAllModels();
     DestroyAllLights();
@@ -61,52 +61,51 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::ApplyLights()
+  void CScene::UpdateLighting()
   {
     // Fill data
-    auto& oGlobalLightningData = m_oLightningBuffer.GetData();
+    auto& oGlobalLightingData = m_oLightingBuffer.GetData();
 
     // Directional light
     if (m_pDirectionalLight)
     {
-      oGlobalLightningData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
-      oGlobalLightningData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
-      oGlobalLightningData.DirectionalLight.Direction = m_pDirectionalLight->GetDirection();
+      oGlobalLightingData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
+      oGlobalLightingData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
+      oGlobalLightingData.DirectionalLight.Direction = m_pDirectionalLight->GetDirection();
     }
 
     // Point lights
     for (uint32_t uIndex = 0; uIndex < m_vctPointLights.CurrentSize(); uIndex++)
     {
       const render::lights::CPointLight* pPointLight = m_vctPointLights[uIndex];
-      oGlobalLightningData.PointLights[uIndex].Position = pPointLight->GetPosition();
-      oGlobalLightningData.PointLights[uIndex].Color = pPointLight->GetColor();
-      oGlobalLightningData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
-      oGlobalLightningData.PointLights[uIndex].Range = pPointLight->GetRange();
+      oGlobalLightingData.PointLights[uIndex].Position = pPointLight->GetPosition();
+      oGlobalLightingData.PointLights[uIndex].Color = pPointLight->GetColor();
+      oGlobalLightingData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
+      oGlobalLightingData.PointLights[uIndex].Range = pPointLight->GetRange();
     }
     // Set the number of registered point lights
-    oGlobalLightningData.RegisteredPointLights = static_cast<int>(m_vctPointLights.CurrentSize());
+    oGlobalLightingData.RegisteredPointLights = static_cast<int>(m_vctPointLights.CurrentSize());
 
     // Spot lights
     for (uint32_t uIndex = 0; uIndex < m_vctSpotLights.CurrentSize(); uIndex++)
     {
       const render::lights::CSpotLight* pSpotLight = m_vctSpotLights[uIndex];
-      oGlobalLightningData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
-      oGlobalLightningData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
-      oGlobalLightningData.SpotLights[uIndex].Color = pSpotLight->GetColor();
-      oGlobalLightningData.SpotLights[uIndex].Range = pSpotLight->GetRange();
-      oGlobalLightningData.SpotLights[uIndex].CutOffAngle = pSpotLight->GetCutOffAngle();
-      oGlobalLightningData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
+      oGlobalLightingData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
+      oGlobalLightingData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
+      oGlobalLightingData.SpotLights[uIndex].Color = pSpotLight->GetColor();
+      oGlobalLightingData.SpotLights[uIndex].Range = pSpotLight->GetRange();
+      oGlobalLightingData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
     }
     // Set the number of registered spot lights
-    oGlobalLightningData.RegisteredSpotLights = static_cast<int>(m_vctSpotLights.CurrentSize());
+    oGlobalLightingData.RegisteredSpotLights = static_cast<int>(m_vctSpotLights.CurrentSize());
 
     // Write buffer
-    bool bOk = m_oLightningBuffer.WriteBuffer();
+    bool bOk = m_oLightingBuffer.WriteBuffer();
     UNUSED_VARIABLE(bOk);
     assert(bOk);
 
     // Apply constant buffer
-    ID3D11Buffer* pConstantBuffer = m_oLightningBuffer.GetBuffer();
+    ID3D11Buffer* pConstantBuffer = m_oLightingBuffer.GetBuffer();
     global::dx11::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
   }
   // ------------------------------------
@@ -144,7 +143,7 @@ namespace scene
     assert(pPrimitive);
 
     // Set values
-    pPrimitive->UseGlobalLightning(false);
+    pPrimitive->UseGlobalLighting(false);
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
@@ -167,8 +166,7 @@ namespace scene
     }
 
     // Set indices
-    oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::s_oCubeIndices :
-    render::graphics::CPrimitiveUtils::s_oCubeWireframeIndices;
+    oVertexData.m_vctIndices = render::graphics::CPrimitiveUtils::s_oCubeIndices;
 
     // Create item + set pos
     render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
@@ -177,7 +175,7 @@ namespace scene
     // Set values
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetColor(_v3Color);
-    pPrimitive->UseGlobalLightning(false);
+    pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -206,7 +204,7 @@ namespace scene
     // Set values
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetColor(_v3Color);
-    pPrimitive->UseGlobalLightning(false);
+    pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)

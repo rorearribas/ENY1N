@@ -1,29 +1,11 @@
-﻿  CollisionManager.cpp
-  PhysicsManager.cpp
-  PrimitiveUtils.cpp
-  LightManager.cpp
-  Mesh.cpp
-  Light.cpp
-  Material.cpp
-  Model.cpp
-  BoxCollider.cpp
-  Engine.cpp
+﻿  Engine.cpp
   Camera.cpp
-  DirectionalLight.cpp
-  GlobalResources.cpp
+  BoxCollider.cpp
   InputManager.cpp
-  PointLight.cpp
+  Mesh.cpp
+  Model.cpp
   Primitive.cpp
   Render.cpp
-  RenderWindow.cpp
-  ResourceManager.cpp
-  Rigidbody.cpp
-  Compiling...
-  SceneManager.cpp
   Scene.cpp
-  Texture.cpp
-  Shape.cpp
-  Shader.cpp
-  SpotLight.cpp
-  SphereCollider.cpp
+  SceneManager.cpp
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib

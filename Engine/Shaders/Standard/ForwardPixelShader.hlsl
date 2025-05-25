@@ -43,9 +43,10 @@ struct Spotlight
   
   // 4 + 4 + 4 + 4 = 16 bytes
   float Range;
-  float CutOffAngle;
-  float Intensity;
   float Padding3;
+
+  float Intensity;
+  float Padding4;
 };
 
 // Samplers
@@ -68,14 +69,14 @@ cbuffer ConstantTexture : register(b0)
   // 4 + 4 + 4
   int HasTexture = 0;
   int HasModel = 0;
-  int UseGlobalLightning = 0;
+  int UseGlobalLighting = 0;
 
   // 12 + 4
   int Padding0;
 };
 
 // Constant buffer global lightning
-cbuffer GlobalLightningData : register(b1)
+cbuffer GlobalLightingData : register(b1)
 {
   // Lights
   DirectionalLight directionalLight;
@@ -94,23 +95,13 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   float3 v3Normal = normalize(input.normal);
 
   // Ambient light
-  float3 v3AmbientColor = 0.02f * float3(1.0f, 1.0f, 1.0f);
+  float3 v3AmbientColor = 0.01f * float3(1.0f, 1.0f, 1.0f);
   v3TotalDiffuse += v3AmbientColor;
 
-  if(HasModel == 0)
-  {
-    float3 dp1 = ddx(input.worldpos);
-    float3 dp2 = ddy(input.worldpos);
-    v3Normal = normalize(cross(dp1, dp2));
-  }
-
   // Directional light
-  if(directionalLight.Intensity > 0.001f)
-  {
-    float3 v3LightDir = normalize(directionalLight.Direction);
-    float fDot = max(dot(v3Normal, v3LightDir), 0.0f);
-    v3TotalDiffuse += fDot * directionalLight.Color * directionalLight.Intensity;
-  }
+  float3 v3LightDir = normalize(directionalLight.Direction);
+  float fDot = max(dot(v3Normal, v3LightDir), 0.0f);
+  v3TotalDiffuse += directionalLight.Color * directionalLight.Intensity * fDot;
   
   // Point Lights
   for (int i = 0; i < RegisteredLights.x; i++)
@@ -123,9 +114,10 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
     float fDot = max(dot(v3Normal, v3LightDir), 0.0f);
     if(fDot > 0.0f)
     {
+      // Apply point light color
       float fDistanceFalloff = saturate(1.0f - fLength / pointLight.Range);
-      float3 vPointDiffuse = pointLight.Color * pointLight.Intensity * fDot * fDistanceFalloff;
-      v3TotalDiffuse += vPointDiffuse;
+      float3 v3PointDiffuse = pointLight.Color * pointLight.Intensity * fDot * fDistanceFalloff;
+      v3TotalDiffuse += v3PointDiffuse;
     }
   }
   
@@ -146,19 +138,22 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
       // Angles
       float cosTheta = dot(-v3LightDirToPixel, v3LightDirSpot);
       float cosInner = cos(radians(15.0f));
-      float cosOuter = cos(radians(30.0f));
+      float cosOuter = cos(radians(35.0f));
 
+      // Attenuation
       float fDistanceFalloff = saturate(1.0f - fLength / spotlight.Range);
       float fIntensityFalloff = saturate((cosTheta - cosOuter) / (cosInner - cosOuter));
-      float fFalloff = fDistanceFalloff * fIntensityFalloff;
+      float fFalloff = max(fDistanceFalloff * fIntensityFalloff, 0.0f);
 
+      // Apply spot light color
       v3TotalDiffuse += spotlight.Color * spotlight.Intensity * fFalloff;
     }
   }
 
-  if(UseGlobalLightning == 1)
+  if(UseGlobalLighting)
   {
-    return float4(v3TotalDiffuse, 1.0f) * (HasTexture ? v4TextureColor : float4(input.color, 1.0f));
+    float4 v4FinalColor = HasTexture ? v4TextureColor : float4(input.color, 1.0f);
+    return float4(saturate(v4FinalColor.rgb * 0.5 + v3TotalDiffuse * 0.5f), 1.0f);
   }
 
   return float4(input.color, 1.0f);

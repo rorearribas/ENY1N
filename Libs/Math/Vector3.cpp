@@ -79,9 +79,9 @@ namespace math
   {
     return CVector3
     (
-      (this->Y * _v3.Z - this->Z * _v3.Y), // X
-      (this->Z * _v3.X - this->X * _v3.Z), // Y
-      (this->X * _v3.Y - this->Y * _v3.X)  // Z
+      (this->Y * _v3.Z) - (this->Z * _v3.Y), // X
+      (this->Z * _v3.X) - (this->X * _v3.Z), // Y
+      (this->X * _v3.Y) - (this->Y * _v3.X)  // Z
     );
   }
   // ------------------------------------
