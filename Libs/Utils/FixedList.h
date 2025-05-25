@@ -6,29 +6,29 @@
 namespace utils
 {
   template<typename T, size_t MAX_ITEMS>
-  class CFixedList
-  {
+  class CFixedList {
   public:
     template<typename Inheritance = T, typename ...Args>
     T* CreateItem(Args&&... args)
     {
-      if (m_uRegisteredItems >= m_vctItemList.size())
+      if (m_uRegisteredItems >= MAX_ITEMS)
       {
         std::cout << "Maximum items reached!" << std::endl;
         return nullptr;
       }
+
       Inheritance* pItem = new Inheritance(std::forward<Args>(args)...);
-      m_vctItemList[m_uRegisteredItems++] = pItem;
-      return pItem;
+      m_vctItemList[m_uRegisteredItems] = pItem;
+      return m_vctItemList[m_uRegisteredItems++];
     }
+
     bool RemoveItem(T* _pItem_);
     void ClearAll();
 
     const uint32_t& CurrentSize() const { return m_uRegisteredItems; }
-    uint32_t GetMaxSize() { return static_cast<uint32_t>(MAX_ITEMS); }
+    size_t GetMaxSize() const { return static_cast<size_t>(MAX_ITEMS); }
 
-    std::array<T*, MAX_ITEMS>& operator()() { return m_vctItemList; }
-    T* operator[](size_t Index) { return m_vctItemList[Index]; }
+    T* operator[](int _iIndex) { return m_vctItemList[_iIndex]; }
 
   private:
     std::array<T*, MAX_ITEMS> m_vctItemList = std::array<T*, MAX_ITEMS>();
@@ -40,12 +40,7 @@ namespace utils
   {
     for (uint32_t uIndex = 0; uIndex < m_uRegisteredItems; uIndex++)
     {
-      T*& pItem = m_vctItemList[uIndex];
-      if (pItem)
-      {
-        delete pItem;
-        pItem = nullptr;
-      }
+      global::ReleaseObject(m_vctItemList[uIndex]);
     }
     m_uRegisteredItems = 0;
   }
@@ -67,7 +62,4 @@ namespace utils
     }
     return false;
   }
-
 }
-
-

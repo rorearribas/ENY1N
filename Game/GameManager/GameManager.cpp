@@ -18,7 +18,7 @@ namespace game
 #ifdef DEBUG_MODE
     ImGui::Begin("Entity Selector");
     // Show the list of entities
-    for (uint32_t uIndex = 0; uIndex < m_vctEntitiesList.GetMaxSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_vctEntitiesList.CurrentSize(); ++uIndex)
     {
       CEntity* pEntity = m_vctEntitiesList[uIndex];
       if (pEntity)
@@ -31,7 +31,7 @@ namespace game
     ImGui::End();
 #endif
     // Update
-    for (uint32_t uIndex = 0; uIndex < m_vctEntitiesList.GetMaxSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_vctEntitiesList.CurrentSize(); ++uIndex)
     {
       CEntity* pEntity = m_vctEntitiesList[uIndex];
       if (pEntity)

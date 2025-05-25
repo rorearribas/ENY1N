@@ -33,17 +33,20 @@ namespace render
       switch (eShaderType)
       {
       case render::shader::VERTEX_SHADER:
-        if (m_pShaderData) { static_cast<ID3D11VertexShader>(m_pShaderData)->Release(); }
+        if (m_pShaderData) { static_cast<ID3D11VertexShader*>(m_pShaderData)->Release(); }
         break;
       case render::shader::PIXEL_SHADER:
-        if (m_pShaderData) { static_cast<ID3D11PixelShader>(m_pShaderData)->Release(); }
+        if (m_pShaderData) { static_cast<ID3D11PixelShader*>(m_pShaderData)->Release(); }
         break;
       case render::shader::COMPUTE_SHADER:
-        if (m_pShaderData) { static_cast<ID3D11ComputeShader>(m_pShaderData)->Release(); }
+        if (m_pShaderData) { static_cast<ID3D11ComputeShader*>(m_pShaderData)->Release(); }
         break;
       default:
         break;
       }
+
+      // Set as nullptr
+      m_pShaderData = nullptr;
     }
 
     template<EShaderType eShaderType>

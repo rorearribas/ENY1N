@@ -123,7 +123,7 @@ namespace collisions
   // ------------------------------------
   bool CBoxCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
-    const std::vector<math::CVector3>& v3Extents = GetExtents();
+    const std::vector<math::CVector3>& v3Extents = this->GetExtents();
     const std::vector<math::CVector3>& v3OtherExtents = _pOther->GetExtents();
 
     std::vector<math::CVector3> vctAxis =

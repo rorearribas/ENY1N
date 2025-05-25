@@ -20,14 +20,15 @@ namespace render
 
       // 2D Triangle
       static const std::vector<uint32_t> s_oTriangleIndices;
-      static const std::vector<uint32_t> s_oTriangleWireframeIndices;
+      static const std::vector<uint32_t> s_oWireframeTriangleIndices;
 
       // 3D Cube
       static const std::vector<uint32_t> s_oCubeIndices;
+      static const std::vector<uint32_t> s_oWireframeCubeIndices;
 
       // 3D Plane
       static const std::vector<uint32_t> s_oPlaneIndices;
-      static const std::vector<uint32_t> s_oPlaneWireframeIndices;
+      static const std::vector<uint32_t> s_oWireframePlaneIndices;
 
       // 3D Line
       static void CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, CPrimitive::SCustomPrimitive& _oVertexData_);

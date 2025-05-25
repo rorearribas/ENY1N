@@ -3,6 +3,7 @@
 #include "Rigidbody.h"
 #include "Game/ETT/Entity.h"
 #include "Libs/Time/TimeManager.h"
+#include <iostream>
 
 namespace physics
 {

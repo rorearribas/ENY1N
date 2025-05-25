@@ -2,7 +2,7 @@
 #include "Game/ETT/Entity.h"
 #include "Libs/Utils/Singleton.h"
 #include "Engine/Collisions/CollisionManager.h"
-#include "Libs/Utils/FixedList.h"
+#include "Libs/Utils/MemoryPool.h"
 
 namespace collisions { class CCollider; }
 
@@ -12,7 +12,7 @@ namespace game
   {
   public:
     static const uint32_t s_uMaxEntities = 1000;
-    typedef utils::CFixedList<CEntity, s_uMaxEntities> TEntitiesList;
+    typedef utils::CMemoryPool<CEntity, s_uMaxEntities> TEntitiesList;
 
   public:
     CGameManager() {};

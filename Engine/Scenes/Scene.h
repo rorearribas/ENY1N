@@ -2,6 +2,8 @@
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Engine/Render/Lights/SpotLight.h"
+#include "Engine/Render/Lights/PointLight.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/Utils/FixedList.h"
 #include <cassert>
@@ -63,17 +65,18 @@ namespace scene
   private:
     friend class render::CRender;
 
+    // Draw calls
+    void DrawPrimitives();
+    void DrawModels();
+    void UpdateLighting();
+
+  private:
     bool DestroyPointLight(render::lights::CPointLight* pLight_);
     bool DestroySpotLight(render::lights::CSpotLight* pLight_);
 
     void DestroyAllPrimitives();
     void DestroyAllModels();
-
     void DestroyAllLights();
-
-    void DrawPrimitives();
-    void DrawModels();
-    void UpdateLighting();
 
   private:
     bool m_bEnabled = false;

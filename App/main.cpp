@@ -110,7 +110,7 @@ int main()
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
-    pModelCompTest->SetPrimitiveColor(math::CVector3::Forward);
+    pModelCompTest->SetPrimitiveColor(math::CVector3::Right);
 
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();

@@ -78,7 +78,7 @@ namespace render
     {
       0, 1, 2, // FRONT
     };
-    const std::vector<uint32_t> CPrimitiveUtils::s_oTriangleWireframeIndices =
+    const std::vector<uint32_t> CPrimitiveUtils::s_oWireframeTriangleIndices =
     {
       0, 1, // Line 1
       1, 2, // Line 2
@@ -108,9 +108,29 @@ namespace render
       16, 19, 17,
       17, 19, 18,
 
-      //
+      // BOTTOM
       20, 23, 21,
       21, 23, 22
+    };
+    const std::vector<uint32_t> CPrimitiveUtils::s_oWireframeCubeIndices =
+    {
+      // FRONT FACE EDGES
+      0, 1, 1, 2, 2, 3, 3, 0,
+
+      // BACK FACE EDGES
+      4, 5, 5, 6, 6, 7, 7, 4,
+
+      // LEFT FACE EDGES
+      8, 9, 9, 10, 10, 11, 11, 8,
+
+      // RIGHT FACE EDGES
+      12, 13, 13, 14, 14, 15, 15, 12,
+
+      // TOP FACE EDGES
+      16, 17, 17, 18, 18, 19, 19, 16,
+
+      // BOTTOM FACE EDGES
+      20, 21, 21, 22, 22, 23, 23, 20
     };
 
     // 3D Plane Indices
@@ -119,7 +139,7 @@ namespace render
       0, 1, 2, //FRONT
       0, 2, 3, //FRONT
     };
-    const std::vector<uint32_t> CPrimitiveUtils::s_oPlaneWireframeIndices =
+    const std::vector<uint32_t> CPrimitiveUtils::s_oWireframePlaneIndices =
     {
       0, 1, // TOP EDGE
       1, 2, // RIGHT EDGE

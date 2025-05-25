@@ -76,7 +76,7 @@ namespace render
         return CreateBufferFromPrimitiveData
         (
           CPrimitiveUtils::s_oTrianglePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oTriangleIndices : CPrimitiveUtils::s_oTriangleWireframeIndices
+          _eRenderMode == SOLID ? CPrimitiveUtils::s_oTriangleIndices : CPrimitiveUtils::s_oWireframeTriangleIndices
         );
       }
       break;
@@ -86,7 +86,7 @@ namespace render
         return CreateBufferFromPrimitiveData
         (
           CPrimitiveUtils::s_oPlanePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oPlaneWireframeIndices
+          _eRenderMode == SOLID ? CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices
         );
       }
       case EPrimitiveType::E3D_CUBE:
@@ -94,7 +94,7 @@ namespace render
         return CreateBufferFromPrimitiveData
         (
           CPrimitiveUtils::s_oCubePrimitive,
-          CPrimitiveUtils::s_oCubeIndices
+          _eRenderMode == SOLID ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oWireframeCubeIndices
         );
       }
       case EPrimitiveType::E3D_SPHERE:
