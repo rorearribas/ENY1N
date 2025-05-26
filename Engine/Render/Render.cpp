@@ -17,6 +17,11 @@ namespace render
 {
   namespace internal_render
   {
+    static const wchar_t* s_sPrepareFrameMarker(L"Prepare Frame");
+    static const wchar_t* s_sDrawModelsMarker(L"Models");
+    static const wchar_t* s_sDrawPrimitivesMarker(L"Primitives");
+    static const wchar_t* s_sImGuiMarker(L"ImGui");
+
     static const float s_v4ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
@@ -37,6 +42,9 @@ namespace render
 
       // Blending
       ID3D11BlendState* pBlendState = nullptr;
+
+      // Debug
+      ID3DUserDefinedAnnotation* pUserDefAnnotation = nullptr;
 
       // Shaders for 3D Pipeline
       shader::CShader<shader::EShaderType::PIXEL_SHADER>* pForwardPS;
@@ -105,7 +113,7 @@ namespace render
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
-    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
+    global::delegates::s_vctOnWindowResizeDelegates.emplace_back(oResizeDelegate);
 
     // Push shaders for standard 3D pipeline
     internal_render::s_oPipeline.pForwardPS->PushShader();
@@ -349,16 +357,18 @@ namespace render
   void CRender::BeginDraw() const
   {
     // Clear resources
-    global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oPipeline.pRenderTargetView, internal_render::s_v4ClearColor);
-    global::dx11::s_pDeviceContext->ClearDepthStencilView(internal_render::s_oPipeline.DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    BeginMarker(internal_render::s_sPrepareFrameMarker);
+    ::global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oPipeline.pRenderTargetView, internal_render::s_v4ClearColor);
+    ::global::dx11::s_pDeviceContext->ClearDepthStencilView(internal_render::s_oPipeline.DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
     // Prepare ImGu
-    ImGui_ImplDX11_NewFrame();
-    ImGui_ImplWin32_NewFrame();
-    ImGui::NewFrame();
+    ::ImGui_ImplDX11_NewFrame();
+    ::ImGui_ImplWin32_NewFrame();
+    ::ImGui::NewFrame();
 
-    // Begin frame
-    ImGuizmo::BeginFrame();
+    // ImGuizmo
+    ::ImGuizmo::BeginFrame();
+    EndMarker();
   }
   // ------------------------------------
   void CRender::Draw(scene::CScene* _pScene) const
@@ -367,10 +377,14 @@ namespace render
     _pScene->UpdateLighting();
 
     // Draw models
+    BeginMarker(internal_render::s_sDrawModelsMarker);
     _pScene->DrawModels();
+    EndMarker();
 
     // Draw primitives
+    BeginMarker(internal_render::s_sDrawPrimitivesMarker);
     _pScene->DrawPrimitives();
+    EndMarker();
   }
   // ------------------------------------
   void CRender::EndDraw() const
@@ -381,11 +395,31 @@ namespace render
     global::dx11::s_pDeviceContext->OMSetBlendState(internal_render::s_oPipeline.pBlendState, nullptr, 0xFFFFFFFF);
     global::dx11::s_pDeviceContext->RSSetState(internal_render::s_oPipeline.pRasterizerState);
 
-    // End imgui draw
-    ImGui::Render();
-    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    // Render ImGui
+    BeginMarker(internal_render::s_sImGuiMarker);
+    ::ImGui::Render();
+    ::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    EndMarker();
 
-    // Draw the current frame
+    // Present
     internal_render::s_oPipeline.pSwapChain->Present(m_bVerticalSync, 0);
+  }
+  // ------------------------------------
+  void CRender::BeginMarker(const wchar_t* _sMarker) const
+  {
+    global::dx11::s_pDeviceContext->QueryInterface(__uuidof(ID3DUserDefinedAnnotation), (void**)&internal_render::s_oPipeline.pUserDefAnnotation);
+    if (internal_render::s_oPipeline.pUserDefAnnotation)
+    {
+      internal_render::s_oPipeline.pUserDefAnnotation->BeginEvent(_sMarker);
+    }
+  }
+  // ------------------------------------
+  void CRender::EndMarker() const
+  {
+    if (internal_render::s_oPipeline.pUserDefAnnotation)
+    {
+      internal_render::s_oPipeline.pUserDefAnnotation->EndEvent();
+      internal_render::s_oPipeline.pUserDefAnnotation->Release();
+    }
   }
 }

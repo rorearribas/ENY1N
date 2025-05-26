@@ -146,6 +146,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Collisions\CollisionManager.h" />
+    <ClInclude Include="Managers\MemoryTracker.h" />
     <ClInclude Include="Physics\PhysicsManager.h" />
     <ClInclude Include="Collisions\Collider.h" />
     <ClInclude Include="Render\Graphics\PrimitiveUtils.h" />
@@ -181,6 +182,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Collisions\CollisionManager.cpp" />
+    <ClCompile Include="Managers\MemoryTracker.cpp" />
     <ClCompile Include="Physics\PhysicsManager.cpp" />
     <ClCompile Include="Render\Graphics\PrimitiveUtils.cpp" />
     <ClCompile Include="Render\Lights\WIP\LightManager.cpp" />

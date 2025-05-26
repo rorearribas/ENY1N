@@ -196,7 +196,7 @@ namespace render
           oVertexData.Normal = math::CVector3::Normalize(v3VertexPos);
           oVertexData.TexCoord = math::CVector2((static_cast<float>(uJ) / _iSlices), 1.0f - (static_cast<float>(uX) / _iStacks));
 
-          _vctVertexData_.push_back(oVertexData);
+          _vctVertexData_.emplace_back(oVertexData);
         }
       }
     }
@@ -212,13 +212,13 @@ namespace render
           int iFirst = (i * (_iSlices + 1)) + j;
           int iSecond = iFirst + _iSlices + 1;
 
-          vctIndices.push_back(iFirst);
-          vctIndices.push_back(iSecond);
-          vctIndices.push_back(iFirst + 1);
+          vctIndices.emplace_back(iFirst);
+          vctIndices.emplace_back(iSecond);
+          vctIndices.emplace_back(iFirst + 1);
 
-          vctIndices.push_back(iSecond);
-          vctIndices.push_back(iSecond + 1);
-          vctIndices.push_back(iFirst + 1);
+          vctIndices.emplace_back(iSecond);
+          vctIndices.emplace_back(iSecond + 1);
+          vctIndices.emplace_back(iFirst + 1);
         }
       }
       return vctIndices;
@@ -238,13 +238,13 @@ namespace render
 
           if (iJ < _iSlices)
           {
-            vctWireframeIndices.push_back(iCurrent);
-            vctWireframeIndices.push_back(iNext);
+            vctWireframeIndices.emplace_back(iCurrent);
+            vctWireframeIndices.emplace_back(iNext);
           }
           if (iI < _iStacks)
           {
-            vctWireframeIndices.push_back(iCurrent);
-            vctWireframeIndices.push_back(iAbove);
+            vctWireframeIndices.emplace_back(iCurrent);
+            vctWireframeIndices.emplace_back(iAbove);
           }
         }
       }

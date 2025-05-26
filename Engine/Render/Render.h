@@ -41,6 +41,10 @@ namespace render
     void SetScissorRect(uint32_t _uX, uint32_t _uY);
     bool InitImGui();
 
+  private:
+    void BeginMarker(const wchar_t* _sMarker) const;
+    void EndMarker() const;
+
     // Data
     render::CRenderWindow* m_pRenderWindow = nullptr;
     bool m_bVerticalSync = false;

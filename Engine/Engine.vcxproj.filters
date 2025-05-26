@@ -114,6 +114,9 @@
     <ClInclude Include="Render\Graphics\PrimitiveUtils.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Managers\MemoryTracker.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp">
@@ -195,6 +198,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Graphics\PrimitiveUtils.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\MemoryTracker.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
