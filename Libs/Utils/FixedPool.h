@@ -1,10 +1,10 @@
 #pragma once
 #include <algorithm>
-#include <array>
-#include <iostream>
-#include <new>
+#include <bitset>
 #include <cstddef>
 #include <cassert>
+#include <new>
+#include <iostream>
 
 namespace utils
 {
@@ -26,69 +26,67 @@ namespace utils
         return nullptr;
       }
 
-      // Find valid block
-      T* pItem = nullptr;
-      for (size_t tIndex = 0; tIndex < MAX_ITEMS; tIndex++)
+      for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
       {
-        if (!m_vctAssignedBlock[tIndex])
+        if (!m_vctAssignedBlock.test(tIndex))
         {
-          size_t tTargetPos = tIndex * sizeof(T);
-          void* pMem = reinterpret_cast<void*>(m_vctBytes.data() + tTargetPos);
-          pItem = new (pMem) T(std::forward<Args>(args)...);
+          size_t offset = tIndex * sizeof(T);
+          void* pMem = static_cast<void*>(m_vctBytes + offset);
+          T* pItem = new (pMem) T(std::forward<Args>(args)...);
 
-          // Register
-          m_vctAssignedBlock[tIndex] = true;
-          m_uRegisteredItems++;
-          break;
+          m_vctAssignedBlock.set(tIndex);
+          ++m_uRegisteredItems;
+          return pItem;
         }
       }
 
-      return pItem;
+      return nullptr;
     }
+
     bool RemoveItem(T*& _pItem_);
     void ClearAll();
 
     const uint32_t& CurrentSize() const { return m_uRegisteredItems; }
-    size_t GetMaxSize() { return static_cast<size_t>(MAX_ITEMS); }
+    size_t GetMaxSize() const { return MAX_ITEMS; }
 
     T* operator[](size_t _tIndex)
     {
-      if (_tIndex < 0 || _tIndex >= MAX_ITEMS) return nullptr;
-      if (!m_vctAssignedBlock[_tIndex]) return nullptr;
+      if (_tIndex >= MAX_ITEMS || !m_vctAssignedBlock.test(_tIndex))
+        return nullptr;
 
-      size_t tTargetBlock = _tIndex * sizeof(T);
-      return reinterpret_cast<T*>(m_vctBytes.data() + tTargetBlock);
+      size_t offset = _tIndex * sizeof(T);
+      return reinterpret_cast<T*>(m_vctBytes + offset);
     }
 
   private:
     void Init();
 
   private:
-    alignas(T)std::array<std::byte, sizeof(T)* MAX_ITEMS> m_vctBytes;
-    std::array<bool, MAX_ITEMS> m_vctAssignedBlock;
+    alignas(T) unsigned char m_vctBytes[sizeof(T) * MAX_ITEMS];
+    std::bitset<MAX_ITEMS> m_vctAssignedBlock;
     uint32_t m_uRegisteredItems;
   };
 
   template<typename T, size_t MAX_ITEMS>
-  void CFixedPool<T, MAX_ITEMS>::Init()
+  void utils::CFixedPool<T, MAX_ITEMS>::Init()
   {
     // Initialize
-    std::fill(m_vctAssignedBlock.begin(), m_vctAssignedBlock.end(), false);
-    std::fill(m_vctBytes.begin(), m_vctBytes.end(), std::byte{ 0 });
+    std::fill(m_vctBytes, m_vctBytes + (sizeof(T) * MAX_ITEMS), static_cast<unsigned char>(0));
+    m_vctAssignedBlock.reset();
   }
 
   template<typename T, size_t MAX_ITEMS>
   void CFixedPool<T, MAX_ITEMS>::ClearAll()
   {
-    for (size_t tIndex = 0; tIndex < MAX_ITEMS; tIndex++)
+    for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
     {
-      if (m_vctAssignedBlock[tIndex])
+      if (m_vctAssignedBlock.test(tIndex))
       {
-        size_t tCurrentBlock = tIndex * sizeof(T);
-        T* pItem = reinterpret_cast<T*>(m_vctBytes.data() + tCurrentBlock);
+        size_t offset = tIndex * sizeof(T);
+        T* pItem = reinterpret_cast<T*>(m_vctBytes + offset);
         pItem->~T();
-        memset(m_vctBytes.data() + tCurrentBlock, 0, sizeof(T));
-        m_vctAssignedBlock[tIndex] = false;
+        std::memset(m_vctBytes + offset, 0, sizeof(T));
+        m_vctAssignedBlock.reset(tIndex);
       }
     }
     m_uRegisteredItems = 0;
@@ -99,26 +97,23 @@ namespace utils
   {
     for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
     {
-      if (!m_vctAssignedBlock[tIndex])
+      if (m_vctAssignedBlock.test(tIndex))
       {
-        continue;
+        size_t offset = tIndex * sizeof(T);
+        T* pItem = reinterpret_cast<T*>(m_vctBytes + offset);
+
+        if (pItem == _pItem_)
+        {
+          pItem->~T();
+          std::memset(m_vctBytes + offset, 0, sizeof(T));
+          m_vctAssignedBlock.reset(tIndex);
+          _pItem_ = nullptr;
+          --m_uRegisteredItems;
+          return true;
+        }
       }
-
-      size_t tTargetBlock = tIndex * sizeof(T);
-      T* pItem = reinterpret_cast<T*>(m_vctBytes.data() + tIndex * sizeof(T));
-      bool bFound = pItem == _pItem_;
-      if (bFound)
-      {
-        pItem->~T();
-        memset(m_vctBytes.data() + tTargetBlock, 0, sizeof(T));
-        _pItem_ = nullptr;
-
-        m_vctAssignedBlock[tIndex] = false;
-        --m_uRegisteredItems;
-        return true;
-      }
-
     }
+
     return false;
   }
 }

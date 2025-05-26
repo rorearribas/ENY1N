@@ -41,7 +41,8 @@ namespace scene
     }
 
     // Draw temporal primitives
-    for (uint32_t uIndex = 0; uIndex < m_vctTemporalItems.CurrentSize(); uIndex++)
+    uint32_t uTempSize = m_vctTemporalItems.CurrentSize();
+    for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
     {
       render::graphics::CPrimitive* pPrimitiveItem = m_vctTemporalItems[uIndex];
       if (pPrimitiveItem)
@@ -49,9 +50,12 @@ namespace scene
         pPrimitiveItem->DrawPrimitive();
       }
     }
-
+    
     // Clean after draw
-    m_vctTemporalItems.ClearAll();
+    if (uTempSize > 0)
+    {
+      m_vctTemporalItems.ClearAll();
+    }
   }
   // ------------------------------------
   void CScene::DrawModels()

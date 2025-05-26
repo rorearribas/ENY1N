@@ -3,12 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|solutionrelative:App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Utils\\FixedPool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Utils\\FixedPool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Shaders\\Standard\\ForwardPixelShader.hlsl||{8B382828-6202-11D1-8870-0000F87579D2}",
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Shaders\\Standard\\ForwardPixelShader.hlsl||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|solutionrelative:App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Scenes\\Scene.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -20,10 +24,6 @@
     },
     {
       "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xtree||{3B902123-F8A7-4915-9F01-361F908088D0}|"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Utils\\FixedPool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Utils\\FixedPool.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Render\\Window\\RenderWindow.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -526,7 +526,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 228,
-          "SelectedChildIndex": 12,
+          "SelectedChildIndex": 10,
           "Children": [
             {
               "$type": "Document",
@@ -562,7 +562,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "Scene.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Scenes\\Scene.h",
               "RelativeDocumentMoniker": "Engine\\Scenes\\Scene.h",
@@ -601,7 +601,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Scene.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Scenes\\Scene.cpp",
               "RelativeDocumentMoniker": "Engine\\Scenes\\Scene.cpp",
@@ -653,20 +653,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 0,
               "Title": "FixedPool.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Utils\\FixedPool.h",
               "RelativeDocumentMoniker": "Libs\\Utils\\FixedPool.h",
               "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Utils\\FixedPool.h",
               "RelativeToolTip": "Libs\\Utils\\FixedPool.h",
-              "ViewState": "AgIAAB8AAAAAAAAAAAAywDIAAAAfAAAAAAAAAA==",
+              "ViewState": "AgIAABIAAAAAAAAAAAAAAB8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-05-25T17:13:40.873Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "xtree",
               "DocumentMoniker": "C:\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xtree",
               "RelativeDocumentMoniker": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xtree",
@@ -685,7 +685,7 @@
               "RelativeDocumentMoniker": "Engine\\Shaders\\Standard\\ForwardPixelShader.hlsl",
               "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Shaders\\Standard\\ForwardPixelShader.hlsl",
               "RelativeToolTip": "Engine\\Shaders\\Standard\\ForwardPixelShader.hlsl",
-              "ViewState": "AgIAAD8AAAAAAAAAAAAAAFMAAAAaAAAAAAAAAA==",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAE4AAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
               "WhenOpened": "2025-05-24T09:51:03.695Z",
               "EditorCaption": ""
@@ -700,8 +700,7 @@
               "RelativeToolTip": "Engine\\Collisions\\SphereCollider.cpp",
               "ViewState": "AgIAAA0AAAAAAAAAAAAhwBoAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-09T11:24:23.871Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T11:24:23.871Z"
             },
             {
               "$type": "Document",
@@ -713,8 +712,7 @@
               "RelativeToolTip": "Engine\\Managers\\InputManager.cpp",
               "ViewState": "AgIAAF0AAAAAAAAAAAAhwGoAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-17T21:22:43.991Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-17T21:22:43.991Z"
             },
             {
               "$type": "Document",
@@ -726,8 +724,7 @@
               "RelativeToolTip": "Engine\\Collisions\\BoxCollider.cpp",
               "ViewState": "AgIAAFYAAAAAAAAAAAAhwGMAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-27T20:18:40.007Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-27T20:18:40.007Z"
             },
             {
               "$type": "Document",
@@ -739,8 +736,7 @@
               "RelativeToolTip": "Engine\\Camera\\Camera.cpp",
               "ViewState": "AgIAADkAAAAAAAAAAADgv0YAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-29T23:04:58.953Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-29T23:04:58.953Z"
             },
             {
               "$type": "Document",
@@ -752,8 +748,7 @@
               "RelativeToolTip": "Engine\\Base\\Engine.cpp",
               "ViewState": "AgIAAGoAAAAAAAAAAAAhwHcAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T19:07:52.732Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T19:07:52.732Z"
             },
             {
               "$type": "Document",
@@ -765,8 +760,7 @@
               "RelativeToolTip": "Engine\\Render\\Render.cpp",
               "ViewState": "AgIAAHYAAAAAAAAAAAAhwIMAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-29T18:29:35.523Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T18:29:35.523Z"
             },
             {
               "$type": "Document",
@@ -778,8 +772,7 @@
               "RelativeToolTip": "Engine\\Render\\Window\\RenderWindow.cpp",
               "ViewState": "AgIAAGgAAAAAAAAAAADgv3UAAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-18T01:22:37.203Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-18T01:22:37.203Z"
             },
             {
               "$type": "Document",
@@ -791,8 +784,7 @@
               "RelativeToolTip": "Engine\\Shaders\\Shader.h",
               "ViewState": "AgIAAEUAAAAAAAAAAAAcwFIAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-01-18T00:39:05.127Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-18T00:39:05.127Z"
             },
             {
               "$type": "Document",
@@ -804,8 +796,7 @@
               "RelativeToolTip": "Engine\\Global\\GlobalResources.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-01T14:57:35.42Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:57:35.42Z"
             },
             {
               "$type": "Document",
@@ -817,8 +808,7 @@
               "RelativeToolTip": "Game\\ETT\\Entity.h",
               "ViewState": "AgIAABMAAAAAAAAAAIAywCkAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-01T15:00:29.91Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-01T15:00:29.91Z"
             },
             {
               "$type": "Document",
@@ -830,8 +820,7 @@
               "RelativeToolTip": "Libs\\Utils\\CircularPool.h",
               "ViewState": "AgIAABwAAAAAAAAAAAAAACMAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-25T20:47:14.4Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T20:47:14.4Z"
             },
             {
               "$type": "Document",
@@ -843,8 +832,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\LightComponent\\LightComponent.cpp",
               "ViewState": "AgIAABUAAAAAAAAAAAAAACIAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T18:41:35.798Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T18:41:35.798Z"
             },
             {
               "$type": "Document",
@@ -856,8 +844,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.cpp",
               "ViewState": "AgIAAFwAAAAAAAAAAAAvwGsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-05T17:14:08.739Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-05T17:14:08.739Z"
             },
             {
               "$type": "Document",
@@ -869,8 +856,7 @@
               "RelativeToolTip": "Game\\GameManager\\GameManager.cpp",
               "ViewState": "AgIAADIAAAAAAAAAAAASwDoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T00:49:24.978Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T00:49:24.978Z"
             },
             {
               "$type": "Document",
@@ -882,8 +868,7 @@
               "RelativeToolTip": "Engine\\Managers\\ResourceManager.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA8AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-26T17:21:50.728Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-26T17:21:50.728Z"
             },
             {
               "$type": "Document",
@@ -895,8 +880,7 @@
               "RelativeToolTip": "Libs\\Utils\\FixedList.h",
               "ViewState": "AgIAACcAAAAAAAAAAAAYwDUAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-23T19:28:09.208Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-23T19:28:09.208Z"
             },
             {
               "$type": "Document",
@@ -908,8 +892,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\RigidbodyComponent\\RigidbodyComponent.h",
               "ViewState": "AgIAAAUAAAAAAAAAAAAYwBgAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-09T12:15:55.689Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-09T12:15:55.689Z"
             },
             {
               "$type": "Document",
@@ -921,8 +904,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.cpp",
               "ViewState": "AgIAABwAAAAAAAAAAAAvwDQAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-29T17:24:45.366Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T17:24:45.366Z"
             },
             {
               "$type": "Document",
@@ -934,8 +916,7 @@
               "RelativeToolTip": "Libs\\ImGui\\imgui_widgets.cpp",
               "ViewState": "AgIAAMcDAAAAAAAAAAAcwNYDAABNAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-25T17:05:09.834Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T17:05:09.834Z"
             },
             {
               "$type": "Document",
@@ -947,8 +928,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.cpp",
               "ViewState": "AgIAABEAAAAAAAAAAAAvwCAAAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-17T17:21:14.125Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-17T17:21:14.125Z"
             },
             {
               "$type": "Document",
@@ -960,8 +940,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\Light.h",
               "ViewState": "AgIAAAkAAAAAAAAAAAAywA8AAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-01-18T00:02:24.031Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-18T00:02:24.031Z"
             },
             {
               "$type": "Document",
@@ -973,8 +952,7 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\Model.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-26T17:09:55.604Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-26T17:09:55.604Z"
             },
             {
               "$type": "Document",
@@ -986,8 +964,7 @@
               "RelativeToolTip": "Engine\\Collisions\\SphereCollider.h",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAAAgAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-17T16:59:37.871Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-17T16:59:37.871Z"
             },
             {
               "$type": "Document",
@@ -999,8 +976,7 @@
               "RelativeToolTip": "Engine\\Collisions\\BoxCollider.h",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAAkAAAAUAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-06T21:17:11.31Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-06T21:17:11.31Z"
             },
             {
               "$type": "Document",
@@ -1012,8 +988,7 @@
               "RelativeToolTip": "Engine\\Collisions\\Collider.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-17T17:01:01.87Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-17T17:01:01.87Z"
             },
             {
               "$type": "Document",
@@ -1025,8 +1000,7 @@
               "RelativeToolTip": "Engine\\Collisions\\CollisionManager.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-23T19:13:24.747Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-23T19:13:24.747Z"
             },
             {
               "$type": "Document",
@@ -1038,8 +1012,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\CollisionComponent\\CollisionComponent.h",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABAAAAAlAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-17T17:21:02.425Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-17T17:21:02.425Z"
             },
             {
               "$type": "Document",
@@ -1051,8 +1024,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\PointLight.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-08T17:53:30.192Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T17:53:30.192Z"
             },
             {
               "$type": "Document",
@@ -1064,8 +1036,7 @@
               "RelativeToolTip": "Engine\\Collisions\\CollisionManager.cpp",
               "ViewState": "AgIAAE8AAAAAAAAAAAAowGIAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-23T19:22:11.428Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-23T19:22:11.428Z"
             },
             {
               "$type": "Document",
@@ -1077,8 +1048,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\SpotLight.h",
               "ViewState": "AgIAAAsAAAAAAAAAAAAhwA8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-15T18:56:13.433Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-15T18:56:13.433Z"
             },
             {
               "$type": "Document",
@@ -1090,8 +1060,7 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\Shape.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-01T19:21:12.025Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:21:12.025Z"
             },
             {
               "$type": "Document",
@@ -1103,8 +1072,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\unordered_set",
               "ViewState": "AgIAAD8AAAAAAAAAAAAhwFUAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-25T15:44:30.811Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T15:44:30.811Z"
             },
             {
               "$type": "Document",
@@ -1116,8 +1084,7 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\PrimitiveUtils.h",
               "ViewState": "AgIAAAsAAAAAAAAAAAAEwBoAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-16T18:48:26.759Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-16T18:48:26.759Z"
             },
             {
               "$type": "Document",
@@ -1129,8 +1096,7 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\PrimitiveUtils.cpp",
               "ViewState": "AgIAAGsAAAAAAAAAAAAcwHUAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-25T17:21:57.898Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T17:21:57.898Z"
             },
             {
               "$type": "Document",
@@ -1142,8 +1108,7 @@
               "RelativeToolTip": "Game\\GameManager\\GameManager.h",
               "ViewState": "AgIAAAEAAAAAAAAAAAAAAA0AAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T11:17:13.802Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T11:17:13.802Z"
             },
             {
               "$type": "Document",
@@ -1155,8 +1120,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\LightComponent\\LightComponent.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAArAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-01-25T18:40:33.393Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T18:40:33.393Z"
             },
             {
               "$type": "Document",
@@ -1168,8 +1132,7 @@
               "RelativeToolTip": "Libs\\Utils\\Delegate.h",
               "ViewState": "AgIAABUAAAAAAAAAAAAAACgAAAAzAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T17:08:54.336Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T17:08:54.336Z"
             },
             {
               "$type": "Document",
@@ -1181,8 +1144,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\Component.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T11:19:23.449Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T11:19:23.449Z"
             },
             {
               "$type": "Document",
@@ -1194,8 +1156,7 @@
               "RelativeToolTip": "Game\\ETT\\Entity.cpp",
               "ViewState": "AgIAAAQAAAAAAAAAAIAywBEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-23T11:19:58.251Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T11:19:58.251Z"
             },
             {
               "$type": "Document",
@@ -1207,8 +1168,7 @@
               "RelativeToolTip": "Engine\\Physics\\PhysicsManager.cpp",
               "ViewState": "AgIAAAoAAAAAAAAAAAAIwBYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-20T19:29:23.119Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-20T19:29:23.119Z"
             },
             {
               "$type": "Document",
@@ -1220,8 +1180,7 @@
               "RelativeToolTip": "Engine\\Scenes\\SceneManager.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-01T14:27:05.316Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:27:05.316Z"
             },
             {
               "$type": "Document",
@@ -1233,8 +1192,7 @@
               "RelativeToolTip": "Libs\\Math\\Vector3.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-05-25T16:04:19.707Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T16:04:19.707Z"
             },
             {
               "$type": "Document",
@@ -1246,8 +1204,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\new",
               "ViewState": "AgIAAA4AAAAAAAAAAAAqwCQAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-25T16:36:34.228Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T16:36:34.228Z"
             },
             {
               "$type": "Document",
@@ -1259,8 +1216,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xstring",
               "ViewState": "AgIAAE4MAAAAAAAAAAAswF4MAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-03-06T22:23:16.874Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-06T22:23:16.874Z"
             },
             {
               "$type": "Document",
@@ -1272,8 +1228,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\d3d11.h",
               "ViewState": "AgIAAM0TAAAAAAAAAAAcwNsTAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-13T16:19:58.547Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-13T16:19:58.547Z"
             },
             {
               "$type": "Document",
@@ -1285,8 +1240,7 @@
               "RelativeToolTip": "Engine\\Render\\Render.h",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAAA8AAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-25T15:41:48.958Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-25T15:41:48.958Z"
             },
             {
               "$type": "Document",
@@ -1298,8 +1252,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\WIP\\LightManager.h",
               "ViewState": "AgIAAA8AAAAAAAAAAADwvxYAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-25T16:09:49.364Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T16:09:49.364Z"
             },
             {
               "$type": "Document",
@@ -1311,8 +1264,7 @@
               "RelativeToolTip": "Engine\\Base\\Engine.h",
               "ViewState": "AgIAAA8AAAAAAAAAAAAAABkAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T19:07:51.549Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T19:07:51.549Z"
             },
             {
               "$type": "Document",
@@ -1324,8 +1276,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\type_traits",
               "ViewState": "AgIAAKgEAAAAAAAAAAAvwLQEAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-25T15:05:54.067Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T15:05:54.067Z"
             },
             {
               "$type": "Document",
@@ -1337,8 +1288,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\xmemory",
               "ViewState": "AgIAAFMAAAAAAAAAAAAxwF0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-05-25T15:54:24.174Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-25T15:54:24.174Z"
             },
             {
               "$type": "Document",
@@ -1350,8 +1300,7 @@
               "RelativeToolTip": "Libs\\ImGui\\GraphEditor.cpp",
               "ViewState": "AgIAABoCAAAAAAAAAIAwwCwCAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-22T19:24:50.657Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-22T19:24:50.657Z"
             },
             {
               "$type": "Document",
@@ -1363,8 +1312,7 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\Primitive.h",
               "ViewState": "AgIAABIAAAAAAAAAAAAAACoAAAAcAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-26T21:46:22.682Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-26T21:46:22.682Z"
             },
             {
               "$type": "Document",
@@ -1376,8 +1324,7 @@
               "RelativeToolTip": "Engine\\Shaders\\Standard\\ForwardVertexShader.hlsl",
               "ViewState": "AgIAAAwAAAAAAAAAAAAAABsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2025-05-17T10:06:41.812Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-17T10:06:41.812Z"
             },
             {
               "$type": "Document",
@@ -1389,8 +1336,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\SpotLight.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAARAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T18:29:41.223Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T18:29:41.223Z"
             },
             {
               "$type": "Document",
@@ -1402,8 +1348,7 @@
               "RelativeToolTip": "Engine\\Shaders\\Primitive\\PixelShader.hlsl",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2024-12-18T20:19:05.326Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-18T20:19:05.326Z"
             },
             {
               "$type": "Document",
@@ -1415,8 +1360,7 @@
               "RelativeToolTip": "Engine\\Scenes\\SceneManager.h",
               "ViewState": "AgIAAAYAAAAAAAAAAIAxwBwAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-01T14:26:45.565Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T14:26:45.565Z"
             },
             {
               "$type": "Document",
@@ -1428,8 +1372,7 @@
               "RelativeToolTip": "Engine\\Shaders\\Standard\\ForwardVertexShader.h",
               "ViewState": "AgIAAHAAAAAAAAAAAAAAAG8AAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-01-25T12:57:25.481Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T12:57:25.481Z"
             },
             {
               "$type": "Document",
@@ -1441,8 +1384,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\d3dcommon.h",
               "ViewState": "AgIAAK4AAAAAAAAAAAAAALQAAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-16T19:08:07.539Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-16T19:08:07.539Z"
             },
             {
               "$type": "Document",
@@ -1454,8 +1396,7 @@
               "RelativeToolTip": "Libs\\Math\\Math.h",
               "ViewState": "AgIAAB0AAAAAAAAAAAAowCoAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-18T15:17:02.855Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-18T15:17:02.855Z"
             },
             {
               "$type": "Document",
@@ -1467,8 +1408,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\DirectionalLight.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-28T18:54:57.248Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-28T18:54:57.248Z"
             },
             {
               "$type": "Document",
@@ -1480,8 +1420,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\Light.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAgwAoAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-18T00:02:24.679Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-18T00:02:24.679Z"
             },
             {
               "$type": "Document",
@@ -1493,8 +1432,7 @@
               "RelativeToolTip": "Engine\\Render\\Resources\\Texture.cpp",
               "ViewState": "AgIAAEUAAAAAAAAAAAAvwE4AAAA5AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-01T19:49:32.036Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:49:32.036Z"
             },
             {
               "$type": "Document",
@@ -1506,8 +1444,7 @@
               "RelativeToolTip": "Engine\\Render\\Resources\\Material.cpp",
               "ViewState": "AgIAAAkAAAAAAAAAAAAAABgAAAA0AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-01T19:48:10.2Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:48:10.2Z"
             },
             {
               "$type": "Document",
@@ -1519,8 +1456,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb_image.h",
               "ViewState": "AgIAAIgaAAAAAAAAAAAvwJgaAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-29T17:58:57.811Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T17:58:57.811Z"
             },
             {
               "$type": "Document",
@@ -1532,8 +1468,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\vector",
               "ViewState": "AgIAAE8HAAAAAAAAAAAgwF8HAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-01-18T02:15:43.662Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-18T02:15:43.662Z"
             },
             {
               "$type": "Document",
@@ -1545,8 +1480,7 @@
               "RelativeToolTip": "Libs\\Math\\Transform.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAA3AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-23T13:09:52.089Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T13:09:52.089Z"
             },
             {
               "$type": "Document",
@@ -1558,8 +1492,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\DirectionalLight.h",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAAAwAAAAgAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-12T20:34:54.362Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-12T20:34:54.362Z"
             },
             {
               "$type": "Document",
@@ -1571,8 +1504,7 @@
               "RelativeToolTip": "Libs\\Math\\Vector2.h",
               "ViewState": "AgIAAB4AAAAAAAAAAAAAACcAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-26T09:07:16.197Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-26T09:07:16.197Z"
             },
             {
               "$type": "Document",
@@ -1584,8 +1516,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\cmath",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-03-18T19:55:40.655Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-18T19:55:40.655Z"
             },
             {
               "$type": "Document",
@@ -1597,8 +1528,7 @@
               "RelativeToolTip": "Engine\\Shaders\\Standard\\ForwardPixelShader.h",
               "ViewState": "AgIAADEBAAAAAAAAAAAAADoBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-01-25T01:42:32.706Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T01:42:32.706Z"
             },
             {
               "$type": "Document",
@@ -1610,8 +1540,7 @@
               "RelativeToolTip": "Engine\\Shaders\\Primitive\\VertexShader.hlsl",
               "ViewState": "AgIAAA8AAAAAAAAAAAAAABoAAABMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002777|",
-              "WhenOpened": "2025-01-17T23:46:46.236Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-17T23:46:46.236Z"
             },
             {
               "$type": "Document",
@@ -1623,8 +1552,7 @@
               "RelativeToolTip": "Engine\\Shaders\\Primitive\\VertexShader.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAQAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-08T18:01:00.335Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T18:01:00.335Z"
             },
             {
               "$type": "Document",
@@ -1636,8 +1564,7 @@
               "RelativeToolTip": "Engine\\Render\\Lights\\PointLight.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T01:34:06.663Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T01:34:06.663Z"
             },
             {
               "$type": "Document",
@@ -1649,8 +1576,7 @@
               "RelativeToolTip": "Engine\\Shaders\\Shader.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-25T01:44:24.841Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-25T01:44:24.841Z"
             },
             {
               "$type": "Document",
@@ -1662,8 +1588,7 @@
               "RelativeToolTip": "Libs\\ImGui\\ImGuizmo.cpp",
               "ViewState": "AgIAAI4DAAAAAAAAAAAkwJoDAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-27T21:48:33.576Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-27T21:48:33.576Z"
             },
             {
               "$type": "Document",
@@ -1675,8 +1600,7 @@
               "RelativeToolTip": "Engine\\Render\\Resources\\Material.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-01T19:19:25.001Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:19:25.001Z"
             },
             {
               "$type": "Document",
@@ -1688,8 +1612,7 @@
               "RelativeToolTip": "Engine\\Physics\\Rigidbody.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAWAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-01T14:40:57.787Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-01T14:40:57.787Z"
             },
             {
               "$type": "Document",
@@ -1701,8 +1624,7 @@
               "RelativeToolTip": "Engine\\Physics\\Rigidbody.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-01T14:40:59.898Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-01T14:40:59.898Z"
             },
             {
               "$type": "Document",
@@ -1714,8 +1636,7 @@
               "RelativeToolTip": "Engine\\Managers\\InputManager.h",
               "ViewState": "AgIAACQAAAAAAAAAAAAAADEAAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-11T17:43:58.277Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-11T17:43:58.277Z"
             },
             {
               "$type": "Document",
@@ -1727,8 +1648,7 @@
               "RelativeToolTip": "Engine\\Global\\GlobalResources.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAApAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-01T15:32:05.772Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-01T15:32:05.772Z"
             },
             {
               "$type": "Document",
@@ -1751,8 +1671,7 @@
               "RelativeToolTip": "Engine\\Shaders\\Primitive\\PixelShader.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-16T16:05:00.143Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-16T16:05:00.143Z"
             },
             {
               "$type": "Document",
@@ -1764,8 +1683,7 @@
               "RelativeToolTip": "Libs\\Math\\Matrix4x4.cpp",
               "ViewState": "AgIAAFQAAAAAAAAAAAAAAHQAAABEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-19T21:06:57.355Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-19T21:06:57.355Z"
             },
             {
               "$type": "Document",
@@ -1777,8 +1695,7 @@
               "RelativeToolTip": "Libs\\Macros\\GlobalMacros.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAASAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-26T17:21:32.568Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-26T17:21:32.568Z"
             },
             {
               "$type": "Document",
@@ -1790,8 +1707,7 @@
               "RelativeToolTip": "Libs\\Math\\Transform.h",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAAAsAAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T13:05:43.062Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T13:05:43.062Z"
             },
             {
               "$type": "Document",
@@ -1803,8 +1719,7 @@
               "RelativeToolTip": "Libs\\Math\\Matrix4x4.h",
               "ViewState": "AgIAABsAAAAAAAAAAAAAACUAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-05-15T18:55:14.703Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-05-15T18:55:14.703Z"
             },
             {
               "$type": "Document",
@@ -1816,8 +1731,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb_vorbis.c",
               "ViewState": "AgIAAIAPAAAAAAAAAAAMwI4PAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-11-29T17:55:56.476Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T17:55:56.476Z"
             },
             {
               "$type": "Document",
@@ -1829,8 +1743,7 @@
               "RelativeToolTip": "Libs\\Time\\TimeManager.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAADAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-19T17:01:00.464Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-19T17:01:00.464Z"
             },
             {
               "$type": "Document",
@@ -1842,8 +1755,7 @@
               "RelativeToolTip": "Libs\\Time\\TimeManager.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAATAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T19:26:23.39Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T19:26:23.39Z"
             },
             {
               "$type": "Document",
@@ -1866,8 +1778,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\objloader\\tiny_obj_loader.h",
               "ViewState": "AgIAAKIAAAAAAAAAAAAlwLYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-06T10:21:38.172Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-06T10:21:38.172Z"
             },
             {
               "$type": "Document",
@@ -1879,8 +1790,7 @@
               "RelativeToolTip": "Engine\\Render\\Resources\\Texture.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-12-01T19:49:32.707Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:49:32.707Z"
             },
             {
               "$type": "Document",
@@ -1892,8 +1802,7 @@
               "RelativeToolTip": "Libs\\ImGui\\imgui_impl_dx11.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABsAAAAvAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-10T15:50:20.831Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T15:50:20.831Z"
             },
             {
               "$type": "Document",
@@ -1905,8 +1814,7 @@
               "RelativeToolTip": "Game\\ETT\\Components\\ModelComponent\\ModelComponent.h",
               "ViewState": "AgIAAAcAAAAAAAAAAAAkwBQAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-23T16:13:01.298Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-23T16:13:01.298Z"
             },
             {
               "$type": "Document",
@@ -1918,8 +1826,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb_herringbone_wang_tile.h",
               "ViewState": "AgIAAE0AAAAAAAAAAAAIwFcAAAAIAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-29T18:02:20.224Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T18:02:20.224Z"
             },
             {
               "$type": "Document",
@@ -1931,8 +1838,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb_tilemap_editor.h",
               "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-03T21:14:30.907Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-03T21:14:30.907Z"
             },
             {
               "$type": "Document",
@@ -1944,8 +1850,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb_c_lexer.h",
               "ViewState": "AgIAAJwAAAAAAAAAAIAywLEAAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-29T18:00:49.008Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T18:00:49.008Z"
             },
             {
               "$type": "Document",
@@ -1957,8 +1862,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\memory",
               "ViewState": "AgIAANEMAAAAAAAAAAAowOQMAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-03-29T10:38:17.718Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-29T10:38:17.718Z"
             },
             {
               "$type": "Document",
@@ -1970,8 +1874,7 @@
               "RelativeToolTip": "Engine\\Render\\Window\\RenderWindow.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-08T21:31:58.534Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-08T21:31:58.534Z"
             },
             {
               "$type": "Document",
@@ -1983,8 +1886,7 @@
               "RelativeToolTip": "Reflection\\Types\\TypeManager\\TypeManager.h",
               "ViewState": "AgIAAAIAAAAAAAAAAAAIwBEAAAAdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:38:37.368Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:38:37.368Z"
             },
             {
               "$type": "Document",
@@ -1996,8 +1898,7 @@
               "RelativeToolTip": "Reflection\\Types\\Property\\Property.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:45:29.601Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:45:29.601Z"
             },
             {
               "$type": "Document",
@@ -2009,8 +1910,7 @@
               "RelativeToolTip": "Reflection\\Types\\Functions\\Functions.h",
               "ViewState": "AgIAAAYAAAAAAAAAAAAQwB8AAAAGAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:30:38.303Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:30:38.303Z"
             },
             {
               "$type": "Document",
@@ -2022,8 +1922,7 @@
               "RelativeToolTip": "Reflection\\Types\\TypeManager\\TypeManager.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T18:38:00.847Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:38:00.847Z"
             },
             {
               "$type": "Document",
@@ -2035,8 +1934,7 @@
               "RelativeToolTip": "Reflection\\Types\\Game\\Entity.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAADwvwcAAAA1AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T18:49:17.603Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:49:17.603Z"
             },
             {
               "$type": "Document",
@@ -2048,8 +1946,7 @@
               "RelativeToolTip": "Reflection\\Types\\Base\\Type.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T18:28:48.375Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:28:48.375Z"
             },
             {
               "$type": "Document",
@@ -2061,8 +1958,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\MSBuild\\Microsoft\\VC\\v170\\Microsoft.CppCommon.targets",
               "ViewState": "AgIAAOICAAAAAAAAAAAhwPICAAAEAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003801|",
-              "WhenOpened": "2025-03-18T20:35:04.618Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-18T20:35:04.618Z"
             },
             {
               "$type": "Document",
@@ -2074,8 +1970,7 @@
               "RelativeToolTip": "Libs\\ImGui\\imgui_draw.cpp",
               "ViewState": "AgIAAFUCAAAAAAAAAAAjwF4CAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-01-19T21:19:01.887Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-19T21:19:01.887Z"
             },
             {
               "$type": "Document",
@@ -2087,8 +1982,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\algorithm",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-11T18:43:24.659Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-11T18:43:24.659Z"
             },
             {
               "$type": "Document",
@@ -2100,8 +1994,7 @@
               "RelativeToolTip": "Libs\\ImGui\\ImGuizmo.h",
               "ViewState": "AgIAAMQAAAAAAAAAAAAAANUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-01-27T21:52:26.638Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-01-27T21:52:26.638Z"
             },
             {
               "$type": "Document",
@@ -2113,8 +2006,7 @@
               "RelativeToolTip": "Reflection\\Types\\Game\\Entity.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:30:33.575Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:30:33.575Z"
             },
             {
               "$type": "Document",
@@ -2126,8 +2018,7 @@
               "RelativeToolTip": "Libs\\ImGui\\imgui_internal.h",
               "ViewState": "AgIAAEkNAAAAAAAAAAAawFsNAABQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-01T14:04:47.378Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-01T14:04:47.378Z"
             },
             {
               "$type": "Document",
@@ -2139,8 +2030,7 @@
               "RelativeToolTip": "Libs\\ImGui\\imgui_demo.cpp",
               "ViewState": "AgIAADUCAAAAAAAAAAAhwEUCAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-11-10T16:11:10.267Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-10T16:11:10.267Z"
             },
             {
               "$type": "Document",
@@ -2152,8 +2042,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files\\Microsoft Visual Studio\\2022\\Community\\VC\\Tools\\MSVC\\14.42.34433\\include\\map",
               "ViewState": "AgIAAGQBAAAAAAAAAAAUwHQBAABPAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2025-02-08T17:09:44.318Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-08T17:09:44.318Z"
             },
             {
               "$type": "Document",
@@ -2165,8 +2054,7 @@
               "RelativeToolTip": "Reflection\\Types\\Base\\Type.h",
               "ViewState": "AgIAAC0AAAAAAAAAAAAowD4AAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-24T18:30:19.842Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:30:19.842Z"
             },
             {
               "$type": "Document",
@@ -2178,8 +2066,7 @@
               "RelativeToolTip": "..\\..\\..\\..\\..\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.22621.0\\um\\DirectXMath.h",
               "ViewState": "AgIAAFYBAAAAAAAAAAAxwGUBAAAaAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-12T18:08:03.053Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-12T18:08:03.053Z"
             },
             {
               "$type": "Document",
@@ -2202,8 +2089,7 @@
               "RelativeToolTip": "Reflection\\Types\\Functions\\Functions.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-24T18:28:44.665Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-24T18:28:44.665Z"
             },
             {
               "$type": "Document",
@@ -2233,8 +2119,7 @@
               "RelativeToolTip": "Libs\\Third-Party\\stb\\stb.h",
               "ViewState": "AgIAABoaAAAAAAAAAIAywCsaAAAxAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-11-29T17:55:43.901Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-11-29T17:55:43.901Z"
             },
             {
               "$type": "Document",
@@ -2246,8 +2131,7 @@
               "RelativeToolTip": "Engine\\Render\\Graphics\\Shape.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-12-01T19:21:56.294Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-12-01T19:21:56.294Z"
             }
           ]
         }
@@ -2272,7 +2156,7 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp",
               "RelativeDocumentMoniker": "App\\main.cpp",
