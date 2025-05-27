@@ -5,6 +5,7 @@
 #include <cassert>
 #include <new>
 #include <iostream>
+#include <type_traits>
 
 namespace utils
 {
@@ -30,8 +31,7 @@ namespace utils
       {
         if (!m_vctAssignedBlock.test(tIndex))
         {
-          size_t offset = tIndex * sizeof(T);
-          void* pMem = static_cast<void*>(m_vctBytes + offset);
+          void* pMem = static_cast<void*>(&m_vctPool[tIndex]);
           T* pItem = new (pMem) T(std::forward<Args>(args)...);
 
           m_vctAssignedBlock.set(tIndex);
@@ -51,29 +51,21 @@ namespace utils
 
     T* operator[](size_t _tIndex)
     {
-      if (_tIndex >= MAX_ITEMS || !m_vctAssignedBlock.test(_tIndex))
-        return nullptr;
-
-      size_t offset = _tIndex * sizeof(T);
-      return reinterpret_cast<T*>(m_vctBytes + offset);
+      if (_tIndex >= MAX_ITEMS || !m_vctAssignedBlock.test(_tIndex)) return nullptr;
+      return reinterpret_cast<T*>(&m_vctPool[_tIndex]);
     }
 
   private:
-    void Init();
+    void Init()
+    {
+      m_vctAssignedBlock.reset();
+    }
 
   private:
-    alignas(T) unsigned char m_vctBytes[sizeof(T) * MAX_ITEMS];
+    std::aligned_storage_t<sizeof(T), alignof(std::max_align_t)> m_vctPool[MAX_ITEMS];
     std::bitset<MAX_ITEMS> m_vctAssignedBlock;
     uint32_t m_uRegisteredItems;
   };
-
-  template<typename T, size_t MAX_ITEMS>
-  void utils::CFixedPool<T, MAX_ITEMS>::Init()
-  {
-    // Initialize
-    std::fill(m_vctBytes, m_vctBytes + (sizeof(T) * MAX_ITEMS), static_cast<unsigned char>(0));
-    m_vctAssignedBlock.reset();
-  }
 
   template<typename T, size_t MAX_ITEMS>
   void CFixedPool<T, MAX_ITEMS>::ClearAll()
@@ -82,10 +74,8 @@ namespace utils
     {
       if (m_vctAssignedBlock.test(tIndex))
       {
-        size_t offset = tIndex * sizeof(T);
-        T* pItem = reinterpret_cast<T*>(m_vctBytes + offset);
+        T* pItem = reinterpret_cast<T*>(&m_vctPool[tIndex]);
         pItem->~T();
-        std::memset(m_vctBytes + offset, 0, sizeof(T));
         m_vctAssignedBlock.reset(tIndex);
       }
     }
@@ -99,13 +89,10 @@ namespace utils
     {
       if (m_vctAssignedBlock.test(tIndex))
       {
-        size_t offset = tIndex * sizeof(T);
-        T* pItem = reinterpret_cast<T*>(m_vctBytes + offset);
-
+        T* pItem = reinterpret_cast<T*>(&m_vctPool[tIndex]);
         if (pItem == _pItem_)
         {
           pItem->~T();
-          std::memset(m_vctBytes + offset, 0, sizeof(T));
           m_vctAssignedBlock.reset(tIndex);
           _pItem_ = nullptr;
           --m_uRegisteredItems;
