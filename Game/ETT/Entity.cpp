@@ -189,7 +189,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::OnCollisionEnter(const collisions::SHitEvent& _oHitEvent)
+  void CEntity::OnCollisionEnter(const collision::SHitEvent& _oHitEvent)
   {    
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)
@@ -201,7 +201,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::OnCollisionStay(const collisions::SHitEvent& _oHitEvent)
+  void CEntity::OnCollisionStay(const collision::SHitEvent& _oHitEvent)
   {
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)
@@ -213,7 +213,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::OnCollisionExit(const collisions::SHitEvent& _oHitEvent)
+  void CEntity::OnCollisionExit(const collision::SHitEvent& _oHitEvent)
   {
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)

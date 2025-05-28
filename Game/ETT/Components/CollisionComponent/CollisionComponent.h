@@ -13,11 +13,11 @@ namespace game
   {
   public:
     CCollisionComponent(CEntity* _pOwner) : CComponent(_pOwner) {}
-    explicit CCollisionComponent(CEntity* _pOwner, collisions::EColliderType _eColliderType);
+    explicit CCollisionComponent(CEntity* _pOwner, collision::EColliderType _eColliderType);
     virtual ~CCollisionComponent() { Clean(); }
 
-    void CreateCollider(collisions::EColliderType _eColliderType);
-    collisions::CCollider* const GetCollider() { return m_pCollider; }
+    void CreateCollider(collision::EColliderType _eColliderType);
+    collision::CCollider* const GetCollider() { return m_pCollider; }
 
     void SetPosition(const math::CVector3& _v3Position);
     const math::CVector3& GetPosition() const;
@@ -33,7 +33,7 @@ namespace game
     void Clean();
 
   private:
-    collisions::CCollider* m_pCollider = nullptr;
+    collision::CCollider* m_pCollider = nullptr;
     render::graphics::CPrimitive* m_pPrimitive = nullptr;
   };
 }

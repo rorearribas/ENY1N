@@ -37,6 +37,8 @@ float GenerateFloat(float min, float max)
   return dist(gen);
 }
 
+static bool bThrowRay = false;
+
 #define WIDTH 2560
 #define HEIGHT 1440
 
@@ -48,7 +50,7 @@ int main()
   pEngine->GetCamera()->SetPosition(math::CVector3(0.0f, 0.0f, 10.0f));
 
   // Collisions manager
-  collisions::CCollisionManager* pCollisionManager = collisions::CCollisionManager::CreateSingleton();
+  collision::CCollisionManager* pCollisionManager = collision::CCollisionManager::CreateSingleton();
   // Physics manager
   physics::CPhysicsManager* pPhysicsManager = physics::CPhysicsManager::CreateSingleton();
   // Input manager
@@ -79,12 +81,12 @@ int main()
   pPlaneModel->SetPrimitiveColor(math::CVector3(1.0f, 1.0f, 1.0f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
-  pCollisionComponent->CreateCollider(collisions::EColliderType::BOX_COLLIDER);
-  collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(pCollisionComponent->GetCollider());
+  pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
+  collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());
   pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
   std::vector<game::CEntity*> vctPhysics = {};
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 5; uIndex++)
   {
     game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
     game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
@@ -95,7 +97,7 @@ int main()
     float fColorZ = GenerateFloat(0.01f, 0.99f);
 
     pSphereModel2->SetPrimitiveColor(math::CVector3(fColorX, fColorY, fColorZ));
-    pSphereEntity->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::SPHERE_COLLIDER);
+    pSphereEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::SPHERE_COLLIDER);
     pSphereEntity->RegisterComponent<game::CRigidbodyComponent>();
 
     float fRandomY = GenerateFloat(5.0f, 10.f);
@@ -113,7 +115,7 @@ int main()
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Right);
 
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(collisions::EColliderType::BOX_COLLIDER);
+    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
@@ -153,6 +155,27 @@ int main()
         pCollisionManager->Update(fFixedDeltaTime);
         pGameManager->Update(fFixedDeltaTime);
 
+        if (bThrowRay)
+        {
+          // Draw line
+          math::CVector3 v3Pos = math::CVector3(0.0f, 10.0f, 0.0f);
+          math::CVector3 v3End = v3Pos + (math::CVector3::Forward * 100.0f);
+          pEngine->DrawLine(v3Pos, v3End, math::CVector3::Right);
+
+          // Throw ray
+          collision::CCollisionManager* pCollManager = collision::CCollisionManager::GetInstance();
+          collision::SHitEvent oHitEvent = collision::SHitEvent();
+          if (pCollManager->Raycast(collision::CRay(v3Pos, math::CVector3::Forward), oHitEvent, 100.0f))
+          {
+            std::cout << "dist: " << oHitEvent.Distance << std::endl;
+            pEngine->DrawSphere(oHitEvent.ImpactPoint, 0.05f, 12, 12, math::CVector3::Right);
+          }
+          else
+          {
+            std::cout << "no toca" << std::endl;
+          }
+        }
+
         pInputManager->Flush();
         m_fFixedDeltaAccumulator -= fFixedDeltaTime;
       }
@@ -169,7 +192,7 @@ int main()
         pEngine->GetRender()->SetFillMode(D3D11_FILL_SOLID);
       }
 
-      ImGui::Begin("TEST_PHYSICS");
+      ImGui::Begin("TEST - PHYSICS");
       if (ImGui::Button("Enabled"))
       {
         for (auto& pEntity : vctPhysics)
@@ -206,6 +229,13 @@ int main()
         pTimeManager->SetMaxFPS(300);
       }
 
+      ImGui::End();
+
+      ImGui::Begin("TEST - RAYCAST");
+      if (ImGui::Button("Enabled"))
+      {
+        bThrowRay = !bThrowRay;
+      }
       ImGui::End();
 
       // End draw

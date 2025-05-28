@@ -2,7 +2,7 @@
 #include "Libs/Math/Vector3.h"
 #include "Engine/Collisions/Collider.h"
 
-namespace collisions { class CCollider; }
+namespace collision { class CCollider; }
 namespace game { class CEntity; }
 
 // Component definition
@@ -25,9 +25,9 @@ namespace game
     virtual void OnRotationChanged(const math::CVector3&) {}
     virtual void OnScaleChanged(const math::CVector3&) {}
 
-    virtual void OnCollisionEnter(const collisions::SHitEvent&) {}
-    virtual void OnCollisionStay(const collisions::SHitEvent&) {}
-    virtual void OnCollisionExit(const collisions::SHitEvent&) {}
+    virtual void OnCollisionEnter(const collision::SHitEvent&) {}
+    virtual void OnCollisionStay(const collision::SHitEvent&) {}
+    virtual void OnCollisionExit(const collision::SHitEvent&) {}
 
   protected:
     CEntity* m_pOwner = nullptr;

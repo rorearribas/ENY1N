@@ -28,7 +28,7 @@ namespace render
 
     struct SRenderPipeline
     {
-      // Swap char + render target
+      // Swap chain + render target
       IDXGISwapChain* pSwapChain = nullptr;
       ID3D11RenderTargetView* pRenderTargetView = nullptr;
 

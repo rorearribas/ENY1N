@@ -23,7 +23,7 @@ namespace game
     m_pRigidbody->SetRigidbodyType(_eRigidbodyType);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionEnter(const collisions::SHitEvent& _oHitEvent)
+  void CRigidbodyComponent::OnCollisionEnter(const collision::SHitEvent& _oHitEvent)
   { 
     // Set new state
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
@@ -31,12 +31,33 @@ namespace game
     math::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
     math::CVector3 v3VelocityDir = math::CVector3::Normalize(v3CurrentVelocity);
 
+    // Get impact velocity
+    float fImpactVelocity = abs(v3CurrentVelocity.Dot(_oHitEvent.Normal));
+    if (fImpactVelocity > math::s_fEpsilon5)
+    {
+      // Apply velocity
+      v3CurrentVelocity = v3CurrentVelocity - _oHitEvent.Normal * (-fImpactVelocity * internal_rigidbody::s_fRebound);
+      m_pRigidbody->SetVelocity(v3CurrentVelocity);
+    }
+
     float fMagnitude = v3CurrentVelocity.Magnitude();
     math::CVector3 v3TorqueDir = _oHitEvent.Normal.Cross(v3VelocityDir);
     m_pRigidbody->AddTorque(v3TorqueDir * -fMagnitude * (internal_rigidbody::s_fMaxAngularForce * 2.0f));
+
+    // Fixed impacted position
+    CEntity* pOwner = GetOwner();
+    if (pOwner)
+    {
+      math::CVector3 v3Offset = _oHitEvent.Normal * _oHitEvent.Depth;
+      if (!v3Offset.Equal(math::CVector3::Zero, math::s_fEpsilon5))
+      {
+        math::CVector3 vNewPosition = pOwner->GetPosition() + v3Offset;
+        pOwner->SetPosition(vNewPosition);
+      }
+    }
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionStay(const collisions::SHitEvent& _oHitEvent)
+  void CRigidbodyComponent::OnCollisionStay(const collision::SHitEvent& _oHitEvent)
   {
     math::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
     math::CVector3 v3VelocityDir = math::CVector3::Normalize(v3CurrentVelocity);
@@ -74,7 +95,7 @@ namespace game
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionExit(const collisions::SHitEvent&)
+  void CRigidbodyComponent::OnCollisionExit(const collision::SHitEvent&)
   {
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::IN_THE_AIR);
   }

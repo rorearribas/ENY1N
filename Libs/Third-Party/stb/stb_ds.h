@@ -1122,7 +1122,7 @@ size_t stbds_hash_bytes(void *p, size_t len, size_t seed)
     hash ^= (hash>>15);
     #elif 1
     // HASH32-BB  Bob Jenkin's presumably-accidental version of Thomas Wang hash with rotates turned into shifts.
-    // Note that converting these back to rotates makes it run a lot slower, presumably due to collisions, so I'm
+    // Note that converting these back to rotates makes it run a lot slower, presumably due to collision, so I'm
     // not really sure what's going on.
     hash ^= seed;
     hash = (hash ^ 61) ^ (hash >> 16);

@@ -3,9 +3,9 @@
 #include "Libs/Math/Vector3.h"
 
 namespace render { namespace graphics { class CPrimitive; } }
-namespace collisions { class CSphereCollider; }
+namespace collision { class CSphereCollider; }
 
-namespace collisions
+namespace collision
 {
   class CBoxCollider : public CCollider
   {
@@ -14,6 +14,7 @@ namespace collisions
     virtual ~CBoxCollider();
 
     virtual bool CheckCollision(const CCollider& _pOther, SHitEvent& _oHitEvent_) override;
+    virtual bool IntersectRay(const collision::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
     void SetOBBEnabled(bool _bEnabled) { m_bOBBEnabled = _bEnabled; }

@@ -4,7 +4,7 @@
 #include "Engine/Collisions/CollisionManager.h"
 #include "Libs/Utils/FixedPool.h"
 
-namespace collisions { class CCollider; }
+namespace collision { class CCollider; }
 
 namespace game
 {

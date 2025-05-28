@@ -2,17 +2,18 @@
 #include "Libs/Math/Vector3.h"
 #include "Collider.h"
 
-namespace collisions { class CBoxCollider; }
+namespace collision { class CBoxCollider; }
 
-namespace collisions
+namespace collision
 {
   class CSphereCollider : public CCollider
   {
   public:
-    CSphereCollider(void* _pOwner) : CCollider(SPHERE_COLLIDER, _pOwner) {}
+    CSphereCollider(void* _pOwner) : CCollider(EColliderType::SPHERE_COLLIDER, _pOwner) {}
     virtual ~CSphereCollider() {}
 
-    bool CheckCollision(const CCollider&, SHitEvent& _oHitEvent_) override;
+    virtual bool CheckCollision(const CCollider&, SHitEvent& _oHitEvent_) override;
+    virtual bool IntersectRay(const collision::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
     void SetCenter(const math::CVector3& _v3Center) { m_v3Center = _v3Center; }

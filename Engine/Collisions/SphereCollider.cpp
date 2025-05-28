@@ -6,7 +6,7 @@
 #include <iostream>
 #include "Libs/Macros/GlobalMacros.h"
 
-namespace collisions
+namespace collision
 {
   bool CSphereCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
   {
@@ -31,6 +31,42 @@ namespace collisions
     return false;
   }
   // ------------------------------------
+  bool CSphereCollider::IntersectRay(const collision::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
+  {
+    math::CVector3 v3RayDir = _oRay.GetDir();
+    math::CVector3 v3Diff = math::CVector3(_oRay.GetOrigin() - m_v3Center);
+    float fDotA = math::CVector3::Dot(v3Diff, _oRay.GetDir());
+    float fDotB = math::CVector3::Dot(v3Diff, v3Diff) - (this->m_fRadius * this->m_fRadius);
+
+    // Exit if r’s origin outside s (c > 0) and r pointing away from s (b > 0)
+    if (fDotB > 0.0f && fDotA > 0.0f)
+    {
+      return false;
+    }
+
+    // A negative discriminant corresponds to ray missing sphere
+    float fDiscr = fDotA * fDotA - fDotB;
+    if (fDiscr < 0.0f) 
+    {
+      return false;
+    }
+
+    // Get distance
+    float fDist = -fDotA - sqrt(fDiscr);
+    fDist = math::Clamp(fDist, 0.0f, _fMaxDistance + math::s_fEpsilon3);
+    if (fDist >= (_fMaxDistance + math::s_fEpsilon3))
+    {
+      return false;
+    }
+
+    _oHitEvent_.Object = GetOwner();
+    _oHitEvent_.ImpactPoint = _oRay.GetOrigin() + (v3RayDir * fDist);
+    _oHitEvent_.Normal = math::CVector3::Normalize(_oHitEvent_.ImpactPoint - m_v3Center);
+    _oHitEvent_.Distance = fDist;
+
+    return true;
+  }
+  // ------------------------------------
   void CSphereCollider::RecalculateCollider()
   {
     // Set world center
@@ -42,7 +78,7 @@ namespace collisions
     // Get OBB data
     const math::CVector3& v3OBBCenter = _pOther->GetCenter();
     const math::CVector3 v3HalfSize = _pOther->GetHalfSize();
-    const std::vector<math::CVector3> v3Axis = _pOther->GetAxisDirectors(); 
+    const std::vector<math::CVector3> v3Axis = _pOther->GetAxisDirectors();
 
     // Calculate dir
     const math::CVector3& v3SphereCenter = GetCenter();

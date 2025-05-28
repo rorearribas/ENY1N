@@ -7718,7 +7718,7 @@ void stb_wrapper_dump(char *filename)
 //
 // Therefore, it needs to be a hash table, at least when it gets
 // large. On the other hand, when the data has totally arbitrary ints
-// or floats, there won't be many collisions, and we'll have tons of
+// or floats, there won't be many collision, and we'll have tons of
 // 1-item bitmaps. That will be grossly inefficient as hash tables;
 // trade-off; the hash table is reasonably efficient per-item when
 // it's large, but not when it's small. So we need to do something

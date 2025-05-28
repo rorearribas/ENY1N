@@ -9,12 +9,12 @@ namespace math
     static CVector3 Zero, One;
     static CVector3 Forward, Backward, Right, Up;
 
-    float X = 0.0f;
-    float Y = 0.0f;
-    float Z = 0.0f;
+    float X;
+    float Y;
+    float Z;
 
   public:
-    CVector3() = default;
+    CVector3() : X(0.0f), Y(0.0f), Z(0.0f) {}
     CVector3(float _x, float _y, float _z) : X(_x), Y(_y), Z(_z) {}
     ~CVector3() {}
 

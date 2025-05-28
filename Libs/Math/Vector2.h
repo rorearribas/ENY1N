@@ -10,11 +10,11 @@ namespace math
     static CVector2 Right;
     static CVector2 Up;
 
-    float X = 0.0f;
-    float Y = 0.0f;
+    float X;
+    float Y;
 
   public:
-    CVector2() = default;
+    CVector2() : X(0.0f), Y(0.0f) {}
     CVector2(float _x, float _y) : X(_x), Y(_y) {}
     ~CVector2() {}
 

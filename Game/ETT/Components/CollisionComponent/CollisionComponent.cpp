@@ -9,12 +9,12 @@
 
 namespace game
 {
-  CCollisionComponent::CCollisionComponent(CEntity* _pOwner, collisions::EColliderType _eColliderType) : CComponent(_pOwner)
+  CCollisionComponent::CCollisionComponent(CEntity* _pOwner, collision::EColliderType _eColliderType) : CComponent(_pOwner)
   {
     CreateCollider(_eColliderType);
   }
   // ------------------------------------
-  void CCollisionComponent::CreateCollider(collisions::EColliderType _eColliderType)
+  void CCollisionComponent::CreateCollider(collision::EColliderType _eColliderType)
   {
     // Flush
     Clean();
@@ -23,7 +23,7 @@ namespace game
     CEntity* pOwner = GetOwner();
 
     // Create collider usin coll manager
-    collisions::CCollisionManager* pCollisionManager = collisions::CCollisionManager::GetInstance();
+    collision::CCollisionManager* pCollisionManager = collision::CCollisionManager::GetInstance();
     if (pCollisionManager)
     { 
       // Create collider
@@ -33,15 +33,15 @@ namespace game
 #endif
 
       // Assign notifications
-      m_pCollider->SetOnCollisionEnter(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionEnter, pOwner));
-      m_pCollider->SetOnCollisionStay(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionStay, pOwner));
-      m_pCollider->SetOnCollisionExit(collisions::CCollider::TOnCollisionEvent(&CEntity::OnCollisionExit, pOwner));
+      m_pCollider->SetOnCollisionEnter(collision::CCollider::TOnCollisionEvent(&CEntity::OnCollisionEnter, pOwner));
+      m_pCollider->SetOnCollisionStay(collision::CCollider::TOnCollisionEvent(&CEntity::OnCollisionStay, pOwner));
+      m_pCollider->SetOnCollisionExit(collision::CCollider::TOnCollisionEvent(&CEntity::OnCollisionExit, pOwner));
     }
 
     // Create primitive
     switch (_eColliderType)
     {
-    case collisions::BOX_COLLIDER:
+    case collision::EColliderType::BOX_COLLIDER:
     {
       m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
       (
@@ -51,7 +51,7 @@ namespace game
       assert(m_pPrimitive);
     }
     break;
-    case collisions::SPHERE_COLLIDER:
+    case collision::EColliderType::SPHERE_COLLIDER:
     {
       m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
       (
@@ -122,7 +122,7 @@ namespace game
   {
     if (m_pCollider)
     {
-      collisions::CCollisionManager::GetInstance()->DestroyCollider(m_pCollider);
+      collision::CCollisionManager::GetInstance()->DestroyCollider(m_pCollider);
     }
     if (m_pPrimitive)
     {
@@ -137,7 +137,7 @@ namespace game
 
     switch (m_pCollider->GetType())
     {
-    case collisions::EColliderType::BOX_COLLIDER:
+    case collision::EColliderType::BOX_COLLIDER:
     {
       // Generate unique ids
       std::string sTitle = "BOX COLLIDER";
@@ -146,7 +146,7 @@ namespace game
       std::string sMin = "Min" + std::string("##" + sOwnerName);
       std::string sOBB = "OBB Enabled" + std::string("##" + sOwnerName);
 
-      collisions::CBoxCollider* pBoxCollider = static_cast<collisions::CBoxCollider*>(m_pCollider);
+      collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(m_pCollider);
       bool bOBBEnabled = pBoxCollider->IsOBBEnabled();
 
       float v3Size[3] = { pBoxCollider->GetSize().X, pBoxCollider->GetSize().Y, pBoxCollider->GetSize().Z };
@@ -168,14 +168,14 @@ namespace game
       pBoxCollider->SetOBBEnabled(bOBBEnabled);
     }
     break;
-    case collisions::EColliderType::SPHERE_COLLIDER:
+    case collision::EColliderType::SPHERE_COLLIDER:
     {
       // Generate unique ids
       std::string sTitle = "SPHERE COLLIDER";
       std::string sCenter = "Center" + std::string("##" + sOwnerName);
       std::string sRadius = "Radius" + std::string("##" + sOwnerName);
 
-      collisions::CSphereCollider* pSphereCollider = static_cast<collisions::CSphereCollider*>(m_pCollider);
+      collision::CSphereCollider* pSphereCollider = static_cast<collision::CSphereCollider*>(m_pCollider);
       float v3Center[3] = { pSphereCollider->GetCenter().X, pSphereCollider->GetCenter().Y, pSphereCollider->GetCenter().Z };
       float fRadius = pSphereCollider->GetRadius();
 

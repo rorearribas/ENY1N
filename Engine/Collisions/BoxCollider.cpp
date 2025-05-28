@@ -5,7 +5,7 @@
 #include "Libs/Math/Math.h"
 #include <cassert>
 
-namespace collisions
+namespace collision
 {
   namespace internal_box_collider
   {
@@ -71,7 +71,7 @@ namespace collisions
     }
   }
   // ------------------------------------
-  CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(BOX_COLLIDER, _pOwner)
+  CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(collision::BOX_COLLIDER, _pOwner)
   {
     ComputeMinMax();
     ComputeExtents();
@@ -101,6 +101,11 @@ namespace collisions
       return IsOBBEnabled() ? CheckOBBSphereCollision(&oSphereCollider, _oHitEvent_) : CheckSphereCollision(&oSphereCollider, _oHitEvent_);
     }
     }
+    return false;
+  }
+  // ------------------------------------
+  bool CBoxCollider::IntersectRay(const collision::CRay& /*_oRay*/, SHitEvent& /*_oHitEvent_*/, const float& /*_fMaxDistance*/)
+  {
     return false;
   }
   // ------------------------------------
@@ -250,7 +255,7 @@ namespace collisions
     if (fDistance <= fRadius)
     {
       _oHitEvent_.ImpactPoint = v3ClosestPoint;
-      _oHitEvent_.Depth = std::abs(fRadius - fDistance);
+      _oHitEvent_.Depth = fRadius - fDistance;
       _oHitEvent_.Normal = math::CVector3::Normalize(v3ClosestPoint - v3SphereCenter);
       return true;
     }

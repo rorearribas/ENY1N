@@ -117,6 +117,9 @@
     <ClInclude Include="Managers\MemoryTracker.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Physics\Ray.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Base\Engine.cpp">
@@ -201,6 +204,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Managers\MemoryTracker.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Physics\Ray.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

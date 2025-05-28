@@ -5,6 +5,7 @@
 #include "Engine/Managers/InputManager.h"
 #include "Libs/Math/Math.h"
 #include "Libs/Macros/GlobalMacros.h"
+#include "../Collisions/CollisionManager.h"
 
 namespace render
 {
@@ -24,7 +25,7 @@ namespace render
   void CCamera::Update(float _fDeltaTime)
   {
     // Keyboard movement
-    math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(m_vRot);
+    math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
     math::CVector3 vForward = math::CVector3::Normalize(mRotMatrix * math::CVector3::Forward);
     math::CVector3 vRight = math::CVector3::Normalize(mRotMatrix * math::CVector3::Right);
 
@@ -94,34 +95,34 @@ namespace render
   // ------------------------------------
   void CCamera::SetPosition(const math::CVector3& newPos) 
   {
-    m_vPos = newPos;
+    m_v3Pos = newPos;
     UpdateViewMatrix();
   }
   // ------------------------------------
   void CCamera::MovePosition(const math::CVector3& vDelta) 
   {
-    m_vPos += vDelta;
+    m_v3Pos += vDelta;
     UpdateViewMatrix();
   }
   // ------------------------------------
   void CCamera::SetRotation(const math::CVector3& _vNewRot) 
   {
-    m_vRot = _vNewRot;
+    m_v3Rot = _vNewRot;
     UpdateViewMatrix();
   }
   // ------------------------------------
   void CCamera::AddRotation(const math::CVector3& _vDeltaRot) 
   {
-    m_vRot += _vDeltaRot;
+    m_v3Rot += _vDeltaRot;
     UpdateViewMatrix();
   }
   // ------------------------------------
   void CCamera::SetLookAtPos(const math::CVector3& _v3LookAt) 
   {
-    if (_v3LookAt == m_vPos)
+    if (_v3LookAt == m_v3Pos)
       return;
 
-    math::CVector3 v3Dir = _v3LookAt - m_vPos;
+    math::CVector3 v3Dir = _v3LookAt - m_v3Pos;
     float fPitch = (float)atan2(v3Dir.Y, sqrt(v3Dir.X * v3Dir.X + v3Dir.Z * v3Dir.Z));
     float fYaw = (float)atan2(v3Dir.X, v3Dir.Z);
     if (v3Dir.Z > 0) fYaw += static_cast<float>(math::s_fPI);
@@ -138,19 +139,19 @@ namespace render
   void CCamera::UpdateViewMatrix() 
   {
     // Clamp pitch value
-    m_vRot.X = math::Clamp(m_vRot.X, -90.0f, 90.0f);
+    m_v3Rot.X = math::Clamp(m_v3Rot.X, -90.0f, 90.0f);
 
     // Create the rotation matrix
-    math::CMatrix4x4 mRotationMatrix = math::CMatrix4x4::Rotation(m_vRot);
+    math::CMatrix4x4 mRotationMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
 
-    // Calculate target offset
-    math::CVector3 vTarget = mRotationMatrix * math::CVector3::Forward;
-    vTarget = vTarget + m_vPos;
+    // Calculate dir
+    m_v3Dir = mRotationMatrix * math::CVector3::Forward;
+    math::CVector3 v3TargetPos = m_v3Pos + m_v3Dir;
 
     // Calculate up direction
     math::CVector3 vUpDir = mRotationMatrix * math::CVector3::Up;
 
     // Set view matrix
-    m_mViewMatrix = math::CMatrix4x4::LookAt(m_vPos, vTarget, vUpDir);
+    m_mViewMatrix = math::CMatrix4x4::LookAt(m_v3Pos, v3TargetPos, vUpDir);
   }
 }
