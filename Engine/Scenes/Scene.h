@@ -19,7 +19,7 @@ namespace scene
 
     static int constexpr s_iMaxModels = 500;
     static int constexpr s_iMaxPrimitives = 500;
-    static int constexpr s_iMaxTemporalItems = 500;
+    static int constexpr s_iMaxTemporalItems = 1000;
 
     // Lights
     typedef utils::CFixedPool<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;

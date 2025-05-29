@@ -36,6 +36,9 @@ namespace collision
     const math::CVector3& GetUpAxis() const { return m_v3Up; }
     const math::CVector3& GetForwardAxis() const { return m_v3Forward; }
 
+    void SetDebugMode(bool _bEnabled) { m_bDebugMode = _bEnabled; }
+    const bool& IsInDebugMode() const { return m_bDebugMode; }
+
   private:
     bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
     bool CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
@@ -58,11 +61,13 @@ namespace collision
     math::CVector3 m_v3Right = math::CVector3::Right;
     math::CVector3 m_v3Up = math::CVector3::Up;
     math::CVector3 m_v3Forward = math::CVector3::Forward;
-    bool m_bOBBEnabled = true;
 
     // Extents
     std::vector<math::CVector3> m_v3Extents;
     std::vector<render::graphics::CPrimitive*> m_vctPrimitives;
+
+    bool m_bOBBEnabled = true;
+    bool m_bDebugMode = true;
   };
 }
 

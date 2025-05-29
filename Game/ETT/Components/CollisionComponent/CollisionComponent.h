@@ -13,7 +13,7 @@ namespace game
   {
   public:
     CCollisionComponent(CEntity* _pOwner) : CComponent(_pOwner) {}
-    explicit CCollisionComponent(CEntity* _pOwner, collision::EColliderType _eColliderType);
+    CCollisionComponent(CEntity* _pOwner, collision::EColliderType _eColliderType);
     virtual ~CCollisionComponent() { Clean(); }
 
     void CreateCollider(collision::EColliderType _eColliderType);

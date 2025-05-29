@@ -66,14 +66,14 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
-  // Create spot light
-  game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot light");
-  pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
-  pSpotLight->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+  //// Create spot light
+  //game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot light");
+  //pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
+  //pSpotLight->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
 
-  // Create point light
-  game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
-  pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
+  //// Create point light
+  //game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
+  //pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
@@ -86,7 +86,7 @@ int main()
   pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
   std::vector<game::CEntity*> vctPhysics = {};
-  for (uint32_t uIndex = 0; uIndex < 5; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
     game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
@@ -111,10 +111,10 @@ int main()
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
+    pBoxTest->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
-    pModelCompTest->SetPrimitiveColor(math::CVector3::Right);
-
+    pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
@@ -155,25 +155,22 @@ int main()
         pCollisionManager->Update(fFixedDeltaTime);
         pGameManager->Update(fFixedDeltaTime);
 
-        if (bThrowRay)
-        {
-          // Draw line
-          math::CVector3 v3Pos = math::CVector3(0.0f, 10.0f, 0.0f);
-          math::CVector3 v3End = v3Pos + (math::CVector3::Forward * 100.0f);
-          pEngine->DrawLine(v3Pos, v3End, math::CVector3::Right);
+        // Draw line
+        math::CVector3 v3Pos = math::CVector3(0.0f, 10.0f, 0.0f);
+        math::CVector3 v3End = v3Pos + (math::CVector3::Forward * 100.0f);
+        pEngine->DrawLine(v3Pos, v3End, math::CVector3::Right);
 
-          // Throw ray
-          collision::CCollisionManager* pCollManager = collision::CCollisionManager::GetInstance();
-          collision::SHitEvent oHitEvent = collision::SHitEvent();
-          if (pCollManager->Raycast(collision::CRay(v3Pos, math::CVector3::Forward), oHitEvent, 100.0f))
-          {
-            std::cout << "dist: " << oHitEvent.Distance << std::endl;
-            pEngine->DrawSphere(oHitEvent.ImpactPoint, 0.05f, 12, 12, math::CVector3::Right);
-          }
-          else
-          {
-            std::cout << "no toca" << std::endl;
-          }
+        // Throw ray
+        collision::CCollisionManager* pCollManager = collision::CCollisionManager::GetInstance();
+        collision::SHitEvent oHitEvent = collision::SHitEvent();
+        if (pCollManager->Raycast(collision::CRay(v3Pos, math::CVector3::Forward), oHitEvent, 100.0f))
+        {
+          std::cout << "dist: " << oHitEvent.Distance << std::endl;
+          pEngine->DrawSphere(oHitEvent.ImpactPoint, 0.05f, 12, 12, math::CVector3::Right);
+        }
+        else
+        {
+          std::cout << "no toca" << std::endl;
         }
 
         pInputManager->Flush();

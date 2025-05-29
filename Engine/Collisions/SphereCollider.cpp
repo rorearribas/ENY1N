@@ -33,7 +33,6 @@ namespace collision
   // ------------------------------------
   bool CSphereCollider::IntersectRay(const collision::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
   {
-    math::CVector3 v3RayDir = _oRay.GetDir();
     math::CVector3 v3Diff = math::CVector3(_oRay.GetOrigin() - m_v3Center);
     float fDotA = math::CVector3::Dot(v3Diff, _oRay.GetDir());
     float fDotB = math::CVector3::Dot(v3Diff, v3Diff) - (this->m_fRadius * this->m_fRadius);
@@ -60,7 +59,7 @@ namespace collision
     }
 
     _oHitEvent_.Object = GetOwner();
-    _oHitEvent_.ImpactPoint = _oRay.GetOrigin() + (v3RayDir * fDist);
+    _oHitEvent_.ImpactPoint = _oRay.GetOrigin() + (_oRay.GetDir() * fDist);
     _oHitEvent_.Normal = math::CVector3::Normalize(_oHitEvent_.ImpactPoint - m_v3Center);
     _oHitEvent_.Distance = fDist;
 

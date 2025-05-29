@@ -261,8 +261,14 @@ namespace render
       }
 
       // Calculate normals
+      uint32_t uSize = static_cast<uint32_t>(_vctIndices.size());
       for (uint32_t uIndex = 0; uIndex < _vctIndices.size(); uIndex += 3)
       {
+        if (uIndex + 1 >= uSize || uIndex + 2 >= uSize)
+        {
+          break;
+        }
+
         uint32_t i0 = _vctIndices[uIndex];
         uint32_t i1 = _vctIndices[uIndex + 1];
         uint32_t i2 = _vctIndices[uIndex + 2];

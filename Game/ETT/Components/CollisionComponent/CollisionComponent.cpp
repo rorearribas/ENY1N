@@ -36,6 +36,11 @@ namespace game
       m_pCollider->SetOnCollisionEnter(collision::CCollider::TOnCollisionEvent(&CEntity::OnCollisionEnter, pOwner));
       m_pCollider->SetOnCollisionStay(collision::CCollider::TOnCollisionEvent(&CEntity::OnCollisionStay, pOwner));
       m_pCollider->SetOnCollisionExit(collision::CCollider::TOnCollisionEvent(&CEntity::OnCollisionExit, pOwner));
+
+      // Force to update
+      m_pCollider->SetPosition(pOwner->GetPosition());
+      m_pCollider->SetRotation(pOwner->GetRotation());
+      m_pCollider->RecalculateCollider();
     }
 
     // Create primitive
@@ -65,10 +70,15 @@ namespace game
       break;
     }
 
+    // Update primtive
     if (m_pPrimitive)
     {
-      m_pPrimitive->SetColor(math::CVector3::One);
+      m_pPrimitive->SetPosition(pOwner->GetPosition());
+      m_pPrimitive->SetRotation(pOwner->GetRotation());
       m_pPrimitive->SetScale(pOwner->GetScale());
+
+      m_pPrimitive->UseGlobalLighting(false);
+      m_pPrimitive->SetColor(math::CVector3::Forward);
     }
   }
   // ------------------------------------
@@ -145,9 +155,11 @@ namespace game
       std::string sMax = "Max" + std::string("##" + sOwnerName);
       std::string sMin = "Min" + std::string("##" + sOwnerName);
       std::string sOBB = "OBB Enabled" + std::string("##" + sOwnerName);
+      std::string sDebugMode = "Debug Mode" + std::string("##" + sOwnerName);
 
       collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(m_pCollider);
       bool bOBBEnabled = pBoxCollider->IsOBBEnabled();
+      bool bDebugMode = pBoxCollider->IsInDebugMode();
 
       float v3Size[3] = { pBoxCollider->GetSize().X, pBoxCollider->GetSize().Y, pBoxCollider->GetSize().Z };
       float v3Max[3] = { pBoxCollider->GetMax().X, pBoxCollider->GetMax().Y, pBoxCollider->GetMax().Z };
@@ -158,6 +170,7 @@ namespace game
       ImGui::InputFloat3(sMax.c_str(), v3Max);
       ImGui::InputFloat3(sMin.c_str(), v3Min);
       ImGui::Checkbox(sOBB.c_str(), &bOBBEnabled);
+      ImGui::Checkbox(sDebugMode.c_str(), &bDebugMode);
 
       // Apply box collider size
       if (m_pPrimitive) 
@@ -166,6 +179,7 @@ namespace game
       }
       pBoxCollider->SetSize(math::CVector3(v3Size[0], v3Size[1], v3Size[2]));
       pBoxCollider->SetOBBEnabled(bOBBEnabled);
+      pBoxCollider->SetDebugMode(bDebugMode);
     }
     break;
     case collision::EColliderType::SPHERE_COLLIDER:

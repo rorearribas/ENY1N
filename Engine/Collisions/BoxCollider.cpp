@@ -9,6 +9,8 @@ namespace collision
 {
   namespace internal_box_collider
   {
+    static const float s_fDebugRadius = 0.025f;
+
     static bool SeparatedAxis
     (
       const std::vector<math::CVector3>& _vctExtentsA, const std::vector<math::CVector3>& _vctExtentsB,
@@ -28,20 +30,20 @@ namespace collision
       math::CVector3 v3MinA = math::CVector3::Zero;
       for (const math::CVector3& v3Vertex : _vctExtentsA)
       {
-        float fProjection = math::CVector3::Dot(v3Vertex, _v3Axis);
-        if (fProjection < fMinA) { v3MinA = v3Vertex; }
-        fMinA = math::Min(fMinA, fProjection);
-        fMaxA = math::Max(fMaxA, fProjection);
+        float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
+        if (fDot < fMinA) { v3MinA = v3Vertex; }
+        fMinA = math::Min(fMinA, fDot);
+        fMaxA = math::Max(fMaxA, fDot);
       }
 
       // Get MinB/MaxB
       math::CVector3 v3MinB = math::CVector3::Zero;
       for (const math::CVector3& v3Vertex : _vctExtentsB)
       {
-        float fProjection = math::CVector3::Dot(v3Vertex, _v3Axis);
-        if (fProjection < fMinB) { v3MinB = v3Vertex; }
-        fMinB = math::Min(fMinB, fProjection);
-        fMaxB = math::Max(fMaxB, fProjection);
+        float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
+        if (fDot < fMinB) { v3MinB = v3Vertex; }
+        fMinB = math::Min(fMinB, fDot);
+        fMaxB = math::Max(fMaxB, fDot);
       }
 
       // Check separation
@@ -60,8 +62,10 @@ namespace collision
       {
         // Set depth
         fDepth_ = fCurrentDepth;
+
         // Set normal
         v3Normal_ = (fDepth_ == fOverlapA) ? _v3Axis : -_v3Axis;
+
         // Calculate impact point
         math::CVector3 v3Offset = v3Normal_ * (fDepth_ * 0.5f);
         v3ImpactPoint_ = (fDepth_ == fOverlapA) ? v3MinA + v3Offset : v3MinB - v3Offset;
@@ -104,8 +108,13 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CBoxCollider::IntersectRay(const collision::CRay& /*_oRay*/, SHitEvent& /*_oHitEvent_*/, const float& /*_fMaxDistance*/)
+  bool CBoxCollider::IntersectRay(const collision::CRay& _oRay, SHitEvent& /*_oHitEvent_*/, const float& /*_fMaxDistance*/)
   {
+    math::CVector3 v3Diff = math::CVector3(GetPosition() - _oRay.GetOrigin());
+    float fDotA = math::CVector3::Dot(v3Diff, _oRay.GetDir());
+    std::cout << "Scalar: " << fDotA << std::endl;
+
+
     return false;
   }
   // ------------------------------------
@@ -315,39 +324,15 @@ namespace collision
     m_v3Up = mRot * math::CVector3::Up;
 
 #ifdef DEBUG_MODE
-    if (m_vctPrimitives.empty())
+    if (m_bDebugMode)
     {
-      for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
+      engine::CEngine* pEngine = engine::CEngine::GetInstance();
+      float fMagnitude = m_v3Size.Magnitude();
+      for (size_t tIndex = 0; tIndex < m_v3Extents.size(); tIndex++)
       {
-        engine::CEngine* pEngine = engine::CEngine::GetInstance();
-        auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-        pPrimitive->SetColor(math::CVector3::Right);
-        pPrimitive->SetScale(math::CVector3::One / 8.0f);
-        m_vctPrimitives.emplace_back(pPrimitive);
+        math::CVector3 v3Pos = m_v3Extents[tIndex];
+        pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::Right);
       }
-    }
-
-    // Update position
-    for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
-    {
-      m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
-    } 
-    if (m_vctPrimitives.empty())
-    {
-      for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
-      {
-        engine::CEngine* pEngine = engine::CEngine::GetInstance();
-        auto* pPrimitive = pEngine->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-        pPrimitive->SetColor(math::CVector3::Right);
-        pPrimitive->SetScale(math::CVector3::One / 8.0f);
-        m_vctPrimitives.emplace_back(pPrimitive);
-      }
-    }
-
-    // Update position
-    for (int iIndex = 0; iIndex < static_cast<int>(m_v3Extents.size()); iIndex++)
-    {
-      m_vctPrimitives[iIndex]->SetPosition(m_v3Extents[iIndex]);
     }
 #endif
   }

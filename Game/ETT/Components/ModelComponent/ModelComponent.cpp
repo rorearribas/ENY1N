@@ -53,6 +53,14 @@ namespace game
 #ifdef _DEBUG
     assert(m_pPrimitive);
 #endif
+
+    // Update transform
+    CEntity* pOwner = GetOwner();
+    if (pOwner)
+    {
+      m_pPrimitive->SetPosition(pOwner->GetPosition());
+      m_pPrimitive->SetRotation(pOwner->GetRotation());
+    }
   }
   // ------------------------------------
   void CModelComponent::SetPrimitiveRenderMode(render::ERenderMode _eRenderMode)
