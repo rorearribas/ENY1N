@@ -1,4 +1,8 @@
 #pragma once
 
-#define UNUSED_VARIABLE(x) ((void)(x))
+// GLOBAL MACROS
+#define TO_STRING(x) #x
+#define UNUSED_VAR(x) ((void)(x))
+
+// MODES
 #define DEBUG_MODE

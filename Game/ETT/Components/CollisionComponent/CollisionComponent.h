@@ -24,6 +24,9 @@ namespace game
     void SetRotation(const math::CVector3& _v3Rotation);
     const math::CVector3& GetRotation() const;
 
+    void SetDebugMode(bool _bEnabled) { m_bDebugMode = _bEnabled; }
+    const bool& IsDebugEnabled() const { return m_bDebugMode; }
+
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;
     virtual void OnRotationChanged(const math::CVector3& _v3Rot) override;
@@ -35,5 +38,6 @@ namespace game
   private:
     collision::CCollider* m_pCollider = nullptr;
     render::graphics::CPrimitive* m_pPrimitive = nullptr;
+    bool m_bDebugMode = true;
   };
 }

@@ -11,6 +11,7 @@ namespace render
 {
   namespace internal_camera
   {
+    const int s_iFrustumPlanes = 6;
     const float s_fInterpolateSpeed = 10.0f;
 
     static bool s_bWasRightButtonPressed = false;
@@ -20,6 +21,7 @@ namespace render
   CCamera::CCamera()
   {
     m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+    m_oFrustumPlanes.reserve(internal_camera::s_iFrustumPlanes);
   }
   // ------------------------------------
   void CCamera::Update(float _fDeltaTime)
@@ -68,7 +70,7 @@ namespace render
     // Update constant buffer
     m_oConstantBuffer.GetData().Matrix = math::CMatrix4x4::Transpose(m_mViewMatrix * m_mProjectionMatrix);
     bool bOk = m_oConstantBuffer.WriteBuffer();
-    UNUSED_VARIABLE(bOk);
+    UNUSED_VAR(bOk);
     assert(bOk);
 
     ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
@@ -153,5 +155,13 @@ namespace render
 
     // Set view matrix
     m_mViewMatrix = math::CMatrix4x4::LookAt(m_v3Pos, v3TargetPos, vUpDir);
+  }
+  // ------------------------------------
+  void CCamera::UpdateFrustum()
+  {
+    // Calculate 6 Planes
+
+
+
   }
 }

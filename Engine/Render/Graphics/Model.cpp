@@ -14,7 +14,7 @@ namespace render
     CModel::CModel(const char* _sModelPath, const char* _sBaseMltDir)
     {
       HRESULT hResult = InitModel(_sModelPath, _sBaseMltDir);
-      UNUSED_VARIABLE(hResult);
+      UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
     }
     // ------------------------------------
@@ -91,7 +91,7 @@ namespace render
       // Set model matrix
       m_oConstantBuffer.GetData().Matrix = m_oModelTransform.ComputeModelMatrix();
       bool bOk = m_oConstantBuffer.WriteBuffer();
-      UNUSED_VARIABLE(bOk);
+      UNUSED_VAR(bOk);
       assert(bOk);
 
       // Apply constant buffer

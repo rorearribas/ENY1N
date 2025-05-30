@@ -13,7 +13,7 @@ namespace collision
     virtual ~CSphereCollider() {}
 
     virtual bool CheckCollision(const CCollider&, SHitEvent& _oHitEvent_) override;
-    virtual bool IntersectRay(const collision::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
+    virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
     void SetCenter(const math::CVector3& _v3Center) { m_v3Center = _v3Center; }

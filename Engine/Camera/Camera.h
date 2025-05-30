@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Engine/Utils/Plane.h"
 #include "Libs/Math/Matrix4x4.h"
 #include "Libs/Math/Vector3.h"
 #include "Libs/Math/Vector2.h"
@@ -41,6 +42,7 @@ namespace render
 
     void UpdatePerspectiveMatrix();
     void UpdateViewMatrix();
+    void UpdateFrustum();
 
     void AddRotation(const math::CVector3& _v3Delta);
     void ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos);
@@ -62,6 +64,8 @@ namespace render
     float m_fFar = 100000.0f;
     float m_fNear = 0.01f;
     float m_fAspectRatio = 1.77778f;
+
+    std::vector<math::CPlane> m_oFrustumPlanes;
   };
 }
 

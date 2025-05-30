@@ -33,7 +33,7 @@ namespace input
 
     // Register raw input
     bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
-    UNUSED_VARIABLE(bOk);
+    UNUSED_VAR(bOk);
     assert(bOk);
 
     // Bind delegate
@@ -103,7 +103,7 @@ namespace input
 
     // Register keyboard input
     bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
-    UNUSED_VARIABLE(bOk);
+    UNUSED_VAR(bOk);
     assert(bOk);
 
     // Register all keys

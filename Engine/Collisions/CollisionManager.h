@@ -1,9 +1,9 @@
 #pragma once
-#include "Libs/Utils/Singleton.h"
 #include "Engine/Collisions/Collider.h"
+#include "Engine/Utils/Ray.h"
+#include "Libs/Utils/Singleton.h"
 #include "Libs/Utils/FixedList.h"
 #include "Libs/Utils/Delegate.h"
-#include "../Physics/Ray.h"
 
 namespace collision
 {
@@ -23,8 +23,8 @@ namespace collision
     collision::CCollider* CreateCollider(collision::EColliderType _eColliderType, void* _pOwner);
     void DestroyCollider(collision::CCollider*& _pCollider_);
 
-    bool Raycast(const CRay& _oRaycast, SHitEvent& _oHitEvent_, float _fMaxDistance, ECollisionMask _eCollisionMask = ECollisionMask::DEFAULT);
-    bool RaycastAll(const CRay& _oRaycast, std::vector<SHitEvent>& _vctHits_, float _fMaxDistance, ECollisionMask _eCollisionMask = ECollisionMask::DEFAULT);
+    bool Raycast(const physics::CRay& _oRaycast, SHitEvent& _oHitEvent_, float _fMaxDistance, ECollisionMask _eCollisionMask = ECollisionMask::DEFAULT);
+    bool RaycastAll(const physics::CRay& _oRaycast, std::vector<SHitEvent>& _vctHits_, float _fMaxDistance, ECollisionMask _eCollisionMask = ECollisionMask::DEFAULT);
 
   private:
     void Clean();

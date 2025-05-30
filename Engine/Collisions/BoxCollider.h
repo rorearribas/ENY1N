@@ -14,7 +14,7 @@ namespace collision
     virtual ~CBoxCollider();
 
     virtual bool CheckCollision(const CCollider& _pOther, SHitEvent& _oHitEvent_) override;
-    virtual bool IntersectRay(const collision::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
+    virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
     void SetOBBEnabled(bool _bEnabled) { m_bOBBEnabled = _bEnabled; }
@@ -36,8 +36,7 @@ namespace collision
     const math::CVector3& GetUpAxis() const { return m_v3Up; }
     const math::CVector3& GetForwardAxis() const { return m_v3Forward; }
 
-    void SetDebugMode(bool _bEnabled) { m_bDebugMode = _bEnabled; }
-    const bool& IsInDebugMode() const { return m_bDebugMode; }
+    void DrawDebug();
 
   private:
     bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;

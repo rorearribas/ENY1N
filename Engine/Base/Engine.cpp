@@ -63,6 +63,11 @@ namespace engine
     m_pSceneManager->DrawLine(_v3Origin, _v3Dest, _v3Color);
   }
   // ------------------------------------
+  void CEngine::DrawPlane(const math::CPlane& _oPlane, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  {
+    m_pSceneManager->DrawPlane(_oPlane, _fSize, _v3Color, _eRenderMode);
+  }
+  // ------------------------------------
   void CEngine::DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     m_pSceneManager->DrawCube(_v3Pos, _fSize, _v3Color, _eRenderMode);

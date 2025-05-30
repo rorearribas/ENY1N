@@ -17,9 +17,9 @@ namespace scene
     static int constexpr s_iMaxSpotLights = 250;
     static int constexpr s_iMaxPointLights = 250;
 
-    static int constexpr s_iMaxModels = 500;
+    static int constexpr s_iMaxModels = 1000;
     static int constexpr s_iMaxPrimitives = 500;
-    static int constexpr s_iMaxTemporalItems = 1000;
+    static int constexpr s_iMaxTemporalItems = 500;
 
     // Lights
     typedef utils::CFixedPool<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
@@ -40,6 +40,7 @@ namespace scene
 
     // Debug creation
     void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
+    void DrawPlane(const math::CPlane& _oPlane, float _fSize, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
     void DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
     void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
 

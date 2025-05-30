@@ -1,10 +1,10 @@
 #pragma once
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
+#include "Engine/Utils/Plane.h"
 #include "Engine/Scenes/Scene.h"
 #include "Libs/Utils/Singleton.h"
 #include "Engine/Render/Render.h"
-#include <array>
 
 namespace scene
 {
@@ -25,6 +25,7 @@ namespace scene
 
     // Debug creation
     void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
+    void DrawPlane(const math::CPlane& _oPlane, float _fSize, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
     void DrawCube(const math::CVector3& _v3Origin, float _fSize, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
     void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
 
@@ -36,8 +37,8 @@ namespace scene
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
     render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
 
-    void DestroyModel(render::graphics::CModel*& pModel_, uint32_t _uSceneIndex = 0);
     void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
+    void DestroyModel(render::graphics::CModel*& pModel_, uint32_t _uSceneIndex = 0);
     void DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uSceneIndex = 0);
 
   private:

@@ -18,7 +18,7 @@ namespace collision
   // ------------------------------------
   void CCollisionManager::Update(float _fDeltaTime)
   {
-    UNUSED_VARIABLE(_fDeltaTime);
+    UNUSED_VAR(_fDeltaTime);
 
     // Check collisions
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
@@ -111,7 +111,7 @@ namespace collision
     _pCollider_ = nullptr;
   }
   // ------------------------------------
-  bool CCollisionManager::Raycast(const CRay& _oRaycast, SHitEvent& _oHitEvent_, float _fMaxDistance, ECollisionMask _eCollisionMask)
+  bool CCollisionManager::Raycast(const physics::CRay& _oRaycast, SHitEvent& _oHitEvent_, float _fMaxDistance, ECollisionMask _eCollisionMask)
   {
     bool bHit = false;
     float fClosestDistance = _fMaxDistance;
@@ -134,7 +134,7 @@ namespace collision
     return bHit;
   }
   // ------------------------------------
-  bool CCollisionManager::RaycastAll(const CRay& _oRaycast, std::vector<SHitEvent>& _vctHits_, float _fMaxDistance, ECollisionMask _eCollisionMask)
+  bool CCollisionManager::RaycastAll(const physics::CRay& _oRaycast, std::vector<SHitEvent>& _vctHits_, float _fMaxDistance, ECollisionMask _eCollisionMask)
   {
     _vctHits_.clear();
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)

@@ -108,12 +108,37 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CBoxCollider::IntersectRay(const collision::CRay& _oRay, SHitEvent& /*_oHitEvent_*/, const float& /*_fMaxDistance*/)
+  bool CBoxCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& /*_oHitEvent_*/, const float& /*_fMaxDistance*/)
   {
-    math::CVector3 v3Diff = math::CVector3(GetPosition() - _oRay.GetOrigin());
-    float fDotA = math::CVector3::Dot(v3Diff, _oRay.GetDir());
-    std::cout << "Scalar: " << fDotA << std::endl;
+    math::CVector3 v3Dir = math::CVector3::Normalize(math::CVector3(GetPosition() - _oRay.GetOrigin()));
+    float fDotA = math::CVector3::Dot(v3Dir, _oRay.GetDir());
+    UNUSED_VAR(fDotA);
 
+    std::vector<math::CVector3> vctAxis =
+    {
+      // Normals 
+      this->m_v3Right,
+      this->m_v3Up,
+      this->m_v3Forward,
+
+      // Cross Product
+      math::CVector3::Cross(this->m_v3Right, v3Dir),
+      math::CVector3::Cross(this->m_v3Right, v3Dir),
+      math::CVector3::Cross(this->m_v3Right, v3Dir),
+      math::CVector3::Cross(this->m_v3Up, v3Dir),
+      math::CVector3::Cross(this->m_v3Up, v3Dir),
+      math::CVector3::Cross(this->m_v3Up, v3Dir),
+      math::CVector3::Cross(this->m_v3Forward, v3Dir),
+      math::CVector3::Cross(this->m_v3Forward, v3Dir),
+      math::CVector3::Cross(this->m_v3Forward, v3Dir)
+    };
+
+    /* for (uint32_t uIndex = 0; uIndex < vctAxis.size(); uIndex++)
+     {
+       engine::CEngine* pEngine = engine::CEngine::GetInstance();
+       math::CVector3 v3Axis = vctAxis[uIndex];
+       pEngine->DrawLine(GetPosition(), GetPosition() + (v3Axis * 5.0f), math::CVector3::Right);
+     }*/
 
     return false;
   }
@@ -133,6 +158,17 @@ namespace collision
   std::vector<math::CVector3> CBoxCollider::GetAxisDirectors() const
   {
     return std::vector<math::CVector3> { m_v3Right, m_v3Up, m_v3Forward };
+  }
+  // ------------------------------------
+  void CBoxCollider::DrawDebug()
+  {
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    float fMagnitude = m_v3Size.Magnitude();
+    for (size_t tIndex = 0; tIndex < m_v3Extents.size(); tIndex++)
+    {
+      math::CVector3 v3Pos = m_v3Extents[tIndex];
+      pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::Right);
+    }
   }
   // ------------------------------------
   bool CBoxCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
@@ -326,13 +362,7 @@ namespace collision
 #ifdef DEBUG_MODE
     if (m_bDebugMode)
     {
-      engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      float fMagnitude = m_v3Size.Magnitude();
-      for (size_t tIndex = 0; tIndex < m_v3Extents.size(); tIndex++)
-      {
-        math::CVector3 v3Pos = m_v3Extents[tIndex];
-        pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::Right);
-      }
+
     }
 #endif
   }

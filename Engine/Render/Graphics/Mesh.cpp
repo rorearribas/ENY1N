@@ -59,7 +59,7 @@ namespace render
       m_oConstantModelData.GetData().bHasTexture = pTargetTexture ? true : false;
       m_oConstantModelData.GetData().bHasModel = true;
       bool bOk = m_oConstantModelData.WriteBuffer();
-      UNUSED_VARIABLE(bOk);
+      UNUSED_VAR(bOk);
       assert(bOk);
 
       // Set constant buffer
@@ -110,7 +110,7 @@ namespace render
       // Mapped vertex buffer
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
       HRESULT hResult = global::dx11::s_pDeviceContext->Map(_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
-      UNUSED_VARIABLE(hResult);
+      UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
 
       // Get vertex data

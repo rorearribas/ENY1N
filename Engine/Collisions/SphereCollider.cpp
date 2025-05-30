@@ -31,7 +31,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CSphereCollider::IntersectRay(const collision::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
+  bool CSphereCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
   {
     math::CVector3 v3Diff = math::CVector3(_oRay.GetOrigin() - m_v3Center);
     float fDotA = math::CVector3::Dot(v3Diff, _oRay.GetDir());

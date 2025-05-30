@@ -1,5 +1,6 @@
 #include "PrimitiveUtils.h"
 #include "Libs/Math/Math.h"
+#include "Libs/Macros/GlobalMacros.h"
 
 namespace render
 {
@@ -167,6 +168,30 @@ namespace render
 
       _oVertexData_.m_vctVertexData.emplace_back(oDest);
       _oVertexData_.m_vctIndices.emplace_back(1);
+    }
+
+    // 3D Plane -> TODO
+    void CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, CPrimitive::SCustomPrimitive& /*_oVertexData_*/)
+    {
+      const math::CVector3& v3Normal = _oPlane.GetNormal();
+      UNUSED_VAR(v3Normal);
+
+      //_oVertexData_.m_vctVertexData.clear();
+
+      //// Bottom - left
+      //render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
+      //oVertexData.
+      //{ math::CVector3(-0.5f, 0.0f, -0.5f), math::CVector3(0.0f, 1.0f, 0.0f), math::CVector3(1.0f, 1.0f, 1.0f) },  // Bottom-left
+      //_oVertexData_.m_vctVertexData.emplace_back()
+
+      //// Top-left
+      //math::CVector3(-0.5f, 0.0f, 0.5f), math::CVector3(0.0f, 1.0f, 0.0f) // Top-left
+
+      //// Top-right
+      //math::CVector3(0.5f, 0.0f, 0.5f), math::CVector3(0.0f, 1.0f, 0.0f)  // Top-right
+
+      //// Bottom-right
+      //math::CVector3(0.5f, 0.0f, -0.5f), math::CVector3(0.0f, 1.0f, 0.0f)   // Bottom-right
     }
 
     // 3D Sphere

@@ -150,36 +150,42 @@ namespace game
     case collision::EColliderType::BOX_COLLIDER:
     {
       // Generate unique ids
-      std::string sTitle = "BOX COLLIDER";
-      std::string sSize = "Size" + std::string("##" + sOwnerName);
-      std::string sMax = "Max" + std::string("##" + sOwnerName);
-      std::string sMin = "Min" + std::string("##" + sOwnerName);
-      std::string sOBB = "OBB Enabled" + std::string("##" + sOwnerName);
-      std::string sDebugMode = "Debug Mode" + std::string("##" + sOwnerName);
+      std::string sColliderType = "BOX COLLIDER";
+      std::string sSize = std::string("Size") + std::string("##" + sOwnerName);
+      std::string sMax = std::string("Max") + std::string("##" + sOwnerName);
+      std::string sMin = std::string("Min") + std::string("##" + sOwnerName);
+      std::string sOBB = std::string("OBB Enabled") + std::string("##" + sOwnerName);
+      std::string sDebugMode = std::string("Debug Mode") + std::string("##" + sOwnerName);
 
       collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(m_pCollider);
       bool bOBBEnabled = pBoxCollider->IsOBBEnabled();
-      bool bDebugMode = pBoxCollider->IsInDebugMode();
 
       float v3Size[3] = { pBoxCollider->GetSize().X, pBoxCollider->GetSize().Y, pBoxCollider->GetSize().Z };
       float v3Max[3] = { pBoxCollider->GetMax().X, pBoxCollider->GetMax().Y, pBoxCollider->GetMax().Z };
       float v3Min[3] = { pBoxCollider->GetMin().X, pBoxCollider->GetMin().Y, pBoxCollider->GetMin().Z };
 
-      ImGui::Text(sTitle.c_str());
+      ImGui::Text(sColliderType.c_str());
       ImGui::InputFloat3(sSize.c_str(), v3Size);
       ImGui::InputFloat3(sMax.c_str(), v3Max);
       ImGui::InputFloat3(sMin.c_str(), v3Min);
       ImGui::Checkbox(sOBB.c_str(), &bOBBEnabled);
-      ImGui::Checkbox(sDebugMode.c_str(), &bDebugMode);
+      ImGui::Checkbox(sDebugMode.c_str(), &m_bDebugMode);
 
-      // Apply box collider size
-      if (m_pPrimitive) 
+      // Apply values
+      pBoxCollider->SetOBBEnabled(bOBBEnabled);
+      math::CVector3 v3CurrentSize(v3Size[0], v3Size[1], v3Size[2]);
+      if (m_pPrimitive && !v3CurrentSize.Equal(m_pPrimitive->GetScale()))
       { 
         m_pPrimitive->SetScale(math::CVector3(v3Size[0], v3Size[1], v3Size[2])); 
       }
-      pBoxCollider->SetSize(math::CVector3(v3Size[0], v3Size[1], v3Size[2]));
-      pBoxCollider->SetOBBEnabled(bOBBEnabled);
-      pBoxCollider->SetDebugMode(bDebugMode);
+      if (m_pPrimitive && !v3CurrentSize.Equal(pBoxCollider->GetSize()))
+      {
+        pBoxCollider->SetSize(v3CurrentSize);
+      }
+      if (m_bDebugMode)
+      {
+        pBoxCollider->DrawDebug();
+      }
     }
     break;
     case collision::EColliderType::SPHERE_COLLIDER:

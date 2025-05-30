@@ -15,7 +15,7 @@ namespace render
     CLightManager::CLightManager()
     {
       HRESULT hResult = m_oLightningBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
-      UNUSED_VARIABLE(hResult);
+      UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
     }
     // ------------------------------------
@@ -64,7 +64,7 @@ namespace render
 
       // Write buffer
       bool bOk = m_oLightningBuffer.WriteBuffer();
-      UNUSED_VARIABLE(bOk);
+      UNUSED_VAR(bOk);
       assert(bOk);
 
       // Push buffer

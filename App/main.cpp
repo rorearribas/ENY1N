@@ -29,7 +29,7 @@
 #include "Libs/Math/Math.h"
 #include "Engine/Managers/MemoryTracker.h"
 
-float GenerateFloat(float min, float max) 
+float GenerateFloat(float min, float max)
 {
   static std::random_device rd;
   static std::mt19937 gen(rd());
@@ -115,8 +115,13 @@ int main()
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
+    //pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
+    //pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
+
+    float fRandomY = GenerateFloat(-200.0f, 200.f);
+    float fRandomX = GenerateFloat(-100.0f, 100.0f);
+    float fRandomZ = GenerateFloat(-10.5f, 10.5f);
+    pBoxTest->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
   }
 
   render::CRender* const pRender = pEngine->GetRender();
@@ -163,14 +168,10 @@ int main()
         // Throw ray
         collision::CCollisionManager* pCollManager = collision::CCollisionManager::GetInstance();
         collision::SHitEvent oHitEvent = collision::SHitEvent();
-        if (pCollManager->Raycast(collision::CRay(v3Pos, math::CVector3::Forward), oHitEvent, 100.0f))
+        if (pCollManager->Raycast(physics::CRay(v3Pos, math::CVector3::Forward), oHitEvent, 100.0f))
         {
           std::cout << "dist: " << oHitEvent.Distance << std::endl;
           pEngine->DrawSphere(oHitEvent.ImpactPoint, 0.05f, 12, 12, math::CVector3::Right);
-        }
-        else
-        {
-          std::cout << "no toca" << std::endl;
         }
 
         pInputManager->Flush();
@@ -234,6 +235,8 @@ int main()
         bThrowRay = !bThrowRay;
       }
       ImGui::End();
+
+      ImGui::ShowDemoWindow();
 
       // End draw
       pEngine->PushEndDraw();

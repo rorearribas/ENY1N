@@ -126,12 +126,25 @@ namespace game
     ImGui::InputFloat3(sRotateInputId.c_str(), fRotation);
     ImGui::InputFloat3(sScaleInputId.c_str(), fScale);
 
+    math::CVector3 v3Pos(fTranslation[0], fTranslation[1], fTranslation[2]);
+    math::CVector3 v3Rot(fRotation[0], fRotation[1], fRotation[2]);
+    math::CVector3 v3Scale(fScale[0], fScale[1], fScale[2]);
+
     if (!ImGuizmo::IsUsing())
     {
       // Update the entity
-      SetPosition(math::CVector3(fTranslation[0], fTranslation[1], fTranslation[2]));
-      SetRotation(math::CVector3(fRotation[0], fRotation[1], fRotation[2]));
-      SetScale(math::CVector3(fScale[0], fScale[1], fScale[2]));
+      if (!GetPosition().Equal(v3Pos))
+      {
+        SetPosition(v3Pos);
+      }
+      if (!GetRotation().Equal(v3Rot))
+      {
+        SetRotation(v3Rot);
+      }
+      if (!GetScale().Equal(v3Scale))
+      {
+        SetScale(v3Scale);
+      }
     }
 
     // Draw debug on components

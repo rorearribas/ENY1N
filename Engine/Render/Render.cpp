@@ -65,7 +65,7 @@ namespace render
 
     // Init render
     HRESULT hResult = Init(_uX, _uY);
-    UNUSED_VARIABLE(hResult);
+    UNUSED_VAR(hResult);
     assert(!FAILED(hResult));
   }
   // ------------------------------------

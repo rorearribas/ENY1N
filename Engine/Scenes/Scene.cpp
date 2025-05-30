@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Base/Engine.h"
+#include "Engine/Utils/Plane.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Render/Lights/Light.h"
 #include "Engine/Render/Lights/DirectionalLight.h"
@@ -17,7 +18,7 @@ namespace scene
   CScene::CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex)
   {
     HRESULT hResult = m_oLightingBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
-    UNUSED_VARIABLE(hResult);
+    UNUSED_VAR(hResult);
 #ifdef _DEBUG
     assert(!FAILED(hResult));
 #endif
@@ -107,7 +108,7 @@ namespace scene
 
     // Write buffer
     bool bOk = m_oLightingBuffer.WriteBuffer();
-    UNUSED_VARIABLE(bOk);
+    UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk); // Sanity check
 #endif
@@ -155,6 +156,27 @@ namespace scene
     // Set values
     pPrimitive->UseGlobalLighting(false);
     pPrimitive->SetColor(_v3Color);
+  }
+  // ------------------------------------
+  void CScene::DrawPlane(const math::CPlane& /*_oPlane*/, float /*_fSize*/, const math::CVector3& /*_v3Color*/, render::ERenderMode _eRenderMode)
+  {
+    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
+    {
+      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      return;
+    }
+
+    // Create plane
+    render::graphics::CPrimitive::SCustomPrimitive oVertexData = render::graphics::CPrimitive::SCustomPrimitive();
+    oVertexData.m_vctVertexData = render::graphics::CPrimitiveUtils::s_oPlanePrimitive;
+    oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::s_oPlaneIndices :
+    render::graphics::CPrimitiveUtils::s_oWireframePlaneIndices;
+
+    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
+    UNUSED_VAR(pPrimitive);
+
+    /*   render::graphics::CPrimitive::SCustomPrimitive oCustomData = render::graphics::CPrimitive::SCustomPrimitive();
+       render::graphics::CPrimitiveUtils::CreateLine(_v3Origin, _v3Dest, oCustomData);*/
   }
   // ------------------------------------
   void CScene::DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -275,7 +297,7 @@ namespace scene
   void CScene::DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_)
   {
     bool bOk = m_vctPrimitiveItems.RemoveItem(_pPrimitive_);
-    UNUSED_VARIABLE(bOk);
+    UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk); // Sanity check
 #endif
@@ -285,7 +307,7 @@ namespace scene
   void CScene::DestroyModel(render::graphics::CModel*& _pModel_)
   {
     bool bOk = m_vctModels.RemoveItem(_pModel_);
-    UNUSED_VARIABLE(bOk);
+    UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk); // Sanity check
 #endif

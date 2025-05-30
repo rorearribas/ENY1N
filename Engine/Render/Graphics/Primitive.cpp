@@ -151,7 +151,7 @@ namespace render
       // Map
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
       HRESULT hResult = global::dx11::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
-      UNUSED_VARIABLE(hResult);
+      UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
 
       // Get data

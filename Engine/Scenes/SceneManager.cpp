@@ -40,6 +40,14 @@ namespace scene
     }
   }
   // ------------------------------------
+  void CSceneManager::DrawPlane(const math::CPlane& _oPlane, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  {
+    if (m_pCurrentScene)
+    {
+      m_pCurrentScene->DrawPlane(_oPlane, _fSize, _v3Color, _eRenderMode);
+    }
+  }
+  // ------------------------------------
   void CSceneManager::DrawCube(const math::CVector3& _v3Origin, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
@@ -103,18 +111,18 @@ namespace scene
     return pScene->CreateSpotLight();
   }
   // ------------------------------------
-  void CSceneManager::DestroyModel(render::graphics::CModel*& _pModel_, uint32_t _uIndex)
-  {
-    if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
-    scene::CScene* pScene = m_vctScenes.at(_uIndex);
-    pScene->DestroyModel(_pModel_);
-  }
-  // ------------------------------------
   void CSceneManager::DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uIndex)
   {
     if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
     scene::CScene* pScene = m_vctScenes.at(_uIndex);
     pScene->DestroyPrimitive(_pPrimitive_);
+  }
+  // ------------------------------------
+  void CSceneManager::DestroyModel(render::graphics::CModel*& _pModel_, uint32_t _uIndex)
+  {
+    if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
+    scene::CScene* pScene = m_vctScenes.at(_uIndex);
+    pScene->DestroyModel(_pModel_);
   }
   // ------------------------------------
   void CSceneManager::DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uIndex)
