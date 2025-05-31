@@ -19,11 +19,11 @@ namespace utils
     {
       // Remove item
       size_t tTargetBlock = m_tItemIndex * sizeof(T);
-      T* pPtr = reinterpret_cast<T*>(m_vctBytes.data() + tTargetBlock);
+      T* pPtr = reinterpret_cast<T*>(m_vctPool.data() + tTargetBlock);
       RemoveItem(pPtr);
 
       // Set block
-      void* pMem = reinterpret_cast<void*>(m_vctBytes.data() + tTargetBlock);
+      void* pMem = reinterpret_cast<void*>(m_vctPool.data() + tTargetBlock);
       T* pItem = new (pMem) T(std::forward<Args>(args)...);
 
       // Update assigned + current index
@@ -46,14 +46,14 @@ namespace utils
       if (!m_vctAssignedBlock[_tIndex]) return nullptr;
 
       size_t tTargetBlock = _tIndex * sizeof(T);
-      return reinterpret_cast<T*>(m_vctBytes.data() + tTargetBlock);
+      return reinterpret_cast<T*>(m_vctPool.data() + tTargetBlock);
     }
 
   private:
     void Init();
 
   private:
-    alignas(T)std::array<std::byte, sizeof(T)* MAX_ITEMS> m_vctBytes;
+    std::aligned_storage_t<sizeof(T), alignof(std::max_align_t)> m_vctPool[MAX_ITEMS];
     std::array<bool, MAX_ITEMS> m_vctAssignedBlock;
 
     uint32_t m_uRegisteredItems;
@@ -64,9 +64,8 @@ namespace utils
   void CCircularPool<T, MAX_ITEMS>::Init()
   {
     // Initialize
-    std::fill(m_vctAssignedBlock.begin(), m_vctAssignedBlock.end(), false);
-    std::fill(m_vctBytes.begin(), m_vctBytes.end(), std::byte{ 0 });
-  }
+    m_vctAssignedBlock.reset();
+<  }
 
   template<typename T, size_t MAX_ITEMS>
   void CCircularPool<T, MAX_ITEMS>::ClearAll()
@@ -76,9 +75,9 @@ namespace utils
       if (m_vctAssignedBlock[tIndex])
       {
         size_t tCurrentBlock = tIndex * sizeof(T);
-        T* pItem = reinterpret_cast<T*>(m_vctBytes.data() + tCurrentBlock);
+        T* pItem = reinterpret_cast<T*>(m_vctPool.data() + tCurrentBlock);
         pItem->~T();
-        memset(m_vctBytes.data() + tCurrentBlock, 0, sizeof(T));
+        memset(m_vctPool.data() + tCurrentBlock, 0, sizeof(T));
         m_vctAssignedBlock[tIndex] = false;
       }
     }
@@ -95,12 +94,12 @@ namespace utils
         continue;
       }
       size_t tTargetBlock = tIndex * sizeof(T);
-      T* pItem = reinterpret_cast<T*>(m_vctBytes.data() + tIndex * sizeof(T));
+      T* pItem = reinterpret_cast<T*>(m_vctPool.data() + tIndex * sizeof(T));
       bool bFound = pItem == _pItem_;
       if (bFound)
       {
         pItem->~T();
-        memset(m_vctBytes.data() + tTargetBlock, 0, sizeof(T));
+        memset(m_vctPool.data() + tTargetBlock, 0, sizeof(T));
         _pItem_ = nullptr;
 
         m_vctAssignedBlock[tIndex] = false;

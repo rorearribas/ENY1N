@@ -48,10 +48,10 @@ namespace math
     return matrix;
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _vEye, const CVector3& _vTarget, const CVector3& _vUp)
+  math::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _v3Pos, const CVector3& _vTarget, const CVector3& _vUp)
   {
     // Z Axis
-    CVector3 vDir = _vTarget - _vEye;
+    CVector3 vDir = _vTarget - _v3Pos;
     CVector3 zAxis = math::CVector3::Normalize(vDir);
 
     // X axis
@@ -65,7 +65,7 @@ namespace math
     Matrix.m[0] = xAxis.X; Matrix.m[1] = yAxis.X; Matrix.m[2] = zAxis.X; Matrix.m[3] = 0.0f;
     Matrix.m[4] = xAxis.Y; Matrix.m[5] = yAxis.Y; Matrix.m[6] = zAxis.Y; Matrix.m[7] = 0.0f;
     Matrix.m[8] = xAxis.Z; Matrix.m[9] = yAxis.Z; Matrix.m[10] = zAxis.Z; Matrix.m[11] = 0.0f;
-    Matrix.m[12] = -xAxis.Dot(_vEye); Matrix.m[13] = -yAxis.Dot(_vEye); Matrix.m[14] = -zAxis.Dot(_vEye); Matrix.m[15] = 1.0f;
+    Matrix.m[12] = -xAxis.Dot(_v3Pos); Matrix.m[13] = -yAxis.Dot(_v3Pos); Matrix.m[14] = -zAxis.Dot(_v3Pos); Matrix.m[15] = 1.0f;
     return Matrix;
   }
   // ------------------------------------

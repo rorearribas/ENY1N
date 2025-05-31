@@ -1,13 +1,14 @@
 #pragma once
-#include "Libs/Math/Vector3.h"
-#include "Libs/Math/Vector2.h"
+#include <d3d11.h>
 #include "Engine/Render/Resources/Material.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 
-#include <vector>
-#include <functional>
+#include "Libs/Math/Vector3.h"
+#include "Libs/Math/Vector2.h"
 #include "Libs/Math/Transform.h"
-#include <d3d11.h>
+
+#include <vector>
+#include <unordered_map>
 
 namespace render
 {
@@ -34,7 +35,7 @@ namespace render
     class CMesh
     {
     public:
-      typedef std::map<uint32_t, render::material::CMaterial*> TMapMaterials;
+      typedef std::unordered_map<uint32_t, render::material::CMaterial*> TMapMaterials;
       typedef std::vector<uint32_t> TIndexesList;
 
     public:

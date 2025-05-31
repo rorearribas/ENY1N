@@ -19,14 +19,14 @@ namespace scene
 
     static int constexpr s_iMaxModels = 1000;
     static int constexpr s_iMaxPrimitives = 500;
-    static int constexpr s_iMaxTemporalItems = 500;
+    static int constexpr s_iMaxDebugItems = 500;
 
     // Lights
     typedef utils::CFixedPool<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
     typedef utils::CFixedPool<render::lights::CSpotLight, s_iMaxSpotLights> TSpotLightsList;
 
     // Graphics
-    typedef utils::CFixedPool<render::graphics::CPrimitive, s_iMaxTemporalItems> TTemporalItemList;
+    typedef utils::CFixedPool<render::graphics::CPrimitive, s_iMaxDebugItems> TDebugItemList;
     typedef utils::CFixedPool<render::graphics::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
     typedef utils::CFixedPool<render::graphics::CModel, s_iMaxPrimitives> TModelList;
 
@@ -79,7 +79,7 @@ namespace scene
     // Graphics
     TModelList m_vctModels = TModelList();
     TPrimitiveList m_vctPrimitiveItems = TPrimitiveList();
-    TTemporalItemList m_vctTemporalItems = TTemporalItemList();
+    TDebugItemList m_vctDebugItems = TDebugItemList();
 
     // Lights
     render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;

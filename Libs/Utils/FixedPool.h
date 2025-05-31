@@ -29,12 +29,12 @@ namespace utils
 
       for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
       {
-        if (!m_vctAssignedBlock.test(tIndex))
+        if (!m_vctAssignedBlocks.test(tIndex))
         {
           void* pMem = static_cast<void*>(&m_vctPool[tIndex]);
           T* pItem = new (pMem) T(std::forward<Args>(args)...);
 
-          m_vctAssignedBlock.set(tIndex);
+          m_vctAssignedBlocks.set(tIndex);
           ++m_uRegisteredItems;
           return pItem;
         }
@@ -49,21 +49,27 @@ namespace utils
     const uint32_t& CurrentSize() const { return m_uRegisteredItems; }
     size_t GetMaxSize() const { return MAX_ITEMS; }
 
-    T* operator[](size_t _tIndex)
+    T* operator[](size_t index)
     {
-      if (_tIndex >= MAX_ITEMS || !m_vctAssignedBlock.test(_tIndex)) return nullptr;
-      return reinterpret_cast<T*>(&m_vctPool[_tIndex]);
+      bool bAssignedBlock = (index < MAX_ITEMS && m_vctAssignedBlocks.test(index));
+      return bAssignedBlock ? reinterpret_cast<T*>(&m_vctPool[index]) : nullptr;
+    }
+
+    const T* operator[](size_t index) const
+    {
+      bool bAssignedBlock = (index < MAX_ITEMS && m_vctAssignedBlocks.test(index));
+      return bAssignedBlock ? reinterpret_cast<const T*>(&m_vctPool[index]) : nullptr;
     }
 
   private:
     void Init()
     {
-      m_vctAssignedBlock.reset();
+      m_vctAssignedBlocks.reset();
     }
 
   private:
     std::aligned_storage_t<sizeof(T), alignof(std::max_align_t)> m_vctPool[MAX_ITEMS];
-    std::bitset<MAX_ITEMS> m_vctAssignedBlock;
+    std::bitset<MAX_ITEMS> m_vctAssignedBlocks;
     uint32_t m_uRegisteredItems;
   };
 
@@ -72,11 +78,11 @@ namespace utils
   {
     for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
     {
-      if (m_vctAssignedBlock.test(tIndex))
+      if (m_vctAssignedBlocks.test(tIndex))
       {
         T* pItem = reinterpret_cast<T*>(&m_vctPool[tIndex]);
         pItem->~T();
-        m_vctAssignedBlock.reset(tIndex);
+        m_vctAssignedBlocks.reset(tIndex);
       }
     }
     m_uRegisteredItems = 0;
@@ -87,13 +93,13 @@ namespace utils
   {
     for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
     {
-      if (m_vctAssignedBlock.test(tIndex))
+      if (m_vctAssignedBlocks.test(tIndex))
       {
         T* pItem = reinterpret_cast<T*>(&m_vctPool[tIndex]);
         if (pItem == _pItem_)
         {
           pItem->~T();
-          m_vctAssignedBlock.reset(tIndex);
+          m_vctAssignedBlocks.reset(tIndex);
           _pItem_ = nullptr;
           --m_uRegisteredItems;
           return true;

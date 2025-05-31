@@ -42,10 +42,10 @@ namespace scene
     }
 
     // Draw temporal primitives
-    uint32_t uTempSize = m_vctTemporalItems.CurrentSize();
+    uint32_t uTempSize = m_vctDebugItems.CurrentSize();
     for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
     {
-      render::graphics::CPrimitive* pPrimitiveItem = m_vctTemporalItems[uIndex];
+      render::graphics::CPrimitive* pPrimitiveItem = m_vctDebugItems[uIndex];
       if (pPrimitiveItem)
       {
         pPrimitiveItem->DrawPrimitive();
@@ -55,7 +55,7 @@ namespace scene
     // Clean after draw
     if (uTempSize > 0)
     {
-      m_vctTemporalItems.ClearAll();
+      m_vctDebugItems.ClearAll();
     }
   }
   // ------------------------------------
@@ -137,7 +137,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
-    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
+    if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
       std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
       return;
@@ -148,7 +148,7 @@ namespace scene
     render::graphics::CPrimitiveUtils::CreateLine(_v3Origin, _v3Dest, oCustomData);
 
     // Create temporal item
-    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oCustomData, render::ERenderMode::WIREFRAME);
+    render::graphics::CPrimitive* pPrimitive = m_vctDebugItems.CreateItem(oCustomData, render::ERenderMode::WIREFRAME);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -158,81 +158,80 @@ namespace scene
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawPlane(const math::CPlane& /*_oPlane*/, float /*_fSize*/, const math::CVector3& /*_v3Color*/, render::ERenderMode _eRenderMode)
+  void CScene::DrawPlane(const math::CPlane& _oPlane, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
+    if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
       std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
       return;
     }
 
     // Create plane
-    render::graphics::CPrimitive::SCustomPrimitive oVertexData = render::graphics::CPrimitive::SCustomPrimitive();
-    oVertexData.m_vctVertexData = render::graphics::CPrimitiveUtils::s_oPlanePrimitive;
-    oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::s_oPlaneIndices :
-    render::graphics::CPrimitiveUtils::s_oWireframePlaneIndices;
+    using namespace render::graphics;
+    CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
+    CPrimitiveUtils::CreatePlane(_oPlane, oPrimitiveData);
 
-    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
-    UNUSED_VAR(pPrimitive);
+    // Set indices
+    oPrimitiveData.m_vctVertexData = CPrimitiveUtils::s_oPlanePrimitive;
+    oPrimitiveData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? 
+    CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices;
 
-    /*   render::graphics::CPrimitive::SCustomPrimitive oCustomData = render::graphics::CPrimitive::SCustomPrimitive();
-       render::graphics::CPrimitiveUtils::CreateLine(_v3Origin, _v3Dest, oCustomData);*/
+    // Create primitive
+    CPrimitive* pPrimitive = m_vctDebugItems.CreateItem(oPrimitiveData, _eRenderMode);
+#ifdef _DEBUG
+    assert(pPrimitive); // Sanity check
+#endif
+    pPrimitive->SetPosition(_oPlane.GetPos());
+    pPrimitive->SetScale(math::CVector3::One * _fSize);
+    pPrimitive->UseGlobalLighting(false);
+    pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
   void CScene::DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
+    if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
       std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
       return;
     }
 
-    // Create vertex data
-    render::graphics::CPrimitive::SCustomPrimitive oVertexData = render::graphics::CPrimitive::SCustomPrimitive();
-
-    // Set primitive data + update pos
-    oVertexData.m_vctVertexData = render::graphics::CPrimitiveUtils::s_oCubePrimitive;
-    for (auto& oPrimitiveData : oVertexData.m_vctVertexData)
-    {
-      oPrimitiveData.Position *= _fSize;
-    }
-
-    // Set indices
-    oVertexData.m_vctIndices = render::graphics::CPrimitiveUtils::s_oCubeIndices;
-
-    // Create item + set pos
-    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
+    // Create cube
+    using namespace render::graphics;
+    CPrimitive* pPrimitive = m_vctDebugItems.CreateItem(CPrimitive::EPrimitiveType::E3D_CUBE, _eRenderMode);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
 
     // Set values
     pPrimitive->SetPosition(_v3Pos);
+    pPrimitive->SetScale(math::CVector3::One * _fSize);
     pPrimitive->SetColor(_v3Color);
     pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_vctTemporalItems.CurrentSize() >= m_vctTemporalItems.GetMaxSize())
+    if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
       std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
       return;
     }
 
     // Fill primitive data
-    render::graphics::CPrimitive::SCustomPrimitive oVertexData = render::graphics::CPrimitive::SCustomPrimitive();
-    render::graphics::CPrimitiveUtils::CreateSphere(_fRadius, _iStacks, _iSlices, oVertexData.m_vctVertexData);
+    using namespace render::graphics;
+    CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
+    CPrimitiveUtils::CreateSphere(_fRadius, _iStacks, _iSlices, oPrimitiveData.m_vctVertexData);
 
     // Fill indices
-    oVertexData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? render::graphics::CPrimitiveUtils::GetSphereIndices(_iStacks, _iSlices) :
-      render::graphics::CPrimitiveUtils::GetWireframeSphereIndices(_iStacks, _iSlices);
+    oPrimitiveData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? 
+    CPrimitiveUtils::GetSphereIndices(_iStacks, _iSlices) :
+    CPrimitiveUtils::GetWireframeSphereIndices(_iStacks, _iSlices);
 
     // Compute normals
-    render::graphics::CPrimitiveUtils::ComputeNormals(oVertexData.m_vctVertexData, oVertexData.m_vctIndices);
+    CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
 
     // Create temporal item + set pos
-    render::graphics::CPrimitive* pPrimitive = m_vctTemporalItems.CreateItem(oVertexData, _eRenderMode);
+    CPrimitive* pPrimitive = m_vctDebugItems.CreateItem(oPrimitiveData, _eRenderMode);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
