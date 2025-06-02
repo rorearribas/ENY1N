@@ -358,13 +358,6 @@ namespace collision
     m_v3Forward = mRot * math::CVector3::Forward;
     m_v3Right = mRot * math::CVector3::Right;
     m_v3Up = mRot * math::CVector3::Up;
-
-#ifdef DEBUG_MODE
-    if (m_bDebugMode)
-    {
-
-    }
-#endif
   }
   // ------------------------------------
   void CBoxCollider::ComputeMinMax()

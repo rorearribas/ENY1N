@@ -25,7 +25,7 @@ namespace game
     // Create collider usin coll manager
     collision::CCollisionManager* pCollisionManager = collision::CCollisionManager::GetInstance();
     if (pCollisionManager)
-    { 
+    {
       // Create collider
       m_pCollider = pCollisionManager->CreateCollider(_eColliderType, pOwner);
 #ifdef _DEBUG
@@ -50,7 +50,7 @@ namespace game
     {
       m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
       (
-        render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE, 
+        render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE,
         render::ERenderMode::WIREFRAME
       );
       assert(m_pPrimitive);
@@ -60,7 +60,7 @@ namespace game
     {
       m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
       (
-        render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE, 
+        render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE,
         render::ERenderMode::WIREFRAME
       );
       assert(m_pPrimitive);
@@ -175,8 +175,8 @@ namespace game
       pBoxCollider->SetOBBEnabled(bOBBEnabled);
       math::CVector3 v3CurrentSize(v3Size[0], v3Size[1], v3Size[2]);
       if (m_pPrimitive && !v3CurrentSize.Equal(m_pPrimitive->GetScale()))
-      { 
-        m_pPrimitive->SetScale(math::CVector3(v3Size[0], v3Size[1], v3Size[2])); 
+      {
+        m_pPrimitive->SetScale(math::CVector3(v3Size[0], v3Size[1], v3Size[2]));
       }
       if (m_pPrimitive && !v3CurrentSize.Equal(pBoxCollider->GetSize()))
       {
@@ -200,12 +200,22 @@ namespace game
       float fRadius = pSphereCollider->GetRadius();
 
       ImGui::Text(sTitle.c_str());
-      ImGui::InputFloat3(sCenter.c_str(), v3Center);
       ImGui::InputFloat(sRadius.c_str(), &fRadius);
 
-      pSphereCollider->SetCenter(math::CVector3(GetPosition().X, GetPosition().Y, GetPosition().Z));
-      pSphereCollider->SetRadius(fRadius);
-      if (m_pPrimitive) { m_pPrimitive->SetScale(math::CVector3(fRadius * 2.0f, fRadius * 2.0f, fRadius * 2.0f)); }
+      // Read only
+      ImGui::BeginDisabled();
+      ImGui::InputFloat3(sCenter.c_str(), v3Center);
+      ImGui::EndDisabled();
+
+      // Update radius
+      if (fRadius != pSphereCollider->GetRadius())
+      {
+        pSphereCollider->SetRadius(fRadius);
+        if (m_pPrimitive)
+        {
+          m_pPrimitive->SetScale(math::CVector3(fRadius * 2.0f, fRadius * 2.0f, fRadius * 2.0f));
+        }
+      }
     }
     break;
     default:

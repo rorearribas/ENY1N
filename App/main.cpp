@@ -108,15 +108,15 @@ int main()
     vctPhysics.emplace_back(pSphereEntity);
   }
 
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 40; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     pBoxTest->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
-    //pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-    //pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
+    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
+    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
 
     float fRandomY = GenerateFloat(-200.0f, 200.f);
     float fRandomX = GenerateFloat(-100.0f, 100.0f);
@@ -173,7 +173,7 @@ int main()
         if (pCollManager->Raycast(physics::CRay(v3Pos, math::CVector3::Forward), oHitEvent, 100.0f))
         {
           std::cout << "dist: " << oHitEvent.Distance << std::endl;
-          pEngine->DrawSphere(oHitEvent.ImpactPoint, 0.05f, 12, 12, math::CVector3::Right);
+          pEngine->DrawSphere(oHitEvent.ImpactPoint, 0.05f, 8, 8, math::CVector3::Right);
         }
 
         pInputManager->Flush();

@@ -134,8 +134,7 @@ namespace render
   // ------------------------------------
   void CCamera::UpdatePerspectiveMatrix()
   {
-    float fRadians =  math::DegreesToRadians(m_fTargetFov);
-    m_mProjectionMatrix = math::CMatrix4x4::CreatePerspectiveMatrix(fRadians, m_fAspectRatio, m_fNear, m_fFar);
+    m_mProjectionMatrix = math::CMatrix4x4::CreatePerspectiveMatrix(m_fTargetFov, m_fAspectRatio, m_fNear, m_fFar);
   }
   // ------------------------------------
   void CCamera::UpdateViewMatrix() 

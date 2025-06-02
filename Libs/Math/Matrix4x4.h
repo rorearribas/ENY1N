@@ -1,5 +1,6 @@
 #pragma once
 #include <array>
+#include <cstring>
 #include "Vector3.h"
 
 namespace math
@@ -7,8 +8,9 @@ namespace math
   class CMatrix4x4
   {
   private:
-    static constexpr int s_iMatrixSize = 16;
-    typedef float TMatrix4x4[s_iMatrixSize];
+    static constexpr int s_iRowSize = 4;
+    static constexpr int s_iColumnSize = 4;
+    typedef float TMatrix4x4[s_iRowSize][s_iColumnSize];
     TMatrix4x4 m;
 
   public:
@@ -16,10 +18,12 @@ namespace math
     static const CMatrix4x4 Zero;
 
     CMatrix4x4() = default;
-    CMatrix4x4(const float _mMatrix[s_iMatrixSize])
+
+    CMatrix4x4(const float _mMatrix[s_iRowSize][s_iColumnSize])
     {
-      memcpy(m, _mMatrix, sizeof(float) * s_iMatrixSize);
+      std::memcpy(m, _mMatrix, sizeof(float) * (s_iRowSize * s_iColumnSize));
     }
+
     CMatrix4x4
     (
       float _m11, float _m12, float _m13, float _m14,
@@ -30,40 +34,43 @@ namespace math
 
     math::CVector3 operator*(const CVector3& _v3) const
     {
-      float fX = _v3.X * m[0] + _v3.Y * m[4] + _v3.Z * m[8] + m[12];
-      float fY = _v3.X * m[1] + _v3.Y * m[5] + _v3.Z * m[9] + m[13];
-      float fZ = _v3.X * m[2] + _v3.Y * m[6] + _v3.Z * m[10] + m[14];
+      float fX = _v3.X * m[0][0] + _v3.Y * m[1][0] + _v3.Z * m[2][0] + m[3][0];
+      float fY = _v3.X * m[0][1] + _v3.Y * m[1][1] + _v3.Z * m[2][1] + m[3][1];
+      float fZ = _v3.X * m[0][2] + _v3.Y * m[1][2] + _v3.Z * m[2][2] + m[3][2];
       return CVector3(fX, fY, fZ);
     }
-    CMatrix4x4 operator*(const CMatrix4x4& _mMatrix) const
+
+    CMatrix4x4 operator*(const CMatrix4x4& rhs) const
     {
-      CMatrix4x4 Matrix = CMatrix4x4::Identity;
-      for (int i = 0; i < 4; ++i)
+      CMatrix4x4 result;
+      for (int row = 0; row < 4; ++row)
       {
-        for (int j = 0; j < 4; ++j)
+        for (int col = 0; col < 4; ++col)
         {
-          Matrix.m[i * 4 + j] = m[i * 4 + 0] * _mMatrix.m[0 * 4 + j] +
-            m[i * 4 + 1] * _mMatrix.m[1 * 4 + j] +
-            m[i * 4 + 2] * _mMatrix.m[2 * 4 + j] +
-            m[i * 4 + 3] * _mMatrix.m[3 * 4 + j];
+          result.m[row][col] = 0.0f;
+          for (int k = 0; k < 4; ++k)
+          {
+            result.m[row][col] += m[row][k] * rhs.m[k][col];
+          }
         }
       }
-      return Matrix;
+      return result;
     }
+
     CMatrix4x4& operator=(const CMatrix4x4& _other)
     {
-      if (this != &_other) 
+      if (this != &_other)
       {
-        std::memcpy(m, _other.m, sizeof(float) * s_iMatrixSize);
+        std::memcpy(m, _other.m, sizeof(float) * (s_iRowSize * s_iColumnSize));
       }
       return *this;
     }
 
-    const float* operator()() const { return m; }
-    float* operator()() { return m; }
+    const float* operator()() const { return &m[0][0]; }
+    float* operator()() { return &m[0][0]; }
 
-    float& operator[](size_t index) { return m[index]; }
-    const float& operator[](size_t index) const { return m[index]; }
+    float& At(size_t row, size_t col) { return m[row][col]; }
+    const float& At(size_t row, size_t col) const { return m[row][col]; }
 
     static CMatrix4x4 CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar);
     static CMatrix4x4 LookAt(const CVector3& _v3Pos, const CVector3& _vTarget, const CVector3& _vUp);
