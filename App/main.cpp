@@ -165,7 +165,7 @@ int main()
         math::CVector3 v3End = v3Pos + (math::CVector3::Forward * 100.0f);
         pEngine->DrawLine(v3Pos, v3End, math::CVector3::Right);
 
-        pEngine->DrawPlane(math::CPlane(math::CVector3(0.0f, 5.0f, 0.0f), math::CVector3::Right), 1.0f, math::CVector3::Forward, render::ERenderMode::SOLID);
+        pEngine->DrawPlane(math::CPlane(math::CVector3(0.0f, 20.0f, 0.0f), math::CVector3::Right), 10.0f, math::CVector3::Forward);
 
         // Throw ray
         collision::CCollisionManager* pCollManager = collision::CCollisionManager::GetInstance();

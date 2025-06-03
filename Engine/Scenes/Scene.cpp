@@ -169,12 +169,7 @@ namespace scene
     // Create plane
     using namespace render::graphics;
     CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-    CPrimitiveUtils::CreatePlane(_oPlane, oPrimitiveData);
-
-    // Set indices
-    oPrimitiveData.m_vctVertexData = CPrimitiveUtils::s_oPlanePrimitive;
-    oPrimitiveData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? 
-    CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices;
+    CPrimitiveUtils::CreatePlane(_oPlane, oPrimitiveData, _eRenderMode);
 
     // Create primitive
     CPrimitive* pPrimitive = m_vctDebugItems.CreateItem(oPrimitiveData, _eRenderMode);

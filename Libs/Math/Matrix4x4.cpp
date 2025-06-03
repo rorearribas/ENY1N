@@ -36,8 +36,8 @@ namespace math
   math::CMatrix4x4 CMatrix4x4::CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar)
   {
     // Calculate tangent
-    float fRadians = math::DegreesToRadians(_fFov);
-    float fTan = tanf(_fFov / 2.0f);
+    float fFovRadians = math::DegreesToRadians(_fFov);
+    float fTan = tanf(fFovRadians / 2.0f);
 
     CMatrix4x4 mMatrix = CMatrix4x4::Identity;
     mMatrix.m[0][0] = 1.0f / (_fAspectRatio * fTan);
@@ -128,6 +128,37 @@ namespace math
     mYawMatrix.m[2][2] = cos(fYaw);
 
     return mRollMatrix * mPitchMatrix * mYawMatrix;
+  }
+  // ------------------------------------
+  math::CMatrix4x4 CMatrix4x4::RotationAxis(const CVector3& _v3Axis, float _fRadians)
+  {
+    float fCos = cosf(_fRadians);
+    float fSin = sinf(_fRadians);
+    float fOffset = 1.0f - fCos; // Using 1.0f, because we are supposing that the axis is normalized
+
+    CMatrix4x4 mRot = CMatrix4x4::Identity;
+
+    mRot.m[0][0] = fCos + _v3Axis.X * _v3Axis.X * fOffset;
+    mRot.m[0][1] = _v3Axis.X * _v3Axis.Y * fOffset - _v3Axis.Z * fSin;
+    mRot.m[0][2] = _v3Axis.X * _v3Axis.Z * fOffset + _v3Axis.Y * fSin;
+    mRot.m[0][3] = 0.0f;
+
+    mRot.m[1][0] = _v3Axis.Y * _v3Axis.X * fOffset + _v3Axis.Z * fSin;
+    mRot.m[1][1] = fCos + _v3Axis.Y * _v3Axis.Y * fOffset;
+    mRot.m[1][2] = _v3Axis.Y * _v3Axis.Z * fOffset - _v3Axis.X * fSin;
+    mRot.m[1][3] = 0.0f;
+
+    mRot.m[2][0] = _v3Axis.Z * _v3Axis.X * fOffset - _v3Axis.Y * fSin;
+    mRot.m[2][1] = _v3Axis.Z * _v3Axis.Y * fOffset + _v3Axis.X * fSin;
+    mRot.m[2][2] = fCos + _v3Axis.Z * _v3Axis.Z * fOffset;
+    mRot.m[2][3] = 0.0f;
+
+    mRot.m[0][3] = 0.0f;
+    mRot.m[1][3] = 0.0f;
+    mRot.m[2][3] = 0.0f;
+    mRot.m[3][3] = 1.0f;
+
+    return mRot;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)

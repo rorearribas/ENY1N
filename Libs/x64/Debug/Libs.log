@@ -1,3 +1,2 @@
 ﻿  Matrix4x4.cpp
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\Math\Matrix4x4.cpp(39,11): warning C4189: 'fRadians': local variable is initialized but not referenced
   Libs.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Libs.lib

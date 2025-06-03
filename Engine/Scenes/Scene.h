@@ -14,12 +14,12 @@ namespace scene
   class CScene
   {
   private:
-    static int constexpr s_iMaxSpotLights = 250;
-    static int constexpr s_iMaxPointLights = 250;
+    static int constexpr s_iMaxSpotLights = 100;
+    static int constexpr s_iMaxPointLights = 100;
 
     static int constexpr s_iMaxModels = 1000;
+    static int constexpr s_iMaxDebugItems = 1000;
     static int constexpr s_iMaxPrimitives = 500;
-    static int constexpr s_iMaxDebugItems = 500;
 
     // Lights
     typedef utils::CFixedPool<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;

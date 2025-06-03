@@ -172,23 +172,38 @@ namespace render
     }
 
     // 3D Plane -> TODO
-    void CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, CPrimitive::SCustomPrimitive& _oVertexData_)
+    void CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, CPrimitive::SCustomPrimitive& _oVertexData_, render::ERenderMode _eRenderMode)
     {
-      // Set vertex data
+      // Fill data
       _oVertexData_.m_vctVertexData = s_oPlanePrimitive;
+      _oVertexData_.m_vctIndices = _eRenderMode == SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
 
+      // Invert indices
       const math::CVector3& v3Normal = _oPlane.GetNormal();
-      math::CVector3 v3Cross = math::CVector3::Cross(v3Normal, s_oPlaneNormal);
-      float fAngle = acosf(s_oPlaneNormal.Dot(v3Normal));
-      UNUSED_VAR(fAngle);
+      if (v3Normal.Dot(s_oPlaneNormal) < 0.0f)
+      {
+        size_t iSize = _eRenderMode == SOLID ? 3 : 2;
+        for (size_t i = 0; i < s_oPlaneIndices.size(); i += iSize)
+        {
+          std::swap(_oVertexData_.m_vctIndices[i], _oVertexData_.m_vctIndices[i + 2]);
+        }
+      }
 
-      if (v3Cross.Magnitude() < math::s_fEpsilon5)
+      math::CVector3 v3Cross = math::CVector3::Cross(v3Normal, s_oPlaneNormal);
+      math::CVector3 v3Dir = math::CVector3::Normalize(v3Cross);
+      if (v3Dir.Magnitude() < math::s_fEpsilon5)
       {
         return;
       }
-      
-      //math::CMatrix4x4 mRotation = math::CMatrix4x4::CreateRotationAxis(v3Cross, fAngle);
-      //mRotation = math::CMatrix4x4::CreateRotationAxis(v3Cross, fAngle);
+
+      // Rotate vertices
+      float fAngle = acosf(s_oPlaneNormal.Dot(v3Normal));
+      math::CMatrix4x4 mRot = math::CMatrix4x4::RotationAxis(v3Dir, fAngle);
+      for (auto& oVertexData : _oVertexData_.m_vctVertexData)
+      {
+        oVertexData.Position = math::CMatrix4x4::Transpose(mRot) * oVertexData.Position;
+        oVertexData.Normal = v3Normal;
+      }
     }
 
     // 3D Sphere
