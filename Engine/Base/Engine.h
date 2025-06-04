@@ -33,8 +33,8 @@ namespace engine
 
     // Debug creation
     void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
-    void DrawPlane(const math::CPlane& _oPlane, float _fSize, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
     void DrawCube(const math::CVector3& _v3Origin, float _fSize, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
+    void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
     void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
 
     // Element creation

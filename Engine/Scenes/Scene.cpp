@@ -46,10 +46,7 @@ namespace scene
     for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
     {
       render::graphics::CPrimitive* pPrimitiveItem = m_vctDebugItems[uIndex];
-      if (pPrimitiveItem)
-      {
-        pPrimitiveItem->DrawPrimitive();
-      }
+      pPrimitiveItem->DrawPrimitive();
     }
     
     // Clean after draw
@@ -158,30 +155,6 @@ namespace scene
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawPlane(const math::CPlane& _oPlane, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
-  {
-    if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
-    {
-      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
-      return;
-    }
-
-    // Create plane
-    using namespace render::graphics;
-    CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-    CPrimitiveUtils::CreatePlane(_oPlane, oPrimitiveData, _eRenderMode);
-
-    // Create primitive
-    CPrimitive* pPrimitive = m_vctDebugItems.CreateItem(oPrimitiveData, _eRenderMode);
-#ifdef _DEBUG
-    assert(pPrimitive); // Sanity check
-#endif
-    pPrimitive->SetPosition(_oPlane.GetPos());
-    pPrimitive->SetScale(math::CVector3::One * _fSize);
-    pPrimitive->UseGlobalLighting(false);
-    pPrimitive->SetColor(_v3Color);
-  }
-  // ------------------------------------
   void CScene::DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
@@ -202,6 +175,30 @@ namespace scene
     pPrimitive->SetScale(math::CVector3::One * _fSize);
     pPrimitive->SetColor(_v3Color);
     pPrimitive->UseGlobalLighting(false);
+  }
+  // ------------------------------------
+  void CScene::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  {
+    if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
+    {
+      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      return;
+    }
+
+    // Create plane
+    using namespace render::graphics;
+    CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
+    CPrimitiveUtils::CreatePlane(_oPlane, oPrimitiveData, _eRenderMode);
+
+    // Create primitive
+    CPrimitive* pPrimitive = m_vctDebugItems.CreateItem(oPrimitiveData, _eRenderMode);
+#ifdef _DEBUG
+    assert(pPrimitive); // Sanity check
+#endif
+    pPrimitive->SetPosition(_oPlane.GetPos());
+    pPrimitive->SetScale(_v3Size);
+    pPrimitive->UseGlobalLighting(false);
+    pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
   void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)

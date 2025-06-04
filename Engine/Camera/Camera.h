@@ -59,9 +59,9 @@ namespace render
     float m_fMovementSpeed = 50.0f;
 
     float m_fFov = 45.0f;
-    float m_fTargetFov = 45.0f;
+    float m_fDesiredFov = 45.0f;
 
-    float m_fFar = 100000.0f;
+    float m_fFar = 10000.0f;
     float m_fNear = 0.01f;
     float m_fAspectRatio = 1.77778f;
 

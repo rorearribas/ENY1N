@@ -53,8 +53,7 @@ namespace math
   math::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _v3Pos, const CVector3& _vTarget, const CVector3& _vUp)
   {
     // Z Axis
-    CVector3 v3Offset = _vTarget - _v3Pos;
-    CVector3 v3Dir = math::CVector3::Normalize(v3Offset);
+    CVector3 v3Dir = math::CVector3::Normalize(_vTarget - _v3Pos);
 
     // X axis
     CVector3 v3Cross = _vUp.Cross(v3Dir);

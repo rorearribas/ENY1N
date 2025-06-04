@@ -11,7 +11,7 @@ namespace game
   class CGameManager : public utils::CSingleton<CGameManager>
   {
   public:
-    static const uint32_t s_uMaxEntities = 1500;
+    static const uint32_t s_uMaxEntities = 10000;
     typedef utils::CFixedPool<CEntity, s_uMaxEntities> TEntitiesList;
 
   public:

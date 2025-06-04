@@ -40,19 +40,19 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawPlane(const math::CPlane& _oPlane, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
-  {
-    if (m_pCurrentScene)
-    {
-      m_pCurrentScene->DrawPlane(_oPlane, _fSize, _v3Color, _eRenderMode);
-    }
-  }
-  // ------------------------------------
   void CSceneManager::DrawCube(const math::CVector3& _v3Origin, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
     {
       m_pCurrentScene->DrawCube(_v3Origin, _fSize, _v3Color, _eRenderMode);
+    }
+  }
+  // ------------------------------------
+  void CSceneManager::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  {
+    if (m_pCurrentScene)
+    {
+      m_pCurrentScene->DrawPlane(_oPlane, _v3Size, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------
