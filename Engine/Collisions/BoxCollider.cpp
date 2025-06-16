@@ -115,15 +115,17 @@ namespace collision
     const math::CVector3& v3RayDir = _oRay.GetDir();
     math::CVector3 v3Delta = v3RayOrigin - GetPosition();
 
-    // Project dir using axis directors from box collider
-    std::vector<math::CVector3> vctAxis = GetAxisDirectors();
+    const std::vector<math::CVector3> vctAxis = GetAxisDirectors();
     math::CVector3 v3HalfSize = (m_v3Max - m_v3Min) * 0.5f;
+
     float fMinValue = -FLT_MAX;
     float fMaxValue = _fMaxDistance;
+    int iHitAxis = -1;
 
-    for (uint32_t uIndex = 0; uIndex < vctAxis.size(); uIndex++)
+    // Standard slab algorithm
+    for (uint32_t uIndex = 0; uIndex < 3; ++uIndex)
     {
-      math::CVector3 v3Axis = vctAxis[uIndex];
+      const math::CVector3& v3Axis = vctAxis[uIndex];
       float fDotDelta = math::CVector3::Dot(v3Axis, v3Delta);
       float fDotRayDir = math::CVector3::Dot(v3Axis, v3RayDir);
 
@@ -132,12 +134,18 @@ namespace collision
         float t1 = (-fDotDelta - v3HalfSize[uIndex]) / fDotRayDir;
         float t2 = (-fDotDelta + v3HalfSize[uIndex]) / fDotRayDir;
 
-        if (t1 > t2) std::swap(t1, t2);
+        if (t1 > t2)
+        {
+          std::swap(t1, t2);
+        }
 
-        fMinValue = math::Max(fMinValue, t1);
+        if (t1 > fMinValue)
+        {
+          fMinValue = t1;
+          iHitAxis = static_cast<int>(uIndex);
+        }
+
         fMaxValue = math::Min(fMaxValue, t2);
-
-        // Invalid intersection!
         if (fMinValue > fMaxValue)
         {
           return false;
@@ -145,34 +153,31 @@ namespace collision
       }
       else
       {
-        // Invalid ray
-        if (-fDotDelta - v3HalfSize[uIndex] > 0.0f || -fDotDelta + v3HalfSize[uIndex] < 0.0f)
+        // Check parallel ray
+        if (fabs(fDotDelta) > v3HalfSize[uIndex])
         {
           return false;
         }
       }
     }
 
-    // Set values
-    _oHitEvent_.Distance = fMinValue;
-    _oHitEvent_.ImpactPoint = v3RayOrigin + v3RayDir * fMinValue;
-
-    math::CVector3 v3LocalHit = v3Delta + v3RayDir * fMinValue;
-    math::CVector3 v3Normal = math::CVector3::Zero;
-
-    for (uint32_t uIndex = 0; uIndex < 3; ++uIndex)
+    // Set valid distance
+    float fHitDistance = fMinValue >= 0.0f ? fMinValue : fMaxValue;
+    if (fHitDistance < 0.0f || fHitDistance > _fMaxDistance)
     {
-      if (fabsf(v3LocalHit[uIndex] - v3HalfSize[uIndex]) < math::s_fEpsilon3)
-      {
-        v3Normal = vctAxis[uIndex];
-      }
-      else if (fabsf(v3LocalHit[uIndex] + v3HalfSize[uIndex]) < math::s_fEpsilon3)
-      {
-        v3Normal = -vctAxis[uIndex];
-      }
+      return false;
     }
-    _oHitEvent_.Normal = v3Normal;
+
+    // Apply hit data
     _oHitEvent_.Object = GetOwner();
+    _oHitEvent_.Distance = fHitDistance;
+    _oHitEvent_.ImpactPoint = v3RayOrigin + v3RayDir * fHitDistance;
+
+    if (iHitAxis >= 0)
+    {
+      float fDot = math::CVector3::Dot(vctAxis[iHitAxis], v3RayDir);
+      _oHitEvent_.Normal = (fDot < 0.0f) ? vctAxis[iHitAxis] : -vctAxis[iHitAxis];
+    }
 
     return true;
   }

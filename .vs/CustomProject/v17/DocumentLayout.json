@@ -7,12 +7,16 @@
       "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Collisions\\BoxCollider.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Math\\Vector3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Math\\Vector3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Collisions\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Math\\Vector3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Math\\Vector3.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Math\\Vector3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{5491B832-E865-4E15-8D92-0DB5FF91CAF7}|Libs\\Libs.vcxproj|solutionrelative:Libs\\Math\\Vector3.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Utils\\Ray.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -25,10 +29,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{D847EF57-06E7-41AD-B159-B4B8B91D8B72}|App\\App.vcxproj|solutionrelative:App\\main.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|solutionrelative:Engine\\Collisions\\Collider.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}|Engine\\Engine.vcxproj|C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\CollisionManager.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -240,7 +240,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 228,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -248,20 +248,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Vector3.cpp",
-              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Math\\Vector3.cpp",
-              "RelativeDocumentMoniker": "Libs\\Math\\Vector3.cpp",
-              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Math\\Vector3.cpp",
-              "RelativeToolTip": "Libs\\Math\\Vector3.cpp",
-              "ViewState": "AgIAACoAAAAAAAAAAAAAAEIAAAADAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-06-16T18:00:42.395Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 3,
               "Title": "Vector3.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Math\\Vector3.h",
               "RelativeDocumentMoniker": "Libs\\Math\\Vector3.h",
@@ -280,7 +267,7 @@
               "RelativeDocumentMoniker": "Engine\\Collisions\\BoxCollider.cpp",
               "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\BoxCollider.cpp",
               "RelativeToolTip": "Engine\\Collisions\\BoxCollider.cpp",
-              "ViewState": "AgIAAJMAAAAAAAAAAAD4v6IAAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAAJMAAAAAAAAAAAAowKMAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-05-30T17:13:48.843Z",
               "EditorCaption": ""
@@ -417,7 +404,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "main.cpp",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\App\\main.cpp",
               "RelativeDocumentMoniker": "App\\main.cpp",
@@ -430,7 +417,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "Ray.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Utils\\Ray.h",
               "RelativeDocumentMoniker": "Engine\\Utils\\Ray.h",
@@ -482,20 +469,33 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 1,
               "Title": "Collider.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\Collider.h",
               "RelativeDocumentMoniker": "Engine\\Collisions\\Collider.h",
               "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\Collider.h",
               "RelativeToolTip": "Engine\\Collisions\\Collider.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAADwvx8AAAASAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvxwAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-05-30T17:11:05.272Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 2,
+              "Title": "Vector3.cpp",
+              "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Math\\Vector3.cpp",
+              "RelativeDocumentMoniker": "Libs\\Math\\Vector3.cpp",
+              "ToolTip": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Libs\\Math\\Vector3.cpp",
+              "RelativeToolTip": "Libs\\Math\\Vector3.cpp",
+              "ViewState": "AgIAACoAAAAAAAAAAAAAAEIAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-06-16T18:00:42.395Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
               "Title": "CollisionManager.h",
               "DocumentMoniker": "C:\\Users\\Rub\u00E9n\\Documents\\GitHub\\ENY1N\\Engine\\Collisions\\CollisionManager.h",
               "RelativeDocumentMoniker": "Engine\\Collisions\\CollisionManager.h",
