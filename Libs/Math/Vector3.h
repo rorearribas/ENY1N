@@ -45,6 +45,8 @@ namespace math
     bool operator!=(const CVector3& other) const { return !(*this == other); }
     bool operator==(const CVector3& _v3) const;
 
+    float operator[](uint32_t _uIndex);
+
     static bool IsZero(const CVector3& _v3);
     bool IsZero() const;
 

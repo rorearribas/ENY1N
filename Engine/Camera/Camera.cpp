@@ -149,7 +149,7 @@ namespace render
     math::CMatrix4x4 mRotationMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
 
     // Calculate dir
-    m_v3Dir = mRotationMatrix * math::CVector3::Forward;
+    m_v3Dir = math::CVector3::Normalize(mRotationMatrix * math::CVector3::Forward);
     math::CVector3 v3TargetPos = m_v3Pos + m_v3Dir;
 
     // Calculate up direction
@@ -161,51 +161,84 @@ namespace render
   // ------------------------------------
   void CCamera::UpdateFrustum()
   {
-    float fFovRadians = math::DegreesToRadians(m_fDesiredFov);
-    float fTan = tanf(fFovRadians / 2.0f);
+    //float fFovRadians = math::DegreesToRadians(m_fDesiredFov);
+    //float fTan = tanf(fFovRadians / 2.0f);
 
-    // Far plane
-    float fTestFar = 500.0f;
-    float fFarHeight = (fTan * fTestFar) * 2.0f;
-    float fFarWidth = fFarHeight * m_fAspectRatio;
+    //// Far plane
+    //float fFarHeight = (fTan * m_fFar) * 2.0f;
+    //float fFarWidth = fFarHeight * m_fAspectRatio;
 
-    // Near plane
-    float fTestNear = 100.0f;
-    float fNearHeight = (fTan * fTestNear) * 2.0f;
-    float fNearWidth = fNearHeight * m_fAspectRatio;
+    //// Near plane
+    //float fNearHeight = (fTan * m_fNear) * 2.0f;
+    //float fNearWidth = fNearHeight * m_fAspectRatio;
 
-    // Top
-    math::CVector3 v3FarTopLeft = { -fFarWidth * 0.5f,  fFarHeight * 0.5f, fTestFar };
-    math::CVector3 v3FarTopRight = { fFarWidth * 0.5f,  fFarHeight * 0.5f, fTestFar };
-    math::CVector3 v3FarBottomLeft = { -fFarWidth * 0.5f, -fFarHeight * 0.5f, fTestFar };
-    math::CVector3 v3FarBottomRight = { fFarWidth * 0.5f, -fFarHeight * 0.5f, fTestFar };
+    //// Top
+    //math::CVector3 v3FarTopLeft = { -fFarWidth * 0.5f,  fFarHeight * 0.5f, fTestFar };
+    //math::CVector3 v3FarTopRight = { fFarWidth * 0.5f,  fFarHeight * 0.5f, fTestFar };
+    //math::CVector3 v3FarBottomLeft = { -fFarWidth * 0.5f, -fFarHeight * 0.5f, fTestFar };
+    //math::CVector3 v3FarBottomRight = { fFarWidth * 0.5f, -fFarHeight * 0.5f, fTestFar };
 
-    // Near
-    math::CVector3 v3NearTopLeft = { -fNearWidth * 0.5f,  fNearHeight * 0.5f, fTestNear };
-    math::CVector3 v3NearTopRight = { fNearWidth * 0.5f,  fNearHeight * 0.5f, fTestNear };
-    math::CVector3 v3NearBottomLeft = { -fNearWidth * 0.5f, -fNearHeight * 0.5f, fTestNear };
-    math::CVector3 v3NearBottomRight = { fNearWidth * 0.5f, -fNearHeight * 0.5f, fTestNear };
+    //// Near
+    //math::CVector3 v3NearTopLeft = { -fNearWidth * 0.5f,  fNearHeight * 0.5f, fTestNear };
+    //math::CVector3 v3NearTopRight = { fNearWidth * 0.5f,  fNearHeight * 0.5f, fTestNear };
+    //math::CVector3 v3NearBottomLeft = { -fNearWidth * 0.5f, -fNearHeight * 0.5f, fTestNear };
+    //math::CVector3 v3NearBottomRight = { fNearWidth * 0.5f, -fNearHeight * 0.5f, fTestNear };
 
     // Draw near
-    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    math::CVector3 v3Origin(0.0f, 20.0f, 0.0f);
-    pEngine->DrawLine(v3Origin, v3Origin + v3NearTopLeft, math::CVector3::Forward);
-    pEngine->DrawLine(v3Origin, v3Origin + v3NearTopRight, math::CVector3::Forward);
-    pEngine->DrawLine(v3Origin, v3Origin + v3NearBottomLeft, math::CVector3::Forward);
-    pEngine->DrawLine(v3Origin, v3Origin + v3NearBottomRight, math::CVector3::Forward);
+    //engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    //math::CVector3 v3Origin(0.0f, 20.0f, 0.0f);
 
-    // Draw near plane
-    pEngine->DrawPlane(math::CPlane(v3Origin + (math::CVector3::Forward * fTestNear), math::CVector3::Forward), 
-    math::CVector3(fNearWidth, fNearHeight, 1.0f), math::CVector3::Forward);
+    //// Get valid axis
+    //math::CVector3 v3Right = math::CVector3::Cross(math::CVector3::Up, m_v3Dir);
+    //v3Right.Normalize();
 
-    // Draw far
-    pEngine->DrawLine(v3Origin + v3NearTopLeft, v3Origin + v3FarTopLeft, math::CVector3::Right);
-    pEngine->DrawLine(v3Origin + v3NearTopRight, v3Origin + v3FarTopRight, math::CVector3::Right);
-    pEngine->DrawLine(v3Origin + v3NearBottomLeft, v3Origin + v3FarBottomLeft, math::CVector3::Right);
-    pEngine->DrawLine(v3Origin + v3NearBottomRight, v3Origin + v3FarBottomRight, math::CVector3::Right);
+    //math::CVector3 v3Up = math::CVector3::Cross(m_v3Dir, v3Right);
+    //v3Up.Normalize();
 
-    // Draw far plane
-    pEngine->DrawPlane(math::CPlane(v3Origin + (math::CVector3::Forward * fTestFar), math::CVector3::Forward), 
-    math::CVector3(fFarWidth, fFarHeight, 1.0f), math::CVector3::Right);
+    //math::CVector3 v3CenterNear = m_v3Pos + m_v3Dir * m_fNear;
+    //math::CVector3 v3NearTopLeft = v3CenterNear + v3Up * (fNearHeight * 0.5f) - v3Right * (fNearWidth * 0.5f);
+    //math::CVector3 v3NearTopRight = v3CenterNear + v3Up * (fNearHeight * 0.5f) + v3Right * (fNearWidth * 0.5f);
+    //math::CVector3 v3NearBottomLeft = v3CenterNear - v3Up * (fNearHeight * 0.5f) - v3Right * (fNearWidth * 0.5f);
+    //math::CVector3 v3NearBottomRight = v3CenterNear - v3Up * (fNearHeight * 0.5f) + v3Right * (fNearWidth * 0.5f);
+
+    //// Far
+    //math::CVector3 v3CenterFar = m_v3Pos + m_v3Dir * m_fFar;
+    //math::CVector3 v3FarTopLeft = v3CenterFar + v3Up * (fFarHeight * 0.5f) - v3Right * (fFarWidth * 0.5f);
+    //math::CVector3 v3FarTopRight = v3CenterFar + v3Up * (fFarHeight * 0.5f) + v3Right * (fFarWidth * 0.5f);
+    //math::CVector3 v3FarBottomLeft = v3CenterFar - v3Up * (fFarHeight * 0.5f) - v3Right * (fFarWidth * 0.5f);
+    //math::CVector3 v3FarBottomRight = v3CenterFar - v3Up * (fFarHeight * 0.5f) + v3Right * (fFarWidth * 0.5f);
+
+    //// Near plane
+    //pEngine->DrawLine(v3NearTopLeft, v3NearTopRight, math::CVector3::Right);
+    //pEngine->DrawLine(v3NearTopRight, v3NearBottomRight, math::CVector3::Right);
+    //pEngine->DrawLine(v3NearBottomRight, v3NearBottomLeft, math::CVector3::Right);
+    //pEngine->DrawLine(v3NearBottomLeft, v3NearTopLeft, math::CVector3::Right);
+
+    //// Far plane
+    //pEngine->DrawLine(v3FarTopLeft, v3FarTopRight, math::CVector3::Up);
+    //pEngine->DrawLine(v3FarTopRight, v3FarBottomRight, math::CVector3::Up);
+    //pEngine->DrawLine(v3FarBottomRight, v3FarBottomLeft, math::CVector3::Up);
+    //pEngine->DrawLine(v3FarBottomLeft, v3FarTopLeft, math::CVector3::Up);
+
+    //// Connect near and far planes
+    //pEngine->DrawLine(v3NearTopLeft, v3FarTopLeft, math::CVector3::Forward);
+    //pEngine->DrawLine(v3NearTopRight, v3FarTopRight, math::CVector3::Forward);
+    //pEngine->DrawLine(v3NearBottomLeft, v3FarBottomLeft, math::CVector3::Forward);
+    //pEngine->DrawLine(v3NearBottomRight, v3FarBottomRight, math::CVector3::Forward);
+
+    //pEngine->DrawLine(m_v3Pos, m_v3Pos + v3NearTopLeft, math::CVector3::Forward);
+    //pEngine->DrawLine(m_v3Pos, m_v3Pos + v3NearTopRight, math::CVector3::Forward);
+    //pEngine->DrawLine(m_v3Pos, m_v3Pos + v3NearBottomLeft, math::CVector3::Forward);
+    //pEngine->DrawLine(m_v3Pos, m_v3Pos + v3NearBottomRight, math::CVector3::Forward);
+
+    //// Draw near plane
+    //pEngine->DrawPlane(math::CPlane(m_v3Pos + (math::CVector3::Forward * fTestNear), math::CVector3::Forward),
+    //math::CVector3(fNearWidth, fNearHeight, 1.0f), math::CVector3::Forward);
+
+    //// Draw far
+    //pEngine->DrawLine(m_v3Pos + v3NearTopLeft, m_v3Pos + v3FarTopLeft, math::CVector3::Right);
+    //pEngine->DrawLine(m_v3Pos + v3NearTopRight, m_v3Pos + v3FarTopRight, math::CVector3::Right);
+    //pEngine->DrawLine(m_v3Pos + v3NearBottomLeft, m_v3Pos + v3FarBottomLeft, math::CVector3::Right);
+    //pEngine->DrawLine(m_v3Pos + v3NearBottomRight, m_v3Pos + v3FarBottomRight, math::CVector3::Right);
   }
 }

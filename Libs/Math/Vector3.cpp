@@ -53,6 +53,19 @@ namespace math
       std::fabs(this->Z - _v3.Z) < math::s_fEpsilon5;
   }
   // ------------------------------------
+  float CVector3::operator[](uint32_t _uIndex)
+  {
+    switch (_uIndex)
+    {
+    case 0: return X;
+    case 1: return Y;
+    case 2: return Z;
+    default:
+      break;
+    }
+    return FLT_MAX;
+  }
+  // ------------------------------------
   bool CVector3::IsZero(const CVector3& _v3)
   {
     return _v3.IsZero();

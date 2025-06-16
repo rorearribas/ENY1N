@@ -81,12 +81,12 @@ namespace collision
 
     // Calculate dir
     const math::CVector3& v3SphereCenter = GetCenter();
-    math::CVector3 v3Dir = v3SphereCenter - v3OBBCenter;
+    math::CVector3 v3Offset = v3SphereCenter - v3OBBCenter;
 
     // Project dir using axis directors from box collider
-    float fProjX = math::CVector3::Dot(v3Dir, v3Axis[0]); // Axis X
-    float fProjY = math::CVector3::Dot(v3Dir, v3Axis[1]); // Axis Y
-    float fProjZ = math::CVector3::Dot(v3Dir, v3Axis[2]); // Axis Z
+    float fProjX = math::CVector3::Dot(v3Offset, v3Axis[0]); // Axis X
+    float fProjY = math::CVector3::Dot(v3Offset, v3Axis[1]); // Axis Y
+    float fProjZ = math::CVector3::Dot(v3Offset, v3Axis[2]); // Axis Z
 
     // Clamp axis
     float fClampedX = math::Clamp(fProjX, -v3HalfSize.X, v3HalfSize.X);
@@ -94,7 +94,12 @@ namespace collision
     float fClampedZ = math::Clamp(fProjZ, -v3HalfSize.Z, v3HalfSize.Z);
 
     // Compute closest point
-    math::CVector3 v3ClosestPoint = (v3OBBCenter + v3Axis[0] * fClampedX) + (v3Axis[1] * fClampedY) + (v3Axis[2] * fClampedZ);
+    math::CVector3 v3ClosestPoint =
+    {
+      (v3OBBCenter + v3Axis[0] * fClampedX) + // X
+      (v3Axis[1] * fClampedY) + // Y
+      (v3Axis[2] * fClampedZ) // Z
+    };
 
     // Check distance
     float fRadius = GetRadius();

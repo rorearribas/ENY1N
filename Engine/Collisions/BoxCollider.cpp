@@ -4,6 +4,7 @@
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/Math/Math.h"
 #include <cassert>
+#include "Libs/Math/Vector3.h"
 
 namespace collision
 {
@@ -108,39 +109,72 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CBoxCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& /*_oHitEvent_*/, const float& /*_fMaxDistance*/)
+  bool CBoxCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
   {
-    math::CVector3 v3Dir = math::CVector3::Normalize(math::CVector3(GetPosition() - _oRay.GetOrigin()));
-    float fDotA = math::CVector3::Dot(v3Dir, _oRay.GetDir());
-    UNUSED_VAR(fDotA);
+    const math::CVector3& v3RayOrigin = _oRay.GetOrigin();
+    const math::CVector3& v3RayDir = _oRay.GetDir();
+    math::CVector3 v3Delta = v3RayOrigin - GetPosition();
 
-    std::vector<math::CVector3> vctAxis =
+    // Project dir using axis directors from box collider
+    std::vector<math::CVector3> vctAxis = GetAxisDirectors();
+    math::CVector3 v3HalfSize = (m_v3Max - m_v3Min) * 0.5f;
+    float fMinValue = -FLT_MAX;
+    float fMaxValue = _fMaxDistance;
+
+    for (uint32_t uIndex = 0; uIndex < vctAxis.size(); uIndex++)
     {
-      // Normals 
-      this->m_v3Right,
-      this->m_v3Up,
-      this->m_v3Forward,
+      math::CVector3 v3Axis = vctAxis[uIndex];
+      float fDotDelta = math::CVector3::Dot(v3Axis, v3Delta);
+      float fDotRayDir = math::CVector3::Dot(v3Axis, v3RayDir);
 
-      // Cross Product
-      math::CVector3::Cross(this->m_v3Right, v3Dir),
-      math::CVector3::Cross(this->m_v3Right, v3Dir),
-      math::CVector3::Cross(this->m_v3Right, v3Dir),
-      math::CVector3::Cross(this->m_v3Up, v3Dir),
-      math::CVector3::Cross(this->m_v3Up, v3Dir),
-      math::CVector3::Cross(this->m_v3Up, v3Dir),
-      math::CVector3::Cross(this->m_v3Forward, v3Dir),
-      math::CVector3::Cross(this->m_v3Forward, v3Dir),
-      math::CVector3::Cross(this->m_v3Forward, v3Dir)
-    };
+      if (fabs(fDotRayDir) > math::s_fEpsilon3)
+      {
+        float t1 = (-fDotDelta - v3HalfSize[uIndex]) / fDotRayDir;
+        float t2 = (-fDotDelta + v3HalfSize[uIndex]) / fDotRayDir;
 
-    /* for (uint32_t uIndex = 0; uIndex < vctAxis.size(); uIndex++)
-     {
-       engine::CEngine* pEngine = engine::CEngine::GetInstance();
-       math::CVector3 v3Axis = vctAxis[uIndex];
-       pEngine->DrawLine(GetPosition(), GetPosition() + (v3Axis * 5.0f), math::CVector3::Right);
-     }*/
+        if (t1 > t2) std::swap(t1, t2);
 
-    return false;
+        fMinValue = math::Max(fMinValue, t1);
+        fMaxValue = math::Min(fMaxValue, t2);
+
+        // Invalid intersection!
+        if (fMinValue > fMaxValue)
+        {
+          return false;
+        }
+      }
+      else
+      {
+        // Invalid ray
+        if (-fDotDelta - v3HalfSize[uIndex] > 0.0f || -fDotDelta + v3HalfSize[uIndex] < 0.0f)
+        {
+          return false;
+        }
+      }
+    }
+
+    // Set values
+    _oHitEvent_.Distance = fMinValue;
+    _oHitEvent_.ImpactPoint = v3RayOrigin + v3RayDir * fMinValue;
+
+    math::CVector3 v3LocalHit = v3Delta + v3RayDir * fMinValue;
+    math::CVector3 v3Normal = math::CVector3::Zero;
+
+    for (uint32_t uIndex = 0; uIndex < 3; ++uIndex)
+    {
+      if (fabsf(v3LocalHit[uIndex] - v3HalfSize[uIndex]) < math::s_fEpsilon3)
+      {
+        v3Normal = vctAxis[uIndex];
+      }
+      else if (fabsf(v3LocalHit[uIndex] + v3HalfSize[uIndex]) < math::s_fEpsilon3)
+      {
+        v3Normal = -vctAxis[uIndex];
+      }
+    }
+    _oHitEvent_.Normal = v3Normal;
+    _oHitEvent_.Object = GetOwner();
+
+    return true;
   }
   // ------------------------------------
   void CBoxCollider::RecalculateCollider()
@@ -279,12 +313,12 @@ namespace collision
 
     // Calculate dir
     const math::CVector3& v3SphereCenter = _pOther->GetCenter();
-    math::CVector3 v3Dir = v3SphereCenter - v3OBBCenter;
+    math::CVector3 v3Offset = v3SphereCenter - v3OBBCenter;
 
     // Project dir using axis directors from box collider
-    float fProjX = math::CVector3::Dot(v3Dir, v3Axis[0]); // Axis X
-    float fProjY = math::CVector3::Dot(v3Dir, v3Axis[1]); // Axis Y
-    float fProjZ = math::CVector3::Dot(v3Dir, v3Axis[2]); // Axis Z
+    float fProjX = math::CVector3::Dot(v3Offset, v3Axis[0]); // Axis X
+    float fProjY = math::CVector3::Dot(v3Offset, v3Axis[1]); // Axis Y
+    float fProjZ = math::CVector3::Dot(v3Offset, v3Axis[2]); // Axis Z
 
     // Clamp axis
     float fClampedX = math::Clamp(fProjX, -v3HalfSize.X, v3HalfSize.X);
@@ -292,7 +326,12 @@ namespace collision
     float fClampedZ = math::Clamp(fProjZ, -v3HalfSize.Z, v3HalfSize.Z);
 
     // Compute closest point
-    math::CVector3 v3ClosestPoint = (v3OBBCenter + v3Axis[0] * fClampedX) + (v3Axis[1] * fClampedY) + (v3Axis[2] * fClampedZ);
+    math::CVector3 v3ClosestPoint = 
+    {
+        (v3OBBCenter + v3Axis[0] * fClampedX) + // X
+        (v3Axis[1] * fClampedY) + // Y
+        (v3Axis[2] * fClampedZ) // Z
+    };
 
     // Check distance
     float fRadius = _pOther->GetRadius();
