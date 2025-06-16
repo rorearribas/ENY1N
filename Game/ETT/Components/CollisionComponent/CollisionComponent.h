@@ -17,15 +17,15 @@ namespace game
     virtual ~CCollisionComponent() { Clean(); }
 
     void CreateCollider(collision::EColliderType _eColliderType);
-    collision::CCollider* const GetCollider() { return m_pCollider; }
+    inline collision::CCollider* const GetCollider() { return m_pCollider; }
 
     void SetPosition(const math::CVector3& _v3Position);
     const math::CVector3& GetPosition() const;
     void SetRotation(const math::CVector3& _v3Rotation);
     const math::CVector3& GetRotation() const;
 
-    void SetDebugMode(bool _bEnabled) { m_bDebugMode = _bEnabled; }
-    const bool& IsDebugEnabled() const { return m_bDebugMode; }
+    inline void SetDebugMode(bool _bEnabled) { m_bDebugMode = _bEnabled; }
+    inline const bool IsDebugEnabled() const { return m_bDebugMode; }
 
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;

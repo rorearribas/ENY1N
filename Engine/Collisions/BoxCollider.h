@@ -18,7 +18,7 @@ namespace collision
     virtual void RecalculateCollider() override;
 
     inline void SetOBBEnabled(bool _bEnabled) { m_bOBBEnabled = _bEnabled; }
-    inline const bool& IsOBBEnabled() const { return m_bOBBEnabled; }
+    inline bool IsOBBEnabled() const { return m_bOBBEnabled; }
 
     inline const math::CVector3& GetSize() const { return m_v3Size; }
     inline void SetSize(const math::CVector3& _v3Size) { m_v3Size = _v3Size; RecalculateCollider(); }

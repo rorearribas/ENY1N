@@ -14,10 +14,10 @@ namespace game
     virtual ~CRigidbodyComponent() { Clean(); }
 
     void SetRigidbodyType(physics::ERigidbodyType _eRigidbodyType);
-    const physics::ERigidbodyType& GetRigidbodyType() const { return m_pRigidbody->GetRigidbodyType(); }
+    inline const physics::ERigidbodyType& GetRigidbodyType() const { return m_pRigidbody->GetRigidbodyType(); }
 
-    const float& GetMass() const { return m_pRigidbody->GetMass(); }
-    void SetMass(float _fMass) { m_pRigidbody->SetMass(_fMass); }
+    inline const float GetMass() const { return m_pRigidbody->GetMass(); }
+    inline void SetMass(float _fMass) { m_pRigidbody->SetMass(_fMass); }
 
   protected:
     virtual void OnCollisionEnter(const collision::SHitEvent&) override;

@@ -1,5 +1,19 @@
-﻿  BoxCollider.cpp
+﻿  Engine.cpp
+  Camera.cpp
+  BoxCollider.cpp
+  CapsuleCollider.cpp
   CollisionManager.cpp
   SphereCollider.cpp
+  InputManager.cpp
+  PhysicsManager.cpp
+  Rigidbody.cpp
+  Model.cpp
+  Primitive.cpp
+  PrimitiveUtils.cpp
+  Render.cpp
+  Scene.cpp
+  SceneManager.cpp
+  Plane.cpp
+  Ray.cpp
   Generating Code...
   Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Debug\Engine.lib

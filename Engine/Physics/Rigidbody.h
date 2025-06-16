@@ -19,22 +19,22 @@ namespace physics
     ~CRigidbody() {}
 
     void SetRigidbodyType(ERigidbodyType _eRigidbodyType);
-    const ERigidbodyType& GetRigidbodyType() const { return m_eRigidbodyType; }
-    void SetCurrentState(ERigidbodyState _eRigidbodyState) { m_eRidibodyState = _eRigidbodyState; }
-    const ERigidbodyState& GetRigidbodyState() const { return m_eRidibodyState; }
+    inline const ERigidbodyType& GetRigidbodyType() const { return m_eRigidbodyType; }
+    inline void SetCurrentState(ERigidbodyState _eRigidbodyState) { m_eRidibodyState = _eRigidbodyState; }
+    inline const ERigidbodyState& GetRigidbodyState() const { return m_eRidibodyState; }
 
     void AddForce(const math::CVector3& _v3Force);
-    const math::CVector3& GetAcceleration() { return m_v3Acceleration; }
+    inline const math::CVector3& GetAcceleration() { return m_v3Acceleration; }
     void AddTorque(const math::CVector3& _v3Torque);
-    const math::CVector3& GetTorque() const { return m_v3Torque; }
+    inline const math::CVector3& GetTorque() const { return m_v3Torque; }
 
-    void SetAngularVelocity(const math::CVector3& _v3Velocity) { m_v3AngularVelocity = _v3Velocity; }
-    const math::CVector3& GetAngularVelocity() const { return m_v3AngularVelocity; }
-    void SetVelocity(const math::CVector3& _v3Velocity) { m_v3Velocity = _v3Velocity; }
-    const math::CVector3& GetVelocity() { return m_v3Velocity; }
+    inline void SetAngularVelocity(const math::CVector3& _v3Velocity) { m_v3AngularVelocity = _v3Velocity; }
+    inline const math::CVector3& GetAngularVelocity() const { return m_v3AngularVelocity; }
+    inline void SetVelocity(const math::CVector3& _v3Velocity) { m_v3Velocity = _v3Velocity; }
+    inline const math::CVector3& GetVelocity() { return m_v3Velocity; }
 
-    void SetMass(float _fValue) { m_fMass = _fValue; }
-    const float& GetMass() const { return m_fMass; }
+    inline void SetMass(float _fValue) { m_fMass = _fValue; }
+    inline const float GetMass() const { return m_fMass; }
 
     // Notifications
     void SetOnVelocityChangedDelegate(const TOnVelocityChangedDelegate& _oDelegate) { m_OnVelocityChangedDelegate = _oDelegate; }

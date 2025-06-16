@@ -36,7 +36,7 @@ namespace scene
 
     const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
     void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
-    const bool& IsEnabled() const { return m_bEnabled; }
+    const bool IsEnabled() const { return m_bEnabled; }
 
     // Debug creation
     void DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
