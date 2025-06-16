@@ -188,12 +188,6 @@ namespace collision
     ComputeExtents();
   }
   // ------------------------------------
-  void CBoxCollider::SetSize(const math::CVector3& _v3Size)
-  {
-    m_v3Size = _v3Size;
-    RecalculateCollider();
-  }
-  // ------------------------------------
   std::vector<math::CVector3> CBoxCollider::GetAxisDirectors() const
   {
     return std::vector<math::CVector3> { m_v3Right, m_v3Up, m_v3Forward };

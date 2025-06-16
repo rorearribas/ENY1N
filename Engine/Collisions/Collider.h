@@ -21,6 +21,7 @@ namespace collision
   {
     BOX_COLLIDER,
     SPHERE_COLLIDER,
+    CAPSULE_COLLIDER,
     INVALID
   };
 
@@ -49,18 +50,18 @@ namespace collision
     virtual bool IntersectRay(const physics::CRay&, collision::SHitEvent&, const float&) = 0;
     virtual void RecalculateCollider() = 0;
 
-    void* GetOwner() const { return m_pOwner; }
-    const collision::EColliderType& GetType() const { return m_eColliderType; }
+    inline void* GetOwner() const { return m_pOwner; }
+    inline const collision::EColliderType& GetType() const { return m_eColliderType; }
 
-    void SetCollisionMask(const ECollisionMask& _eCollisionMask) { m_eCollisionMask = _eCollisionMask; }
-    const collision::ECollisionMask& GetCollisionMask() const { return m_eCollisionMask; }
+    inline void SetCollisionMask(const ECollisionMask& _eCollisionMask) { m_eCollisionMask = _eCollisionMask; }
+    inline const collision::ECollisionMask& GetCollisionMask() const { return m_eCollisionMask; }
 
-    const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-    void SetPosition(const math::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }
-    const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-    void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
-    const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
-    void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
+    inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+    inline void SetPosition(const math::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }
+    inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
+    inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
+    inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+    inline void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
 
     // Notifications
     void SetOnCollisionEnter(const TOnCollisionEvent& _oDelegate) { m_oOnCollisionEnter = _oDelegate; }

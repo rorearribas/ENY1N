@@ -30,6 +30,7 @@ c:\users\rubén\documents\github\eny1n\engine\x64\debug\scenemanager.obj
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\rigidbody.obj
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\resourcemanager.obj
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\renderwindow.obj
+c:\users\rubén\documents\github\eny1n\engine\x64\debug\capsulecollider.obj
 c:\users\rubén\documents\github\eny1n\engine\shaders\standard\forwardpixelshader.h
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\forwardpixelshader.cso
 c:\users\rubén\documents\github\eny1n\engine\shaders\standard\forwardvertexshader.h
@@ -40,9 +41,6 @@ c:\users\rubén\documents\github\eny1n\engine\shaders\primitive\vertexshader.h
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\vertexshader.cso
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\engine.lib
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\boxcollider.obj.enc
-c:\users\rubén\documents\github\eny1n\engine\x64\debug\camera.obj.enc
-c:\users\rubén\documents\github\eny1n\engine\x64\debug\scene.obj.enc
-c:\users\rubén\documents\github\eny1n\engine\x64\debug\spherecollider.obj.enc
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\engine.tlog\cl.command.1.tlog
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\engine.tlog\cl.items.tlog
 c:\users\rubén\documents\github\eny1n\engine\x64\debug\engine.tlog\cl.read.1.tlog

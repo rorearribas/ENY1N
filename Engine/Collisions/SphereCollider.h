@@ -16,10 +16,10 @@ namespace collision
     virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
-    void SetCenter(const math::CVector3& _v3Center) { m_v3Center = _v3Center; }
-    const math::CVector3& GetCenter() const { return m_v3Center; }
-    void SetRadius(float _fRadius) { m_fRadius = _fRadius; }
-    const float& GetRadius() const { return m_fRadius;}
+    inline void SetCenter(const math::CVector3& _v3Center) { m_v3Center = _v3Center; }
+    inline const math::CVector3& GetCenter() const { return m_v3Center; }
+    inline void SetRadius(float _fRadius) { m_fRadius = _fRadius; }
+    inline const float& GetRadius() const { return m_fRadius;}
 
   private:
     bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;

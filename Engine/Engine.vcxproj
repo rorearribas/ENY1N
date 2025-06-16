@@ -145,6 +145,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Collisions\CapsuleCollider.h" />
     <ClInclude Include="Collisions\CollisionManager.h" />
     <ClInclude Include="Managers\MemoryTracker.h" />
     <ClInclude Include="Physics\PhysicsManager.h" />
@@ -183,6 +184,7 @@
     <ClInclude Include="Collisions\SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Collisions\CapsuleCollider.cpp" />
     <ClCompile Include="Collisions\CollisionManager.cpp" />
     <ClCompile Include="Managers\MemoryTracker.cpp" />
     <ClCompile Include="Physics\PhysicsManager.cpp" />
