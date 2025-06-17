@@ -1,8 +1,4 @@
 c:\users\rubén\documents\github\eny1n\libs\x64\release\libs.pdb
-c:\users\rubén\documents\github\eny1n\libs\x64\release\transform.obj
-c:\users\rubén\documents\github\eny1n\libs\x64\release\matrix4x4.obj
-c:\users\rubén\documents\github\eny1n\libs\x64\release\vector3.obj
-c:\users\rubén\documents\github\eny1n\libs\x64\release\vector2.obj
 c:\users\rubén\documents\github\eny1n\libs\x64\release\imgui_impl_dx11.obj
 c:\users\rubén\documents\github\eny1n\libs\x64\release\imgui_widgets.obj
 c:\users\rubén\documents\github\eny1n\libs\x64\release\imgui_tables.obj
@@ -18,6 +14,10 @@ c:\users\rubén\documents\github\eny1n\libs\x64\release\imgradient.obj
 c:\users\rubén\documents\github\eny1n\libs\x64\release\imcurveedit.obj
 c:\users\rubén\documents\github\eny1n\libs\x64\release\grapheditor.obj
 c:\users\rubén\documents\github\eny1n\libs\x64\release\stb_vorbis.obj
+c:\users\rubén\documents\github\eny1n\libs\x64\release\vector3.obj
+c:\users\rubén\documents\github\eny1n\libs\x64\release\vector2.obj
+c:\users\rubén\documents\github\eny1n\libs\x64\release\transform.obj
+c:\users\rubén\documents\github\eny1n\libs\x64\release\matrix4x4.obj
 c:\users\rubén\documents\github\eny1n\libs\x64\release\libs.lib
 c:\users\rubén\documents\github\eny1n\libs\x64\release\libs.tlog\cl.command.1.tlog
 c:\users\rubén\documents\github\eny1n\libs\x64\release\libs.tlog\cl.items.tlog

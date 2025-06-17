@@ -7,7 +7,7 @@ namespace collision { class CSphereCollider; }
 
 namespace collision
 {
-  class CBoxCollider : public CCollider
+  class CBoxCollider final : public CCollider
   {
   public:
     CBoxCollider(void* _pOwner);
@@ -36,7 +36,7 @@ namespace collision
     inline const math::CVector3& GetUpAxis() const { return m_v3Up; }
     inline const math::CVector3& GetForwardAxis() const { return m_v3Forward; }
 
-    void DrawDebug();
+    virtual void DrawDebug() override;
 
   private:
     bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;

@@ -3,7 +3,7 @@
 
 namespace collision
 {
-  class CCapsuleCollider : public CCollider
+  class CCapsuleCollider final : public CCollider
   {
   public:
     CCapsuleCollider(void* _pOwner) : CCollider(EColliderType::CAPSULE_COLLIDER, _pOwner) {}
@@ -16,10 +16,11 @@ namespace collision
     inline void SetSize(const math::CVector3& _v3Size) { m_v3Size = _v3Size; }
     inline const math::CVector3& GetSize() const { return m_v3Size; }
 
-    void DrawDebug();
+    virtual void DrawDebug() override;
 
   private:
     math::CVector3 m_v3Size = math::CVector3::One;
+    math::CVector3 m_v3Center = math::CVector3::Zero;
   };
 }
 

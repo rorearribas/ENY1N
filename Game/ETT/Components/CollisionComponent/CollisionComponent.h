@@ -37,7 +37,6 @@ namespace game
 
   private:
     collision::CCollider* m_pCollider = nullptr;
-    render::graphics::CPrimitive* m_pPrimitive = nullptr;
     bool m_bDebugMode = true;
   };
 }

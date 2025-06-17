@@ -42,44 +42,6 @@ namespace game
       m_pCollider->SetRotation(pOwner->GetRotation());
       m_pCollider->RecalculateCollider();
     }
-
-    // Create primitive
-    switch (_eColliderType)
-    {
-    case collision::EColliderType::BOX_COLLIDER:
-    {
-      m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
-      (
-        render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE,
-        render::ERenderMode::WIREFRAME
-      );
-      assert(m_pPrimitive);
-    }
-    break;
-    case collision::EColliderType::SPHERE_COLLIDER:
-    {
-      m_pPrimitive = engine::CEngine::GetInstance()->CreatePrimitive
-      (
-        render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE,
-        render::ERenderMode::WIREFRAME
-      );
-      assert(m_pPrimitive);
-    }
-    break;
-    default:
-      break;
-    }
-
-    // Update primtive
-    if (m_pPrimitive)
-    {
-      m_pPrimitive->SetPosition(pOwner->GetPosition());
-      m_pPrimitive->SetRotation(pOwner->GetRotation());
-      m_pPrimitive->SetScale(pOwner->GetScale());
-
-      m_pPrimitive->UseGlobalLighting(false);
-      m_pPrimitive->SetColor(math::CVector3::Forward);
-    }
   }
   // ------------------------------------
   void CCollisionComponent::SetPosition(const math::CVector3& _v3Pos)
@@ -88,10 +50,6 @@ namespace game
     {
       m_pCollider->SetPosition(_v3Pos);
       m_pCollider->RecalculateCollider();
-    }
-    if (m_pPrimitive)
-    {
-      m_pPrimitive->SetPosition(_v3Pos);
     }
   }
   // ------------------------------------
@@ -106,10 +64,6 @@ namespace game
     {
       m_pCollider->SetRotation(_v3Rot);
       m_pCollider->RecalculateCollider();
-    }
-    if (m_pPrimitive)
-    {
-      m_pPrimitive->SetRotation(_v3Rot);
     }
   }
   // ------------------------------------
@@ -134,16 +88,13 @@ namespace game
     {
       collision::CCollisionManager::GetInstance()->DestroyCollider(m_pCollider);
     }
-    if (m_pPrimitive)
-    {
-      engine::CEngine::GetInstance()->DestroyPrimitive(m_pPrimitive);
-    }
   }
   // ------------------------------------
   void CCollisionComponent::DrawDebug()
   {
     ImGui::Spacing();
     std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
+    std::string sDebugMode = std::string("Debug Mode") + std::string("##" + sOwnerName);
 
     switch (m_pCollider->GetType())
     {
@@ -155,7 +106,6 @@ namespace game
       std::string sMax = std::string("Max") + std::string("##" + sOwnerName);
       std::string sMin = std::string("Min") + std::string("##" + sOwnerName);
       std::string sOBB = std::string("OBB Enabled") + std::string("##" + sOwnerName);
-      std::string sDebugMode = std::string("Debug Mode") + std::string("##" + sOwnerName);
 
       collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(m_pCollider);
       bool bOBBEnabled = pBoxCollider->IsOBBEnabled();
@@ -174,11 +124,7 @@ namespace game
       // Apply values
       pBoxCollider->SetOBBEnabled(bOBBEnabled);
       math::CVector3 v3CurrentSize(v3Size[0], v3Size[1], v3Size[2]);
-      if (m_pPrimitive && !v3CurrentSize.Equal(m_pPrimitive->GetScale()))
-      {
-        m_pPrimitive->SetScale(math::CVector3(v3Size[0], v3Size[1], v3Size[2]));
-      }
-      if (m_pPrimitive && !v3CurrentSize.Equal(pBoxCollider->GetSize()))
+      if (!v3CurrentSize.Equal(pBoxCollider->GetSize()))
       {
         pBoxCollider->SetSize(v3CurrentSize);
       }
@@ -201,20 +147,21 @@ namespace game
 
       ImGui::Text(sTitle.c_str());
       ImGui::InputFloat(sRadius.c_str(), &fRadius);
+      ImGui::Checkbox(sDebugMode.c_str(), &m_bDebugMode);
 
       // Read only
       ImGui::BeginDisabled();
       ImGui::InputFloat3(sCenter.c_str(), v3Center);
       ImGui::EndDisabled();
 
-      // Update radius
+      // Apply values
       if (fRadius != pSphereCollider->GetRadius())
       {
         pSphereCollider->SetRadius(fRadius);
-        if (m_pPrimitive)
-        {
-          m_pPrimitive->SetScale(math::CVector3(fRadius * 2.0f, fRadius * 2.0f, fRadius * 2.0f));
-        }
+      }
+      if (m_bDebugMode)
+      {
+        pSphereCollider->DrawDebug();
       }
     }
     break;

@@ -19,6 +19,5 @@ namespace collision
   // ------------------------------------
   void CCapsuleCollider::DrawDebug()
   {
-    // Not implemented yet!
   }
 }

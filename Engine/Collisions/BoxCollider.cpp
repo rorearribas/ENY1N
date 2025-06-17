@@ -195,7 +195,11 @@ namespace collision
   // ------------------------------------
   void CBoxCollider::DrawDebug()
   {
+    // Draw cube
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    pEngine->DrawCube(GetPosition(), GetSize(), GetRotation(), math::CVector3::One);
+
+    // Draw extents
     float fMagnitude = m_v3Size.Magnitude();
     for (size_t tIndex = 0; tIndex < m_v3Extents.size(); tIndex++)
     {

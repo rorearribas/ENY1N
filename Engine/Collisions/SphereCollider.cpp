@@ -1,13 +1,17 @@
 #include "SphereCollider.h"
+#include "Engine/Base/Engine.h"
 #include "BoxCollider.h"
-#include <cassert>
-#include <algorithm>
 #include "Libs/Math/Math.h"
-#include <iostream>
 #include "Libs/Macros/GlobalMacros.h"
 
 namespace collision
 {
+  namespace internal_sphere_collider
+  {
+    static const int s_iMaxStacks = 8;
+    static const int s_iMaxSlices = 8;
+  }
+
   bool CSphereCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
@@ -70,6 +74,20 @@ namespace collision
   {
     // Set world center
     m_v3Center = GetPosition();
+  }
+  // ------------------------------------
+  void CSphereCollider::DrawDebug()
+  {
+    // Draw sphere
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    pEngine->DrawSphere
+    (
+      GetPosition(),
+      GetRadius(),
+      internal_sphere_collider::s_iMaxStacks,
+      internal_sphere_collider::s_iMaxSlices,
+      math::CVector3::One
+    );
   }
   // ------------------------------------
   bool CSphereCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const

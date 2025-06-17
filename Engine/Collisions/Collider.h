@@ -49,6 +49,7 @@ namespace collision
     virtual bool CheckCollision(const collision::CCollider&, collision::SHitEvent&) = 0;
     virtual bool IntersectRay(const physics::CRay&, collision::SHitEvent&, const float&) = 0;
     virtual void RecalculateCollider() = 0;
+    virtual void DrawDebug() = 0;
 
     inline void* GetOwner() const { return m_pOwner; }
     inline const collision::EColliderType& GetType() const { return m_eColliderType; }

@@ -58,14 +58,14 @@ namespace engine
     m_pRender->EndDraw(); // End 
   }
   // ------------------------------------
-  void CEngine::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
+  void CEngine::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    m_pSceneManager->DrawLine(_v3Origin, _v3Dest, _v3Color);
+    m_pSceneManager->DrawCube(_v3Pos, _v3Size, _v3Rot, _v3Color, _eRenderMode);
   }
   // ------------------------------------
-  void CEngine::DrawCube(const math::CVector3& _v3Pos, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    m_pSceneManager->DrawCube(_v3Pos, _fSize, _v3Color, _eRenderMode);
+    m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _v3Color, _eRenderMode);
   }
   // ------------------------------------
   void CEngine::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -73,9 +73,9 @@ namespace engine
     m_pSceneManager->DrawPlane(_oPlane, _v3Size, _v3Color, _eRenderMode);
   }
   // ------------------------------------
-  void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CEngine::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
-    m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _v3Color, _eRenderMode);
+    m_pSceneManager->DrawLine(_v3Origin, _v3Dest, _v3Color);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CEngine::CreatePrimitive

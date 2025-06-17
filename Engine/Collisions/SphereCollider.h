@@ -6,7 +6,7 @@ namespace collision { class CBoxCollider; }
 
 namespace collision
 {
-  class CSphereCollider : public CCollider
+  class CSphereCollider final : public CCollider
   {
   public:
     CSphereCollider(void* _pOwner) : CCollider(EColliderType::SPHERE_COLLIDER, _pOwner) {}
@@ -20,6 +20,8 @@ namespace collision
     inline const math::CVector3& GetCenter() const { return m_v3Center; }
     inline void SetRadius(float _fRadius) { m_fRadius = _fRadius; }
     inline const float& GetRadius() const { return m_fRadius;}
+
+    virtual void DrawDebug() override;
 
   private:
     bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;

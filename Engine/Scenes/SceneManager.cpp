@@ -32,19 +32,19 @@ namespace scene
     });
   }
   // ------------------------------------
-  void CSceneManager::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
+  void CSceneManager::DrawCube(const math::CVector3& _v3Origin, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawLine(_v3Origin, _v3Dest, _v3Color);
+      m_pCurrentScene->DrawCube(_v3Origin, _v3Size, _v3Rot, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawCube(const math::CVector3& _v3Origin, float _fSize, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CSceneManager::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawCube(_v3Origin, _fSize, _v3Color, _eRenderMode);
+      m_pCurrentScene->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------
@@ -56,11 +56,11 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CSceneManager::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _v3Color, _eRenderMode);
+      m_pCurrentScene->DrawLine(_v3Origin, _v3Dest, _v3Color);
     }
   }
   // ------------------------------------

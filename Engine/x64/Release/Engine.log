@@ -1,12 +1,4 @@
-﻿  CapsuleCollider.cpp
-  CollisionManager.cpp
-  PhysicsManager.cpp
-  Plane.cpp
-  Ray.cpp
-  PrimitiveUtils.cpp
-  LightManager.cpp
-  Mesh.cpp
-  Light.cpp
-  Material.cpp
-  Model.cpp
-  BoxCollider.cpp
+﻿  BoxCollider.cpp
+  CapsuleCollider.cpp
+  SphereCollider.cpp
+  Engine.vcxproj -> C:\Users\Rubén\Documents\GitHub\ENY1N\Engine\x64\Release\Engine.lib
