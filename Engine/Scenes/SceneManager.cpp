@@ -17,26 +17,34 @@ namespace scene
   void CSceneManager::CreateScenes()
   {
     int iCurrentIdx = 0;
-    std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene*& _pScene) 
-    {
-      _pScene = new scene::CScene(iCurrentIdx++);
-      _pScene->SetSceneEnabled(false);
-    });
+    std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene*& _pScene)
+      {
+        _pScene = new scene::CScene(iCurrentIdx++);
+        _pScene->SetSceneEnabled(false);
+      });
   }
   // ------------------------------------
   void CSceneManager::DisableAllScenes() const
   {
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene* _pScene)
-    {
-      _pScene->SetSceneEnabled(false);
-    });
+      {
+        _pScene->SetSceneEnabled(false);
+      });
   }
   // ------------------------------------
-  void CSceneManager::DrawCube(const math::CVector3& _v3Origin, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CSceneManager::DrawCapsule(const math::CVector3& _v3Pos, float _fRadius, float _fHeight, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawCube(_v3Origin, _v3Size, _v3Rot, _v3Color, _eRenderMode);
+      m_pCurrentScene->DrawCapsule(_v3Pos, _fRadius, _fHeight, _iStacks, _iSlices, _v3Color, _eRenderMode);
+    }
+  }
+  // ------------------------------------
+  void CSceneManager::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  {
+    if (m_pCurrentScene)
+    {
+      m_pCurrentScene->DrawCube(_v3Pos, _v3Size, _v3Rot, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------
@@ -56,11 +64,11 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
+  void CSceneManager::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawLine(_v3Origin, _v3Dest, _v3Color);
+      m_pCurrentScene->DrawLine(_v3Start, _v3Dest, _v3Color);
     }
   }
   // ------------------------------------
@@ -73,7 +81,7 @@ namespace scene
   // ------------------------------------
   render::graphics::CPrimitive* const CSceneManager::CreatePrimitive
   (
-    const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, 
+    const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType,
     render::ERenderMode _eRenderMode,
     uint32_t _uSceneIndex
   )
@@ -135,8 +143,8 @@ namespace scene
   void CSceneManager::DestroyAllScenes()
   {
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [](CScene*& _pScene)
-    {
-      global::ReleaseObject(_pScene);
-    });
+      {
+        global::ReleaseObject(_pScene);
+      });
   }
 }

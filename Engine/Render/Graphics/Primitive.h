@@ -22,6 +22,7 @@ namespace render
         E3D_PLANE,
         E3D_CUBE,
         E3D_SPHERE,
+        E3D_CAPSULE,
         CUSTOM,
         INVALID
       };

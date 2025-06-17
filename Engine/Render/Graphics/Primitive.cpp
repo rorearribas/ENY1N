@@ -99,7 +99,7 @@ namespace render
       }
       case EPrimitiveType::E3D_SPHERE:
       {
-        // Standard size
+        // Set values
         const float fTargetRadius = 0.5f;
         const int iStacks = 12;
         const int iSlices = 12;

@@ -17,7 +17,18 @@ namespace collision
     CCollider::RecalculateCollider();
   }
   // ------------------------------------
+  void CCapsuleCollider::SetRadius(float _fRadius)
+  {
+    m_fRadius = _fRadius;
+  }
+  // ------------------------------------
+  void CCapsuleCollider::SetHeight(float _fHeight)
+  {
+    m_fHeight = _fHeight;
+  }
+  // ------------------------------------
   void CCapsuleCollider::DrawDebug()
   {
+    
   }
 }

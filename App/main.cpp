@@ -160,6 +160,8 @@ int main()
         pCollisionManager->Update(fFixedDeltaTime);
         pGameManager->Update(fFixedDeltaTime);
 
+        pEngine->DrawCapsule(math::CVector3(0.0f, 10.0f, 0.0f), 0.5f, 2.0f, 12, 12, math::CVector3::Right, render::ERenderMode::SOLID);
+
         if (bThrowRay)
         {
           // Draw line

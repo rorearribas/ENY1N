@@ -5,16 +5,17 @@
 namespace math
 {
   // Static values
-  static const double s_fPI = 3.14159265358979323846;
+  static constexpr double s_fPI = 3.14159265358979323846;
+  static constexpr double s_fHalfPI = s_fPI / 2.0f;
 
   // Epsilon
-  static const float s_fEpsilon1 = 1e-1f;
-  static const float s_fEpsilon2 = 1e-2f;
-  static const float s_fEpsilon3 = 1e-3f;
-  static const float s_fEpsilon4 = 1e-4f;
-  static const float s_fEpsilon5 = 1e-5f;
-  static const float s_fEpsilon6 = 1e-6f;
-  static const float s_fEpsilon7 = 1e-7f;
+  static constexpr float s_fEpsilon1 = 1e-1f;
+  static constexpr float s_fEpsilon2 = 1e-2f;
+  static constexpr float s_fEpsilon3 = 1e-3f;
+  static constexpr float s_fEpsilon4 = 1e-4f;
+  static constexpr float s_fEpsilon5 = 1e-5f;
+  static constexpr float s_fEpsilon6 = 1e-6f;
+  static constexpr float s_fEpsilon7 = 1e-7f;
 
   // Functions
   inline float Lerp(float a, float b, float f)

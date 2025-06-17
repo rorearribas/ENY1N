@@ -13,14 +13,19 @@ namespace collision
     virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
-    inline void SetSize(const math::CVector3& _v3Size) { m_v3Size = _v3Size; }
-    inline const math::CVector3& GetSize() const { return m_v3Size; }
+    inline const math::CVector3& GetCenter() const { return m_v3Center; }
+    inline const float GetRadius() const { return m_fRadius; }
+    inline const float GetHeight() const { return m_fHeight; }
+
+    void SetRadius(float _fRadius);
+    void SetHeight(float _fHeight);
 
     virtual void DrawDebug() override;
 
   private:
-    math::CVector3 m_v3Size = math::CVector3::One;
-    math::CVector3 m_v3Center = math::CVector3::Zero;
+    math::CVector3 m_v3Center = math::CVector3::Zero; // Local displacement
+    float m_fRadius = 0.25f;
+    float m_fHeight = 1.0f;
   };
 }
 
