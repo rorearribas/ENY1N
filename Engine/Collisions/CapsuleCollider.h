@@ -13,7 +13,9 @@ namespace collision
     virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
-    inline const math::CVector3& GetCenter() const { return m_v3Center; }
+    inline const math::CVector3& GetLocalCenter() const { return m_v3LocalCenter; }
+    inline void SetLocalCenter(const math::CVector3& _v3LocalCenter) { m_v3LocalCenter = _v3LocalCenter; }
+
     inline const float GetRadius() const { return m_fRadius; }
     inline const float GetHeight() const { return m_fHeight; }
 
@@ -23,9 +25,9 @@ namespace collision
     virtual void DrawDebug() override;
 
   private:
-    math::CVector3 m_v3Center = math::CVector3::Zero; // Local displacement
-    float m_fRadius = 0.25f;
-    float m_fHeight = 1.0f;
+    math::CVector3 m_v3LocalCenter = math::CVector3::Zero; // Local displacement
+    float m_fHeight = 2.0f;
+    float m_fRadius = 0.5f;
   };
 }
 

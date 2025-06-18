@@ -124,6 +124,23 @@ int main()
     pBoxTest->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
   }
 
+  // Sphere collider
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  {
+    game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Capsule");
+    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
+    game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
+    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE);
+    pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
+    pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
+    pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
+
+    float fRandomX = GenerateFloat(-1.0f, 1.0f);
+    float fRandomY = GenerateFloat(1.0f, 5.0f);
+    float fRandomZ = GenerateFloat(0.0f, 0.0f);
+    pCapsuleEntity->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
+  }
+
   render::CRender* const pRender = pEngine->GetRender();
   render::CCamera* const pRenderCamera = pEngine->GetCamera();
   pRender->GetRenderWindow()->SetEnabled(true);
@@ -159,8 +176,6 @@ int main()
         pPhysicsManager->Update(fFixedDeltaTime);
         pCollisionManager->Update(fFixedDeltaTime);
         pGameManager->Update(fFixedDeltaTime);
-
-        pEngine->DrawCapsule(math::CVector3(0.0f, 10.0f, 0.0f), 0.5f, 2.0f, 12, 12, math::CVector3::Right, render::ERenderMode::SOLID);
 
         if (bThrowRay)
         {

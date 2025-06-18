@@ -101,18 +101,30 @@ namespace render
       {
         // Set values
         const float fTargetRadius = 0.5f;
-        const int iStacks = 12;
-        const int iSlices = 12;
+        const int iSubvH = 12;
+        const int iSubvV = 12;
 
-        std::vector<render::graphics::SVertexData> vctPrimitiveData = std::vector<render::graphics::SVertexData>();
-        const auto& vctIndices = _eRenderMode == SOLID ? CPrimitiveUtils::GetSphereIndices(iStacks, iSlices) : CPrimitiveUtils::GetWireframeSphereIndices(iStacks, iSlices);
-        CPrimitiveUtils::CreateSphere(fTargetRadius, iStacks, iSlices, vctPrimitiveData);
+        std::vector<render::graphics::SVertexData> vctVertexData = std::vector<render::graphics::SVertexData>();
+        const auto& vctIndices = _eRenderMode == SOLID ? CPrimitiveUtils::GetSphereIndices(iSubvH, iSubvV) : CPrimitiveUtils::GetWireframeSphereIndices(iSubvH, iSubvV);
+        CPrimitiveUtils::CreateSphere(fTargetRadius, iSubvH, iSubvV, vctVertexData);
+        CPrimitiveUtils::ComputeNormals(vctVertexData, vctIndices);
 
-        return CreateBufferFromPrimitiveData
-        (
-          vctPrimitiveData,
-          vctIndices
-        );
+        return CreateBufferFromPrimitiveData(vctVertexData, vctIndices);
+      }
+      case EPrimitiveType::E3D_CAPSULE:
+      {
+        // Set values
+        const float fTargetRadius = 0.5f;
+        const float fStandardHeight = 2.0f;
+
+        const int iSubvH = 12;
+        const int iSubvV = 12;
+
+        CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
+        CPrimitiveUtils::CreateCapsule(fTargetRadius, fStandardHeight, iSubvH, iSubvV, _eRenderMode, oPrimitiveData);
+        CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+
+        return CreateBufferFromPrimitiveData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
       }
       break;
       }

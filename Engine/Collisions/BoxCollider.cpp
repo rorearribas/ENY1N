@@ -76,7 +76,7 @@ namespace collision
     }
   }
   // ------------------------------------
-  CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(collision::BOX_COLLIDER, _pOwner)
+  CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(collision::EColliderType::BOX_COLLIDER, _pOwner)
   {
     ComputeMinMax();
     ComputeExtents();

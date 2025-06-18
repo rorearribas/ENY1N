@@ -6,18 +6,19 @@
 // Interface
 namespace collision
 {
-  // Mask
+  // Default mask
   enum ECollisionMask
   {
-    DEFAULT = 1 << 1,
+    DEFAULT = 1 << 0,
     PHYSICS = 1 << 1,
     FLOOR = 1 << 2,
     WATER = 1 << 3,
     PLAYER = 1 << 4,
-    ENEMY = 1 << 5
+    ENEMY = 1 << 5,
+    INVALID = -1
   };
 
-  enum EColliderType
+  enum class EColliderType
   {
     BOX_COLLIDER,
     SPHERE_COLLIDER,
@@ -42,8 +43,7 @@ namespace collision
 
   public:
     explicit CCollider(EColliderType _eColliderType, void* _pOwner)
-      : m_eColliderType(_eColliderType), m_pOwner(_pOwner) {
-    }
+    : m_eColliderType(_eColliderType), m_pOwner(_pOwner) {}
     virtual ~CCollider() {}
 
     virtual bool CheckCollision(const collision::CCollider&, collision::SHitEvent&) = 0;

@@ -241,23 +241,26 @@ namespace render
 #pragma region 3D Capsule
 
     // 3D Capsule 
-    void CPrimitiveUtils::CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode, CPrimitive::SCustomPrimitive& _oPrimitiveData_)
+    void CPrimitiveUtils::CreateCapsule(float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode, CPrimitive::SCustomPrimitive& _oPrimitiveData_)
     {
       // Clear
       _oPrimitiveData_.m_vctIndices.clear();
       _oPrimitiveData_.m_vctVertexData.clear();
 
-      // Semi sphere lambda
+      // Calculate values
       float fHalfHeight = _fHeight * 0.5f;
+      float fDiff = fHalfHeight - _fRadius;
+
+      // Semi sphere lambda
       auto oComputeSemiSphereLamb = [&](bool _bInverse = false)
       {
-        for (int uX = 0; uX <= _iStacks; ++uX)
+        for (int uX = 0; uX <= _iSubvH; ++uX)
         {
-          float fPhi = static_cast<float>(uX) / static_cast<float>(_iStacks) * static_cast<float>(math::s_fHalfPI);
-          for (int uJ = 0; uJ <= _iSlices; ++uJ)
+          float fPhi = static_cast<float>(uX) / static_cast<float>(_iSubvH) * static_cast<float>(math::s_fHalfPI);
+          for (int uJ = 0; uJ <= _iSubvV; ++uJ)
           {
             // Conversion
-            float fTheta = (static_cast<float>(uJ) / static_cast<float>(_iSlices)) * (static_cast<float>(math::s_fPI * 2.0f));
+            float fTheta = (static_cast<float>(uJ) / static_cast<float>(_iSubvV)) * (static_cast<float>(math::s_fPI * 2.0f));
             float fX = _fRadius * sinf(fPhi) * cosf(fTheta);
             float fY = _fRadius * cosf(fPhi);
             float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
@@ -269,12 +272,7 @@ namespace render
 
             // Add vertex
             render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
-            math::CVector3 v3VertexPos(fX, fY, fZ);
-
-            oVertexData.Position = v3VertexPos;
-            oVertexData.Normal = math::CVector3::Normalize(v3VertexPos);
-            oVertexData.TexCoord = math::CVector2((static_cast<float>(uJ) / _iSlices), 1.0f - (static_cast<float>(uX) / _iStacks));
-
+            oVertexData.Position = math::CVector3(fX, fY, fZ);
             _oPrimitiveData_.m_vctVertexData.emplace_back(oVertexData);
           }
         }
@@ -301,7 +299,7 @@ namespace render
       };
 
       // Generate indices lambda + lit mode
-      auto oGenerateIndicesLamb = [&](int _iStacks, int _iSlices, int _iStartIdx)
+      auto oGenerateIndicesLamb = [&](int _iStacks, int _iSlices, int _iStartIdx, bool _bInverseCCW = false)
       {
         for (int uX = 0; uX < _iStacks; ++uX)
         {
@@ -310,14 +308,13 @@ namespace render
             int iFirst = _iStartIdx + (uX * (_iSlices + 1)) + uJ;
             int iSecond = iFirst + _iSlices + 1;
 
-            // Triangulate
             _oPrimitiveData_.m_vctIndices.emplace_back(iFirst);
-            _oPrimitiveData_.m_vctIndices.emplace_back(iFirst + 1);
-            _oPrimitiveData_.m_vctIndices.emplace_back(iSecond);
+            _oPrimitiveData_.m_vctIndices.emplace_back(_bInverseCCW ? iSecond : (iFirst + 1));
+            _oPrimitiveData_.m_vctIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : iSecond);
 
             _oPrimitiveData_.m_vctIndices.emplace_back(iSecond);
-            _oPrimitiveData_.m_vctIndices.emplace_back(iFirst + 1);
-            _oPrimitiveData_.m_vctIndices.emplace_back(iSecond + 1);
+            _oPrimitiveData_.m_vctIndices.emplace_back(_bInverseCCW ? (iSecond + 1) : (iFirst + 1));
+            _oPrimitiveData_.m_vctIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : (iSecond + 1));
           }
         }
       };
@@ -327,48 +324,46 @@ namespace render
       oComputeSemiSphereLamb();
       for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(_oPrimitiveData_.m_vctVertexData.size()); ++iIdx)
       {
-        _oPrimitiveData_.m_vctVertexData[iIdx].Position.Y += fHalfHeight - _fRadius;
+        _oPrimitiveData_.m_vctVertexData[iIdx].Position.Y += (fDiff >= 0 ? fDiff : 0.0f);
       }
       // Compute top semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(_iStacks, _iSlices, iCacheStartIdx) : 
-      oGenerateWireframeIndicesLamb(_iStacks, _iSlices, iCacheStartIdx);
+      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx) : 
+      oGenerateWireframeIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx);
 
-      // Body
-      static constexpr int s_iMaxBodySubdv = 1;
-      iCacheStartIdx = static_cast<int>(_oPrimitiveData_.m_vctVertexData.size());
-      for (int iX = 0; iX <= s_iMaxBodySubdv; ++iX)
+      if (fDiff >= 0.0f)
       {
-        float fY = math::Lerp(-fHalfHeight + _fRadius, fHalfHeight - _fRadius, static_cast<float>(iX) / s_iMaxBodySubdv);
-        for (int iJ = 0; iJ <= _iSlices; ++iJ)
+        // Body
+        static constexpr int s_iMaxBodySubdv = 1;
+        iCacheStartIdx = static_cast<int>(_oPrimitiveData_.m_vctVertexData.size());
+        for (int iX = 0; iX <= s_iMaxBodySubdv; ++iX)
         {
-          float fTheta = (static_cast<float>(iJ) / _iSlices) * (static_cast<float>(math::s_fPI * 2.0f));
-          float fX = _fRadius * cosf(fTheta);
-          float fZ = _fRadius * sinf(fTheta);
+          float fY = math::Lerp(-fHalfHeight + _fRadius, fHalfHeight - _fRadius, static_cast<float>(iX) / s_iMaxBodySubdv);
+          for (int iJ = 0; iJ <= _iSubvV; ++iJ)
+          {
+            float fTheta = (static_cast<float>(iJ) / _iSubvV) * (static_cast<float>(math::s_fPI * 2.0f));
+            float fX = _fRadius * cosf(fTheta);
+            float fZ = _fRadius * sinf(fTheta);
 
-          render::graphics::SVertexData oVertexData = {};
-          math::CVector3 v3VertexPos(fX, fY, fZ);
-
-          oVertexData.Position = v3VertexPos;
-          oVertexData.Normal = math::CVector3::Normalize(math::CVector3(fX, 0.0f, fZ)); // horizontal normal
-          oVertexData.TexCoord = math::CVector2(static_cast<float>(iJ) / _iSlices, static_cast<float>(iX) / _iStacks);
-
-          _oPrimitiveData_.m_vctVertexData.emplace_back(oVertexData);
+            render::graphics::SVertexData oVertexData = {};
+            oVertexData.Position = math::CVector3(fX, fY, fZ);
+            _oPrimitiveData_.m_vctVertexData.emplace_back(oVertexData);
+          }
         }
+        // Compute body indices
+        _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx, true) :
+        oGenerateWireframeIndicesLamb(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx);
       }
-      // Compute body indices
-      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(s_iMaxBodySubdv, _iSlices, iCacheStartIdx) :
-      oGenerateWireframeIndicesLamb(s_iMaxBodySubdv, _iSlices, iCacheStartIdx);
 
       // Bottom semi-sphere
       iCacheStartIdx = static_cast<int>(_oPrimitiveData_.m_vctVertexData.size());
       oComputeSemiSphereLamb(true);
       for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(_oPrimitiveData_.m_vctVertexData.size()); ++iIdx)
       {
-        _oPrimitiveData_.m_vctVertexData[iIdx].Position.Y -= fHalfHeight - _fRadius;
+        _oPrimitiveData_.m_vctVertexData[iIdx].Position.Y -= (fDiff >= 0 ? fDiff : 0.0f);
       }
       // Compute bottom semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(_iStacks, _iSlices, iCacheStartIdx) :
-      oGenerateWireframeIndicesLamb(_iStacks, _iSlices, iCacheStartIdx);
+      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx, true) :
+      oGenerateWireframeIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx);
     }
 
 #pragma endregion
@@ -448,7 +443,7 @@ namespace render
 
       // Calculate normals
       long lSize = static_cast<int>(_vctIndices.size());
-      for (long lIdx = 0; lIdx < _vctIndices.size(); lIdx += 3)
+      for (long lIdx = 0; lIdx < lSize; lIdx += 3)
       {
         if (lIdx + 1 >= lSize || lIdx + 2 >= lSize)
         {

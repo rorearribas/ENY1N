@@ -8,8 +8,8 @@ namespace collision
 {
   namespace internal_sphere_collider
   {
-    static const int s_iMaxStacks = 8;
-    static const int s_iMaxSlices = 8;
+    static const int s_iMaxSubvH(8);
+    static const int s_iMaxSubvV(8);
   }
 
   bool CSphereCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
@@ -84,8 +84,8 @@ namespace collision
     (
       GetPosition(),
       GetRadius(),
-      internal_sphere_collider::s_iMaxStacks,
-      internal_sphere_collider::s_iMaxSlices,
+      internal_sphere_collider::s_iMaxSubvH,
+      internal_sphere_collider::s_iMaxSubvV,
       math::CVector3::One
     );
   }

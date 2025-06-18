@@ -1,10 +1,11 @@
 #include "CollisionComponent.h"
 #include "Libs/ImGui/imgui.h"
+#include "Game/ETT/Entity.h"
+#include "Engine/Base/Engine.h"
 #include "Engine/Collisions/CollisionManager.h"
 #include "Engine/Collisions/BoxCollider.h"
 #include "Engine/Collisions/SphereCollider.h"
-#include "Game/ETT/Entity.h"
-#include "Engine/Base/Engine.h"
+#include "Engine/Collisions/CapsuleCollider.h"
 #include <cassert>
 
 namespace game
@@ -44,13 +45,20 @@ namespace game
     }
   }
   // ------------------------------------
+  void CCollisionComponent::SetCollisionMask(collision::ECollisionMask _eCollisionMask)
+  {
+    m_pCollider->SetCollisionMask(_eCollisionMask);
+  }
+  // ------------------------------------
+  collision::ECollisionMask CCollisionComponent::GetCollisionMask() const
+  {
+    return m_pCollider ? m_pCollider->GetCollisionMask() : collision::ECollisionMask::INVALID;
+  }
+  // ------------------------------------
   void CCollisionComponent::SetPosition(const math::CVector3& _v3Pos)
   {
-    if (m_pCollider)
-    {
-      m_pCollider->SetPosition(_v3Pos);
-      m_pCollider->RecalculateCollider();
-    }
+    m_pCollider->SetPosition(_v3Pos);
+    m_pCollider->RecalculateCollider();
   }
   // ------------------------------------
   const math::CVector3& CCollisionComponent::GetPosition() const
@@ -60,11 +68,8 @@ namespace game
   // ------------------------------------
   void CCollisionComponent::SetRotation(const math::CVector3& _v3Rot)
   {
-    if (m_pCollider)
-    {
-      m_pCollider->SetRotation(_v3Rot);
-      m_pCollider->RecalculateCollider();
-    }
+    m_pCollider->SetRotation(_v3Rot);
+    m_pCollider->RecalculateCollider();
   }
   // ------------------------------------
   const math::CVector3& CCollisionComponent::GetRotation() const
@@ -120,6 +125,7 @@ namespace game
       ImGui::InputFloat3(sMin.c_str(), v3Min);
       ImGui::Checkbox(sOBB.c_str(), &bOBBEnabled);
       ImGui::Checkbox(sDebugMode.c_str(), &m_bDebugMode);
+      ImGui::Separator();
 
       // Apply values
       pBoxCollider->SetOBBEnabled(bOBBEnabled);
@@ -147,21 +153,67 @@ namespace game
 
       ImGui::Text(sTitle.c_str());
       ImGui::InputFloat(sRadius.c_str(), &fRadius);
-      ImGui::Checkbox(sDebugMode.c_str(), &m_bDebugMode);
 
       // Read only
       ImGui::BeginDisabled();
       ImGui::InputFloat3(sCenter.c_str(), v3Center);
       ImGui::EndDisabled();
 
+      // Debug mode
+      ImGui::Checkbox(sDebugMode.c_str(), &m_bDebugMode);
+      ImGui::Separator();
+
       // Apply values
       if (fRadius != pSphereCollider->GetRadius())
       {
-        pSphereCollider->SetRadius(fRadius);
+        pSphereCollider->SetRadius(fRadius >= 0.0f ? fRadius : 0.0f);
       }
       if (m_bDebugMode)
       {
         pSphereCollider->DrawDebug();
+      }
+    }
+    break;
+    case collision::EColliderType::CAPSULE_COLLIDER:
+    {
+      // Generate unique ids
+      std::string sTitle = "CAPSULE COLLIDER";
+      std::string sHeight = "Height" + std::string("##" + sOwnerName);
+      std::string sRadius = "Radius" + std::string("##" + sOwnerName);
+      std::string sLocalCenter = "Local Center" + std::string("##" + sOwnerName);
+
+      collision::CCapsuleCollider* pCapsuleCollider = static_cast<collision::CCapsuleCollider*>(m_pCollider);
+      float v3LocalCenter[3] = { pCapsuleCollider->GetLocalCenter().X, pCapsuleCollider->GetLocalCenter().Y, pCapsuleCollider->GetLocalCenter().Z };
+      float fHeight = pCapsuleCollider->GetHeight();
+      float fRadius = pCapsuleCollider->GetRadius();
+
+      ImGui::Text(sTitle.c_str());
+
+      ImGui::InputFloat(sHeight.c_str(), &fHeight);
+      ImGui::InputFloat(sRadius.c_str(), &fRadius);
+      ImGui::InputFloat3(sLocalCenter.c_str(), v3LocalCenter);
+
+      // Debug mode
+      ImGui::Checkbox(sDebugMode.c_str(), &m_bDebugMode);
+      ImGui::Separator();
+
+      // Apply values
+      if (fHeight != pCapsuleCollider->GetHeight())
+      {
+        pCapsuleCollider->SetHeight(fHeight);
+      }
+      if (fRadius != pCapsuleCollider->GetRadius())
+      {
+        pCapsuleCollider->SetRadius(fRadius >= 0.0f ? fRadius : 0.0f);
+      }
+      math::CVector3 v3CurrentLocalCenter(v3LocalCenter[0], v3LocalCenter[1], v3LocalCenter[2]);
+      if (!v3CurrentLocalCenter.Equal(pCapsuleCollider->GetLocalCenter()))
+      {
+        pCapsuleCollider->SetLocalCenter(v3CurrentLocalCenter);
+      }
+      if (m_bDebugMode)
+      {
+        pCapsuleCollider->DrawDebug();
       }
     }
     break;

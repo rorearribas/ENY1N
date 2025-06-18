@@ -132,7 +132,7 @@ namespace scene
     m_vctSpotLights.ClearAll();
   }
   // ------------------------------------
-  void CScene::DrawCapsule(const math::CVector3& _v3Pos, float _fRadius, float _fHeight, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CScene::DrawCapsule(const math::CVector3& _v3Pos, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
@@ -143,7 +143,7 @@ namespace scene
     // Fill primitive data
     using namespace render::graphics;
     CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-    CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iStacks, _iSlices, _eRenderMode, oPrimitiveData);
+    CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode, oPrimitiveData);
 
     // Compute normals
     CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
@@ -184,7 +184,7 @@ namespace scene
     pCubePrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
-  void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
@@ -195,12 +195,12 @@ namespace scene
     // Fill primitive data
     using namespace render::graphics;
     CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-    CPrimitiveUtils::CreateSphere(_fRadius, _iStacks, _iSlices, oPrimitiveData.m_vctVertexData);
+    CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, oPrimitiveData.m_vctVertexData);
 
     // Fill indices
     oPrimitiveData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? 
-    CPrimitiveUtils::GetSphereIndices(_iStacks, _iSlices) :
-    CPrimitiveUtils::GetWireframeSphereIndices(_iStacks, _iSlices);
+    CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
+    CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
 
     // Compute normals
     CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);

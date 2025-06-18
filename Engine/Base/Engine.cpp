@@ -58,9 +58,9 @@ namespace engine
     m_pRender->EndDraw(); // End 
   }
   // ------------------------------------
-  void CEngine::DrawCapsule(const math::CVector3& _v3Pos, float _fRadius, float _fHeight, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CEngine::DrawCapsule(const math::CVector3& _v3Pos, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    m_pSceneManager->DrawCapsule(_v3Pos, _fRadius, _fHeight, _iStacks, _iSlices, _v3Color, _eRenderMode);
+    m_pSceneManager->DrawCapsule(_v3Pos, _fRadius, _fHeight, _iSubvH, _iSubvV, _v3Color, _eRenderMode);
   }
   // ------------------------------------
   void CEngine::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -68,9 +68,9 @@ namespace engine
     m_pSceneManager->DrawCube(_v3Pos, _v3Size, _v3Rot, _v3Color, _eRenderMode);
   }
   // ------------------------------------
-  void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iStacks, _iSlices, _v3Color, _eRenderMode);
+    m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iSubvH, _iSubvV, _v3Color, _eRenderMode);
   }
   // ------------------------------------
   void CEngine::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)

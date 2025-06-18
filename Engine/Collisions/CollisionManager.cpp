@@ -1,9 +1,10 @@
 #include "CollisionManager.h"
-#include "Libs/Macros/GlobalMacros.h"
+
 #include "Engine/Collisions/BoxCollider.h"
 #include "Engine/Collisions/SphereCollider.h"
-#include <iostream>
-#include <cassert>
+#include "Engine/Collisions/CapsuleCollider.h"
+
+#include "Libs/Macros/GlobalMacros.h"
 #include <unordered_map>
 #include <unordered_set>
 
@@ -98,8 +99,9 @@ namespace collision
     }
     switch (_eColliderType)
     {
-      case collision::BOX_COLLIDER: return m_vctColliders.CreateItem<collision::CBoxCollider>(_pOwner);
-      case collision::SPHERE_COLLIDER: return m_vctColliders.CreateItem<collision::CSphereCollider>(_pOwner);
+      case collision::EColliderType::BOX_COLLIDER: return m_vctColliders.CreateItem<collision::CBoxCollider>(_pOwner);
+      case collision::EColliderType::SPHERE_COLLIDER: return m_vctColliders.CreateItem<collision::CSphereCollider>(_pOwner);
+      case collision::EColliderType::CAPSULE_COLLIDER: return m_vctColliders.CreateItem<collision::CCapsuleCollider>(_pOwner);
       default: return nullptr;
     }
   }
@@ -119,7 +121,8 @@ namespace collision
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
     {
       collision::CCollider* pCollider = m_vctColliders[uI];
-      if((pCollider->GetCollisionMask() & _eCollisionMask) == 0) continue;
+      const collision::ECollisionMask& eCollMask = pCollider->GetCollisionMask();
+      if((eCollMask & _eCollisionMask) == 0) continue;
 
       collision::SHitEvent oHitEvent = collision::SHitEvent();
       bool bIntersect = pCollider->IntersectRay(_oRaycast, oHitEvent, _fMaxDistance);

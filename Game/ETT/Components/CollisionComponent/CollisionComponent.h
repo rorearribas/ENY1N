@@ -19,6 +19,9 @@ namespace game
     void CreateCollider(collision::EColliderType _eColliderType);
     inline collision::CCollider* const GetCollider() { return m_pCollider; }
 
+    void SetCollisionMask(collision::ECollisionMask _eCollisionMask);
+    collision::ECollisionMask GetCollisionMask() const;
+
     void SetPosition(const math::CVector3& _v3Position);
     const math::CVector3& GetPosition() const;
     void SetRotation(const math::CVector3& _v3Rotation);
