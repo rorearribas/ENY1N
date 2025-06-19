@@ -30,6 +30,9 @@ namespace render
       static const std::vector<uint32_t> s_oPlaneIndices;
       static const std::vector<uint32_t> s_oWireframePlaneIndices;
 
+      // 2D Circle
+      static void Create2DCircle(float _fRadius, int _iSubvH, int _iSubvV, CPrimitive::SCustomPrimitive& _oPrimitiveData_, render::ERenderMode _eRenderMode);
+
       // 3D Line
       static void CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, CPrimitive::SCustomPrimitive& _oPrimitiveData_);
 
@@ -42,7 +45,7 @@ namespace render
       static std::vector<uint32_t> GetWireframeSphereIndices(int _iStacks, int _iSlices);
 
       // 3D Capsule
-      static void CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode, CPrimitive::SCustomPrimitive& _oPrimitiveData_);
+      static void CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, CPrimitive::SCustomPrimitive& _oPrimitiveData_, render::ERenderMode _eRenderMode);
 
       // Normals
       static void ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _vctIndices);

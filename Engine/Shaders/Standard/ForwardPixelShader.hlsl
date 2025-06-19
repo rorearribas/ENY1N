@@ -80,8 +80,8 @@ cbuffer GlobalLightingData : register(b1)
 {
   // Lights
   DirectionalLight directionalLight;
-  PointLight pointLights[250];
-  Spotlight spotLights[250];
+  PointLight pointLights[100];
+  Spotlight spotLights[100];
 
   // Handle lights
   int2 RegisteredLights;

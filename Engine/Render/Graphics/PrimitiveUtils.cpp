@@ -67,18 +67,21 @@ namespace render
     // 2D Square Indices
     const std::vector<uint32_t> CPrimitiveUtils::s_oSquareIndices =
     {
-      0, 1, 2, // FRONT
-      0, 2, 3, // FRONT
+      0, 1, 2,
+      0, 2, 3
     };
     const std::vector<uint32_t> CPrimitiveUtils::s_oSquareWireframeIndices =
     {
-      0, 1, 1, 2, 2, 3, 3, 0, // FRONT FACE
+      0, 1, // Line 1
+      1, 2, // Line 2
+      2, 3, // Line 3
+      3, 0  // Line 4
     };
 
     // 2D Triangle Indices
     const std::vector<uint32_t> CPrimitiveUtils::s_oTriangleIndices =
     {
-      0, 1, 2, // FRONT
+      0, 1, 2
     };
     const std::vector<uint32_t> CPrimitiveUtils::s_oWireframeTriangleIndices =
     {
@@ -86,6 +89,19 @@ namespace render
       1, 2, // Line 2
       2, 0  // Line 3
     };
+
+    // Create 2D Circle
+    void CPrimitiveUtils::Create2DCircle
+    (
+      float /*_fStandardRadius*/,
+      int /*_iSubvH*/,
+      int /*_iSubvV*/, 
+      CPrimitive::SCustomPrimitive& /*_oPrimitiveData_*/, 
+      render::ERenderMode /*_eRenderMode*/
+    )
+    {
+      
+    }
 
     // 3D Cube Indices
     const std::vector<uint32_t> CPrimitiveUtils::s_oCubeIndices =
@@ -241,7 +257,15 @@ namespace render
 #pragma region 3D Capsule
 
     // 3D Capsule 
-    void CPrimitiveUtils::CreateCapsule(float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode, CPrimitive::SCustomPrimitive& _oPrimitiveData_)
+    void CPrimitiveUtils::CreateCapsule
+    (
+      float _fRadius,
+      float _fHeight,
+      int _iSubvH,
+      int _iSubvV,
+      CPrimitive::SCustomPrimitive& _oPrimitiveData_,
+      render::ERenderMode _eRenderMode
+    )
     {
       // Clear
       _oPrimitiveData_.m_vctIndices.clear();
@@ -330,10 +354,10 @@ namespace render
       _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx) : 
       oGenerateWireframeIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx);
 
+      // Body
       if (fDiff >= 0.0f)
       {
-        // Body
-        static constexpr int s_iMaxBodySubdv = 1;
+        const int s_iMaxBodySubdv = _eRenderMode == render::ERenderMode::SOLID ? _iSubvH : 1;
         iCacheStartIdx = static_cast<int>(_oPrimitiveData_.m_vctVertexData.size());
         for (int iX = 0; iX <= s_iMaxBodySubdv; ++iX)
         {

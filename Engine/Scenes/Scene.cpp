@@ -17,7 +17,7 @@ namespace scene
 {
   CScene::CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex)
   {
-    HRESULT hResult = m_oLightingBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+    HRESULT hResult = m_oGlobalLightingBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
     UNUSED_VAR(hResult);
 #ifdef _DEBUG
     assert(!FAILED(hResult));
@@ -26,7 +26,7 @@ namespace scene
   // ------------------------------------
   CScene::~CScene()
   {
-    m_oLightingBuffer.CleanBuffer();
+    m_oGlobalLightingBuffer.CleanBuffer();
     DestroyAllPrimitives();
     DestroyAllModels();
     DestroyAllLights();
@@ -68,7 +68,7 @@ namespace scene
   void CScene::UpdateLighting()
   {
     // Fill data
-    auto& oGlobalLightingData = m_oLightingBuffer.GetData();
+    auto& oGlobalLightingData = m_oGlobalLightingBuffer.GetData();
 
     // Directional light
     if (m_pDirectionalLight)
@@ -104,14 +104,14 @@ namespace scene
     oGlobalLightingData.RegisteredSpotLights = static_cast<int>(m_vctSpotLights.CurrentSize());
 
     // Write buffer
-    bool bOk = m_oLightingBuffer.WriteBuffer();
+    bool bOk = m_oGlobalLightingBuffer.WriteBuffer();
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk); // Sanity check
 #endif
 
     // Apply constant buffer
-    ID3D11Buffer* pConstantBuffer = m_oLightingBuffer.GetBuffer();
+    ID3D11Buffer* pConstantBuffer = m_oGlobalLightingBuffer.GetBuffer();
     global::dx11::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
   }
   // ------------------------------------
@@ -143,7 +143,7 @@ namespace scene
     // Fill primitive data
     using namespace render::graphics;
     CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-    CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode, oPrimitiveData);
+    CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, oPrimitiveData, _eRenderMode);
 
     // Compute normals
     CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
@@ -239,8 +239,8 @@ namespace scene
     // Set values
     pPlanePrimitive->SetPosition(_oPlane.GetPos());
     pPlanePrimitive->SetScale(_v3Size);
-    pPlanePrimitive->UseGlobalLighting(false);
     pPlanePrimitive->SetColor(_v3Color);
+    pPlanePrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   void CScene::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
@@ -262,8 +262,8 @@ namespace scene
 #endif
 
     // Set values
-    pLinePrimitive->UseGlobalLighting(false);
     pLinePrimitive->SetColor(_v3Color);
+    pLinePrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)
@@ -342,38 +342,30 @@ namespace scene
     bool bOk = false;
     switch (_pLight_->GetLightType())
     {
-    case render::lights::ELightType::DIRECTIONAL_LIGHT:
-    {
-      bOk = global::ReleaseObject(m_pDirectionalLight);
-    }
-    break;
-    case render::lights::ELightType::POINT_LIGHT:
-    {
-      bOk = DestroyPointLight(static_cast<render::lights::CPointLight*>(_pLight_));
-    }
-    break;
-    case render::lights::ELightType::SPOT_LIGHT:
-    {
-      bOk = DestroySpotLight(static_cast<render::lights::CSpotLight*>(_pLight_));
-    }
-    break;
-    default:
+      case render::lights::ELightType::DIRECTIONAL_LIGHT:
+      {
+        bOk = global::ReleaseObject(m_pDirectionalLight);
+      }
       break;
+      case render::lights::ELightType::POINT_LIGHT:
+      {
+        render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(_pLight_);
+        bOk = m_vctPointLights.RemoveItem(pPointLight);
+      }
+      break;
+      case render::lights::ELightType::SPOT_LIGHT:
+      {
+        render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(_pLight_);
+        bOk = m_vctSpotLights.RemoveItem(pSpotLight);
+      }
+      break;
+      default:
+        break;
     }
 
 #ifdef _DEBUG
     assert(bOk); // Sanity check
 #endif
-    _pLight_ = nullptr; // Assign to nullptr
-  }
-  // ------------------------------------
-  bool CScene::DestroyPointLight(render::lights::CPointLight* _pPointLight_)
-  {
-    return m_vctPointLights.RemoveItem(_pPointLight_);
-  }
-  // ------------------------------------
-  bool CScene::DestroySpotLight(render::lights::CSpotLight* _pLight_)
-  {
-    return m_vctSpotLights.RemoveItem(_pLight_);
+    _pLight_ = nullptr; // Set as nullptr
   }
 }

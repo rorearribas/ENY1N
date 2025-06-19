@@ -11,6 +11,12 @@ namespace render
 {
   namespace graphics
   {
+    static constexpr float s_fStandardRadius = 0.5f;
+    static constexpr float s_fCapsuleHeight = 2.0f;
+
+    static constexpr int s_iSubvH = 12;
+    static constexpr int s_iSubvV = 12;
+
     CPrimitive::CPrimitive(const SCustomPrimitive& _oVertexData, render::ERenderMode _eRenderMode)
     {
       HRESULT hResult = CreateInputLayout();
@@ -61,72 +67,76 @@ namespace render
     {
       switch (_ePrimitiveType)
       {
-      // 2D Implementation
-      case EPrimitiveType::E2D_SQUARE:
-      {
-        return CreateBufferFromPrimitiveData
-        (
-          CPrimitiveUtils::s_oCubePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oSquareIndices : CPrimitiveUtils::s_oSquareWireframeIndices
-        );
-      }
-      break;
-      case EPrimitiveType::E2D_TRIANGLE:
-      {
-        return CreateBufferFromPrimitiveData
-        (
-          CPrimitiveUtils::s_oTrianglePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oTriangleIndices : CPrimitiveUtils::s_oWireframeTriangleIndices
-        );
-      }
-      break;
-      // 3D Implementation
-      case EPrimitiveType::E3D_PLANE:
-      {
-        return CreateBufferFromPrimitiveData
-        (
-          CPrimitiveUtils::s_oPlanePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices
-        );
-      }
-      case EPrimitiveType::E3D_CUBE:
-      {
-        return CreateBufferFromPrimitiveData
-        (
-          CPrimitiveUtils::s_oCubePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oWireframeCubeIndices
-        );
-      }
-      case EPrimitiveType::E3D_SPHERE:
-      {
-        // Set values
-        const float fTargetRadius = 0.5f;
-        const int iSubvH = 12;
-        const int iSubvV = 12;
+        // 2D Implementation
+        case EPrimitiveType::E2D_SQUARE:
+        {
+          return CreateBufferFromPrimitiveData
+          (
+            CPrimitiveUtils::s_oCubePrimitive,
+            _eRenderMode == SOLID ? CPrimitiveUtils::s_oSquareIndices : CPrimitiveUtils::s_oSquareWireframeIndices
+          );
+        }
+        case EPrimitiveType::E2D_CIRCLE:
+        {
+          CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
+          CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, oPrimitiveData, _eRenderMode);
+          return CreateBufferFromPrimitiveData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+        }
+        break;
+        case EPrimitiveType::E2D_TRIANGLE:
+        {
+          return CreateBufferFromPrimitiveData
+          (
+            CPrimitiveUtils::s_oTrianglePrimitive,
+            _eRenderMode == SOLID ? CPrimitiveUtils::s_oTriangleIndices : CPrimitiveUtils::s_oWireframeTriangleIndices
+          );
+        }
+        break;
+        // 3D Implementation
+        case EPrimitiveType::E3D_PLANE:
+        {
+          return CreateBufferFromPrimitiveData
+          (
+            CPrimitiveUtils::s_oPlanePrimitive,
+            _eRenderMode == SOLID ? CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices
+          );
+        }
+        case EPrimitiveType::E3D_CUBE:
+        {
+          return CreateBufferFromPrimitiveData
+          (
+            CPrimitiveUtils::s_oCubePrimitive, 
+            _eRenderMode == SOLID ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oWireframeCubeIndices
+          );
+        }
+        case EPrimitiveType::E3D_SPHERE:
+        {
+          std::vector<render::graphics::SVertexData> vctVertexData = std::vector<render::graphics::SVertexData>();
+          CPrimitiveUtils::CreateSphere(s_fStandardRadius, s_iSubvH, s_iSubvV, vctVertexData);
 
-        std::vector<render::graphics::SVertexData> vctVertexData = std::vector<render::graphics::SVertexData>();
-        const auto& vctIndices = _eRenderMode == SOLID ? CPrimitiveUtils::GetSphereIndices(iSubvH, iSubvV) : CPrimitiveUtils::GetWireframeSphereIndices(iSubvH, iSubvV);
-        CPrimitiveUtils::CreateSphere(fTargetRadius, iSubvH, iSubvV, vctVertexData);
-        CPrimitiveUtils::ComputeNormals(vctVertexData, vctIndices);
+          const auto& vctIndices = _eRenderMode == SOLID ?
+          CPrimitiveUtils::GetSphereIndices(s_iSubvH, s_iSubvV) :
+          CPrimitiveUtils::GetWireframeSphereIndices(s_iSubvH, s_iSubvV);
+          CPrimitiveUtils::ComputeNormals(vctVertexData, vctIndices);
 
-        return CreateBufferFromPrimitiveData(vctVertexData, vctIndices);
-      }
-      case EPrimitiveType::E3D_CAPSULE:
-      {
-        // Set values
-        const float fTargetRadius = 0.5f;
-        const float fStandardHeight = 2.0f;
-
-        const int iSubvH = 12;
-        const int iSubvV = 12;
-
-        CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-        CPrimitiveUtils::CreateCapsule(fTargetRadius, fStandardHeight, iSubvH, iSubvV, _eRenderMode, oPrimitiveData);
-        CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
-
-        return CreateBufferFromPrimitiveData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
-      }
-      break;
+          return CreateBufferFromPrimitiveData(vctVertexData, vctIndices);
+        }
+        case EPrimitiveType::E3D_CAPSULE:
+        {
+          CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
+          CPrimitiveUtils::CreateCapsule
+          (
+            s_fStandardRadius, 
+            s_fCapsuleHeight, 
+            s_iSubvH, 
+            s_iSubvV,
+            oPrimitiveData,
+            _eRenderMode
+          );
+          CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+          return CreateBufferFromPrimitiveData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+        }
+        break;
       }
 
       return S_FALSE;

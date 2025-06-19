@@ -16,6 +16,7 @@ namespace global
   {
     extern ID3D11Device* s_pDevice;
     extern ID3D11DeviceContext* s_pDeviceContext;
+
     template<typename _ID3D11Resource>
     inline void SafeRelease(_ID3D11Resource*& _pPtr)
     {

@@ -14,18 +14,18 @@ namespace scene
   class CScene
   {
   private:
+    //@Note: if you change this values you will also need to change the array size in hlsl
     static int constexpr s_iMaxSpotLights = 100;
     static int constexpr s_iMaxPointLights = 100;
 
+    typedef utils::CFixedPool<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
+    typedef utils::CFixedPool<render::lights::CSpotLight, s_iMaxSpotLights> TSpotLightsList;
+
+  private:
     static int constexpr s_iMaxModels = 1000;
     static int constexpr s_iMaxDebugItems = 1000;
     static int constexpr s_iMaxPrimitives = 10000;
 
-    // Lights
-    typedef utils::CFixedPool<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
-    typedef utils::CFixedPool<render::lights::CSpotLight, s_iMaxSpotLights> TSpotLightsList;
-
-    // Graphics
     typedef utils::CFixedPool<render::graphics::CPrimitive, s_iMaxDebugItems> TDebugItemList;
     typedef utils::CFixedPool<render::graphics::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
     typedef utils::CFixedPool<render::graphics::CModel, s_iMaxPrimitives> TModelList;
@@ -66,9 +66,6 @@ namespace scene
     void UpdateLighting();
 
   private:
-    bool DestroyPointLight(render::lights::CPointLight* pLight_);
-    bool DestroySpotLight(render::lights::CSpotLight* pLight_);
-
     void DestroyAllPrimitives();
     void DestroyAllModels();
     void DestroyAllLights();
@@ -88,6 +85,6 @@ namespace scene
     TSpotLightsList m_vctSpotLights = TSpotLightsList();
 
     // Global lightning buffer
-    CConstantBuffer<SGlobalLightingData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightingBuffer;
+    CConstantBuffer<SGlobalLightingData<s_iMaxPointLights, s_iMaxSpotLights>> m_oGlobalLightingBuffer;
   };
 }

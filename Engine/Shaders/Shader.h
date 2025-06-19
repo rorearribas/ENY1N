@@ -32,16 +32,23 @@ namespace render
     {
       switch (eShaderType)
       {
-      case render::shader::VERTEX_SHADER:
-        if (m_pShaderData) { static_cast<ID3D11VertexShader*>(m_pShaderData)->Release(); }
+        case render::shader::VERTEX_SHADER: 
+        {
+          ID3D11VertexShader* pVertexShader = static_cast<ID3D11VertexShader*>(m_pShaderData);
+          global::dx11::SafeRelease(pVertexShader);
+        }
         break;
-      case render::shader::PIXEL_SHADER:
-        if (m_pShaderData) { static_cast<ID3D11PixelShader*>(m_pShaderData)->Release(); }
+        case render::shader::PIXEL_SHADER: 
+        {
+          ID3D11PixelShader* pPixelShader = static_cast<ID3D11PixelShader*>(m_pShaderData);
+          global::dx11::SafeRelease(pPixelShader);
+        }
         break;
-      case render::shader::COMPUTE_SHADER:
-        if (m_pShaderData) { static_cast<ID3D11ComputeShader*>(m_pShaderData)->Release(); }
-        break;
-      default:
+        case render::shader::COMPUTE_SHADER: 
+        {
+          ID3D11ComputeShader* pComputeShader = static_cast<ID3D11ComputeShader*>(m_pShaderData);
+          global::dx11::SafeRelease(pComputeShader);
+        }
         break;
       }
 

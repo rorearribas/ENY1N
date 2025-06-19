@@ -322,7 +322,7 @@ namespace render
     global::dx11::SafeRelease(internal_render::s_oPipeline.pBlendState);
 
     D3D11_RENDER_TARGET_BLEND_DESC oRenderTargetBlendDesc = D3D11_RENDER_TARGET_BLEND_DESC();
-    oRenderTargetBlendDesc.BlendEnable = false;
+    oRenderTargetBlendDesc.BlendEnable = true;
     oRenderTargetBlendDesc.SrcBlend = D3D11_BLEND_ONE;
     oRenderTargetBlendDesc.DestBlend = D3D11_BLEND_BLEND_FACTOR;
     oRenderTargetBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
@@ -331,9 +331,7 @@ namespace render
     oRenderTargetBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
     oRenderTargetBlendDesc.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
 
-    D3D11_BLEND_DESC oBlendDesc;
-    ZeroMemory(&oBlendDesc, sizeof(oBlendDesc));
-
+    D3D11_BLEND_DESC oBlendDesc = D3D11_BLEND_DESC();
     oBlendDesc.AlphaToCoverageEnable = false;
     oBlendDesc.RenderTarget[0] = oRenderTargetBlendDesc;
 

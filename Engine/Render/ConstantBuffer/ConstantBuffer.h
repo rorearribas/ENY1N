@@ -38,7 +38,7 @@ struct __declspec(align(16)) SConstantModelData
 };
 
 #pragma region Lights
-namespace internal
+namespace internal_wrapper
 {
   // Directional lights
   struct __declspec(align(16)) SDirectionaLight
@@ -90,9 +90,10 @@ template<size_t MAX_POINT_LIGHTS, size_t MAX_SPOT_LIGHTS>
 struct __declspec(align(16)) SGlobalLightingData
 {
   // Lights [144 Bytes]
-  internal::SDirectionaLight DirectionalLight;
-  internal::SPointLight PointLights[MAX_POINT_LIGHTS];
-  internal::SSpotLight SpotLights[MAX_SPOT_LIGHTS];
+  internal_wrapper::SDirectionaLight DirectionalLight;
+  internal_wrapper::SPointLight PointLights[MAX_POINT_LIGHTS];
+  internal_wrapper::SSpotLight SpotLights[MAX_SPOT_LIGHTS];
+
   // Handle lights [16 Bytes]
   int RegisteredPointLights;
   int RegisteredSpotLights;

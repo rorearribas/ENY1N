@@ -18,6 +18,7 @@ namespace render
       enum EPrimitiveType
       {
         E2D_SQUARE,
+        E2D_CIRCLE,
         E2D_TRIANGLE,
         E3D_PLANE,
         E3D_CUBE,

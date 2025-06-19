@@ -18,18 +18,18 @@ namespace scene
   {
     int iCurrentIdx = 0;
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene*& _pScene)
-      {
-        _pScene = new scene::CScene(iCurrentIdx++);
-        _pScene->SetSceneEnabled(false);
-      });
+    {
+      _pScene = new scene::CScene(iCurrentIdx++);
+      _pScene->SetSceneEnabled(false);
+    });
   }
   // ------------------------------------
   void CSceneManager::DisableAllScenes() const
   {
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene* _pScene)
-      {
-        _pScene->SetSceneEnabled(false);
-      });
+    {
+      _pScene->SetSceneEnabled(false);
+    });
   }
   // ------------------------------------
   void CSceneManager::DrawCapsule(const math::CVector3& _v3Pos, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
