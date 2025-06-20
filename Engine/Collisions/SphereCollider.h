@@ -24,9 +24,9 @@ namespace collision
     virtual void DrawDebug() override;
 
   private:
-    bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
-    bool CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
     bool CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const;
+    bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
+    bool CheckAABBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
 
     math::CVector3 m_v3Center = math::CVector3::Zero; // World position
     float m_fRadius = 0.5f; // Radius

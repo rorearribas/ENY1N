@@ -1,6 +1,10 @@
 #pragma once
 #include "Collider.h"
 
+namespace collision { class CSphereCollider; }
+
+namespace collision { class CBoxCollider; }
+
 namespace collision
 {
   class CCapsuleCollider final : public CCollider
@@ -25,9 +29,18 @@ namespace collision
     virtual void DrawDebug() override;
 
   private:
+    bool CheckCapsuleCollision(const CCapsuleCollider* _pOther, SHitEvent& _oHitEvent_) const;
+    bool CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const;
+    bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
+    bool CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
+
     math::CVector3 m_v3LocalCenter = math::CVector3::Zero; // Local displacement
     float m_fHeight = 2.0f;
     float m_fRadius = 0.5f;
+
+    math::CVector3 m_v3Forward = math::CVector3::Zero;
+    math::CVector3 m_v3Right = math::CVector3::Zero;
+    math::CVector3 m_v3Up = math::CVector3::Zero;
   };
 }
 

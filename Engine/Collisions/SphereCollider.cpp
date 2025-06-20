@@ -23,7 +23,7 @@ namespace collision
     {
       const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
       assert(&oBoxCollider);
-      return oBoxCollider.IsOBBEnabled() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckBoxCollision(&oBoxCollider, _oHitEvent_);
+      return oBoxCollider.IsOBBEnabled() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckAABBCollision(&oBoxCollider, _oHitEvent_);
     }
     case EColliderType::SPHERE_COLLIDER:
     {
@@ -76,18 +76,27 @@ namespace collision
     m_v3Center = GetPosition();
   }
   // ------------------------------------
-  void CSphereCollider::DrawDebug()
+  bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
-    // Draw sphere
-    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    pEngine->DrawSphere
-    (
-      GetPosition(),
-      GetRadius(),
-      internal_sphere_collider::s_iMaxSubvH,
-      internal_sphere_collider::s_iMaxSubvV,
-      math::CVector3::One
-    );
+    const math::CVector3 v3Center = GetCenter();
+    math::CVector3 vDist = v3Center - _pOther->GetCenter();
+    math::CVector3 v3Dir = math::CVector3::Normalize(vDist);
+
+    // Calculate values
+    float fDistanceSquared = (vDist.X * vDist.X) + (vDist.Y * vDist.Y) + (vDist.Z * vDist.Z);
+    float fRadiusSum = GetRadius() + _pOther->GetRadius();
+    float fRadiusSquared = fRadiusSum * fRadiusSum;
+
+    // Valid collision
+    if (fDistanceSquared <= fRadiusSquared)
+    {
+      _oHitEvent_.Normal = v3Dir;
+      _oHitEvent_.Depth = fRadiusSum - sqrtf(fDistanceSquared);
+      _oHitEvent_.ImpactPoint = v3Center + (_oHitEvent_.Normal * GetRadius());
+      return true;
+    }
+
+    return false;
   }
   // ------------------------------------
   bool CSphereCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
@@ -132,7 +141,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CSphereCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CSphereCollider::CheckAABBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     // We have to find the closest point.
     const math::CVector3& v3Center = GetCenter();
@@ -159,26 +168,17 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
+  void CSphereCollider::DrawDebug()
   {
-    const math::CVector3 v3Center = GetCenter();
-    math::CVector3 vDist = v3Center - _pOther->GetCenter();
-    math::CVector3 v3Dir = math::CVector3::Normalize(vDist);
-
-    // Calculate values
-    float fDistanceSquared = (vDist.X * vDist.X) + (vDist.Y * vDist.Y) + (vDist.Z * vDist.Z);
-    float fRadiusSum = GetRadius() + _pOther->GetRadius();
-    float fRadiusSquared = fRadiusSum * fRadiusSum;
-
-    // Valid collision
-    if (fDistanceSquared <= fRadiusSquared)
-    {
-      _oHitEvent_.Normal = v3Dir;
-      _oHitEvent_.Depth = fRadiusSum - sqrtf(fDistanceSquared);
-      _oHitEvent_.ImpactPoint = v3Center + (_oHitEvent_.Normal * GetRadius());
-      return true;
-    }
-
-    return false;
+    // Draw sphere
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    pEngine->DrawSphere
+    (
+      GetPosition(),
+      GetRadius(),
+      internal_sphere_collider::s_iMaxSubvH,
+      internal_sphere_collider::s_iMaxSubvV,
+      math::CVector3::One
+    );
   }
 }

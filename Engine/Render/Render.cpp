@@ -322,7 +322,7 @@ namespace render
     global::dx11::SafeRelease(internal_render::s_oPipeline.pBlendState);
 
     D3D11_RENDER_TARGET_BLEND_DESC oRenderTargetBlendDesc = D3D11_RENDER_TARGET_BLEND_DESC();
-    oRenderTargetBlendDesc.BlendEnable = true;
+    oRenderTargetBlendDesc.BlendEnable = false;
     oRenderTargetBlendDesc.SrcBlend = D3D11_BLEND_ONE;
     oRenderTargetBlendDesc.DestBlend = D3D11_BLEND_BLEND_FACTOR;
     oRenderTargetBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
@@ -340,7 +340,7 @@ namespace render
   // ------------------------------------
   void CRender::ConfigureViewport(uint32_t _uX, uint32_t _uY)
   {
-    if (global::dx11::s_pDeviceContext && m_pRenderWindow)
+    if (global::dx11::s_pDeviceContext && m_pRenderWindow) 
     {
       D3D11_VIEWPORT oViewport = D3D11_VIEWPORT();
       oViewport.Width = static_cast<float>(_uX);

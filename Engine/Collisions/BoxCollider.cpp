@@ -97,7 +97,7 @@ namespace collision
     {
       const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
       assert(&oBoxCollider);
-      return IsOBBEnabled() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckBoxCollision(&oBoxCollider, _oHitEvent_);
+      return IsOBBEnabled() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckAABBCollision(&oBoxCollider, _oHitEvent_);
     }
     case EColliderType::SPHERE_COLLIDER:
     {
@@ -257,7 +257,7 @@ namespace collision
     return true;
   }
   // ------------------------------------
-  bool CBoxCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CBoxCollider::CheckAABBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     bool bCheckCollision = (m_v3Min.X <= _pOther->m_v3Max.X && m_v3Max.X >= _pOther->m_v3Min.X) &&
       (m_v3Min.Y <= _pOther->m_v3Max.Y && m_v3Max.Y >= _pOther->m_v3Min.Y) &&
@@ -331,9 +331,9 @@ namespace collision
     // Compute closest point
     math::CVector3 v3ClosestPoint = 
     {
-        (v3OBBCenter + v3Axis[0] * fClampedX) + // X
-        (v3Axis[1] * fClampedY) + // Y
-        (v3Axis[2] * fClampedZ) // Z
+      (v3OBBCenter + v3Axis[0] * fClampedX) + // X
+      (v3Axis[1] * fClampedY) + // Y
+      (v3Axis[2] * fClampedZ) // Z
     };
 
     // Check distance
