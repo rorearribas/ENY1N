@@ -1,2 +1,0 @@
-D:\Projects\Personal\ENY1N\App\x64\Debug\App.exe
-C:\Users\Rubén\Documents\GitHub\ENY1N\App\x64\Debug\App.exe

@@ -1,2 +1,0 @@
-D:\Projects\Personal\ENY1N\Reflection\x64\Debug\Reflection.lib
-C:\Users\Rubén\Documents\GitHub\ENY1N\Reflection\x64\Debug\Reflection.lib

@@ -1,2 +1,0 @@
-D:\Projects\Personal\ENY1N\Libs\x64\Debug\Libs.lib
-C:\Users\Rubén\Documents\GitHub\ENY1N\Libs\x64\Debug\Libs.lib
