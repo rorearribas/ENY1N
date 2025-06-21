@@ -7,7 +7,7 @@
 
 namespace collision
 {
-  class CCollisionManager : public utils::CSingleton<CCollisionManager> 
+  class CCollisionManager : public utils::CSingleton<CCollisionManager>
   {
   public:
     static const uint32_t s_uMaxColliders = 250;
@@ -15,7 +15,7 @@ namespace collision
 
   public:
     CCollisionManager() {}
-    ~CCollisionManager();
+    ~CCollisionManager() { Clean(); }
 
     void Update(float _fDeltaTime);
 
@@ -23,8 +23,8 @@ namespace collision
     collision::CCollider* CreateCollider(collision::EColliderType _eColliderType, void* _pOwner);
     void DestroyCollider(collision::CCollider*& _pCollider_);
 
-    bool Raycast(const physics::CRay& _oRaycast, SHitEvent& _oHitEvent_, float _fMaxDistance, ECollisionMask _eCollisionMask = ECollisionMask::DEFAULT);
-    bool RaycastAll(const physics::CRay& _oRaycast, std::vector<SHitEvent>& _vctHits_, float _fMaxDistance, ECollisionMask _eCollisionMask = ECollisionMask::DEFAULT);
+    bool Raycast(const physics::CRay& _oRaycast, float _fMaxDistance, SHitEvent& _oHitEvent_, ECollisionMask _eMask = ECollisionMask::DEFAULT);
+    bool RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<SHitEvent>& _vctHits_, ECollisionMask _eMask = ECollisionMask::DEFAULT);
 
   private:
     void Clean();

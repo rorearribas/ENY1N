@@ -8,12 +8,6 @@
 
 namespace engine
 {
-  namespace internal_engine
-  {
-    const float s_fMaxFixedDeltaTime = 1.f / 10.f;
-    const int s_iTargetMaxFPS = 60;
-  }
-
   CEngine::~CEngine()
   {
     m_pSceneManager.reset();

@@ -6,7 +6,6 @@
 // Interface
 namespace collision
 {
-  // Default mask
   enum ECollisionMask
   {
     DEFAULT = 1 << 0,

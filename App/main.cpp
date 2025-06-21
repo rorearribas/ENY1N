@@ -115,7 +115,8 @@ int main()
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
+    game::CCollisionComponent* pCollComp = pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
+    pCollComp->SetCollisionMask(collision::FLOOR);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
 
     float fRandomX = GenerateFloat(-1.0f, 1.0f);
@@ -186,11 +187,13 @@ int main()
 
           // Throw ray
           collision::CCollisionManager* pCollManager = collision::CCollisionManager::GetInstance();
-          collision::SHitEvent oHitEvent = collision::SHitEvent();
-          if (pCollManager->Raycast(physics::CRay(v3Pos, math::CVector3::Forward), oHitEvent, 100.0f))
+          std::vector<collision::SHitEvent> vctHits;
+          if (pCollManager->RaycastAll(physics::CRay(v3Pos, math::CVector3::Forward), 100.0f, vctHits, collision::FLOOR))
           {
-            std::cout << "dist: " << oHitEvent.Distance << std::endl;
-            pEngine->DrawSphere(oHitEvent.ImpactPoint, 0.05f, 8, 8, math::CVector3::Right);
+            for (auto& HitEvent : vctHits)
+            {
+              pEngine->DrawSphere(HitEvent.ImpactPoint, 0.05f, 8, 8, math::CVector3::Up);
+            }
           }
         }
 

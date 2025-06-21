@@ -11,16 +11,9 @@
 namespace collision
 {
   static std::unordered_map<collision::CCollider*, std::unordered_set<collision::CCollider*>> s_dctHandleCollisions;
-
-  CCollisionManager::~CCollisionManager()
-  {
-    Clean();
-  }
   // ------------------------------------
-  void CCollisionManager::Update(float _fDeltaTime)
+  void CCollisionManager::Update(float /*_fDeltaTime*/)
   {
-    UNUSED_VAR(_fDeltaTime);
-
     // Check collisions
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
     {
@@ -113,48 +106,52 @@ namespace collision
     _pCollider_ = nullptr;
   }
   // ------------------------------------
-  bool CCollisionManager::Raycast(const physics::CRay& _oRaycast, SHitEvent& _oHitEvent_, float _fMaxDistance, ECollisionMask _eCollisionMask)
+  bool CCollisionManager::Raycast(const physics::CRay& _oRaycast, float _fMaxDistance, SHitEvent& oHitEvent_, ECollisionMask _eMask)
   {
     bool bHit = false;
     float fClosestDistance = _fMaxDistance;
-
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
     {
       collision::CCollider* pCollider = m_vctColliders[uI];
       const collision::ECollisionMask& eCollMask = pCollider->GetCollisionMask();
-      if((eCollMask & _eCollisionMask) == 0) continue;
+      if((eCollMask & _eMask) == 0)
+      {
+        continue;
+      }
 
       collision::SHitEvent oHitEvent = collision::SHitEvent();
       bool bIntersect = pCollider->IntersectRay(_oRaycast, oHitEvent, _fMaxDistance);
-      bool bCorrectDist = _oHitEvent_.Distance < fClosestDistance;
+      bool bCorrectDist = oHitEvent.Distance <= fClosestDistance;
       if (bIntersect && bCorrectDist)
       {
-        _oHitEvent_ = oHitEvent;
-        fClosestDistance = oHitEvent.Distance; // Update closest dista
         bHit = true;
+        oHitEvent_ = oHitEvent;
+        fClosestDistance = oHitEvent.Distance;
       }
     }
     return bHit;
   }
   // ------------------------------------
-  bool CCollisionManager::RaycastAll(const physics::CRay& _oRaycast, std::vector<SHitEvent>& _vctHits_, float _fMaxDistance, ECollisionMask _eCollisionMask)
+  bool CCollisionManager::RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<SHitEvent>& _vctOutHits_, ECollisionMask _eMask)
   {
-    _vctHits_.clear();
+    _vctOutHits_.clear();
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
     {
       collision::CCollider* pCollider = m_vctColliders[uI];
-      if ((pCollider->GetCollisionMask() & _eCollisionMask) == 0) continue;
+      if ((pCollider->GetCollisionMask() & _eMask) == 0) 
+      {
+        continue;
+      }
 
       collision::SHitEvent oHitEvent = collision::SHitEvent();
       bool bIntersect = pCollider->IntersectRay(_oRaycast, oHitEvent, _fMaxDistance);
-      bool bCorrectDist = oHitEvent.Distance < _fMaxDistance;
-
+      bool bCorrectDist = oHitEvent.Distance <= _fMaxDistance;
       if (bIntersect && bCorrectDist)
       {
-        _vctHits_.emplace_back(oHitEvent);
+        _vctOutHits_.emplace_back(oHitEvent);
       }
     }
-    return _vctHits_.size() > 0;
+    return _vctOutHits_.size() > 0;
   }
   // ------------------------------------
   void CCollisionManager::Clean()
