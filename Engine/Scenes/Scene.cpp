@@ -132,7 +132,8 @@ namespace scene
     m_vctSpotLights.ClearAll();
   }
   // ------------------------------------
-  void CScene::DrawCapsule(const math::CVector3& _v3Pos, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
+  float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
@@ -157,6 +158,7 @@ namespace scene
 
     // Set values
     pCapsulePrimitive->SetPosition(_v3Pos);
+    pCapsulePrimitive->SetRotation(_v3Rot);
     pCapsulePrimitive->SetColor(_v3Color);
     pCapsulePrimitive->UseGlobalLighting(false);
   }

@@ -11,69 +11,6 @@ namespace collision
   namespace internal_box_collider
   {
     static const float s_fDebugRadius = 0.025f;
-
-    static bool SeparatedAxis
-    (
-      const std::vector<math::CVector3>& _vctExtentsA, const std::vector<math::CVector3>& _vctExtentsB,
-      const math::CVector3& _v3Axis,
-      math::CVector3& v3ImpactPoint_,
-      math::CVector3& v3Normal_,
-      float& fDepth_
-    )
-    {
-      if (_v3Axis.IsZero())
-        return false;
-
-      float fMinA = FLT_MAX, fMaxA = -FLT_MAX;
-      float fMinB = FLT_MAX, fMaxB = -FLT_MAX;
-
-      // Get MinA/MaxA
-      math::CVector3 v3MinA = math::CVector3::Zero;
-      for (const math::CVector3& v3Vertex : _vctExtentsA)
-      {
-        float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
-        if (fDot < fMinA) { v3MinA = v3Vertex; }
-        fMinA = math::Min(fMinA, fDot);
-        fMaxA = math::Max(fMaxA, fDot);
-      }
-
-      // Get MinB/MaxB
-      math::CVector3 v3MinB = math::CVector3::Zero;
-      for (const math::CVector3& v3Vertex : _vctExtentsB)
-      {
-        float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
-        if (fDot < fMinB) { v3MinB = v3Vertex; }
-        fMinB = math::Min(fMinB, fDot);
-        fMaxB = math::Max(fMaxB, fDot);
-      }
-
-      // Check separation
-      if (fMinA > fMaxB || fMinB > fMaxA)
-      {
-        return true; // No collision
-      }
-
-      // Compute depth
-      float fOverlapA = fMaxB - fMinA;
-      float fOverlapB = fMaxA - fMinB;
-      float fCurrentDepth = math::Min(fOverlapA, fOverlapB);
-
-      // Update current depth
-      if (fCurrentDepth < fDepth_)
-      {
-        // Set depth
-        fDepth_ = fCurrentDepth;
-
-        // Set normal
-        v3Normal_ = (fDepth_ == fOverlapA) ? _v3Axis : -_v3Axis;
-
-        // Calculate impact point
-        math::CVector3 v3Offset = v3Normal_ * (fDepth_ * 0.5f);
-        v3ImpactPoint_ = (fDepth_ == fOverlapA) ? v3MinA + v3Offset : v3MinB - v3Offset;
-      }
-
-      return false; // Valid
-    }
   }
   // ------------------------------------
   CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(collision::EColliderType::BOX_COLLIDER, _pOwner)
@@ -243,7 +180,7 @@ namespace collision
 
     for (const math::CVector3& v3Axis : vctAxis)
     {
-      if (internal_box_collider::SeparatedAxis(v3Extents, v3OtherExtents, v3Axis, v3ImpactPoint, v3Normal, fDepth))
+      if (math::SeparateAxisTheorem(v3Extents, v3OtherExtents, v3Axis, v3ImpactPoint, v3Normal, fDepth))
       {
         return false;
       }

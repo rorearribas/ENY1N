@@ -80,10 +80,28 @@ int main()
   pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
   pPlaneModel->SetPrimitiveColor(math::CVector3(1.0f, 1.0f, 1.0f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
-  //game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
-  //pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
-  //collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());
-  //pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
+  game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
+  pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
+  collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());
+  pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
+
+  // Sphere collider
+  for (uint32_t uIndex = 0; uIndex < 2; uIndex++)
+  {
+    game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Capsule");
+    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
+    game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
+    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE);
+    pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
+    pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
+    pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
+
+    float fRandomX = GenerateFloat(-1.0f, 1.0f);
+    float fRandomY = GenerateFloat(1.0f, 5.0f);
+    float fRandomZ = GenerateFloat(0.0f, 0.0f);
+    pCapsuleEntity->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
+  }
+
 
   std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
@@ -115,31 +133,13 @@ int main()
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
-    game::CCollisionComponent* pCollComp = pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-    pCollComp->SetCollisionMask(collision::FLOOR);
+    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
 
     float fRandomX = GenerateFloat(-1.0f, 1.0f);
     float fRandomY = GenerateFloat(1.0f, 5.0f);
     float fRandomZ = GenerateFloat(0.0f, 0.0f);
     pBoxTest->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
-  }
-
-  // Sphere collider
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
-  {
-    game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Capsule");
-    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
-    game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE);
-    pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
-    pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
-    pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
-
-    float fRandomX = GenerateFloat(-1.0f, 1.0f);
-    float fRandomY = GenerateFloat(1.0f, 5.0f);
-    float fRandomZ = GenerateFloat(0.0f, 0.0f);
-    pCapsuleEntity->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
   }
 
   render::CRender* const pRender = pEngine->GetRender();

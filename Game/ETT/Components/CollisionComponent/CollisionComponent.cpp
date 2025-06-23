@@ -134,10 +134,6 @@ namespace game
       {
         pBoxCollider->SetSize(v3CurrentSize);
       }
-      if (m_bDebugMode)
-      {
-        pBoxCollider->DrawDebug();
-      }
     }
     break;
     case collision::EColliderType::SPHERE_COLLIDER:
@@ -168,10 +164,6 @@ namespace game
       {
         pSphereCollider->SetRadius(fRadius >= 0.0f ? fRadius : 0.0f);
       }
-      if (m_bDebugMode)
-      {
-        pSphereCollider->DrawDebug();
-      }
     }
     break;
     case collision::EColliderType::CAPSULE_COLLIDER:
@@ -180,9 +172,11 @@ namespace game
       std::string sTitle = "CAPSULE COLLIDER";
       std::string sHeight = "Height" + std::string("##" + sOwnerName);
       std::string sRadius = "Radius" + std::string("##" + sOwnerName);
+      std::string sOrientedAxis = "Oriented Axis" + std::string("##" + sOwnerName);
       std::string sLocalCenter = "Local Center" + std::string("##" + sOwnerName);
 
       collision::CCapsuleCollider* pCapsuleCollider = static_cast<collision::CCapsuleCollider*>(m_pCollider);
+      float v3OrientedAxis[3] = { pCapsuleCollider->GetOrientedAxis().X, pCapsuleCollider->GetOrientedAxis().Y, pCapsuleCollider->GetOrientedAxis().Z };
       float v3LocalCenter[3] = { pCapsuleCollider->GetLocalCenter().X, pCapsuleCollider->GetLocalCenter().Y, pCapsuleCollider->GetLocalCenter().Z };
       float fHeight = pCapsuleCollider->GetHeight();
       float fRadius = pCapsuleCollider->GetRadius();
@@ -191,6 +185,7 @@ namespace game
 
       ImGui::InputFloat(sHeight.c_str(), &fHeight);
       ImGui::InputFloat(sRadius.c_str(), &fRadius);
+      ImGui::InputFloat3(sOrientedAxis.c_str(), v3OrientedAxis);
       ImGui::InputFloat3(sLocalCenter.c_str(), v3LocalCenter);
 
       // Debug mode
@@ -206,19 +201,25 @@ namespace game
       {
         pCapsuleCollider->SetRadius(fRadius >= 0.0f ? fRadius : 0.0f);
       }
+      math::CVector3 v3CurrentOrientedAxis(v3OrientedAxis[0], v3OrientedAxis[1], v3OrientedAxis[2]);
+      if (!v3CurrentOrientedAxis.Equal(pCapsuleCollider->GetLocalCenter()))
+      {
+        pCapsuleCollider->SetOrientedAxis(v3CurrentOrientedAxis);
+      }
       math::CVector3 v3CurrentLocalCenter(v3LocalCenter[0], v3LocalCenter[1], v3LocalCenter[2]);
       if (!v3CurrentLocalCenter.Equal(pCapsuleCollider->GetLocalCenter()))
       {
         pCapsuleCollider->SetLocalCenter(v3CurrentLocalCenter);
       }
-      if (m_bDebugMode)
-      {
-        pCapsuleCollider->DrawDebug();
-      }
     }
     break;
     default:
       break;
+    }
+
+    if (m_bDebugMode)
+    {
+      m_pCollider->DrawDebug();
     }
   }
 }

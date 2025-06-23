@@ -32,11 +32,12 @@ namespace scene
     });
   }
   // ------------------------------------
-  void CSceneManager::DrawCapsule(const math::CVector3& _v3Pos, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CSceneManager::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, 
+    float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawCapsule(_v3Pos, _fRadius, _fHeight, _iSubvH, _iSubvV, _v3Color, _eRenderMode);
+      m_pCurrentScene->DrawCapsule(_v3Pos, _v3Rot, _v3Color, _fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
     }
   }
   // ------------------------------------

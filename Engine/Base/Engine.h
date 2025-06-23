@@ -32,7 +32,7 @@ namespace engine
     render::CCamera* GetCamera() const { return m_pCamera.get(); }
 
     // Debug creation
-    void DrawCapsule(const math::CVector3& _v3Pos, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
+    void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode = render::ERenderMode::WIREFRAME);
     void DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
     void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
     void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);

@@ -79,11 +79,11 @@ namespace collision
   bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     const math::CVector3 v3Center = GetCenter();
-    math::CVector3 vDist = v3Center - _pOther->GetCenter();
-    math::CVector3 v3Dir = math::CVector3::Normalize(vDist);
+    math::CVector3 v3Offset = v3Center - _pOther->GetCenter();
+    math::CVector3 v3Dir = math::CVector3::Normalize(v3Offset);
 
     // Calculate values
-    float fDistanceSquared = (vDist.X * vDist.X) + (vDist.Y * vDist.Y) + (vDist.Z * vDist.Z);
+    float fDistanceSquared = (v3Offset.X * v3Offset.X) + (v3Offset.Y * v3Offset.Y) + (v3Offset.Z * v3Offset.Z);
     float fRadiusSum = GetRadius() + _pOther->GetRadius();
     float fRadiusSquared = fRadiusSum * fRadiusSum;
 
