@@ -80,66 +80,33 @@ int main()
   pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
   pPlaneModel->SetPrimitiveColor(math::CVector3(1.0f, 1.0f, 1.0f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
-  game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
-  pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
-  collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());
-  pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
+  //game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
+  //pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
+  //collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());
+  //pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
   // Sphere collider
-  for (uint32_t uIndex = 0; uIndex < 2; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Capsule");
-    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
+    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 1.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE);
+    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
     pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
     pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
-
-    float fRandomX = GenerateFloat(-1.0f, 1.0f);
-    float fRandomY = GenerateFloat(1.0f, 5.0f);
-    float fRandomZ = GenerateFloat(0.0f, 0.0f);
-    pCapsuleEntity->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
   }
-
 
   std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
-    game::CEntity* pSphereEntity = pGameManager->CreateEntity("Sphere");
-    game::CModelComponent* pSphereModel2 = pSphereEntity->RegisterComponent<game::CModelComponent>();
-    pSphereModel2->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-
-    float fColorX = GenerateFloat(0.01f, 0.99f);
-    float fColorY = GenerateFloat(0.01f, 0.99f);
-    float fColorZ = GenerateFloat(0.01f, 0.99f);
-
-    pSphereModel2->SetPrimitiveColor(math::CVector3(fColorX, fColorY, fColorZ));
-    pSphereEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::SPHERE_COLLIDER);
-    pSphereEntity->RegisterComponent<game::CRigidbodyComponent>();
-
-    float fRandomY = GenerateFloat(5.0f, 10.f);
-    float fRandomX = GenerateFloat(-10.0f, 10.0f);
-    float fRandomZ = GenerateFloat(-0.5f, 0.5f);
-
-    pSphereEntity->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
-    vctPhysics.emplace_back(pSphereEntity);
-  }
-
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
-  {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    pBoxTest->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
+    pBoxTest->SetPosition(math::CVector3(1.0f, 5.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE, render::ERenderMode::WIREFRAME);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
-
-    float fRandomX = GenerateFloat(-1.0f, 1.0f);
-    float fRandomY = GenerateFloat(1.0f, 5.0f);
-    float fRandomZ = GenerateFloat(0.0f, 0.0f);
-    pBoxTest->SetPosition(math::CVector3(fRandomX, fRandomY, fRandomZ));
   }
 
   render::CRender* const pRender = pEngine->GetRender();

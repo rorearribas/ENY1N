@@ -83,6 +83,7 @@ namespace collision
 
     pEngine->DrawSphere(m_v3PointA, 0.125f, 8, 8, math::CVector3::Forward);
     pEngine->DrawSphere(m_v3PointB, 0.125f, 8, 8, math::CVector3::Right);
+    pEngine->DrawLine(m_v3PointA, m_v3PointB, math::CVector3::Up);
 
     pEngine->DrawCapsule
     (
@@ -119,13 +120,71 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CCapsuleCollider::CheckOBBCollision(const CBoxCollider* /*_pOther*/, SHitEvent& /*_oHitEvent_*/) const
+  bool CCapsuleCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& /*_oHitEvent_*/) const
   {
+    math::CVector3 v3Diff =  GetWorldPos() - _pOther->GetCenter();
+    math::CVector3 v3Dir = math::CVector3::Normalize(v3Diff);
+    math::CVector3 v3HalfSize = _pOther->GetHalfSize();
+    UNUSED_VAR(v3HalfSize);
+
+    std::vector<math::CVector3> v3AxisDirectors = _pOther->GetAxisDirectors();
+    float fProjX = math::CVector3::Dot(v3Diff, v3AxisDirectors[0]);
+    float fProjY = math::CVector3::Dot(v3Diff, v3AxisDirectors[1]);
+    float fProjZ = math::CVector3::Dot(v3Diff, v3AxisDirectors[2]);
+
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    math::CVector3 v3Segment = GetPointA() - GetPointB();
+    UNUSED_VAR(v3Segment);
+
+    // Clamp axis
+    float fClampedX = math::Clamp(fProjX, -v3HalfSize.X, v3HalfSize.X);
+    float fClampedY = math::Clamp(fProjY, -v3HalfSize.Y, v3HalfSize.Y);
+    float fClampedZ = math::Clamp(fProjZ, -v3HalfSize.Z, v3HalfSize.Z);
+
+    // Compute closest point
+    math::CVector3 v3ClosestPoint
+    {
+      (_pOther->GetCenter() + v3AxisDirectors[0] * fClampedX) + // X
+      (v3AxisDirectors[1] * fClampedY) + // Y
+      (v3AxisDirectors[2] * fClampedZ) // Z
+    };
+
+    pEngine->DrawSphere(v3ClosestPoint, 0.125, 8, 8, math::CVector3::Right);
+    pEngine->DrawLine(v3ClosestPoint, v3ClosestPoint + v3Segment, math::CVector3::Forward);
+
+    //pEngine->DrawSphere(v3Pos, 0.125f, 8, 8, math::CVector3::Up);
+
+    //float fClosestDist = FLT_MAX;
+    //const std::vector<math::CVector3>& v3Extents = _pOther->GetExtents();
+    //for (auto& v3Point : v3Extents)
+    //{
+    //  pEngine->DrawLine(GetPointA(), v3Point, math::CVector3::Forward);
+    //  pEngine->DrawLine(GetPointB(), v3Point, math::CVector3::Forward);
+
+    //  float fDist = math::SqDistPointSegment(GetPointA(), GetPointB(), v3Point);
+    //  fClosestDist = math::Min(fClosestDist, fDist);
+    //}
+
+    //if (fClosestDist <= fRadius * fRadius)
+    //{
+    //  const math::CVector3 v3Center = GetWorldPos();
+    //  math::CVector3 v3Offset = v3Center - _pOther->GetCenter();
+    //  math::CVector3 v3Dir = math::CVector3::Normalize(v3Offset);
+    //  
+    // _oHitEvent_.Normal = v3Dir;
+    //  _oHitEvent_.Depth = fRadiusSum - sqrtf(fClosestDist);
+    //  _oHitEvent_.ImpactPoint = v3Center + (_oHitEvent_.Normal * GetRadius());
+
+    //  return true; // Hay colisión
+    //}
     return false;
   }
   // ------------------------------------
-  bool CCapsuleCollider::CheckBoxCollision(const CBoxCollider* /*_pOther*/, SHitEvent& /*_oHitEvent_*/) const
+  bool CCapsuleCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& /*_oHitEvent_*/) const
   {
+    float fDist = math::SqDistPointSegment(GetPointA(), GetPointB(), _pOther->GetCenter());
+    std::cout << "dist: " << fDist << std::endl;
+
     return false;
   }
   // ------------------------------------

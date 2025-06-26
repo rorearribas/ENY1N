@@ -101,15 +101,17 @@ namespace math
     return _vA.Cross(_vB);
   }
   // ------------------------------------
-  void CVector3::Normalize()
+  CVector3 CVector3::Normalize()
   {
-    float fMagnitude = Magnitude();
+    CVector3 v3 = *this;
+    float fMagnitude = this->Magnitude();
     if (fMagnitude > math::s_fEpsilon7)
     {
-      this->X /= fMagnitude;
-      this->Y /= fMagnitude;
-      this->Z /= fMagnitude;
+      v3.X /= fMagnitude;
+      v3.Y /= fMagnitude;
+      v3.Z /= fMagnitude;
     }
+    return v3;
   }
   // ------------------------------------
   math::CVector3 CVector3::Normalize(const CVector3& _v3)

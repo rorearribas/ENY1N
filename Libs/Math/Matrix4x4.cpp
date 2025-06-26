@@ -36,9 +36,8 @@ namespace math
   math::CMatrix4x4 CMatrix4x4::CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar)
   {
     // Calculate tangent
-    float fFovRadians = math::DegreesToRadians(_fFov);
+    float fFovRadians = math::Deg2Radians(_fFov);
     float fTan = tanf(fFovRadians / 2.0f);
-
     CMatrix4x4 mMatrix = CMatrix4x4::Identity;
     mMatrix.m[0][0] = 1.0f / (_fAspectRatio * fTan);
     mMatrix.m[1][1] = 1.0f / fTan;
@@ -46,39 +45,51 @@ namespace math
     mMatrix.m[2][3] = 1.0f;
     mMatrix.m[3][2] = -(_fFar * _fNear) / (_fFar - _fNear);
     mMatrix.m[3][3] = 0.0f;
-
     return mMatrix;
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _v3Pos, const CVector3& _vTarget, const CVector3& _vUp)
+  math::CMatrix4x4 CMatrix4x4::CreateOrtographicMatrix(float /*_fWidth*/, float /*_fHeight*/, float _fNear, float _fFar)
+  {
+    CMatrix4x4 mMatrix = CMatrix4x4::Identity;
+    mMatrix.m[0][0] = 2.0f / 4;
+    mMatrix.m[1][1] = 2.0f / 2;
+    mMatrix.m[2][2] = 1.0f / (_fNear - _fFar);
+    mMatrix.m[3][0] = -1.0f;
+    mMatrix.m[3][1] = -1.0f;
+    mMatrix.m[3][2] = -_fNear / (_fNear - _fFar);
+    mMatrix.m[3][3] = 1.0f;
+    return mMatrix;
+  }
+  // ------------------------------------
+  math::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _v3Pos, const CVector3& _v3Target, const CVector3& _v3Up)
   {
     // Z Axis
-    CVector3 v3Dir = math::CVector3::Normalize(_vTarget - _v3Pos);
+    CVector3 v3Dir = (_v3Target - _v3Pos).Normalize();
 
     // X axis
-    CVector3 v3Cross = _vUp.Cross(v3Dir);
-    CVector3 xAxis = math::CVector3::Normalize(v3Cross);
+    CVector3 v3Right = _v3Up.Cross(v3Dir).Normalize();
 
     // Y axis
-    CVector3 yAxis = v3Dir.Cross(xAxis);
+    CVector3 v3Up = v3Dir.Cross(v3Right).Normalize();
 
+    // Compose matrix
     CMatrix4x4 mMatrix = CMatrix4x4::Identity;
 
-    mMatrix.m[0][0] = xAxis.X;
-    mMatrix.m[1][0] = xAxis.Y;
-    mMatrix.m[2][0] = xAxis.Z;
-    mMatrix.m[3][0] = -xAxis.Dot(_v3Pos);
+    mMatrix.m[0][0] = v3Right.X;
+    mMatrix.m[1][0] = v3Right.Y;
+    mMatrix.m[2][0] = v3Right.Z;
 
-    mMatrix.m[0][1] = yAxis.X;
-    mMatrix.m[1][1] = yAxis.Y;
-    mMatrix.m[2][1] = yAxis.Z;
-    mMatrix.m[3][1] = -yAxis.Dot(_v3Pos);
+    mMatrix.m[0][1] = v3Up.X;
+    mMatrix.m[1][1] = v3Up.Y;
+    mMatrix.m[2][1] = v3Up.Z;
 
     mMatrix.m[0][2] = v3Dir.X;
     mMatrix.m[1][2] = v3Dir.Y;
     mMatrix.m[2][2] = v3Dir.Z;
-    mMatrix.m[3][2] = -v3Dir.Dot(_v3Pos);
 
+    mMatrix.m[3][0] = -v3Right.Dot(_v3Pos);
+    mMatrix.m[3][1] = -v3Up.Dot(_v3Pos);
+    mMatrix.m[3][2] = -v3Dir.Dot(_v3Pos);
     mMatrix.m[3][3] = 1.0f;
 
     return mMatrix;
@@ -104,9 +115,9 @@ namespace math
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _vRot)
   {
-    float fPitch = math::DegreesToRadians(_vRot.X);
-    float fYaw = math::DegreesToRadians(_vRot.Y);
-    float fRoll = math::DegreesToRadians(_vRot.Z);
+    float fPitch = math::Deg2Radians(_vRot.X);
+    float fYaw = math::Deg2Radians(_vRot.Y);
+    float fRoll = math::Deg2Radians(_vRot.Z);
 
     CMatrix4x4 mRollMatrix = CMatrix4x4::Identity;
     mRollMatrix.m[0][0] = cos(fRoll);
@@ -162,14 +173,14 @@ namespace math
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)
   {
-    CMatrix4x4 mMatrix = CMatrix4x4::Identity;
-    for (int i = 0; i < 4; ++i)
+    CMatrix4x4 mTranspose = CMatrix4x4::Identity;
+    for (int iRow = 0; iRow < s_iRowSize; ++iRow)
     {
-      for (int j = 0; j < 4; ++j)
+      for (int iColumn = 0; iColumn < s_iColumnSize; ++iColumn)
       {
-        mMatrix.m[i][j] = _mMatrix.m[j][i];
+        mTranspose.m[iRow][iColumn] = _mMatrix.m[iColumn][iRow];
       }
     }
-    return mMatrix;
+    return mTranspose;
   }
 }

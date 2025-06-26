@@ -6,7 +6,8 @@
 
 namespace input
 {
-  class CMouse {
+  class CMouse 
+  {
   public:
     CMouse();
     ~CMouse();

@@ -1,4 +1,6 @@
 #pragma once
+#include "Engine/Utils/Plane.h"
+#include "Engine/Utils/Ray.h"
 #include "Vector2.h"
 #include "Vector3.h"
 
@@ -18,9 +20,10 @@ namespace math
   static constexpr float s_fEpsilon7 = 1e-7f;
 
   // Functions
-  inline float Lerp(float a, float b, float f)
+  template <typename T>
+  inline T Lerp(T _ObjectA, T _ObjectB, float _fDelta)
   {
-    return static_cast<float>(a * (1.0 - f) + (b * f));
+    return _ObjectA * (1.0f - _fDelta) + (_ObjectB * _fDelta);
   }
 
   template <typename T>
@@ -30,73 +33,79 @@ namespace math
   }
 
   template <typename T>
-  inline T Max(const T& Object1, const T& Object2)
+  inline T Max(const T& _Object1, const T& _Object2)
   {
-    return Object1 > Object2 ? Object1 : Object2;
+    return _Object1 > _Object2 ? _Object1 : _Object2;
   }
 
   template <typename T>
-  inline T Min(const T& Object1, const T& Object2)
+  inline T Min(const T& _Object1, const T& _Object2)
   {
-    return Object1 < Object2 ? Object1 : Object2;
+    return _Object1 < _Object2 ? _Object1 : _Object2;
   }
 
-  inline float DegreesToRadians(float _fDegrees)
+  inline float Deg2Radians(float _fDegrees)
   {
     return _fDegrees * static_cast<float>(s_fPI / 180.0f);
   }
 
-  inline float RadiansToDegrees(float _fRadians)
+  inline float Rad2Degrees(float _fRadians)
   {
     return _fRadians * static_cast<float>(180.0f / s_fPI);
   }
 
-  inline math::CVector3 DegreesToRadians(const math::CVector3& _v3)
+  inline math::CVector3 Deg2Radians(const math::CVector3& _v3)
   {
-    float fX = DegreesToRadians(_v3.X);
-    float fY = DegreesToRadians(_v3.Y);
-    float fZ = DegreesToRadians(_v3.Z);
-    return math::CVector3(fX, fY, fZ);
+    return math::CVector3(Deg2Radians(_v3.X), Deg2Radians(_v3.Y), Deg2Radians(_v3.Z));
   }
 
-  inline math::CVector2 DegreesToRadians(const math::CVector2& _v2)
+  inline math::CVector2 Deg2Radians(const math::CVector2& _v2)
   {
-    float fX = DegreesToRadians(_v2.X);
-    float fY = DegreesToRadians(_v2.Y);
-    return math::CVector2(fX, fY);
+    return math::CVector2(Deg2Radians(_v2.X), Deg2Radians(_v2.Y));
   }
 
-  inline math::CVector3 RadiansToDegrees(const math::CVector3& _v3)
+  inline math::CVector3 Rad2Degrees(const math::CVector3& _v3)
   {
-    float fX = RadiansToDegrees(_v3.X);
-    float fY = RadiansToDegrees(_v3.Y);
-    float fZ = RadiansToDegrees(_v3.Z);
-    return math::CVector3(fX, fY, fZ);
+    return math::CVector3(Rad2Degrees(_v3.X), Rad2Degrees(_v3.Y), Rad2Degrees(_v3.Z));
   }
 
-  inline math::CVector2 RadiansToDegrees(const math::CVector2& _v2)
+  inline math::CVector2 Rad2Degrees(const math::CVector2& _v2)
   {
-    float fX = RadiansToDegrees(_v2.X);
-    float fY = RadiansToDegrees(_v2.Y);
-    return  math::CVector2(fX, fY);
+    return  math::CVector2(Rad2Degrees(_v2.X), Rad2Degrees(_v2.Y));
   }
 
   //@Note these functions have been extracted from real time collision detection book
+  inline bool RayPlaneIntersection(math::CPlane& _oPlane, const physics::CRay& _oRay, math::CVector3& _v3IntersectPoint_)
+  {
+    // Get denominator
+    float fDenom = math::CVector3::Dot(_oPlane.GetNormal(), _oRay.GetDir());
+    if (fabs(fDenom) < s_fEpsilon6)
+    {
+      return false;
+    }
+
+    float fDot = math::CVector3::Dot(_oPlane.GetPos() - _oRay.GetOrigin(), _oPlane.GetNormal()) / fDenom;
+    _v3IntersectPoint_ = _oRay.GetOrigin() + (_oRay.GetDir() * fDot);
+    return fDot > 0.0f;
+  }
+
   inline bool SeparateAxisTheorem
   (
-    const std::vector<math::CVector3>& _vctExtentsA, const std::vector<math::CVector3>& _vctExtentsB,
-    const math::CVector3& _v3Axis, math::CVector3& v3ImpactPoint_, math::CVector3& v3Normal_, float& fDepth_
+    const std::vector<math::CVector3>& _vctExtsA, const std::vector<math::CVector3>& _vctExtsB, 
+    const math::CVector3& _v3Axis, math::CVector3& _v3ImpactPoint_, math::CVector3& _v3Normal_, float& _fDepth_
   )
   {
     if (_v3Axis.IsZero())
+    {
       return false;
+    }
 
     float fMinA = FLT_MAX, fMaxA = -FLT_MAX;
     float fMinB = FLT_MAX, fMaxB = -FLT_MAX;
 
     // Get MinA/MaxA
     math::CVector3 v3MinA = math::CVector3::Zero;
-    for (const math::CVector3& v3Vertex : _vctExtentsA)
+    for (const math::CVector3& v3Vertex : _vctExtsA)
     {
       float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
       if (fDot < fMinA) 
@@ -109,7 +118,7 @@ namespace math
 
     // Get MinB/MaxB
     math::CVector3 v3MinB = math::CVector3::Zero;
-    for (const math::CVector3& v3Vertex : _vctExtentsB)
+    for (const math::CVector3& v3Vertex : _vctExtsB)
     {
       float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
       if (fDot < fMinB) 
@@ -132,17 +141,17 @@ namespace math
     float fCurrentDepth = math::Min(fOverlapA, fOverlapB);
 
     // Update current depth
-    if (fCurrentDepth < fDepth_)
+    if (fCurrentDepth < _fDepth_)
     {
       // Set depth
-      fDepth_ = fCurrentDepth;
+      _fDepth_ = fCurrentDepth;
 
       // Set normal
-      v3Normal_ = (fDepth_ == fOverlapA) ? _v3Axis : -_v3Axis;
+      _v3Normal_ = (_fDepth_ == fOverlapA) ? _v3Axis : -_v3Axis;
 
       // Calculate impact point
-      math::CVector3 v3Offset = v3Normal_ * (fDepth_ * 0.5f);
-      v3ImpactPoint_ = (fDepth_ == fOverlapA) ? v3MinA + v3Offset : v3MinB - v3Offset;
+      math::CVector3 v3Offset = _v3Normal_ * (_fDepth_ * 0.5f);
+      _v3ImpactPoint_ = (_fDepth_ == fOverlapA) ? v3MinA + v3Offset : v3MinB - v3Offset;
     }
 
     return false; // Valid

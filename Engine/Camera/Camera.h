@@ -7,6 +7,12 @@
 
 namespace render
 {
+  enum EProjectionMode
+  {
+    PERSPECTIVE,
+    ORTOGRAPHIC
+  };
+
   class CCamera
   {
   public:
@@ -19,22 +25,27 @@ namespace render
     const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
 
-    void SetPosition(const math::CVector3& _v3Pos);
+    inline void SetPosition(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; UpdateViewMatrix(); }
     const math::CVector3& GetPosition() const { return m_v3Pos; }
-    void SetRotation(const math::CVector3& _v3Rot);
-    const math::CVector3& GetRotation() const { return m_v3Rot; }
+    inline void SetRotation(const math::CVector3& _v3Rot) { m_v3Rot = _v3Rot; UpdateViewMatrix(); }
+    inline const math::CVector3& GetRotation() const { return m_v3Rot; }
 
-    void SetFov(float _fFov) { m_fFov = _fFov; }
-    const float& GetFov() const { return m_fFov; }
-    void SetFar(float _fFar) { m_fFar = _fFar; }
-    const float& GetFar() const { return m_fFar; }
-    void SetNear(float _fNear) { m_fNear = _fNear; }
-    const float& GetNear() const { return m_fNear; }
+    inline void SetFov(float _fFov) { m_fFov = _fFov; }
+    inline float GetFov() const { return m_fFov; }
+    inline void SetFar(float _fFar) { m_fFar = _fFar; }
+    inline float GetFar() const { return m_fFar; }
+    inline void SetNear(float _fNear) { m_fNear = _fNear; }
+    inline float GetNear() const { return m_fNear; }
 
-    void SetCameraSpeed(float _fCameraSpeed) { m_fCameraSpeed = _fCameraSpeed; }
-    const float& GetCameraSpeed() const { return m_fCameraSpeed; }
-    void SetAspectRatio(float _fAspectRatio) { m_fAspectRatio = _fAspectRatio; }
-    const float& GetAspectRatio() const { return m_fAspectRatio; }
+    inline void SetProjectionMode(EProjectionMode _eProjectionMode) { m_eProjectionMode = _eProjectionMode; }
+    inline const EProjectionMode& GetProjectionMode() const { return m_eProjectionMode; }
+
+    inline void SetCameraSpeed(float _fCameraSpeed) { m_fCameraSpeed = _fCameraSpeed; }
+    inline float GetCameraSpeed() const { return m_fCameraSpeed; }
+    inline void SetAspectRatio(float _fAspectRatio) { m_fAspectRatio = _fAspectRatio; }
+    inline float GetAspectRatio() const { return m_fAspectRatio; }
+
+    void DrawFrustum(const math::CVector3& v3Origin);
 
   private:
     void MovePosition(const math::CVector3& _v3Move);
@@ -42,7 +53,7 @@ namespace render
 
     void UpdatePerspectiveMatrix();
     void UpdateViewMatrix();
-    void UpdateFrustum();
+    void BuildFrustumPlanes();
 
     void AddRotation(const math::CVector3& _v3Delta);
     void ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos);
@@ -66,6 +77,7 @@ namespace render
     float m_fAspectRatio = 1.77778f;
 
     std::vector<math::CPlane> m_oFrustumPlanes;
+    EProjectionMode m_eProjectionMode = PERSPECTIVE;
   };
 }
 

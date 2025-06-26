@@ -132,14 +132,14 @@ namespace render
   {
     RECT oClientRect;
     GetClientRect(m_hWnd, &oClientRect);
-    return (uint32_t)(oClientRect.right - oClientRect.left);
+    return static_cast<uint32_t>(oClientRect.right - oClientRect.left);
   }
   // ------------------------------------
   const uint32_t CRenderWindow::GetHeight() const
   {
     RECT oClientRect;
     GetClientRect(m_hWnd, &oClientRect);
-    return (uint32_t)(oClientRect.bottom - oClientRect.top);
+    return static_cast<uint32_t>(oClientRect.bottom - oClientRect.top);
   }
   // ------------------------------------
 
