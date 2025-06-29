@@ -28,8 +28,8 @@ namespace render
   {
     // Keyboard movement
     math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
-    math::CVector3 vForward = math::CVector3::Normalize(mRotMatrix * math::CVector3::Forward);
-    math::CVector3 vRight = math::CVector3::Normalize(mRotMatrix * math::CVector3::Right);
+    math::CVector3 v3Forward = math::CVector3::Normalize(mRotMatrix * math::CVector3::Forward);
+    math::CVector3 v3Right = math::CVector3::Normalize(mRotMatrix * math::CVector3::Right);
 
     // Show cursor
     input::CInputManager* pInputManager = input::CInputManager::GetInstance();
@@ -41,31 +41,37 @@ namespace render
     // Movement + rotation
     if (bRightButtonPressed)
     {
-      if (pInputManager->IsKeyPressed('W') && bRightButtonPressed) MovePosition(vForward * m_fMovementSpeed * _fDeltaTime);
-      if (pInputManager->IsKeyPressed('S') && bRightButtonPressed) MovePosition(-vForward * m_fMovementSpeed * _fDeltaTime);
-      if (pInputManager->IsKeyPressed('D') && bRightButtonPressed) MovePosition(vRight * m_fMovementSpeed * _fDeltaTime);
-      if (pInputManager->IsKeyPressed('A') && bRightButtonPressed) MovePosition(-vRight * m_fMovementSpeed * _fDeltaTime);
+      bool bPespectiveMode = GetProjectionMode() == EProjectionMode::PERSPECTIVE;
+      math::CVector3 v3HorizontalDir = bPespectiveMode ? v3Forward : math::CVector3::Up;
 
-      // Rotation
-      float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed;
-      float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed;
+      if (pInputManager->IsKeyPressed('W') && bRightButtonPressed) { MovePosition(v3HorizontalDir * m_fMovementSpeed * _fDeltaTime); }
+      if (pInputManager->IsKeyPressed('S') && bRightButtonPressed) { MovePosition(-v3HorizontalDir * m_fMovementSpeed * _fDeltaTime); }
+      if (pInputManager->IsKeyPressed('D') && bRightButtonPressed) { MovePosition(v3Right * m_fMovementSpeed * _fDeltaTime); }
+      if (pInputManager->IsKeyPressed('A') && bRightButtonPressed) { MovePosition(-v3Right * m_fMovementSpeed * _fDeltaTime); }
 
-      // Apply rotation
-      AddRotation(math::CVector3(math::Rad2Degrees(yValue), math::Rad2Degrees(xValue), 0.0f));
+      if (bPespectiveMode)
+      {
+        // Rotation
+        float xValue = pMouse->GetMouseDelta().X * m_fCameraSpeed;
+        float yValue = pMouse->GetMouseDelta().Y * m_fCameraSpeed;
+
+        // Apply rotation
+        AddRotation(math::CVector3(math::Rad2Degrees(yValue), math::Rad2Degrees(xValue), 0.0f));
+      }
     }
 
     // Wheel 
     if (!bRightButtonPressed)
     {
       float fMouseDelta = pMouse->GetMouseWheelDelta();
-      MovePosition(fMouseDelta != 0 ? vForward * (fMouseDelta * m_fMovementSpeed) * _fDeltaTime : math::CVector3::Zero);
+      MovePosition(fMouseDelta != 0 ? v3Forward * (fMouseDelta * m_fMovementSpeed) * _fDeltaTime : math::CVector3::Zero);
     }
 
     // Interpolate FOV
     m_fDesiredFov = math::Lerp(m_fDesiredFov, m_fFov, internal_camera::s_fInterpolateSpeed * _fDeltaTime);
 
-    // Update perspective matrix
-    UpdatePerspectiveMatrix();
+    // Update projection matrix
+    UpdateProjectionMatrix(GetProjectionMode());
 
     // Update frustum
     BuildFrustumPlanes();
@@ -98,38 +104,46 @@ namespace render
     while (_bMousePressed ? ::ShowCursor(!_bMousePressed) >= 0 : ::ShowCursor(!_bMousePressed) < 0);
   }
   // ------------------------------------
-  void CCamera::MovePosition(const math::CVector3& vDelta) 
+  void CCamera::MovePosition(const math::CVector3& vDelta)
   {
     m_v3Pos += vDelta;
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::AddRotation(const math::CVector3& _vDeltaRot) 
+  void CCamera::AddRotation(const math::CVector3& _vDeltaRot)
   {
     m_v3Rot += _vDeltaRot;
     UpdateViewMatrix();
   }
   // ------------------------------------
-  void CCamera::SetLookAtPos(const math::CVector3& _v3LookAt) 
+  void CCamera::LookAt(const math::CVector3& _v3LookAt)
   {
     if (_v3LookAt == m_v3Pos)
+    {
       return;
+    }
 
-    math::CVector3 v3Dir = _v3LookAt - m_v3Pos;
-    float fPitch = (float)atan2(v3Dir.Y, sqrt(v3Dir.X * v3Dir.X + v3Dir.Z * v3Dir.Z));
-    float fYaw = (float)atan2(v3Dir.X, v3Dir.Z);
-    if (v3Dir.Z > 0) fYaw += static_cast<float>(math::s_fPI);
+    math::CVector3 v3Dir = math::CVector3::Normalize(_v3LookAt - m_v3Pos);
+    float fPitch = static_cast<float>(atan2(v3Dir.Y, sqrt(v3Dir.X * v3Dir.X + v3Dir.Z * v3Dir.Z)));
+    float fYaw = static_cast<float>(atan2(v3Dir.X, v3Dir.Z));
+    if (v3Dir.Z > 0) 
+    {
+      fYaw += static_cast<float>(math::s_fPI);
+    }
 
     SetRotation(math::CVector3(fPitch, fYaw, 0.0f));
   }
   // ------------------------------------
-  void CCamera::UpdatePerspectiveMatrix()
+  void CCamera::UpdateProjectionMatrix(render::EProjectionMode _eProjectionMode)
   {
-    if (m_eProjectionMode == PERSPECTIVE)
+    switch (_eProjectionMode)
+    {
+    case render::EProjectionMode::PERSPECTIVE:
     {
       m_mProjectionMatrix = math::CMatrix4x4::CreatePerspectiveMatrix(m_fDesiredFov, m_fAspectRatio, m_fNear, m_fFar);
     }
-    else
+    break;
+    case render::EProjectionMode::ORTOGRAPHIC:
     {
       render::CRender* pRender = engine::CEngine::GetInstance()->GetRender();
       render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
@@ -137,28 +151,32 @@ namespace render
       float fHeight = static_cast<float>(pRenderWindow->GetHeight());
       m_mProjectionMatrix = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
     }
+    break;
+    default:
+      break;
+    }
   }
   // ------------------------------------
   void CCamera::UpdateViewMatrix()
   {
-    math::CVector3 v3Up = math::CVector3::Up;
-    m_v3Dir = math::CVector3::Forward;
-    math::CVector3 v3TargetPos = m_v3Pos + m_v3Dir;
+    math::CVector3 v3Up = math::CVector3::Up; // Default World Up
+    m_v3Dir = math::CVector3::Forward; // Default Dir
+    math::CVector3 v3TargetPos = m_v3Pos + m_v3Dir; // Default Offset
 
-    if (m_eProjectionMode == PERSPECTIVE)
+    if (GetProjectionMode() == EProjectionMode::PERSPECTIVE)
     {
       // Clamp pitch value
       m_v3Rot.X = math::Clamp(m_v3Rot.X, -90.0f, 90.0f);
 
       // Create the rotation matrix
-      math::CMatrix4x4 mRotationMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
+      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
 
       // Calculate dir
-      m_v3Dir = math::CVector3::Normalize(mRotationMatrix * math::CVector3::Forward);
+      m_v3Dir = math::CVector3::Normalize(mRotMatrix * math::CVector3::Forward);
       v3TargetPos = m_v3Pos + m_v3Dir;
 
       // Calculate up direction
-      v3Up = mRotationMatrix * math::CVector3::Up;
+      v3Up = mRotMatrix * math::CVector3::Up;
     }
 
     // Set view matrix

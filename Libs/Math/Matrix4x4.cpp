@@ -48,11 +48,11 @@ namespace math
     return mMatrix;
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::CreateOrtographicMatrix(float /*_fWidth*/, float /*_fHeight*/, float _fNear, float _fFar)
+  math::CMatrix4x4 CMatrix4x4::CreateOrtographicMatrix(float _fWidth, float _fHeight, float _fNear, float _fFar)
   {
     CMatrix4x4 mMatrix = CMatrix4x4::Identity;
-    mMatrix.m[0][0] = 2.0f / 4;
-    mMatrix.m[1][1] = 2.0f / 2;
+    mMatrix.m[0][0] = 2.0f / _fWidth;
+    mMatrix.m[1][1] = 2.0f / _fHeight;
     mMatrix.m[2][2] = 1.0f / (_fNear - _fFar);
     mMatrix.m[3][0] = -1.0f;
     mMatrix.m[3][1] = -1.0f;

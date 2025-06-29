@@ -7,7 +7,7 @@
 
 namespace render
 {
-  enum EProjectionMode
+  enum class EProjectionMode
   {
     PERSPECTIVE,
     ORTOGRAPHIC
@@ -21,7 +21,6 @@ namespace render
 
     void Update(float _fDeltaTime);
 
-    const math::CVector3& GetDir() { return m_v3Dir; }
     const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
 
@@ -37,6 +36,7 @@ namespace render
     inline void SetNear(float _fNear) { m_fNear = _fNear; }
     inline float GetNear() const { return m_fNear; }
 
+    const math::CVector3& GetCameraDir() const { return m_v3Dir; }
     inline void SetProjectionMode(EProjectionMode _eProjectionMode) { m_eProjectionMode = _eProjectionMode; }
     inline const EProjectionMode& GetProjectionMode() const { return m_eProjectionMode; }
 
@@ -49,9 +49,9 @@ namespace render
 
   private:
     void MovePosition(const math::CVector3& _v3Move);
-    void SetLookAtPos(const math::CVector3& _v3LookAtPos);
+    void LookAt(const math::CVector3& _v3LookAtPos);
 
-    void UpdatePerspectiveMatrix();
+    void UpdateProjectionMatrix(EProjectionMode _eProjectionMode);
     void UpdateViewMatrix();
     void BuildFrustumPlanes();
 
@@ -77,7 +77,7 @@ namespace render
     float m_fAspectRatio = 1.77778f;
 
     std::vector<math::CPlane> m_oFrustumPlanes;
-    EProjectionMode m_eProjectionMode = PERSPECTIVE;
+    EProjectionMode m_eProjectionMode = EProjectionMode::ORTOGRAPHIC;
   };
 }
 
