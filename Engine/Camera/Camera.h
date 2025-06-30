@@ -21,12 +21,13 @@ namespace render
 
     void Update(float _fDeltaTime);
 
+    inline const math::CVector3& GetCameraDir() const { return m_v3Dir; }
     const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
 
-    inline void SetPosition(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; UpdateViewMatrix(); }
+    inline void SetPosition(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; UpdateViewMatrix(GetProjectionMode()); }
     const math::CVector3& GetPosition() const { return m_v3Pos; }
-    inline void SetRotation(const math::CVector3& _v3Rot) { m_v3Rot = _v3Rot; UpdateViewMatrix(); }
+    inline void SetRotation(const math::CVector3& _v3Rot) { m_v3Rot = _v3Rot; UpdateViewMatrix(GetProjectionMode()); }
     inline const math::CVector3& GetRotation() const { return m_v3Rot; }
 
     inline void SetFov(float _fFov) { m_fFov = _fFov; }
@@ -36,8 +37,7 @@ namespace render
     inline void SetNear(float _fNear) { m_fNear = _fNear; }
     inline float GetNear() const { return m_fNear; }
 
-    const math::CVector3& GetCameraDir() const { return m_v3Dir; }
-    inline void SetProjectionMode(EProjectionMode _eProjectionMode) { m_eProjectionMode = _eProjectionMode; }
+    void SetProjectionMode(EProjectionMode _eProjectionMode);
     inline const EProjectionMode& GetProjectionMode() const { return m_eProjectionMode; }
 
     inline void SetCameraSpeed(float _fCameraSpeed) { m_fCameraSpeed = _fCameraSpeed; }
@@ -52,7 +52,7 @@ namespace render
     void LookAt(const math::CVector3& _v3LookAtPos);
 
     void UpdateProjectionMatrix(EProjectionMode _eProjectionMode);
-    void UpdateViewMatrix();
+    void UpdateViewMatrix(EProjectionMode _eProjectionMode);
     void BuildFrustumPlanes();
 
     void AddRotation(const math::CVector3& _v3Delta);
@@ -71,13 +71,14 @@ namespace render
 
     float m_fFov = 45.0f;
     float m_fDesiredFov = 45.0f;
+    float m_fZoomScale = 0.01f;
 
     float m_fFar = 10000.0f;
     float m_fNear = 0.01f;
     float m_fAspectRatio = 1.77778f;
 
     std::vector<math::CPlane> m_oFrustumPlanes;
-    EProjectionMode m_eProjectionMode = EProjectionMode::ORTOGRAPHIC;
+    EProjectionMode m_eProjectionMode = EProjectionMode::PERSPECTIVE;
   };
 }
 

@@ -61,10 +61,6 @@ namespace math
       float fZ = _v3Other.X * m[0][2] + _v3Other.Y * m[1][2] + _v3Other.Z * m[2][2] + m[3][2];
       return math::CVector3(fX, fY, fZ);
     }
-    //CMatrix4x4 operator*(const math::CVector3& /*_v3Other*/)
-    //{
-    //  return CMatrix4x4();
-    //}
 
     const float* operator()() const { return &m[0][0]; }
     float* operator()() { return &m[0][0]; }

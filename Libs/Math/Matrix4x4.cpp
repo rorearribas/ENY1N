@@ -54,8 +54,6 @@ namespace math
     mMatrix.m[0][0] = 2.0f / _fWidth;
     mMatrix.m[1][1] = 2.0f / _fHeight;
     mMatrix.m[2][2] = 1.0f / (_fNear - _fFar);
-    mMatrix.m[3][0] = -1.0f;
-    mMatrix.m[3][1] = -1.0f;
     mMatrix.m[3][2] = -_fNear / (_fNear - _fFar);
     mMatrix.m[3][3] = 1.0f;
     return mMatrix;

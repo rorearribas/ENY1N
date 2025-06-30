@@ -16,6 +16,9 @@ namespace render
 
     const int s_iFrustumPlanes = 6;
     const float s_fInterpolateSpeed = 10.0f;
+
+    const float s_fMaxWheelDelta = 0.97f;
+    const float s_fOrtographicFactor = 1.0f;
   }
   // ------------------------------------
   CCamera::CCamera()
@@ -64,7 +67,16 @@ namespace render
     if (!bRightButtonPressed)
     {
       float fMouseDelta = pMouse->GetMouseWheelDelta();
-      MovePosition(fMouseDelta != 0 ? v3Forward * (fMouseDelta * m_fMovementSpeed) * _fDeltaTime : math::CVector3::Zero);
+      fMouseDelta = math::Clamp(fMouseDelta, -internal_camera::s_fMaxWheelDelta, internal_camera::s_fMaxWheelDelta);
+      if (GetProjectionMode() == EProjectionMode::PERSPECTIVE)
+      {
+        MovePosition(fMouseDelta != 0 ? v3Forward * (fMouseDelta * m_fMovementSpeed) * _fDeltaTime : math::CVector3::Zero);
+      }
+      else
+      {
+        m_fZoomScale += fMouseDelta * _fDeltaTime;
+        m_fZoomScale = math::Clamp(m_fZoomScale, math::s_fEpsilon7, FLT_MAX);
+      }
     }
 
     // Interpolate FOV
@@ -107,13 +119,13 @@ namespace render
   void CCamera::MovePosition(const math::CVector3& vDelta)
   {
     m_v3Pos += vDelta;
-    UpdateViewMatrix();
+    UpdateViewMatrix(m_eProjectionMode);
   }
   // ------------------------------------
   void CCamera::AddRotation(const math::CVector3& _vDeltaRot)
   {
     m_v3Rot += _vDeltaRot;
-    UpdateViewMatrix();
+    UpdateViewMatrix(m_eProjectionMode);
   }
   // ------------------------------------
   void CCamera::LookAt(const math::CVector3& _v3LookAt)
@@ -134,6 +146,20 @@ namespace render
     SetRotation(math::CVector3(fPitch, fYaw, 0.0f));
   }
   // ------------------------------------
+  void CCamera::SetProjectionMode(EProjectionMode _eProjectionMode)
+  {
+    // Reset values
+    m_v3Rot = math::CVector3::Zero;
+    m_v3Dir = math::CVector3::Forward;
+    m_v3Pos.Z = 0.0f;
+
+    // Update view matrix
+    UpdateViewMatrix(_eProjectionMode);
+
+    // Set projection mode
+    m_eProjectionMode = _eProjectionMode;
+  }
+  // ------------------------------------
   void CCamera::UpdateProjectionMatrix(render::EProjectionMode _eProjectionMode)
   {
     switch (_eProjectionMode)
@@ -145,10 +171,8 @@ namespace render
     break;
     case render::EProjectionMode::ORTOGRAPHIC:
     {
-      render::CRender* pRender = engine::CEngine::GetInstance()->GetRender();
-      render::CRenderWindow* pRenderWindow = pRender->GetRenderWindow();
-      float fWidth = static_cast<float>(pRenderWindow->GetWidth());
-      float fHeight = static_cast<float>(pRenderWindow->GetHeight());
+      float fWidth = internal_camera::s_fOrtographicFactor / m_fZoomScale;
+      float fHeight = (internal_camera::s_fOrtographicFactor / m_fAspectRatio) / m_fZoomScale;
       m_mProjectionMatrix = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
     }
     break;
@@ -157,13 +181,12 @@ namespace render
     }
   }
   // ------------------------------------
-  void CCamera::UpdateViewMatrix()
+  void CCamera::UpdateViewMatrix(EProjectionMode _eProjectionMode)
   {
     math::CVector3 v3Up = math::CVector3::Up; // Default World Up
-    m_v3Dir = math::CVector3::Forward; // Default Dir
     math::CVector3 v3TargetPos = m_v3Pos + m_v3Dir; // Default Offset
 
-    if (GetProjectionMode() == EProjectionMode::PERSPECTIVE)
+    if (_eProjectionMode == EProjectionMode::PERSPECTIVE)
     {
       // Clamp pitch value
       m_v3Rot.X = math::Clamp(m_v3Rot.X, -90.0f, 90.0f);
@@ -249,6 +272,7 @@ namespace render
     //pEngine->DrawLine(m_v3Pos, m_v3Pos + v3NearBottomLeft, math::CVector3::Forward);
     //pEngine->DrawLine(m_v3Pos, m_v3Pos + v3NearBottomRight, math::CVector3::Forward);
   }
+
   // ------------------------------------
   void CCamera::DrawFrustum(const math::CVector3& /*v3Origin*/)
   {

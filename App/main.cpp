@@ -226,6 +226,21 @@ int main()
       }
       ImGui::End();
 
+      ImGui::Begin("TESTING CAMERA");
+      float fFov = pRenderCamera->GetFov();
+      ImGui::InputFloat("Camera FOV", &fFov);
+      pRenderCamera->SetFov(fFov);
+
+      if (ImGui::Button("Perspective Mode"))
+      {
+        pRenderCamera->SetProjectionMode(render::EProjectionMode::PERSPECTIVE);
+      }
+      if (ImGui::Button("Ortographic Mode"))
+      {
+        pRenderCamera->SetProjectionMode(render::EProjectionMode::ORTOGRAPHIC);
+      }
+
+      ImGui::End();
       ImGui::ShowDemoWindow();
 
       // End draw
