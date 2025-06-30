@@ -21,10 +21,10 @@ namespace render
 
     void Update(float _fDeltaTime);
 
-    inline const math::CVector3& GetCameraDir() const { return m_v3Dir; }
     const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
 
+    inline const math::CVector3& GetCameraDir() const { return m_v3Dir; }
     inline void SetPosition(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; UpdateViewMatrix(GetProjectionMode()); }
     const math::CVector3& GetPosition() const { return m_v3Pos; }
     inline void SetRotation(const math::CVector3& _v3Rot) { m_v3Rot = _v3Rot; UpdateViewMatrix(GetProjectionMode()); }
@@ -40,22 +40,22 @@ namespace render
     void SetProjectionMode(EProjectionMode _eProjectionMode);
     inline const EProjectionMode& GetProjectionMode() const { return m_eProjectionMode; }
 
-    inline void SetCameraSpeed(float _fCameraSpeed) { m_fCameraSpeed = _fCameraSpeed; }
-    inline float GetCameraSpeed() const { return m_fCameraSpeed; }
+    inline void SetCamVelocity(float _fCameraSpeed) { m_fCamVelocity = _fCameraSpeed; }
+    inline float GetCamVelocity() const { return m_fCamVelocity; }
     inline void SetAspectRatio(float _fAspectRatio) { m_fAspectRatio = _fAspectRatio; }
     inline float GetAspectRatio() const { return m_fAspectRatio; }
 
-    void DrawFrustum(const math::CVector3& v3Origin);
+    void DrawDebug();
 
   private:
-    void MovePosition(const math::CVector3& _v3Move);
     void LookAt(const math::CVector3& _v3LookAtPos);
+    void AddDisplacement(const math::CVector3& _v3Delta);
+    void AddRotation(const math::CVector3& _v3Delta);
 
     void UpdateProjectionMatrix(EProjectionMode _eProjectionMode);
     void UpdateViewMatrix(EProjectionMode _eProjectionMode);
     void BuildFrustumPlanes();
 
-    void AddRotation(const math::CVector3& _v3Delta);
     void ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos);
 
     CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
@@ -66,7 +66,7 @@ namespace render
     math::CVector3 m_v3Pos = math::CVector3::Zero;
     math::CVector3 m_v3Rot = math::CVector3::Zero;
 
-    float m_fCameraSpeed = 1.0f;
+    float m_fCamVelocity = 1.0f;
     float m_fMovementSpeed = 50.0f;
 
     float m_fFov = 45.0f;

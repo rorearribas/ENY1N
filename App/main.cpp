@@ -110,7 +110,7 @@ int main()
   }
 
   render::CRender* const pRender = pEngine->GetRender();
-  render::CCamera* const pRenderCamera = pEngine->GetCamera();
+  render::CCamera* const pCamera = pEngine->GetCamera();
   pRender->GetRenderWindow()->SetEnabled(true);
 
   float m_fFixedDeltaAccumulator = 0.0f;
@@ -139,7 +139,8 @@ int main()
       {
         float fFixedDeltaTime = pTimeManager->GetFixedDelta();
 
-        pRenderCamera->Update(fFixedDeltaTime);
+        pCamera->Update(fFixedDeltaTime);
+        pCamera->DrawDebug();
 
         pPhysicsManager->Update(fFixedDeltaTime);
         pCollisionManager->Update(fFixedDeltaTime);
@@ -225,23 +226,6 @@ int main()
         bThrowRay = !bThrowRay;
       }
       ImGui::End();
-
-      ImGui::Begin("TESTING CAMERA");
-      float fFov = pRenderCamera->GetFov();
-      ImGui::InputFloat("Camera FOV", &fFov);
-      pRenderCamera->SetFov(fFov);
-
-      if (ImGui::Button("Perspective Mode"))
-      {
-        pRenderCamera->SetProjectionMode(render::EProjectionMode::PERSPECTIVE);
-      }
-      if (ImGui::Button("Ortographic Mode"))
-      {
-        pRenderCamera->SetProjectionMode(render::EProjectionMode::ORTOGRAPHIC);
-      }
-
-      ImGui::End();
-      ImGui::ShowDemoWindow();
 
       // End draw
       pEngine->PushEndDraw();
