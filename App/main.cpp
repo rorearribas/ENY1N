@@ -75,16 +75,6 @@ int main()
   game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
   pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
-  game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
-  game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
-  pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
-  pPlaneModel->SetPrimitiveColor(math::CVector3(1.0f, 1.0f, 1.0f));
-  pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
-  //game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
-  //pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
-  //collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());
-  //pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
-
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
@@ -96,6 +86,16 @@ int main()
     pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
     pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
   }
+
+  game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
+  game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
+  pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
+  pPlaneModel->SetPrimitiveColor(math::CVector3(1.0f, 1.0f, 1.0f));
+  pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
+  game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
+  pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
+  collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());
+  pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
   std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
