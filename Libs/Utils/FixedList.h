@@ -9,7 +9,7 @@ namespace utils
   class CFixedList {
   public:
     template<typename Inheritance = T, typename ...Args>
-    T* CreateItem(Args&&... args)
+    T* RegisterItem(Args&&... args)
     {
       if (m_uRegisteredItems >= MAX_ITEMS)
       {

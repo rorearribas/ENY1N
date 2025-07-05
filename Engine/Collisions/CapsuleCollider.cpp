@@ -43,11 +43,6 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CCapsuleCollider::IntersectRay(const physics::CRay& /*_oRay*/, SHitEvent& /*_oHitEvent_*/, const float& /*_fMaxDistance*/)
-  {
-    return false;
-  }
-  // ------------------------------------
   void CCapsuleCollider::RecalculateCollider()
   {
     // Calculate axis directors
@@ -59,8 +54,10 @@ namespace collision
     float fSize = GetHeight() - (m_fRadius * 2.0f);
     float fHalfSize = fSize * 0.5f;
 
-    m_v3PointA = GetWorldPos() + (v3TargetAxis * fHalfSize);
-    m_v3PointB = GetWorldPos() - (v3TargetAxis * fHalfSize);
+    const math::CVector3& v3WorldPos = GetWorldPos();
+    m_v3SegmentEndPoint = v3WorldPos + (v3TargetAxis * fHalfSize);
+    m_v3SegmentStartPoint = v3WorldPos - (v3TargetAxis * fHalfSize);
+    m_v3SegmentDir = (m_v3SegmentEndPoint - m_v3SegmentStartPoint).Normalize();
   }
   // ------------------------------------
   void CCapsuleCollider::SetRadius(float _fRadius)
@@ -81,9 +78,9 @@ namespace collision
     const math::CVector3& v3CurrentPos = GetWorldPos(); // Get center
     const math::CVector3& v3CurrentRot = GetRotation(); // Get rotation
 
-    pEngine->DrawSphere(m_v3PointA, 0.125f, 8, 8, math::CVector3::Forward);
-    pEngine->DrawSphere(m_v3PointB, 0.125f, 8, 8, math::CVector3::Right);
-    pEngine->DrawLine(m_v3PointA, m_v3PointB, math::CVector3::Up);
+    pEngine->DrawSphere(m_v3SegmentEndPoint, 0.05f, 8, 8, math::CVector3::Forward);
+    pEngine->DrawSphere(m_v3SegmentStartPoint, 0.05f, 8, 8, math::CVector3::Right);
+    pEngine->DrawLine(m_v3SegmentEndPoint, m_v3SegmentStartPoint, math::CVector3::Up);
 
     pEngine->DrawCapsule
     (
@@ -97,6 +94,35 @@ namespace collision
     );
   }
   // ------------------------------------
+  bool CCapsuleCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
+  {
+    float s = 0.0f, t = 0.0f;
+    math::CVector3 v3ClosestOnRay, v3ClosestToSegment;
+    float fDist = math::ClosestPtRaySegment(_oRay.GetOrigin(), _oRay.GetDir(), GetSegmentStartPoint(), GetSegmentEndPoint(), s, t, v3ClosestOnRay, v3ClosestToSegment);
+    float fRadiusSum = GetRadius();
+    float fRadiusSquared = fRadiusSum * fRadiusSum;
+
+    if (s < 0.0f || s > _fMaxDistance)
+    {
+      return false;
+    }
+
+    if (fDist <= fRadiusSquared)
+    {
+      float fDepth = GetRadius() - fDist;
+      math::CVector3 v3Diff = v3ClosestOnRay - v3ClosestToSegment;
+      math::CVector3 v3Dir = math::CVector3::Normalize(v3ClosestOnRay - GetWorldPos());
+      float fDot = math::CVector3::Dot(v3Diff, v3Dir);
+      UNUSED_VAR(fDot);
+
+      _oHitEvent_.Normal = v3Diff;
+      _oHitEvent_.Depth = fDepth;
+      _oHitEvent_.ImpactPoint = v3ClosestToSegment + v3Diff * GetRadius();
+      return true;
+    }
+    return false;
+  }
+  // ------------------------------------
   bool CCapsuleCollider::CheckCapsuleCollision(const CCapsuleCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     const math::CVector3 v3Center = GetWorldPos();
@@ -105,7 +131,12 @@ namespace collision
 
     float s = 0.0f, t = 0.0f;
     math::CVector3 v3OutPointA, v3OutPointB;
-    float fDist = math::ClosestPtSegmentSegment(GetPointA(), GetPointB(), _pOther->GetPointA(), _pOther->GetPointB(), s, t, v3OutPointA, v3OutPointB);
+    float fDist = math::ClosestPtSegmentSegment
+    (
+      GetSegmentStartPoint(), GetSegmentEndPoint(),
+      _pOther->GetSegmentStartPoint(), _pOther->GetSegmentEndPoint(), 
+      s, t, v3OutPointA, v3OutPointB
+    );
     float fRadiusSum = GetRadius() + _pOther->GetRadius();
     float fRadiusSquared = fRadiusSum * fRadiusSum;
 
@@ -134,7 +165,7 @@ namespace collision
     for (uint32_t uI = 0; uI <= uMaxIterations; uI++)
     {
       float fDelta = (static_cast<float>(uI) / static_cast<float>(uMaxIterations));
-      math::CVector3 v3SegmentPoint = math::Lerp(GetPointA(), GetPointB(), fDelta);
+      math::CVector3 v3SegmentPoint = math::Lerp(GetSegmentStartPoint(), GetSegmentEndPoint(), fDelta);
       math::CVector3 v3Diff = v3SegmentPoint - _pOther->GetCenter();
 
       // Calculate closest point
@@ -158,14 +189,14 @@ namespace collision
         fMinDist = fDist;
         bCollision = true;
       }
-    } 
+    }
     return bCollision;
   }
   // ------------------------------------
   bool CCapsuleCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     //@Note: Review this!
-    float fDist = math::SqDistPointSegment(GetPointA(), GetPointB(), _pOther->GetCenter());
+    float fDist = math::SqDistPointSegment(GetSegmentEndPoint(), GetSegmentStartPoint(), _pOther->GetCenter());
     float fCapsuleWidth = GetRadius() + GetRadius();
     if (fDist <= fCapsuleWidth)
     {
@@ -180,7 +211,7 @@ namespace collision
   bool CCapsuleCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     // Compute (squared) distance between sphere center and capsule line segment
-    float fDist = math::SqDistPointSegment(GetPointA(), GetPointB(), _pOther->GetCenter());
+    float fDist = math::SqDistPointSegment(GetSegmentEndPoint(), GetSegmentStartPoint(), _pOther->GetCenter());
     // If (squared) distance smaller than (squared) sum of radii, they collide
     float fRadiusSum = _pOther->GetRadius() + this->GetRadius();
     float fRadiusSquared = fRadiusSum * fRadiusSum;

@@ -150,7 +150,7 @@ namespace scene
     CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
 
     // Create temporal item + set pos
-    CPrimitive* pCapsulePrimitive = m_vctDebugItems.CreateItem(oPrimitiveData, _eRenderMode);
+    CPrimitive* pCapsulePrimitive = m_vctDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
 
 #ifdef _DEBUG
     assert(pCapsulePrimitive); // Sanity check
@@ -173,7 +173,7 @@ namespace scene
 
     // Create cube
     using namespace render::graphics;
-    CPrimitive* pCubePrimitive = m_vctDebugItems.CreateItem(CPrimitive::EPrimitiveType::E3D_CUBE, _eRenderMode);
+    CPrimitive* pCubePrimitive = m_vctDebugItems.RegisterItem(CPrimitive::EPrimitiveType::E3D_CUBE, _eRenderMode);
 #ifdef _DEBUG
     assert(pCubePrimitive); // Sanity check
 #endif
@@ -208,7 +208,7 @@ namespace scene
     CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
 
     // Create temporal item + set pos
-    CPrimitive* pSpherePrimitive = m_vctDebugItems.CreateItem(oPrimitiveData, _eRenderMode);
+    CPrimitive* pSpherePrimitive = m_vctDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
 #ifdef _DEBUG
     assert(pSpherePrimitive); // Sanity check
 #endif
@@ -233,7 +233,7 @@ namespace scene
     CPrimitiveUtils::CreatePlane(_oPlane, oPrimitiveData, _eRenderMode);
 
     // Create primitive
-    CPrimitive* pPlanePrimitive = m_vctDebugItems.CreateItem(oPrimitiveData, _eRenderMode);
+    CPrimitive* pPlanePrimitive = m_vctDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
 #ifdef _DEBUG
     assert(pPlanePrimitive); // Sanity check
 #endif
@@ -258,7 +258,7 @@ namespace scene
     render::graphics::CPrimitiveUtils::CreateLine(_v3Start, _v3Dest, oCustomData);
 
     // Create temporal item
-    render::graphics::CPrimitive* pLinePrimitive = m_vctDebugItems.CreateItem(oCustomData, render::ERenderMode::WIREFRAME);
+    render::graphics::CPrimitive* pLinePrimitive = m_vctDebugItems.RegisterItem(oCustomData, render::ERenderMode::WIREFRAME);
 #ifdef _DEBUG
     assert(pLinePrimitive); // Sanity check
 #endif
@@ -275,7 +275,7 @@ namespace scene
       std::cout << "You have reached maximum primitives in the current scene" << std::endl;
       return nullptr;
     }
-    return m_vctPrimitiveItems.CreateItem(_ePrimitiveType, _eRenderMode);
+    return m_vctPrimitiveItems.RegisterItem(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
   render::graphics::CModel* const CScene::CreateModel(const char* _sModelPath, const char* _sBaseMltDir)
@@ -285,7 +285,7 @@ namespace scene
       std::cout << "You have reached maximum models in the current scene" << std::endl;
       return nullptr;
     }
-    return m_vctModels.CreateItem(_sModelPath, _sBaseMltDir);
+    return m_vctModels.RegisterItem(_sModelPath, _sBaseMltDir);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CScene::CreateDirectionalLight()
@@ -306,7 +306,7 @@ namespace scene
       std::cout << "You have reached maximum point lights in the current scene" << std::endl;
       return nullptr;
     }
-    return m_vctPointLights.CreateItem();
+    return m_vctPointLights.RegisterItem();
   }
   // ------------------------------------
   render::lights::CSpotLight* const CScene::CreateSpotLight()
@@ -316,7 +316,7 @@ namespace scene
       std::cout << "You have reached maximum spot lights in the current scene" << std::endl;
       return nullptr;
     }
-    return m_vctSpotLights.CreateItem();
+    return m_vctSpotLights.RegisterItem();
   }
   // ------------------------------------
   void CScene::DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_)

@@ -84,12 +84,6 @@
     <ClInclude Include="Shaders\Standard\ForwardVertexShader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\Primitive\VertexShader.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders\Primitive\PixelShader.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Render\Lights\SpotLight.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -223,8 +217,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\Primitive\VertexShader.hlsl" />
-    <FxCompile Include="Shaders\Primitive\PixelShader.hlsl" />
     <FxCompile Include="Shaders\Standard\ForwardVertexShader.hlsl" />
     <FxCompile Include="Shaders\Standard\ForwardPixelShader.hlsl" />
   </ItemGroup>

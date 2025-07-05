@@ -15,7 +15,7 @@ namespace utils
     ~CCircularPool() { ClearAll(); }
 
     template<typename ...Args>
-    T* CreateItem(Args&&... args)
+    T* RegisterItem(Args&&... args)
     {
       // Remove item
       size_t tTargetBlock = m_tItemIndex * sizeof(T);

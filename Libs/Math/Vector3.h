@@ -54,7 +54,7 @@ namespace math
     void Abs();
 
     static CVector3 Normalize(const CVector3& _v3);
-    CVector3 Normalize();
+    CVector3 Normalize() const;
 
     static float Dot(const CVector3& _vA, const CVector3& _vB);
     float Dot(const CVector3& _v3) const;

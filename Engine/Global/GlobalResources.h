@@ -1,10 +1,16 @@
 #pragma once
 #include <d3d11.h>
 #include <d3d11_1.h>
+#include "Engine/Managers/MemoryTracker.h"
 #include "Libs/Utils/Delegate.h"
 
 namespace global
 {
+  namespace mem
+  {
+    extern CMemoryTracker s_oMemoryTracker;
+  }
+
   // Win handle
   namespace window
   {

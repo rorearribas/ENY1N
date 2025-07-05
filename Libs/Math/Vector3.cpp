@@ -101,7 +101,7 @@ namespace math
     return _vA.Cross(_vB);
   }
   // ------------------------------------
-  CVector3 CVector3::Normalize()
+  CVector3 CVector3::Normalize() const
   {
     CVector3 v3 = *this;
     float fMagnitude = this->Magnitude();
@@ -116,8 +116,6 @@ namespace math
   // ------------------------------------
   math::CVector3 CVector3::Normalize(const CVector3& _v3)
   {
-    CVector3 v3Dir = _v3;
-    v3Dir.Normalize();
-    return v3Dir;
+    return _v3.Normalize();
   }
 }

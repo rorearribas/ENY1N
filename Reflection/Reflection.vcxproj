@@ -140,18 +140,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Types\Game\Entity.cpp" />
-    <ClCompile Include="Types\Functions\Functions.cpp" />
-    <ClCompile Include="Types\Property\Property.cpp" />
-    <ClCompile Include="Types\Base\Type.cpp" />
-    <ClCompile Include="Types\TypeManager\TypeManager.cpp" />
+    <ClCompile Include="Base\Class.cpp" />
+    <ClCompile Include="Variable\Variable.cpp" />
+    <ClCompile Include="TypeManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Types\Game\Entity.h" />
-    <ClInclude Include="Types\Functions\Functions.h" />
-    <ClInclude Include="Types\Property\Property.h" />
-    <ClInclude Include="Types\Base\Type.h" />
-    <ClInclude Include="Types\TypeManager\TypeManager.h" />
+    <ClInclude Include="Base\Class.h" />
+    <ClInclude Include="Function\Function.h" />
+    <ClInclude Include="Variable\Variable.h" />
+    <ClInclude Include="ReflectionMacros.h" />
+    <ClInclude Include="TypeManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

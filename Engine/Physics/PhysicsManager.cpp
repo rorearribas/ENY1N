@@ -70,7 +70,7 @@ namespace physics
       std::cout << "You have reached maximum colliders" << std::endl;
       return nullptr;
     }
-    return m_vctRigidbodys.CreateItem(_eRigidbodyType);
+    return m_vctRigidbodys.RegisterItem(_eRigidbodyType);
   }
   // ------------------------------------
   void CPhysicsManager::DestroyRigidbody(CRigidbody*& _pRigidbody)

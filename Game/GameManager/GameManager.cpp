@@ -74,7 +74,7 @@ namespace game
 
     // Register entity
     m_uRegisteredEntities++;
-    CEntity* pEntity = m_vctEntitiesList.CreateItem(sTargetEntityID.c_str());
+    CEntity* pEntity = m_vctEntitiesList.RegisterItem(sTargetEntityID.c_str());
     return pEntity;
   }
   // ------------------------------------

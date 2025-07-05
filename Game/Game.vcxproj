@@ -113,7 +113,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Reflection\$(Platform)\$(Configuration)\Reflection.lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -130,7 +130,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Reflection\$(Platform)\$(Configuration)\Reflection.lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>

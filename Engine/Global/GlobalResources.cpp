@@ -2,6 +2,11 @@
 
 namespace global
 {
+  namespace mem
+  {
+    CMemoryTracker s_oMemoryTracker;
+  }
+
   // Win handle
   namespace window
   {
@@ -20,4 +25,35 @@ namespace global
     utils::CDelegate<void(RAWKEYBOARD*)> s_oOnUpdateKeyboardDelegate;
     utils::CDelegate<void(RAWMOUSE*)> s_oUpdateMouseDelegate;
   }
+}
+
+void* operator new(std::size_t size)
+{
+  void* ptr = malloc(size);
+  if (!ptr)
+  {
+    throw std::bad_alloc();
+  }
+  global::mem::s_oMemoryTracker.RegisterMem(size);
+  return ptr;
+}
+void operator delete(void* ptr, size_t size) noexcept
+{
+  global::mem::s_oMemoryTracker.DeregisterMem(size);
+  free(ptr);
+}
+void* operator new[](std::size_t size)
+{
+  void* ptr = malloc(size);
+  if (!ptr)
+  {
+    throw std::bad_alloc();
+  }
+  global::mem::s_oMemoryTracker.RegisterMem(size);
+  return ptr;
+}
+void operator delete[](void* ptr, size_t size) noexcept
+{
+  global::mem::s_oMemoryTracker.DeregisterMem(size);
+  free(ptr);
 }

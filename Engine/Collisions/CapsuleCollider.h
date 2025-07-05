@@ -21,8 +21,9 @@ namespace collision
     inline const math::CVector3& GetLocalCenter() const { return m_v3LocalCenter; }
     inline void SetLocalCenter(const math::CVector3& _v3LocalCenter) { m_v3LocalCenter = _v3LocalCenter; }
 
-    inline const math::CVector3& GetPointA() const { return m_v3PointA; }
-    inline const math::CVector3& GetPointB() const { return m_v3PointB; }
+    inline const math::CVector3& GetSegmentEndPoint() const { return m_v3SegmentEndPoint; }
+    inline const math::CVector3& GetSegmentStartPoint() const { return m_v3SegmentStartPoint; }
+    inline const math::CVector3& GetSegmentDir() const { return m_v3SegmentDir; }
 
     inline const math::CVector3& GetOrientedAxis() const { return m_v3OrientedAxis; }
     inline void SetOrientedAxis(math::CVector3 _v3Axis) { m_v3OrientedAxis = _v3Axis; }
@@ -49,9 +50,10 @@ namespace collision
     // Default axis
     math::CVector3 m_v3OrientedAxis = math::CVector3::Up;
 
-    // Segment points
-    math::CVector3 m_v3PointA = math::CVector3::Zero;
-    math::CVector3 m_v3PointB = math::CVector3::Zero;
+    // Segment
+    math::CVector3 m_v3SegmentEndPoint = math::CVector3::Zero;
+    math::CVector3 m_v3SegmentStartPoint = math::CVector3::Zero;
+    math::CVector3 m_v3SegmentDir = math::CVector3::Zero;
   };
 }
 

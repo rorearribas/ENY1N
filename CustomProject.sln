@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.7.34221.43
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Engine", "Engine\Engine.vcxproj", "{E9154C9C-C731-432E-AE3D-DF4FBE9E938F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5491B832-E865-4E15-8D92-0DB5FF91CAF7} = {5491B832-E865-4E15-8D92-0DB5FF91CAF7}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Reflection", "Reflection\Reflection.vcxproj", "{3F569F91-B437-4AA5-9C9C-DEDBEAEA94CC}"
 EndProject
@@ -18,6 +21,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Libs", "Libs\Libs.vcxproj", "{5491B832-E865-4E15-8D92-0DB5FF91CAF7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{D8691100-CB9B-4CEC-B516-7940E960261B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5491B832-E865-4E15-8D92-0DB5FF91CAF7} = {5491B832-E865-4E15-8D92-0DB5FF91CAF7}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

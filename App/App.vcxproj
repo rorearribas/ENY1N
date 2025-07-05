@@ -115,13 +115,13 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engine;$(ProjectDir)Libs;$(ProjectDir)Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine;$(ProjectDir)Libs;$(ProjectDir)Game;$(ProjectDir)Reflection;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Game\$(Platform)\$(Configuration)\Game.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Game\$(Platform)\$(Configuration)\Game.lib;$(SolutionDir)Reflection\$(Platform)\$(Configuration)\Reflection.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -133,7 +133,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)Engine;$(ProjectDir)Libs;$(ProjectDir)Game;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Engine;$(ProjectDir)Libs;$(ProjectDir)Game;$(ProjectDir)Reflection;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -141,7 +141,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Game\$(Platform)\$(Configuration)\Game.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>$(SolutionDir)Engine\$(Platform)\$(Configuration)\Engine.lib;$(SolutionDir)Libs\$(Platform)\$(Configuration)\Libs.lib;$(SolutionDir)Game\$(Platform)\$(Configuration)\Game.lib;$(SolutionDir)Reflection\$(Platform)\$(Configuration)\Reflection.lib;d3d11.lib;d3dcompiler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

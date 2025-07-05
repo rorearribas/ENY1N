@@ -27,7 +27,7 @@
 #include "Engine/Physics/PhysicsManager.h"
 #include "Libs/ImGui/imgui.h"
 #include "Libs/Math/Math.h"
-#include "Engine/Managers/MemoryTracker.h"
+#include "Reflection/TypeManager.h"
 
 float GenerateFloat(float min, float max)
 {
@@ -44,6 +44,8 @@ static bool bThrowRay = false;
 
 int main()
 {
+  reflection::CTypeManager::CreateSingleton();
+
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);
@@ -79,7 +81,7 @@ int main()
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Capsule");
-    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 1.0f, 0.0f));
+    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
@@ -156,7 +158,7 @@ int main()
           // Throw ray
           collision::CCollisionManager* pCollManager = collision::CCollisionManager::GetInstance();
           std::vector<collision::SHitEvent> vctHits;
-          if (pCollManager->RaycastAll(physics::CRay(v3Pos, math::CVector3::Forward), 100.0f, vctHits, collision::FLOOR))
+          if (pCollManager->RaycastAll(physics::CRay(v3Pos, math::CVector3::Forward), 100.0f, vctHits))
           {
             for (auto& HitEvent : vctHits)
             {
@@ -239,4 +241,6 @@ int main()
   pTimeManager->DestroySingleton();
   pInputManager->DestroySingleton();
   pEngine->DestroySingleton();
+
+  global::mem::s_oMemoryTracker.PrintStats();
 }

@@ -23,7 +23,7 @@ namespace math
   template <typename T>
   inline T Lerp(T _ObjectA, T _ObjectB, float _fDelta)
   {
-    return _ObjectA * (1.0f - _fDelta) + (_ObjectB * _fDelta);
+    return _ObjectA + (_ObjectB - _ObjectA) * _fDelta;
   }
 
   template <typename T>
@@ -172,7 +172,7 @@ namespace math
     return math::CVector3::Dot(ac, ac) - e * e / f;
   }
 
-  inline float ClosestPtSegmentSegment(math::CVector3 p1, math::CVector3 q1, math::CVector3 p2, math::CVector3 q2,
+  inline float ClosestPtSegmentSegment(const math::CVector3& p1, const math::CVector3& q1, const math::CVector3& p2, const math::CVector3& q2,
   float& s, float& t, math::CVector3& c1, math::CVector3& c2)
   {
     math::CVector3 d1 = q1 - p1; // Direction vector of segment S1
@@ -238,4 +238,49 @@ namespace math
     c2 = p2 + d2 * t;
     return math::CVector3::Dot(c1 - c2, c1 - c2);
   }
+
+  inline float ClosestPtRaySegment(const math::CVector3& _v3RayOrigin, const math::CVector3& _v3RayDir,
+    const math::CVector3& p1, const math::CVector3& q1, float& s, float& t, math::CVector3& c1, math::CVector3& c2)
+  {
+    math::CVector3 d1 = _v3RayDir; // Direction of ray
+    math::CVector3 d2 = q1 - p1; // Direction of segment
+    math::CVector3 r = _v3RayOrigin - p1;
+
+    float a = math::CVector3::Dot(d1, d1); // Should be > 0
+    float e = math::CVector3::Dot(d2, d2); // Should be > 0
+    float b = math::CVector3::Dot(d1, d2);
+    float c = math::CVector3::Dot(d1, r);
+    float f = math::CVector3::Dot(d2, r);
+
+    float denom = a * e - b * b;
+
+    // If not parallel
+    if (fabs(denom) > s_fEpsilon3)
+    {
+      s = (b * f - c * e) / denom;
+      s = Max(s, 0.0f); // Clamp ray to s >= 0 (it's a ray, not a line)
+    }
+    else
+    {
+      s = 0.0f; // Parallel: pick arbitrary point on ray
+    }
+
+    t = (b * s + f) / e;
+    t = Clamp(t, 0.0f, 1.0f); // Clamp t to segment
+
+    // Recompute s if t was clamped
+    if (t <= 0.0f || t >= 1.0f)
+    {
+      t = Clamp(t, 0.0f, 1.0f);
+      math::CVector3 cp = p1 + d2 * t;
+      s = math::CVector3::Dot(cp - _v3RayOrigin, d1) / a;
+      s = Max(s, 0.0f); // Again, ray only
+    }
+
+    c1 = _v3RayOrigin + d1 * s;
+    c2 = p1 + d2 * t;
+
+    return math::CVector3::Dot(c1 - c2, c1 - c2);
+  }
+
 }

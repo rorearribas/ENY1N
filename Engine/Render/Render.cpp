@@ -10,8 +10,6 @@
 // Shaders
 #include "Engine/Shaders/Standard/ForwardPixelShader.h"
 #include "Engine/Shaders/Standard/ForwardVertexShader.h"
-#include "Engine/Shaders/Primitive/PixelShader.h"
-#include "Engine/Shaders/Primitive/VertexShader.h"
 
 namespace render
 {
@@ -49,10 +47,6 @@ namespace render
       // Shaders for 3D Pipeline
       shader::CShader<shader::EShaderType::PIXEL_SHADER>* pForwardPS;
       shader::CShader<shader::EShaderType::VERTEX_SHADER>* pForwardVS;
-
-      // Shaders for primitives
-      shader::CShader<shader::EShaderType::PIXEL_SHADER>* pPrimitivesPS;
-      shader::CShader<shader::EShaderType::VERTEX_SHADER>* pPrimitivesVS;
     };
 
     static SRenderPipeline s_oPipeline;
@@ -85,9 +79,7 @@ namespace render
 
     // Release objetcs
     global::ReleaseObject(internal_render::s_oPipeline.pForwardPS);
-    global::ReleaseObject(internal_render::s_oPipeline.pPrimitivesPS);
     global::ReleaseObject(internal_render::s_oPipeline.pForwardVS);
-    global::ReleaseObject(internal_render::s_oPipeline.pPrimitivesVS);
   }
   // ------------------------------------
   HRESULT CRender::Init(uint32_t _uX, uint32_t _uY)
@@ -106,10 +98,6 @@ namespace render
     // Create shaders for 3D pipeline
     internal_render::s_oPipeline.pForwardPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_ForwardPixelShader, ARRAYSIZE(g_ForwardPixelShader));
     internal_render::s_oPipeline.pForwardVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_ForwardVertexShader, ARRAYSIZE(g_ForwardVertexShader));
-
-    // Create shaders for primitives
-    internal_render::s_oPipeline.pPrimitivesPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_PixelShader, ARRAYSIZE(g_PixelShader));
-    internal_render::s_oPipeline.pPrimitivesVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_VertexShader, ARRAYSIZE(g_VertexShader));
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);

@@ -4,6 +4,8 @@
 #include "Libs/Utils/Singleton.h"
 #include "Libs/Utils/FixedList.h"
 #include "Libs/Utils/Delegate.h"
+#include <unordered_map>
+#include <unordered_set>
 
 namespace collision
 {
@@ -31,6 +33,7 @@ namespace collision
 
   private:
     TColliderList m_vctColliders;
+    std::unordered_map<collision::CCollider*, std::unordered_set<collision::CCollider*>> m_dctHandleCollisions;
   };
 }
 
