@@ -30,6 +30,8 @@ namespace render
     inline void SetRotation(const math::CVector3& _v3Rot) { m_v3Rot = _v3Rot; UpdateViewMatrix(GetProjectionMode()); }
     inline const math::CVector3& GetRotation() const { return m_v3Rot; }
 
+    inline void SetMovementVel(float _fVelocity) { m_fMovementVelocity = _fVelocity; }
+    inline float GetMovementVel() const { return m_fMovementVelocity;}
     inline void SetFov(float _fFov) { m_fFov = _fFov; }
     inline float GetFov() const { return m_fFov; }
     inline void SetFar(float _fFar) { m_fFar = _fFar; }
@@ -67,7 +69,7 @@ namespace render
     math::CVector3 m_v3Rot = math::CVector3::Zero;
 
     float m_fCamVelocity = 1.0f;
-    float m_fMovementSpeed = 50.0f;
+    float m_fMovementVelocity = 25.0f;
 
     float m_fFov = 45.0f;
     float m_fDesiredFov = 45.0f;

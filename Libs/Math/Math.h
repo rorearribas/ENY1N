@@ -239,12 +239,12 @@ namespace math
     return math::CVector3::Dot(c1 - c2, c1 - c2);
   }
 
-  inline float ClosestPtRaySegment(const math::CVector3& _v3RayOrigin, const math::CVector3& _v3RayDir,
-    const math::CVector3& p1, const math::CVector3& q1, float& s, float& t, math::CVector3& c1, math::CVector3& c2)
+  inline float ClosestPtRaySegment(const physics::CRay& _oRay, const math::CVector3& p1, const math::CVector3& q1, 
+  float& s, float& t, math::CVector3& c1, math::CVector3& c2)
   {
-    math::CVector3 d1 = _v3RayDir; // Direction of ray
+    math::CVector3 d1 = _oRay.GetDir(); // Direction of ray
     math::CVector3 d2 = q1 - p1; // Direction of segment
-    math::CVector3 r = _v3RayOrigin - p1;
+    math::CVector3 r = _oRay.GetOrigin() - p1;
 
     float a = math::CVector3::Dot(d1, d1); // Should be > 0
     float e = math::CVector3::Dot(d2, d2); // Should be > 0
@@ -273,14 +273,40 @@ namespace math
     {
       t = Clamp(t, 0.0f, 1.0f);
       math::CVector3 cp = p1 + d2 * t;
-      s = math::CVector3::Dot(cp - _v3RayOrigin, d1) / a;
+      s = math::CVector3::Dot(cp - _oRay.GetOrigin(), d1) / a;
       s = Max(s, 0.0f); // Again, ray only
     }
 
-    c1 = _v3RayOrigin + d1 * s;
+    c1 = _oRay.GetOrigin() + d1 * s;
     c2 = p1 + d2 * t;
 
     return math::CVector3::Dot(c1 - c2, c1 - c2);
   }
 
+  inline bool ClosestPtRaySphere(const physics::CRay& _oRay, const math::CVector3& _v3SphereCenter, float _fSphereRadius, 
+  math::CVector3& _v3ClosestPoint_, float& _fDist_)
+  {
+    math::CVector3 v3Diff = math::CVector3(_oRay.GetOrigin() - _v3SphereCenter);
+    float fDotA = math::CVector3::Dot(v3Diff, _oRay.GetDir());
+    float fDotB = math::CVector3::Dot(v3Diff, v3Diff) - (_fSphereRadius * _fSphereRadius);
+
+    // Exit if r’s origin outside s (c > 0) and r pointing away from s (b > 0)
+    if (fDotB > 0.0f && fDotA > 0.0f)
+    {
+      return false;
+    }
+
+    // A negative discriminant corresponds to ray missing sphere
+    float fDiscr = fDotA * fDotA - fDotB;
+    if (fDiscr < 0.0f)
+    {
+      return false;
+    }
+
+    // Compute distance
+    _fDist_ = -fDotA - sqrt(fDiscr);
+    _fDist_ = _fDist_ >= 0.0f ? _fDist_ : 0.0f; // Inside of sphere
+    _v3ClosestPoint_ = _oRay.GetOrigin() + (_oRay.GetDir() * _fDist_);
+    return true;
+  }
 }

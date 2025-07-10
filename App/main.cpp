@@ -68,14 +68,14 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
-  // Create spot light
-  game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot light");
-  pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
-  pSpotLight->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+  //// Create spot light
+  //game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot light");
+  //pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
+  //pSpotLight->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
 
-  // Create point light
-  game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
-  pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
+  //// Create point light
+  //game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
+  //pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
@@ -86,6 +86,17 @@ int main()
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
     pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
+    pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
+  }
+
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  {
+    game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Sphere");
+    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+    game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
+    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
+    pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
+    pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::SPHERE_COLLIDER);
     pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
   }
 
@@ -105,7 +116,7 @@ int main()
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     pBoxTest->SetPosition(math::CVector3(1.0f, 5.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE, render::ERenderMode::WIREFRAME);
+    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();

@@ -8,7 +8,8 @@ public:
 
   size_t GetAllocatedSize() const { return m_tAllocatedSize; }
   size_t GetMemoryPeak() const { return m_tAllocatedSize; }
-  void PrintStats() const;
+
+  void PrintStats() const;    
 
 private:
   size_t m_tAllocatedSize = 0;

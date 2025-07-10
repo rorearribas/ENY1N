@@ -37,37 +37,17 @@ namespace collision
   // ------------------------------------
   bool CSphereCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
   {
-    math::CVector3 v3Diff = math::CVector3(_oRay.GetOrigin() - m_v3Center);
-    float fDotA = math::CVector3::Dot(v3Diff, _oRay.GetDir());
-    float fDotB = math::CVector3::Dot(v3Diff, v3Diff) - (this->m_fRadius * this->m_fRadius);
-
-    // Exit if r’s origin outside s (c > 0) and r pointing away from s (b > 0)
-    if (fDotB > 0.0f && fDotA > 0.0f)
+    float fDist = 0.0f;
+    math::CVector3 v3ClosestPoint = math::CVector3::Zero;
+    if (math::ClosestPtRaySphere(_oRay, GetCenter(), GetRadius(), v3ClosestPoint, fDist) && fDist <= _fMaxDistance)
     {
-      return false;
+      _oHitEvent_.Object = GetOwner();
+      _oHitEvent_.ImpactPoint = v3ClosestPoint;
+      _oHitEvent_.Normal = math::CVector3::Normalize(v3ClosestPoint - GetCenter());
+      _oHitEvent_.Distance = fDist;
+      return true;
     }
-
-    // A negative discriminant corresponds to ray missing sphere
-    float fDiscr = fDotA * fDotA - fDotB;
-    if (fDiscr < 0.0f) 
-    {
-      return false;
-    }
-
-    // Get distance
-    float fDist = -fDotA - sqrt(fDiscr);
-    fDist = math::Clamp(fDist, 0.0f, _fMaxDistance + math::s_fEpsilon3);
-    if (fDist >= (_fMaxDistance + math::s_fEpsilon3))
-    {
-      return false;
-    }
-
-    _oHitEvent_.Object = GetOwner();
-    _oHitEvent_.ImpactPoint = _oRay.GetOrigin() + (_oRay.GetDir() * fDist);
-    _oHitEvent_.Normal = math::CVector3::Normalize(_oHitEvent_.ImpactPoint - m_v3Center);
-    _oHitEvent_.Distance = fDist;
-
-    return true;
+    return false;
   }
   // ------------------------------------
   void CSphereCollider::RecalculateCollider()

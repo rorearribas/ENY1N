@@ -96,28 +96,38 @@ namespace collision
   // ------------------------------------
   bool CCapsuleCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
   {
+    const math::CVector3& v3RayDir = _oRay.GetDir();
+    const math::CVector3& v3RayOrigin = _oRay.GetOrigin();
+
     float s = 0.0f, t = 0.0f;
-    math::CVector3 v3ClosestOnRay, v3ClosestToSegment;
-    float fDist = math::ClosestPtRaySegment(_oRay.GetOrigin(), _oRay.GetDir(), GetSegmentStartPoint(), GetSegmentEndPoint(), s, t, v3ClosestOnRay, v3ClosestToSegment);
-    float fRadiusSum = GetRadius();
-    float fRadiusSquared = fRadiusSum * fRadiusSum;
+    math::CVector3 v3ClosestToRay, v3ClosestToSegment;
+    float fDist = math::ClosestPtRaySegment(_oRay, GetSegmentStartPoint(), GetSegmentEndPoint(), s, t, v3ClosestToRay, v3ClosestToSegment);
 
     if (s < 0.0f || s > _fMaxDistance)
     {
       return false;
     }
 
-    if (fDist <= fRadiusSquared)
+    float fDotZ = math::CVector3::Dot(v3ClosestToSegment - v3RayOrigin, v3RayDir);
+    if (fDotZ < 0.0f)
     {
-      float fDepth = GetRadius() - fDist;
-      math::CVector3 v3Diff = v3ClosestOnRay - v3ClosestToSegment;
-      math::CVector3 v3Dir = math::CVector3::Normalize(v3ClosestOnRay - GetWorldPos());
-      float fDot = math::CVector3::Dot(v3Diff, v3Dir);
+      return false;
+    }
+
+    float fRadius = GetRadius();
+    float fSqrRadius = fRadius * fRadius;
+    if (fDist <= fSqrRadius)
+    {
+      float fDepth = math::Clamp((fSqrRadius - fDist) * 2.0f, 0.0f, fRadius);
+      math::CVector3 v3Diff = v3ClosestToSegment - v3ClosestToRay;
+      math::CVector3 v3Normal = v3Diff.Normalize();
+      float fDot = math::CVector3::Dot(v3Diff, v3Normal);
       UNUSED_VAR(fDot);
 
-      _oHitEvent_.Normal = v3Diff;
+      _oHitEvent_.Normal = v3Normal;
       _oHitEvent_.Depth = fDepth;
-      _oHitEvent_.ImpactPoint = v3ClosestToSegment + v3Diff * GetRadius();
+      _oHitEvent_.ImpactPoint = _oRay.GetOrigin() + (_oRay.GetDir() * s);
+      _oHitEvent_.Object = GetOwner();
       return true;
     }
     return false;

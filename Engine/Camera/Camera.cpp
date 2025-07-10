@@ -47,10 +47,10 @@ namespace render
       bool bPespectiveMode = GetProjectionMode() == EProjectionMode::PERSPECTIVE;
       math::CVector3 v3HorizontalDir = bPespectiveMode ? v3Forward : math::CVector3::Up;
 
-      if (pInputManager->IsKeyPressed('W') && bRightButtonPressed) { AddDisplacement(v3HorizontalDir * m_fMovementSpeed * _fDeltaTime); }
-      if (pInputManager->IsKeyPressed('S') && bRightButtonPressed) { AddDisplacement(-v3HorizontalDir * m_fMovementSpeed * _fDeltaTime); }
-      if (pInputManager->IsKeyPressed('D') && bRightButtonPressed) { AddDisplacement(v3Right * m_fMovementSpeed * _fDeltaTime); }
-      if (pInputManager->IsKeyPressed('A') && bRightButtonPressed) { AddDisplacement(-v3Right * m_fMovementSpeed * _fDeltaTime); }
+      if (pInputManager->IsKeyPressed('W') && bRightButtonPressed) { AddDisplacement(v3HorizontalDir * m_fMovementVelocity * _fDeltaTime); }
+      if (pInputManager->IsKeyPressed('S') && bRightButtonPressed) { AddDisplacement(-v3HorizontalDir * m_fMovementVelocity * _fDeltaTime); }
+      if (pInputManager->IsKeyPressed('D') && bRightButtonPressed) { AddDisplacement(v3Right * m_fMovementVelocity * _fDeltaTime); }
+      if (pInputManager->IsKeyPressed('A') && bRightButtonPressed) { AddDisplacement(-v3Right * m_fMovementVelocity * _fDeltaTime); }
 
       if (bPespectiveMode)
       {
@@ -70,7 +70,7 @@ namespace render
       fMouseDelta = math::Clamp(fMouseDelta, -internal_camera::s_fMaxWheelDelta, internal_camera::s_fMaxWheelDelta);
       if (GetProjectionMode() == EProjectionMode::PERSPECTIVE)
       {
-        AddDisplacement(fMouseDelta != 0 ? v3Forward * (fMouseDelta * m_fMovementSpeed) * _fDeltaTime : math::CVector3::Zero);
+        AddDisplacement(fMouseDelta != 0 ? v3Forward * (fMouseDelta * m_fMovementVelocity) * _fDeltaTime : math::CVector3::Zero);
       }
       else
       {
@@ -227,6 +227,11 @@ namespace render
     float fFov = GetFov();
     ImGui::InputFloat("FOV", &fFov);
     SetFov(fFov);
+
+    ImGui::Separator();
+    float fVel = GetMovementVel();
+    ImGui::InputFloat("Velocity", &fVel);
+    SetMovementVel(fVel);
 
     if (ImGui::Button("Perspective Mode"))
     {

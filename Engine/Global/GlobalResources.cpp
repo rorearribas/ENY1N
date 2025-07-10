@@ -2,6 +2,7 @@
 
 namespace global
 {
+  // Memory tracker
   namespace mem
   {
     CMemoryTracker s_oMemoryTracker;
