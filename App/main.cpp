@@ -39,8 +39,8 @@ float GenerateFloat(float min, float max)
 
 static bool bThrowRay = false;
 
-#define WIDTH 2560
-#define HEIGHT 1440
+#define WIDTH 1920
+#define HEIGHT 1080
 
 int main()
 {
@@ -84,19 +84,8 @@ int main()
     pCapsuleEntity->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
-    pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
+    pModelCompTest->SetPrimitiveColor(math::CVector3::Forward);
     pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
-    pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
-  }
-
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
-  {
-    game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Sphere");
-    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
-    game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_SPHERE);
-    pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
-    pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::SPHERE_COLLIDER);
     pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
   }
 

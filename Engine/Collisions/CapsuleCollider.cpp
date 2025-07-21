@@ -11,8 +11,7 @@ namespace collision
 {
   namespace internal_capsule_collider
   {
-    const int s_iMaxSubvH(12);
-    const int s_iMaxSubvV(12);
+    static constexpr int s_iMaxDebugSubv = 12;
   }
 
   bool CCapsuleCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
@@ -55,9 +54,9 @@ namespace collision
     float fHalfSize = fSize * 0.5f;
 
     const math::CVector3& v3WorldPos = GetWorldPos();
-    m_v3SegmentEndPoint = v3WorldPos + (v3TargetAxis * fHalfSize);
-    m_v3SegmentStartPoint = v3WorldPos - (v3TargetAxis * fHalfSize);
-    m_v3SegmentDir = (m_v3SegmentEndPoint - m_v3SegmentStartPoint).Normalize();
+    m_v3EndSegmentPoint = v3WorldPos + (v3TargetAxis * fHalfSize);
+    m_v3StartSegmentPoint = v3WorldPos - (v3TargetAxis * fHalfSize);
+    m_v3SegmentDir = (m_v3EndSegmentPoint - m_v3StartSegmentPoint).Normalize();
   }
   // ------------------------------------
   void CCapsuleCollider::SetRadius(float _fRadius)
@@ -78,9 +77,9 @@ namespace collision
     const math::CVector3& v3CurrentPos = GetWorldPos(); // Get center
     const math::CVector3& v3CurrentRot = GetRotation(); // Get rotation
 
-    pEngine->DrawSphere(m_v3SegmentEndPoint, 0.05f, 8, 8, math::CVector3::Forward);
-    pEngine->DrawSphere(m_v3SegmentStartPoint, 0.05f, 8, 8, math::CVector3::Right);
-    pEngine->DrawLine(m_v3SegmentEndPoint, m_v3SegmentStartPoint, math::CVector3::Up);
+    pEngine->DrawSphere(m_v3EndSegmentPoint, 0.05f, 8, 8, math::CVector3::Forward);
+    pEngine->DrawSphere(m_v3StartSegmentPoint, 0.05f, 8, 8, math::CVector3::Right);
+    pEngine->DrawLine(m_v3EndSegmentPoint, m_v3StartSegmentPoint, math::CVector3::Up);
 
     pEngine->DrawCapsule
     (
@@ -89,48 +88,75 @@ namespace collision
       math::CVector3::One, // Color
       m_fRadius, // Radius
       m_fHeight, // Height
-      internal_capsule_collider::s_iMaxSubvH, // Horizontal
-      internal_capsule_collider::s_iMaxSubvV // Vertical
+      internal_capsule_collider::s_iMaxDebugSubv, // Horizontal
+      internal_capsule_collider::s_iMaxDebugSubv // Vertical
     );
   }
   // ------------------------------------
   bool CCapsuleCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
   {
-    const math::CVector3& v3RayDir = _oRay.GetDir();
-    const math::CVector3& v3RayOrigin = _oRay.GetOrigin();
+    bool bCalculateSegment = true;
+    float fClosestDist = FLT_MAX, fTempDist = FLT_MAX;
+    math::CVector3 v3ClosestPoint, v3TempClosestPoint;
 
-    float s = 0.0f, t = 0.0f;
-    math::CVector3 v3ClosestToRay, v3ClosestToSegment;
-    float fDist = math::ClosestPtRaySegment(_oRay, GetSegmentStartPoint(), GetSegmentEndPoint(), s, t, v3ClosestToRay, v3ClosestToSegment);
-
-    if (s < 0.0f || s > _fMaxDistance)
+    // Check top sphere
+    if (math::ClosestPtRaySphere(_oRay, m_v3EndSegmentPoint, m_fRadius, v3TempClosestPoint, fTempDist) && fTempDist <= _fMaxDistance)
     {
-      return false;
+      // Update closest point
+      float fDot = math::CVector3::Dot(v3TempClosestPoint - m_v3EndSegmentPoint, GetSegmentDir());
+      if (fDot >= 0.0f && fTempDist <= fClosestDist)
+      {
+        fClosestDist = fTempDist;
+        v3ClosestPoint = v3TempClosestPoint;
+        bCalculateSegment = false;
+      }
     }
 
-    float fDotZ = math::CVector3::Dot(v3ClosestToSegment - v3RayOrigin, v3RayDir);
-    if (fDotZ < 0.0f)
+    // Check bottom sphere
+    if (math::ClosestPtRaySphere(_oRay, m_v3StartSegmentPoint, m_fRadius, v3TempClosestPoint, fTempDist) && fTempDist <= _fMaxDistance)
     {
-      return false;
+      // Update closest point
+      float fDot = math::CVector3::Dot(m_v3StartSegmentPoint - v3TempClosestPoint, GetSegmentDir());
+      if (fDot >= 0.0f && fTempDist <= fClosestDist)
+      {
+        fClosestDist = fTempDist;
+        v3ClosestPoint = v3TempClosestPoint;
+        bCalculateSegment = false;
+      }
     }
 
-    float fRadius = GetRadius();
-    float fSqrRadius = fRadius * fRadius;
-    if (fDist <= fSqrRadius)
+    // Check segment!
+    if (bCalculateSegment)
     {
-      float fDepth = math::Clamp((fSqrRadius - fDist) * 2.0f, 0.0f, fRadius);
-      math::CVector3 v3Diff = v3ClosestToSegment - v3ClosestToRay;
-      math::CVector3 v3Normal = v3Diff.Normalize();
-      float fDot = math::CVector3::Dot(v3Diff, v3Normal);
-      UNUSED_VAR(fDot);
+      float s = 0.0f, t = 0.0f;
+      math::CVector3 v3ClosestToRay, v3ClosestToSegment;
+      float fSqrDist = math::ClosestPtRaySegment(_oRay, GetStartSegmentPoint(), GetEndSegmentPoint(), s, t, v3ClosestToRay, v3ClosestToSegment);
+      if (fSqrDist <= GetRadius() && s <= _fMaxDistance)
+      {
+        math::CVector3 v3Dir = (v3ClosestToRay - v3ClosestToSegment).Normalize();
+        UNUSED_VAR(v3Dir);
+        float fCorrectFactor = GetRadius() - fSqrDist;
+        UNUSED_VAR(fCorrectFactor);
+        v3ClosestPoint = _oRay.GetOrigin() + (_oRay.GetDir() * (s + -fCorrectFactor));
+      }
 
-      _oHitEvent_.Normal = v3Normal;
-      _oHitEvent_.Depth = fDepth;
-      _oHitEvent_.ImpactPoint = _oRay.GetOrigin() + (_oRay.GetDir() * s);
-      _oHitEvent_.Object = GetOwner();
-      return true;
+      if (s < 0.0f || s > _fMaxDistance)
+      {
+        return false;
+      }
     }
-    return false;
+
+    //fDepth = math::Clamp((fSqrRadius - fDist) * 2.0f, 0.0f, fRadius);
+    //math::CVector3 v3Diff /*= v3ClosestToSegment - v3ClosestToRay*/;
+    //math::CVector3 v3Normal = v3Diff.Normalize();
+    ///* float fDot = math::CVector3::Dot(v3Diff, v3Normal);
+    // UNUSED_VAR(fDot);*/
+
+  /*  _oHitEvent_.Normal = v3Normal;
+    _oHitEvent_.Depth = fDepth;*/
+    _oHitEvent_.ImpactPoint = v3ClosestPoint;
+    _oHitEvent_.Object = GetOwner();
+    return true;
   }
   // ------------------------------------
   bool CCapsuleCollider::CheckCapsuleCollision(const CCapsuleCollider* _pOther, SHitEvent& _oHitEvent_) const
@@ -143,8 +169,8 @@ namespace collision
     math::CVector3 v3OutPointA, v3OutPointB;
     float fDist = math::ClosestPtSegmentSegment
     (
-      GetSegmentStartPoint(), GetSegmentEndPoint(),
-      _pOther->GetSegmentStartPoint(), _pOther->GetSegmentEndPoint(), 
+      GetStartSegmentPoint(), GetEndSegmentPoint(),
+      _pOther->GetStartSegmentPoint(), _pOther->GetEndSegmentPoint(),
       s, t, v3OutPointA, v3OutPointB
     );
     float fRadiusSum = GetRadius() + _pOther->GetRadius();
@@ -171,11 +197,11 @@ namespace collision
     float fMinDist = FLT_MAX;
     bool bCollision = false;
 
-    static constexpr uint32_t uMaxIterations = 16; // Max iterations between segments points
-    for (uint32_t uI = 0; uI <= uMaxIterations; uI++)
+    static constexpr uint32_t uMaxOBBIterations = 16; // Max iterations between segments points
+    for (uint32_t uI = 0; uI <= uMaxOBBIterations; uI++)
     {
-      float fDelta = (static_cast<float>(uI) / static_cast<float>(uMaxIterations));
-      math::CVector3 v3SegmentPoint = math::Lerp(GetSegmentStartPoint(), GetSegmentEndPoint(), fDelta);
+      float fDelta = (static_cast<float>(uI) / static_cast<float>(uMaxOBBIterations));
+      math::CVector3 v3SegmentPoint = math::Lerp(GetStartSegmentPoint(), GetEndSegmentPoint(), fDelta);
       math::CVector3 v3Diff = v3SegmentPoint - _pOther->GetCenter();
 
       // Calculate closest point
@@ -206,7 +232,7 @@ namespace collision
   bool CCapsuleCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     //@Note: Review this!
-    float fDist = math::SqDistPointSegment(GetSegmentEndPoint(), GetSegmentStartPoint(), _pOther->GetCenter());
+    float fDist = math::SqDistPointSegment(GetEndSegmentPoint(), GetStartSegmentPoint(), _pOther->GetCenter());
     float fCapsuleWidth = GetRadius() + GetRadius();
     if (fDist <= fCapsuleWidth)
     {
@@ -221,7 +247,7 @@ namespace collision
   bool CCapsuleCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
     // Compute (squared) distance between sphere center and capsule line segment
-    float fDist = math::SqDistPointSegment(GetSegmentEndPoint(), GetSegmentStartPoint(), _pOther->GetCenter());
+    float fDist = math::SqDistPointSegment(GetEndSegmentPoint(), GetStartSegmentPoint(), _pOther->GetCenter());
     // If (squared) distance smaller than (squared) sum of radii, they collide
     float fRadiusSum = _pOther->GetRadius() + this->GetRadius();
     float fRadiusSquared = fRadiusSum * fRadiusSum;

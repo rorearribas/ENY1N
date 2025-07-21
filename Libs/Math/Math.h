@@ -21,27 +21,27 @@ namespace math
 
   // Functions
   template <typename T>
-  inline T Lerp(T _ObjectA, T _ObjectB, float _fDelta)
+  inline T Lerp(const T& _ObjectA, const T& _ObjectB, float _fDelta)
   {
     return _ObjectA + (_ObjectB - _ObjectA) * _fDelta;
   }
 
   template <typename T>
-  inline T Clamp(T Value, T Min, T Max)
+  inline T Clamp(const T& Value, const T& Min, const T& Max)
   {
     return Value < Min ? Min : Value > Max ? Max : Value;
-  }
-
-  template <typename T>
-  inline T Max(const T& _Object1, const T& _Object2)
-  {
-    return _Object1 > _Object2 ? _Object1 : _Object2;
   }
 
   template <typename T>
   inline T Min(const T& _Object1, const T& _Object2)
   {
     return _Object1 < _Object2 ? _Object1 : _Object2;
+  }
+
+  template <typename T>
+  inline T Max(const T& _Object1, const T& _Object2)
+  {
+    return _Object1 > _Object2 ? _Object1 : _Object2;
   }
 
   inline float Deg2Radians(float _fDegrees)
@@ -91,7 +91,7 @@ namespace math
 
   inline bool SeparateAxisTheorem
   (
-    const std::vector<math::CVector3>& _vctExtsA, const std::vector<math::CVector3>& _vctExtsB, 
+    const std::vector<math::CVector3>& _vctPointsA, const std::vector<math::CVector3>& _vctPointsB, 
     const math::CVector3& _v3Axis, math::CVector3& _v3ImpactPoint_, math::CVector3& _v3Normal_, float& _fDepth_
   )
   {
@@ -100,30 +100,29 @@ namespace math
       return false;
     }
 
+    // Get A Values
     float fMinA = FLT_MAX, fMaxA = -FLT_MAX;
-    float fMinB = FLT_MAX, fMaxB = -FLT_MAX;
-
-    // Get MinA/MaxA
-    math::CVector3 v3MinA = math::CVector3::Zero;
-    for (const math::CVector3& v3Vertex : _vctExtsA)
+    math::CVector3 v3ClosestPointA = math::CVector3::Zero;
+    for (const math::CVector3& v3Vertex : _vctPointsA)
     {
       float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
       if (fDot < fMinA) 
       { 
-        v3MinA = v3Vertex; 
+        v3ClosestPointA = v3Vertex; 
       }
       fMinA = math::Min(fMinA, fDot);
       fMaxA = math::Max(fMaxA, fDot);
     }
 
-    // Get MinB/MaxB
-    math::CVector3 v3MinB = math::CVector3::Zero;
-    for (const math::CVector3& v3Vertex : _vctExtsB)
+    // Get B Values
+    float fMinB = FLT_MAX, fMaxB = -FLT_MAX;
+    math::CVector3 v3ClosestPointB = math::CVector3::Zero;
+    for (const math::CVector3& v3Vertex : _vctPointsB)
     {
       float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
       if (fDot < fMinB) 
       {
-        v3MinB = v3Vertex; 
+        v3ClosestPointB = v3Vertex; 
       }
       fMinB = math::Min(fMinB, fDot);
       fMaxB = math::Max(fMaxB, fDot);
@@ -151,7 +150,7 @@ namespace math
 
       // Calculate impact point
       math::CVector3 v3Offset = _v3Normal_ * (_fDepth_ * 0.5f);
-      _v3ImpactPoint_ = (_fDepth_ == fOverlapA) ? v3MinA + v3Offset : v3MinB - v3Offset;
+      _v3ImpactPoint_ = (_fDepth_ == fOverlapA) ? v3ClosestPointA + v3Offset : v3ClosestPointB - v3Offset;
     }
 
     return false; // Valid
@@ -280,11 +279,11 @@ namespace math
     c1 = _oRay.GetOrigin() + d1 * s;
     c2 = p1 + d2 * t;
 
-    return math::CVector3::Dot(c1 - c2, c1 - c2);
+    return math::CVector3::Distance(c1, c2);
   }
 
-  inline bool ClosestPtRaySphere(const physics::CRay& _oRay, const math::CVector3& _v3SphereCenter, float _fSphereRadius, 
-  math::CVector3& _v3ClosestPoint_, float& _fDist_)
+  inline bool ClosestPtRaySphere(const physics::CRay& _oRay, const math::CVector3& _v3SphereCenter, 
+  const float _fSphereRadius, math::CVector3& _v3ClosestPoint_, float& _fDist_)
   {
     math::CVector3 v3Diff = math::CVector3(_oRay.GetOrigin() - _v3SphereCenter);
     float fDotA = math::CVector3::Dot(v3Diff, _oRay.GetDir());
