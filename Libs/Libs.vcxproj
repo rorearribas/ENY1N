@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Memory\Allocator.h" />
     <ClInclude Include="Utils\CircularPool.h" />
     <ClInclude Include="Utils\FixedList.h" />
     <ClInclude Include="ImGui\GraphEditor.h" />
@@ -189,6 +190,7 @@
     <ClInclude Include="Utils\Singleton.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Memory\Allocator.cpp" />
     <ClCompile Include="ImGui\GraphEditor.cpp" />
     <ClCompile Include="ImGui\ImCurveEdit.cpp" />
     <ClCompile Include="ImGui\ImGradient.cpp" />
