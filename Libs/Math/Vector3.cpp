@@ -20,15 +20,26 @@ namespace math
     return _vA.Dot(_vB);
   }
   // ------------------------------------
-  float CVector3::Distance(const CVector3& _vDest, const CVector3& _vOrigin)
+  float CVector3::Distance(const CVector3& _v3Dest, const CVector3& _v3Origin)
   {
-    math::CVector3 v3Substract = _vDest - _vOrigin;
+    math::CVector3 v3Substract = _v3Dest - _v3Origin;
     return v3Substract.Magnitude();
   }
   // ------------------------------------
   float CVector3::Distance(const CVector3& _v3Dest) const
   {
     return Distance(_v3Dest, *this);
+  }
+  // ------------------------------------
+  float CVector3::SqrDist(const CVector3& _v3Dest, const CVector3& _v3Origin)
+  {
+    math::CVector3 v3Substract = _v3Dest - _v3Origin;
+    return v3Substract.GetSqrDist();
+  }
+  // ------------------------------------
+  float CVector3::SqrDist(const CVector3& _v3Dest) const
+  {
+    return SqrDist(_v3Dest, *this);
   }
   // ------------------------------------
   bool CVector3::Equal(const math::CVector3& _v3, float _fEpsilon) const
@@ -44,6 +55,16 @@ namespace math
   float CVector3::Magnitude() const
   {
     return sqrt((X * X) + (Y * Y) + (Z * Z));
+  }
+  // ------------------------------------
+  float CVector3::GetSqrDist(const CVector3& _v3)
+  {
+    return _v3.GetSqrDist();
+  }
+  // ------------------------------------
+  float CVector3::GetSqrDist() const
+  {
+    return (X * X) + (Y * Y) + (Z * Z);
   }
   // ------------------------------------
   bool CVector3::operator==(const CVector3& _v3) const

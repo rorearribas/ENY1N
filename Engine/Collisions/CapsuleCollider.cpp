@@ -100,10 +100,10 @@ namespace collision
     math::CVector3 v3ClosestPoint, v3TempClosestPoint;
 
     // Check top sphere
-    if (math::ClosestPtRaySphere(_oRay, m_v3EndSegmentPoint, m_fRadius, v3TempClosestPoint, fTempDist) && fTempDist <= _fMaxDistance)
+    if (math::ClosestPtRaySphere(_oRay, GetEndSegmentPoint(), m_fRadius, v3TempClosestPoint, fTempDist) && fTempDist <= _fMaxDistance)
     {
       // Update closest point
-      float fDot = math::CVector3::Dot(v3TempClosestPoint - m_v3EndSegmentPoint, GetSegmentDir());
+      float fDot = math::CVector3::Dot(v3TempClosestPoint - GetEndSegmentPoint(), GetSegmentDir());
       if (fDot >= 0.0f && fTempDist <= fClosestDist)
       {
         fClosestDist = fTempDist;
@@ -113,10 +113,10 @@ namespace collision
     }
 
     // Check bottom sphere
-    if (math::ClosestPtRaySphere(_oRay, m_v3StartSegmentPoint, m_fRadius, v3TempClosestPoint, fTempDist) && fTempDist <= _fMaxDistance)
+    if (math::ClosestPtRaySphere(_oRay, GetStartSegmentPoint(), m_fRadius, v3TempClosestPoint, fTempDist) && fTempDist <= _fMaxDistance)
     {
       // Update closest point
-      float fDot = math::CVector3::Dot(m_v3StartSegmentPoint - v3TempClosestPoint, GetSegmentDir());
+      float fDot = math::CVector3::Dot(GetStartSegmentPoint() - v3TempClosestPoint, GetSegmentDir());
       if (fDot >= 0.0f && fTempDist <= fClosestDist)
       {
         fClosestDist = fTempDist;
@@ -131,16 +131,19 @@ namespace collision
       float s = 0.0f, t = 0.0f;
       math::CVector3 v3ClosestToRay, v3ClosestToSegment;
       float fSqrDist = math::ClosestPtRaySegment(_oRay, GetStartSegmentPoint(), GetEndSegmentPoint(), s, t, v3ClosestToRay, v3ClosestToSegment);
-      if (fSqrDist <= GetRadius() && s <= _fMaxDistance)
+      if (fSqrDist <= GetRadius() && (s >= GetRadius()) && (s <= _fMaxDistance))
       {
-        math::CVector3 v3Dir = (v3ClosestToRay - v3ClosestToSegment).Normalize();
-        UNUSED_VAR(v3Dir);
-        float fCorrectFactor = GetRadius() - fSqrDist;
-        UNUSED_VAR(fCorrectFactor);
-        v3ClosestPoint = _oRay.GetOrigin() + (_oRay.GetDir() * (s + -fCorrectFactor));
-      }
+        math::ClosestPtRaySphere(_oRay, v3ClosestToRay, m_fRadius, v3TempClosestPoint, fTempDist);
+        //float fDot = math::CVector3::Dot(v3TempClosestPoint - v3ClosestToSegment, GetSegmentDir());
+        //std::cout << "dot: " << fDot << std::endl;
+        //v3TempClosestPoint = v3TempClosestPoint + (GetSegmentDir() * fDot);
 
-      if (s < 0.0f || s > _fMaxDistance)
+        //math::CVector3 v3Idiota = v3ClosestToSegment - v3ClosestToRay;
+        //float fDotIdiota = math::CVector3::Dot(v3Idiota, GetSegmentDir());
+        //math::CVector3 v3Idiota2 = v3ClosestToSegment + (GetSegmentDir() * fDotIdiota);
+        v3ClosestPoint = v3TempClosestPoint;
+      }
+      else
       {
         return false;
       }
@@ -152,7 +155,7 @@ namespace collision
     ///* float fDot = math::CVector3::Dot(v3Diff, v3Normal);
     // UNUSED_VAR(fDot);*/
 
-  /*  _oHitEvent_.Normal = v3Normal;
+   /* _oHitEvent_.Normal = v3Normal;
     _oHitEvent_.Depth = fDepth;*/
     _oHitEvent_.ImpactPoint = v3ClosestPoint;
     _oHitEvent_.Object = GetOwner();

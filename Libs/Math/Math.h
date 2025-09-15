@@ -279,7 +279,7 @@ namespace math
     c1 = _oRay.GetOrigin() + d1 * s;
     c2 = p1 + d2 * t;
 
-    return math::CVector3::Distance(c1, c2);
+    return math::CVector3::SqrDist(c1, c2);
   }
 
   inline bool ClosestPtRaySphere(const physics::CRay& _oRay, const math::CVector3& _v3SphereCenter, 

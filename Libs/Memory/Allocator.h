@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include <cstdlib>
 
 namespace mem
 {
@@ -10,16 +11,38 @@ namespace mem
     3. para hacer optimizacion cada cierto N alocaciones ordenary tener un indice para saber donde insertar memoria
   */
 
+#define INVALID_SIZE 0xCDCDCDCD
+  static constexpr uint32_t s_uBYTE_ALIGNMENT = 8u;
+
   struct header_block
   {
-    uint32_t size;
-    bool free;
+    size_t block_size;
 
-    header_block() : size(0), free(true) {}
+    void set_size(int idx, uint32_t value)
+    {
+      const size_t mask = 0xF;
+      const size_t shift = idx * 4;
+
+      block_size &= ~(mask << shift);
+      block_size |= ((value & mask) << shift);
+    }
+    uint32_t get_size(int idx) const
+    {
+      const size_t mask = 0xF;
+      const size_t shift = idx * 4;
+      return (block_size >> shift) & mask;
+    }
+    uint32_t get_packed_size() const
+    {
+      uint32_t packed_size = 0, index = 0;
+      while (index != s_uBYTE_ALIGNMENT) { packed_size += get_size(index++); }
+      return packed_size;
+    }
+
+    header_block() : block_size(INVALID_SIZE) {}
     ~header_block() {}
-  } static invalid_block;
+  };
 
-  static constexpr uint32_t s_uBYTE_ALIGNMENT = 8u;
   static constexpr uint32_t s_uMEM_ALIGNMENT = sizeof(header_block) + s_uBYTE_ALIGNMENT;
 
   class CAllocator
@@ -29,25 +52,25 @@ namespace mem
 
   public:
     explicit CAllocator(size_t size);
-    ~CAllocator() { delete[] internal_memory; }
+    ~CAllocator() {}
 
     void* alloc(size_t size);
     bool free(void* ptr, size_t size);
 
     const size_t get_allocated_size() const { return allocated_size; }
-    const size_t get_memory_free() const { return memory_free; }
     const size_t get_memory_size() const { return memory_size; }
+    const size_t get_memory_free() const { return memory_free; }
 
+    const size_t get_free_blocks() const;
     void print_memory();
 
   private:
-    void find_free_blocks(size_t size, size_t& begin_block, size_t& end_block);
-
-    size_t FindAndReorder(size_t size);
-
     void setup_headers();
     void* get_memory_block(size_t index);
+    void* get_free_memory_block(size_t size);
+
     header_block* get_header_block(size_t index);
+    header_block* get_free_header_block(size_t size);
 
   private:
     size_t allocated_size;

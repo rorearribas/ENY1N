@@ -83,7 +83,7 @@ int main()
     game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Capsule");
     pCapsuleEntity->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
+    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE/*, render::ERenderMode::WIREFRAME*/);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Forward);
     pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
     pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();

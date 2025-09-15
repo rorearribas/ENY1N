@@ -47,9 +47,6 @@ namespace math
 
     float operator[] (uint32_t _uIndex) const;
 
-    static bool IsZero(const CVector3& _v3);
-    bool IsZero() const;
-
     static CVector3 Abs(const CVector3& _v3);
     void Abs();
 
@@ -65,10 +62,18 @@ namespace math
     static float Distance(const CVector3& _v3Dest, const CVector3& _v3Origin);
     float Distance(const CVector3& _v3Dest) const;
 
-    bool Equal(const CVector3& _v3, float _fEpsilon = 0.0001f) const;
+    static float SqrDist(const CVector3& _v3Dest, const CVector3& _v3Origin);
+    float SqrDist(const CVector3& _v3Dest) const;
 
     static float Magnitude(const CVector3& _v3);
     float Magnitude() const;
+
+    static float GetSqrDist(const CVector3& _v3);
+    float GetSqrDist() const;
+
+    bool Equal(const CVector3& _v3, float _fEpsilon = 0.0001f) const;
+    static bool IsZero(const CVector3& _v3);
+    bool IsZero() const;
   };
 }
 
