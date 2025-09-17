@@ -1,6 +1,6 @@
 #include "CollisionComponent.h"
 #include "Libs/ImGui/imgui.h"
-#include "Game/ETT/Entity.h"
+#include "Game/Entity/Entity.h"
 #include "Engine/Base/Engine.h"
 #include "Engine/Collisions/CollisionManager.h"
 #include "Engine/Collisions/BoxCollider.h"

@@ -1,5 +1,5 @@
 #include "RigidbodyComponent.h"
-#include "Game/ETT/Entity.h"
+#include "Game/Entity/Entity.h"
 #include "Engine/Physics/PhysicsManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/ImGui/imgui.h"

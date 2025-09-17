@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/ETT/Entity.h"
+#include "Game/Entity/Entity.h"
 #include "Libs/Utils/Singleton.h"
 #include "Engine/Collisions/CollisionManager.h"
 #include "Libs/Utils/FixedPool.h"

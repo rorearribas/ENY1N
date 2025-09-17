@@ -1,7 +1,7 @@
 #include "PhysicsManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include "Rigidbody.h"
-#include "Game/ETT/Entity.h"
+#include "Game/Entity/Entity.h"
 #include "Libs/Time/TimeManager.h"
 #include <iostream>
 

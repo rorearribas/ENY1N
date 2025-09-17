@@ -1,6 +1,6 @@
 #include "ModelComponent.h"
 #include "Engine/Base/Engine.h"
-#include "Game/ETT/Entity.h"
+#include "Game/Entity/Entity.h"
 #include <cassert>
 
 namespace game

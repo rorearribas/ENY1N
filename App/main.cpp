@@ -17,10 +17,10 @@
 #include "Engine/Managers/InputManager.h"
 
 #include "Game/GameManager/GameManager.h"
-#include "Game/ETT/Components/ModelComponent/ModelComponent.h"
-#include "Game/ETT/Components/LightComponent/LightComponent.h"
-#include "Game/ETT/Components/CollisionComponent/CollisionComponent.h"
-#include "Game/ETT/Components/RigidbodyComponent/RigidbodyComponent.h"
+#include "Game/Entity/Components/ModelComponent/ModelComponent.h"
+#include "Game/Entity/Components/LightComponent/LightComponent.h"
+#include "Game/Entity/Components/CollisionComponent/CollisionComponent.h"
+#include "Game/Entity/Components/RigidbodyComponent/RigidbodyComponent.h"
 
 #include "Engine/Collisions/CollisionManager.h"
 #include "Engine/Collisions/BoxCollider.h"

@@ -18,22 +18,22 @@
     <ClInclude Include="GameManager\GameManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ETT\Entity.h">
+    <ClInclude Include="Entity\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ETT\Components\Component.h">
+    <ClInclude Include="Entity\Components\Component.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ETT\Components\ModelComponent\ModelComponent.h">
+    <ClInclude Include="Entity\Components\ModelComponent\ModelComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ETT\Components\LightComponent\LightComponent.h">
+    <ClInclude Include="Entity\Components\LightComponent\LightComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ETT\Components\CollisionComponent\CollisionComponent.h">
+    <ClInclude Include="Entity\Components\CollisionComponent\CollisionComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ETT\Components\RigidbodyComponent\RigidbodyComponent.h">
+    <ClInclude Include="Entity\Components\RigidbodyComponent\RigidbodyComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -41,19 +41,19 @@
     <ClCompile Include="GameManager\GameManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ETT\Entity.cpp">
+    <ClCompile Include="Entity\Entity.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ETT\Components\ModelComponent\ModelComponent.cpp">
+    <ClCompile Include="Entity\Components\ModelComponent\ModelComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ETT\Components\LightComponent\LightComponent.cpp">
+    <ClCompile Include="Entity\Components\LightComponent\LightComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ETT\Components\CollisionComponent\CollisionComponent.cpp">
+    <ClCompile Include="Entity\Components\CollisionComponent\CollisionComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ETT\Components\RigidbodyComponent\RigidbodyComponent.cpp">
+    <ClCompile Include="Entity\Components\RigidbodyComponent\RigidbodyComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

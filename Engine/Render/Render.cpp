@@ -15,7 +15,7 @@ namespace render
 {
   namespace internal_render
   {
-    static const wchar_t* s_sPrepareFrameMarker(L"Prepare Frame");
+    static const wchar_t* s_sPrepareFrameMarker(L"Begin Frame");
     static const wchar_t* s_sDrawModelsMarker(L"Models");
     static const wchar_t* s_sDrawPrimitivesMarker(L"Primitives");
     static const wchar_t* s_sImGuiMarker(L"ImGui");
@@ -42,11 +42,11 @@ namespace render
       ID3D11BlendState* pBlendState = nullptr;
 
       // Debug
-      ID3DUserDefinedAnnotation* pUserDefAnnotation = nullptr;
+      ID3DUserDefinedAnnotation* pMarker = nullptr;
 
       // Shaders for 3D Pipeline
-      shader::CShader<shader::EShaderType::PIXEL_SHADER>* pForwardPS;
-      shader::CShader<shader::EShaderType::VERTEX_SHADER>* pForwardVS;
+      shader::CShader<shader::EShaderType::PIXEL_SHADER>* pPixelShader;
+      shader::CShader<shader::EShaderType::VERTEX_SHADER>* pVertexShader;
     };
 
     static SRenderPipeline s_oPipeline;
@@ -78,34 +78,51 @@ namespace render
     global::dx11::SafeRelease(internal_render::s_oPipeline.pRasterizerState);
 
     // Release objetcs
-    global::ReleaseObject(internal_render::s_oPipeline.pForwardPS);
-    global::ReleaseObject(internal_render::s_oPipeline.pForwardVS);
+    global::ReleaseObject(internal_render::s_oPipeline.pPixelShader);
+    global::ReleaseObject(internal_render::s_oPipeline.pVertexShader);
   }
   // ------------------------------------
   HRESULT CRender::Init(uint32_t _uX, uint32_t _uY)
   {
     // Create device
     HRESULT hResult = CreateDevice(_uX, _uY);
-    if (FAILED(hResult)) return hResult;
+    if (FAILED(hResult)) 
+    {
+      return hResult;
+    }
 
     // Init ImGui
-    if (!InitImGui()) return -1;
+    if (!InitImGui()) 
+    {
+      return -1;
+    }
 
     // Setup basic pipeline
     hResult = InitBasicPipeline(_uX, _uY);
-    if (FAILED(hResult)) return hResult;
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
 
     // Create shaders for 3D pipeline
-    internal_render::s_oPipeline.pForwardPS = new shader::CShader<shader::EShaderType::PIXEL_SHADER>(g_ForwardPixelShader, ARRAYSIZE(g_ForwardPixelShader));
-    internal_render::s_oPipeline.pForwardVS = new shader::CShader<shader::EShaderType::VERTEX_SHADER>(g_ForwardVertexShader, ARRAYSIZE(g_ForwardVertexShader));
+    using namespace shader;
+    internal_render::s_oPipeline.pPixelShader = new CShader<PIXEL_SHADER>(g_ForwardPixelShader, ARRAYSIZE(g_ForwardPixelShader));
+    internal_render::s_oPipeline.pVertexShader = new CShader<VERTEX_SHADER>(g_ForwardVertexShader, ARRAYSIZE(g_ForwardVertexShader));
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
     global::delegates::s_vctOnWindowResizeDelegates.emplace_back(oResizeDelegate);
 
-    // Push shaders for standard 3D pipeline
-    internal_render::s_oPipeline.pForwardPS->PushShader();
-    internal_render::s_oPipeline.pForwardVS->PushShader();
+    // Push shaders
+    internal_render::s_oPipeline.pPixelShader->PushShader();
+    internal_render::s_oPipeline.pVertexShader->PushShader();
+
+    // Get user def
+    global::dx11::s_pDeviceContext->QueryInterface
+    (
+      __uuidof(ID3DUserDefinedAnnotation),
+      reinterpret_cast<void**>(&internal_render::s_oPipeline.pMarker)
+    );
 
     return S_OK;
   }
@@ -149,16 +166,21 @@ namespace render
   bool CRender::InitImGui()
   {
     if (!IMGUI_CHECKVERSION())
+    {
       return false;
-
+    }
     if (!ImGui::CreateContext())
+    {
       return false;
-
+    }
     if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHwnd()))
+    {
       return false;
-
+    }
     if (!ImGui_ImplDX11_Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext))
+    {
       return false;
+    }
 
     ImGui::StyleColorsDark();
     return true;
@@ -166,6 +188,7 @@ namespace render
   // ------------------------------------
   HRESULT CRender::CreateDevice(uint32_t _uX, uint32_t _uY)
   {
+    // Create descriptor
     DXGI_SWAP_CHAIN_DESC oSwapChainDescriptor = DXGI_SWAP_CHAIN_DESC();
     oSwapChainDescriptor.BufferCount = 1;
     oSwapChainDescriptor.BufferDesc.Width = _uX;
@@ -189,13 +212,12 @@ namespace render
     D3D_FEATURE_LEVEL oFeatureLevel;
     UINT uNumFeatureLevels = ARRAYSIZE(vctFeatureLevels);
 
-    // Device and swap chain
+    // Create device and swap chain
     HRESULT hResult = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, vctFeatureLevels,
       uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &internal_render::s_oPipeline.pSwapChain,
       &global::dx11::s_pDevice, &oFeatureLevel, &global::dx11::s_pDeviceContext);
-    if (FAILED(hResult)) return hResult;
 
-    return S_OK;
+    return hResult;
   }
   // ------------------------------------
   void CRender::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
@@ -216,11 +238,16 @@ namespace render
   {
     ID3D11Texture2D* pBackBuffer = nullptr;
     internal_render::s_oPipeline.pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
-    if (!pBackBuffer) return E_FAIL;
+    if (!pBackBuffer) 
+    {
+      return E_FAIL;
+    }
 
     HRESULT hResult = global::dx11::s_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &internal_render::s_oPipeline.pRenderTargetView);
-    if (FAILED(hResult)) return hResult;
-
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
     pBackBuffer->Release();
     return hResult;
   }
@@ -328,7 +355,7 @@ namespace render
   // ------------------------------------
   void CRender::ConfigureViewport(uint32_t _uX, uint32_t _uY)
   {
-    if (global::dx11::s_pDeviceContext && m_pRenderWindow) 
+    if (global::dx11::s_pDeviceContext && m_pRenderWindow)
     {
       D3D11_VIEWPORT oViewport = D3D11_VIEWPORT();
       oViewport.Width = static_cast<float>(_uX);
@@ -344,16 +371,19 @@ namespace render
   {
     // Clear resources
     BeginMarker(internal_render::s_sPrepareFrameMarker);
-    ::global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oPipeline.pRenderTargetView, internal_render::s_v4ClearColor);
-    ::global::dx11::s_pDeviceContext->ClearDepthStencilView(internal_render::s_oPipeline.DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    {
+      // Clear render target
+      ::global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oPipeline.pRenderTargetView, internal_render::s_v4ClearColor);
+      ::global::dx11::s_pDeviceContext->ClearDepthStencilView(internal_render::s_oPipeline.DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-    // Prepare ImGu
-    ::ImGui_ImplDX11_NewFrame();
-    ::ImGui_ImplWin32_NewFrame();
-    ::ImGui::NewFrame();
+      // Prepare ImGu
+      ::ImGui_ImplDX11_NewFrame();
+      ::ImGui_ImplWin32_NewFrame();
+      ::ImGui::NewFrame();
 
-    // ImGuizmo
-    ::ImGuizmo::BeginFrame();
+      // ImGuizmo
+      ::ImGuizmo::BeginFrame();
+    }
     EndMarker();
   }
   // ------------------------------------
@@ -364,12 +394,16 @@ namespace render
 
     // Draw models
     BeginMarker(internal_render::s_sDrawModelsMarker);
-    _pScene->DrawModels();
+    {
+      _pScene->DrawModels();
+    }
     EndMarker();
 
     // Draw primitives
     BeginMarker(internal_render::s_sDrawPrimitivesMarker);
-    _pScene->DrawPrimitives();
+    {
+      _pScene->DrawPrimitives();
+    }
     EndMarker();
   }
   // ------------------------------------
@@ -383,29 +417,31 @@ namespace render
 
     // Render ImGui
     BeginMarker(internal_render::s_sImGuiMarker);
-    ::ImGui::Render();
-    ::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    {
+      ::ImGui::Render();
+      ::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    }
     EndMarker();
 
     // Present
-    internal_render::s_oPipeline.pSwapChain->Present(m_bVerticalSync, 0);
+    const uint32_t uFlags = 0;
+    internal_render::s_oPipeline.pSwapChain->Present(m_bVerticalSync, uFlags);
   }
   // ------------------------------------
   void CRender::BeginMarker(const wchar_t* _sMarker) const
   {
-    global::dx11::s_pDeviceContext->QueryInterface(__uuidof(ID3DUserDefinedAnnotation), (void**)&internal_render::s_oPipeline.pUserDefAnnotation);
-    if (internal_render::s_oPipeline.pUserDefAnnotation)
+    if (internal_render::s_oPipeline.pMarker)
     {
-      internal_render::s_oPipeline.pUserDefAnnotation->BeginEvent(_sMarker);
+      internal_render::s_oPipeline.pMarker->BeginEvent(_sMarker);
     }
   }
   // ------------------------------------
   void CRender::EndMarker() const
   {
-    if (internal_render::s_oPipeline.pUserDefAnnotation)
+    if (internal_render::s_oPipeline.pMarker)
     {
-      internal_render::s_oPipeline.pUserDefAnnotation->EndEvent();
-      internal_render::s_oPipeline.pUserDefAnnotation->Release();
+      internal_render::s_oPipeline.pMarker->EndEvent();
+      internal_render::s_oPipeline.pMarker->Release();
     }
   }
 }

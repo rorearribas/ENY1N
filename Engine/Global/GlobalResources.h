@@ -24,13 +24,14 @@ namespace global
     extern ID3D11DeviceContext* s_pDeviceContext;
 
     template<typename _ID3D11Resource>
-    inline void SafeRelease(_ID3D11Resource*& _pPtr)
+    inline bool SafeRelease(_ID3D11Resource*& _pPtr)
     {
       if (_pPtr)
       {
         _pPtr->Release();
         _pPtr = nullptr;
       }
+      return !_pPtr;
     }
   }
 

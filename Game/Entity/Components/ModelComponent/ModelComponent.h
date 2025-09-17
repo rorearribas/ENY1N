@@ -1,5 +1,5 @@
 #pragma once
-#include "Game/ETT/Components/Component.h"
+#include "Game/Entity/Components/Component.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
 #include "Libs/Math/Vector3.h"
