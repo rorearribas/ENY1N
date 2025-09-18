@@ -82,8 +82,8 @@ namespace render
     void CModel::DrawModel()
     {
       // Set vertex buffer
-      UINT uVertexStride = sizeof(render::graphics::SVertexData);
-      UINT uVertexOffset = 0;
+      uint32_t uVertexStride = sizeof(render::graphics::SVertexData);
+      uint32_t uVertexOffset = 0;
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
       global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

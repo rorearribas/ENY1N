@@ -15,11 +15,11 @@ namespace render
 {
   namespace internal_render
   {
-    static const wchar_t* s_sPrepareFrameMarker(L"Begin Frame");
-    static const wchar_t* s_sDrawModelsMarker(L"Models");
-    static const wchar_t* s_sDrawPrimitivesMarker(L"Primitives");
+    static const wchar_t* s_sPrepareFrameMrk(L"Begin Frame");
+    static const wchar_t* s_sDrawModelsMrk(L"Models");
+    static const wchar_t* s_sDrawPrimitivesMrk(L"Primitives");
     static const wchar_t* s_sImGuiMarker(L"ImGui");
-
+    
     static const float s_v4ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
@@ -28,21 +28,21 @@ namespace render
     {
       // Swap chain + render target
       IDXGISwapChain* pSwapChain = nullptr;
-      ID3D11RenderTargetView* pRenderTargetView = nullptr;
+      ID3D11RenderTargetView* pRenderTarget = nullptr;
 
-      // Depth stencil
-      ID3D11Texture2D* pDepthStencilTexture = nullptr;
-      ID3D11DepthStencilState* DepthStencilState = nullptr;
-      ID3D11DepthStencilView* DepthStencilView = nullptr;
+      // Depth
+      ID3D11Texture2D* pDepthTexture = nullptr;
+      ID3D11DepthStencilState* pDepthStencilState = nullptr;
+      ID3D11DepthStencilView* pDepthStencilView = nullptr;
 
       // Rasterizer
-      ID3D11RasterizerState* pRasterizerState = nullptr;
+      ID3D11RasterizerState* pRasterizer = nullptr;
 
       // Blending
       ID3D11BlendState* pBlendState = nullptr;
 
       // Debug
-      ID3DUserDefinedAnnotation* pMarker = nullptr;
+      ID3DUserDefinedAnnotation* pUserMarker = nullptr;
 
       // Shaders for 3D Pipeline
       shader::CShader<shader::EShaderType::PIXEL_SHADER>* pPixelShader;
@@ -71,11 +71,13 @@ namespace render
 
     // Delete internal resources
     global::dx11::SafeRelease(internal_render::s_oPipeline.pSwapChain);
-    global::dx11::SafeRelease(internal_render::s_oPipeline.pRenderTargetView);
-    global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthStencilTexture);
-    global::dx11::SafeRelease(internal_render::s_oPipeline.DepthStencilState);
-    global::dx11::SafeRelease(internal_render::s_oPipeline.DepthStencilView);
-    global::dx11::SafeRelease(internal_render::s_oPipeline.pRasterizerState);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pRenderTarget);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthTexture);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthStencilState);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthStencilView);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pRasterizer);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pBlendState);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pUserMarker);
 
     // Release objetcs
     global::ReleaseObject(internal_render::s_oPipeline.pPixelShader);
@@ -121,10 +123,10 @@ namespace render
     global::dx11::s_pDeviceContext->QueryInterface
     (
       __uuidof(ID3DUserDefinedAnnotation),
-      reinterpret_cast<void**>(&internal_render::s_oPipeline.pMarker)
+      reinterpret_cast<void**>(&internal_render::s_oPipeline.pUserMarker)
     );
 
-    return S_OK;
+    return hResult;
   }
   // ------------------------------------
   HRESULT CRender::InitBasicPipeline(uint32_t _uX, uint32_t _uY)
@@ -210,10 +212,11 @@ namespace render
       D3D_FEATURE_LEVEL_9_1
     };
     D3D_FEATURE_LEVEL oFeatureLevel;
-    UINT uNumFeatureLevels = ARRAYSIZE(vctFeatureLevels);
+    uint32_t uNumFeatureLevels = ARRAYSIZE(vctFeatureLevels);
 
     // Create device and swap chain
-    HRESULT hResult = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, 0, vctFeatureLevels,
+    uint32_t uFlags = 0;
+    HRESULT hResult = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, uFlags, vctFeatureLevels,
       uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &internal_render::s_oPipeline.pSwapChain,
       &global::dx11::s_pDevice, &oFeatureLevel, &global::dx11::s_pDeviceContext);
 
@@ -223,7 +226,7 @@ namespace render
   void CRender::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
   {
     // Remove current target view
-    global::dx11::SafeRelease(internal_render::s_oPipeline.pRenderTargetView);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pRenderTarget);
 
     // Resize buffers
     HRESULT hResult = internal_render::s_oPipeline.pSwapChain->ResizeBuffers(0, _uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
@@ -243,7 +246,7 @@ namespace render
       return E_FAIL;
     }
 
-    HRESULT hResult = global::dx11::s_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &internal_render::s_oPipeline.pRenderTargetView);
+    HRESULT hResult = global::dx11::s_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &internal_render::s_oPipeline.pRenderTarget);
     if (FAILED(hResult))
     {
       return hResult;
@@ -255,9 +258,9 @@ namespace render
   HRESULT CRender::CreateDepthStencilView(uint32_t _uX, uint32_t _uY)
   {
     // Release resources
-    global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthStencilTexture);
-    global::dx11::SafeRelease(internal_render::s_oPipeline.DepthStencilState);
-    global::dx11::SafeRelease(internal_render::s_oPipeline.DepthStencilView);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthTexture);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthStencilState);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthStencilView);
 
     // Create texture
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -272,7 +275,13 @@ namespace render
     oTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
     oTextureDesc.CPUAccessFlags = 0;
     oTextureDesc.MiscFlags = 0;
-    HRESULT hResult = global::dx11::s_pDevice->CreateTexture2D(&oTextureDesc, nullptr, &internal_render::s_oPipeline.pDepthStencilTexture);
+
+    HRESULT hResult = global::dx11::s_pDevice->CreateTexture2D
+    (
+      &oTextureDesc, 
+      nullptr, 
+      &internal_render::s_oPipeline.pDepthTexture
+    );
     assert(!FAILED(hResult));
 
     // Depth test parameters
@@ -297,7 +306,11 @@ namespace render
     oDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     // Create depth stencil state
-    hResult = global::dx11::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &internal_render::s_oPipeline.DepthStencilState);
+    hResult = global::dx11::s_pDevice->CreateDepthStencilState
+    (
+      &oDepthStencilDesc, 
+      &internal_render::s_oPipeline.pDepthStencilState
+    );
 
     D3D11_DEPTH_STENCIL_VIEW_DESC oDepthStencilViewDesc = D3D11_DEPTH_STENCIL_VIEW_DESC();
     oDepthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -307,15 +320,15 @@ namespace render
     // Create the depth stencil view
     return global::dx11::s_pDevice->CreateDepthStencilView
     (
-      internal_render::s_oPipeline.pDepthStencilTexture,
+      internal_render::s_oPipeline.pDepthTexture,
       &oDepthStencilViewDesc,
-      &internal_render::s_oPipeline.DepthStencilView
+      &internal_render::s_oPipeline.pDepthStencilView
     );
   }
   // ------------------------------------
   HRESULT CRender::CreateRasterizerState(D3D11_FILL_MODE _eFillMode)
   {
-    global::dx11::SafeRelease(internal_render::s_oPipeline.pRasterizerState);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pRasterizer);
 
     D3D11_RASTERIZER_DESC oRasterizerDesc = D3D11_RASTERIZER_DESC();
     oRasterizerDesc.FillMode = _eFillMode;
@@ -329,7 +342,7 @@ namespace render
     oRasterizerDesc.MultisampleEnable = false;
     oRasterizerDesc.AntialiasedLineEnable = false;
 
-    return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerDesc, &internal_render::s_oPipeline.pRasterizerState);
+    return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerDesc, &internal_render::s_oPipeline.pRasterizer);
   }
   // ------------------------------------
   HRESULT CRender::CreateBlendState()
@@ -370,11 +383,12 @@ namespace render
   void CRender::BeginDraw() const
   {
     // Clear resources
-    BeginMarker(internal_render::s_sPrepareFrameMarker);
+    BeginMarker(internal_render::s_sPrepareFrameMrk);
     {
       // Clear render target
-      ::global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oPipeline.pRenderTargetView, internal_render::s_v4ClearColor);
-      ::global::dx11::s_pDeviceContext->ClearDepthStencilView(internal_render::s_oPipeline.DepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+      ::global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oPipeline.pRenderTarget, internal_render::s_v4ClearColor);
+      // Clear depth stencil view
+      ::global::dx11::s_pDeviceContext->ClearDepthStencilView(internal_render::s_oPipeline.pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
       // Prepare ImGu
       ::ImGui_ImplDX11_NewFrame();
@@ -393,14 +407,14 @@ namespace render
     _pScene->UpdateLighting();
 
     // Draw models
-    BeginMarker(internal_render::s_sDrawModelsMarker);
+    BeginMarker(internal_render::s_sDrawModelsMrk);
     {
       _pScene->DrawModels();
     }
     EndMarker();
 
     // Draw primitives
-    BeginMarker(internal_render::s_sDrawPrimitivesMarker);
+    BeginMarker(internal_render::s_sDrawPrimitivesMrk);
     {
       _pScene->DrawPrimitives();
     }
@@ -410,10 +424,10 @@ namespace render
   void CRender::EndDraw() const
   {
     // Update resources
-    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &internal_render::s_oPipeline.pRenderTargetView, internal_render::s_oPipeline.DepthStencilView);
-    global::dx11::s_pDeviceContext->OMSetDepthStencilState(internal_render::s_oPipeline.DepthStencilState, 1);
+    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &internal_render::s_oPipeline.pRenderTarget, internal_render::s_oPipeline.pDepthStencilView);
+    global::dx11::s_pDeviceContext->OMSetDepthStencilState(internal_render::s_oPipeline.pDepthStencilState, 1);
     global::dx11::s_pDeviceContext->OMSetBlendState(internal_render::s_oPipeline.pBlendState, nullptr, 0xFFFFFFFF);
-    global::dx11::s_pDeviceContext->RSSetState(internal_render::s_oPipeline.pRasterizerState);
+    global::dx11::s_pDeviceContext->RSSetState(internal_render::s_oPipeline.pRasterizer);
 
     // Render ImGui
     BeginMarker(internal_render::s_sImGuiMarker);
@@ -430,18 +444,17 @@ namespace render
   // ------------------------------------
   void CRender::BeginMarker(const wchar_t* _sMarker) const
   {
-    if (internal_render::s_oPipeline.pMarker)
+    if (internal_render::s_oPipeline.pUserMarker)
     {
-      internal_render::s_oPipeline.pMarker->BeginEvent(_sMarker);
+      internal_render::s_oPipeline.pUserMarker->BeginEvent(_sMarker);
     }
   }
   // ------------------------------------
   void CRender::EndMarker() const
   {
-    if (internal_render::s_oPipeline.pMarker)
+    if (internal_render::s_oPipeline.pUserMarker)
     {
-      internal_render::s_oPipeline.pMarker->EndEvent();
-      internal_render::s_oPipeline.pMarker->Release();
+      internal_render::s_oPipeline.pUserMarker->EndEvent();
     }
   }
 }

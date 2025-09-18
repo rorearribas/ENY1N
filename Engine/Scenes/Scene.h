@@ -72,7 +72,7 @@ namespace scene
 
   private:
     bool m_bEnabled = false;
-    UINT32 m_uSceneIdx = 0;
+    uint32_t m_uSceneIdx = 0;
 
     // Graphics
     TModelList m_vctModels = TModelList();

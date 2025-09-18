@@ -44,8 +44,6 @@ static bool bThrowRay = false;
 
 int main()
 {
-  reflection::CTypeManager::CreateSingleton();
-
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);

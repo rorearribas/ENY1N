@@ -4,19 +4,19 @@
 #include <windows.h>
 #include <cassert>
 
-extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND _hWnd, UINT _uMessage, WPARAM _wParam, LPARAM _lParam);
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND _hWnd, UINT _uMsg, WPARAM _wParam, LPARAM _lParam);
 
 namespace render
 {
   namespace internal_renderwindow
   {
-    static LRESULT CALLBACK WindowProc(HWND _hWnd, uint32_t _uMessage, WPARAM _wParam, LPARAM _lParam)
+    static LRESULT CALLBACK WindowProc(HWND _hWnd, uint32_t _uMsg, WPARAM _wParam, LPARAM _lParam)
     {
-      if (ImGui_ImplWin32_WndProcHandler(_hWnd, _uMessage, _wParam, _lParam))
+      if (ImGui_ImplWin32_WndProcHandler(_hWnd, _uMsg, _wParam, _lParam))
         return true;
 
       // sort through and find what code to run for the message given
-      switch (_uMessage)
+      switch (_uMsg)
       {
       case WM_DESTROY:
       {
@@ -51,8 +51,8 @@ namespace render
           break;
         }
 
-        RAWINPUT* pRawInput = reinterpret_cast<RAWINPUT*>(pData.get());
         // Mouse
+        RAWINPUT* pRawInput = reinterpret_cast<RAWINPUT*>(pData.get());
         if (pRawInput && pRawInput->header.dwType == RIM_TYPEMOUSE)
         {
           global::delegates::s_oUpdateMouseDelegate(&pRawInput->data.mouse);
@@ -67,7 +67,7 @@ namespace render
       }
 
       // Handle any messages the switch statement didn't
-      return DefWindowProc(_hWnd, _uMessage, _wParam, _lParam);
+      return DefWindowProc(_hWnd, _uMsg, _wParam, _lParam);
     }
 
     static HWND WINAPI CreateWinMain(HINSTANCE hInstance, uint32_t _uWidth, uint32_t _uHeight)

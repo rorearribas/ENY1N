@@ -11,7 +11,7 @@ namespace scene
   class CSceneManager
   {
   public:
-    static int constexpr s_iMaxScenes = 5;
+    static int constexpr s_iMaxScenes = 1;
     typedef std::array<CScene*, s_iMaxScenes> TSceneList;
 
     CSceneManager();

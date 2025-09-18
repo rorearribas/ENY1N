@@ -88,9 +88,9 @@ namespace render
       m_vctIndices = std::move(_vctIndices);
 
       // Config index buffer
-      D3D11_BUFFER_DESC oIndexBufferDesc = {};
+      D3D11_BUFFER_DESC oIndexBufferDesc = D3D11_BUFFER_DESC();
       oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-      oIndexBufferDesc.ByteWidth = static_cast<UINT>((sizeof(uint32_t) * m_vctIndices.size()));
+      oIndexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(uint32_t) * m_vctIndices.size()));
       oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
       oIndexBufferDesc.CPUAccessFlags = 0;
 
