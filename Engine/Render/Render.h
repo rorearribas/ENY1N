@@ -12,6 +12,9 @@ namespace render
   class CRender
   {
   public:
+    static const math::CVector3 s_v3WorldUp;
+
+  public:
     CRender(uint32_t _uX, uint32_t _uY);
     ~CRender();
 

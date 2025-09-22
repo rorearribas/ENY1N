@@ -32,6 +32,24 @@ namespace math
     m[2][0] = _m31; m[2][1] = _m32; m[2][2] = _m33; m[2][3] = _m34;
     m[3][0] = _m41; m[3][1] = _m42; m[3][2] = _m43; m[3][3] = _m44;
   }
+
+  math::CMatrix4x4 CMatrix4x4::operator*(const CMatrix4x4& _Other) const
+  {
+    CMatrix4x4 mMatrix = CMatrix4x4::Zero;
+    for (int iRow = 0; iRow < s_iRowSize; ++iRow)
+    {
+      for (int iColumn = 0; iColumn < s_iColumnSize; ++iColumn)
+      {
+        mMatrix.m[iRow][iColumn] =
+          m[iRow][0] * _Other.m[0][iColumn] +
+          m[iRow][1] * _Other.m[1][iColumn] +
+          m[iRow][2] * _Other.m[2][iColumn] +
+          m[iRow][3] * _Other.m[3][iColumn];
+      }
+    }
+    return mMatrix;
+  }
+
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar)
   {
@@ -43,7 +61,7 @@ namespace math
     mMatrix.m[1][1] = 1.0f / fTan;
     mMatrix.m[2][2] = _fFar / (_fFar - _fNear);
     mMatrix.m[2][3] = 1.0f;
-    mMatrix.m[3][2] = -(_fFar * _fNear) / (_fFar - _fNear);
+    mMatrix.m[3][2] = -_fNear * _fFar / (_fFar - _fNear);
     mMatrix.m[3][3] = 0.0f;
     return mMatrix;
   }
@@ -61,36 +79,34 @@ namespace math
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _v3Pos, const CVector3& _v3Target, const CVector3& _v3Up)
   {
-    // Z Axis
+    // Get dir
     CVector3 v3Dir = (_v3Target - _v3Pos).Normalize();
-
-    // X axis
+    // Right
     CVector3 v3Right = _v3Up.Cross(v3Dir).Normalize();
-
-    // Y axis
+    // Up
     CVector3 v3Up = v3Dir.Cross(v3Right).Normalize();
 
     // Compose matrix
-    CMatrix4x4 mMatrix = CMatrix4x4::Identity;
+    CMatrix4x4 mLookAt = CMatrix4x4::Identity;
 
-    mMatrix.m[0][0] = v3Right.X;
-    mMatrix.m[1][0] = v3Right.Y;
-    mMatrix.m[2][0] = v3Right.Z;
+    mLookAt.m[0][0] = v3Right.X;
+    mLookAt.m[1][0] = v3Right.Y;
+    mLookAt.m[2][0] = v3Right.Z;
 
-    mMatrix.m[0][1] = v3Up.X;
-    mMatrix.m[1][1] = v3Up.Y;
-    mMatrix.m[2][1] = v3Up.Z;
+    mLookAt.m[0][1] = v3Up.X;
+    mLookAt.m[1][1] = v3Up.Y;
+    mLookAt.m[2][1] = v3Up.Z;
 
-    mMatrix.m[0][2] = v3Dir.X;
-    mMatrix.m[1][2] = v3Dir.Y;
-    mMatrix.m[2][2] = v3Dir.Z;
+    mLookAt.m[0][2] = v3Dir.X;
+    mLookAt.m[1][2] = v3Dir.Y;
+    mLookAt.m[2][2] = v3Dir.Z;
 
-    mMatrix.m[3][0] = -v3Right.Dot(_v3Pos);
-    mMatrix.m[3][1] = -v3Up.Dot(_v3Pos);
-    mMatrix.m[3][2] = -v3Dir.Dot(_v3Pos);
-    mMatrix.m[3][3] = 1.0f;
+    mLookAt.m[3][0] = -v3Right.Dot(_v3Pos);
+    mLookAt.m[3][1] = -v3Up.Dot(_v3Pos);
+    mLookAt.m[3][2] = -v3Dir.Dot(_v3Pos);
+    mLookAt.m[3][3] = 1.0f;
 
-    return mMatrix;
+    return mLookAt;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Translate(const CVector3& _vTranslate)
@@ -138,32 +154,26 @@ namespace math
     return mRollMatrix * mPitchMatrix * mYawMatrix;
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::RotationAxis(const CVector3& _v3Axis, float _fRadians)
+  math::CMatrix4x4 CMatrix4x4::RotationAxis(const CVector3& _v3Axis, float _fAngle)
   {
-    float fCos = cosf(_fRadians);
-    float fSin = sinf(_fRadians);
-    float fOffset = 1.0f - fCos; // Using 1.0f, because we are supposing that the axis is normalized
+    // We are supposing that the axis is normalized!!
+    float fCos = cosf(_fAngle);
+    float fSin = sinf(_fAngle);
+    float fOffset = 1.0f - fCos;
 
-    CMatrix4x4 mRot = CMatrix4x4::Identity;
-
-    mRot.m[0][0] = fCos + _v3Axis.X * _v3Axis.X * fOffset;
+    CMatrix4x4 mRot(CMatrix4x4::Identity);
+    mRot.m[0][0] = _v3Axis.X * _v3Axis.X * fOffset + fCos;
     mRot.m[0][1] = _v3Axis.X * _v3Axis.Y * fOffset - _v3Axis.Z * fSin;
     mRot.m[0][2] = _v3Axis.X * _v3Axis.Z * fOffset + _v3Axis.Y * fSin;
-    mRot.m[0][3] = 0.0f;
 
     mRot.m[1][0] = _v3Axis.Y * _v3Axis.X * fOffset + _v3Axis.Z * fSin;
-    mRot.m[1][1] = fCos + _v3Axis.Y * _v3Axis.Y * fOffset;
+    mRot.m[1][1] = _v3Axis.Y * _v3Axis.Y * fOffset + fCos;
     mRot.m[1][2] = _v3Axis.Y * _v3Axis.Z * fOffset - _v3Axis.X * fSin;
-    mRot.m[1][3] = 0.0f;
 
     mRot.m[2][0] = _v3Axis.Z * _v3Axis.X * fOffset - _v3Axis.Y * fSin;
     mRot.m[2][1] = _v3Axis.Z * _v3Axis.Y * fOffset + _v3Axis.X * fSin;
-    mRot.m[2][2] = fCos + _v3Axis.Z * _v3Axis.Z * fOffset;
-    mRot.m[2][3] = 0.0f;
+    mRot.m[2][2] = _v3Axis.Z * _v3Axis.Z * fOffset + fCos;
 
-    mRot.m[0][3] = 0.0f;
-    mRot.m[1][3] = 0.0f;
-    mRot.m[2][3] = 0.0f;
     mRot.m[3][3] = 1.0f;
 
     return mRot;

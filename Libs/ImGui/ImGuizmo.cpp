@@ -313,7 +313,7 @@ namespace IMGUIZMO_NAMESPACE
          float m16[16];
          struct
          {
-            vec_t right, up, dir, position;
+           vec_t right, up, dir, position;
          } v;
          vec_t component[4];
       };

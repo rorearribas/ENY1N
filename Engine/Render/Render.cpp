@@ -13,6 +13,8 @@
 
 namespace render
 {
+  const math::CVector3 CRender::s_v3WorldUp(0.0f, 1.0f, 0.0f);
+
   namespace internal_render
   {
     static const wchar_t* s_sPrepareFrameMrk(L"Begin Frame");
@@ -51,6 +53,7 @@ namespace render
 
     static SRenderPipeline s_oPipeline;
   }
+
   // ------------------------------------
   CRender::CRender(uint32_t _uX, uint32_t _uY)
   {

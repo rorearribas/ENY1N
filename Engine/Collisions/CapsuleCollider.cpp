@@ -131,16 +131,9 @@ namespace collision
       float s = 0.0f, t = 0.0f;
       math::CVector3 v3ClosestToRay, v3ClosestToSegment;
       float fSqrDist = math::ClosestPtRaySegment(_oRay, GetStartSegmentPoint(), GetEndSegmentPoint(), s, t, v3ClosestToRay, v3ClosestToSegment);
-      if (fSqrDist <= GetRadius() && (s >= GetRadius()) && (s <= _fMaxDistance))
+      if (fSqrDist <= (GetRadius() * GetRadius()) && s >= 0.0f && s <= _fMaxDistance)
       {
-        math::ClosestPtRaySphere(_oRay, v3ClosestToRay, m_fRadius, v3TempClosestPoint, fTempDist);
-        //float fDot = math::CVector3::Dot(v3TempClosestPoint - v3ClosestToSegment, GetSegmentDir());
-        //std::cout << "dot: " << fDot << std::endl;
-        //v3TempClosestPoint = v3TempClosestPoint + (GetSegmentDir() * fDot);
-
-        //math::CVector3 v3Idiota = v3ClosestToSegment - v3ClosestToRay;
-        //float fDotIdiota = math::CVector3::Dot(v3Idiota, GetSegmentDir());
-        //math::CVector3 v3Idiota2 = v3ClosestToSegment + (GetSegmentDir() * fDotIdiota);
+        math::ClosestPtRaySphere(_oRay, v3ClosestToSegment, m_fRadius, v3TempClosestPoint, fTempDist);
         v3ClosestPoint = v3TempClosestPoint;
       }
       else

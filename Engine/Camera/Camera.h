@@ -7,14 +7,15 @@
 
 namespace render
 {
-  enum class EProjectionMode
-  {
-    PERSPECTIVE,
-    ORTOGRAPHIC
-  };
-
   class CCamera
   {
+  public:
+    enum class EProjectionMode
+    {
+      PERSPECTIVE,
+      ORTOGRAPHIC
+    };
+
   public:
     CCamera();
     ~CCamera() {}
@@ -31,7 +32,7 @@ namespace render
     inline const math::CVector3& GetRotation() const { return m_v3Rot; }
 
     inline void SetMovementVel(float _fVelocity) { m_fMovementVelocity = _fVelocity; }
-    inline float GetMovementVel() const { return m_fMovementVelocity;}
+    inline float GetMovementVel() const { return m_fMovementVelocity; }
     inline void SetFov(float _fFov) { m_fFov = _fFov; }
     inline float GetFov() const { return m_fFov; }
     inline void SetFar(float _fFar) { m_fFar = _fFar; }

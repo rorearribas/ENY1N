@@ -14,11 +14,12 @@ namespace render
     static bool s_bWasRightButtonPressed = false;
     static math::CVector2 s_v2LastPosition = math::CVector2::Zero;
 
-    const int s_iFrustumPlanes = 6;
     const float s_fInterpolateSpeed = 10.0f;
+    const int s_iFrustumPlanes = 6;
 
     const float s_fMaxWheelDelta = 0.97f;
     const float s_fOrtographicFactor = 1.0f;
+    const float s_fMaxPitch = 90.0f;
   }
   // ------------------------------------
   CCamera::CCamera()
@@ -160,42 +161,40 @@ namespace render
     m_eProjectionMode = _eProjectionMode;
   }
   // ------------------------------------
-  void CCamera::UpdateProjectionMatrix(render::EProjectionMode _eProjectionMode)
+  void CCamera::UpdateProjectionMatrix(EProjectionMode _eProjectionMode)
   {
     switch (_eProjectionMode) 
     {
-    case render::EProjectionMode::PERSPECTIVE:
-    {
-      m_mProjectionMatrix = math::CMatrix4x4::CreatePerspectiveMatrix(m_fDesiredFov, m_fAspectRatio, m_fNear, m_fFar);
-    }
-    break;
-    case render::EProjectionMode::ORTOGRAPHIC:
-    {
-      float fWidth = internal_camera::s_fOrtographicFactor / m_fZoomScale;
-      float fHeight = (internal_camera::s_fOrtographicFactor / m_fAspectRatio) / m_fZoomScale;
-      m_mProjectionMatrix = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
-    }
-    break;
-    default:
+      case EProjectionMode::PERSPECTIVE:
+      {
+        m_mProjectionMatrix = math::CMatrix4x4::CreatePerspectiveMatrix(m_fDesiredFov, m_fAspectRatio, m_fNear, m_fFar);
+      }
+      break;
+      case EProjectionMode::ORTOGRAPHIC:
+      {
+        float fWidth = internal_camera::s_fOrtographicFactor / m_fZoomScale;
+        float fHeight = (internal_camera::s_fOrtographicFactor / m_fAspectRatio) / m_fZoomScale;
+        m_mProjectionMatrix = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
+      }
       break;
     }
   }
   // ------------------------------------
   void CCamera::UpdateViewMatrix(EProjectionMode _eProjectionMode)
   {
-    math::CVector3 v3Up = math::CVector3::Up; // Default World Up
+    math::CVector3 v3Up = render::CRender::s_v3WorldUp; // Default World Up
     math::CVector3 v3TargetPos = m_v3Pos + m_v3Dir; // Default Offset
 
     if (_eProjectionMode == EProjectionMode::PERSPECTIVE)
     {
       // Clamp pitch value
-      m_v3Rot.X = math::Clamp(m_v3Rot.X, -90.0f, 90.0f);
+      m_v3Rot.X = math::Clamp(m_v3Rot.X, -internal_camera::s_fMaxPitch, internal_camera::s_fMaxPitch);
 
-      // Create the rotation matrix
+      // Create rotation matrix
       math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
 
       // Calculate dir
-      m_v3Dir = math::CVector3::Normalize(mRotMatrix * math::CVector3::Forward);
+      m_v3Dir = mRotMatrix * math::CVector3::Forward;
       v3TargetPos = m_v3Pos + m_v3Dir;
 
       // Calculate up direction
@@ -235,11 +234,11 @@ namespace render
 
     if (ImGui::Button("Perspective Mode"))
     {
-      SetProjectionMode(render::EProjectionMode::PERSPECTIVE);
+      SetProjectionMode(render::CCamera::EProjectionMode::PERSPECTIVE);
     }
     if (ImGui::Button("Ortographic Mode"))
     {
-      SetProjectionMode(render::EProjectionMode::ORTOGRAPHIC);
+      SetProjectionMode(render::CCamera::EProjectionMode::ORTOGRAPHIC);
     }
     ImGui::End();
   }

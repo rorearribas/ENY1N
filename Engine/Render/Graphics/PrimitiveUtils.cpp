@@ -421,9 +421,10 @@ namespace render
       // Rotate vertices
       float fAngle = acosf(s_oPlaneNormal.Dot(v3Normal));
       math::CMatrix4x4 mRot = math::CMatrix4x4::RotationAxis(v3Dir, fAngle);
+      math::CMatrix4x4 mTranspose = math::CMatrix4x4::Transpose(mRot);
       for (auto& oVertexData : _oVertexData_.m_vctVertexData)
       {
-        oVertexData.Position = math::CMatrix4x4::Transpose(mRot) * oVertexData.Position;
+        oVertexData.Position = mTranspose * oVertexData.Position;
         oVertexData.Normal = v3Normal;
       }
     }
@@ -440,18 +441,17 @@ namespace render
       _oPrimitiveData_.m_vctIndices.clear();
 
       // Fill data 
-      render::graphics::SVertexData oOrigin = render::graphics::SVertexData();
-      oOrigin.Position = _v3Origin;
+      render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
+      oVertexData.Position = _v3Origin;
 
-      _oPrimitiveData_.m_vctVertexData.emplace_back(oOrigin);
-      _oPrimitiveData_.m_vctIndices.emplace_back(0);
+      uint32_t uIndex = 0;
+      _oPrimitiveData_.m_vctVertexData.emplace_back(oVertexData);
+      _oPrimitiveData_.m_vctIndices.emplace_back(uIndex++);
 
       // Fill data 
-      render::graphics::SVertexData oDest = render::graphics::SVertexData();
-      oDest.Position = _v3Dest;
-
-      _oPrimitiveData_.m_vctVertexData.emplace_back(oDest);
-      _oPrimitiveData_.m_vctIndices.emplace_back(1);
+      oVertexData.Position = _v3Dest;
+      _oPrimitiveData_.m_vctVertexData.emplace_back(oVertexData);
+      _oPrimitiveData_.m_vctIndices.emplace_back(uIndex);
     }
 
 #pragma endregion
@@ -466,7 +466,7 @@ namespace render
       }
 
       // Calculate normals
-      long lSize = static_cast<int>(_vctIndices.size());
+      long lSize = static_cast<long>(_vctIndices.size());
       for (long lIdx = 0; lIdx < lSize; lIdx += 3)
       {
         if (lIdx + 1 >= lSize || lIdx + 2 >= lSize)
@@ -478,9 +478,9 @@ namespace render
         int i1 = _vctIndices[lIdx + 1];
         int i2 = _vctIndices[lIdx + 2];
 
-        math::CVector3& v0 = _oVertexData[i0].Position;
-        math::CVector3& v1 = _oVertexData[i1].Position;
-        math::CVector3& v2 = _oVertexData[i2].Position;
+        const math::CVector3& v0 = _oVertexData[i0].Position;
+        const math::CVector3& v1 = _oVertexData[i1].Position;
+        const math::CVector3& v2 = _oVertexData[i2].Position;
 
         math::CVector3 v3Edge01 = v1 - v0;
         math::CVector3 v3Edge02 = v2 - v0;
