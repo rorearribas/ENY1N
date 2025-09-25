@@ -23,7 +23,7 @@ namespace render
     void Update(float _fDeltaTime);
 
     const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
-    const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjectionMatrix; }
+    const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjection; }
 
     inline const math::CVector3& GetCameraDir() const { return m_v3Dir; }
     inline void SetPosition(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; UpdateViewMatrix(GetProjectionMode()); }
@@ -63,7 +63,7 @@ namespace render
 
     CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
     math::CMatrix4x4 m_mViewMatrix = math::CMatrix4x4::Identity;
-    math::CMatrix4x4 m_mProjectionMatrix = math::CMatrix4x4::Identity;
+    math::CMatrix4x4 m_mProjection = math::CMatrix4x4::Identity;
 
     math::CVector3 m_v3Dir = math::CVector3::Zero;
     math::CVector3 m_v3Pos = math::CVector3::Zero;

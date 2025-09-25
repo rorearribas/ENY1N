@@ -46,7 +46,6 @@ namespace collision
   {
     // Calculate axis directors
     math::CMatrix4x4 mRot = math::CMatrix4x4::Rotation(GetRotation());
-    mRot = math::CMatrix4x4::Transpose(mRot);
     math::CVector3 v3TargetAxis = mRot * m_v3OrientedAxis;
 
     // Set segment points

@@ -21,8 +21,8 @@ struct VS_INPUT
 PS_INPUT VSMain(VS_INPUT input)
 {
   PS_INPUT output;
-  float4 worldPosition = mul(float4(input.position, 1.0), modelMatrix);
-  output.position = mul(worldPosition, viewProjection);
+  float4 worldPosition = mul(modelMatrix, float4(input.position, 1.0));
+  output.position = mul(viewProjection, worldPosition);
   output.worldpos = worldPosition.xyz;
   output.normal = input.normal;
   output.color = input.color;

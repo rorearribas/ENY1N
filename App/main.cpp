@@ -47,7 +47,7 @@ int main()
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);
-  pEngine->GetCamera()->SetPosition(math::CVector3(0.0f, 0.0f, 10.0f));
+  pEngine->GetCamera()->SetPosition(math::CVector3(0.0f, 5.0f, -10.0f));
 
   // Collisions manager
   collision::CCollisionManager* pCollisionManager = collision::CCollisionManager::CreateSingleton();
@@ -66,14 +66,14 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
-  //// Create spot light
-  //game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot light");
-  //pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
-  //pSpotLight->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+  // Create spot light
+  game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot light");
+  pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
+  pSpotLight->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
 
-  //// Create point light
-  //game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
-  //pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
+  // Create point light
+  game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
+  pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)

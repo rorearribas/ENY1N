@@ -421,10 +421,9 @@ namespace render
       // Rotate vertices
       float fAngle = acosf(s_oPlaneNormal.Dot(v3Normal));
       math::CMatrix4x4 mRot = math::CMatrix4x4::RotationAxis(v3Dir, fAngle);
-      math::CMatrix4x4 mTranspose = math::CMatrix4x4::Transpose(mRot);
       for (auto& oVertexData : _oVertexData_.m_vctVertexData)
       {
-        oVertexData.Position = mTranspose * oVertexData.Position;
+        oVertexData.Position = mRot * oVertexData.Position;
         oVertexData.Normal = v3Normal;
       }
     }

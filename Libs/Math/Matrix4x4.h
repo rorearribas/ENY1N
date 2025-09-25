@@ -8,19 +8,26 @@ namespace math
   class CMatrix4x4
   {
   private:
-    static constexpr int s_iRowSize = 4;
     static constexpr int s_iColumnSize = 4;
-    typedef float TMatrix4x4[s_iRowSize][s_iColumnSize];
-    TMatrix4x4 m;
+    static constexpr int s_iRowSize = 4;
+
+    // column-major (DirectX/HLSL)
+    typedef float TMatrix4x4[s_iColumnSize][s_iRowSize];
+    typedef float TMatrix16[s_iColumnSize * s_iRowSize];
+    union
+    {
+      TMatrix4x4 m4x4; // for debugging purposes only
+      TMatrix16 m16; // column-major style
+    };
 
   public:
     static const CMatrix4x4 Identity;
     static const CMatrix4x4 Zero;
 
     CMatrix4x4() = default;
-    CMatrix4x4(const float _mMatrix[s_iRowSize][s_iColumnSize])
+    CMatrix4x4(const TMatrix4x4& _mMatrix)
     {
-      std::memcpy(m, _mMatrix, sizeof(float) * (s_iRowSize * s_iColumnSize));
+      std::memcpy(m16, _mMatrix, sizeof(TMatrix4x4));
     }
     CMatrix4x4
     (
@@ -35,23 +42,23 @@ namespace math
     {
       if (this != &_Other)
       {
-        std::memcpy(m, _Other.m, sizeof(float) * (s_iRowSize * s_iColumnSize));
+        std::memcpy(m16, _Other.m16, sizeof(float) * (s_iColumnSize * s_iRowSize));
       }
       return *this;
     }
     inline math::CVector3 operator*(const math::CVector3& _v3Other) const
     {
-      float fX = _v3Other.X * m[0][0] + _v3Other.Y * m[1][0] + _v3Other.Z * m[2][0] + m[3][0];
-      float fY = _v3Other.X * m[0][1] + _v3Other.Y * m[1][1] + _v3Other.Z * m[2][1] + m[3][1];
-      float fZ = _v3Other.X * m[0][2] + _v3Other.Y * m[1][2] + _v3Other.Z * m[2][2] + m[3][2];
+      float fX = _v3Other.X * m16[0] + _v3Other.Y * m16[4] + _v3Other.Z * m16[8] + m16[12];
+      float fY = _v3Other.X * m16[1] + _v3Other.Y * m16[5] + _v3Other.Z * m16[9] + m16[13];
+      float fZ = _v3Other.X * m16[2] + _v3Other.Y * m16[6] + _v3Other.Z * m16[10] + m16[14];
       return math::CVector3(fX, fY, fZ);
     }
 
-    inline const float* operator()() const { return &m[0][0]; }
-    inline float* operator()() { return &m[0][0]; }
+    inline const float* operator()() const { return &m16[0]; }
+    inline float* operator()() { return &m16[0]; }
 
-    inline float operator() (int _iRow, int _iColumn) const { return m[_iRow][_iColumn]; }
-    inline float& operator() (int _iRow, int _iColumn) { return m[_iRow][_iColumn]; }
+    inline float operator[] (int _iPos) const { return m16[_iPos]; }
+    inline float& operator[] (int _iPos) { return m16[_iPos]; }
 
     static CMatrix4x4 LookAt(const CVector3& _v3Pos, const CVector3& _vTarget, const CVector3& _vUp);
     static CMatrix4x4 RotationAxis(const CVector3& _v3Axis, float _fAngle);

@@ -317,7 +317,6 @@ namespace collision
   {
     // Calculate matrix
     math::CMatrix4x4 mRot = math::CMatrix4x4::Rotation(GetRotation());
-    mRot = math::CMatrix4x4::Transpose(mRot);
 
     // Calculate extents
     const math::CVector3& v3Center = GetCenter();

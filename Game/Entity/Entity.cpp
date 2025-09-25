@@ -63,10 +63,9 @@ namespace game
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     const render::CCamera* pCamera = pEngine->GetCamera();
 
-    // Transpose matrix
     float matrix[16];
-    math::CMatrix4x4 mTranspose = math::CMatrix4x4::Transpose(m_oTransform.ComputeModelMatrix());
-    memcpy(matrix, mTranspose(), sizeof(matrix));
+    math::CMatrix4x4 mTransform = m_oTransform.ComputeModelMatrix();
+    memcpy(matrix, mTransform(), sizeof(matrix));
 
     // Get matrix
     float fTranslation[3] = { m_oTransform.GetPosition().X, m_oTransform.GetPosition().Y, m_oTransform.GetPosition().Z };
@@ -103,9 +102,9 @@ namespace game
       case ImGuizmo::ROTATE:
       {
         math::CVector3 vNewRot = m_oTransform.GetRotation();
-        vNewRot.X += (fRotation[0] - vNewRot.X) * -1.0f;
-        vNewRot.Y += (fRotation[1] - vNewRot.Y) * -1.0f;
-        vNewRot.Z += (fRotation[2] - vNewRot.Z) * -1.0f;
+        vNewRot.X += (fRotation[0] - vNewRot.X);
+        vNewRot.Y += (fRotation[1] - vNewRot.Y);
+        vNewRot.Z += (fRotation[2] - vNewRot.Z);
         SetRotation(vNewRot);
       }
       break;

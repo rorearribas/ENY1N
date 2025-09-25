@@ -71,7 +71,7 @@ namespace math
 
   inline math::CVector2 Rad2Degrees(const math::CVector2& _v2)
   {
-    return  math::CVector2(Rad2Degrees(_v2.X), Rad2Degrees(_v2.Y));
+    return math::CVector2(Rad2Degrees(_v2.X), Rad2Degrees(_v2.Y));
   }
 
   //@Note these functions have been extracted from real time collision detection book

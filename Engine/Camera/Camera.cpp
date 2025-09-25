@@ -32,8 +32,8 @@ namespace render
   {
     // Keyboard movement
     math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
-    math::CVector3 v3Forward = math::CVector3::Normalize(mRotMatrix * math::CVector3::Forward);
-    math::CVector3 v3Right = math::CVector3::Normalize(mRotMatrix * math::CVector3::Right);
+    math::CVector3 v3Forward = mRotMatrix * math::CVector3::Forward;
+    math::CVector3 v3Right = mRotMatrix * math::CVector3::Right;
 
     // Show cursor
     input::CInputManager* pInputManager = input::CInputManager::GetInstance();
@@ -90,7 +90,7 @@ namespace render
     BuildFrustumPlanes();
 
     // Update constant buffer
-    m_oConstantBuffer.GetData().Matrix = math::CMatrix4x4::Transpose(m_mViewMatrix * m_mProjectionMatrix);
+    m_oConstantBuffer.GetData().Matrix =  m_mProjection * m_mViewMatrix;
     bool bOk = m_oConstantBuffer.WriteBuffer();
     UNUSED_VAR(bOk);
     assert(bOk);
@@ -167,14 +167,14 @@ namespace render
     {
       case EProjectionMode::PERSPECTIVE:
       {
-        m_mProjectionMatrix = math::CMatrix4x4::CreatePerspectiveMatrix(m_fDesiredFov, m_fAspectRatio, m_fNear, m_fFar);
+        m_mProjection = math::CMatrix4x4::CreatePerspectiveMatrix(m_fDesiredFov, m_fAspectRatio, m_fNear, m_fFar);
       }
       break;
       case EProjectionMode::ORTOGRAPHIC:
       {
         float fWidth = internal_camera::s_fOrtographicFactor / m_fZoomScale;
         float fHeight = (internal_camera::s_fOrtographicFactor / m_fAspectRatio) / m_fZoomScale;
-        m_mProjectionMatrix = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
+        m_mProjection = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
       }
       break;
     }
@@ -195,6 +195,7 @@ namespace render
 
       // Calculate dir
       m_v3Dir = mRotMatrix * math::CVector3::Forward;
+
       v3TargetPos = m_v3Pos + m_v3Dir;
 
       // Calculate up direction
