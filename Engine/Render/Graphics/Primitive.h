@@ -15,7 +15,7 @@ namespace render
     class CPrimitive
     {
     public:
-      enum EPrimitiveType
+      enum class EPrimitiveType
       {
         E2D_SQUARE,
         E2D_CIRCLE,

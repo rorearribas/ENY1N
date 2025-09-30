@@ -9,6 +9,37 @@ namespace math
   math::CVector3 CVector3::Backward(0.0f, 0.0f, -1.0f);
   math::CVector3 CVector3::Right(1.0f, 0.0f, 0.0f);
   math::CVector3 CVector3::Up(0.0f, 1.0f, 0.0f);
+
+  // ------------------------------------
+  CVector3 CVector3::Normalize() const
+  {
+    CVector3 v3 = *this;
+    float fMagnitude = this->Magnitude();
+    if (fMagnitude > math::s_fEpsilon7)
+    {
+      v3.X /= fMagnitude;
+      v3.Y /= fMagnitude;
+      v3.Z /= fMagnitude;
+    }
+    return v3;
+  }
+  // ------------------------------------
+  math::CVector3 CVector3::Normalize(const CVector3& _v3)
+  {
+    return _v3.Normalize();
+  }
+  // ------------------------------------
+  void CVector3::Abs()
+  {
+    this->X = std::abs(this->X);
+    this->Z = std::abs(this->Y);
+    this->Y = std::abs(this->Z);
+  }
+  // ------------------------------------
+  CVector3 CVector3::Abs(const CVector3& _v3)
+  {
+    return CVector3(std::abs(_v3.X), std::abs(_v3.Y), std::abs(_v3.Z));
+  }
   // ------------------------------------
   float CVector3::Dot(const CVector3& _v3) const
   {
@@ -18,6 +49,21 @@ namespace math
   float CVector3::Dot(const CVector3& _vA, const CVector3& _vB)
   {
     return _vA.Dot(_vB);
+  }
+  // ------------------------------------
+  CVector3 CVector3::Cross(const CVector3& _v3) const
+  {
+    return CVector3
+    (
+      (this->Y * _v3.Z) - (this->Z * _v3.Y), // X
+      (this->Z * _v3.X) - (this->X * _v3.Z), // Y
+      (this->X * _v3.Y) - (this->Y * _v3.X)  // Z
+    );
+  }
+  // ------------------------------------
+  math::CVector3 CVector3::Cross(const CVector3& _vA, const CVector3& _vB)
+  {
+    return _vA.Cross(_vB);
   }
   // ------------------------------------
   float CVector3::Distance(const CVector3& _v3Dest, const CVector3& _v3Origin)
@@ -95,48 +141,18 @@ namespace math
     return std::abs(X) <= s_fEpsilon2 && std::abs(Y) <= s_fEpsilon2 && std::abs(Z) <= s_fEpsilon2;
   }
   // ------------------------------------
-  void CVector3::Abs()
+  float CVector3::AngleBetween(const CVector3& _v3) const
   {
-    this->X = std::abs(this->X);
-    this->Z = std::abs(this->Y);
-    this->Y = std::abs(this->Z);
+    return AngleBetween(*this, _v3);
   }
   // ------------------------------------
-  CVector3 CVector3::Abs(const CVector3& _v3)
+  float CVector3::AngleBetween(const CVector3& _vA, const CVector3& _vB)
   {
-    return CVector3(std::abs(_v3.X), std::abs(_v3.Y), std::abs(_v3.Z));
-  }
-  // ------------------------------------
-  CVector3 CVector3::Cross(const CVector3& _v3) const
-  {
-    return CVector3
-    (
-      (this->Y * _v3.Z) - (this->Z * _v3.Y), // X
-      (this->Z * _v3.X) - (this->X * _v3.Z), // Y
-      (this->X * _v3.Y) - (this->Y * _v3.X)  // Z
-    );
-  }
-  // ------------------------------------
-  math::CVector3 CVector3::Cross(const CVector3& _vA, const CVector3& _vB)
-  {
-    return _vA.Cross(_vB);
-  }
-  // ------------------------------------
-  CVector3 CVector3::Normalize() const
-  {
-    CVector3 v3 = *this;
-    float fMagnitude = this->Magnitude();
-    if (fMagnitude > math::s_fEpsilon7)
-    {
-      v3.X /= fMagnitude;
-      v3.Y /= fMagnitude;
-      v3.Z /= fMagnitude;
-    }
-    return v3;
-  }
-  // ------------------------------------
-  math::CVector3 CVector3::Normalize(const CVector3& _v3)
-  {
-    return _v3.Normalize();
+    // Cos
+    float fCos = _vA.Dot(_vB) / (_vA.Magnitude() * _vB.Magnitude());
+    fCos = math::Clamp(fCos, -1.0f, 1.0f); // Clamp
+
+    // Radians
+    return std::acos(fCos);
   }
 }

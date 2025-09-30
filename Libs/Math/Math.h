@@ -7,8 +7,9 @@
 namespace math
 {
   // Static values
-  static constexpr double s_fPI = 3.14159265358979323846;
-  static constexpr double s_fHalfPI = s_fPI / 2.0f;
+  static constexpr float s_fPI = 3.14159265358979323846f;
+  static constexpr float s_fHalfPI = s_fPI / 2.0f;
+  static constexpr float s_fMaxEuler = 360.0f;
 
   // Epsilon
   static constexpr float s_fEpsilon1 = 1e-1f;
@@ -42,6 +43,13 @@ namespace math
   inline T Max(const T& _Object1, const T& _Object2)
   {
     return _Object1 > _Object2 ? _Object1 : _Object2;
+  }
+
+  inline float CalculateEulerAngle(float fAngle)
+  {
+    fAngle = fmod(fAngle, s_fMaxEuler);
+    fAngle = (fAngle > s_fMaxEuler / 2.0f) ? (fAngle - s_fMaxEuler) : (fAngle < -(s_fMaxEuler / 2.0f) ? (fAngle + s_fMaxEuler) : fAngle);
+    return fAngle;
   }
 
   inline float Deg2Radians(float _fDegrees)
@@ -91,7 +99,7 @@ namespace math
 
   inline bool SeparateAxisTheorem
   (
-    const std::vector<math::CVector3>& _vctPointsA, const std::vector<math::CVector3>& _vctPointsB, 
+    const std::vector<math::CVector3>& _vctPointsA, const std::vector<math::CVector3>& _vctPointsB,
     const math::CVector3& _v3Axis, math::CVector3& _v3ImpactPoint_, math::CVector3& _v3Normal_, float& _fDepth_
   )
   {
@@ -106,9 +114,9 @@ namespace math
     for (const math::CVector3& v3Vertex : _vctPointsA)
     {
       float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
-      if (fDot < fMinA) 
-      { 
-        v3ClosestPointA = v3Vertex; 
+      if (fDot < fMinA)
+      {
+        v3ClosestPointA = v3Vertex;
       }
       fMinA = math::Min(fMinA, fDot);
       fMaxA = math::Max(fMaxA, fDot);
@@ -120,9 +128,9 @@ namespace math
     for (const math::CVector3& v3Vertex : _vctPointsB)
     {
       float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
-      if (fDot < fMinB) 
+      if (fDot < fMinB)
       {
-        v3ClosestPointB = v3Vertex; 
+        v3ClosestPointB = v3Vertex;
       }
       fMinB = math::Min(fMinB, fDot);
       fMaxB = math::Max(fMaxB, fDot);
@@ -172,16 +180,16 @@ namespace math
   }
 
   inline float ClosestPtSegmentSegment(const math::CVector3& p1, const math::CVector3& q1, const math::CVector3& p2, const math::CVector3& q2,
-  float& s, float& t, math::CVector3& c1, math::CVector3& c2)
+    float& s, float& t, math::CVector3& c1, math::CVector3& c2)
   {
     math::CVector3 d1 = q1 - p1; // Direction vector of segment S1
     math::CVector3 d2 = q2 - p2; // Direction vector of segment S2
-    math::CVector3 r = p1 - p2; 
+    math::CVector3 r = p1 - p2;
     float a = math::CVector3::Dot(d1, d1); // Squared length of segment S1, always nonnegative
     float e = math::CVector3::Dot(d2, d2); // Squared length of segment S2, always nonnegative
     float f = math::CVector3::Dot(d2, r);
     // Check if either or both segments degenerate into points
-    if (a <= s_fEpsilon3 && e <= s_fEpsilon3) 
+    if (a <= s_fEpsilon3 && e <= s_fEpsilon3)
     {
       // Both segments degenerate into points
       s = t = 0.0f;
@@ -189,7 +197,7 @@ namespace math
       c2 = p2;
       return math::CVector3::Dot(c1 - c2, c1 - c2);
     }
-    if (a <= s_fEpsilon3) 
+    if (a <= s_fEpsilon3)
     {
       // First segment degenerates into a point
       s = 0.0f;
@@ -199,20 +207,20 @@ namespace math
     else
     {
       float c = math::CVector3::Dot(d1, r);
-      if (e <= s_fEpsilon3) 
+      if (e <= s_fEpsilon3)
       {
         // Second segment degenerates into a point
         t = 0.0f;
         s = Clamp(-c / a, 0.0f, 1.0f); // t = 0 => s = (b*t - c) / a = -c / a
       }
-      else 
+      else
       {
         // The general nondegenerate case starts here
         float b = math::CVector3::Dot(d1, d2);
         float denom = a * e - b * b; // Always nonnegative
         // If segments not parallel, compute closest point on L1 to L2 and
         // clamp to segment S1. Else pick arbitrary s (here 0)
-        if (denom != 0.0f) 
+        if (denom != 0.0f)
         {
           s = Clamp((b * f - c * e) / denom, 0.0f, 1.0f);
         }
@@ -238,8 +246,8 @@ namespace math
     return math::CVector3::Dot(c1 - c2, c1 - c2);
   }
 
-  inline float ClosestPtRaySegment(const physics::CRay& _oRay, const math::CVector3& p1, const math::CVector3& q1, 
-  float& s, float& t, math::CVector3& c1, math::CVector3& c2)
+  inline float ClosestPtRaySegment(const physics::CRay& _oRay, const math::CVector3& p1, const math::CVector3& q1,
+    float& s, float& t, math::CVector3& c1, math::CVector3& c2)
   {
     math::CVector3 d1 = _oRay.GetDir(); // Direction of ray
     math::CVector3 d2 = q1 - p1; // Direction of segment
@@ -282,8 +290,8 @@ namespace math
     return math::CVector3::SqrDist(c1, c2);
   }
 
-  inline bool ClosestPtRaySphere(const physics::CRay& _oRay, const math::CVector3& _v3SphereCenter, 
-  const float _fSphereRadius, math::CVector3& _v3ClosestPoint_, float& _fDist_)
+  inline bool ClosestPtRaySphere(const physics::CRay& _oRay, const math::CVector3& _v3SphereCenter,
+    const float _fSphereRadius, math::CVector3& _v3ClosestPoint_, float& _fDist_)
   {
     math::CVector3 v3Diff = math::CVector3(_oRay.GetOrigin() - _v3SphereCenter);
     float fDotA = math::CVector3::Dot(v3Diff, _oRay.GetDir());

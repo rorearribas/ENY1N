@@ -1,6 +1,6 @@
 #include "Scene.h"
 #include "Engine/Global/GlobalResources.h"
-#include "Engine/Base/Engine.h"
+#include "Engine/Engine.h"
 #include "Engine/Utils/Plane.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Render/Lights/Light.h"
@@ -143,24 +143,30 @@ namespace scene
 
     // Fill primitive data
     using namespace render::graphics;
-    CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-    CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, oPrimitiveData, _eRenderMode);
+    CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
+    (
+      _fRadius, 
+      _fHeight,
+      _iSubvH, 
+      _iSubvV, 
+      _eRenderMode
+    );
 
     // Compute normals
     CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
 
     // Create temporal item + set pos
-    CPrimitive* pCapsulePrimitive = m_vctDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
+    CPrimitive* pPrimitive = m_vctDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
 
 #ifdef _DEBUG
-    assert(pCapsulePrimitive); // Sanity check
+    assert(pPrimitive); // Sanity check
 #endif
 
     // Set values
-    pCapsulePrimitive->SetPosition(_v3Pos);
-    pCapsulePrimitive->SetRotation(_v3Rot);
-    pCapsulePrimitive->SetColor(_v3Color);
-    pCapsulePrimitive->UseGlobalLighting(false);
+    pPrimitive->SetPosition(_v3Pos);
+    pPrimitive->SetRotation(_v3Rot);
+    pPrimitive->SetColor(_v3Color);
+    pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   void CScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -173,17 +179,17 @@ namespace scene
 
     // Create cube
     using namespace render::graphics;
-    CPrimitive* pCubePrimitive = m_vctDebugItems.RegisterItem(CPrimitive::EPrimitiveType::E3D_CUBE, _eRenderMode);
+    CPrimitive* pPrimitive = m_vctDebugItems.RegisterItem(CPrimitive::EPrimitiveType::E3D_CUBE, _eRenderMode);
 #ifdef _DEBUG
-    assert(pCubePrimitive); // Sanity check
+    assert(pPrimitive); // Sanity check
 #endif
 
     // Set values
-    pCubePrimitive->SetPosition(_v3Pos);
-    pCubePrimitive->SetRotation(_v3Rot);
-    pCubePrimitive->SetScale(_v3Size);
-    pCubePrimitive->SetColor(_v3Color);
-    pCubePrimitive->UseGlobalLighting(false);
+    pPrimitive->SetPosition(_v3Pos);
+    pPrimitive->SetRotation(_v3Rot);
+    pPrimitive->SetScale(_v3Size);
+    pPrimitive->SetColor(_v3Color);
+    pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -228,12 +234,10 @@ namespace scene
     }
 
     // Create plane
-    using namespace render::graphics;
-    CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-    CPrimitiveUtils::CreatePlane(_oPlane, oPrimitiveData, _eRenderMode);
+    auto oData = render::graphics::CPrimitiveUtils::CreatePlane(_oPlane, _eRenderMode);
 
     // Create primitive
-    CPrimitive* pPlanePrimitive = m_vctDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
+    render::graphics::CPrimitive* pPlanePrimitive = m_vctDebugItems.RegisterItem(oData, _eRenderMode);
 #ifdef _DEBUG
     assert(pPlanePrimitive); // Sanity check
 #endif
@@ -253,19 +257,18 @@ namespace scene
       return;
     }
 
-    // Create line
-    render::graphics::CPrimitive::SCustomPrimitive oCustomData = render::graphics::CPrimitive::SCustomPrimitive();
-    render::graphics::CPrimitiveUtils::CreateLine(_v3Start, _v3Dest, oCustomData);
-
+    // Create data
+    using namespace render::graphics;
+    CPrimitive::SCustomPrimitive oData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
     // Create temporal item
-    render::graphics::CPrimitive* pLinePrimitive = m_vctDebugItems.RegisterItem(oCustomData, render::ERenderMode::WIREFRAME);
+    CPrimitive* pPrimitive = m_vctDebugItems.RegisterItem(oData, render::ERenderMode::WIREFRAME);
 #ifdef _DEBUG
-    assert(pLinePrimitive); // Sanity check
+    assert(pPrimitive); // Sanity check
 #endif
 
     // Set values
-    pLinePrimitive->SetColor(_v3Color);
-    pLinePrimitive->UseGlobalLighting(false);
+    pPrimitive->SetColor(_v3Color);
+    pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)

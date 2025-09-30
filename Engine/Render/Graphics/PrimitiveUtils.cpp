@@ -90,19 +90,6 @@ namespace render
       2, 0  // Line 3
     };
 
-    // Create 2D Circle
-    void CPrimitiveUtils::Create2DCircle
-    (
-      float /*_fStandardRadius*/,
-      int /*_iSubvH*/,
-      int /*_iSubvV*/, 
-      CPrimitive::SCustomPrimitive& /*_oPrimitiveData_*/, 
-      render::ERenderMode /*_eRenderMode*/
-    )
-    {
-      
-    }
-
     // 3D Cube Indices
     const std::vector<uint32_t> CPrimitiveUtils::s_oCubeIndices =
     {
@@ -165,9 +152,19 @@ namespace render
       3, 0  // LEFT EDGE 
     };
 
-#pragma region 3D Sphere
+    // ------------------------------------
+    CPrimitive::SCustomPrimitive CPrimitiveUtils::Create2DCircle
+    (
+      float /*_fStandardRadius*/,
+      int /*_iSubvH*/,
+      int /*_iSubvV*/,
+      render::ERenderMode /*_eRenderMode*/
+    )
+    {
+      return CPrimitive::SCustomPrimitive();
+    }
 
-    // 3D Sphere
+    // ------------------------------------
     void CPrimitiveUtils::CreateSphere
     (
       float _fRadius, int _iStacks, int _iSlices,
@@ -225,7 +222,7 @@ namespace render
       return vctIndices;
     }
 
-    // Sphere wireframe indices
+    // ------------------------------------
     std::vector<uint32_t> CPrimitiveUtils::GetWireframeSphereIndices(int _iStacks, int _iSlices)
     {
       std::vector<uint32_t> vctWireframeIndices = {};
@@ -252,24 +249,18 @@ namespace render
       return vctWireframeIndices;
     }
 
-#pragma endregion
-
-#pragma region 3D Capsule
-
-    // 3D Capsule 
-    void CPrimitiveUtils::CreateCapsule
+    // ------------------------------------
+    CPrimitive::SCustomPrimitive CPrimitiveUtils::CreateCapsule
     (
       float _fRadius,
       float _fHeight,
       int _iSubvH,
       int _iSubvV,
-      CPrimitive::SCustomPrimitive& _oPrimitiveData_,
       render::ERenderMode _eRenderMode
     )
     {
-      // Clear
-      _oPrimitiveData_.m_vctIndices.clear();
-      _oPrimitiveData_.m_vctVertexData.clear();
+      // Create primitve
+      CPrimitive::SCustomPrimitive oCustomPrimitive;
 
       // Calculate values
       float fHalfHeight = _fHeight * 0.5f;
@@ -297,13 +288,13 @@ namespace render
             // Add vertex
             render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
             oVertexData.Position = math::CVector3(fX, fY, fZ);
-            _oPrimitiveData_.m_vctVertexData.emplace_back(oVertexData);
+            oCustomPrimitive.m_vctVertexData.emplace_back(oVertexData);
           }
         }
       };
 
-      // Generate indices lambda + wireframe mode
-      auto oGenerateWireframeIndicesLamb = [&](int _iStacks, int _iSlices, int _iStartIdx)
+      // Generate indices lambda in wireframe mode
+      auto oGenerateWireIndicesFunc = [&](int _iStacks, int _iSlices, int _iStartIdx)
       {
         for (int uX = 0; uX < _iStacks; ++uX)
         {
@@ -313,17 +304,17 @@ namespace render
             int iNext = iCurrent + 1;
             int iAbove = iCurrent + (_iSlices + 1);
 
-            _oPrimitiveData_.m_vctIndices.emplace_back(iCurrent);
-            _oPrimitiveData_.m_vctIndices.emplace_back(iNext);
+            oCustomPrimitive.m_vctIndices.emplace_back(iCurrent);
+            oCustomPrimitive.m_vctIndices.emplace_back(iNext);
 
-            _oPrimitiveData_.m_vctIndices.emplace_back(iCurrent);
-            _oPrimitiveData_.m_vctIndices.emplace_back(iAbove);
+            oCustomPrimitive.m_vctIndices.emplace_back(iCurrent);
+            oCustomPrimitive.m_vctIndices.emplace_back(iAbove);
           }
         }
       };
 
-      // Generate indices lambda + lit mode
-      auto oGenerateIndicesLamb = [&](int _iStacks, int _iSlices, int _iStartIdx, bool _bInverseCCW = false)
+      // Generate indices lambda in lit mode
+      auto oGenerateIndicesFunc = [&](int _iStacks, int _iSlices, int _iStartIdx, bool _bInverseCCW = false)
       {
         for (int uX = 0; uX < _iStacks; ++uX)
         {
@@ -332,33 +323,33 @@ namespace render
             int iFirst = _iStartIdx + (uX * (_iSlices + 1)) + uJ;
             int iSecond = iFirst + _iSlices + 1;
 
-            _oPrimitiveData_.m_vctIndices.emplace_back(iFirst);
-            _oPrimitiveData_.m_vctIndices.emplace_back(_bInverseCCW ? iSecond : (iFirst + 1));
-            _oPrimitiveData_.m_vctIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : iSecond);
+            oCustomPrimitive.m_vctIndices.emplace_back(iFirst);
+            oCustomPrimitive.m_vctIndices.emplace_back(_bInverseCCW ? iSecond : (iFirst + 1));
+            oCustomPrimitive.m_vctIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : iSecond);
 
-            _oPrimitiveData_.m_vctIndices.emplace_back(iSecond);
-            _oPrimitiveData_.m_vctIndices.emplace_back(_bInverseCCW ? (iSecond + 1) : (iFirst + 1));
-            _oPrimitiveData_.m_vctIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : (iSecond + 1));
+            oCustomPrimitive.m_vctIndices.emplace_back(iSecond);
+            oCustomPrimitive.m_vctIndices.emplace_back(_bInverseCCW ? (iSecond + 1) : (iFirst + 1));
+            oCustomPrimitive.m_vctIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : (iSecond + 1));
           }
         }
       };
 
       // Top semi-sphere
-      int iCacheStartIdx = static_cast<int>(_oPrimitiveData_.m_vctVertexData.size());
+      int iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_vctVertexData.size());
       oComputeSemiSphereLamb();
-      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(_oPrimitiveData_.m_vctVertexData.size()); ++iIdx)
+      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_vctVertexData.size()); ++iIdx)
       {
-        _oPrimitiveData_.m_vctVertexData[iIdx].Position.Y += (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.m_vctVertexData[iIdx].Position.Y += (fDiff >= 0 ? fDiff : 0.0f);
       }
       // Compute top semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx) : 
-      oGenerateWireframeIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx);
+      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx) :
+        oGenerateWireIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx);
 
       // Body
       if (fDiff >= 0.0f)
       {
         const int s_iMaxBodySubdv = _eRenderMode == render::ERenderMode::SOLID ? _iSubvH : 1;
-        iCacheStartIdx = static_cast<int>(_oPrimitiveData_.m_vctVertexData.size());
+        iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_vctVertexData.size());
         for (int iX = 0; iX <= s_iMaxBodySubdv; ++iX)
         {
           float fY = math::Lerp(-fHalfHeight + _fRadius, fHalfHeight - _fRadius, static_cast<float>(iX) / s_iMaxBodySubdv);
@@ -370,35 +361,36 @@ namespace render
 
             render::graphics::SVertexData oVertexData = {};
             oVertexData.Position = math::CVector3(fX, fY, fZ);
-            _oPrimitiveData_.m_vctVertexData.emplace_back(oVertexData);
+            oCustomPrimitive.m_vctVertexData.emplace_back(oVertexData);
           }
         }
         // Compute body indices
-        _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx, true) :
-        oGenerateWireframeIndicesLamb(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx);
+        _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx, true) :
+          oGenerateWireIndicesFunc(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx);
       }
 
       // Bottom semi-sphere
-      iCacheStartIdx = static_cast<int>(_oPrimitiveData_.m_vctVertexData.size());
+      iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_vctVertexData.size());
       oComputeSemiSphereLamb(true);
-      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(_oPrimitiveData_.m_vctVertexData.size()); ++iIdx)
+      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_vctVertexData.size()); ++iIdx)
       {
-        _oPrimitiveData_.m_vctVertexData[iIdx].Position.Y -= (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.m_vctVertexData[iIdx].Position.Y -= (fDiff >= 0 ? fDiff : 0.0f);
       }
+
       // Compute bottom semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx, true) :
-      oGenerateWireframeIndicesLamb(_iSubvH, _iSubvV, iCacheStartIdx);
+      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx, true) :
+        oGenerateWireIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx);
+
+      return oCustomPrimitive;
     }
 
-#pragma endregion
-
-#pragma region 3D Plane
-
-    void CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, CPrimitive::SCustomPrimitive& _oVertexData_, render::ERenderMode _eRenderMode)
+    // ------------------------------------
+    CPrimitive::SCustomPrimitive CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode)
     {
-      // Fill data
-      _oVertexData_.m_vctVertexData = s_oPlanePrimitive;
-      _oVertexData_.m_vctIndices = _eRenderMode == SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
+      // Create primitive
+      CPrimitive::SCustomPrimitive oCustomPrimitive;
+      oCustomPrimitive.m_vctVertexData = s_oPlanePrimitive;
+      oCustomPrimitive.m_vctIndices = _eRenderMode == SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
 
       // Invert indices
       const math::CVector3& v3Normal = _oPlane.GetNormal();
@@ -407,55 +399,61 @@ namespace render
         size_t iSize = _eRenderMode == SOLID ? 3 : 2;
         for (size_t i = 0; i < s_oPlaneIndices.size(); i += iSize)
         {
-          std::swap(_oVertexData_.m_vctIndices[i], _oVertexData_.m_vctIndices[i + 2]);
+          std::swap(oCustomPrimitive.m_vctIndices[i], oCustomPrimitive.m_vctIndices[i + 2]);
         }
       }
 
-      math::CVector3 v3Cross = math::CVector3::Cross(v3Normal, s_oPlaneNormal);
-      math::CVector3 v3Dir = math::CVector3::Normalize(v3Cross);
-      if (v3Dir.Magnitude() < math::s_fEpsilon5)
+      // Calculate rotation
+      math::CMatrix4x4 mRot = math::CMatrix4x4::Identity;
+      float fDot = math::CVector3::Dot(v3Normal, s_oPlaneNormal);
+      if (std::abs(fDot) > (1.0f - math::s_fEpsilon3))
       {
-        return;
+        // Rotate 180 degrees
+        if (fDot < 0.0f)
+        {
+          mRot = math::CMatrix4x4::Rotation(math::CVector3(0.0f, -180.0f, 0.0f));
+        }
+      }
+      else
+      {
+        math::CVector3 v3Dir = math::CVector3::Cross(v3Normal, s_oPlaneNormal);
+        float fAngle = math::CVector3::AngleBetween(s_oPlaneNormal, v3Normal);
+        mRot = math::CMatrix4x4::RotationAxis(v3Dir, fAngle);
       }
 
       // Rotate vertices
-      float fAngle = acosf(s_oPlaneNormal.Dot(v3Normal));
-      math::CMatrix4x4 mRot = math::CMatrix4x4::RotationAxis(v3Dir, fAngle);
-      for (auto& oVertexData : _oVertexData_.m_vctVertexData)
+      for (auto& oVertexData : oCustomPrimitive.m_vctVertexData)
       {
         oVertexData.Position = mRot * oVertexData.Position;
         oVertexData.Normal = v3Normal;
       }
+
+      return oCustomPrimitive;
     }
 
-#pragma endregion
-
-#pragma region 3D Line
-
-    // 3D Line
-    void CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest, CPrimitive::SCustomPrimitive& _oPrimitiveData_)
+    // ------------------------------------
+    CPrimitive::SCustomPrimitive CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest)
     {
-      // Clean
-      _oPrimitiveData_.m_vctVertexData.clear();
-      _oPrimitiveData_.m_vctIndices.clear();
+      // Create primitive
+      CPrimitive::SCustomPrimitive oPrimitive = CPrimitive::SCustomPrimitive();
 
       // Fill data 
       render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
       oVertexData.Position = _v3Origin;
 
       uint32_t uIndex = 0;
-      _oPrimitiveData_.m_vctVertexData.emplace_back(oVertexData);
-      _oPrimitiveData_.m_vctIndices.emplace_back(uIndex++);
+      oPrimitive.m_vctVertexData.emplace_back(oVertexData);
+      oPrimitive.m_vctIndices.emplace_back(uIndex++);
 
       // Fill data 
       oVertexData.Position = _v3Dest;
-      _oPrimitiveData_.m_vctVertexData.emplace_back(oVertexData);
-      _oPrimitiveData_.m_vctIndices.emplace_back(uIndex);
+      oPrimitive.m_vctVertexData.emplace_back(oVertexData);
+      oPrimitive.m_vctIndices.emplace_back(uIndex);
+
+      return oPrimitive;
     }
 
-#pragma endregion
-
-    // Compute normals
+    // ------------------------------------
     void CPrimitiveUtils::ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _vctIndices)
     {
       // Reset normals
@@ -497,6 +495,7 @@ namespace render
       }
     }
 
+    // ------------------------------------
     void CPrimitiveUtils::ComputeBasicNormals(std::vector<SVertexData>& _oVertexData)
     {
       // Set normals

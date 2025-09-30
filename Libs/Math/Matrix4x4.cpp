@@ -113,29 +113,29 @@ namespace math
     return mLookAt;
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::Translate(const CVector3& _vTranslate)
+  math::CMatrix4x4 CMatrix4x4::Translate(const CVector3& _v3Translate)
   {
     CMatrix4x4 mTranslate = CMatrix4x4::Identity;
-    mTranslate.m16[12] = _vTranslate.X;
-    mTranslate.m16[13] = _vTranslate.Y;
-    mTranslate.m16[14] = _vTranslate.Z;
+    mTranslate.m16[12] = _v3Translate.X;
+    mTranslate.m16[13] = _v3Translate.Y;
+    mTranslate.m16[14] = _v3Translate.Z;
     return mTranslate;
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::Scale(const CVector3& _vScale)
+  math::CMatrix4x4 CMatrix4x4::Scale(const CVector3& _v3Scale)
   {
     CMatrix4x4 mScale = CMatrix4x4::Identity;
-    mScale.m16[0] = _vScale.X;
-    mScale.m16[5] = _vScale.Y;
-    mScale.m16[10] = _vScale.Z;
+    mScale.m16[0] = _v3Scale.X;
+    mScale.m16[5] = _v3Scale.Y;
+    mScale.m16[10] = _v3Scale.Z;
     return mScale;
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _vRot)
+  math::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _v3Rot)
   {
-    float fPitch = math::Deg2Radians(_vRot.X);
-    float fYaw = math::Deg2Radians(_vRot.Y);
-    float fRoll = math::Deg2Radians(_vRot.Z);
+    float fPitch = math::Deg2Radians(_v3Rot.X);
+    float fYaw = math::Deg2Radians(_v3Rot.Y);
+    float fRoll = math::Deg2Radians(_v3Rot.Z);
 
     // Roll (Z)
     CMatrix4x4 mRoll = CMatrix4x4::Identity;
@@ -184,6 +184,49 @@ namespace math
     mRot.m16[15] = 1.0f;
 
     return mRot;
+  }
+  // ------------------------------------
+  // https://iquilezles.org/articles/noacos/
+  math::CMatrix4x4 CMatrix4x4::AlignMatrix(const CVector3& _v3Current, const CVector3& _v3Target)
+  {
+    const float fDot = math::CVector3::Dot(_v3Current, _v3Target);
+    if (std::abs(fDot) > (1.0f - math::s_fEpsilon3))
+    {
+      if (fDot > 0.0f)
+      {
+        return Identity;
+      }
+
+      // Calculate 180 degrees
+      math::CVector3 v3Orthogonal = math::CVector3::Cross(_v3Current, math::CVector3::Right);
+      if (v3Orthogonal.Magnitude() < math::s_fEpsilon3)
+      {
+        v3Orthogonal = math::CVector3::Cross(_v3Current, math::CVector3::Up);
+      }
+      v3Orthogonal.Normalize();
+      return CMatrix4x4::RotationAxis(v3Orthogonal, math::s_fPI);
+    }
+
+    const math::CVector3 v3Cross = math::CVector3::Cross(_v3Current, _v3Target);
+    const float fK = 1.0f / (1.0f + fDot);
+
+    return CMatrix4x4
+    (
+      v3Cross.X * v3Cross.X * fK + fDot,
+      v3Cross.Y * v3Cross.X * fK - v3Cross.Z,
+      v3Cross.Z * v3Cross.X * fK + v3Cross.Y,
+      0.0f,
+
+      v3Cross.X * v3Cross.Y * fK + v3Cross.Z,
+      v3Cross.Y * v3Cross.Y * fK + fDot, 
+      v3Cross.Z * v3Cross.Y * fK - v3Cross.X,
+      0.0f,
+
+      v3Cross.X * v3Cross.Z * fK - v3Cross.Y,
+      v3Cross.Y * v3Cross.Z * fK + v3Cross.X,
+      v3Cross.Z * v3Cross.Z * fK + fDot,
+      0.0f, 0.0f, 0.0f, 0.0f, 1.0f
+    );
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)

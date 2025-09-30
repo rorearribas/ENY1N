@@ -8,7 +8,7 @@ namespace math
   public:
     CPlane() : m_v3Point(math::CVector3::Zero), m_v3Normal(math::CVector3::Zero) {}
     CPlane(const math::CVector3& _v3Pos, const math::CVector3& _v3Normal) : 
-    m_v3Point(_v3Pos), m_v3Normal(math::CVector3::Normalize(_v3Normal)) {}
+    m_v3Point(_v3Pos), m_v3Normal(_v3Normal) {}
     ~CPlane() {}
 
     inline void SetPos(const math::CVector3& _v3Pos) { m_v3Point = _v3Pos; }

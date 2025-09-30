@@ -1,5 +1,5 @@
 #include "LightComponent.h"
-#include "Engine/Base/Engine.h"
+#include "Engine/Engine.h"
 #include "Game/Entity/Entity.h"
 #include "Engine/Render/Lights/PointLight.h"
 #include "Engine/Render/Lights/SpotLight.h"

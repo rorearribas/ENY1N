@@ -62,13 +62,14 @@ namespace math
 
     static CMatrix4x4 LookAt(const CVector3& _v3Pos, const CVector3& _vTarget, const CVector3& _vUp);
     static CMatrix4x4 RotationAxis(const CVector3& _v3Axis, float _fAngle);
+    static CMatrix4x4 AlignMatrix(const CVector3& _v3Current, const CVector3& _v3Target);
     static CMatrix4x4 Transpose(const CMatrix4x4& matrix);
 
     static CMatrix4x4 CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar);
     static CMatrix4x4 CreateOrtographicMatrix(float _fWidth, float _fHeight, float _fNear, float _fFar);
 
-    static CMatrix4x4 Translate(const CVector3& _vTranslate);
-    static CMatrix4x4 Scale(const CVector3& _vScale);
-    static CMatrix4x4 Rotation(const CVector3& _vRot);
+    static CMatrix4x4 Translate(const CVector3& _v3Translate);
+    static CMatrix4x4 Scale(const CVector3& _v3Scale);
+    static CMatrix4x4 Rotation(const CVector3& _v3Rot);
   };
 }

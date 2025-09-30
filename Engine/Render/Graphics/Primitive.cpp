@@ -78,8 +78,7 @@ namespace render
         }
         case EPrimitiveType::E2D_CIRCLE:
         {
-          CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-          CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, oPrimitiveData, _eRenderMode);
+          SCustomPrimitive oPrimitiveData = CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, _eRenderMode);
           return CreateBufferFromPrimitiveData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
         }
         break;
@@ -123,14 +122,12 @@ namespace render
         }
         case EPrimitiveType::E3D_CAPSULE:
         {
-          CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
-          CPrimitiveUtils::CreateCapsule
+          SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
           (
             s_fStandardRadius, 
             s_fCapsuleHeight, 
             s_iSubvH, 
             s_iSubvV,
-            oPrimitiveData,
             _eRenderMode
           );
           CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <random>
 
-#include "Engine/Base/Engine.h"
+#include "Engine/Engine.h"
 #include "Libs/Math/Vector2.h"
 #include "Libs/Math/Vector3.h"
 #include "Libs/Macros/GlobalMacros.h"
@@ -134,6 +134,9 @@ int main()
       float fOffset = math::Clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
       m_fFixedDeltaAccumulator += fOffset;
 
+      math::CPlane oPlane(math::CVector3(0.0f, 5.0f, 0.0f), math::CVector3(0.0f, 0.0f, 0.4f));
+      pEngine->DrawPlane(oPlane, math::CVector3(10, 10, 10), math::CVector3::Right, render::ERenderMode::SOLID);
+
       // Update
       while (m_fFixedDeltaAccumulator >= pTimeManager->GetFixedDelta())
       {
@@ -153,10 +156,14 @@ int main()
           math::CVector3 v3End = v3Pos + (math::CVector3::Forward * 100.0f);
           pEngine->DrawLine(v3Pos, v3End, math::CVector3::Right);
 
+          const float fMaxDistance(100);
+          physics::CRay oRay(v3Pos, math::CVector3::Forward);
+          oRay.DrawRay(fMaxDistance, math::CVector3::Right);
+
           // Throw ray
           collision::CCollisionManager* pCollManager = collision::CCollisionManager::GetInstance();
           std::vector<collision::SHitEvent> vctHits;
-          if (pCollManager->RaycastAll(physics::CRay(v3Pos, math::CVector3::Forward), 100.0f, vctHits))
+          if (pCollManager->RaycastAll(oRay, fMaxDistance, vctHits))
           {
             for (auto& HitEvent : vctHits)
             {

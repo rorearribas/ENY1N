@@ -71,6 +71,9 @@ namespace math
     static float GetSqrDist(const CVector3& _v3);
     float GetSqrDist() const;
 
+    float AngleBetween(const CVector3& _v3) const;
+    static float AngleBetween(const CVector3& _vA, const CVector3& _vB);
+
     bool Equal(const CVector3& _v3, float _fEpsilon = 0.0001f) const;
     static bool IsZero(const CVector3& _v3);
     bool IsZero() const;

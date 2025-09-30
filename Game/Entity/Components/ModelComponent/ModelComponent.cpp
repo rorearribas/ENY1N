@@ -1,5 +1,5 @@
 #include "ModelComponent.h"
-#include "Engine/Base/Engine.h"
+#include "Engine/Engine.h"
 #include "Game/Entity/Entity.h"
 #include <cassert>
 

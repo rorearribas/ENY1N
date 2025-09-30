@@ -1,17 +1,8 @@
 #include "Transform.h"
+#include "Math.h"
 
 namespace math
 {
-  namespace internal_transform
-  {
-    const float fMaxDegrees = 360.0f;
-    static float AdjustAngle(float fAngle)
-    {
-      fAngle = fmod(fAngle, fMaxDegrees);
-      fAngle = (fAngle > fMaxDegrees / 2.0f) ? (fAngle - fMaxDegrees) : (fAngle < -(fMaxDegrees / 2.0f) ? (fAngle + fMaxDegrees) : fAngle);
-      return fAngle;
-    }
-  }
   // ------------------------------------
   const math::CMatrix4x4 CTransform::ComputeModelMatrix() const
   {
@@ -30,9 +21,9 @@ namespace math
   // ------------------------------------
   void CTransform::SetRotation(const math::CVector3& _v3Rotation)
   {
-    m_v3Rot.X = internal_transform::AdjustAngle(_v3Rotation.X);
-    m_v3Rot.Y = internal_transform::AdjustAngle(_v3Rotation.Y);
-    m_v3Rot.Z = internal_transform::AdjustAngle(_v3Rotation.Z);
+    m_v3Rot.X = math::CalculateEulerAngle(_v3Rotation.X);
+    m_v3Rot.Y = math::CalculateEulerAngle(_v3Rotation.Y);
+    m_v3Rot.Z = math::CalculateEulerAngle(_v3Rotation.Z);
   }
   // ------------------------------------
   const math::CVector3& CTransform::GetRotation() const

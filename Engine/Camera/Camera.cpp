@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Libs/ImGui/imgui.h"
-#include "Engine/Base/Engine.h"
+#include "Engine/Engine.h"
 #include "Engine/Managers/InputManager.h"
 #include "Libs/Math/Math.h"
 #include "Libs/Macros/GlobalMacros.h"
@@ -237,7 +237,7 @@ namespace render
     {
       SetProjectionMode(render::CCamera::EProjectionMode::PERSPECTIVE);
     }
-    if (ImGui::Button("Ortographic Mode"))
+    if (ImGui::Button("Orthographic Mode"))
     {
       SetProjectionMode(render::CCamera::EProjectionMode::ORTOGRAPHIC);
     }
