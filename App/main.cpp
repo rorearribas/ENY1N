@@ -134,7 +134,7 @@ int main()
       float fOffset = math::Clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
       m_fFixedDeltaAccumulator += fOffset;
 
-      math::CPlane oPlane(math::CVector3(0.0f, 5.0f, 0.0f), math::CVector3(0.0f, 0.0f, 0.4f));
+      math::CPlane oPlane(math::CVector3(0.0f, 5.0f, 0.0f), math::CVector3(0.0f, 1.0f, 0.0f));
       pEngine->DrawPlane(oPlane, math::CVector3(10, 10, 10), math::CVector3::Right, render::ERenderMode::SOLID);
 
       // Update
