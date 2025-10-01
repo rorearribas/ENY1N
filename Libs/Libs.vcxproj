@@ -108,17 +108,22 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <WarningLevel>Level4</WarningLevel>
+      <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <AdditionalIncludeDirectories>$(ProjectDir)Third-Party\fbxloader\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>$(ProjectDir)Third-Party\fbxloader\debug\lib\assimp-vc142-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -126,10 +131,11 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <TreatWarningAsError>false</TreatWarningAsError>
+      <AdditionalIncludeDirectories>$(ProjectDir)Third-Party\fbxloader\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -137,9 +143,379 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <Lib>
+      <AdditionalDependencies>$(ProjectDir)Third-Party\fbxloader\lib\assimp-vc142-mt.lib;$(ProjectDir)Third-Party\fbxloader\lib\zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Memory\Allocator.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\aabb.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ai_assert.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\anim.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\AssertHandler.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Base64.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\BaseImporter.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Bitmap.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\BlobIOSystem.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ByteSwapper.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\camera.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\cexport.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\cfileio.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\cimport.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ColladaMetaData.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\color4.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\commonMetaData.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Compiler\pushpack1.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\config.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\CreateAnimMesh.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\DefaultIOStream.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\DefaultIOSystem.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\DefaultLogger.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\defs.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Exceptional.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Exporter.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\fast_atof.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\GenericProperty.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\GltfMaterial.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Hash.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Importer.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\importerdesc.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\IOStream.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\IOStreamBuffer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\IOSystem.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\light.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\LineSplitter.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\LogAux.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Logger.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\LogStream.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\material.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\MathFunctions.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\matrix3x3.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\matrix4x4.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\MemoryIOWrapper.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\mesh.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\metadata.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\NullLogger.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ObjMaterial.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ParsingUtils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\pbrmaterial.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\postprocess.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Profiler.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ProgressHandler.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\qnan.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\quaternion.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\RemoveComments.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\scene.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SceneCombiner.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SGSpatialSort.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SkeletonMeshBuilder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SmallVector.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SmoothingGroups.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SpatialSort.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StandardShapes.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StreamReader.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StreamWriter.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StringComparison.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StringUtils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Subdivision.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\texture.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\TinyFormatter.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\types.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\vector2.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\vector3.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\version.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Vertex.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\XmlParser.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\XMLTools.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ZipArchiveIOSystem.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\animation\keyframe_animation.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\animation\keyframe_animation_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\animation\keyframe_animation_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_octahedron_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_quantization_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_transform_data.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_transform_type.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\geometry_attribute.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\geometry_indices.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\point_attribute.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\attributes_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\attributes_decoder_interface.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\attributes_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\kd_tree_attributes_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\kd_tree_attributes_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\kd_tree_attributes_shared.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\linear_sequencer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\mesh_attribute_indices_encoding_data.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\normal_compression_utils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\points_sequencer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\point_d_vector.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_shared.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_data.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_area.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_base.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_shared.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_predictor.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_factory.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_interface.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoding_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_factory.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_interface.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoding_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_factory.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_interface.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_decoding_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_encoding_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_transform_base.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_decoding_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_encoding_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_transform_base.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_decoding_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_encoding_transform.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_transform_base.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_attribute_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_attribute_decoders_controller.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_attribute_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_attribute_encoders_controller.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_integer_attribute_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_integer_attribute_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_normal_attribute_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_normal_attribute_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_quantization_attribute_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_quantization_attribute_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\adaptive_rans_bit_coding_shared.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\adaptive_rans_bit_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\adaptive_rans_bit_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\direct_bit_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\direct_bit_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\folded_integer_bit_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\folded_integer_bit_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\rans_bit_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\rans_bit_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\symbol_bit_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\symbol_bit_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\compression_shared.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\decoder_options.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\draco_options.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\encoder_options.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\encoding_features.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\decode.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\draco_compression_options.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\encode.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\encode_base.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\ans.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\rans_symbol_coding.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\rans_symbol_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\rans_symbol_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\shannon_entropy.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\symbol_decoding.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\symbol_encoding.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\expert_encode.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_decoder_impl.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_decoder_impl_interface.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_encoder_impl.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_encoder_impl_interface.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_shared.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_valence_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_valence_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_sequential_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_sequential_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\depth_first_traverser.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\max_prediction_degree_traverser.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\mesh_attribute_indices_encoding_observer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\mesh_traversal_sequencer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\traverser_base.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\float_points_tree_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\float_points_tree_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\point_cloud_compression_method.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\point_cloud_types.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\quantize_points_3.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\queuing_policy.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_kd_tree_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_kd_tree_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_sequential_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_sequential_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\bit_utils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\bounding_box.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\constants.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\cycle_timer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\data_buffer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\decoder_buffer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\divide.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\draco_index_type.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\draco_index_type_vector.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\draco_types.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\draco_version.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\encoder_buffer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\hash_utils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\macros.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\math_utils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\options.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\quantization_utils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\status.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\status_or.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\varint_decoding.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\varint_encoding.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\vector_d.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\draco_features.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_reader_factory.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_reader_interface.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_utils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_writer_factory.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_writer_interface.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_writer_utils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\mesh_io.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\obj_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\obj_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\parser_utils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_property_reader.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_property_writer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_reader.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\point_cloud_io.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\stdio_file_reader.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\stdio_file_writer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\stl_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\stl_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\corner_table.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\corner_table_iterators.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_are_equivalent.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_attribute_corner_table.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_cleanup.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_features.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_indices.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_misc_functions.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_stripifier.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\triangle_soup_mesh_builder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\valence_cache.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\geometry_metadata.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\metadata.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\metadata_decoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\metadata_encoder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\property_attribute.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\property_table.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\structural_metadata.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\structural_metadata_schema.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\point_cloud\point_cloud.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\draco\point_cloud\point_cloud_builder.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\kubazip\zip\zip.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\crypt.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\ioapi.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\iowin32.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\mztools.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\unzip.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\zip.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\common\dll_symbol.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\common\shapes.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\common\utils.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\poly2tri.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\sweep\advancing_front.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\sweep\cdt.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\sweep\sweep.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\sweep\sweep_context.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\polyclipping\clipper.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\pugiconfig.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\pugixml.hpp" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\allocators.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\cursorstreamwrapper.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\document.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\encodedstream.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\encodings.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\error\en.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\error\error.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\filereadstream.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\filewritestream.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\fwd.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\clzll.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\itoa.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\meta.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\pow10.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\regex.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\stack.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\strtod.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\swap.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\memorybuffer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\memorystream.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\pointer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\prettywriter.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\rapidjson.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\reader.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\schema.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\stream.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\stringbuffer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\uri.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\writer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_connected_components.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_c_lexer.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_divide.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_ds.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_dxt.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_easy_font.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_herringbone_wang_tile.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_hexwave.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_image.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_image_resize2.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_image_write.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_include.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_leakcheck.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_perlin.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_rect_pack.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_sprintf.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_textedit.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_tilemap_editor.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_truetype.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\stb_voxel_render.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\checked.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\core.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\cpp11.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\cpp17.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\cpp20.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\unchecked.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\zconf.h" />
+    <ClInclude Include="Third-Party\fbxloader\include\zlib.h" />
     <ClInclude Include="Utils\CircularPool.h" />
     <ClInclude Include="Utils\FixedList.h" />
     <ClInclude Include="ImGui\GraphEditor.h" />
@@ -196,6 +572,7 @@
     <ClCompile Include="ImGui\ImGradient.cpp" />
     <ClCompile Include="ImGui\ImGuizmo.cpp" />
     <ClCompile Include="ImGui\ImSequencer.cpp" />
+    <ClCompile Include="Third-Party\fbxloader\include\stb_vorbis.c" />
     <ClCompile Include="Third-Party\objloader\tiny_obj_loader.cc" />
     <ClCompile Include="Third-Party\stb\stb_vorbis.c" />
     <ClCompile Include="Time\TimeManager.cpp" />
@@ -210,6 +587,16 @@
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Matrix4x4.cpp" />
     <ClCompile Include="Math\Transform.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Third-Party\fbxloader\include\assimp\color4.inl" />
+    <None Include="Third-Party\fbxloader\include\assimp\material.inl" />
+    <None Include="Third-Party\fbxloader\include\assimp\matrix3x3.inl" />
+    <None Include="Third-Party\fbxloader\include\assimp\matrix4x4.inl" />
+    <None Include="Third-Party\fbxloader\include\assimp\quaternion.inl" />
+    <None Include="Third-Party\fbxloader\include\assimp\SmoothingGroups.inl" />
+    <None Include="Third-Party\fbxloader\include\assimp\vector2.inl" />
+    <None Include="Third-Party\fbxloader\include\assimp\vector3.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

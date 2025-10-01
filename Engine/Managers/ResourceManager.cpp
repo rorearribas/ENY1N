@@ -18,7 +18,7 @@ namespace internal_resource_manager
   }
 }
 // ------------------------------------
-char* CResourceManager::LoadResource(const char* _sPath, const char* _sMode)
+char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
 {
   FILE* pFile = nullptr;
   fopen_s(&pFile, _sPath, _sMode);
@@ -37,7 +37,7 @@ char* CResourceManager::LoadResource(const char* _sPath, const char* _sMode)
     return nullptr;
   }
 
-  // Leer el archivo completo
+  // Read buffer
   size_t tSize = fread_s(cBuffer, tMaxSize, 1, lFileSize, pFile);
   cBuffer[tSize] = '\0';
   fclose(pFile);
@@ -50,9 +50,39 @@ unsigned char* CResourceManager::LoadTexture(const char* _sPath, int& _iWidth_, 
   return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, 4);
 }
 // ------------------------------------
-render::graphics::CModel::SModelData CResourceManager::LoadModel(const char* _sPath, const char* _sBaseModelMtlDir)
+render::graphics::CModel::SModelData CResourceManager::LoadFBX(const char* /*_sPath*/)
 {
+  // Create importer instance
+  //Assimp::Importer importer;
 
+  //// Load FBX
+  //const aiScene* scene = importer.ReadFile(_sPath, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals);
+
+  //// Check
+  //if (!scene) {
+  //  std::cerr << "Error al cargar el archivo: " << importer.GetErrorString() << std::endl;
+  //  return;
+  //}
+
+
+  //// Mesh
+  //std::cout << "Escena cargada con " << scene->mNumMeshes << " mallas." << std::endl;
+  //for (unsigned int i = 0; i < scene->mNumMeshes; ++i) {
+  //  aiMesh* mesh = scene->mMeshes[i];
+  //  std::cout << "Malla " << i << " tiene " << mesh->mNumVertices << " vértices y " << mesh->mNumFaces << " caras." << std::endl;
+
+  //// Vertices
+  //  for (unsigned int j = 0; j < mesh->mNumVertices; ++j) {
+  //    aiVector3D vertex = mesh->mVertices[j];
+  //    std::cout << "Vértice: (" << vertex.x << ", " << vertex.y << ", " << vertex.z << ")" << std::endl;
+  //  }
+  //}
+
+  return render::graphics::CModel::SModelData();
+}
+// ------------------------------------
+render::graphics::CModel::SModelData CResourceManager::LoadOBJ(const char* _sPath, const char* _sBaseModelMtlDir)
+{
   // Tiny obj declarations
   tinyobj::attrib_t attributes;
   std::vector<tinyobj::shape_t> shapes;

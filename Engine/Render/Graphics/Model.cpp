@@ -42,7 +42,7 @@ namespace render
     {
       // Try to load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
-      m_oModelData = std::move(pResourceManager->LoadModel(_sModelPath, _sBaseMltDir));
+      m_oModelData = std::move(pResourceManager->LoadOBJ(_sModelPath, _sBaseMltDir));
       if (m_oModelData.m_vctMeshes.empty()) return E_FAIL;
 
       // Init constant buffer

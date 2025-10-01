@@ -162,6 +162,1107 @@
     <ClInclude Include="Memory\Allocator.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\zlib.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Compiler\poppack1.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Compiler\pstdint.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Compiler\pushpack1.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\aabb.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ai_assert.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\anim.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\AssertHandler.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Base64.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\BaseImporter.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Bitmap.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\BlobIOSystem.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ByteSwapper.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\camera.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\cexport.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\cfileio.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\cimport.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ColladaMetaData.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\color4.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\commonMetaData.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\config.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\CreateAnimMesh.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\DefaultIOStream.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\DefaultIOSystem.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\DefaultLogger.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\defs.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Exceptional.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Exporter.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\fast_atof.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\GenericProperty.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\GltfMaterial.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Hash.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\importerdesc.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\IOStream.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\IOStreamBuffer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\IOSystem.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\light.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\LineSplitter.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\LogAux.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Logger.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\LogStream.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\material.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\MathFunctions.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\matrix3x3.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\matrix4x4.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\MemoryIOWrapper.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\mesh.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\metadata.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\NullLogger.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ObjMaterial.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ParsingUtils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\pbrmaterial.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\postprocess.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Profiler.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ProgressHandler.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\qnan.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\quaternion.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\RemoveComments.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\scene.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SceneCombiner.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SGSpatialSort.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SkeletonMeshBuilder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SmallVector.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SmoothingGroups.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\SpatialSort.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StandardShapes.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StreamReader.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StreamWriter.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StringComparison.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\StringUtils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Subdivision.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\texture.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\TinyFormatter.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\types.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\vector2.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\vector3.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\version.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Vertex.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\XmlParser.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\XMLTools.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\ZipArchiveIOSystem.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\animation\keyframe_animation.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\animation\keyframe_animation_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\animation\keyframe_animation_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_octahedron_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_quantization_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_transform_data.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\attribute_transform_type.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\geometry_attribute.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\geometry_indices.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\attributes\point_attribute.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_constrained_multi_parallelogram_shared.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_data.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_area.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_geometric_normal_predictor_base.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_multi_parallelogram_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_parallelogram_shared.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\mesh_prediction_scheme_tex_coords_portable_predictor.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_factory.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoder_interface.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_decoding_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_delta_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_factory.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoder_interface.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_encoding_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_factory.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_interface.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_decoding_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_encoding_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_canonicalized_transform_base.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_decoding_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_encoding_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_normal_octahedron_transform_base.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_decoding_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_encoding_transform.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\prediction_schemes\prediction_scheme_wrap_transform_base.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\attributes_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\attributes_decoder_interface.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\attributes_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\kd_tree_attributes_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\kd_tree_attributes_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\kd_tree_attributes_shared.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\linear_sequencer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\mesh_attribute_indices_encoding_data.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\normal_compression_utils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\point_d_vector.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\points_sequencer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_attribute_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_attribute_decoders_controller.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_attribute_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_attribute_encoders_controller.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_integer_attribute_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_integer_attribute_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_normal_attribute_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_normal_attribute_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_quantization_attribute_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\attributes\sequential_quantization_attribute_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\adaptive_rans_bit_coding_shared.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\adaptive_rans_bit_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\adaptive_rans_bit_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\direct_bit_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\direct_bit_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\folded_integer_bit_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\folded_integer_bit_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\rans_bit_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\rans_bit_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\symbol_bit_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\bit_coders\symbol_bit_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\compression_shared.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\decoder_options.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\draco_options.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\encoder_options.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\config\encoding_features.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\ans.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\rans_symbol_coding.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\rans_symbol_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\rans_symbol_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\shannon_entropy.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\symbol_decoding.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\entropy\symbol_encoding.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\depth_first_traverser.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\max_prediction_degree_traverser.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\mesh_attribute_indices_encoding_observer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\mesh_traversal_sequencer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\traverser\traverser_base.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_decoder_impl.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_decoder_impl_interface.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_encoder_impl.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_encoder_impl_interface.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_shared.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_predictive_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_valence_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_edgebreaker_traversal_valence_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_sequential_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\mesh\mesh_sequential_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\dynamic_integer_points_kd_tree_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\float_points_tree_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\float_points_tree_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\point_cloud_compression_method.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\point_cloud_types.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\quantize_points_3.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\algorithms\queuing_policy.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_kd_tree_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_kd_tree_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_sequential_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\point_cloud\point_cloud_sequential_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\decode.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\draco_compression_options.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\encode.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\encode_base.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\compression\expert_encode.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\bit_utils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\bounding_box.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\constants.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\cycle_timer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\data_buffer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\decoder_buffer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\divide.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\draco_index_type.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\draco_index_type_vector.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\draco_types.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\draco_version.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\encoder_buffer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\hash_utils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\macros.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\math_utils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\options.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\quantization_utils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\status.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\status_or.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\varint_decoding.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\varint_encoding.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\core\vector_d.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_reader_factory.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_reader_interface.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_utils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_writer_factory.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_writer_interface.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\file_writer_utils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\mesh_io.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\obj_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\obj_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\parser_utils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_property_reader.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_property_writer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\ply_reader.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\point_cloud_io.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\stdio_file_reader.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\stdio_file_writer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\stl_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\io\stl_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\corner_table.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\corner_table_iterators.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_are_equivalent.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_attribute_corner_table.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_cleanup.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_features.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_indices.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_misc_functions.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\mesh_stripifier.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\triangle_soup_mesh_builder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\mesh\valence_cache.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\geometry_metadata.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\metadata.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\metadata_decoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\metadata_encoder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\property_attribute.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\property_table.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\structural_metadata.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\metadata\structural_metadata_schema.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\point_cloud\point_cloud.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\point_cloud\point_cloud_builder.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\draco\draco_features.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\kubazip\zip\zip.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\crypt.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\ioapi.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\iowin32.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\mztools.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\unzip.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\minizip\zip.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\common\dll_symbol.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\common\shapes.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\common\utils.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\sweep\advancing_front.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\sweep\cdt.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\sweep\sweep.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\sweep\sweep_context.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\poly2tri\poly2tri.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\polyclipping\clipper.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\error\en.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\error\error.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\biginteger.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\clzll.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\diyfp.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\dtoa.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\ieee754.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\itoa.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\meta.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\pow10.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\regex.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\stack.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\strfunc.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\strtod.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\internal\swap.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\msinttypes\inttypes.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\msinttypes\stdint.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\allocators.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\cursorstreamwrapper.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\document.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\encodedstream.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\encodings.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\filereadstream.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\filewritestream.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\fwd.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\istreamwrapper.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\memorybuffer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\memorystream.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\ostreamwrapper.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\pointer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\prettywriter.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\rapidjson.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\reader.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\schema.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\stream.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\stringbuffer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\uri.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\rapidjson\writer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\checked.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\core.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\cpp11.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\cpp17.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\cpp20.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8\unchecked.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\utf8cpp\utf8.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\pugiconfig.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\pugixml.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_c_lexer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_connected_components.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_divide.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_ds.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_dxt.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_easy_font.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_herringbone_wang_tile.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_hexwave.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_image.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_image_resize2.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_image_write.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_include.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_leakcheck.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_perlin.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_rect_pack.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_sprintf.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_textedit.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_tilemap_editor.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_truetype.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\stb_voxel_render.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\zconf.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Third-Party\fbxloader\include\assimp\Importer.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Math\Vector3.cpp">
@@ -224,5 +1325,34 @@
     <ClCompile Include="Memory\Allocator.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Third-Party\fbxloader\include\stb_vorbis.c">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Third-Party\fbxloader\include\assimp\color4.inl">
+      <Filter>Archivos de encabezado</Filter>
+    </None>
+    <None Include="Third-Party\fbxloader\include\assimp\material.inl">
+      <Filter>Archivos de encabezado</Filter>
+    </None>
+    <None Include="Third-Party\fbxloader\include\assimp\matrix3x3.inl">
+      <Filter>Archivos de encabezado</Filter>
+    </None>
+    <None Include="Third-Party\fbxloader\include\assimp\matrix4x4.inl">
+      <Filter>Archivos de encabezado</Filter>
+    </None>
+    <None Include="Third-Party\fbxloader\include\assimp\quaternion.inl">
+      <Filter>Archivos de encabezado</Filter>
+    </None>
+    <None Include="Third-Party\fbxloader\include\assimp\SmoothingGroups.inl">
+      <Filter>Archivos de encabezado</Filter>
+    </None>
+    <None Include="Third-Party\fbxloader\include\assimp\vector2.inl">
+      <Filter>Archivos de encabezado</Filter>
+    </None>
+    <None Include="Third-Party\fbxloader\include\assimp\vector3.inl">
+      <Filter>Archivos de encabezado</Filter>
+    </None>
   </ItemGroup>
 </Project>
