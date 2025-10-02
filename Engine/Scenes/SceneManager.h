@@ -31,15 +31,15 @@ namespace scene
     void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
 
     // Element creation
-    render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType&, render::ERenderMode = render::ERenderMode::SOLID, uint32_t _uSceneIndex = 0);
-    render::graphics::CModel* const CreateModel(const char*, const char*, uint32_t _uSceneIndex = 0);
+    render::gfx::CPrimitive* const CreatePrimitive(const render::gfx::EPrimitiveType&, render::ERenderMode = render::ERenderMode::SOLID, uint32_t _uSceneIndex = 0);
+    render::gfx::CModel* const CreateModel(const char*, const char*, uint32_t _uSceneIndex = 0);
 
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
     render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
 
-    void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
-    void DestroyModel(render::graphics::CModel*& pModel_, uint32_t _uSceneIndex = 0);
+    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
+    void DestroyModel(render::gfx::CModel*& pModel_, uint32_t _uSceneIndex = 0);
     void DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uSceneIndex = 0);
 
   private:

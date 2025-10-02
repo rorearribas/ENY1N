@@ -80,9 +80,9 @@ namespace scene
     m_pCurrentScene->SetSceneEnabled(_bEnabled);
   }
   // ------------------------------------
-  render::graphics::CPrimitive* const CSceneManager::CreatePrimitive
+  render::gfx::CPrimitive* const CSceneManager::CreatePrimitive
   (
-    const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType,
+    const render::gfx::EPrimitiveType& _ePrimitiveType,
     render::ERenderMode _eRenderMode,
     uint32_t _uSceneIndex
   )
@@ -92,7 +92,7 @@ namespace scene
     return pScene->CreatePrimitive(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
-  render::graphics::CModel* const CSceneManager::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
+  render::gfx::CModel* const CSceneManager::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
@@ -120,14 +120,14 @@ namespace scene
     return pScene->CreateSpotLight();
   }
   // ------------------------------------
-  void CSceneManager::DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_, uint32_t _uIndex)
+  void CSceneManager::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uIndex)
   {
     if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
     scene::CScene* pScene = m_vctScenes.at(_uIndex);
     pScene->DestroyPrimitive(_pPrimitive_);
   }
   // ------------------------------------
-  void CSceneManager::DestroyModel(render::graphics::CModel*& _pModel_, uint32_t _uIndex)
+  void CSceneManager::DestroyModel(render::gfx::CModel*& _pModel_, uint32_t _uIndex)
   {
     if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
     scene::CScene* pScene = m_vctScenes.at(_uIndex);

@@ -2,7 +2,7 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
 
   }

@@ -9,8 +9,8 @@ namespace render { namespace lights { class CSpotLight; } }
 namespace render { namespace lights { class CPointLight; } }
 namespace render { namespace lights { class CDirectionalLight; } }
 
-namespace render { namespace graphics { class CModel; } }
-namespace render { namespace graphics { class CPrimitive; } }
+namespace render { namespace gfx { class CModel; } }
+namespace render { namespace gfx { class CPrimitive; } }
 namespace render { class CCamera; }
 
 namespace engine
@@ -39,15 +39,15 @@ namespace engine
     void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
 
     // Element creation
-    render::graphics::CPrimitive* const CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType, render::ERenderMode = render::ERenderMode::SOLID, uint32_t _uSceneIndex = 0);
-    render::graphics::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex = 0);
+    render::gfx::CPrimitive* const CreatePrimitive(render::gfx::EPrimitiveType, render::ERenderMode = render::ERenderMode::SOLID, uint32_t _uSceneIndex = 0);
+    render::gfx::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex = 0);
 
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
     render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
 
-    void DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive);
-    void DestroyModel(render::graphics::CModel*& _pModel);
+    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive);
+    void DestroyModel(render::gfx::CModel*& _pModel);
     void DestroyLight(render::lights::CBaseLight*& pLight_);
 
   private:

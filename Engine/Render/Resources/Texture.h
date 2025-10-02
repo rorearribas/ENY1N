@@ -6,6 +6,23 @@ namespace render
 {
   namespace texture
   {
+    // Types
+    enum class ETextureType : uint32_t
+    {
+      DIFFUSE,
+      SPECULAR,
+      AMBIENT,
+      EMISSIVE,
+      HEIGHT,
+      NORMAL,
+      SHININESS,
+      OPACITY,
+      DISPLACEMENT,
+      LIGHTMAP,
+      REFLECTION,
+      COUNT
+    };
+
     class CTexture
     {
     public:
@@ -13,7 +30,7 @@ namespace render
       ~CTexture();
 
       void BindTexture();
-      HRESULT SetTexture(void* _pData, uint32_t _uWidth, uint32_t _uHeight);
+      HRESULT SetTexture(void* _pData, uint32_t _uWidth, uint32_t _uHeight, uint32_t _uChannels);
       ID3D11Texture2D* const GetTexture() { return m_pTexture; }
 
       ID3D11SamplerState* const GetSamplerState() { return m_pSamplerState; }

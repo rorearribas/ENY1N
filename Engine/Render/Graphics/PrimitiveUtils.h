@@ -4,15 +4,15 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
     class CPrimitiveUtils
     {
     public:
       // Primitive data
-      static const std::vector<render::graphics::SVertexData> s_oTrianglePrimitive;
-      static const std::vector<render::graphics::SVertexData> s_oCubePrimitive;
-      static const std::vector<render::graphics::SVertexData> s_oPlanePrimitive;
+      static const std::vector<render::gfx::SVertexData> s_oTrianglePrimitive;
+      static const std::vector<render::gfx::SVertexData> s_oCubePrimitive;
+      static const std::vector<render::gfx::SVertexData> s_oPlanePrimitive;
 
       // 2D Square
       static const std::vector<uint32_t> s_oSquareIndices;
@@ -31,19 +31,19 @@ namespace render
       static const std::vector<uint32_t> s_oWireframePlaneIndices;
 
       // 2D Circle
-      static CPrimitive::SCustomPrimitive Create2DCircle(float _fRadius, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
+      static gfx::SCustomPrimitive Create2DCircle(float _fRadius, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
 
       // 3D Line
-      static CPrimitive::SCustomPrimitive CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest);
+      static gfx::SCustomPrimitive CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest);
 
       // 3D Plane
-      static CPrimitive::SCustomPrimitive CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode);
+      static gfx::SCustomPrimitive CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode);
 
       // 3D Capsule
-      static CPrimitive::SCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode);
+      static gfx::SCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode);
 
       // 3D Sphere
-      static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::graphics::SVertexData>& _vctVertexData_);
+      static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::gfx::SVertexData>& _vctVertexData_);
       static std::vector<uint32_t> GetSphereIndices(int _iStacks, int _iSlices);
       static std::vector<uint32_t> GetWireframeSphereIndices(int _iStacks, int _iSlices);
 

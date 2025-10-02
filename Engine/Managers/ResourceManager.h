@@ -9,11 +9,11 @@ public:
   [[nodiscard]] char* LoadFile(const char* _sPath, const char* _sMode);
   [[nodiscard]] unsigned char* LoadTexture(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_);
 
-  [[nodiscard]] render::graphics::CModel::SModelData LoadFBX(const char* _sPath);
-  [[nodiscard]] render::graphics::CModel::SModelData LoadOBJ(const char* _sPath, const char* _sBaseModelMtlDir);
+  [[nodiscard]] render::gfx::CModel::SModelData LoadFBX(const char* _sPath);
+  [[nodiscard]] render::gfx::CModel::SModelData LoadOBJ(const char* _sPath, const char* _sBaseModelMtlDir);
 
 private:
-  void RegisterTexture(render::material::CMaterial*& pMaterial, render::material::CMaterial::EType _eModifierType,
+  void RegisterTexture(render::mat::CMaterial*& pMaterial, render::texture::ETextureType _eModifierType,
     const std::filesystem::path& _oBasePath, const std::string& _sTextureName);
 };
 

@@ -47,7 +47,7 @@ namespace game
     m_pModel->SetScale(GetScale());
   }
   // ------------------------------------
-  void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
+  void CModelComponent::CreatePrimitive(render::gfx::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
   {
     // Flush
     Clean();

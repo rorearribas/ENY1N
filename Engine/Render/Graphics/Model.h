@@ -9,15 +9,15 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
     class CModel
     {
     public:
       struct SModelData
       {
-        std::vector<render::graphics::CMesh*> m_vctMeshes;
-        std::vector<render::graphics::SVertexData> m_vctVertexData;
+        std::vector<render::gfx::CMesh*> m_vctMeshes;
+        std::vector<render::gfx::SVertexData> m_vctVertexData;
       };
 
     public:

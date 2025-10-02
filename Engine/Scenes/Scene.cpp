@@ -37,7 +37,7 @@ namespace scene
     // Draw primitives
     for (uint32_t uIndex = 0; uIndex < m_vctPrimitiveItems.CurrentSize(); uIndex++)
     {
-      render::graphics::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[uIndex];
+      render::gfx::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[uIndex];
       pPrimitiveItem->DrawPrimitive();
     }
 
@@ -45,7 +45,7 @@ namespace scene
     uint32_t uTempSize = m_vctDebugItems.CurrentSize();
     for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
     {
-      render::graphics::CPrimitive* pPrimitiveItem = m_vctDebugItems[uIndex];
+      render::gfx::CPrimitive* pPrimitiveItem = m_vctDebugItems[uIndex];
       pPrimitiveItem->DrawPrimitive();
     }
 
@@ -60,7 +60,7 @@ namespace scene
   {
     for (uint32_t uIndex = 0; uIndex < m_vctModels.CurrentSize(); uIndex++)
     {
-      render::graphics::CModel* pModel = m_vctModels[uIndex];
+      render::gfx::CModel* pModel = m_vctModels[uIndex];
       pModel->DrawModel();
     }
   }
@@ -142,8 +142,8 @@ namespace scene
     }
 
     // Fill primitive data
-    using namespace render::graphics;
-    CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
+    using namespace render::gfx;
+   SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
     (
       _fRadius,
       _fHeight,
@@ -178,8 +178,8 @@ namespace scene
     }
 
     // Create cube
-    using namespace render::graphics;
-    CPrimitive* pPrimitive = m_vctDebugItems.RegisterItem(CPrimitive::EPrimitiveType::E3D_CUBE, _eRenderMode);
+    using namespace render::gfx;
+    CPrimitive* pPrimitive = m_vctDebugItems.RegisterItem(EPrimitiveType::E3D_CUBE, _eRenderMode);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -201,8 +201,8 @@ namespace scene
     }
 
     // Fill primitive data
-    using namespace render::graphics;
-    CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitive::SCustomPrimitive();
+    using namespace render::gfx;
+    SCustomPrimitive oPrimitiveData = SCustomPrimitive();
     CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, oPrimitiveData.m_vctVertexData);
 
     // Fill indices
@@ -234,10 +234,10 @@ namespace scene
     }
 
     // Create plane
-    auto oData = render::graphics::CPrimitiveUtils::CreatePlane(_oPlane, _eRenderMode);
+    auto oData = render::gfx::CPrimitiveUtils::CreatePlane(_oPlane, _eRenderMode);
 
     // Create primitive
-    render::graphics::CPrimitive* pPlanePrimitive = m_vctDebugItems.RegisterItem(oData, _eRenderMode);
+    render::gfx::CPrimitive* pPlanePrimitive = m_vctDebugItems.RegisterItem(oData, _eRenderMode);
 #ifdef _DEBUG
     assert(pPlanePrimitive); // Sanity check
 #endif
@@ -258,8 +258,8 @@ namespace scene
     }
 
     // Create data
-    using namespace render::graphics;
-    CPrimitive::SCustomPrimitive oData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
+    using namespace render::gfx;
+    SCustomPrimitive oData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
     // Create temporal item
     CPrimitive* pPrimitive = m_vctDebugItems.RegisterItem(oData, render::ERenderMode::WIREFRAME);
 #ifdef _DEBUG
@@ -271,7 +271,7 @@ namespace scene
     pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
-  render::graphics::CPrimitive* const CScene::CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)
+  render::gfx::CPrimitive* const CScene::CreatePrimitive(const render::gfx::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)
   {
     if (m_vctPrimitiveItems.CurrentSize() >= m_vctPrimitiveItems.GetMaxSize())
     {
@@ -281,7 +281,7 @@ namespace scene
     return m_vctPrimitiveItems.RegisterItem(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
-  render::graphics::CModel* const CScene::CreateModel(const char* _sModelPath, const char* _sBaseMltDir)
+  render::gfx::CModel* const CScene::CreateModel(const char* _sModelPath, const char* _sBaseMltDir)
   {
     if (m_vctModels.CurrentSize() >= m_vctModels.GetMaxSize())
     {
@@ -322,7 +322,7 @@ namespace scene
     return m_vctSpotLights.RegisterItem();
   }
   // ------------------------------------
-  void CScene::DestroyPrimitive(render::graphics::CPrimitive*& _pPrimitive_)
+  void CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
   {
     bool bOk = m_vctPrimitiveItems.RemoveItem(_pPrimitive_);
     UNUSED_VAR(bOk);
@@ -332,7 +332,7 @@ namespace scene
     _pPrimitive_ = nullptr; // Set as nullptr
   }
   // ------------------------------------
-  void CScene::DestroyModel(render::graphics::CModel*& _pModel_)
+  void CScene::DestroyModel(render::gfx::CModel*& _pModel_)
   {
     bool bOk = m_vctModels.RemoveItem(_pModel_);
     UNUSED_VAR(bOk);

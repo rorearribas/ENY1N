@@ -10,30 +10,29 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
+    enum class EPrimitiveType
+    {
+      E2D_SQUARE,
+      E2D_CIRCLE,
+      E2D_TRIANGLE,
+      E3D_PLANE,
+      E3D_CUBE,
+      E3D_SPHERE,
+      E3D_CAPSULE,
+      CUSTOM,
+      INVALID
+    };
+
+    struct SCustomPrimitive
+    {
+      std::vector<render::gfx::SVertexData> m_vctVertexData;
+      std::vector<uint32_t> m_vctIndices;
+    };
+
     class CPrimitive
     {
-    public:
-      enum class EPrimitiveType
-      {
-        E2D_SQUARE,
-        E2D_CIRCLE,
-        E2D_TRIANGLE,
-        E3D_PLANE,
-        E3D_CUBE,
-        E3D_SPHERE,
-        E3D_CAPSULE,
-        CUSTOM,
-        INVALID
-      };
-
-      struct SCustomPrimitive
-      {
-        std::vector<render::graphics::SVertexData> m_vctVertexData;
-        std::vector<uint32_t> m_vctIndices;
-      };
-
     public:
       CPrimitive(const SCustomPrimitive& _oVertexData, render::ERenderMode _eRenderMode = SOLID);
       CPrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode = SOLID);
@@ -55,7 +54,7 @@ namespace render
 
     private:
       HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode);
-      HRESULT CreateBufferFromPrimitiveData(const std::vector<render::graphics::SVertexData>&, const std::vector<uint32_t>&);
+      HRESULT CreateBufferFromPrimitiveData(const std::vector<render::gfx::SVertexData>&, const std::vector<uint32_t>&);
       HRESULT CreateInputLayout();
 
       // Primitive data
@@ -67,8 +66,8 @@ namespace render
       ID3D11InputLayout* m_pInputLayout = nullptr;
 
       // Data
-      render::ERenderMode m_eRenderMode = SOLID;
-      CPrimitive::EPrimitiveType m_ePrimitiveType = CPrimitive::EPrimitiveType::INVALID;
+      render::ERenderMode m_eRenderMode = render::ERenderMode::SOLID;
+      gfx::EPrimitiveType m_eType = gfx::EPrimitiveType::INVALID;
 
       math::CTransform m_oTransform = math::CTransform();
       math::CVector3 m_v3Color = math::CVector3::One;

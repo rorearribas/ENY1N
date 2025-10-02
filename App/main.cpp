@@ -79,10 +79,11 @@ int main()
   pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
   // Load test model
-  /*game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+  game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
   pModelEnt->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
   game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-  pModelTest->LoadModel("SimpleBox/Box.fbx", "");*/
+  pModelTest->LoadModel("Test/uploads_files_2711294_manhattan.fbx", "");
+  pModelTest->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
 
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
@@ -90,7 +91,7 @@ int main()
     game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Capsule");
     pCapsuleEntity->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
+    pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Forward);
     pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
     pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
@@ -98,7 +99,7 @@ int main()
 
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
-  pPlaneModel->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_PLANE);
+  pPlaneModel->CreatePrimitive(render::gfx::EPrimitiveType::E3D_PLANE);
   pPlaneModel->SetPrimitiveColor(math::CVector3(1.0f, 1.0f, 1.0f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
@@ -112,7 +113,7 @@ int main()
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     pBoxTest->SetPosition(math::CVector3(1.0f, 5.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType::E3D_CUBE);
+    pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CUBE);
     pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();

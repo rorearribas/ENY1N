@@ -29,7 +29,7 @@ namespace render
       }
     }
     // ------------------------------------
-    HRESULT CTexture::SetTexture(void* _pData, uint32_t _uWidth, uint32_t _uHeight)
+    HRESULT CTexture::SetTexture(void* _pData, uint32_t _uWidth, uint32_t _uHeight, uint32_t _uChannels)
     {
       // Clear
       Clear();
@@ -50,7 +50,7 @@ namespace render
 
       D3D11_SUBRESOURCE_DATA subresource_data = D3D11_SUBRESOURCE_DATA();
       subresource_data.pSysMem = _pData;
-      subresource_data.SysMemPitch = m_uTextureWidth * internal_texture::s_iRGBA;
+      subresource_data.SysMemPitch = m_uTextureWidth * _uChannels;
 
       HRESULT hResult = global::dx11::s_pDevice->CreateTexture2D(&oTextureDesc, &subresource_data, &m_pTexture);
       if (FAILED(hResult))

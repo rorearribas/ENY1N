@@ -4,10 +4,10 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
     // Triangle Primitive
-    const std::vector<render::graphics::SVertexData> CPrimitiveUtils::s_oTrianglePrimitive =
+    const std::vector<render::gfx::SVertexData> CPrimitiveUtils::s_oTrianglePrimitive =
     {
       { math::CVector3(0.0f, 0.5f, 0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
       { math::CVector3(0.5f, -0.5f,  0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
@@ -15,7 +15,7 @@ namespace render
     };
 
     // Cube Primitive
-    const std::vector<render::graphics::SVertexData> CPrimitiveUtils::s_oCubePrimitive =
+    const std::vector<render::gfx::SVertexData> CPrimitiveUtils::s_oCubePrimitive =
     {
       // FRONT
      { math::CVector3(-0.5f, -0.5f,  0.5f), math::CVector3(0.0f,  0.0f,  1.0f) },
@@ -56,7 +56,7 @@ namespace render
 
     // Plane Primitive
     static const math::CVector3 s_oPlaneNormal(0.0f, 1.0f, 0.0f);
-    const std::vector<render::graphics::SVertexData> CPrimitiveUtils::s_oPlanePrimitive =
+    const std::vector<render::gfx::SVertexData> CPrimitiveUtils::s_oPlanePrimitive =
     {
       { math::CVector3(-0.5f, 0.0f, -0.5f), s_oPlaneNormal },  // Bottom-left
       { math::CVector3(-0.5f, 0.0f,  0.5f), s_oPlaneNormal },  // Top-left
@@ -153,7 +153,7 @@ namespace render
     };
 
     // ------------------------------------
-    CPrimitive::SCustomPrimitive CPrimitiveUtils::Create2DCircle
+    gfx::SCustomPrimitive CPrimitiveUtils::Create2DCircle
     (
       float /*_fStandardRadius*/,
       int /*_iSubvH*/,
@@ -161,14 +161,14 @@ namespace render
       render::ERenderMode /*_eRenderMode*/
     )
     {
-      return CPrimitive::SCustomPrimitive();
+      return gfx::SCustomPrimitive();
     }
 
     // ------------------------------------
     void CPrimitiveUtils::CreateSphere
     (
       float _fRadius, int _iStacks, int _iSlices,
-      std::vector<render::graphics::SVertexData>& _vctVertexData_
+      std::vector<render::gfx::SVertexData>& _vctVertexData_
     )
     {
       // Clear
@@ -187,7 +187,7 @@ namespace render
           float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
 
           // Add vertex
-          render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
+          render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
           math::CVector3 v3VertexPos(fX, fY, fZ);
 
           oVertexData.Position = v3VertexPos;
@@ -250,7 +250,7 @@ namespace render
     }
 
     // ------------------------------------
-    CPrimitive::SCustomPrimitive CPrimitiveUtils::CreateCapsule
+    gfx::SCustomPrimitive CPrimitiveUtils::CreateCapsule
     (
       float _fRadius,
       float _fHeight,
@@ -260,7 +260,7 @@ namespace render
     )
     {
       // Create primitve
-      CPrimitive::SCustomPrimitive oCustomPrimitive;
+      gfx::SCustomPrimitive oCustomPrimitive = gfx::SCustomPrimitive();
 
       // Calculate values
       float fHalfHeight = _fHeight * 0.5f;
@@ -286,7 +286,7 @@ namespace render
             }
 
             // Add vertex
-            render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
+            render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
             oVertexData.Position = math::CVector3(fX, fY, fZ);
             oCustomPrimitive.m_vctVertexData.emplace_back(oVertexData);
           }
@@ -359,7 +359,7 @@ namespace render
             float fX = _fRadius * cosf(fTheta);
             float fZ = _fRadius * sinf(fTheta);
 
-            render::graphics::SVertexData oVertexData = {};
+            render::gfx::SVertexData oVertexData = {};
             oVertexData.Position = math::CVector3(fX, fY, fZ);
             oCustomPrimitive.m_vctVertexData.emplace_back(oVertexData);
           }
@@ -385,10 +385,10 @@ namespace render
     }
 
     // ------------------------------------
-    CPrimitive::SCustomPrimitive CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode)
+    gfx::SCustomPrimitive CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode)
     {
       // Create primitive
-      CPrimitive::SCustomPrimitive oCustomPrimitive;
+      gfx::SCustomPrimitive oCustomPrimitive;
       oCustomPrimitive.m_vctVertexData = s_oPlanePrimitive;
       oCustomPrimitive.m_vctIndices = _eRenderMode == SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
 
@@ -432,13 +432,13 @@ namespace render
     }
 
     // ------------------------------------
-    CPrimitive::SCustomPrimitive CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest)
+    gfx::SCustomPrimitive CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest)
     {
       // Create primitive
-      CPrimitive::SCustomPrimitive oPrimitive = CPrimitive::SCustomPrimitive();
+      gfx::SCustomPrimitive oPrimitive = gfx::SCustomPrimitive();
 
       // Fill data 
-      render::graphics::SVertexData oVertexData = render::graphics::SVertexData();
+      render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
       oVertexData.Position = _v3Origin;
 
       uint32_t uIndex = 0;

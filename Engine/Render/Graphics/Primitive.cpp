@@ -9,7 +9,7 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
     static constexpr float s_fStandardRadius = 0.5f;
     static constexpr float s_fCapsuleHeight = 2.0f;
@@ -31,7 +31,7 @@ namespace render
 
       // Set values
       m_eRenderMode = _eRenderMode;
-      m_ePrimitiveType = EPrimitiveType::CUSTOM;
+      m_eType = EPrimitiveType::CUSTOM;
     }
     // ------------------------------------
     CPrimitive::CPrimitive(EPrimitiveType _ePrimitiveType, ERenderMode _eRenderMode)
@@ -48,7 +48,7 @@ namespace render
 
       // Set values
       m_eRenderMode = _eRenderMode;
-      m_ePrimitiveType = _ePrimitiveType;
+      m_eType = _ePrimitiveType;
     }
     // ------------------------------------
     CPrimitive::~CPrimitive()
@@ -110,7 +110,7 @@ namespace render
       }
       case EPrimitiveType::E3D_SPHERE:
       {
-        std::vector<render::graphics::SVertexData> vctVertexData = std::vector<render::graphics::SVertexData>();
+        std::vector<render::gfx::SVertexData> vctVertexData = std::vector<render::gfx::SVertexData>();
         CPrimitiveUtils::CreateSphere(s_fStandardRadius, s_iSubvH, s_iSubvV, vctVertexData);
 
         const auto& vctIndices = _eRenderMode == SOLID ?
@@ -143,8 +143,8 @@ namespace render
     {
       return global::dx11::s_pDevice->CreateInputLayout
       (
-        render::graphics::SVertexData::s_vctInputElementDesc.data(),
-        static_cast<uint32_t>(render::graphics::SVertexData::s_vctInputElementDesc.size()),
+        render::gfx::SVertexData::s_vctInputElementDesc.data(),
+        static_cast<uint32_t>(render::gfx::SVertexData::s_vctInputElementDesc.size()),
         g_ForwardVertexShader,
         sizeof(g_ForwardVertexShader),
         &m_pInputLayout
@@ -156,7 +156,7 @@ namespace render
       if (m_eRenderMode != _eRenderMode)
       {
         m_eRenderMode = _eRenderMode;
-        CreatePrimitive(m_ePrimitiveType, m_eRenderMode);
+        CreatePrimitive(m_eType, m_eRenderMode);
       }
     }
     // ------------------------------------
@@ -174,7 +174,7 @@ namespace render
       assert(!FAILED(hResult));
 
       // Get data
-      render::graphics::SVertexData* pPrimitiveData = (render::graphics::SVertexData*)(oMappedSubresource.pData);
+      render::gfx::SVertexData* pPrimitiveData = (render::gfx::SVertexData*)(oMappedSubresource.pData);
       assert(pPrimitiveData);
 
       // Update color
@@ -190,7 +190,7 @@ namespace render
       m_v3Color = _v3Color;
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBufferFromPrimitiveData(const std::vector<render::graphics::SVertexData>& _vctPrimitiveData, const std::vector<uint32_t>& _vctIndexes)
+    HRESULT CPrimitive::CreateBufferFromPrimitiveData(const std::vector<render::gfx::SVertexData>& _vctPrimitiveData, const std::vector<uint32_t>& _vctIndexes)
     {
       if (_vctPrimitiveData.empty()) return E_FAIL;
 
@@ -202,7 +202,7 @@ namespace render
 
       // Create vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
-      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>(sizeof(render::graphics::SVertexData) * _vctPrimitiveData.size());
+      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>(sizeof(render::gfx::SVertexData) * _vctPrimitiveData.size());
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -236,7 +236,7 @@ namespace render
     void CPrimitive::DrawPrimitive()
     {
       // Set general data
-      uint32_t uVertexStride = sizeof(render::graphics::SVertexData);
+      uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
       uint32_t uVertexOffset = 0;
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);

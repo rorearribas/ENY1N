@@ -18,7 +18,7 @@ namespace game
     virtual void DrawDebug() override {};
 
     void LoadModel(const char* _sModelPath, const char* _sBaseMltDir);
-    void CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode = render::ERenderMode::SOLID);
+    void CreatePrimitive(render::gfx::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode = render::ERenderMode::SOLID);
 
     void SetPrimitiveRenderMode(render::ERenderMode _eRenderMode);
     void SetPrimitiveColor(const math::CVector3& _v3Color);
@@ -39,8 +39,8 @@ namespace game
     void Clean();
 
   private:
-    render::graphics::CPrimitive* m_pPrimitive = nullptr;
-    render::graphics::CModel* m_pModel = nullptr;
+    render::gfx::CPrimitive* m_pPrimitive = nullptr;
+    render::gfx::CModel* m_pModel = nullptr;
   };
 }
 

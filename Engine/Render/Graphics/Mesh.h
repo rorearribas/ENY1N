@@ -12,7 +12,7 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
     struct SVertexData
     {
@@ -35,7 +35,7 @@ namespace render
     class CMesh
     {
     public:
-      typedef std::unordered_map<uint32_t, render::material::CMaterial*> TMapMaterials;
+      typedef std::unordered_map<uint32_t, render::mat::CMaterial*> TMapMaterials;
       typedef std::vector<uint32_t> TIndexesList;
 
     public:
@@ -46,7 +46,7 @@ namespace render
       HRESULT AssignIndexBuffer(TIndexesList& _vctIndices);
 
       void UseGlobalLighting(bool _bEnabled);
-      void AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
+      void AddMaterial(render::mat::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
       void UpdateVertexColor(ID3D11Buffer* _pVertexBuffer);
 
       const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
@@ -74,9 +74,9 @@ namespace render
 namespace std
 {
   template <>
-  struct hash<render::graphics::SVertexData>
+  struct hash<render::gfx::SVertexData>
   {
-    size_t operator()(const render::graphics::SVertexData& vertex) const
+    size_t operator()(const render::gfx::SVertexData& vertex) const
     {
       return ((hash<math::CVector3>()(vertex.Position) ^
         (hash<math::CVector3>()(vertex.Normal) << 1)) >> 1) ^

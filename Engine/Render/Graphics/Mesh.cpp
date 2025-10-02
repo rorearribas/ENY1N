@@ -6,14 +6,14 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
     std::vector<D3D11_INPUT_ELEMENT_DESC> SVertexData::s_vctInputElementDesc =
     {
-       { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::graphics::SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::graphics::SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+       { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+       { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+       { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
+       { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::gfx::SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
     // ------------------------------------
     bool SVertexData::operator==(const SVertexData& _other) const
@@ -42,10 +42,10 @@ namespace render
       texture::CTexture* pTargetTexture = nullptr;
       for (auto& it : m_dctMaterials)
       {
-        for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(material::CMaterial::EType::COUNT); uIndex++)
+        for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(texture::ETextureType::COUNT); uIndex++)
         {
-          material::CMaterial::EType eModifierType = static_cast<material::CMaterial::EType>(uIndex);
-          pTargetTexture = it.second->GetTexture(eModifierType);
+          texture::ETextureType eTextureType = static_cast<texture::ETextureType>(uIndex);
+          pTargetTexture = it.second->GetTexture(eTextureType);
           if (pTargetTexture)
           {
             pTargetTexture->BindTexture();
@@ -71,7 +71,7 @@ namespace render
       global::dx11::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_vctIndices.size()), 0, 0);
     }
     // ------------------------------------
-    void CMesh::AddMaterial(render::material::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx)
+    void CMesh::AddMaterial(render::mat::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx)
     {
       m_dctMaterials.emplace(_uMaterialIdx, _pMaterial);
     }
@@ -130,7 +130,7 @@ namespace render
           auto it = m_dctMaterials.find(pVertexData[uVertexDataIdx].MaterialId);
           if (it != m_dctMaterials.end())
           {
-            render::material::CMaterial* pMaterial = it->second;
+            render::mat::CMaterial* pMaterial = it->second;
             pVertexData[uVertexDataIdx].Color = pMaterial->GetDiffuseColor(); // WIP Version
           }
         }

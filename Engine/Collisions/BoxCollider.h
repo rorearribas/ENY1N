@@ -2,7 +2,7 @@
 #include "Collider.h"
 #include "Libs/Math/Vector3.h"
 
-namespace render { namespace graphics { class CPrimitive; } }
+namespace render { namespace gfx { class CPrimitive; } }
 namespace collision { class CSphereCollider; }
 
 namespace collision
@@ -64,7 +64,7 @@ namespace collision
 
     // Extents
     std::vector<math::CVector3> m_v3Extents;
-    std::vector<render::graphics::CPrimitive*> m_vctPrimitives;
+    std::vector<render::gfx::CPrimitive*> m_vctPrimitives;
   };
 }
 

@@ -26,9 +26,9 @@ namespace scene
     static int constexpr s_iMaxDebugItems = 1000;
     static int constexpr s_iMaxPrimitives = 10000;
 
-    typedef utils::CFixedPool<render::graphics::CPrimitive, s_iMaxDebugItems> TDebugItemList;
-    typedef utils::CFixedPool<render::graphics::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
-    typedef utils::CFixedPool<render::graphics::CModel, s_iMaxPrimitives> TModelList;
+    typedef utils::CFixedPool<render::gfx::CPrimitive, s_iMaxDebugItems> TDebugItemList;
+    typedef utils::CFixedPool<render::gfx::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
+    typedef utils::CFixedPool<render::gfx::CModel, s_iMaxPrimitives> TModelList;
 
   public:
     CScene(uint32_t _uIndex);
@@ -46,15 +46,15 @@ namespace scene
     void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
 
     // Element creation
-    render::graphics::CPrimitive* const CreatePrimitive(const render::graphics::CPrimitive::EPrimitiveType& _ePrimitiveType, render::ERenderMode = render::ERenderMode::SOLID);
-    render::graphics::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir);
+    render::gfx::CPrimitive* const CreatePrimitive(const render::gfx::EPrimitiveType& _ePrimitiveType, render::ERenderMode = render::ERenderMode::SOLID);
+    render::gfx::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir);
 
     render::lights::CDirectionalLight* const CreateDirectionalLight();
     render::lights::CPointLight* const CreatePointLight();
     render::lights::CSpotLight* const CreateSpotLight();
 
-    void DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_);
-    void DestroyModel(render::graphics::CModel*& pModel_);
+    void DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_);
+    void DestroyModel(render::gfx::CModel*& pModel_);
     void DestroyLight(render::lights::CBaseLight*& pLight_);
 
   private:

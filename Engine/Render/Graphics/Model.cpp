@@ -8,7 +8,7 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
     // ------------------------------------
     CModel::CModel(const char* _sModelPath, const char* _sBaseMltDir)
@@ -30,8 +30,8 @@ namespace render
     {
       return global::dx11::s_pDevice->CreateInputLayout
       (
-        render::graphics::SVertexData::s_vctInputElementDesc.data(),
-        static_cast<uint32_t>(render::graphics::SVertexData::s_vctInputElementDesc.size()),
+        render::gfx::SVertexData::s_vctInputElementDesc.data(),
+        static_cast<uint32_t>(render::gfx::SVertexData::s_vctInputElementDesc.size()),
         g_ForwardVertexShader,
         sizeof(g_ForwardVertexShader),
         &m_pInputLayout
@@ -42,7 +42,7 @@ namespace render
     {
       // Try to load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
-      m_oModelData = std::move(pResourceManager->LoadFBX(_sModelPath));
+      m_oModelData = std::move(pResourceManager->LoadFBX(_sModelPath/*, _sBaseMltDir*/));
       if (m_oModelData.m_vctMeshes.empty()) return E_FAIL;
 
       // Init constant buffer
@@ -50,7 +50,7 @@ namespace render
 
       // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
-      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(render::graphics::SVertexData) * m_oModelData.m_vctVertexData.size()));
+      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::SVertexData) * m_oModelData.m_vctVertexData.size()));
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -64,7 +64,7 @@ namespace render
       }
 
       // Update vertex color
-      for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
+      for (render::gfx::CMesh* pMesh : m_oModelData.m_vctMeshes)
       {
         pMesh->UpdateVertexColor(m_pVertexBuffer);
       }
@@ -82,7 +82,7 @@ namespace render
     void CModel::DrawModel()
     {
       // Set vertex buffer
-      uint32_t uVertexStride = sizeof(render::graphics::SVertexData);
+      uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
       uint32_t uVertexOffset = 0;
       global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
@@ -99,7 +99,7 @@ namespace render
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
       // Draw meshes
-      for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
+      for (render::gfx::CMesh* pMesh : m_oModelData.m_vctMeshes)
       {
         pMesh->DrawMesh();
       }
@@ -108,7 +108,7 @@ namespace render
     void CModel::UseGlobalLighting(bool _bEnabled)
     {
       // Draw meshes
-      for (render::graphics::CMesh* pMesh : m_oModelData.m_vctMeshes)
+      for (render::gfx::CMesh* pMesh : m_oModelData.m_vctMeshes)
       {
         pMesh->UseGlobalLighting(_bEnabled);
       }

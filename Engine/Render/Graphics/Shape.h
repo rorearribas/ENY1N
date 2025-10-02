@@ -4,7 +4,7 @@
 
 namespace render
 {
-  namespace graphics
+  namespace gfx
   {
     struct SLine
     {
@@ -19,12 +19,12 @@ namespace render
       CShape(std::string _sShapeName) : m_pShapeId(_sShapeName) {}
       ~CShape() {}
 
-      render::graphics::CMesh* const GetMesh() { return m_pMesh; }
+      render::gfx::CMesh* const GetMesh() { return m_pMesh; }
       const std::string& GetShapeId() const { return m_pShapeId; }
 
     private:
       std::string m_pShapeId = std::string();
-      render::graphics::CMesh* m_pMesh = nullptr;
+      render::gfx::CMesh* m_pMesh = nullptr;
     };
   }
 }

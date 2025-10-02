@@ -78,9 +78,9 @@ namespace engine
     m_pSceneManager->DrawLine(_v3Start, _v3Dest, _v3Color);
   }
   // ------------------------------------
-  render::graphics::CPrimitive* const CEngine::CreatePrimitive
+  render::gfx::CPrimitive* const CEngine::CreatePrimitive
   (
-    render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType,
+    render::gfx::EPrimitiveType _ePrimitiveType,
     render::ERenderMode _eRenderMode,
     uint32_t _uSceneIndex
   )
@@ -88,7 +88,7 @@ namespace engine
     return m_pSceneManager->CreatePrimitive(_ePrimitiveType, _eRenderMode, _uSceneIndex);
   }
   // ------------------------------------
-  render::graphics::CModel* const CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
+  render::gfx::CModel* const CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreateModel(_sModelPath, _sBaseMltDir, _uSceneIndex);
   }
@@ -108,13 +108,13 @@ namespace engine
     return m_pSceneManager->CreateSpotLight(_uSceneIndex);
   }
   // ------------------------------------
-  void CEngine::DestroyPrimitive(render::graphics::CPrimitive*& pPrimitive_)
+  void CEngine::DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_)
   {
     assert(pPrimitive_);
     m_pSceneManager->DestroyPrimitive(pPrimitive_);
   }
   // ------------------------------------
-  void CEngine::DestroyModel(render::graphics::CModel*& pModel_)
+  void CEngine::DestroyModel(render::gfx::CModel*& pModel_)
   {
     assert(pModel_);
     m_pSceneManager->DestroyModel(pModel_);
