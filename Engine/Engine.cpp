@@ -30,7 +30,7 @@ namespace engine
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CEngine::OnWindowResizeEvent, this);
-    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate); 
+    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
 
     // Marked as initialized
     m_bInitialized = true;
@@ -80,12 +80,12 @@ namespace engine
   // ------------------------------------
   render::graphics::CPrimitive* const CEngine::CreatePrimitive
   (
-    render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, 
+    render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType,
     render::ERenderMode _eRenderMode,
     uint32_t _uSceneIndex
   )
   {
-    return m_pSceneManager->CreatePrimitive(_ePrimitiveType, _eRenderMode,  _uSceneIndex);
+    return m_pSceneManager->CreatePrimitive(_ePrimitiveType, _eRenderMode, _uSceneIndex);
   }
   // ------------------------------------
   render::graphics::CModel* const CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)

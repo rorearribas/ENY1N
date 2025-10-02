@@ -9,8 +9,8 @@
 
 namespace render
 {
-	namespace lights
-	{
+  namespace lights
+  {
     // ------------------------------------
     CLightManager::CLightManager()
     {
@@ -139,16 +139,16 @@ namespace render
 
       // Destroy point lights
       std::for_each(m_vctPointLights.begin(), m_vctPointLights.end(), [](render::lights::CPointLight*& _pLight)
-      {
-        global::ReleaseObject(_pLight);
-      });
+        {
+          global::ReleaseObject(_pLight);
+        });
       m_uRegisteredPointLights = 0;
 
       // Destroy spot lights
       std::for_each(m_vctSpotLights.begin(), m_vctSpotLights.end(), [](render::lights::CSpotLight*& _pLight)
-      {
-        global::ReleaseObject(_pLight);
-      });
+        {
+          global::ReleaseObject(_pLight);
+        });
       m_uRegisteredSpotLights = 0;
     }
     // ------------------------------------
@@ -161,7 +161,7 @@ namespace render
         m_uRegisteredPointLights--;
 
         auto oReorderFunc = std::remove_if(m_vctPointLights.begin(), m_vctPointLights.end(),
-        [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+          [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
         std::fill(oReorderFunc, m_vctPointLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;
@@ -176,7 +176,7 @@ namespace render
         m_uRegisteredSpotLights--;
 
         auto oReorderFunc = std::remove_if(m_vctSpotLights.begin(), m_vctSpotLights.end(),
-        [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+          [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
         std::fill(oReorderFunc, m_vctSpotLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;

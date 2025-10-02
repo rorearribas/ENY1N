@@ -22,7 +22,7 @@ namespace utils
     template<typename Object>
     inline void Bind(RETURN_TYPE(Object::* Method)(Args...), Object* _pObject)
     {
-      m_oFunction = [_pObject, Method](Args... args) -> RETURN_TYPE 
+      m_oFunction = [_pObject, Method](Args... args) -> RETURN_TYPE
       {
         return (_pObject->*Method)(std::forward<Args>(args)...);
       };

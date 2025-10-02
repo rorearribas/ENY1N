@@ -6,7 +6,7 @@ namespace render
 {
   namespace lights
   {
-    class CPointLight : public CBaseLight 
+    class CPointLight : public CBaseLight
     {
     public:
       CPointLight() : CBaseLight(POINT_LIGHT) {}

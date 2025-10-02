@@ -71,7 +71,7 @@ namespace render
   }
 }
 
-namespace std 
+namespace std
 {
   template <>
   struct hash<render::graphics::SVertexData>

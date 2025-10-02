@@ -13,9 +13,9 @@ namespace render { namespace graphics { class CModel; } }
 namespace render { namespace graphics { class CPrimitive; } }
 namespace render { class CCamera; }
 
-namespace engine 
+namespace engine
 {
-  class CEngine : public utils::CSingleton<CEngine> 
+  class CEngine : public utils::CSingleton<CEngine>
   {
   public:
     CEngine() {}

@@ -19,10 +19,10 @@ namespace render
     bool SVertexData::operator==(const SVertexData& _other) const
     {
       return Position == _other.Position && // Pos
-      Normal == _other.Normal && // Normal
-      TexCoord == _other.TexCoord && // TexCoord
-      Color == _other.Color && // Color
-      MaterialId == _other.MaterialId; // Material ID
+        Normal == _other.Normal && // Normal
+        TexCoord == _other.TexCoord && // TexCoord
+        Color == _other.Color && // Color
+        MaterialId == _other.MaterialId; // Material ID
     }
     // ------------------------------------
     bool SVertexData::operator!=(const SVertexData& _other) const
@@ -46,9 +46,9 @@ namespace render
         {
           material::CMaterial::EType eModifierType = static_cast<material::CMaterial::EType>(uIndex);
           pTargetTexture = it.second->GetTexture(eModifierType);
-          if (pTargetTexture) 
-          { 
-            pTargetTexture->BindTexture(); 
+          if (pTargetTexture)
+          {
+            pTargetTexture->BindTexture();
             break;
           }
         }

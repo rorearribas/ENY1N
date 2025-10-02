@@ -51,13 +51,13 @@ namespace utils
 
     T* operator[](size_t index)
     {
-      bool bAssignedBlock = (index < MAX_ITEMS && m_vctAssignedBlocks.test(index));
+      bool bAssignedBlock = (index < MAX_ITEMS&& m_vctAssignedBlocks.test(index));
       return bAssignedBlock ? reinterpret_cast<T*>(&m_vctPool[index]) : nullptr;
     }
 
     const T* operator[](size_t index) const
     {
-      bool bAssignedBlock = (index < MAX_ITEMS && m_vctAssignedBlocks.test(index));
+      bool bAssignedBlock = (index < MAX_ITEMS&& m_vctAssignedBlocks.test(index));
       return bAssignedBlock ? reinterpret_cast<const T*>(&m_vctPool[index]) : nullptr;
     }
 

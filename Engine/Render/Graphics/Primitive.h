@@ -72,7 +72,7 @@ namespace render
 
       math::CTransform m_oTransform = math::CTransform();
       math::CVector3 m_v3Color = math::CVector3::One;
-      bool m_bUseGlobalLighting  = true;
+      bool m_bUseGlobalLighting = true;
 
       uint32_t m_uVertices = 0;
       uint32_t m_uIndices = 0;

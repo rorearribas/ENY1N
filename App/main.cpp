@@ -44,6 +44,9 @@ static bool bThrowRay = false;
 
 int main()
 {
+  // Create resource manager
+  CResourceManager::CreateSingleton();
+
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);
@@ -74,6 +77,12 @@ int main()
   // Create point light
   game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
   pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
+
+  // Load test model
+  /*game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+  pModelEnt->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+  game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
+  pModelTest->LoadModel("SimpleBox/Box.fbx", "");*/
 
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)

@@ -11,8 +11,8 @@ namespace reflection
   {
   public:
     template<typename _Class = void>
-    explicit CClass(_Class* _pClassPtr, const char* _sClassName) 
-    : m_pPtr(_pClassPtr), m_sClassId(_sClassName) 
+    explicit CClass(_Class* _pClassPtr, const char* _sClassName)
+      : m_pPtr(_pClassPtr), m_sClassId(_sClassName)
     {
       reflection::CTypeManager::GetInstance()->RegisterClass(this);
     }

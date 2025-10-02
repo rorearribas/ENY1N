@@ -6,8 +6,8 @@
 
 namespace render
 {
-	namespace material
-	{
+  namespace material
+  {
     CMaterial::~CMaterial()
     {
       m_dctTextures.clear();
@@ -23,9 +23,9 @@ namespace render
     {
       // Create new texture or get it
       render::texture::CTexture*& pTargetTexture = m_dctTextures[_eType];
-      if (!pTargetTexture) 
-      { 
-        pTargetTexture = new render::texture::CTexture(_sTextureID); 
+      if (!pTargetTexture)
+      {
+        pTargetTexture = new render::texture::CTexture(_sTextureID);
       }
       return pTargetTexture;
     }

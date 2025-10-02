@@ -48,7 +48,7 @@ namespace scene
       render::graphics::CPrimitive* pPrimitiveItem = m_vctDebugItems[uIndex];
       pPrimitiveItem->DrawPrimitive();
     }
-    
+
     // Clean after draw
     if (uTempSize > 0)
     {
@@ -133,7 +133,7 @@ namespace scene
   }
   // ------------------------------------
   void CScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
-  float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
+    float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
@@ -145,10 +145,10 @@ namespace scene
     using namespace render::graphics;
     CPrimitive::SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
     (
-      _fRadius, 
+      _fRadius,
       _fHeight,
-      _iSubvH, 
-      _iSubvV, 
+      _iSubvH,
+      _iSubvV,
       _eRenderMode
     );
 
@@ -206,9 +206,9 @@ namespace scene
     CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, oPrimitiveData.m_vctVertexData);
 
     // Fill indices
-    oPrimitiveData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? 
-    CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
-    CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
+    oPrimitiveData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ?
+      CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
+      CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
 
     // Compute normals
     CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
@@ -347,25 +347,25 @@ namespace scene
     bool bOk = false;
     switch (_pLight_->GetLightType())
     {
-      case render::lights::ELightType::DIRECTIONAL_LIGHT:
-      {
-        bOk = global::ReleaseObject(m_pDirectionalLight);
-      }
+    case render::lights::ELightType::DIRECTIONAL_LIGHT:
+    {
+      bOk = global::ReleaseObject(m_pDirectionalLight);
+    }
+    break;
+    case render::lights::ELightType::POINT_LIGHT:
+    {
+      render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(_pLight_);
+      bOk = m_vctPointLights.RemoveItem(pPointLight);
+    }
+    break;
+    case render::lights::ELightType::SPOT_LIGHT:
+    {
+      render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(_pLight_);
+      bOk = m_vctSpotLights.RemoveItem(pSpotLight);
+    }
+    break;
+    default:
       break;
-      case render::lights::ELightType::POINT_LIGHT:
-      {
-        render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(_pLight_);
-        bOk = m_vctPointLights.RemoveItem(pPointLight);
-      }
-      break;
-      case render::lights::ELightType::SPOT_LIGHT:
-      {
-        render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(_pLight_);
-        bOk = m_vctSpotLights.RemoveItem(pSpotLight);
-      }
-      break;
-      default:
-        break;
     }
 
 #ifdef _DEBUG

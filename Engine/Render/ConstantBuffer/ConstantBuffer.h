@@ -5,18 +5,18 @@
 
 /* Reference table
 
-| HLSL Type       | Size (bytes)   | Equivalent             
+| HLSL Type       | Size (bytes)   | Equivalent
 |-----------------|----------------|------------------------
-| bool            | 1              | bool            
-| int             | 4              | int                    
-| uint            | 4              | unsigned int           
-| float           | 4              | float                  
-| float2          | 8              | math::CVector2     
-| float3          | 12             | math::CVector3      
-| float4          | 16             | math::CVector4      
-| float3x3        | 48             | math::CVector3 * 3    
-| float4x4        | 64             | math::CMatrix4x4      
-| matriz NxM      | N×16 bytes     |                        
+| bool            | 1              | bool
+| int             | 4              | int
+| uint            | 4              | unsigned int
+| float           | 4              | float
+| float2          | 8              | math::CVector2
+| float3          | 12             | math::CVector3
+| float4          | 16             | math::CVector4
+| float3x3        | 48             | math::CVector3 * 3
+| float4x4        | 64             | math::CMatrix4x4
+| matriz NxM      | N×16 bytes     |
 */
 
 // Model matrix
@@ -131,9 +131,9 @@ public:
   {
     D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
     HRESULT hResult = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
-    if (FAILED(hResult)) 
-    { 
-      return false; 
+    if (FAILED(hResult))
+    {
+      return false;
     }
 
     // Copy memory into buffer

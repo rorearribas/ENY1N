@@ -124,10 +124,10 @@ namespace math
   {
     switch (_uIndex)
     {
-      case 0: return this->X;
-      case 1: return this->Y;
-      case 2: return this->Z;
-      default: return FLT_MAX;
+    case 0: return this->X;
+    case 1: return this->Y;
+    case 2: return this->Z;
+    default: return FLT_MAX;
     }
   }
   // ------------------------------------

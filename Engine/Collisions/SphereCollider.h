@@ -19,7 +19,7 @@ namespace collision
     inline void SetCenter(const math::CVector3& _v3Center) { m_v3Center = _v3Center; }
     inline const math::CVector3& GetCenter() const { return m_v3Center; }
     inline void SetRadius(float _fRadius) { m_fRadius = _fRadius; }
-    inline const float& GetRadius() const { return m_fRadius;}
+    inline const float& GetRadius() const { return m_fRadius; }
 
     virtual void DrawDebug() override;
 

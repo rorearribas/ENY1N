@@ -90,7 +90,7 @@ namespace render
     BuildFrustumPlanes();
 
     // Update constant buffer
-    m_oConstantBuffer.GetData().Matrix =  m_mProjection * m_mViewMatrix;
+    m_oConstantBuffer.GetData().Matrix = m_mProjection * m_mViewMatrix;
     bool bOk = m_oConstantBuffer.WriteBuffer();
     UNUSED_VAR(bOk);
     assert(bOk);
@@ -139,7 +139,7 @@ namespace render
     math::CVector3 v3Dir = math::CVector3::Normalize(_v3LookAt - m_v3Pos);
     float fPitch = static_cast<float>(atan2(v3Dir.Y, sqrt(v3Dir.X * v3Dir.X + v3Dir.Z * v3Dir.Z)));
     float fYaw = static_cast<float>(atan2(v3Dir.X, v3Dir.Z));
-    if (v3Dir.Z > 0) 
+    if (v3Dir.Z > 0)
     {
       fYaw += static_cast<float>(math::s_fPI);
     }
@@ -163,20 +163,20 @@ namespace render
   // ------------------------------------
   void CCamera::UpdateProjectionMatrix(EProjectionMode _eProjectionMode)
   {
-    switch (_eProjectionMode) 
+    switch (_eProjectionMode)
     {
-      case EProjectionMode::PERSPECTIVE:
-      {
-        m_mProjection = math::CMatrix4x4::CreatePerspectiveMatrix(m_fDesiredFov, m_fAspectRatio, m_fNear, m_fFar);
-      }
-      break;
-      case EProjectionMode::ORTOGRAPHIC:
-      {
-        float fWidth = internal_camera::s_fOrtographicFactor / m_fZoomScale;
-        float fHeight = (internal_camera::s_fOrtographicFactor / m_fAspectRatio) / m_fZoomScale;
-        m_mProjection = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
-      }
-      break;
+    case EProjectionMode::PERSPECTIVE:
+    {
+      m_mProjection = math::CMatrix4x4::CreatePerspectiveMatrix(m_fDesiredFov, m_fAspectRatio, m_fNear, m_fFar);
+    }
+    break;
+    case EProjectionMode::ORTOGRAPHIC:
+    {
+      float fWidth = internal_camera::s_fOrtographicFactor / m_fZoomScale;
+      float fHeight = (internal_camera::s_fOrtographicFactor / m_fAspectRatio) / m_fZoomScale;
+      m_mProjection = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
+    }
+    break;
     }
   }
   // ------------------------------------

@@ -6,7 +6,7 @@ namespace render
 {
   namespace texture
   {
-    class CTexture 
+    class CTexture
     {
     public:
       explicit CTexture(const std::string& _sTextureId) : m_sTextureId(_sTextureId) {}

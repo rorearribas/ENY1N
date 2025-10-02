@@ -16,11 +16,11 @@ struct PointLight
   // 12 + 4 bytes = 16 bytes
   float3 Position;
   float Padding0;
-  
+
   // 12 + 4 bytes = 16 bytes
   float3 Color;
   float Padding1;
-  
+
   // 4 + 4 bytes = 8 bytes
   float Range;
   float Intensity;
@@ -32,15 +32,15 @@ struct Spotlight
   // 12 + 4 bytes = 16 bytes
   float3 Position;
   float Padding0;
-  
+
   // 12 + 4 bytes = 16 bytes
   float3 Direction;
   float Padding1;
-  
+
   // 12 + 4 bytes = 16 bytes
   float3 Color;
   float Padding2;
-  
+
   // 4 + 4 + 4 + 4 = 16 bytes
   float Range;
   float Padding3;
@@ -102,7 +102,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   float3 v3LightDir = normalize(directionalLight.Direction);
   float fDot = max(dot(v3Normal, v3LightDir), 0.0f);
   v3TotalDiffuse += directionalLight.Color * directionalLight.Intensity * fDot;
-  
+
   // Point Lights
   for (int i = 0; i < RegisteredLights.x; i++)
   {
@@ -112,7 +112,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
 
     float3 v3LightDir = normalize(v3Diff);
     float fDot = max(dot(v3Normal, v3LightDir), 0.0f);
-    if(fDot > 0.0f)
+    if (fDot > 0.0f)
     {
       // Apply point light color
       float fDistanceFalloff = saturate(1.0f - fLength / pointLight.Range);
@@ -120,7 +120,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
       v3TotalDiffuse += v3PointDiffuse;
     }
   }
-  
+
   // Spotlights
   for (int j = 0; j < RegisteredLights.y; j++)
   {
@@ -133,7 +133,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
     float3 v3LightDirToPixel = normalize(v3Diff);
 
     float fDot = dot(v3Normal, v3LightDirToPixel);
-    if(fDot > 0.0f)
+    if (fDot > 0.0f)
     {
       // Angles
       float cosTheta = dot(-v3LightDirToPixel, v3LightDirSpot);
@@ -150,7 +150,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
     }
   }
 
-  if(UseGlobalLighting)
+  if (UseGlobalLighting)
   {
     float4 v4FinalColor = HasTexture ? v4TextureColor : float4(input.color, 1.0f);
     return float4(saturate(v4FinalColor.rgb * 0.5 + v3TotalDiffuse * 0.5f), 1.0f);

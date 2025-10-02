@@ -12,17 +12,17 @@ namespace render
     class CMaterial
     {
     public:
-      enum EType : uint32_t 
+      enum EType : uint32_t
       {
-        AMBIENT, 
-        DIFFUSE, 
-        SPECULAR, 
-        SPECULAR_HIGHLIGHT, 
-        BUMP, 
-        DISPLACEMENT, 
-        ALPHA, 
-        REFLECTION, 
-        COUNT 
+        AMBIENT,
+        DIFFUSE,
+        SPECULAR,
+        SPECULAR_HIGHLIGHT,
+        BUMP,
+        DISPLACEMENT,
+        ALPHA,
+        REFLECTION,
+        COUNT
       };
       typedef std::map<CMaterial::EType, texture::CTexture*> TMapTextures;
 

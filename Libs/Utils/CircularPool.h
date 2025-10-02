@@ -65,7 +65,8 @@ namespace utils
   {
     // Initialize
     m_vctAssignedBlock.reset();
-<  }
+    <
+  }
 
   template<typename T, size_t MAX_ITEMS>
   void CCircularPool<T, MAX_ITEMS>::ClearAll()

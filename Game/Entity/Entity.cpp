@@ -92,7 +92,7 @@ namespace game
       ImGuizmo::DecomposeMatrixToComponents(matrix, fTranslation, fRotation, fScale);
 
       // Apply modifications
-      switch (mCurrentGizmoOperation) 
+      switch (mCurrentGizmoOperation)
       {
       case ImGuizmo::TRANSLATE:
       {
@@ -202,7 +202,7 @@ namespace game
   }
   // ------------------------------------
   void CEntity::OnCollisionEnter(const collision::SHitEvent& _oHitEvent)
-  {    
+  {
     // Notify to components
     for (game::CComponent* pComponent : m_vctComponents)
     {
@@ -240,8 +240,8 @@ namespace game
   void CEntity::DestroyAllComponents()
   {
     std::for_each(m_vctComponents.begin(), m_vctComponents.end(), [](CComponent*& _pComponent)
-    {
-      global::ReleaseObject(_pComponent);
-    });
+      {
+        global::ReleaseObject(_pComponent);
+      });
   }
 }

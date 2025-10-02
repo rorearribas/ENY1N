@@ -38,11 +38,11 @@ namespace render
       );
     }
     // ------------------------------------
-    HRESULT CModel::InitModel(const char* _sModelPath, const char* _sBaseMltDir)
+    HRESULT CModel::InitModel(const char* _sModelPath, const char* /*_sBaseMltDir*/)
     {
       // Try to load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
-      m_oModelData = std::move(pResourceManager->LoadOBJ(_sModelPath, _sBaseMltDir));
+      m_oModelData = std::move(pResourceManager->LoadFBX(_sModelPath));
       if (m_oModelData.m_vctMeshes.empty()) return E_FAIL;
 
       // Init constant buffer
@@ -58,7 +58,7 @@ namespace render
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
       oSubresourceData.pSysMem = m_oModelData.m_vctVertexData.data();
       HRESULT hResult = global::dx11::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
-      if (FAILED(hResult)) 
+      if (FAILED(hResult))
       {
         return hResult;
       }

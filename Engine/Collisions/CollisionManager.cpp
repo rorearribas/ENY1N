@@ -89,10 +89,10 @@ namespace collision
     }
     switch (_eColliderType)
     {
-      case collision::EColliderType::BOX_COLLIDER: return m_vctColliders.RegisterItem<collision::CBoxCollider>(_pOwner);
-      case collision::EColliderType::SPHERE_COLLIDER: return m_vctColliders.RegisterItem<collision::CSphereCollider>(_pOwner);
-      case collision::EColliderType::CAPSULE_COLLIDER: return m_vctColliders.RegisterItem<collision::CCapsuleCollider>(_pOwner);
-      default: return nullptr;
+    case collision::EColliderType::BOX_COLLIDER: return m_vctColliders.RegisterItem<collision::CBoxCollider>(_pOwner);
+    case collision::EColliderType::SPHERE_COLLIDER: return m_vctColliders.RegisterItem<collision::CSphereCollider>(_pOwner);
+    case collision::EColliderType::CAPSULE_COLLIDER: return m_vctColliders.RegisterItem<collision::CCapsuleCollider>(_pOwner);
+    default: return nullptr;
     }
   }
   // ------------------------------------
@@ -111,7 +111,7 @@ namespace collision
     {
       collision::CCollider* pCollider = m_vctColliders[uI];
       const collision::ECollisionMask& eCollMask = pCollider->GetCollisionMask();
-      if((eCollMask & _eMask) == 0)
+      if ((eCollMask & _eMask) == 0)
       {
         continue;
       }
@@ -135,7 +135,7 @@ namespace collision
     for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
     {
       collision::CCollider* pCollider = m_vctColliders[uI];
-      if ((pCollider->GetCollisionMask() & _eMask) == 0) 
+      if ((pCollider->GetCollisionMask() & _eMask) == 0)
       {
         continue;
       }

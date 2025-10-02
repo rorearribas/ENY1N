@@ -40,6 +40,11 @@ namespace game
 #ifdef _DEBUG
     assert(m_pModel);
 #endif
+
+    // Update transform
+    m_pModel->SetPosition(GetPosition());
+    m_pModel->SetRotation(GetRotation());
+    m_pModel->SetScale(GetScale());
   }
   // ------------------------------------
   void CModelComponent::CreatePrimitive(render::graphics::CPrimitive::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)

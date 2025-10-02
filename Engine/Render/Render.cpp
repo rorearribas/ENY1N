@@ -21,7 +21,7 @@ namespace render
     static const wchar_t* s_sDrawModelsMrk(L"Models");
     static const wchar_t* s_sDrawPrimitivesMrk(L"Primitives");
     static const wchar_t* s_sImGuiMarker(L"ImGui");
-    
+
     static const float s_v4ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
@@ -91,13 +91,13 @@ namespace render
   {
     // Create device
     HRESULT hResult = CreateDevice(_uX, _uY);
-    if (FAILED(hResult)) 
+    if (FAILED(hResult))
     {
       return hResult;
     }
 
     // Init ImGui
-    if (!InitImGui()) 
+    if (!InitImGui())
     {
       return -1;
     }
@@ -244,7 +244,7 @@ namespace render
   {
     ID3D11Texture2D* pBackBuffer = nullptr;
     internal_render::s_oPipeline.pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
-    if (!pBackBuffer) 
+    if (!pBackBuffer)
     {
       return E_FAIL;
     }
@@ -281,8 +281,8 @@ namespace render
 
     HRESULT hResult = global::dx11::s_pDevice->CreateTexture2D
     (
-      &oTextureDesc, 
-      nullptr, 
+      &oTextureDesc,
+      nullptr,
       &internal_render::s_oPipeline.pDepthTexture
     );
     assert(!FAILED(hResult));
@@ -311,7 +311,7 @@ namespace render
     // Create depth stencil state
     hResult = global::dx11::s_pDevice->CreateDepthStencilState
     (
-      &oDepthStencilDesc, 
+      &oDepthStencilDesc,
       &internal_render::s_oPipeline.pDepthStencilState
     );
 

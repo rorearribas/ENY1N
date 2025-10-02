@@ -24,7 +24,7 @@ namespace game
   }
   // ------------------------------------
   void CRigidbodyComponent::OnCollisionEnter(const collision::SHitEvent& _oHitEvent)
-  { 
+  {
     // Set new state
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
 

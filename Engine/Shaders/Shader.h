@@ -49,10 +49,10 @@ namespace render
       // Push Shader
       switch (eShaderType)
       {
-        case EShaderType::VERTEX_SHADER: { pDeviceCtx->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(m_pInternalPtr), nullptr, 0); } break;
-        case EShaderType::PIXEL_SHADER: { pDeviceCtx->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(m_pInternalPtr), nullptr, 0); } break;
-        case EShaderType::COMPUTE_SHADER: { pDeviceCtx->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(m_pInternalPtr), nullptr, 0); } break;
-        default: break;
+      case EShaderType::VERTEX_SHADER: { pDeviceCtx->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(m_pInternalPtr), nullptr, 0); } break;
+      case EShaderType::PIXEL_SHADER: { pDeviceCtx->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(m_pInternalPtr), nullptr, 0); } break;
+      case EShaderType::COMPUTE_SHADER: { pDeviceCtx->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(m_pInternalPtr), nullptr, 0); } break;
+      default: break;
       }
     }
 
@@ -65,24 +65,24 @@ namespace render
       HRESULT hResult = S_OK;
       switch (eShaderType)
       {
-        case EShaderType::VERTEX_SHADER:
-        {
-          ID3D11VertexShader** pVertexShader = reinterpret_cast<ID3D11VertexShader**>(&m_pInternalPtr);
-          hResult = _pDevice->CreateVertexShader(_pData, _tSize, nullptr, pVertexShader);
-        }
-        break;
-        case EShaderType::PIXEL_SHADER:
-        {
-          ID3D11PixelShader** pPixelShader = reinterpret_cast<ID3D11PixelShader**>(&m_pInternalPtr);
-          hResult = _pDevice->CreatePixelShader(_pData, _tSize, nullptr, pPixelShader);
-        }
-        break;
-        case EShaderType::COMPUTE_SHADER:
-        {
-          ID3D11ComputeShader** pComputeShader = reinterpret_cast<ID3D11ComputeShader**>(&m_pInternalPtr);
-          hResult = _pDevice->CreateComputeShader(_pData, _tSize, nullptr, pComputeShader);
-        }
-        break;
+      case EShaderType::VERTEX_SHADER:
+      {
+        ID3D11VertexShader** pVertexShader = reinterpret_cast<ID3D11VertexShader**>(&m_pInternalPtr);
+        hResult = _pDevice->CreateVertexShader(_pData, _tSize, nullptr, pVertexShader);
+      }
+      break;
+      case EShaderType::PIXEL_SHADER:
+      {
+        ID3D11PixelShader** pPixelShader = reinterpret_cast<ID3D11PixelShader**>(&m_pInternalPtr);
+        hResult = _pDevice->CreatePixelShader(_pData, _tSize, nullptr, pPixelShader);
+      }
+      break;
+      case EShaderType::COMPUTE_SHADER:
+      {
+        ID3D11ComputeShader** pComputeShader = reinterpret_cast<ID3D11ComputeShader**>(&m_pInternalPtr);
+        hResult = _pDevice->CreateComputeShader(_pData, _tSize, nullptr, pComputeShader);
+      }
+      break;
       }
 #ifdef _DEBUG
       assert(SUCCEEDED(hResult));

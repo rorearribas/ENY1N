@@ -3,8 +3,8 @@
 
 namespace render
 {
-	namespace lights
-	{
+  namespace lights
+  {
     const float s_fMaxValue(1.0f);
     const float s_fMinValue(0.0f);
     // ------------------------------------

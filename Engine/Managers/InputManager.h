@@ -6,7 +6,7 @@
 
 namespace input
 {
-  class CMouse 
+  class CMouse
   {
   public:
     CMouse();
@@ -42,7 +42,7 @@ namespace input
     std::map<USHORT, bool> m_mapKeyStates;
   };
 
-  class CInputManager : public utils::CSingleton<CInputManager> 
+  class CInputManager : public utils::CSingleton<CInputManager>
   {
   public:
     CInputManager();

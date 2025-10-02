@@ -27,8 +27,8 @@ namespace math
     float _m41, float _m42, float _m43, float _m44
   )
   {
-    m16[0] = _m11; m16[4] = _m12; m16[8]  = _m13; m16[12] = _m14;
-    m16[1] = _m21; m16[5] = _m22; m16[9]  = _m23; m16[13] = _m24;
+    m16[0] = _m11; m16[4] = _m12; m16[8] = _m13; m16[12] = _m14;
+    m16[1] = _m21; m16[5] = _m22; m16[9] = _m23; m16[13] = _m24;
     m16[2] = _m31; m16[6] = _m32; m16[10] = _m33; m16[14] = _m34;
     m16[3] = _m41; m16[7] = _m42; m16[11] = _m43; m16[15] = _m44;
   }
@@ -218,7 +218,7 @@ namespace math
       0.0f,
 
       v3Cross.X * v3Cross.Y * fK + v3Cross.Z,
-      v3Cross.Y * v3Cross.Y * fK + fDot, 
+      v3Cross.Y * v3Cross.Y * fK + fDot,
       v3Cross.Z * v3Cross.Y * fK - v3Cross.X,
       0.0f,
 

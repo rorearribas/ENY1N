@@ -5,7 +5,7 @@ namespace reflection
 {
   void CTypeManager::RegisterClass(CClass* _pType)
   {
-    if (m_iRegisteredTypes == m_vctTypes.max_size()) 
+    if (m_iRegisteredTypes == m_vctTypes.max_size())
     {
       std::cout << "Increase the size!" << std::endl;
       return;

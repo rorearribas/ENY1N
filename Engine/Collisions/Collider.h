@@ -42,7 +42,7 @@ namespace collision
 
   public:
     explicit CCollider(EColliderType _eColliderType, void* _pOwner)
-    : m_eColliderType(_eColliderType), m_pOwner(_pOwner) {}
+      : m_eColliderType(_eColliderType), m_pOwner(_pOwner) {}
     virtual ~CCollider() {}
 
     virtual bool CheckCollision(const collision::CCollider&, collision::SHitEvent&) = 0;

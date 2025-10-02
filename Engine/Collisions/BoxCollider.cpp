@@ -266,7 +266,7 @@ namespace collision
     float fClampedZ = math::Clamp(fProjZ, -v3HalfSize.Z, v3HalfSize.Z);
 
     // Compute closest point
-    math::CVector3 v3ClosestPoint = 
+    math::CVector3 v3ClosestPoint =
     {
       (v3OBBCenter + v3Axis[0] * fClampedX) + // X
       (v3Axis[1] * fClampedY) + // Y

@@ -19,5 +19,5 @@ namespace global
       size_t m_tAllocatedSize = 0;
       size_t m_tMemoryPeak = 0;
     };
-  } 
+  }
 }

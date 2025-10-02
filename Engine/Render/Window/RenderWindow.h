@@ -4,7 +4,7 @@
 
 namespace render
 {
-  class CRenderWindow 
+  class CRenderWindow
   {
   public:
     CRenderWindow(uint32_t _uWidth, uint32_t _uHeight);

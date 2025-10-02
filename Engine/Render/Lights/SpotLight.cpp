@@ -3,8 +3,8 @@
 
 namespace render
 {
-	namespace lights
-	{
+  namespace lights
+  {
     math::CVector3 CSpotLight::s_vDefaultDirection(0.0f, -1.0f, 0.0f);
-	}
+  }
 }

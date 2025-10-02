@@ -7,10 +7,10 @@ namespace tick
     const float s_fMaxFixedDelta = 1.0f / 15.f;
   }
   // ------------------------------------
-  CTimeManager::CTimeManager(int _iMaxFPS) :  
-    m_fDeltaTime(-1.0), 
-    m_llBaseTime(0), 
-    m_llPausedTime(0), 
+  CTimeManager::CTimeManager(int _iMaxFPS) :
+    m_fDeltaTime(-1.0),
+    m_llBaseTime(0),
+    m_llPausedTime(0),
     m_bStopped(false)
   {
     QueryPerformanceCounter(&m_llPrevTime);

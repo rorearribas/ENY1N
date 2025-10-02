@@ -34,7 +34,7 @@ namespace render
       void SetScale(const math::CVector3& _v3Scale) { m_oModelTransform.SetScale(_v3Scale); }
       const math::CVector3& GetScale() const { return m_oModelTransform.GetScale(); }
 
-    private: 
+    private:
       HRESULT InitModel(const char* _sModelPath, const char* _sBaseMltDir);
       HRESULT CreateInputLayout();
 
