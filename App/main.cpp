@@ -50,7 +50,8 @@ int main()
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);
-  pEngine->GetCamera()->SetPosition(math::CVector3(0.0f, 5.0f, -10.0f));
+  pEngine->GetCamera()->SetPosition(math::CVector3(3.104f, 11.347f, -0.901f));
+  pEngine->GetCamera()->SetRotation(math::CVector3(5.443f, -75.275f, -0.901f));
 
   // Collisions manager
   collision::CCollisionManager* pCollisionManager = collision::CCollisionManager::CreateSingleton();
@@ -79,11 +80,19 @@ int main()
   pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
   // Load test model
-  game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-  pModelEnt->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
-  game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-  pModelTest->LoadModel("Test/uploads_files_2711294_manhattan.fbx", "");
-  pModelTest->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+  //game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+  //pModelEnt->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+  //game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
+  //pModelTest->LoadModel("models/wolf/Wolf.fbx", "");
+  //pModelTest->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+  //pModelTest->SetScale(math::CVector3(3.0f, 3.0f, 3.0f));
+
+  game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
+  pModelEnt2->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+  game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
+  pModelTest2->LoadModel("models/manhattan/manhattan.fbx", "");
+  pModelTest2->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+  pModelTest2->SetScale(math::CVector3(3.0f, 3.0f, 3.0f));
 
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)

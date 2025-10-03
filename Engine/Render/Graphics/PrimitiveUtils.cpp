@@ -192,7 +192,7 @@ namespace render
 
           oVertexData.Position = v3VertexPos;
           oVertexData.Normal = math::CVector3::Normalize(v3VertexPos);
-          oVertexData.TexCoord = math::CVector2((static_cast<float>(uJ) / _iSlices), 1.0f - (static_cast<float>(uX) / _iStacks));
+          oVertexData.UV = math::CVector2((static_cast<float>(uJ) / _iSlices), 1.0f - (static_cast<float>(uX) / _iStacks));
 
           _vctVertexData_.emplace_back(oVertexData);
         }

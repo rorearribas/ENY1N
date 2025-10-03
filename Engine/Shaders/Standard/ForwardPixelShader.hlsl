@@ -60,7 +60,7 @@ struct PS_INPUT
   float3 worldpos : POSITION;
   float3 normal : NORMAL;
   float3 color: COLOR;
-  float2 uv : TEXCOORD;
+  float2 uv : UV;
 };
 
 // Constant buffer

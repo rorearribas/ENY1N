@@ -53,7 +53,7 @@ char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
 // ------------------------------------
 unsigned char* CResourceManager::LoadTexture(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
 {
-  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, 4);
+  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture::s_uChannels); 
 }
 // ------------------------------------
 render::gfx::CModel::SModelData CResourceManager::LoadFBX(const char* _sPath)
@@ -67,9 +67,8 @@ render::gfx::CModel::SModelData CResourceManager::LoadFBX(const char* _sPath)
     std::string(_sPath),
     aiProcess_ConvertToLeftHanded |
     aiProcess_Triangulate |
-    aiProcess_GenNormals |
-    aiProcess_JoinIdenticalVertices |
-    aiProcess_GlobalScale
+    aiProcess_GenNormals /*|
+    aiProcess_GlobalScale*/
   );
 
   // Check
@@ -123,9 +122,8 @@ render::gfx::CModel::SModelData CResourceManager::LoadFBX(const char* _sPath)
       pMaterial->SetShininess(fTransparent);
     }
 
-    // Load textures
-    aiString sPath;
     // Diffuse
+    aiString sPath;
     if (pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &sPath) == aiReturn_SUCCESS)
     {
       RegisterTexture(pMaterial, render::texture::ETextureType::DIFFUSE, path(_sPath).parent_path(), sPath.C_Str());
@@ -175,8 +173,39 @@ render::gfx::CModel::SModelData CResourceManager::LoadFBX(const char* _sPath)
     {
       RegisterTexture(pMaterial, texture::ETextureType::REFLECTION, path(_sPath).parent_path(), sPath.C_Str());
     }
+    // Base color
+    if (pLoadedMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &sPath) == aiReturn_SUCCESS)
+    {
+      RegisterTexture(pMaterial, texture::ETextureType::BASE_COLOR, path(_sPath).parent_path(), sPath.C_Str());
+    }
+    // Normal camera
+    if (pLoadedMaterial->GetTexture(aiTextureType_NORMAL_CAMERA, 0, &sPath) == aiReturn_SUCCESS)
+    {
+      RegisterTexture(pMaterial, texture::ETextureType::NORMAL_CAMERA, path(_sPath).parent_path(), sPath.C_Str());
+    }
+    // Emission color
+    if (pLoadedMaterial->GetTexture(aiTextureType_EMISSION_COLOR, 0, &sPath) == aiReturn_SUCCESS)
+    {
+      RegisterTexture(pMaterial, texture::ETextureType::EMISSION_COLOR, path(_sPath).parent_path(), sPath.C_Str());
+    }
+    // Metalness
+    if (pLoadedMaterial->GetTexture(aiTextureType_METALNESS, 0, &sPath) == aiReturn_SUCCESS)
+    {
+      RegisterTexture(pMaterial, texture::ETextureType::METALNESS, path(_sPath).parent_path(), sPath.C_Str());
+    }
+    // Diffuse roughness
+    if (pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &sPath) == aiReturn_SUCCESS)
+    {
+      RegisterTexture(pMaterial, texture::ETextureType::DIFFUSE_ROUGHNESS, path(_sPath).parent_path(), sPath.C_Str());
+    }
+    // Ambient occlusion
+    if (pLoadedMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &sPath) == aiReturn_SUCCESS)
+    {
+      RegisterTexture(pMaterial, texture::ETextureType::AMBIENT_OCCLUSSION, path(_sPath).parent_path(), sPath.C_Str());
+    }
 
-    vctMaterials.emplace_back(pMaterial);
+    // Add material
+    vctMaterials.emplace_back(std::move(pMaterial));
   }
 
   // Load meshes
@@ -190,24 +219,24 @@ render::gfx::CModel::SModelData CResourceManager::LoadFBX(const char* _sPath)
     render::gfx::CMesh* pMesh = new render::gfx::CMesh(pSceneMesh->mName.C_Str());
     std::vector<uint32_t> vctIndices;
 
-    for (unsigned int uI = 0; uI < pSceneMesh->mNumFaces; uI++) 
+    for (uint32_t uI = 0; uI < pSceneMesh->mNumFaces; uI++)
     {
       aiFace& oFace = pSceneMesh->mFaces[uI];
-      for (unsigned int uJ = 0; uJ < oFace.mNumIndices; uJ++) 
+      for (uint32_t uJ = 0; uJ < oFace.mNumIndices; uJ++) 
       {
-        render::gfx::SVertexData oVertexData;
+        render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
+        uint32_t uPosIdx = oFace.mIndices[uJ];
         oVertexData.MaterialId = pSceneMesh->mMaterialIndex;
 
         // Position
-        unsigned int uPosIdx = oFace.mIndices[uJ];
-        aiVector3D pos = pSceneMesh->mVertices[uPosIdx];
-        oVertexData.Position = math::CVector3(pos.x, pos.y, pos.z);
+        aiVector3D v3Pos = pSceneMesh->mVertices[uPosIdx];
+        oVertexData.Position = math::CVector3(v3Pos.x, v3Pos.y, v3Pos.z);
 
         // Normal
         if (pSceneMesh->HasNormals())
         {
-          aiVector3D n = pSceneMesh->mNormals[uPosIdx];
-          oVertexData.Normal = math::CVector3(n.x, n.y, n.z);
+          aiVector3D v3Normal = pSceneMesh->mNormals[uPosIdx];
+          oVertexData.Normal = math::CVector3(v3Normal.x, v3Normal.y, v3Normal.z);
         }
         else 
         {
@@ -217,12 +246,12 @@ render::gfx::CModel::SModelData CResourceManager::LoadFBX(const char* _sPath)
         // UV
         if (pSceneMesh->HasTextureCoords(0))
         {
-          aiVector3D uv = pSceneMesh->mTextureCoords[0][uPosIdx];
-          oVertexData.TexCoord = math::CVector2(uv.x, 1.0f - uv.y);
+          aiVector3D v3Vector = pSceneMesh->mTextureCoords[0][uPosIdx];
+          oVertexData.UV = math::CVector2(v3Vector.x, v3Vector.y);
         }
         else 
         {
-          oVertexData.TexCoord = math::CVector2::Zero;
+          oVertexData.UV = math::CVector2::Zero;
         }
 
         // Add vertices
@@ -235,14 +264,14 @@ render::gfx::CModel::SModelData CResourceManager::LoadFBX(const char* _sPath)
         {
           uint32_t uNewIdx = static_cast<uint32_t>(dctVertexMap.size());
           dctVertexMap[oVertexData] = uNewIdx;
-          oModelData.m_vctVertexData.emplace_back(oVertexData);
+          oModelData.m_vctVertexData.emplace_back(std::move(oVertexData));
           vctIndices.emplace_back(uNewIdx);
         }
       }
     }
 
     // Index buffer
-    HRESULT hResult = pMesh->AssignIndexBuffer(vctIndices);
+    HRESULT hResult = pMesh->CreateBuffer(vctIndices);
     UNUSED_VAR(hResult);
     assert(!FAILED(hResult));
 
@@ -375,7 +404,7 @@ render::gfx::CModel::SModelData CResourceManager::LoadOBJ(const char* _sPath, co
 
         // Set UV
         bool bHasTexCoord = idx.texcoord_index >= 0 && idx.texcoord_index < (attributes.texcoords.size() / 2);
-        oVertexData.TexCoord = bHasTexCoord ? math::CVector2
+        oVertexData.UV = bHasTexCoord ? math::CVector2
         (
           attributes.texcoords[2 * idx.texcoord_index + 0],
           1.0f - attributes.texcoords[2 * idx.texcoord_index + 1] // We have to invert this value
@@ -402,7 +431,7 @@ render::gfx::CModel::SModelData CResourceManager::LoadOBJ(const char* _sPath, co
     }
 
     // Create mesh
-    HRESULT hResult = pMesh->AssignIndexBuffer(vctIndices);
+    HRESULT hResult = pMesh->CreateBuffer(vctIndices);
     UNUSED_VAR(hResult);
     assert(!FAILED(hResult));
 

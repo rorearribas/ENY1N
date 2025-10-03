@@ -20,13 +20,22 @@ namespace render
       DISPLACEMENT,
       LIGHTMAP,
       REFLECTION,
+      BASE_COLOR,
+      NORMAL_CAMERA,
+      EMISSION_COLOR,
+      METALNESS,
+      DIFFUSE_ROUGHNESS,
+      AMBIENT_OCCLUSSION,
       COUNT
     };
 
     class CTexture
     {
     public:
-      explicit CTexture(const std::string& _sTextureId) : m_sTextureId(_sTextureId) {}
+      static constexpr uint32_t s_uChannels = 4;
+
+    public:
+      CTexture(const std::string& _sTextureID) : m_sTextureID(_sTextureID) {}
       ~CTexture();
 
       void BindTexture();
@@ -40,9 +49,11 @@ namespace render
       void Clear();
 
       // Info
-      std::string m_sTextureId;
+      std::string m_sTextureID;
+
       uint32_t m_uTextureWidth = 0;
       uint32_t m_uTextureHeight = 0;
+      uint32_t m_uChannels = 0;
 
       // DirectX
       ID3D11Texture2D* m_pTexture = nullptr;

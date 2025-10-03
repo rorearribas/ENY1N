@@ -23,7 +23,7 @@ namespace render
       math::CVector3 Position = math::CVector3::Zero;
       math::CVector3 Normal = math::CVector3::Zero;
       math::CVector3 Color = math::CVector3::One;
-      math::CVector2 TexCoord = math::CVector2::Zero;
+      math::CVector2 UV = math::CVector2::Zero;
 
       // Material ID
       uint32_t MaterialId = 0;
@@ -39,11 +39,11 @@ namespace render
       typedef std::vector<uint32_t> TIndexesList;
 
     public:
-      CMesh(const std::string& _sMeshName) : m_sMeshId(_sMeshName) {}
+      CMesh(const std::string& _sMeshName) : m_sMeshID(_sMeshName) {}
       ~CMesh();
 
       void DrawMesh();
-      HRESULT AssignIndexBuffer(TIndexesList& _vctIndices);
+      HRESULT CreateBuffer(TIndexesList& _vctIndices);
 
       void UseGlobalLighting(bool _bEnabled);
       void AddMaterial(render::mat::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
@@ -51,13 +51,13 @@ namespace render
 
       const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
       const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndices.size()); }
-      const std::string& GetMeshId() const { return m_sMeshId; }
+      const std::string& GetMeshID() const { return m_sMeshID; }
 
     private:
       void Clean();
 
       // Info
-      std::string m_sMeshId = std::string();
+      std::string m_sMeshID = std::string();
       bool m_bUseGlobalLightning = true;
 
       // Materials
@@ -71,18 +71,19 @@ namespace render
   }
 }
 
-namespace std
+namespace std 
 {
   template <>
-  struct hash<render::gfx::SVertexData>
+  struct hash<render::gfx::SVertexData> 
   {
-    size_t operator()(const render::gfx::SVertexData& vertex) const
+    size_t operator()(const render::gfx::SVertexData& v) const 
     {
-      return ((hash<math::CVector3>()(vertex.Position) ^
-        (hash<math::CVector3>()(vertex.Normal) << 1)) >> 1) ^
-        (hash<math::CVector2>()(vertex.TexCoord) << 1) ^
-        (hash<math::CVector3>()(vertex.Color) << 1) ^
-        (hash<int>()(vertex.MaterialId) << 1);
+      auto roundFloat = [](float f) { return static_cast<int>(f * 1000); };
+      size_t h1 = hash<int>()(roundFloat(v.Position.X)) ^ hash<int>()(roundFloat(v.Position.Y)) ^ hash<int>()(roundFloat(v.Position.Z));
+      size_t h2 = hash<int>()(roundFloat(v.Normal.X)) ^ hash<int>()(roundFloat(v.Normal.Y)) ^ hash<int>()(roundFloat(v.Normal.Z));
+      size_t h3 = hash<int>()(roundFloat(v.UV.X)) ^ hash<int>()(roundFloat(v.UV.Y));
+      size_t h4 = hash<uint32_t>()(v.MaterialId);
+      return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3);
     }
   };
 }

@@ -13,15 +13,14 @@ namespace render
        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::gfx::SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+       { "UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::gfx::SVertexData, UV), D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
     // ------------------------------------
     bool SVertexData::operator==(const SVertexData& _other) const
     {
       return Position == _other.Position && // Pos
         Normal == _other.Normal && // Normal
-        TexCoord == _other.TexCoord && // TexCoord
-        Color == _other.Color && // Color
+        UV == _other.UV && // TexCoord
         MaterialId == _other.MaterialId; // Material ID
     }
     // ------------------------------------
@@ -29,7 +28,6 @@ namespace render
     {
       return !(*this == _other);
     }
-
     // ------------------------------------
     CMesh::~CMesh()
     {
@@ -39,16 +37,17 @@ namespace render
     void CMesh::DrawMesh()
     {
       // Draw texture
-      texture::CTexture* pTargetTexture = nullptr;
+      bool bHasTexture = false;
       for (auto& it : m_dctMaterials)
       {
         for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(texture::ETextureType::COUNT); uIndex++)
         {
           texture::ETextureType eTextureType = static_cast<texture::ETextureType>(uIndex);
-          pTargetTexture = it.second->GetTexture(eTextureType);
+          texture::CTexture* pTargetTexture = it.second->GetTexture(eTextureType);
           if (pTargetTexture)
           {
             pTargetTexture->BindTexture();
+            bHasTexture = true;
             break;
           }
         }
@@ -56,7 +55,7 @@ namespace render
 
       // Update buffer
       m_oConstantModelData.GetData().bUseGlobalLighting = m_bUseGlobalLightning;
-      m_oConstantModelData.GetData().bHasTexture = pTargetTexture ? true : false;
+      m_oConstantModelData.GetData().bHasTexture = bHasTexture;
       m_oConstantModelData.GetData().bHasModel = true;
       bool bOk = m_oConstantModelData.WriteBuffer();
       UNUSED_VAR(bOk);
@@ -76,7 +75,7 @@ namespace render
       m_dctMaterials.emplace(_uMaterialIdx, _pMaterial);
     }
     // ------------------------------------
-    HRESULT CMesh::AssignIndexBuffer(TIndexesList& _vctIndices)
+    HRESULT CMesh::CreateBuffer(TIndexesList& _vctIndices)
     {
       // Clean mesh
       Clean();
