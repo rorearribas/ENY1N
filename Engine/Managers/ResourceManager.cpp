@@ -69,23 +69,25 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
 
     // Set material values
     {
-      aiColor3D v3Ambient(0.f, 0.f, 0.f), v3Diffuse(0.f, 0.f, 0.f), v3Specular(0.f, 0.f, 0.f);
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_AMBIENT, v3Ambient);
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, v3Diffuse);
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_SPECULAR, v3Specular);
+      math::CVector3 v3Diffuse, v3Ambient, v3Specular;
+      pLoadedMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, reinterpret_cast<aiColor3D&>(v3Diffuse));
+      pLoadedMaterial->Get(AI_MATKEY_COLOR_AMBIENT, reinterpret_cast<aiColor3D&>(v3Ambient));
+      pLoadedMaterial->Get(AI_MATKEY_COLOR_SPECULAR, reinterpret_cast<aiColor3D&>(v3Specular));
 
-      pMaterial->SetAmbientColor({ v3Ambient.r, v3Ambient.g, v3Ambient.b });
-      pMaterial->SetDiffuseColor({ v3Diffuse.r, v3Diffuse.g, v3Diffuse.b });
-      pMaterial->SetSpecularColor({ v3Specular.r, v3Specular.g, v3Specular.b });
+      // Set
+      pMaterial->SetDiffuseColor(v3Diffuse);
+      pMaterial->SetAmbientColor(v3Ambient);
+      pMaterial->SetSpecularColor(v3Specular);
 
-      aiColor3D v3Emissive(0.f, 0.f, 0.f), v3Transparent(0.f, 0.f, 0.f), v3Reflective(0.f, 0.f, 0.f);
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, v3Emissive);
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_TRANSPARENT, v3Transparent);
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_REFLECTIVE, v3Reflective);
+      math::CVector3 v3Emissive, v3Transparent, v3Reflective;
+      pLoadedMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, reinterpret_cast<aiColor3D&>(v3Emissive));
+      pLoadedMaterial->Get(AI_MATKEY_COLOR_TRANSPARENT, reinterpret_cast<aiColor3D&>(v3Transparent));
+      pLoadedMaterial->Get(AI_MATKEY_COLOR_REFLECTIVE, reinterpret_cast<aiColor3D&>(v3Reflective));
 
-      pMaterial->SetEmissiveColor({ v3Emissive.r, v3Emissive.g, v3Emissive.b });
-      pMaterial->SetTransparentColor({ v3Transparent.r, v3Transparent.g, v3Transparent.b });
-      pMaterial->SetReflectiveColor({ v3Reflective.r, v3Reflective.g, v3Reflective.b });
+      // Set
+      pMaterial->SetEmissiveColor(v3Emissive);
+      pMaterial->SetTransparentColor(v3Transparent);
+      pMaterial->SetReflectiveColor(v3Reflective);
 
       float fOpacity = 0.0f, fTransparent = 0.0f;
       pLoadedMaterial->Get(AI_MATKEY_OPACITY, fOpacity);

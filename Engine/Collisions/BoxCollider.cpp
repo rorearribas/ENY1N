@@ -196,9 +196,9 @@ namespace collision
   // ------------------------------------
   bool CBoxCollider::CheckAABBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
   {
-    bool bCheckCollision = (m_v3Min.X <= _pOther->m_v3Max.X && m_v3Max.X >= _pOther->m_v3Min.X) &&
-      (m_v3Min.Y <= _pOther->m_v3Max.Y && m_v3Max.Y >= _pOther->m_v3Min.Y) &&
-      (m_v3Min.Z <= _pOther->m_v3Max.Z && m_v3Max.Z >= _pOther->m_v3Min.Z);
+    bool bCheckCollision = (m_v3Min.x <= _pOther->m_v3Max.x && m_v3Max.x >= _pOther->m_v3Min.x) &&
+      (m_v3Min.y <= _pOther->m_v3Max.y && m_v3Max.y >= _pOther->m_v3Min.y) &&
+      (m_v3Min.z <= _pOther->m_v3Max.z && m_v3Max.z >= _pOther->m_v3Min.z);
 
     if (bCheckCollision)
     {
@@ -211,9 +211,9 @@ namespace collision
       v3Dir.Normalize();
 
       // Calculate overlap
-      float fOverlapX = (v3HalfSize.X + v3OtherHalfSize.X) - v3Abs.X;
-      float fOverlapY = (v3HalfSize.Y + v3OtherHalfSize.Y) - v3Abs.Y;
-      float fOverlapZ = (v3HalfSize.Z + v3OtherHalfSize.Z) - v3Abs.Z;
+      float fOverlapX = (v3HalfSize.x + v3OtherHalfSize.x) - v3Abs.x;
+      float fOverlapY = (v3HalfSize.y + v3OtherHalfSize.y) - v3Abs.y;
+      float fOverlapZ = (v3HalfSize.z + v3OtherHalfSize.z) - v3Abs.z;
 
       // Get depth and normal
       math::CVector3 v3Normal = math::CVector3::Zero;
@@ -222,16 +222,16 @@ namespace collision
       if (fOverlapY < fDepth)
       {
         fDepth = fOverlapY;
-        v3Normal = math::CVector3(0, (v3Dir.Y < 0) ? 1.0f : -1.0f, 0);
+        v3Normal = math::CVector3(0, (v3Dir.y < 0) ? 1.0f : -1.0f, 0);
       }
       if (fOverlapZ < fDepth)
       {
         fDepth = fOverlapZ;
-        v3Normal = math::CVector3(0, 0, (v3Dir.Z < 0) ? 1.0f : -1.0f);
+        v3Normal = math::CVector3(0, 0, (v3Dir.z < 0) ? 1.0f : -1.0f);
       }
       if (fOverlapX == fDepth)
       {
-        v3Normal = math::CVector3((v3Dir.X < 0) ? 1.0f : -1.0f, 0, 0);
+        v3Normal = math::CVector3((v3Dir.x < 0) ? 1.0f : -1.0f, 0, 0);
       }
 
       // Fill hit event
@@ -261,9 +261,9 @@ namespace collision
     float fProjZ = math::CVector3::Dot(v3Offset, v3Axis[2]); // Axis Z
 
     // Clamp axis
-    float fClampedX = math::Clamp(fProjX, -v3HalfSize.X, v3HalfSize.X);
-    float fClampedY = math::Clamp(fProjY, -v3HalfSize.Y, v3HalfSize.Y);
-    float fClampedZ = math::Clamp(fProjZ, -v3HalfSize.Z, v3HalfSize.Z);
+    float fClampedX = math::Clamp(fProjX, -v3HalfSize.x, v3HalfSize.x);
+    float fClampedY = math::Clamp(fProjY, -v3HalfSize.y, v3HalfSize.y);
+    float fClampedZ = math::Clamp(fProjZ, -v3HalfSize.z, v3HalfSize.z);
 
     // Compute closest point
     math::CVector3 v3ClosestPoint =
@@ -290,14 +290,14 @@ namespace collision
   {
     // We have to find the closest point.
     const math::CVector3& v3SphereCenter = _pOther->GetCenter();
-    float fClosestX = math::Max(m_v3Min.X, math::Min(v3SphereCenter.X, m_v3Max.X));
-    float fClosestY = math::Max(m_v3Min.Y, math::Min(v3SphereCenter.Y, m_v3Max.Y));
-    float fClosestZ = math::Max(m_v3Min.Z, math::Min(v3SphereCenter.Z, m_v3Max.Z));
+    float fClosestX = math::Max(m_v3Min.x, math::Min(v3SphereCenter.x, m_v3Max.x));
+    float fClosestY = math::Max(m_v3Min.y, math::Min(v3SphereCenter.y, m_v3Max.y));
+    float fClosestZ = math::Max(m_v3Min.z, math::Min(v3SphereCenter.z, m_v3Max.z));
 
     // We have to calculate the squared distance between the center of the sphere and the nearest point.
-    float fSquaredDist = (fClosestX - v3SphereCenter.X) * (fClosestX - v3SphereCenter.X) +
-      (fClosestY - v3SphereCenter.Y) * (fClosestY - v3SphereCenter.Y) +
-      (fClosestZ - v3SphereCenter.Z) * (fClosestZ - v3SphereCenter.Z);
+    float fSquaredDist = (fClosestX - v3SphereCenter.x) * (fClosestX - v3SphereCenter.x) +
+      (fClosestY - v3SphereCenter.y) * (fClosestY - v3SphereCenter.y) +
+      (fClosestZ - v3SphereCenter.z) * (fClosestZ - v3SphereCenter.z);
 
     // We check if the distance is less than or equal to the radius squared of the sphere.
     const float& fRadius = _pOther->GetRadius();
@@ -323,12 +323,12 @@ namespace collision
     m_v3Extents =
     {
       v3Center + mRot * (m_v3Min - v3Center),
-      v3Center + mRot * (math::CVector3(m_v3Min.X, m_v3Min.Y, m_v3Max.Z) - v3Center),
-      v3Center + mRot * (math::CVector3(m_v3Min.X, m_v3Max.Y, m_v3Min.Z) - v3Center),
-      v3Center + mRot * (math::CVector3(m_v3Min.X, m_v3Max.Y, m_v3Max.Z) - v3Center),
-      v3Center + mRot * (math::CVector3(m_v3Max.X, m_v3Min.Y, m_v3Min.Z) - v3Center),
-      v3Center + mRot * (math::CVector3(m_v3Max.X, m_v3Min.Y, m_v3Max.Z) - v3Center),
-      v3Center + mRot * (math::CVector3(m_v3Max.X, m_v3Max.Y, m_v3Min.Z) - v3Center),
+      v3Center + mRot * (math::CVector3(m_v3Min.x, m_v3Min.y, m_v3Max.z) - v3Center),
+      v3Center + mRot * (math::CVector3(m_v3Min.x, m_v3Max.y, m_v3Min.z) - v3Center),
+      v3Center + mRot * (math::CVector3(m_v3Min.x, m_v3Max.y, m_v3Max.z) - v3Center),
+      v3Center + mRot * (math::CVector3(m_v3Max.x, m_v3Min.y, m_v3Min.z) - v3Center),
+      v3Center + mRot * (math::CVector3(m_v3Max.x, m_v3Min.y, m_v3Max.z) - v3Center),
+      v3Center + mRot * (math::CVector3(m_v3Max.x, m_v3Max.y, m_v3Min.z) - v3Center),
       v3Center + mRot * (m_v3Max - v3Center)
     };
 

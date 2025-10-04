@@ -56,8 +56,8 @@ namespace render
       if (bPespectiveMode)
       {
         // Rotation
-        float xValue = pMouse->GetMouseDelta().X * m_fCamVelocity;
-        float yValue = pMouse->GetMouseDelta().Y * m_fCamVelocity;
+        float xValue = pMouse->GetMouseDelta().x * m_fCamVelocity;
+        float yValue = pMouse->GetMouseDelta().y * m_fCamVelocity;
 
         // Apply rotation
         AddRotation(math::CVector3(math::Rad2Degrees(yValue), math::Rad2Degrees(xValue), 0.0f));
@@ -108,8 +108,8 @@ namespace render
     }
     else if (internal_camera::s_bWasRightButtonPressed && !_bMousePressed)
     {
-      int iLastX = static_cast<int>(internal_camera::s_v2LastPosition.X);
-      int iLastY = static_cast<int>(internal_camera::s_v2LastPosition.Y);
+      int iLastX = static_cast<int>(internal_camera::s_v2LastPosition.x);
+      int iLastY = static_cast<int>(internal_camera::s_v2LastPosition.y);
       SetCursorPos(iLastX, iLastY);
       internal_camera::s_bWasRightButtonPressed = false;
     }
@@ -137,9 +137,9 @@ namespace render
     }
 
     math::CVector3 v3Dir = math::CVector3::Normalize(_v3LookAt - m_v3Pos);
-    float fPitch = static_cast<float>(atan2(v3Dir.Y, sqrt(v3Dir.X * v3Dir.X + v3Dir.Z * v3Dir.Z)));
-    float fYaw = static_cast<float>(atan2(v3Dir.X, v3Dir.Z));
-    if (v3Dir.Z > 0)
+    float fPitch = static_cast<float>(atan2(v3Dir.y, sqrt(v3Dir.x * v3Dir.x + v3Dir.z * v3Dir.z)));
+    float fYaw = static_cast<float>(atan2(v3Dir.x, v3Dir.z));
+    if (v3Dir.z > 0)
     {
       fYaw += static_cast<float>(math::s_fPI);
     }
@@ -152,7 +152,7 @@ namespace render
     // Reset values
     m_v3Rot = math::CVector3::Zero;
     m_v3Dir = math::CVector3::Forward;
-    m_v3Pos.Z = 0.0f;
+    m_v3Pos.z = 0.0f;
 
     // Update view matrix
     UpdateViewMatrix(_eProjectionMode);
@@ -188,7 +188,7 @@ namespace render
     if (_eProjectionMode == EProjectionMode::PERSPECTIVE)
     {
       // Clamp pitch value
-      m_v3Rot.X = math::Clamp(m_v3Rot.X, -internal_camera::s_fMaxPitch, internal_camera::s_fMaxPitch);
+      m_v3Rot.x = math::Clamp(m_v3Rot.x, -internal_camera::s_fMaxPitch, internal_camera::s_fMaxPitch);
 
       // Create rotation matrix
       math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
@@ -210,17 +210,17 @@ namespace render
   {
     ImGui::Begin("CAMERA");
     const math::CVector3& v3Position = GetPosition();
-    float camera_pos[3] = { v3Position.X, v3Position.Y, v3Position.Z };
+    float camera_pos[3] = { v3Position.x, v3Position.y, v3Position.z };
     ImGui::InputFloat3("Position", camera_pos);
     SetPosition(math::CVector3(camera_pos[0], camera_pos[1], camera_pos[2]));
 
     const math::CVector3& v3Rot = GetRotation();
-    float camera_rot[3] = { v3Rot.X, v3Rot.Y, v3Rot.Z };
+    float camera_rot[3] = { v3Rot.x, v3Rot.y, v3Rot.z };
     ImGui::InputFloat3("Rotation", camera_rot);
     SetRotation(math::CVector3(camera_rot[0], camera_rot[1], camera_rot[2]));
 
     const math::CVector3& v3Dir = GetCameraDir();
-    float camera_dir[3] = { v3Dir.X, v3Dir.Y, v3Dir.Z };
+    float camera_dir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
     ImGui::InputFloat3("Direction", camera_dir);
 
     ImGui::Separator();
@@ -260,8 +260,8 @@ namespace render
     math::CVector3 v3FrontFar = m_v3Dir * m_fFar;
     math::CVector3 v3FrontNear = m_v3Dir * m_fNear;
 
-    math::CVector3 v3FarPos = m_v3Pos + v3FrontFar;
     math::CVector3 v3NearPos = m_v3Pos + v3FrontNear;
+    math::CVector3 v3FarPos = m_v3Pos + v3FrontFar;
 
     m_oFrustumPlanes[0].Set(v3NearPos, m_v3Dir); // Near
     m_oFrustumPlanes[1].Set(v3FarPos, -m_v3Dir); // Far

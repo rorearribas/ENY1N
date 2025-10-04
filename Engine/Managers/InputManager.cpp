@@ -79,8 +79,8 @@ namespace input
     {
       // Get values
       const float fPollingRate = 1.0f / 1000.0f;
-      m_vMouseDelta.X += static_cast<float>(_pRawMouse->lLastX) * fPollingRate;
-      m_vMouseDelta.Y += static_cast<float>(_pRawMouse->lLastY) * fPollingRate;
+      m_vMouseDelta.x += static_cast<float>(_pRawMouse->lLastX) * fPollingRate;
+      m_vMouseDelta.y += static_cast<float>(_pRawMouse->lLastY) * fPollingRate;
     }
 
     // Set mouse wheel delta
@@ -126,10 +126,10 @@ namespace input
   // ------------------------------------
   void CKeyboard::OnUpdateKeyboard(RAWKEYBOARD* _pPtr)
   {
-    if (_pPtr && !m_mapKeyStates.empty())
+    // Set value
+    auto it = m_mapKeyStates.find(_pPtr->VKey);
+    if (it != m_mapKeyStates.end())
     {
-      // Set value
-      auto it = m_mapKeyStates.find(_pPtr->VKey);
       it->second = !(_pPtr->Flags & RI_KEY_BREAK);
     }
   }

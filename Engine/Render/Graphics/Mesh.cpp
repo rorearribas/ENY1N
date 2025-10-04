@@ -1,8 +1,6 @@
 #include "Mesh.h"
-#include <d3dcompiler.h>
-#include <cassert>
 #include "Libs/Macros/GlobalMacros.h"
-#include <iostream>
+#include <cassert>
 
 namespace render
 {
@@ -37,26 +35,21 @@ namespace render
     // ------------------------------------
     void CMesh::Draw()
     {
-      // Draw texture
-      bool bHasTexture = false;
+      // Draw diffuse
+      texture::CTexture* pDiffuseTexture = nullptr;
       for (auto& it : m_dctMaterials)
       {
-        for (uint32_t uIndex = 0; uIndex < static_cast<uint32_t>(texture::ETextureType::COUNT); uIndex++)
+        pDiffuseTexture = it.second->GetTexture(texture::ETextureType::DIFFUSE);
+        if (pDiffuseTexture)
         {
-          texture::ETextureType eTextureType = static_cast<texture::ETextureType>(uIndex);
-          texture::CTexture* pTargetTexture = it.second->GetTexture(eTextureType);
-          if (pTargetTexture)
-          {
-            pTargetTexture->BindTexture();
-            bHasTexture = true;
-            break;
-          }
+          pDiffuseTexture->BindTexture();
+          break;
         }
       }
 
       // Update buffer
       m_oConstantModelData.GetData().IgnoreGlobalLighting = m_bIgnoreGlobalLighting;
-      m_oConstantModelData.GetData().HasTexture = bHasTexture;
+      m_oConstantModelData.GetData().HasTexture = static_cast<bool>(pDiffuseTexture);
       bool bOk = m_oConstantModelData.WriteBuffer();
       UNUSED_VAR(bOk);
       assert(bOk);
@@ -106,7 +99,7 @@ namespace render
     // ------------------------------------
     void CMesh::UpdateVertexColor(ID3D11Buffer* _pVertexBuffer)
     {
-      // Mapped vertex buffer
+      // Mapped vertex buffer (CPU)
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
       HRESULT hResult = global::dx11::s_pDeviceContext->Map(_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
       UNUSED_VAR(hResult);
@@ -130,7 +123,7 @@ namespace render
           if (it != m_dctMaterials.end())
           {
             render::mat::CMaterial* pMaterial = it->second;
-            pVertexData[uVertexDataIdx].Color = pMaterial->GetDiffuseColor(); // WIP Version
+            pVertexData[uVertexDataIdx].Color = pMaterial->GetDiffuseColor(); // Set diffuse value.
           }
         }
         // Add offset

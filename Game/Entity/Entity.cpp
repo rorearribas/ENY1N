@@ -38,21 +38,32 @@ namespace game
     ImGui::Begin(m_sEntityName.c_str());
 
     // Gizmo config
-    static ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    static ImGuizmo::MODE mCurrentGizmoMode = ImGuizmo::MODE::WORLD;
+    static ImGuizmo::OPERATION s_eGizmoOperation = ImGuizmo::TRANSLATE;
+    static ImGuizmo::MODE s_eGizmoMode = ImGuizmo::WORLD;
 
-    if (ImGui::IsKeyPressed(ImGuiKey_W)) mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-    if (ImGui::IsKeyPressed(ImGuiKey_E)) mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    if (ImGui::IsKeyPressed(ImGuiKey_R)) mCurrentGizmoOperation = ImGuizmo::SCALE;
+    if (ImGui::IsKeyPressed(ImGuiKey_W)) s_eGizmoOperation = ImGuizmo::TRANSLATE;
+    if (ImGui::IsKeyPressed(ImGuiKey_E)) s_eGizmoOperation = ImGuizmo::ROTATE;
+    if (ImGui::IsKeyPressed(ImGuiKey_R)) s_eGizmoOperation = ImGuizmo::SCALE;
 
-    if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
-      mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+    // Operation
+    if (ImGui::RadioButton("Translate", s_eGizmoOperation == ImGuizmo::TRANSLATE))
+      s_eGizmoOperation = ImGuizmo::TRANSLATE;
     ImGui::SameLine();
-    if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
-      mCurrentGizmoOperation = ImGuizmo::ROTATE;
+    if (ImGui::RadioButton("Rotate", s_eGizmoOperation == ImGuizmo::ROTATE))
+      s_eGizmoOperation = ImGuizmo::ROTATE;
     ImGui::SameLine();
-    if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
-      mCurrentGizmoOperation = ImGuizmo::SCALE;
+    if (ImGui::RadioButton("Scale", s_eGizmoOperation == ImGuizmo::SCALE))
+      s_eGizmoOperation = ImGuizmo::SCALE;
+
+    // Mode
+    if (ImGui::RadioButton("World", s_eGizmoMode == ImGuizmo::WORLD))
+      s_eGizmoMode = ImGuizmo::WORLD;
+    ImGui::SameLine();
+    if (ImGui::RadioButton("Local", s_eGizmoMode == ImGuizmo::LOCAL))
+      s_eGizmoMode = ImGuizmo::LOCAL;
+
+    ImGui::Separator();
+    ImGui::Spacing();
 
     // Get view matrix and projection matrix
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
@@ -63,9 +74,9 @@ namespace game
     memcpy(matrix, mTransform(), sizeof(matrix));
 
     // Get matrix
-    float fTranslation[3] = { m_oTransform.GetPosition().X, m_oTransform.GetPosition().Y, m_oTransform.GetPosition().Z };
-    float fRotation[3] = { m_oTransform.GetRotation().X, m_oTransform.GetRotation().Y, m_oTransform.GetRotation().Z };
-    float fScale[3] = { m_oTransform.GetScale().X, m_oTransform.GetScale().Y, m_oTransform.GetScale().Z };
+    float fTranslation[3] = { m_oTransform.GetPosition().x, m_oTransform.GetPosition().y, m_oTransform.GetPosition().z };
+    float fRotation[3] = { m_oTransform.GetRotation().x, m_oTransform.GetRotation().y, m_oTransform.GetRotation().z };
+    float fScale[3] = { m_oTransform.GetScale().x, m_oTransform.GetScale().y, m_oTransform.GetScale().z };
 
     // Set rect
     ImGuiIO& io = ImGui::GetIO();
@@ -79,13 +90,13 @@ namespace game
     ImGuizmo::RecomposeMatrixFromComponents(fTranslation, fRotation, fScale, matrix);
 
     // Manipulate gizmo
-    if (ImGuizmo::Manipulate(viewMatrix(), projectionMatrix(), mCurrentGizmoOperation, mCurrentGizmoMode, matrix))
+    if (ImGuizmo::Manipulate(viewMatrix(), projectionMatrix(), s_eGizmoOperation, s_eGizmoMode, matrix))
     {
       // Decompose matrix
       ImGuizmo::DecomposeMatrixToComponents(matrix, fTranslation, fRotation, fScale);
 
       // Apply modifications
-      switch (mCurrentGizmoOperation)
+      switch (s_eGizmoOperation)
       {
       case ImGuizmo::TRANSLATE:
       {
@@ -95,9 +106,9 @@ namespace game
       case ImGuizmo::ROTATE:
       {
         math::CVector3 vNewRot = m_oTransform.GetRotation();
-        vNewRot.X += (fRotation[0] - vNewRot.X);
-        vNewRot.Y += (fRotation[1] - vNewRot.Y);
-        vNewRot.Z += (fRotation[2] - vNewRot.Z);
+        vNewRot.x += (fRotation[0] - vNewRot.x);
+        vNewRot.y += (fRotation[1] - vNewRot.y);
+        vNewRot.z += (fRotation[2] - vNewRot.z);
         SetRotation(vNewRot);
       }
       break;

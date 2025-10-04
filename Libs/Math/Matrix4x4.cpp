@@ -90,19 +90,19 @@ namespace math
     // Compose matrix
     CMatrix4x4 mLookAt = CMatrix4x4::Identity;
 
-    mLookAt.m16[0] = v3Right.X;
-    mLookAt.m16[4] = v3Right.Y;
-    mLookAt.m16[8] = v3Right.Z;
+    mLookAt.m16[0] = v3Right.x;
+    mLookAt.m16[4] = v3Right.y;
+    mLookAt.m16[8] = v3Right.z;
     mLookAt.m16[3] = 0.0f;
 
-    mLookAt.m16[1] = v3Up.X;
-    mLookAt.m16[5] = v3Up.Y;
-    mLookAt.m16[9] = v3Up.Z;
+    mLookAt.m16[1] = v3Up.x;
+    mLookAt.m16[5] = v3Up.y;
+    mLookAt.m16[9] = v3Up.z;
     mLookAt.m16[7] = 0.0f;
 
-    mLookAt.m16[2] = v3Forward.X;
-    mLookAt.m16[6] = v3Forward.Y;
-    mLookAt.m16[10] = v3Forward.Z;
+    mLookAt.m16[2] = v3Forward.x;
+    mLookAt.m16[6] = v3Forward.y;
+    mLookAt.m16[10] = v3Forward.z;
     mLookAt.m16[11] = 0.0f;
 
     mLookAt.m16[12] = -v3Right.Dot(_v3Pos);
@@ -116,26 +116,26 @@ namespace math
   math::CMatrix4x4 CMatrix4x4::Translate(const CVector3& _v3Translate)
   {
     CMatrix4x4 mTranslate = CMatrix4x4::Identity;
-    mTranslate.m16[12] = _v3Translate.X;
-    mTranslate.m16[13] = _v3Translate.Y;
-    mTranslate.m16[14] = _v3Translate.Z;
+    mTranslate.m16[12] = _v3Translate.x;
+    mTranslate.m16[13] = _v3Translate.y;
+    mTranslate.m16[14] = _v3Translate.z;
     return mTranslate;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Scale(const CVector3& _v3Scale)
   {
     CMatrix4x4 mScale = CMatrix4x4::Identity;
-    mScale.m16[0] = _v3Scale.X;
-    mScale.m16[5] = _v3Scale.Y;
-    mScale.m16[10] = _v3Scale.Z;
+    mScale.m16[0] = _v3Scale.x;
+    mScale.m16[5] = _v3Scale.y;
+    mScale.m16[10] = _v3Scale.z;
     return mScale;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _v3Rot)
   {
-    float fPitch = math::Deg2Radians(_v3Rot.X);
-    float fYaw = math::Deg2Radians(_v3Rot.Y);
-    float fRoll = math::Deg2Radians(_v3Rot.Z);
+    float fPitch = math::Deg2Radians(_v3Rot.x);
+    float fYaw = math::Deg2Radians(_v3Rot.y);
+    float fRoll = math::Deg2Radians(_v3Rot.z);
 
     // Roll (Z)
     CMatrix4x4 mRoll = CMatrix4x4::Identity;
@@ -169,17 +169,17 @@ namespace math
     float fOffset = 1.0f - fCos;
 
     CMatrix4x4 mRot(CMatrix4x4::Identity);
-    mRot.m16[0] = _v3Axis.X * _v3Axis.X * fOffset + fCos;
-    mRot.m16[4] = _v3Axis.X * _v3Axis.Y * fOffset - _v3Axis.Z * fSin;
-    mRot.m16[8] = _v3Axis.X * _v3Axis.Z * fOffset + _v3Axis.Y * fSin;
+    mRot.m16[0] = _v3Axis.x * _v3Axis.x * fOffset + fCos;
+    mRot.m16[4] = _v3Axis.x * _v3Axis.y * fOffset - _v3Axis.z * fSin;
+    mRot.m16[8] = _v3Axis.x * _v3Axis.z * fOffset + _v3Axis.y * fSin;
 
-    mRot.m16[1] = _v3Axis.Y * _v3Axis.X * fOffset + _v3Axis.Z * fSin;
-    mRot.m16[5] = _v3Axis.Y * _v3Axis.Y * fOffset + fCos;
-    mRot.m16[9] = _v3Axis.Y * _v3Axis.Z * fOffset - _v3Axis.X * fSin;
+    mRot.m16[1] = _v3Axis.y * _v3Axis.x * fOffset + _v3Axis.z * fSin;
+    mRot.m16[5] = _v3Axis.y * _v3Axis.y * fOffset + fCos;
+    mRot.m16[9] = _v3Axis.y * _v3Axis.z * fOffset - _v3Axis.x * fSin;
 
-    mRot.m16[2] = _v3Axis.Z * _v3Axis.X * fOffset - _v3Axis.Y * fSin;
-    mRot.m16[6] = _v3Axis.Z * _v3Axis.Y * fOffset + _v3Axis.X * fSin;
-    mRot.m16[10] = _v3Axis.Z * _v3Axis.Z * fOffset + fCos;
+    mRot.m16[2] = _v3Axis.z * _v3Axis.x * fOffset - _v3Axis.y * fSin;
+    mRot.m16[6] = _v3Axis.z * _v3Axis.y * fOffset + _v3Axis.x * fSin;
+    mRot.m16[10] = _v3Axis.z * _v3Axis.z * fOffset + fCos;
 
     mRot.m16[15] = 1.0f;
 
@@ -212,19 +212,19 @@ namespace math
 
     return CMatrix4x4
     (
-      v3Cross.X * v3Cross.X * fK + fDot,
-      v3Cross.Y * v3Cross.X * fK - v3Cross.Z,
-      v3Cross.Z * v3Cross.X * fK + v3Cross.Y,
+      v3Cross.x * v3Cross.x * fK + fDot,
+      v3Cross.y * v3Cross.x * fK - v3Cross.z,
+      v3Cross.z * v3Cross.x * fK + v3Cross.y,
       0.0f,
 
-      v3Cross.X * v3Cross.Y * fK + v3Cross.Z,
-      v3Cross.Y * v3Cross.Y * fK + fDot,
-      v3Cross.Z * v3Cross.Y * fK - v3Cross.X,
+      v3Cross.x * v3Cross.y * fK + v3Cross.z,
+      v3Cross.y * v3Cross.y * fK + fDot,
+      v3Cross.z * v3Cross.y * fK - v3Cross.x,
       0.0f,
 
-      v3Cross.X * v3Cross.Z * fK - v3Cross.Y,
-      v3Cross.Y * v3Cross.Z * fK + v3Cross.X,
-      v3Cross.Z * v3Cross.Z * fK + fDot,
+      v3Cross.x * v3Cross.z * fK - v3Cross.y,
+      v3Cross.y * v3Cross.z * fK + v3Cross.x,
+      v3Cross.z * v3Cross.z * fK + fDot,
       0.0f, 0.0f, 0.0f, 0.0f, 1.0f
     );
   }

@@ -63,7 +63,7 @@ namespace collision
     math::CVector3 v3Dir = math::CVector3::Normalize(v3Offset);
 
     // Calculate values
-    float fDistanceSquared = (v3Offset.X * v3Offset.X) + (v3Offset.Y * v3Offset.Y) + (v3Offset.Z * v3Offset.Z);
+    float fDistanceSquared = (v3Offset.x * v3Offset.x) + (v3Offset.y * v3Offset.y) + (v3Offset.z * v3Offset.z);
     float fRadiusSum = GetRadius() + _pOther->GetRadius();
     float fRadiusSquared = fRadiusSum * fRadiusSum;
 
@@ -96,9 +96,9 @@ namespace collision
     float fProjZ = math::CVector3::Dot(v3Offset, v3Axis[2]); // Axis Z
 
     // Clamp axis
-    float fClampedX = math::Clamp(fProjX, -v3HalfSize.X, v3HalfSize.X);
-    float fClampedY = math::Clamp(fProjY, -v3HalfSize.Y, v3HalfSize.Y);
-    float fClampedZ = math::Clamp(fProjZ, -v3HalfSize.Z, v3HalfSize.Z);
+    float fClampedX = math::Clamp(fProjX, -v3HalfSize.x, v3HalfSize.x);
+    float fClampedY = math::Clamp(fProjY, -v3HalfSize.y, v3HalfSize.y);
+    float fClampedZ = math::Clamp(fProjZ, -v3HalfSize.z, v3HalfSize.z);
 
     // Compute closest point
     math::CVector3 v3ClosestPoint =
@@ -125,14 +125,14 @@ namespace collision
   {
     // We have to find the closest point.
     const math::CVector3& v3Center = GetCenter();
-    float fClosestX = math::Max(_pOther->GetMin().X, math::Min(v3Center.X, _pOther->GetMax().X));
-    float fClosestY = math::Max(_pOther->GetMin().Y, math::Min(v3Center.Y, _pOther->GetMax().Y));
-    float fClosestZ = math::Max(_pOther->GetMin().Z, math::Min(v3Center.Z, _pOther->GetMax().Z));
+    float fClosestX = math::Max(_pOther->GetMin().x, math::Min(v3Center.x, _pOther->GetMax().x));
+    float fClosestY = math::Max(_pOther->GetMin().y, math::Min(v3Center.y, _pOther->GetMax().y));
+    float fClosestZ = math::Max(_pOther->GetMin().z, math::Min(v3Center.z, _pOther->GetMax().z));
 
     // We have to calculate the squared distance between the center of the sphere and the nearest point.
-    float fSquaredDist = (fClosestX - v3Center.X) * (fClosestX - v3Center.X) +
-      (fClosestY - v3Center.Y) * (fClosestY - v3Center.Y) +
-      (fClosestZ - v3Center.Z) * (fClosestZ - v3Center.Z);
+    float fSquaredDist = (fClosestX - v3Center.x) * (fClosestX - v3Center.x) +
+      (fClosestY - v3Center.y) * (fClosestY - v3Center.y) +
+      (fClosestZ - v3Center.z) * (fClosestZ - v3Center.z);
 
     // We check if the distance is less than or equal to the radius squared of the sphere.
     const float& fRadius = GetRadius();

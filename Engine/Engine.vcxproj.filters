@@ -1221,6 +1221,9 @@
     <ClInclude Include="Third-Party\assimp\include\zlib.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Collisions\CullingAABB.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -1314,6 +1317,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Collisions\CapsuleCollider.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Collisions\CullingAABB.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

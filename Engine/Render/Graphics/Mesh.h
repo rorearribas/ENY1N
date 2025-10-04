@@ -1,5 +1,4 @@
 #pragma once
-#include <d3d11.h>
 #include "Engine/Render/Resources/Material.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 
@@ -80,9 +79,9 @@ namespace std
     size_t operator()(const render::gfx::SVertexData& v) const 
     {
       auto roundFloat = [](float f) { return static_cast<int>(f * 1000); };
-      size_t h1 = hash<int>()(roundFloat(v.Position.X)) ^ hash<int>()(roundFloat(v.Position.Y)) ^ hash<int>()(roundFloat(v.Position.Z));
-      size_t h2 = hash<int>()(roundFloat(v.Normal.X)) ^ hash<int>()(roundFloat(v.Normal.Y)) ^ hash<int>()(roundFloat(v.Normal.Z));
-      size_t h3 = hash<int>()(roundFloat(v.UV.X)) ^ hash<int>()(roundFloat(v.UV.Y));
+      size_t h1 = hash<int>()(roundFloat(v.Position.x)) ^ hash<int>()(roundFloat(v.Position.y)) ^ hash<int>()(roundFloat(v.Position.z));
+      size_t h2 = hash<int>()(roundFloat(v.Normal.x)) ^ hash<int>()(roundFloat(v.Normal.y)) ^ hash<int>()(roundFloat(v.Normal.z));
+      size_t h3 = hash<int>()(roundFloat(v.UV.x)) ^ hash<int>()(roundFloat(v.UV.y));
       size_t h4 = hash<uint32_t>()(v.MaterialID);
       return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3);
     }

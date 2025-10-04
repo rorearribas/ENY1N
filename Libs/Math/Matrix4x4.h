@@ -48,9 +48,9 @@ namespace math
     }
     inline math::CVector3 operator*(const math::CVector3& _v3Other) const
     {
-      float fX = _v3Other.X * m16[0] + _v3Other.Y * m16[4] + _v3Other.Z * m16[8] + m16[12];
-      float fY = _v3Other.X * m16[1] + _v3Other.Y * m16[5] + _v3Other.Z * m16[9] + m16[13];
-      float fZ = _v3Other.X * m16[2] + _v3Other.Y * m16[6] + _v3Other.Z * m16[10] + m16[14];
+      float fX = _v3Other.x * m16[0] + _v3Other.y * m16[4] + _v3Other.z * m16[8] + m16[12];
+      float fY = _v3Other.x * m16[1] + _v3Other.y * m16[5] + _v3Other.z * m16[9] + m16[13];
+      float fZ = _v3Other.x * m16[2] + _v3Other.y * m16[6] + _v3Other.z * m16[10] + m16[14];
       return math::CVector3(fX, fY, fZ);
     }
 

@@ -3,7 +3,6 @@
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
-#include "Engine/Engine.h"
 #include <cassert>
 
 namespace render
@@ -43,7 +42,10 @@ namespace render
       // Try to load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
       m_oModelData = std::move(pResourceManager->LoadModel(_sModelPath)); // I should change this!
-      if (m_oModelData.Meshes.empty()) return E_FAIL;
+      if (m_oModelData.Meshes.empty()) 
+      {
+        return E_FAIL;
+      }
 
       // Init constant buffer
       m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);

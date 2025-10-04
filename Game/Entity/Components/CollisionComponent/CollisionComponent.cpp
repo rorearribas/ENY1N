@@ -105,9 +105,9 @@ namespace game
       collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(m_pCollider);
       bool bOBBEnabled = pBoxCollider->IsOBBEnabled();
 
-      float v3Size[3] = { pBoxCollider->GetSize().X, pBoxCollider->GetSize().Y, pBoxCollider->GetSize().Z };
-      float v3Max[3] = { pBoxCollider->GetMax().X, pBoxCollider->GetMax().Y, pBoxCollider->GetMax().Z };
-      float v3Min[3] = { pBoxCollider->GetMin().X, pBoxCollider->GetMin().Y, pBoxCollider->GetMin().Z };
+      float v3Size[3] = { pBoxCollider->GetSize().x, pBoxCollider->GetSize().y, pBoxCollider->GetSize().z };
+      float v3Max[3] = { pBoxCollider->GetMax().x, pBoxCollider->GetMax().y, pBoxCollider->GetMax().z };
+      float v3Min[3] = { pBoxCollider->GetMin().x, pBoxCollider->GetMin().y, pBoxCollider->GetMin().z };
 
       ImGui::Text("BOX COLLIDER");
       ImGui::InputFloat3("Size", v3Size);
@@ -129,7 +129,7 @@ namespace game
     case collision::EColliderType::SPHERE_COLLIDER:
     {
       collision::CSphereCollider* pSphereCollider = static_cast<collision::CSphereCollider*>(m_pCollider);
-      float v3Center[3] = { pSphereCollider->GetCenter().X, pSphereCollider->GetCenter().Y, pSphereCollider->GetCenter().Z };
+      float v3Center[3] = { pSphereCollider->GetCenter().x, pSphereCollider->GetCenter().y, pSphereCollider->GetCenter().z };
       float fRadius = pSphereCollider->GetRadius();
 
       ImGui::Text("SPHERE COLLIDER");
@@ -154,8 +154,8 @@ namespace game
     case collision::EColliderType::CAPSULE_COLLIDER:
     {
       collision::CCapsuleCollider* pCapsuleCollider = static_cast<collision::CCapsuleCollider*>(m_pCollider);
-      float v3OrientedAxis[3] = { pCapsuleCollider->GetOrientedAxis().X, pCapsuleCollider->GetOrientedAxis().Y, pCapsuleCollider->GetOrientedAxis().Z };
-      float v3LocalCenter[3] = { pCapsuleCollider->GetLocalCenter().X, pCapsuleCollider->GetLocalCenter().Y, pCapsuleCollider->GetLocalCenter().Z };
+      float v3OrientedAxis[3] = { pCapsuleCollider->GetOrientedAxis().x, pCapsuleCollider->GetOrientedAxis().y, pCapsuleCollider->GetOrientedAxis().z };
+      float v3LocalCenter[3] = { pCapsuleCollider->GetLocalCenter().x, pCapsuleCollider->GetLocalCenter().y, pCapsuleCollider->GetLocalCenter().z };
       float fHeight = pCapsuleCollider->GetHeight();
       float fRadius = pCapsuleCollider->GetRadius();
 

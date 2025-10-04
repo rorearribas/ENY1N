@@ -1,10 +1,6 @@
 #pragma once
-#include <d3d11.h>
 #include "Libs/Math/Transform.h"
-#include "Libs/Math/Vector2.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-#include "Engine/Render/Resources/Material.h"
-#include "Engine/Render/Resources/Texture.h"
 #include "Mesh.h"
 
 namespace render

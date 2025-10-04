@@ -69,8 +69,8 @@ namespace game
     case render::lights::ELightType::DIRECTIONAL_LIGHT:
     {
       render::lights::CDirectionalLight* pDirectional = static_cast<render::lights::CDirectionalLight*>(m_pLight);
-      float dir[3] = { pDirectional->GetDirection().X, pDirectional->GetDirection().Y, pDirectional->GetDirection().Z };
-      float color[3] = { pDirectional->GetColor().X, pDirectional->GetColor().Y, pDirectional->GetColor().Z };
+      float dir[3] = { pDirectional->GetDirection().x, pDirectional->GetDirection().y, pDirectional->GetDirection().z };
+      float color[3] = { pDirectional->GetColor().x, pDirectional->GetColor().y, pDirectional->GetColor().z };
       float fIntensity = pDirectional->GetIntensity();
 
       ImGui::Text("DIRECTIONAL LIGHT");
@@ -86,7 +86,7 @@ namespace game
     case render::lights::ELightType::POINT_LIGHT:
     {
       render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(m_pLight);
-      float vctColor[3] = { pPointLight->GetColor().X, pPointLight->GetColor().Y, pPointLight->GetColor().Z };
+      float vctColor[3] = { pPointLight->GetColor().x, pPointLight->GetColor().y, pPointLight->GetColor().z };
       float fIntensity = pPointLight->GetIntensity();
       float fRange = pPointLight->GetRange();
 
@@ -107,8 +107,8 @@ namespace game
     case render::lights::ELightType::SPOT_LIGHT:
     {
       render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight);
-      float vctDir[3] = { pSpotLight->GetDirection().X, pSpotLight->GetDirection().Y, pSpotLight->GetDirection().Z };
-      float vctColor[3] = { pSpotLight->GetColor().X, pSpotLight->GetColor().Y, pSpotLight->GetColor().Z };
+      float vctDir[3] = { pSpotLight->GetDirection().x, pSpotLight->GetDirection().y, pSpotLight->GetDirection().z };
+      float vctColor[3] = { pSpotLight->GetColor().x, pSpotLight->GetColor().y, pSpotLight->GetColor().z };
       float fIntensity = pSpotLight->GetIntensity();
       float fRange = pSpotLight->GetRange();
 

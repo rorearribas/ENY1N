@@ -9,37 +9,37 @@ namespace math
     static CVector3 Zero, One;
     static CVector3 Forward, Backward, Right, Up;
 
-    float X;
-    float Y;
-    float Z;
+    float x;
+    float y;
+    float z;
 
   public:
-    CVector3() : X(0.0f), Y(0.0f), Z(0.0f) {}
-    CVector3(float _x, float _y, float _z) : X(_x), Y(_y), Z(_z) {}
+    CVector3() : x(0.0f), y(0.0f), z(0.0f) {}
+    CVector3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
     ~CVector3() {}
 
-    inline CVector3 operator+(const CVector3& _v3) const { return CVector3(X + _v3.X, Y + _v3.Y, Z + _v3.Z); }
-    inline CVector3 operator-(const CVector3& _v3) const { return CVector3(X - _v3.X, Y - _v3.Y, Z - _v3.Z); }
-    inline CVector3 operator*(const CVector3& _v3) const { return CVector3(X * _v3.X, Y * _v3.Y, Z * _v3.Z); }
-    inline CVector3 operator/(const CVector3& _v3) const { return CVector3(X / _v3.X, Y / _v3.Y, Z / _v3.Z); }
+    inline CVector3 operator+(const CVector3& _v3) const { return CVector3(x + _v3.x, y + _v3.y, z + _v3.z); }
+    inline CVector3 operator-(const CVector3& _v3) const { return CVector3(x - _v3.x, y - _v3.y, z - _v3.z); }
+    inline CVector3 operator*(const CVector3& _v3) const { return CVector3(x * _v3.x, y * _v3.y, z * _v3.z); }
+    inline CVector3 operator/(const CVector3& _v3) const { return CVector3(x / _v3.x, y / _v3.y, z / _v3.z); }
 
-    inline CVector3 operator+(float _fValue) const { return CVector3(X + _fValue, Y + _fValue, Z + _fValue); }
-    inline CVector3 operator-(float _fValue) const { return CVector3(X - _fValue, Y - _fValue, Z - _fValue); }
-    inline CVector3 operator*(float _fValue) const { return CVector3(X * _fValue, Y * _fValue, Z * _fValue); }
-    inline CVector3 operator/(float _fValue) const { return CVector3(X / _fValue, Y / _fValue, Z / _fValue); }
+    inline CVector3 operator+(float _fValue) const { return CVector3(x + _fValue, y + _fValue, z + _fValue); }
+    inline CVector3 operator-(float _fValue) const { return CVector3(x - _fValue, y - _fValue, z - _fValue); }
+    inline CVector3 operator*(float _fValue) const { return CVector3(x * _fValue, y * _fValue, z * _fValue); }
+    inline CVector3 operator/(float _fValue) const { return CVector3(x / _fValue, y / _fValue, z / _fValue); }
 
-    inline void operator+=(const CVector3& _v3) { X += _v3.X; Y += _v3.Y; Z += _v3.Z; }
-    inline void operator-=(const CVector3& _v3) { X -= _v3.X; Y -= _v3.Y; Z -= _v3.Z; }
-    inline void operator*=(const CVector3& _v3) { X *= _v3.X; Y *= _v3.Y; Z *= _v3.Z; }
-    inline void operator/=(const CVector3& _v3) { X /= _v3.X; Y /= _v3.Y; Z /= _v3.Z; }
+    inline void operator+=(const CVector3& _v3) { x += _v3.x; y += _v3.y; z += _v3.z; }
+    inline void operator-=(const CVector3& _v3) { x -= _v3.x; y -= _v3.y; z -= _v3.z; }
+    inline void operator*=(const CVector3& _v3) { x *= _v3.x; y *= _v3.y; z *= _v3.z; }
+    inline void operator/=(const CVector3& _v3) { x /= _v3.x; y /= _v3.y; z /= _v3.z; }
 
-    inline void operator +=(float _fValue) { X += _fValue; Y += _fValue; Z += _fValue; }
-    inline void operator -=(float _fValue) { X -= _fValue; Y -= _fValue; Z -= _fValue; }
-    inline void operator *=(float _fValue) { X *= _fValue; Y *= _fValue; Z *= _fValue; }
-    inline void operator /=(float _fValue) { X /= _fValue; Y /= _fValue; Z /= _fValue; }
+    inline void operator +=(float _fValue) { x += _fValue; y += _fValue; z += _fValue; }
+    inline void operator -=(float _fValue) { x -= _fValue; y -= _fValue; z -= _fValue; }
+    inline void operator *=(float _fValue) { x *= _fValue; y *= _fValue; z *= _fValue; }
+    inline void operator /=(float _fValue) { x /= _fValue; y /= _fValue; z /= _fValue; }
 
-    inline CVector3 operator-() const { return CVector3(-X, -Y, -Z); }
-    inline CVector3 operator+() const { return CVector3(+X, +Y, +Z); }
+    inline CVector3 operator-() const { return CVector3(-x, -y, -z); }
+    inline CVector3 operator+() const { return CVector3(+x, +y, +z); }
 
     inline bool operator<(const CVector3& _other) const { return this->Dot(*this) < _other.Dot(_other); }
     bool operator!=(const CVector3& other) const { return !(*this == other); }
@@ -87,9 +87,9 @@ namespace std
   {
     std::size_t operator()(const math::CVector3& v) const
     {
-      size_t hx = std::hash<float>()(v.X);
-      size_t hy = std::hash<float>()(v.Y);
-      size_t hz = std::hash<float>()(v.Z);
+      size_t hx = std::hash<float>()(v.x);
+      size_t hy = std::hash<float>()(v.y);
+      size_t hz = std::hash<float>()(v.z);
       return hx ^ (hy << 1) ^ (hz << 2);
     }
   };

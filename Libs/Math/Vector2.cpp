@@ -10,7 +10,7 @@ namespace math
   // ------------------------------------
   float CVector2::DotProduct(const CVector2& _v2) const
   {
-    return (this->X * _v2.X) + (this->Y * _v2.Y);
+    return (this->x * _v2.x) + (this->y * _v2.y);
   }
   // ------------------------------------
   float CVector2::DotProduct(const CVector2& _vA, const CVector2& _vB)
@@ -20,7 +20,7 @@ namespace math
   // ------------------------------------
   float CVector2::Cross(const CVector2& _v2) const
   {
-    return (this->X * _v2.Y) - (this->Y * _v2.X);
+    return (this->x * _v2.y) - (this->y * _v2.x);
   }
   // ------------------------------------
   float CVector2::Cross(const CVector2& _vA, const CVector2& _vB)
@@ -30,7 +30,7 @@ namespace math
   // ------------------------------------
   float CVector2::Magnitude() const
   {
-    return sqrt((X * X) + (Y * Y));
+    return sqrt((x * x) + (y * y));
   }
   // ------------------------------------
   float CVector2::Magnitude(const CVector2& _v2)
@@ -43,8 +43,8 @@ namespace math
     float fMagnitude = Magnitude();
     if (fMagnitude > math::s_fEpsilon7)
     {
-      X /= fMagnitude;
-      Y /= fMagnitude;
+      x /= fMagnitude;
+      y /= fMagnitude;
     }
   }
   // ------------------------------------

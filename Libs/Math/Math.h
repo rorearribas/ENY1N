@@ -64,22 +64,22 @@ namespace math
 
   inline math::CVector3 Deg2Radians(const math::CVector3& _v3)
   {
-    return math::CVector3(Deg2Radians(_v3.X), Deg2Radians(_v3.Y), Deg2Radians(_v3.Z));
+    return math::CVector3(Deg2Radians(_v3.x), Deg2Radians(_v3.y), Deg2Radians(_v3.z));
   }
 
   inline math::CVector2 Deg2Radians(const math::CVector2& _v2)
   {
-    return math::CVector2(Deg2Radians(_v2.X), Deg2Radians(_v2.Y));
+    return math::CVector2(Deg2Radians(_v2.x), Deg2Radians(_v2.y));
   }
 
   inline math::CVector3 Rad2Degrees(const math::CVector3& _v3)
   {
-    return math::CVector3(Rad2Degrees(_v3.X), Rad2Degrees(_v3.Y), Rad2Degrees(_v3.Z));
+    return math::CVector3(Rad2Degrees(_v3.x), Rad2Degrees(_v3.y), Rad2Degrees(_v3.z));
   }
 
   inline math::CVector2 Rad2Degrees(const math::CVector2& _v2)
   {
-    return math::CVector2(Rad2Degrees(_v2.X), Rad2Degrees(_v2.Y));
+    return math::CVector2(Rad2Degrees(_v2.x), Rad2Degrees(_v2.y));
   }
 
   //@Note these functions have been extracted from real time collision detection book

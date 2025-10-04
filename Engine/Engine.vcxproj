@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="Collisions\CapsuleCollider.h" />
     <ClInclude Include="Collisions\CollisionManager.h" />
+    <ClInclude Include="Collisions\CullingAABB.h" />
     <ClInclude Include="Managers\MemoryTracker.h" />
     <ClInclude Include="Physics\PhysicsManager.h" />
     <ClInclude Include="Collisions\Collider.h" />
@@ -557,6 +558,7 @@
   <ItemGroup>
     <ClCompile Include="Collisions\CapsuleCollider.cpp" />
     <ClCompile Include="Collisions\CollisionManager.cpp" />
+    <ClCompile Include="Collisions\CullingAABB.cpp" />
     <ClCompile Include="Managers\MemoryTracker.cpp" />
     <ClCompile Include="Physics\PhysicsManager.cpp" />
     <ClCompile Include="Utils\Plane.cpp" />

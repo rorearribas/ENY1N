@@ -21,9 +21,9 @@ namespace math
   // ------------------------------------
   void CTransform::SetRotation(const math::CVector3& _v3Rotation)
   {
-    m_v3Rot.X = math::CalculateEulerAngle(_v3Rotation.X);
-    m_v3Rot.Y = math::CalculateEulerAngle(_v3Rotation.Y);
-    m_v3Rot.Z = math::CalculateEulerAngle(_v3Rotation.Z);
+    m_v3Rot.x = math::CalculateEulerAngle(_v3Rotation.x);
+    m_v3Rot.y = math::CalculateEulerAngle(_v3Rotation.y);
+    m_v3Rot.z = math::CalculateEulerAngle(_v3Rotation.z);
   }
   // ------------------------------------
   const math::CVector3& CTransform::GetRotation() const

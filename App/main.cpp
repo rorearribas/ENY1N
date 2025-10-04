@@ -79,19 +79,23 @@ int main()
   game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
   pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
-  // Load test model
-  game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-  pModelEnt->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
-  game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-  pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
-  pModelTest->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+  for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
+  {
+    // FBX Test
+    game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-20.0f, 20.0f), GenerateFloat(1.0f, 20.0f), GenerateFloat(-30.0f, 30.0f)));
+    game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
+    pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
+    pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+  }
 
-  //game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
-  //pModelEnt2->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
-  //game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
-  //pModelTest2->LoadModel("models/manhattan/manhattan.fbx");
-  //pModelTest2->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
-  //pModelTest2->SetScale(math::CVector3(3.0f, 3.0f, 3.0f));
+  // OBJ test
+  game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
+  pModelEnt2->SetPosition(math::CVector3(10.0f, 5.0f, 0.0f));
+  game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
+  pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
+  pModelEnt2->SetRotation(math::CVector3(90.0f, 180.0f, 0.0f));
+  pModelEnt2->SetScale(math::CVector3(0.01f, 0.01f, 0.01f));
 
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
@@ -116,15 +120,15 @@ int main()
   pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
   std::vector<game::CEntity*> vctPhysics = {};
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    pBoxTest->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(1.0f, 50.0f), GenerateFloat(-20.0f, 20.0f)));
+    pBoxTest->SetPosition(math::CVector3(GenerateFloat(-2.0f, 2.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-2.0f, 2.0f)));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CUBE, render::ERenderMode::SOLID);
     pModelCompTest->SetColor(math::CVector3::Up);
- /* pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-    pBoxTest->RegisterComponent<game::CRigidbodyComponent>(); */
+    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
+    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
   render::CRender* const pRender = pEngine->GetRender();

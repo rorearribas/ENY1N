@@ -339,7 +339,7 @@ namespace render
       oComputeSemiSphereLamb();
       for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_vctVertexData.size()); ++iIdx)
       {
-        oCustomPrimitive.m_vctVertexData[iIdx].Position.Y += (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.m_vctVertexData[iIdx].Position.y += (fDiff >= 0 ? fDiff : 0.0f);
       }
       // Compute top semi-sphere indices
       _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx) :
@@ -374,7 +374,7 @@ namespace render
       oComputeSemiSphereLamb(true);
       for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_vctVertexData.size()); ++iIdx)
       {
-        oCustomPrimitive.m_vctVertexData[iIdx].Position.Y -= (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.m_vctVertexData[iIdx].Position.y -= (fDiff >= 0 ? fDiff : 0.0f);
       }
 
       // Compute bottom semi-sphere indices

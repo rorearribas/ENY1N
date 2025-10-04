@@ -21,12 +21,12 @@ namespace render
       render::texture::CTexture* const GetTexture(texture::ETextureType _eType);
       const std::string& GetMaterialId() const { return m_sMaterialID; }
 
-      void SetAmbientColor(math::CVector3 _v3AmbientColor) { m_v3AmbientColor = _v3AmbientColor; }
-      const math::CVector3& GetAmbientColor() const { return m_v3AmbientColor; }
       void SetDiffuseColor(math::CVector3 _vDiffuseColor) { m_v3DiffuseColor = _vDiffuseColor; }
       const math::CVector3& GetDiffuseColor() const { return m_v3DiffuseColor; }
       void SetSpecularColor(math::CVector3 _vSpecularColor) { m_v3SpecularColor = _vSpecularColor; }
       const math::CVector3& GetSpecularColor() const { return m_v3SpecularColor; }
+      void SetAmbientColor(math::CVector3 _v3AmbientColor) { m_v3AmbientColor = _v3AmbientColor; }
+      const math::CVector3& GetAmbientColor() const { return m_v3AmbientColor; }
 
       void SetEmissiveColor(math::CVector3 _v3Emissive) { m_v3Emissive = _v3Emissive; }
       const math::CVector3& GetEmissiveColor() const { return m_v3Emissive; }
@@ -45,9 +45,9 @@ namespace render
       std::string m_sMaterialID = std::string();
 
       // Properties
-      math::CVector3 m_v3AmbientColor = math::CVector3::Zero;
       math::CVector3 m_v3DiffuseColor = math::CVector3::Zero;
       math::CVector3 m_v3SpecularColor = math::CVector3::Zero;
+      math::CVector3 m_v3AmbientColor = math::CVector3::Zero;
 
       math::CVector3 m_v3Emissive = math::CVector3::Zero;
       math::CVector3 m_v3Transparent = math::CVector3::Zero;

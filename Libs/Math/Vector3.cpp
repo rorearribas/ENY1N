@@ -17,9 +17,9 @@ namespace math
     float fMagnitude = this->Magnitude();
     if (fMagnitude > math::s_fEpsilon7)
     {
-      v3.X /= fMagnitude;
-      v3.Y /= fMagnitude;
-      v3.Z /= fMagnitude;
+      v3.x /= fMagnitude;
+      v3.y /= fMagnitude;
+      v3.z /= fMagnitude;
     }
     return v3;
   }
@@ -31,19 +31,19 @@ namespace math
   // ------------------------------------
   void CVector3::Abs()
   {
-    this->X = std::abs(this->X);
-    this->Z = std::abs(this->Y);
-    this->Y = std::abs(this->Z);
+    this->x = std::abs(this->x);
+    this->z = std::abs(this->y);
+    this->y = std::abs(this->z);
   }
   // ------------------------------------
   CVector3 CVector3::Abs(const CVector3& _v3)
   {
-    return CVector3(std::abs(_v3.X), std::abs(_v3.Y), std::abs(_v3.Z));
+    return CVector3(std::abs(_v3.x), std::abs(_v3.y), std::abs(_v3.z));
   }
   // ------------------------------------
   float CVector3::Dot(const CVector3& _v3) const
   {
-    return (this->X * _v3.X) + (this->Y * _v3.Y) + (this->Z * _v3.Z);
+    return (this->x * _v3.x) + (this->y * _v3.y) + (this->z * _v3.z);
   }
   // ------------------------------------
   float CVector3::Dot(const CVector3& _vA, const CVector3& _vB)
@@ -55,9 +55,9 @@ namespace math
   {
     return CVector3
     (
-      (this->Y * _v3.Z) - (this->Z * _v3.Y), // X
-      (this->Z * _v3.X) - (this->X * _v3.Z), // Y
-      (this->X * _v3.Y) - (this->Y * _v3.X)  // Z
+      (this->y * _v3.z) - (this->z * _v3.y), // X
+      (this->z * _v3.x) - (this->x * _v3.z), // Y
+      (this->x * _v3.y) - (this->y * _v3.x)  // Z
     );
   }
   // ------------------------------------
@@ -90,7 +90,7 @@ namespace math
   // ------------------------------------
   bool CVector3::Equal(const math::CVector3& _v3, float _fEpsilon) const
   {
-    return (fabs(X - _v3.X) < _fEpsilon) && (fabs(Y - _v3.Y) < _fEpsilon) && (fabs(Z - _v3.Z) < _fEpsilon);
+    return (fabs(x - _v3.x) < _fEpsilon) && (fabs(y - _v3.y) < _fEpsilon) && (fabs(z - _v3.z) < _fEpsilon);
   }
   // ------------------------------------
   float CVector3::Magnitude(const CVector3& _v3)
@@ -100,7 +100,7 @@ namespace math
   // ------------------------------------
   float CVector3::Magnitude() const
   {
-    return sqrt((X * X) + (Y * Y) + (Z * Z));
+    return sqrt((x * x) + (y * y) + (z * z));
   }
   // ------------------------------------
   float CVector3::GetSqrDist(const CVector3& _v3)
@@ -110,23 +110,23 @@ namespace math
   // ------------------------------------
   float CVector3::GetSqrDist() const
   {
-    return (X * X) + (Y * Y) + (Z * Z);
+    return (x * x) + (y * y) + (z * z);
   }
   // ------------------------------------
   bool CVector3::operator==(const CVector3& _v3) const
   {
-    return std::fabs(this->X - _v3.X) < math::s_fEpsilon5 &&
-      std::fabs(this->Y - _v3.Y) < math::s_fEpsilon5 &&
-      std::fabs(this->Z - _v3.Z) < math::s_fEpsilon5;
+    return std::fabs(this->x - _v3.x) < math::s_fEpsilon5 &&
+      std::fabs(this->y - _v3.y) < math::s_fEpsilon5 &&
+      std::fabs(this->z - _v3.z) < math::s_fEpsilon5;
   }
   // ------------------------------------
   float CVector3::operator[](uint32_t _uIndex) const
   {
     switch (_uIndex)
     {
-    case 0: return this->X;
-    case 1: return this->Y;
-    case 2: return this->Z;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
     default: return FLT_MAX;
     }
   }
@@ -138,7 +138,7 @@ namespace math
   // ------------------------------------
   bool CVector3::IsZero() const
   {
-    return std::abs(X) <= s_fEpsilon2 && std::abs(Y) <= s_fEpsilon2 && std::abs(Z) <= s_fEpsilon2;
+    return std::abs(x) <= s_fEpsilon2 && std::abs(y) <= s_fEpsilon2 && std::abs(z) <= s_fEpsilon2;
   }
   // ------------------------------------
   float CVector3::AngleBetween(const CVector3& _v3) const
