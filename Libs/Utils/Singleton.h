@@ -38,6 +38,7 @@ namespace utils
     if (!m_pInstance)
     {
       m_pInstance = new T();
+      LOG("Singleton created! -> " << typeid(T).name());
     }
     return m_pInstance;
   }

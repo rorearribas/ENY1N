@@ -17,13 +17,13 @@ namespace render
     static constexpr int s_iSubvH = 12;
     static constexpr int s_iSubvV = 12;
 
-    CPrimitive::CPrimitive(const SCustomPrimitive& _oVertexData, render::ERenderMode _eRenderMode)
+    CPrimitive::CPrimitive(SCustomPrimitive& _oData, render::ERenderMode _eRenderMode)
     {
       HRESULT hResult = CreateInputLayout();
       assert(!FAILED(hResult));
 
       // Create from custom data
-      hResult = CreateBufferFromPrimitiveData(_oVertexData.m_vctVertexData, _oVertexData.m_vctIndices);
+      hResult = CreateBufferFromData(_oData.m_vctVertexData, _oData.m_vctIndices);
       assert(!FAILED(hResult));
 
       // Create constant model data buffer
@@ -63,92 +63,40 @@ namespace render
       global::dx11::SafeRelease(m_pInputLayout);
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
+    void CPrimitive::Draw()
     {
-      switch (_ePrimitiveType)
-      {
-        // 2D Implementation
-      case EPrimitiveType::E2D_SQUARE:
-      {
-        return CreateBufferFromPrimitiveData
-        (
-          CPrimitiveUtils::s_oCubePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oSquareIndices : CPrimitiveUtils::s_oSquareWireframeIndices
-        );
-      }
-      case EPrimitiveType::E2D_CIRCLE:
-      {
-        SCustomPrimitive oPrimitiveData = CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, _eRenderMode);
-        return CreateBufferFromPrimitiveData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
-      }
-      break;
-      case EPrimitiveType::E2D_TRIANGLE:
-      {
-        return CreateBufferFromPrimitiveData
-        (
-          CPrimitiveUtils::s_oTrianglePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oTriangleIndices : CPrimitiveUtils::s_oWireframeTriangleIndices
-        );
-      }
-      break;
-      // 3D Implementation
-      case EPrimitiveType::E3D_PLANE:
-      {
-        return CreateBufferFromPrimitiveData
-        (
-          CPrimitiveUtils::s_oPlanePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices
-        );
-      }
-      case EPrimitiveType::E3D_CUBE:
-      {
-        return CreateBufferFromPrimitiveData
-        (
-          CPrimitiveUtils::s_oCubePrimitive,
-          _eRenderMode == SOLID ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oWireframeCubeIndices
-        );
-      }
-      case EPrimitiveType::E3D_SPHERE:
-      {
-        std::vector<render::gfx::SVertexData> vctVertexData = std::vector<render::gfx::SVertexData>();
-        CPrimitiveUtils::CreateSphere(s_fStandardRadius, s_iSubvH, s_iSubvV, vctVertexData);
+      // Set general data
+      uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
+      uint32_t uVertexOffset = 0;
+      global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
+      global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
 
-        const auto& vctIndices = _eRenderMode == SOLID ?
-          CPrimitiveUtils::GetSphereIndices(s_iSubvH, s_iSubvV) :
-          CPrimitiveUtils::GetWireframeSphereIndices(s_iSubvH, s_iSubvV);
-        CPrimitiveUtils::ComputeNormals(vctVertexData, vctIndices);
+      // Set topology
+      D3D_PRIMITIVE_TOPOLOGY eTopology = (m_eRenderMode == ERenderMode::SOLID) ? D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+      global::dx11::s_pDeviceContext->IASetPrimitiveTopology(eTopology);
 
-        return CreateBufferFromPrimitiveData(vctVertexData, vctIndices);
-      }
-      case EPrimitiveType::E3D_CAPSULE:
-      {
-        SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
-        (
-          s_fStandardRadius,
-          s_fCapsuleHeight,
-          s_iSubvH,
-          s_iSubvV,
-          _eRenderMode
-        );
-        CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
-        return CreateBufferFromPrimitiveData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
-      }
-      break;
-      }
+      // Set model matrix
+      m_oConstantBuffer.GetData().Matrix = m_oTransform.ComputeModelMatrix();
+      bool bOk = m_oConstantBuffer.WriteBuffer();
+      assert(bOk);
 
-      return S_FALSE;
-    }
-    // ------------------------------------
-    HRESULT CPrimitive::CreateInputLayout()
-    {
-      return global::dx11::s_pDevice->CreateInputLayout
-      (
-        render::gfx::SVertexData::s_vctInputElementDesc.data(),
-        static_cast<uint32_t>(render::gfx::SVertexData::s_vctInputElementDesc.size()),
-        g_ForwardVertexShader,
-        sizeof(g_ForwardVertexShader),
-        &m_pInputLayout
-      );
+      // Apply constant buffer
+      ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
+      global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
+
+      // Set constants
+      m_oConstantModelData.GetData().IgnoreGlobalLighting = m_bIgnoreGlobalLighting;
+      m_oConstantModelData.GetData().HasTexture = false;
+      bOk = m_oConstantModelData.WriteBuffer();
+      assert(bOk);
+
+      // Apply constant buffer
+      pConstantBuffer = m_oConstantModelData.GetBuffer();
+      global::dx11::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
+
+      // Draw
+      global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+      global::dx11::s_pDeviceContext->DrawIndexed(m_uIndices, 0, 0);
     }
     // ------------------------------------
     void CPrimitive::SetRenderMode(render::ERenderMode _eRenderMode)
@@ -160,9 +108,9 @@ namespace render
       }
     }
     // ------------------------------------
-    void CPrimitive::UseGlobalLighting(bool _bEnabled)
+    void CPrimitive::IgnoreGlobalLighting(bool _bState)
     {
-      m_bUseGlobalLighting = _bEnabled;
+      m_bIgnoreGlobalLighting = _bState;
     }
     // ------------------------------------
     void CPrimitive::SetColor(const math::CVector3& _v3Color)
@@ -190,9 +138,88 @@ namespace render
       m_v3Color = _v3Color;
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBufferFromPrimitiveData(const std::vector<render::gfx::SVertexData>& _vctPrimitiveData, const std::vector<uint32_t>& _vctIndexes)
+    HRESULT CPrimitive::CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
     {
-      if (_vctPrimitiveData.empty()) return E_FAIL;
+      switch (_ePrimitiveType)
+      {
+        // 2D Implementation
+      case EPrimitiveType::E2D_SQUARE:
+      {
+        return CreateBufferFromData
+        (
+          CPrimitiveUtils::s_oCubePrimitive,
+          _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oSquareIndices : CPrimitiveUtils::s_oSquareWireframeIndices
+        );
+      }
+      case EPrimitiveType::E2D_CIRCLE:
+      {
+        SCustomPrimitive oPrimitiveData = CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, _eRenderMode);
+        return CreateBufferFromData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+      }
+      break;
+      case EPrimitiveType::E2D_TRIANGLE:
+      {
+        return CreateBufferFromData
+        (
+          CPrimitiveUtils::s_oTrianglePrimitive,
+          _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oTriangleIndices : CPrimitiveUtils::s_oWireframeTriangleIndices
+        );
+      }
+      break;
+      // 3D Implementation
+      case EPrimitiveType::E3D_PLANE:
+      {
+        return CreateBufferFromData
+        (
+          CPrimitiveUtils::s_oPlanePrimitive,
+          _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices
+        );
+      }
+      case EPrimitiveType::E3D_CUBE:
+      {
+        return CreateBufferFromData
+        (
+          CPrimitiveUtils::s_oCubePrimitive,
+          _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oWireframeCubeIndices
+        );
+      }
+      case EPrimitiveType::E3D_SPHERE:
+      {
+        std::vector<render::gfx::SVertexData> vctVertexData = std::vector<render::gfx::SVertexData>();
+        CPrimitiveUtils::CreateSphere(s_fStandardRadius, s_iSubvH, s_iSubvV, vctVertexData);
+
+        const auto& vctIndices = _eRenderMode == (render::ERenderMode::SOLID) ?
+          CPrimitiveUtils::GetSphereIndices(s_iSubvH, s_iSubvV) :
+          CPrimitiveUtils::GetWireframeSphereIndices(s_iSubvH, s_iSubvV);
+        CPrimitiveUtils::ComputeNormals(vctVertexData, vctIndices);
+
+        return CreateBufferFromData(vctVertexData, vctIndices);
+      }
+      case EPrimitiveType::E3D_CAPSULE:
+      {
+        SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
+        (
+          s_fStandardRadius,
+          s_fCapsuleHeight,
+          s_iSubvH,
+          s_iSubvV,
+          _eRenderMode
+        );
+        CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+        return CreateBufferFromData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+      }
+      break;
+      }
+
+      return S_FALSE;
+    }
+    // ------------------------------------
+    HRESULT CPrimitive::CreateBufferFromData(const std::vector<render::gfx::SVertexData>& _vctVertexData, const std::vector<uint32_t>& _vctIndices)
+    {
+      if (_vctVertexData.empty() || _vctIndices.empty()) 
+      {
+        return E_FAIL;
+      }
 
       // Clean buffer
       m_oConstantBuffer.CleanBuffer();
@@ -200,74 +227,51 @@ namespace render
       // Create constant buffer
       m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
+      // Set number of vertices to draw
+      m_uVertices = static_cast<uint32_t>(_vctVertexData.size());
+
+      // Config vertex buffer
+      D3D11_BUFFER_DESC oVertexBufferDesc = D3D11_BUFFER_DESC();
+      oVertexBufferDesc.ByteWidth = static_cast<uint32_t>(sizeof(render::gfx::SVertexData) * _vctVertexData.size());
+      oVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+      oVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+      oVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
       // Create vertex buffer
-      D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
-      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>(sizeof(render::gfx::SVertexData) * _vctPrimitiveData.size());
-      oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
-      oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-      oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-      D3D11_SUBRESOURCE_DATA oSubresourceData = { 0 };
-      oSubresourceData.pSysMem = _vctPrimitiveData.data();
-      m_uVertices = static_cast<uint32_t>(_vctPrimitiveData.size());
-
-      HRESULT hResult = global::dx11::s_pDevice->CreateBuffer
-      (
-        &oVertexBufferDescriptor,
-        &oSubresourceData,
-        &m_pVertexBuffer
-      );
-      if (_vctIndexes.empty()) return hResult;
+      D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
+      oSubresourceData.pSysMem = _vctVertexData.data();
+      HRESULT hResult = global::dx11::s_pDevice->CreateBuffer(&oVertexBufferDesc, &oSubresourceData, &m_pVertexBuffer);
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
 
       // Config index buffer
       D3D11_BUFFER_DESC oIndexBufferDesc = D3D11_BUFFER_DESC();
       oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-      oIndexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(uint32_t) * _vctIndexes.size()));
+      oIndexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(uint32_t) * _vctIndices.size()));
       oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
       oIndexBufferDesc.CPUAccessFlags = 0;
-      m_uIndices = static_cast<uint32_t>(_vctIndexes.size());
 
-      D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = {};
-      oSubresourceIndexesData.pSysMem = _vctIndexes.data();
+      // Set indices size
+      m_uIndices = static_cast<uint32_t>(_vctIndices.size());
 
+      // Create index buffer
+      D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = D3D11_SUBRESOURCE_DATA();
+      oSubresourceIndexesData.pSysMem = _vctIndices.data();
       return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
-    void CPrimitive::DrawPrimitive()
+    HRESULT CPrimitive::CreateInputLayout()
     {
-      // Set general data
-      uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
-      uint32_t uVertexOffset = 0;
-      global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
-      global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
-
-      // Set topology
-      D3D_PRIMITIVE_TOPOLOGY ePrimitiveTopology = m_eRenderMode == ERenderMode::SOLID ? D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
-      global::dx11::s_pDeviceContext->IASetPrimitiveTopology(ePrimitiveTopology);
-
-      // Set model matrix
-      m_oConstantBuffer.GetData().Matrix = m_oTransform.ComputeModelMatrix();
-      bool bOk = m_oConstantBuffer.WriteBuffer();
-      assert(bOk);
-
-      // Apply constant buffer
-      ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
-      global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
-
-      // Set constants
-      m_oConstantModelData.GetData().bUseGlobalLighting = m_bUseGlobalLighting;
-      m_oConstantModelData.GetData().bHasTexture = false;
-      m_oConstantModelData.GetData().bHasModel = false;
-      bOk = m_oConstantModelData.WriteBuffer();
-      assert(bOk);
-
-      // Apply constant buffer
-      pConstantBuffer = m_oConstantModelData.GetBuffer();
-      global::dx11::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
-
-      // Draw
-      global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-      global::dx11::s_pDeviceContext->DrawIndexed(m_uIndices, 0, 0);
+      return global::dx11::s_pDevice->CreateInputLayout
+      (
+        render::gfx::SVertexData::s_vctInputElementDesc.data(),
+        static_cast<uint32_t>(render::gfx::SVertexData::s_vctInputElementDesc.size()),
+        g_ForwardVertexShader,
+        sizeof(g_ForwardVertexShader),
+        &m_pInputLayout
+      );
     }
   }
 }

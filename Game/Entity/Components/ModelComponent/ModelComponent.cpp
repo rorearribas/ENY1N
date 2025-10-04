@@ -24,19 +24,14 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::Update(float _fDeltaTime)
-  {
-    Super::Update(_fDeltaTime);
-  }
-  // ------------------------------------
-  void CModelComponent::LoadModel(const char* _sModelPath, const char* _sBaseMltDir)
+  void CModelComponent::LoadModel(const char* _sModelPath)
   {
     // Flush
     Clean();
 
     // Create model
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    m_pModel = pEngine->CreateModel(_sModelPath, _sBaseMltDir);
+    m_pModel = pEngine->CreateModel(_sModelPath);
 #ifdef _DEBUG
     assert(m_pModel);
 #endif
@@ -47,14 +42,14 @@ namespace game
     m_pModel->SetScale(GetScale());
   }
   // ------------------------------------
-  void CModelComponent::CreatePrimitive(render::gfx::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
+  void CModelComponent::CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode)
   {
     // Flush
     Clean();
 
     // Create primitive
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    m_pPrimitive = pEngine->CreatePrimitive(_ePrimitiveType, _eRenderMode);
+    m_pPrimitive = pEngine->CreatePrimitive(_eType, _eRenderMode);
 #ifdef _DEBUG
     assert(m_pPrimitive);
 #endif
@@ -68,7 +63,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::SetPrimitiveRenderMode(render::ERenderMode _eRenderMode)
+  void CModelComponent::SetRenderMode(render::ERenderMode _eRenderMode)
   {
     if (m_pPrimitive)
     {
@@ -76,7 +71,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::SetPrimitiveColor(const math::CVector3& _v3Color)
+  void CModelComponent::SetColor(const math::CVector3& _v3Color)
   {
     if (m_pPrimitive)
     {

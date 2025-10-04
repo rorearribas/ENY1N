@@ -16,16 +16,16 @@ namespace render
     public:
       struct SModelData
       {
-        std::vector<render::gfx::CMesh*> m_vctMeshes;
-        std::vector<render::gfx::SVertexData> m_vctVertexData;
+        std::vector<render::gfx::CMesh*> Meshes; // Indices
+        std::vector<render::gfx::SVertexData> VertexData; // Global vertex data
       };
 
     public:
-      CModel(const char* _sModelPath, const char* _sBaseMltDir);
+      CModel(const char* _sModelPath);
       ~CModel();
 
-      void DrawModel();
-      void UseGlobalLighting(bool _bEnabled);
+      void Draw();
+      void IgnoreGlobalLighting(bool _bIgnore); // This is trash!!
 
       void SetPosition(const math::CVector3& _v3Position) { m_oModelTransform.SetPosition(_v3Position); }
       const math::CVector3& GetPosition() const { return m_oModelTransform.GetPosition(); }
@@ -35,7 +35,7 @@ namespace render
       const math::CVector3& GetScale() const { return m_oModelTransform.GetScale(); }
 
     private:
-      HRESULT InitModel(const char* _sModelPath, const char* _sBaseMltDir);
+      HRESULT InitModel(const char* _sModelPath);
       HRESULT CreateInputLayout();
 
       // DirectX

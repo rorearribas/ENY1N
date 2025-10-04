@@ -134,14 +134,14 @@ namespace collision
   {
     // Draw cube
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    pEngine->DrawCube(GetPosition(), GetSize(), GetRotation(), math::CVector3::One);
+    pEngine->DrawCube(GetPosition(), GetSize(), GetRotation(), math::CVector3::One, render::ERenderMode::WIREFRAME);
 
     // Draw extents
     float fMagnitude = m_v3Size.Magnitude();
     for (size_t tIndex = 0; tIndex < m_v3Extents.size(); tIndex++)
     {
       math::CVector3 v3Pos = m_v3Extents[tIndex];
-      pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::Right);
+      pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::Right, render::ERenderMode::WIREFRAME);
     }
   }
   // ------------------------------------

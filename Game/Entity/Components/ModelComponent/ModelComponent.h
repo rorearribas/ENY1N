@@ -14,14 +14,11 @@ namespace game
     CModelComponent(CEntity* _pOwner) : CComponent(_pOwner) {}
     virtual ~CModelComponent();
 
-    virtual void Update(float _fDeltaTime) override;
-    virtual void DrawDebug() override {};
+    void LoadModel(const char* _sModelPath);
+    void CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode);
 
-    void LoadModel(const char* _sModelPath, const char* _sBaseMltDir);
-    void CreatePrimitive(render::gfx::EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode = render::ERenderMode::SOLID);
-
-    void SetPrimitiveRenderMode(render::ERenderMode _eRenderMode);
-    void SetPrimitiveColor(const math::CVector3& _v3Color);
+    void SetRenderMode(render::ERenderMode _eRenderMode);
+    void SetColor(const math::CVector3& _v3Color);
 
     void SetPosition(const math::CVector3& _v3Position);
     const math::CVector3& GetPosition() const;

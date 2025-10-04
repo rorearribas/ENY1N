@@ -390,13 +390,13 @@ namespace render
       // Create primitive
       gfx::SCustomPrimitive oCustomPrimitive;
       oCustomPrimitive.m_vctVertexData = s_oPlanePrimitive;
-      oCustomPrimitive.m_vctIndices = _eRenderMode == SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
+      oCustomPrimitive.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
 
       // Invert indices
       const math::CVector3& v3Normal = _oPlane.GetNormal();
       if (v3Normal.Dot(s_oPlaneNormal) < 0.0f)
       {
-        size_t iSize = _eRenderMode == SOLID ? 3 : 2;
+        size_t iSize = _eRenderMode == render::ERenderMode::SOLID ? 3 : 2;
         for (size_t i = 0; i < s_oPlaneIndices.size(); i += iSize)
         {
           std::swap(oCustomPrimitive.m_vctIndices[i], oCustomPrimitive.m_vctIndices[i + 2]);

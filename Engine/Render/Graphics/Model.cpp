@@ -11,9 +11,9 @@ namespace render
   namespace gfx
   {
     // ------------------------------------
-    CModel::CModel(const char* _sModelPath, const char* _sBaseMltDir)
+    CModel::CModel(const char* _sModelPath)
     {
-      HRESULT hResult = InitModel(_sModelPath, _sBaseMltDir);
+      HRESULT hResult = InitModel(_sModelPath);
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
     }
@@ -22,8 +22,8 @@ namespace render
     {
       global::dx11::SafeRelease(m_pVertexBuffer);
       global::dx11::SafeRelease(m_pInputLayout);
-      m_oModelData.m_vctMeshes.clear();
-      m_oModelData.m_vctVertexData.clear();
+      m_oModelData.Meshes.clear();
+      m_oModelData.VertexData.clear();
     }
     // ------------------------------------
     HRESULT CModel::CreateInputLayout()
@@ -38,25 +38,25 @@ namespace render
       );
     }
     // ------------------------------------
-    HRESULT CModel::InitModel(const char* _sModelPath, const char* /*_sBaseMltDir*/)
+    HRESULT CModel::InitModel(const char* _sModelPath)
     {
       // Try to load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
-      m_oModelData = std::move(pResourceManager->LoadFBX(_sModelPath/*, _sBaseMltDir*/));
-      if (m_oModelData.m_vctMeshes.empty()) return E_FAIL;
+      m_oModelData = std::move(pResourceManager->LoadModel(_sModelPath)); // I should change this!
+      if (m_oModelData.Meshes.empty()) return E_FAIL;
 
       // Init constant buffer
       m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
 
       // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
-      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::SVertexData) * m_oModelData.m_vctVertexData.size()));
+      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::SVertexData) * m_oModelData.VertexData.size()));
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
-      oSubresourceData.pSysMem = m_oModelData.m_vctVertexData.data();
+      oSubresourceData.pSysMem = m_oModelData.VertexData.data();
       HRESULT hResult = global::dx11::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
       if (FAILED(hResult))
       {
@@ -64,7 +64,7 @@ namespace render
       }
 
       // Update vertex color
-      for (render::gfx::CMesh* pMesh : m_oModelData.m_vctMeshes)
+      for (render::gfx::CMesh* pMesh : m_oModelData.Meshes)
       {
         pMesh->UpdateVertexColor(m_pVertexBuffer);
       }
@@ -79,7 +79,7 @@ namespace render
       return hResult;
     }
     // ------------------------------------
-    void CModel::DrawModel()
+    void CModel::Draw()
     {
       // Set vertex buffer
       uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
@@ -98,19 +98,19 @@ namespace render
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
-      // Draw meshes
-      for (render::gfx::CMesh* pMesh : m_oModelData.m_vctMeshes)
+      // Draw meshes using indices
+      for (CMesh* pMesh : m_oModelData.Meshes)
       {
-        pMesh->DrawMesh();
+        pMesh->Draw();
       }
     }
     // ------------------------------------
-    void CModel::UseGlobalLighting(bool _bEnabled)
+    void CModel::IgnoreGlobalLighting(bool _bIgnore)
     {
-      // Draw meshes
-      for (render::gfx::CMesh* pMesh : m_oModelData.m_vctMeshes)
+      // Set state
+      for (CMesh* pMesh : m_oModelData.Meshes)
       {
-        pMesh->UseGlobalLighting(_bEnabled);
+        pMesh->IgnoreGlobalLighting(_bIgnore);
       }
     }
   }

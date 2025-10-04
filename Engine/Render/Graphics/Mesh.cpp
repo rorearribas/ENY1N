@@ -21,7 +21,7 @@ namespace render
       return Position == _other.Position && // Pos
         Normal == _other.Normal && // Normal
         UV == _other.UV && // TexCoord
-        MaterialId == _other.MaterialId; // Material ID
+        MaterialID == _other.MaterialID; // Material ID
     }
     // ------------------------------------
     bool SVertexData::operator!=(const SVertexData& _other) const
@@ -31,10 +31,11 @@ namespace render
     // ------------------------------------
     CMesh::~CMesh()
     {
-      Clean();
+      ClearBuffers();
+      ClearMaterials();
     }
     // ------------------------------------
-    void CMesh::DrawMesh()
+    void CMesh::Draw()
     {
       // Draw texture
       bool bHasTexture = false;
@@ -54,9 +55,8 @@ namespace render
       }
 
       // Update buffer
-      m_oConstantModelData.GetData().bUseGlobalLighting = m_bUseGlobalLightning;
-      m_oConstantModelData.GetData().bHasTexture = bHasTexture;
-      m_oConstantModelData.GetData().bHasModel = true;
+      m_oConstantModelData.GetData().IgnoreGlobalLighting = m_bIgnoreGlobalLighting;
+      m_oConstantModelData.GetData().HasTexture = bHasTexture;
       bool bOk = m_oConstantModelData.WriteBuffer();
       UNUSED_VAR(bOk);
       assert(bOk);
@@ -78,7 +78,7 @@ namespace render
     HRESULT CMesh::CreateBuffer(TIndexesList& _vctIndices)
     {
       // Clean mesh
-      Clean();
+      ClearBuffers();
 
       // Init constant check texture
       m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
@@ -99,9 +99,9 @@ namespace render
       return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
-    void CMesh::UseGlobalLighting(bool _bEnabled)
+    void CMesh::IgnoreGlobalLighting(bool _bState)
     {
-      m_bUseGlobalLightning = _bEnabled;
+      m_bIgnoreGlobalLighting = _bState;
     }
     // ------------------------------------
     void CMesh::UpdateVertexColor(ID3D11Buffer* _pVertexBuffer)
@@ -117,16 +117,16 @@ namespace render
       assert(pVertexData);
 
       // Offset
-      uint32_t uOffsetMat = 0;
-      uint32_t uMaxTriangles = static_cast<uint32_t>(m_vctIndices.size()) / 3; // Get max triangles
-      for (uint32_t uIndex = 0; uIndex < uMaxTriangles; uIndex++)
+      uint32_t uOffset = 0;
+      uint32_t uTrianglesSize = static_cast<uint32_t>(m_vctIndices.size()) / 3; // Get triangles
+      for (uint32_t uIndex = 0; uIndex < uTrianglesSize; uIndex++)
       {
-        // Set material color
-        uint32_t uMeshOffset = static_cast<uint32_t>(m_vctIndices.size()) / uMaxTriangles; // Get mesh offset
-        for (uint32_t uJ = uOffsetMat; uJ < uMeshOffset + uOffsetMat; uJ++)
+        // Set pixel color
+        uint32_t uMeshOffset = (static_cast<uint32_t>(m_vctIndices.size()) / uTrianglesSize); // Get mesh offset
+        for (uint32_t uJ = uOffset; uJ < uMeshOffset + uOffset; uJ++)
         {
           uint32_t uVertexDataIdx = m_vctIndices[uJ];
-          auto it = m_dctMaterials.find(pVertexData[uVertexDataIdx].MaterialId);
+          auto it = m_dctMaterials.find(pVertexData[uVertexDataIdx].MaterialID);
           if (it != m_dctMaterials.end())
           {
             render::mat::CMaterial* pMaterial = it->second;
@@ -134,17 +134,27 @@ namespace render
           }
         }
         // Add offset
-        uOffsetMat += uMeshOffset;
+        uOffset += uMeshOffset;
       }
 
       // Unmap
       global::dx11::s_pDeviceContext->Unmap(_pVertexBuffer, 0);
     }
     // ------------------------------------
-    void CMesh::Clean()
+    void CMesh::ClearBuffers()
     {
       global::dx11::SafeRelease(m_pIndexBuffer);
       m_oConstantModelData.CleanBuffer();
+    }
+    // ------------------------------------
+    void CMesh::ClearMaterials()
+    {
+      auto it = m_dctMaterials.begin();
+      for (; it != m_dctMaterials.end(); it++)
+      {
+        global::ReleaseObject(it->second);
+      }
+      m_dctMaterials.clear();
     }
   }
 }

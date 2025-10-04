@@ -17,8 +17,6 @@ namespace game
     virtual ~CComponent() { m_pOwner = nullptr; }
 
     virtual void Update(float) {}
-    virtual void DrawDebug() {}
-
     CEntity* GetOwner() const { return m_pOwner; }
 
     virtual void OnPositionChanged(const math::CVector3&) {}
@@ -28,6 +26,8 @@ namespace game
     virtual void OnCollisionEnter(const collision::SHitEvent&) {}
     virtual void OnCollisionStay(const collision::SHitEvent&) {}
     virtual void OnCollisionExit(const collision::SHitEvent&) {}
+
+    virtual void DrawDebug() {}
 
   protected:
     CEntity* m_pOwner = nullptr;

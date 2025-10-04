@@ -98,20 +98,10 @@ namespace game
   void CCollisionComponent::DrawDebug()
   {
     ImGui::Spacing();
-    std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
-    std::string sDebugMode = std::string("Debug Mode") + std::string("##" + sOwnerName);
-
     switch (m_pCollider->GetType())
     {
     case collision::EColliderType::BOX_COLLIDER:
     {
-      // Generate unique ids
-      std::string sColliderType = "BOX COLLIDER";
-      std::string sSize = std::string("Size") + std::string("##" + sOwnerName);
-      std::string sMax = std::string("Max") + std::string("##" + sOwnerName);
-      std::string sMin = std::string("Min") + std::string("##" + sOwnerName);
-      std::string sOBB = std::string("OBB Enabled") + std::string("##" + sOwnerName);
-
       collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(m_pCollider);
       bool bOBBEnabled = pBoxCollider->IsOBBEnabled();
 
@@ -119,12 +109,12 @@ namespace game
       float v3Max[3] = { pBoxCollider->GetMax().X, pBoxCollider->GetMax().Y, pBoxCollider->GetMax().Z };
       float v3Min[3] = { pBoxCollider->GetMin().X, pBoxCollider->GetMin().Y, pBoxCollider->GetMin().Z };
 
-      ImGui::Text(sColliderType.c_str());
-      ImGui::InputFloat3(sSize.c_str(), v3Size);
-      ImGui::InputFloat3(sMax.c_str(), v3Max);
-      ImGui::InputFloat3(sMin.c_str(), v3Min);
-      ImGui::Checkbox(sOBB.c_str(), &bOBBEnabled);
-      ImGui::Checkbox(sDebugMode.c_str(), &m_bDebugMode);
+      ImGui::Text("BOX COLLIDER");
+      ImGui::InputFloat3("Size", v3Size);
+      ImGui::InputFloat3("Max", v3Max);
+      ImGui::InputFloat3("Min", v3Min);
+      ImGui::Checkbox("OBB Enabled", &bOBBEnabled);
+      ImGui::Checkbox("Debug Mode", &m_bDebugMode);
       ImGui::Separator();
 
       // Apply values
@@ -138,25 +128,20 @@ namespace game
     break;
     case collision::EColliderType::SPHERE_COLLIDER:
     {
-      // Generate unique ids
-      std::string sTitle = "SPHERE COLLIDER";
-      std::string sCenter = "Center" + std::string("##" + sOwnerName);
-      std::string sRadius = "Radius" + std::string("##" + sOwnerName);
-
       collision::CSphereCollider* pSphereCollider = static_cast<collision::CSphereCollider*>(m_pCollider);
       float v3Center[3] = { pSphereCollider->GetCenter().X, pSphereCollider->GetCenter().Y, pSphereCollider->GetCenter().Z };
       float fRadius = pSphereCollider->GetRadius();
 
-      ImGui::Text(sTitle.c_str());
-      ImGui::InputFloat(sRadius.c_str(), &fRadius);
+      ImGui::Text("SPHERE COLLIDER");
+      ImGui::InputFloat("Radius", &fRadius);
 
       // Read only
       ImGui::BeginDisabled();
-      ImGui::InputFloat3(sCenter.c_str(), v3Center);
+      ImGui::InputFloat3("Center", v3Center);
       ImGui::EndDisabled();
 
       // Debug mode
-      ImGui::Checkbox(sDebugMode.c_str(), &m_bDebugMode);
+      ImGui::Checkbox("Debug Mode", &m_bDebugMode);
       ImGui::Separator();
 
       // Apply values
@@ -168,28 +153,20 @@ namespace game
     break;
     case collision::EColliderType::CAPSULE_COLLIDER:
     {
-      // Generate unique ids
-      std::string sTitle = "CAPSULE COLLIDER";
-      std::string sHeight = "Height" + std::string("##" + sOwnerName);
-      std::string sRadius = "Radius" + std::string("##" + sOwnerName);
-      std::string sOrientedAxis = "Oriented Axis" + std::string("##" + sOwnerName);
-      std::string sLocalCenter = "Local Center" + std::string("##" + sOwnerName);
-
       collision::CCapsuleCollider* pCapsuleCollider = static_cast<collision::CCapsuleCollider*>(m_pCollider);
       float v3OrientedAxis[3] = { pCapsuleCollider->GetOrientedAxis().X, pCapsuleCollider->GetOrientedAxis().Y, pCapsuleCollider->GetOrientedAxis().Z };
       float v3LocalCenter[3] = { pCapsuleCollider->GetLocalCenter().X, pCapsuleCollider->GetLocalCenter().Y, pCapsuleCollider->GetLocalCenter().Z };
       float fHeight = pCapsuleCollider->GetHeight();
       float fRadius = pCapsuleCollider->GetRadius();
 
-      ImGui::Text(sTitle.c_str());
-
-      ImGui::InputFloat(sHeight.c_str(), &fHeight);
-      ImGui::InputFloat(sRadius.c_str(), &fRadius);
-      ImGui::InputFloat3(sOrientedAxis.c_str(), v3OrientedAxis);
-      ImGui::InputFloat3(sLocalCenter.c_str(), v3LocalCenter);
+      ImGui::Text("CAPSULE COLLIDER");
+      ImGui::InputFloat("Height", &fHeight);
+      ImGui::InputFloat("Radius", &fRadius);
+      ImGui::InputFloat3("Oriented Axis", v3OrientedAxis);
+      ImGui::InputFloat3("Local Center", v3LocalCenter);
 
       // Debug mode
-      ImGui::Checkbox(sDebugMode.c_str(), &m_bDebugMode);
+      ImGui::Checkbox("Debug Mode", &m_bDebugMode);
       ImGui::Separator();
 
       // Apply values

@@ -76,8 +76,8 @@ namespace collision
     const math::CVector3& v3CurrentPos = GetWorldPos(); // Get center
     const math::CVector3& v3CurrentRot = GetRotation(); // Get rotation
 
-    pEngine->DrawSphere(m_v3EndSegmentPoint, 0.05f, 8, 8, math::CVector3::Forward);
-    pEngine->DrawSphere(m_v3StartSegmentPoint, 0.05f, 8, 8, math::CVector3::Right);
+    pEngine->DrawSphere(m_v3EndSegmentPoint, 0.05f, 8, 8, math::CVector3::Forward, render::ERenderMode::WIREFRAME);
+    pEngine->DrawSphere(m_v3StartSegmentPoint, 0.05f, 8, 8, math::CVector3::Right, render::ERenderMode::WIREFRAME);
     pEngine->DrawLine(m_v3EndSegmentPoint, m_v3StartSegmentPoint, math::CVector3::Up);
 
     pEngine->DrawCapsule
@@ -88,7 +88,8 @@ namespace collision
       m_fRadius, // Radius
       m_fHeight, // Height
       internal_capsule_collider::s_iMaxDebugSubv, // Horizontal
-      internal_capsule_collider::s_iMaxDebugSubv // Vertical
+      internal_capsule_collider::s_iMaxDebugSubv, // Vertical
+      render::ERenderMode::WIREFRAME
     );
   }
   // ------------------------------------

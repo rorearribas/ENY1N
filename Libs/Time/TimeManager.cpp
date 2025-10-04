@@ -1,6 +1,6 @@
 #include "TimeManager.h"
 
-namespace tick
+namespace chrono
 {
   namespace internal_time_manager
   {

@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "Libs/Macros/GlobalMacros.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/InputManager.h"
 #include "Engine/Shaders/Shader.h"
@@ -17,6 +18,7 @@ namespace engine
   void CEngine::Init(uint32_t _uWidth, uint32_t _uHeight)
   {
     assert(!m_bInitialized);
+    LOG("Initializing engine...");
 
     // Create render
     m_pRender = std::make_unique<render::CRender>(_uWidth, _uHeight);
@@ -34,11 +36,13 @@ namespace engine
 
     // Marked as initialized
     m_bInitialized = true;
+    SUCCESS_LOG("Engine initialized correctly!");
   }
   // ------------------------------------
   void CEngine::PushBeginDraw()
   {
-    m_pRender->BeginDraw(); // Begin
+    // Begin
+    m_pRender->BeginDraw();
   }
   // ------------------------------------
   void CEngine::PushDrawProcess()
@@ -49,7 +53,8 @@ namespace engine
   // ------------------------------------
   void CEngine::PushEndDraw()
   {
-    m_pRender->EndDraw(); // End 
+    // End 
+    m_pRender->EndDraw();
   }
   // ------------------------------------
   void CEngine::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
@@ -78,19 +83,14 @@ namespace engine
     m_pSceneManager->DrawLine(_v3Start, _v3Dest, _v3Color);
   }
   // ------------------------------------
-  render::gfx::CPrimitive* const CEngine::CreatePrimitive
-  (
-    render::gfx::EPrimitiveType _ePrimitiveType,
-    render::ERenderMode _eRenderMode,
-    uint32_t _uSceneIndex
-  )
+  render::gfx::CPrimitive* const CEngine::CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
   {
-    return m_pSceneManager->CreatePrimitive(_ePrimitiveType, _eRenderMode, _uSceneIndex);
+    return m_pSceneManager->CreatePrimitive(_eType, _eRenderMode, _uSceneIndex);
   }
   // ------------------------------------
-  render::gfx::CModel* const CEngine::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
+  render::gfx::CModel* const CEngine::CreateModel(const char* _sModelPath, uint32_t _uSceneIndex)
   {
-    return m_pSceneManager->CreateModel(_sModelPath, _sBaseMltDir, _uSceneIndex);
+    return m_pSceneManager->CreateModel(_sModelPath, _uSceneIndex);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CEngine::CreateDirectionalLight(uint32_t _uSceneIndex)

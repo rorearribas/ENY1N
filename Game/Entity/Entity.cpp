@@ -34,29 +34,24 @@ namespace game
   // ------------------------------------
   void CEntity::DrawDebug()
   {
-    std::string sDebugEntity = m_sEntityName + "##Entity";
-    ImGui::Begin(sDebugEntity.c_str());
+    // Begin
+    ImGui::Begin(m_sEntityName.c_str());
 
     // Gizmo config
     static ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::ROTATE;
-    static ImGuizmo::MODE mCurrentGizmoMode = ImGuizmo::WORLD;
+    static ImGuizmo::MODE mCurrentGizmoMode = ImGuizmo::MODE::WORLD;
 
     if (ImGui::IsKeyPressed(ImGuiKey_W)) mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
     if (ImGui::IsKeyPressed(ImGuiKey_E)) mCurrentGizmoOperation = ImGuizmo::ROTATE;
     if (ImGui::IsKeyPressed(ImGuiKey_R)) mCurrentGizmoOperation = ImGuizmo::SCALE;
 
-    // Generate unique ids
-    std::string sTranslateId = "Translate##" + m_sEntityName;
-    std::string sRotateId = "Rotate##" + m_sEntityName;
-    std::string sScaleId = "Scale##" + m_sEntityName;
-
-    if (ImGui::RadioButton(sTranslateId.c_str(), mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
+    if (ImGui::RadioButton("Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE))
       mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
     ImGui::SameLine();
-    if (ImGui::RadioButton(sRotateId.c_str(), mCurrentGizmoOperation == ImGuizmo::ROTATE))
+    if (ImGui::RadioButton("Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE))
       mCurrentGizmoOperation = ImGuizmo::ROTATE;
     ImGui::SameLine();
-    if (ImGui::RadioButton(sScaleId.c_str(), mCurrentGizmoOperation == ImGuizmo::SCALE))
+    if (ImGui::RadioButton("Scale", mCurrentGizmoOperation == ImGuizmo::SCALE))
       mCurrentGizmoOperation = ImGuizmo::SCALE;
 
     // Get view matrix and projection matrix
@@ -84,9 +79,7 @@ namespace game
     ImGuizmo::RecomposeMatrixFromComponents(fTranslation, fRotation, fScale, matrix);
 
     // Manipulate gizmo
-    ImGuizmo::Manipulate(viewMatrix(), projectionMatrix(), mCurrentGizmoOperation, mCurrentGizmoMode, matrix);
-
-    if (ImGuizmo::IsUsing())
+    if (ImGuizmo::Manipulate(viewMatrix(), projectionMatrix(), mCurrentGizmoOperation, mCurrentGizmoMode, matrix))
     {
       // Decompose matrix
       ImGuizmo::DecomposeMatrixToComponents(matrix, fTranslation, fRotation, fScale);
@@ -116,14 +109,9 @@ namespace game
       }
     }
 
-    // Generate unique ids
-    std::string sTranslateInputId = "Translation##" + m_sEntityName;
-    std::string sRotateInputId = "Rotation##" + m_sEntityName;
-    std::string sScaleInputId = "Scaling##" + m_sEntityName;
-
-    ImGui::InputFloat3(sTranslateInputId.c_str(), fTranslation);
-    ImGui::InputFloat3(sRotateInputId.c_str(), fRotation);
-    ImGui::InputFloat3(sScaleInputId.c_str(), fScale);
+    ImGui::InputFloat3("Translation", fTranslation);
+    ImGui::InputFloat3("Rotation", fRotation);
+    ImGui::InputFloat3("Scaling", fScale);
 
     math::CVector3 v3Pos(fTranslation[0], fTranslation[1], fTranslation[2]);
     math::CVector3 v3Rot(fRotation[0], fRotation[1], fRotation[2]);

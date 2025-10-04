@@ -39,15 +39,15 @@ namespace scene
     const bool IsEnabled() const { return m_bEnabled; }
 
     // Debug creation
-    void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode = render::ERenderMode::WIREFRAME);
-    void DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
-    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
-    void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode = render::ERenderMode::WIREFRAME);
+    void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
+    void DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
+    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
+    void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
     void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
 
     // Element creation
-    render::gfx::CPrimitive* const CreatePrimitive(const render::gfx::EPrimitiveType& _ePrimitiveType, render::ERenderMode = render::ERenderMode::SOLID);
-    render::gfx::CModel* const CreateModel(const char* _sModelPath, const char* _sBaseMltDir);
+    render::gfx::CPrimitive* const CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode);
+    render::gfx::CModel* const CreateModel(const char* _sModelPath);
 
     render::lights::CDirectionalLight* const CreateDirectionalLight();
     render::lights::CPointLight* const CreatePointLight();
@@ -76,7 +76,7 @@ namespace scene
 
     // Graphics
     TModelList m_vctModels = TModelList();
-    TPrimitiveList m_vctPrimitiveItems = TPrimitiveList();
+    TPrimitiveList m_vctPrimitives = TPrimitiveList();
     TDebugItemList m_vctDebugItems = TDebugItemList();
 
     // Lights

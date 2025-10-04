@@ -70,7 +70,7 @@ namespace render
       return DefWindowProc(_hWnd, _uMsg, _wParam, _lParam);
     }
 
-    static HWND WINAPI CreateWinMain(HINSTANCE hInstance, uint32_t _uWidth, uint32_t _uHeight)
+    static HWND WINAPI CreateWinMain(HINSTANCE _hInstance, uint32_t _uWidth, uint32_t _uHeight)
     {
       // this struct holds information for the window class
       WNDCLASSEX wc;
@@ -82,7 +82,7 @@ namespace render
       wc.cbSize = sizeof(WNDCLASSEX);
       wc.style = CS_HREDRAW | CS_VREDRAW;
       wc.lpfnWndProc = internal_renderwindow::WindowProc;
-      wc.hInstance = hInstance;
+      wc.hInstance = _hInstance;
       wc.hCursor = LoadCursor(NULL, IDC_ARROW);
       wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
       wc.lpszClassName = L"ENY1N";
@@ -103,7 +103,7 @@ namespace render
         _uHeight, // height of the window
         NULL, // we have no parent window, NULL
         NULL, // we aren't using menus, NULL
-        hInstance, // application handle
+        _hInstance, // application handle
         NULL
       ); // used with multiple windows, NULL
 

@@ -67,12 +67,12 @@ struct PS_INPUT
 cbuffer ConstantTexture : register(b0)
 {
   // 4 + 4 + 4
+  int IgnoreGlobalLighting = 0;
   int HasTexture = 0;
-  int HasModel = 0;
-  int UseGlobalLighting = 0;
 
-  // 12 + 4
+  // 8 + 8
   int Padding0;
+  int Padding1;
 };
 
 // Constant buffer global lightning
@@ -90,11 +90,18 @@ cbuffer GlobalLightingData : register(b1)
 
 float4 PSMain(PS_INPUT input) : SV_TARGET
 {
-  float4 v4TextureColor = cTexture2D.Sample(cSamplerState, input.uv);
-  float3 v3TotalDiffuse = float3(0.0f, 0.0f, 0.0f);
+  // Get color + normal
+  float4 v4TargetColor = HasTexture ? cTexture2D.Sample(cSamplerState, input.uv) : float4(input.color, 1.0f);
   float3 v3Normal = normalize(input.normal);
 
+  // If we don't use global illumination we simply return with the desired color!
+  if (IgnoreGlobalLighting)
+  {
+    return float4(v4TargetColor);
+  }
+
   // Ambient light
+  float3 v3TotalDiffuse = float3(0.0f, 0.0f, 0.0f);
   float3 v3AmbientColor = 0.01f * float3(1.0f, 1.0f, 1.0f);
   v3TotalDiffuse += v3AmbientColor;
 
@@ -150,11 +157,5 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
     }
   }
 
-  if (UseGlobalLighting)
-  {
-    float4 v4FinalColor = HasTexture ? v4TextureColor : float4(input.color, 1.0f);
-    return float4(saturate(v4FinalColor.rgb * 0.5 + v3TotalDiffuse * 0.5f), 1.0f);
-  }
-
-  return float4(input.color, 1.0f);
+  return float4(saturate(v4TargetColor.rgb * 0.5 + v3TotalDiffuse * 0.5f), 1.0f);
 }

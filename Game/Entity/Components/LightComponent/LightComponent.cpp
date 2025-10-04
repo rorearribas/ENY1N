@@ -47,11 +47,6 @@ namespace game
     }
   }
   // ------------------------------------
-  void CLightComponent::Update(float _fDeltaTime)
-  {
-    Super::Update(_fDeltaTime);
-  }
-  // ------------------------------------
   void CLightComponent::SetLightType(render::lights::ELightType _eLightType)
   {
     CreateLight(_eLightType);
@@ -73,21 +68,15 @@ namespace game
     {
     case render::lights::ELightType::DIRECTIONAL_LIGHT:
     {
-      // Generate unique ids
-      std::string sTitle = "DIRECTIONAL LIGHT";
-      std::string sLightDir = "Direction" + std::string("##" + sOwnerName);
-      std::string sColor = "Color" + std::string("##" + sOwnerName);
-      std::string sIntensity = "Intensity" + std::string("##" + sOwnerName);
-
       render::lights::CDirectionalLight* pDirectional = static_cast<render::lights::CDirectionalLight*>(m_pLight);
       float dir[3] = { pDirectional->GetDirection().X, pDirectional->GetDirection().Y, pDirectional->GetDirection().Z };
       float color[3] = { pDirectional->GetColor().X, pDirectional->GetColor().Y, pDirectional->GetColor().Z };
       float fIntensity = pDirectional->GetIntensity();
 
-      ImGui::Text(sTitle.c_str());
-      ImGui::InputFloat3(sLightDir.c_str(), dir);
-      ImGui::InputFloat3(sColor.c_str(), color);
-      ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
+      ImGui::Text("DIRECTIONAL LIGHT");
+      ImGui::InputFloat3("Direction", dir);
+      ImGui::InputFloat3("Color", color);
+      ImGui::InputFloat("Intensity", &fIntensity);
 
       pDirectional->SetDirection(math::CVector3(dir[0], dir[1], dir[2]));
       pDirectional->SetColor(math::CVector3(color[0], color[1], color[2]));
@@ -96,21 +85,15 @@ namespace game
     break;
     case render::lights::ELightType::POINT_LIGHT:
     {
-      // Generate unique ids
-      std::string sTitle = "POINT LIGHT";
-      std::string sColor = "Color" + std::string("##" + sOwnerName);
-      std::string sRange = "Range" + std::string("##" + sOwnerName);
-      std::string sIntensity = "Intensity" + std::string("##" + sOwnerName);
-
       render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(m_pLight);
       float vctColor[3] = { pPointLight->GetColor().X, pPointLight->GetColor().Y, pPointLight->GetColor().Z };
       float fIntensity = pPointLight->GetIntensity();
       float fRange = pPointLight->GetRange();
 
-      ImGui::Text(sTitle.c_str());
-      ImGui::InputFloat3(sColor.c_str(), vctColor);
-      ImGui::InputFloat(sRange.c_str(), &fRange);
-      ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
+      ImGui::Text("POINT LIGHT");
+      ImGui::InputFloat3("Color", vctColor);
+      ImGui::InputFloat("Range", &fRange);
+      ImGui::InputFloat("Intensity", &fIntensity);
 
       math::CVector3 v3Color(vctColor[0], vctColor[1], vctColor[2]);
       pPointLight->SetColor(v3Color);
@@ -123,25 +106,17 @@ namespace game
     break;
     case render::lights::ELightType::SPOT_LIGHT:
     {
-      // Generate unique ids
-      std::string sTitle = "SPOT LIGHT";
-      std::string sLightDir = "Direction" + std::string("##" + sOwnerName);
-      std::string sColor = "Color" + std::string("##" + sOwnerName);
-      std::string sCutOffAngle = "CutOffAngle" + std::string("##" + sOwnerName);
-      std::string sRange = "Range" + std::string("##" + sOwnerName);
-      std::string sIntensity = "Intensity" + std::string("##" + sOwnerName);
-
       render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight);
       float vctDir[3] = { pSpotLight->GetDirection().X, pSpotLight->GetDirection().Y, pSpotLight->GetDirection().Z };
       float vctColor[3] = { pSpotLight->GetColor().X, pSpotLight->GetColor().Y, pSpotLight->GetColor().Z };
       float fIntensity = pSpotLight->GetIntensity();
       float fRange = pSpotLight->GetRange();
 
-      ImGui::Text(sTitle.c_str());
-      ImGui::InputFloat3(sLightDir.c_str(), vctDir);
-      ImGui::InputFloat3(sColor.c_str(), vctColor);
-      ImGui::InputFloat(sRange.c_str(), &fRange);
-      ImGui::InputFloat(sIntensity.c_str(), &fIntensity);
+      ImGui::Text("SPOT LIGHT");
+      ImGui::InputFloat3("Direction", vctDir);
+      ImGui::InputFloat3("Color", vctColor);
+      ImGui::InputFloat("Range", &fRange);
+      ImGui::InputFloat("Intensity", &fIntensity);
 
       math::CVector3 v3Dir(vctDir[0], vctDir[1], vctDir[2]);
       math::CVector3 v3Color(vctColor[0], vctColor[1], vctColor[2]);

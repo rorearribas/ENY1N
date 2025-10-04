@@ -13,9 +13,6 @@ namespace game
     CLightComponent(CEntity* _pOwner, render::lights::ELightType _eLightType);
     virtual ~CLightComponent();
 
-    virtual void Update(float _fDeltaTime) override;
-    virtual void DrawDebug() override;
-
     inline render::lights::CBaseLight* GetLight() const { return m_pLight; }
     void SetLightType(render::lights::ELightType _eLightType);
     render::lights::ELightType GetLightType() const;
@@ -24,6 +21,8 @@ namespace game
     const math::CVector3& GetPosition() const;
     void SetDirection(const math::CVector3& _v3Rot);
     const math::CVector3& GetDirection() const;
+
+    virtual void DrawDebug() override;
 
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;

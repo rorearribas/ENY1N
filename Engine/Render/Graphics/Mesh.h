@@ -26,7 +26,7 @@ namespace render
       math::CVector2 UV = math::CVector2::Zero;
 
       // Material ID
-      uint32_t MaterialId = 0;
+      uint32_t MaterialID = 0;
 
       bool operator==(const SVertexData& _other) const;
       bool operator!=(const SVertexData& _other) const;
@@ -42,10 +42,10 @@ namespace render
       CMesh(const std::string& _sMeshName) : m_sMeshID(_sMeshName) {}
       ~CMesh();
 
-      void DrawMesh();
+      void Draw();
       HRESULT CreateBuffer(TIndexesList& _vctIndices);
 
-      void UseGlobalLighting(bool _bEnabled);
+      void IgnoreGlobalLighting(bool _bEnabled);
       void AddMaterial(render::mat::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
       void UpdateVertexColor(ID3D11Buffer* _pVertexBuffer);
 
@@ -54,11 +54,12 @@ namespace render
       const std::string& GetMeshID() const { return m_sMeshID; }
 
     private:
-      void Clean();
+      void ClearBuffers();
+      void ClearMaterials();
 
       // Info
       std::string m_sMeshID = std::string();
-      bool m_bUseGlobalLightning = true;
+      bool m_bIgnoreGlobalLighting = false;
 
       // Materials
       TMapMaterials m_dctMaterials = TMapMaterials();
@@ -82,7 +83,7 @@ namespace std
       size_t h1 = hash<int>()(roundFloat(v.Position.X)) ^ hash<int>()(roundFloat(v.Position.Y)) ^ hash<int>()(roundFloat(v.Position.Z));
       size_t h2 = hash<int>()(roundFloat(v.Normal.X)) ^ hash<int>()(roundFloat(v.Normal.Y)) ^ hash<int>()(roundFloat(v.Normal.Z));
       size_t h3 = hash<int>()(roundFloat(v.UV.X)) ^ hash<int>()(roundFloat(v.UV.Y));
-      size_t h4 = hash<uint32_t>()(v.MaterialId);
+      size_t h4 = hash<uint32_t>()(v.MaterialID);
       return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3);
     }
   };

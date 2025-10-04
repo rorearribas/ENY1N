@@ -29,12 +29,12 @@ struct __declspec(align(16)) SConstantMatrix
 struct __declspec(align(16)) SConstantModelData
 {
   // 4 byte + 4 byte + 4 byte
-  int bHasTexture = 0;
-  int bHasModel = 0;
-  int bUseGlobalLighting = 0;
+  int IgnoreGlobalLighting = 0;
+  int HasTexture = 0;
 
-  // 12 + 4 Bytes
+  // 8 + 8 Bytes
   int Padding0 = 0;
+  int Padding1 = 0;
 };
 
 #pragma region Lights

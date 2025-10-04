@@ -158,7 +158,8 @@ namespace collision
       GetRadius(),
       internal_sphere_collider::s_iMaxSubvH,
       internal_sphere_collider::s_iMaxSubvV,
-      math::CVector3::One
+      math::CVector3::One,
+      render::ERenderMode::WIREFRAME
     );
   }
 }

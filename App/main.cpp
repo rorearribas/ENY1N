@@ -44,27 +44,27 @@ static bool bThrowRay = false;
 
 int main()
 {
-  // Create resource manager
-  CResourceManager::CreateSingleton();
-
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);
   pEngine->GetCamera()->SetPosition(math::CVector3(3.104f, 11.347f, -0.901f));
   pEngine->GetCamera()->SetRotation(math::CVector3(5.443f, -75.275f, -0.901f));
 
+  // Time manager
+  chrono::CTimeManager* pTimeManager = chrono::CTimeManager::CreateSingleton();
+  pTimeManager->SetMaxFPS(144);
+
+  // Create resource manager
+  CResourceManager::CreateSingleton();
+
+  // Game manager
+  game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
   // Collisions manager
-  collision::CCollisionManager* pCollisionManager = collision::CCollisionManager::CreateSingleton();
+  collision::CCollisionManager* pCollManager = collision::CCollisionManager::CreateSingleton();
   // Physics manager
   physics::CPhysicsManager* pPhysicsManager = physics::CPhysicsManager::CreateSingleton();
   // Input manager
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
-  // Time manager
-  tick::CTimeManager* pTimeManager = tick::CTimeManager::CreateSingleton();
-  pTimeManager->SetMaxFPS(144);
-
-  // Game manager
-  game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
 
   // Create directional light
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
@@ -80,19 +80,18 @@ int main()
   pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
   // Load test model
-  //game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-  //pModelEnt->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
-  //game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-  //pModelTest->LoadModel("models/wolf/Wolf.fbx", "");
-  //pModelTest->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
-  //pModelTest->SetScale(math::CVector3(3.0f, 3.0f, 3.0f));
+  game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+  pModelEnt->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+  game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
+  pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
+  pModelTest->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
 
-  game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
-  pModelEnt2->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
-  game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
-  pModelTest2->LoadModel("models/manhattan/manhattan.fbx", "");
-  pModelTest2->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
-  pModelTest2->SetScale(math::CVector3(3.0f, 3.0f, 3.0f));
+  //game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
+  //pModelEnt2->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
+  //game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
+  //pModelTest2->LoadModel("models/manhattan/manhattan.fbx");
+  //pModelTest2->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+  //pModelTest2->SetScale(math::CVector3(3.0f, 3.0f, 3.0f));
 
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
@@ -101,15 +100,15 @@ int main()
     pCapsuleEntity->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
-    pModelCompTest->SetPrimitiveColor(math::CVector3::Forward);
+    pModelCompTest->SetColor(math::CVector3::Forward);
     pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
     pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
   }
 
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
-  pPlaneModel->CreatePrimitive(render::gfx::EPrimitiveType::E3D_PLANE);
-  pPlaneModel->SetPrimitiveColor(math::CVector3(1.0f, 1.0f, 1.0f));
+  pPlaneModel->CreatePrimitive(render::gfx::EPrimitiveType::E3D_PLANE, render::ERenderMode::SOLID);
+  pPlaneModel->SetColor(math::CVector3(1.0f, 1.0f, 1.0f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
@@ -120,12 +119,12 @@ int main()
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    pBoxTest->SetPosition(math::CVector3(1.0f, 5.0f, 0.0f));
+    pBoxTest->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(1.0f, 50.0f), GenerateFloat(-20.0f, 20.0f)));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CUBE);
-    pModelCompTest->SetPrimitiveColor(math::CVector3::Up);
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
+    pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CUBE, render::ERenderMode::SOLID);
+    pModelCompTest->SetColor(math::CVector3::Up);
+ /* pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
+    pBoxTest->RegisterComponent<game::CRigidbodyComponent>(); */
   }
 
   render::CRender* const pRender = pEngine->GetRender();
@@ -144,29 +143,25 @@ int main()
     }
     else
     {
-      // Begin draw
-      pTimeManager->BeginFrame();
+      // Push begin draw
       pEngine->PushBeginDraw();
 
-      // Calculate 
+      // Calculate delta
+      pTimeManager->BeginFrame();
       float fDeltaTime = pTimeManager->GetDeltaTime();
+      float fFixedDelta = pTimeManager->GetFixedDelta();
       float fOffset = math::Clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
       m_fFixedDeltaAccumulator += fOffset;
 
-      math::CPlane oPlane(math::CVector3(0.0f, 5.0f, 0.0f), math::CVector3(0.0f, 1.0f, 0.0f));
-      pEngine->DrawPlane(oPlane, math::CVector3(10, 10, 10), math::CVector3::Right, render::ERenderMode::SOLID);
-
       // Update
-      while (m_fFixedDeltaAccumulator >= pTimeManager->GetFixedDelta())
+      while (m_fFixedDeltaAccumulator >= fFixedDelta)
       {
-        float fFixedDeltaTime = pTimeManager->GetFixedDelta();
-
-        pCamera->Update(fFixedDeltaTime);
+        pCamera->Update(fFixedDelta);
         pCamera->DrawDebug();
 
-        pPhysicsManager->Update(fFixedDeltaTime);
-        pCollisionManager->Update(fFixedDeltaTime);
-        pGameManager->Update(fFixedDeltaTime);
+        pPhysicsManager->Update(fFixedDelta);
+        pCollManager->Update(fFixedDelta);
+        pGameManager->Update(fFixedDelta);
 
         if (bThrowRay)
         {
@@ -180,19 +175,18 @@ int main()
           oRay.DrawRay(fMaxDistance, math::CVector3::Right);
 
           // Throw ray
-          collision::CCollisionManager* pCollManager = collision::CCollisionManager::GetInstance();
           std::vector<collision::SHitEvent> vctHits;
           if (pCollManager->RaycastAll(oRay, fMaxDistance, vctHits))
           {
             for (auto& HitEvent : vctHits)
             {
-              pEngine->DrawSphere(HitEvent.ImpactPoint, 0.05f, 8, 8, math::CVector3::Up);
+              pEngine->DrawSphere(HitEvent.ImpactPoint, 0.05f, 8, 8, math::CVector3::Up, render::ERenderMode::WIREFRAME);
             }
           }
         }
 
         pInputManager->Flush();
-        m_fFixedDeltaAccumulator -= fFixedDeltaTime;
+        m_fFixedDeltaAccumulator -= fFixedDelta;
       }
 
       // Draw
@@ -239,9 +233,9 @@ int main()
       {
         pTimeManager->SetMaxFPS(144);
       }
-      if (ImGui::Button("300"))
+      if (ImGui::Button("999"))
       {
-        pTimeManager->SetMaxFPS(300);
+        pTimeManager->SetMaxFPS(999);
       }
 
       ImGui::End();
@@ -261,7 +255,7 @@ int main()
 
   // Destroy
   pGameManager->DestroySingleton();
-  pCollisionManager->DestroySingleton();
+  pCollManager->DestroySingleton();
   pTimeManager->DestroySingleton();
   pInputManager->DestroySingleton();
   pEngine->DestroySingleton();

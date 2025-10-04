@@ -34,14 +34,14 @@ namespace render
     class CPrimitive
     {
     public:
-      CPrimitive(const SCustomPrimitive& _oVertexData, render::ERenderMode _eRenderMode = SOLID);
-      CPrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode = SOLID);
+      CPrimitive(SCustomPrimitive& _oData, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
+      CPrimitive(EPrimitiveType _eType, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
       ~CPrimitive();
 
-      void DrawPrimitive();
+      void Draw();
 
       void SetRenderMode(render::ERenderMode _eRenderMode);
-      void UseGlobalLighting(bool _bEnabled);
+      void IgnoreGlobalLighting(bool _bIgnore); // This is trash!!
 
       void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
       const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
@@ -54,7 +54,7 @@ namespace render
 
     private:
       HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode);
-      HRESULT CreateBufferFromPrimitiveData(const std::vector<render::gfx::SVertexData>&, const std::vector<uint32_t>&);
+      HRESULT CreateBufferFromData(const std::vector<render::gfx::SVertexData>&, const std::vector<uint32_t>&);
       HRESULT CreateInputLayout();
 
       // Primitive data
@@ -71,7 +71,7 @@ namespace render
 
       math::CTransform m_oTransform = math::CTransform();
       math::CVector3 m_v3Color = math::CVector3::One;
-      bool m_bUseGlobalLighting = true;
+      bool m_bIgnoreGlobalLighting = false;
 
       uint32_t m_uVertices = 0;
       uint32_t m_uIndices = 0;

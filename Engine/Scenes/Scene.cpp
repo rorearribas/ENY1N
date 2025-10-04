@@ -35,10 +35,10 @@ namespace scene
   void CScene::DrawPrimitives()
   {
     // Draw primitives
-    for (uint32_t uIndex = 0; uIndex < m_vctPrimitiveItems.CurrentSize(); uIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_vctPrimitives.CurrentSize(); uIndex++)
     {
-      render::gfx::CPrimitive* pPrimitiveItem = m_vctPrimitiveItems[uIndex];
-      pPrimitiveItem->DrawPrimitive();
+      render::gfx::CPrimitive* pPrimitive = m_vctPrimitives[uIndex];
+      pPrimitive->Draw();
     }
 
     // Draw temporal primitives
@@ -46,7 +46,7 @@ namespace scene
     for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
     {
       render::gfx::CPrimitive* pPrimitiveItem = m_vctDebugItems[uIndex];
-      pPrimitiveItem->DrawPrimitive();
+      pPrimitiveItem->Draw();
     }
 
     // Clean after draw
@@ -61,7 +61,7 @@ namespace scene
     for (uint32_t uIndex = 0; uIndex < m_vctModels.CurrentSize(); uIndex++)
     {
       render::gfx::CModel* pModel = m_vctModels[uIndex];
-      pModel->DrawModel();
+      pModel->Draw();
     }
   }
   // ------------------------------------
@@ -117,7 +117,7 @@ namespace scene
   // ------------------------------------
   void CScene::DestroyAllPrimitives()
   {
-    m_vctPrimitiveItems.ClearAll();
+    m_vctPrimitives.ClearAll();
   }
   // ------------------------------------
   void CScene::DestroyAllModels()
@@ -163,10 +163,10 @@ namespace scene
 #endif
 
     // Set values
+    pPrimitive->IgnoreGlobalLighting(true);
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetRotation(_v3Rot);
     pPrimitive->SetColor(_v3Color);
-    pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   void CScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -185,11 +185,11 @@ namespace scene
 #endif
 
     // Set values
+    pPrimitive->IgnoreGlobalLighting(true);
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetRotation(_v3Rot);
     pPrimitive->SetScale(_v3Size);
     pPrimitive->SetColor(_v3Color);
-    pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -220,9 +220,9 @@ namespace scene
 #endif
 
     // Set values
+    pSpherePrimitive->IgnoreGlobalLighting(true);
     pSpherePrimitive->SetPosition(_v3Pos);
     pSpherePrimitive->SetColor(_v3Color);
-    pSpherePrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   void CScene::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -243,10 +243,10 @@ namespace scene
 #endif
 
     // Set values
+    pPlanePrimitive->IgnoreGlobalLighting(true);
     pPlanePrimitive->SetPosition(_oPlane.GetPos());
     pPlanePrimitive->SetScale(_v3Size);
     pPlanePrimitive->SetColor(_v3Color);
-    pPlanePrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
   void CScene::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
@@ -267,28 +267,28 @@ namespace scene
 #endif
 
     // Set values
+    pPrimitive->IgnoreGlobalLighting(true);
     pPrimitive->SetColor(_v3Color);
-    pPrimitive->UseGlobalLighting(false);
   }
   // ------------------------------------
-  render::gfx::CPrimitive* const CScene::CreatePrimitive(const render::gfx::EPrimitiveType& _ePrimitiveType, render::ERenderMode _eRenderMode)
+  render::gfx::CPrimitive* const CScene::CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode)
   {
-    if (m_vctPrimitiveItems.CurrentSize() >= m_vctPrimitiveItems.GetMaxSize())
+    if (m_vctPrimitives.CurrentSize() >= m_vctPrimitives.GetMaxSize())
     {
       std::cout << "You have reached maximum primitives in the current scene" << std::endl;
       return nullptr;
     }
-    return m_vctPrimitiveItems.RegisterItem(_ePrimitiveType, _eRenderMode);
+    return m_vctPrimitives.RegisterItem(_eType, _eRenderMode);
   }
   // ------------------------------------
-  render::gfx::CModel* const CScene::CreateModel(const char* _sModelPath, const char* _sBaseMltDir)
+  render::gfx::CModel* const CScene::CreateModel(const char* _sModelPath)
   {
     if (m_vctModels.CurrentSize() >= m_vctModels.GetMaxSize())
     {
       std::cout << "You have reached maximum models in the current scene" << std::endl;
       return nullptr;
     }
-    return m_vctModels.RegisterItem(_sModelPath, _sBaseMltDir);
+    return m_vctModels.RegisterItem(_sModelPath);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CScene::CreateDirectionalLight()
@@ -324,7 +324,7 @@ namespace scene
   // ------------------------------------
   void CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
   {
-    bool bOk = m_vctPrimitiveItems.RemoveItem(_pPrimitive_);
+    bool bOk = m_vctPrimitives.RemoveItem(_pPrimitive_);
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk); // Sanity check

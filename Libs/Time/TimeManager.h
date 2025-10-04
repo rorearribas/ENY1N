@@ -3,7 +3,7 @@
 #include <windows.h>
 #include "Libs/Utils/Singleton.h"
 
-namespace tick
+namespace chrono
 {
   class CTimeManager : public utils::CSingleton<CTimeManager>
   {

@@ -149,34 +149,21 @@ namespace game
     std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
     if (!m_pRigidbody) return;
 
-    // Generate unique ids
-    std::string sTitle = "RIGIDBODY";
-    std::string sMass = "Mass" + std::string("##" + sOwnerName);
-    std::string sKinematic = "Kinematic" + std::string("##" + sOwnerName);
-    std::string sAddForce = "Add Force" + std::string("##" + sOwnerName);
-
-    ImGui::Text(sTitle.c_str());
-
+    ImGui::Text("RIGIDBODY");
     float fMass = GetMass();
+    ImGui::InputFloat("Mass", &fMass);
     bool bKinematic = GetRigidbodyType() == physics::ERigidbodyType::KINEMATIC;
+    ImGui::Checkbox("Kinematic", &bKinematic);
 
-    ImGui::InputFloat(sMass.c_str(), &fMass);
-    ImGui::Checkbox(sKinematic.c_str(), &bKinematic);
-
-    if (ImGui::Button(sAddForce.c_str()))
-    {
-      if (m_pRigidbody)
-      {
-        m_pRigidbody->AddForce(math::CVector3(500.0f, 0.0f, 0.0f));
-      }
-    }
-
-    // Apply rigidbody cfg
+    // Apply
     if (m_pRigidbody)
     {
-      SetMass(fMass);
       physics::ERigidbodyType eRbType = bKinematic ? physics::ERigidbodyType::KINEMATIC : physics::ERigidbodyType::DYNAMIC;
-      if (eRbType != GetRigidbodyType()) { SetRigidbodyType(eRbType); }
+      if (eRbType != GetRigidbodyType())
+      {
+        SetRigidbodyType(eRbType);
+      }
+      SetMass(fMass);
     }
   }
 }

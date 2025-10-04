@@ -92,11 +92,11 @@ namespace scene
     return pScene->CreatePrimitive(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
-  render::gfx::CModel* const CSceneManager::CreateModel(const char* _sModelPath, const char* _sBaseMltDir, uint32_t _uSceneIndex)
+  render::gfx::CModel* const CSceneManager::CreateModel(const char* _sModelPath, uint32_t _uSceneIndex)
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_vctScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_vctScenes[_uSceneIndex];
-    return pScene->CreateModel(_sModelPath, _sBaseMltDir);
+    return pScene->CreateModel(_sModelPath);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CSceneManager::CreateDirectionalLight(uint32_t _uSceneIndex)

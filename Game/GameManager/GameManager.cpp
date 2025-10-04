@@ -23,9 +23,11 @@ namespace game
       CEntity* pEntity = m_vctEntitiesList[uIndex];
       if (pEntity)
       {
-        std::string entityLabel = pEntity->GetName() + "##" + std::to_string(uIndex);
-        if (ImGui::Selectable(entityLabel.c_str(), iSelectedIdx == static_cast<int>(uIndex)))
+        std::string sLabel = pEntity->GetName() + "##" + std::to_string(uIndex);
+        if (ImGui::Selectable(sLabel.c_str(), iSelectedIdx == static_cast<int>(uIndex)))
+        {
           iSelectedIdx = uIndex;
+        }
       }
     }
     ImGui::End();
@@ -40,7 +42,9 @@ namespace game
 #ifdef DEBUG_MODE
         if (uIndex == static_cast<uint32_t>(iSelectedIdx))
         {
+          ImGui::PushID(uIndex);
           pEntity->DrawDebug();
+          ImGui::PopID();
         }
 #endif
       }

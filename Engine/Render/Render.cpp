@@ -58,12 +58,16 @@ namespace render
   CRender::CRender(uint32_t _uX, uint32_t _uY)
   {
     // Create render window
+    LOG("Creating render window...");
     m_pRenderWindow = new render::CRenderWindow(_uX, _uY);
+    SUCCESS_LOG("The window has been created successfully!");
 
     // Init render
+    LOG("Initializing render...");
     HRESULT hResult = Init(_uX, _uY);
     UNUSED_VAR(hResult);
     assert(!FAILED(hResult));
+    SUCCESS_LOG("Render initialized correctly!");
   }
   // ------------------------------------
   CRender::~CRender()
