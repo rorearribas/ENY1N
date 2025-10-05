@@ -18,7 +18,7 @@ namespace render
 
   public:
     CCamera();
-    ~CCamera() {}
+    ~CCamera();
 
     void Update(float _fDeltaTime);
 

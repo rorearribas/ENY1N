@@ -18,18 +18,18 @@ namespace scene
   {
     int iCurrentIdx = 0;
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene*& _pScene)
-      {
-        _pScene = new scene::CScene(iCurrentIdx++);
-        _pScene->SetSceneEnabled(false);
-      });
+    {
+      _pScene = new scene::CScene(iCurrentIdx++);
+      _pScene->SetSceneEnabled(false);
+    });
   }
   // ------------------------------------
   void CSceneManager::DisableAllScenes() const
   {
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene* _pScene)
-      {
-        _pScene->SetSceneEnabled(false);
-      });
+    {
+      _pScene->SetSceneEnabled(false);
+    });
   }
   // ------------------------------------
   void CSceneManager::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
@@ -120,18 +120,18 @@ namespace scene
     return pScene->CreateSpotLight();
   }
   // ------------------------------------
-  void CSceneManager::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uIndex)
-  {
-    if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
-    scene::CScene* pScene = m_vctScenes.at(_uIndex);
-    pScene->DestroyPrimitive(_pPrimitive_);
-  }
-  // ------------------------------------
   void CSceneManager::DestroyModel(render::gfx::CModel*& _pModel_, uint32_t _uIndex)
   {
     if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
     scene::CScene* pScene = m_vctScenes.at(_uIndex);
     pScene->DestroyModel(_pModel_);
+  }
+  // ------------------------------------
+  void CSceneManager::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uIndex)
+  {
+    if (static_cast<size_t>(_uIndex) > (m_vctScenes.size() - 1)) return;
+    scene::CScene* pScene = m_vctScenes.at(_uIndex);
+    pScene->DestroyPrimitive(_pPrimitive_);
   }
   // ------------------------------------
   void CSceneManager::DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uIndex)
@@ -144,8 +144,8 @@ namespace scene
   void CSceneManager::DestroyAllScenes()
   {
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [](CScene*& _pScene)
-      {
-        global::ReleaseObject(_pScene);
-      });
+    {
+      global::ReleaseObject(_pScene);
+    });
   }
 }

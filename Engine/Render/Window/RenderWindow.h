@@ -11,10 +11,10 @@ namespace render
     ~CRenderWindow() {}
 
     void SetEnabled(bool _bEnabled) const;
+    inline const HWND& GetHwnd() const { return m_hWnd; }
 
     const uint32_t GetWidth() const;
     const uint32_t GetHeight() const;
-    const HWND& GetHwnd() const;
 
   private:
     HWND m_hWnd = nullptr;

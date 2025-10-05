@@ -10,7 +10,7 @@ namespace render
   {
     CMaterial::~CMaterial()
     {
-      m_dctTextures.clear();
+      ClearTextures();
     }
     // ------------------------------------
     render::texture::CTexture* const CMaterial::GetTexture(texture::ETextureType _eType)
@@ -28,6 +28,16 @@ namespace render
         pTargetTexture = new render::texture::CTexture(_sTextureID);
       }
       return pTargetTexture;
+    }
+    // ------------------------------------
+    void CMaterial::ClearTextures()
+    {
+      auto it = m_dctTextures.begin();
+      for (; it != m_dctTextures.end(); ++it)
+      {
+        global::ReleaseObject(it->second);
+      }
+      m_dctTextures.clear();
     }
   }
 }

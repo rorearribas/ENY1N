@@ -143,7 +143,7 @@ namespace render
     void CMesh::ClearMaterials()
     {
       auto it = m_dctMaterials.begin();
-      for (; it != m_dctMaterials.end(); it++)
+      for (; it != m_dctMaterials.end(); ++it)
       {
         global::ReleaseObject(it->second);
       }

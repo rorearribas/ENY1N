@@ -7,11 +7,6 @@ namespace render
 {
   namespace texture
   {
-    namespace internal_texture
-    {
-      static const DXGI_FORMAT s_eTargetFormat(DXGI_FORMAT_R8G8B8A8_UNORM);
-    }
-
     // ------------------------------------
     CTexture::~CTexture()
     {
@@ -45,7 +40,7 @@ namespace render
       oTextureDesc.MipLevels = 1;
       oTextureDesc.ArraySize = 1;
       oTextureDesc.SampleDesc.Count = 1;
-      oTextureDesc.Format = internal_texture::s_eTargetFormat;
+      oTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA
       oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
@@ -61,7 +56,7 @@ namespace render
 
       // Create texture view
       D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
-      oShaderResourceViewDesc.Format = internal_texture::s_eTargetFormat;
+      oShaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA
       oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
       oShaderResourceViewDesc.Texture2D.MipLevels = 1;
       hResult = global::dx11::s_pDevice->CreateShaderResourceView(m_pTexture, &oShaderResourceViewDesc, &m_pShaderResourceView);

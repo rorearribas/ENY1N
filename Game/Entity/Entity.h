@@ -58,8 +58,9 @@ namespace game
     void OnCollisionExit(const collision::SHitEvent&);
 
   private:
-    void DestroyAllComponents();
+    void Clear();
 
+  private:
     TComponentsList m_vctComponents = {};
     math::CTransform m_oTransform;
 

@@ -53,8 +53,8 @@ namespace scene
     render::lights::CPointLight* const CreatePointLight();
     render::lights::CSpotLight* const CreateSpotLight();
 
-    void DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_);
     void DestroyModel(render::gfx::CModel*& pModel_);
+    void DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_);
     void DestroyLight(render::lights::CBaseLight*& pLight_);
 
   private:

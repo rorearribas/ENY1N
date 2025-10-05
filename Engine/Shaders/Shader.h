@@ -49,10 +49,10 @@ namespace render
       // Push Shader
       switch (eShaderType)
       {
-      case EShaderType::VERTEX_SHADER: { pDeviceCtx->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(m_pInternalPtr), nullptr, 0); } break;
-      case EShaderType::PIXEL_SHADER: { pDeviceCtx->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(m_pInternalPtr), nullptr, 0); } break;
-      case EShaderType::COMPUTE_SHADER: { pDeviceCtx->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(m_pInternalPtr), nullptr, 0); } break;
-      default: break;
+        case EShaderType::VERTEX_SHADER: { pDeviceCtx->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(m_pInternalPtr), nullptr, 0); } break;
+        case EShaderType::PIXEL_SHADER: { pDeviceCtx->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(m_pInternalPtr), nullptr, 0); } break;
+        case EShaderType::COMPUTE_SHADER: { pDeviceCtx->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(m_pInternalPtr), nullptr, 0); } break;
+        default: break;
       }
     }
 

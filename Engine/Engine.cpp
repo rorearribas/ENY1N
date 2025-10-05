@@ -11,8 +11,9 @@ namespace engine
 {
   CEngine::~CEngine()
   {
-    m_pSceneManager.reset();
-    m_pRender.reset();
+    global::ReleaseObject(m_pSceneManager);
+    global::ReleaseObject(m_pCamera);
+    global::ReleaseObject(m_pRender);
   }
   // ------------------------------------
   void CEngine::Init(uint32_t _uWidth, uint32_t _uHeight)
@@ -21,13 +22,13 @@ namespace engine
     LOG("Initializing engine...");
 
     // Create render
-    m_pRender = std::make_unique<render::CRender>(_uWidth, _uHeight);
+    m_pRender = new render::CRender(_uWidth, _uHeight);
 
     // Create camera
-    m_pCamera = std::make_unique<render::CCamera>();
+    m_pCamera = new render::CCamera();
 
     // Create scene manager
-    m_pSceneManager = std::make_unique<scene::CSceneManager>();
+    m_pSceneManager = new scene::CSceneManager();
     m_pSceneManager->SetSceneEnabled(0, true);
 
     // Set delegate

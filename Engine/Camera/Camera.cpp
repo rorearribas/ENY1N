@@ -28,6 +28,12 @@ namespace render
     m_oFrustumPlanes.resize(internal_camera::s_iFrustumPlanes);
   }
   // ------------------------------------
+  CCamera::~CCamera()
+  {
+    m_oConstantBuffer.CleanBuffer();
+    m_oFrustumPlanes.clear();
+  }
+  // ------------------------------------
   void CCamera::Update(float _fDeltaTime)
   {
     // Keyboard movement

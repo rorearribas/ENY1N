@@ -30,7 +30,13 @@ namespace render
     {
       // Swap chain + render target
       IDXGISwapChain* pSwapChain = nullptr;
-      ID3D11RenderTargetView* pRenderTarget = nullptr;
+
+      // Deferred shading
+      ID3D11RenderTargetView* pGBufferRTV = nullptr;
+      ID3D11RenderTargetView* pPositionRTV = nullptr;
+      ID3D11RenderTargetView* pAlbedoRTV = nullptr;
+      ID3D11RenderTargetView* pNormalRTV = nullptr;
+      ID3D11RenderTargetView* pSpecularRTV;
 
       // Depth
       ID3D11Texture2D* pDepthTexture = nullptr;
@@ -78,7 +84,7 @@ namespace render
 
     // Delete internal resources
     global::dx11::SafeRelease(internal_render::s_oPipeline.pSwapChain);
-    global::dx11::SafeRelease(internal_render::s_oPipeline.pRenderTarget);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pAlbedoRTV);
     global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthTexture);
     global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthStencilState);
     global::dx11::SafeRelease(internal_render::s_oPipeline.pDepthStencilView);
@@ -202,7 +208,7 @@ namespace render
     oSwapChainDescriptor.BufferCount = 1;
     oSwapChainDescriptor.BufferDesc.Width = _uX;
     oSwapChainDescriptor.BufferDesc.Height = _uY;
-    oSwapChainDescriptor.OutputWindow = global::window::s_oHwnd;
+    oSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHwnd();
     oSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     oSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     oSwapChainDescriptor.SampleDesc.Count = 1;
@@ -233,7 +239,7 @@ namespace render
   void CRender::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
   {
     // Remove current target view
-    global::dx11::SafeRelease(internal_render::s_oPipeline.pRenderTarget);
+    global::dx11::SafeRelease(internal_render::s_oPipeline.pAlbedoRTV);
 
     // Resize buffers
     HRESULT hResult = internal_render::s_oPipeline.pSwapChain->ResizeBuffers(0, _uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
@@ -253,7 +259,7 @@ namespace render
       return E_FAIL;
     }
 
-    HRESULT hResult = global::dx11::s_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &internal_render::s_oPipeline.pRenderTarget);
+    HRESULT hResult = global::dx11::s_pDevice->CreateRenderTargetView(pBackBuffer, nullptr, &internal_render::s_oPipeline.pAlbedoRTV);
     if (FAILED(hResult))
     {
       return hResult;
@@ -393,7 +399,7 @@ namespace render
     BeginMarker(internal_render::s_sPrepareFrameMrk);
     {
       // Clear render target
-      ::global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oPipeline.pRenderTarget, internal_render::s_v4ClearColor);
+      ::global::dx11::s_pDeviceContext->ClearRenderTargetView(internal_render::s_oPipeline.pAlbedoRTV, internal_render::s_v4ClearColor);
       // Clear depth stencil view
       ::global::dx11::s_pDeviceContext->ClearDepthStencilView(internal_render::s_oPipeline.pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
@@ -431,7 +437,7 @@ namespace render
   void CRender::EndDraw() const
   {
     // Update resources
-    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &internal_render::s_oPipeline.pRenderTarget, internal_render::s_oPipeline.pDepthStencilView);
+    global::dx11::s_pDeviceContext->OMSetRenderTargets(1, &internal_render::s_oPipeline.pAlbedoRTV, internal_render::s_oPipeline.pDepthStencilView);
     global::dx11::s_pDeviceContext->OMSetDepthStencilState(internal_render::s_oPipeline.pDepthStencilState, 1);
     global::dx11::s_pDeviceContext->OMSetBlendState(internal_render::s_oPipeline.pBlendState, nullptr, 0xFFFFFFFF);
     global::dx11::s_pDeviceContext->RSSetState(internal_render::s_oPipeline.pRasterizer);

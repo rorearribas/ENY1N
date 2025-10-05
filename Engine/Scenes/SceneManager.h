@@ -38,8 +38,8 @@ namespace scene
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
     render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
 
-    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
     void DestroyModel(render::gfx::CModel*& pModel_, uint32_t _uSceneIndex = 0);
+    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
     void DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uSceneIndex = 0);
 
   private:

@@ -12,8 +12,8 @@ namespace render
     public:
       struct SModelData
       {
-        std::vector<render::gfx::CMesh*> Meshes; // Indices
-        std::vector<render::gfx::SVertexData> VertexData; // Global vertex data
+        std::vector<render::gfx::CMesh*> Meshes;
+        std::vector<render::gfx::SVertexData> VertexData;
       };
 
     public:
@@ -31,9 +31,11 @@ namespace render
       const math::CVector3& GetScale() const { return m_oModelTransform.GetScale(); }
 
     private:
+      void Clear();
       HRESULT InitModel(const char* _sModelPath);
       HRESULT CreateInputLayout();
 
+    private:
       // DirectX
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11InputLayout* m_pInputLayout = nullptr;

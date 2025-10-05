@@ -14,7 +14,7 @@ namespace game
   // ------------------------------------
   CEntity::~CEntity()
   {
-    DestroyAllComponents();
+    Clear();
   }
   // ------------------------------------
   void CEntity::Update(float _fDeltaTime)
@@ -236,11 +236,11 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::DestroyAllComponents()
+  void CEntity::Clear()
   {
     std::for_each(m_vctComponents.begin(), m_vctComponents.end(), [](CComponent*& _pComponent)
-      {
-        global::ReleaseObject(_pComponent);
-      });
+    {
+      global::ReleaseObject(_pComponent);
+    });
   }
 }

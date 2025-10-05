@@ -39,16 +39,20 @@ float GenerateFloat(float min, float max)
 
 static bool bThrowRay = false;
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#define WIDTH 2560
+#define HEIGHT 1440
 
 int main()
 {
+  global::mem::s_oMemoryTracker.PrintStats();
+
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);
   pEngine->GetCamera()->SetPosition(math::CVector3(3.104f, 11.347f, -0.901f));
   pEngine->GetCamera()->SetRotation(math::CVector3(5.443f, -75.275f, -0.901f));
+
+  global::mem::s_oMemoryTracker.PrintStats();
 
   // Time manager
   chrono::CTimeManager* pTimeManager = chrono::CTimeManager::CreateSingleton();
@@ -79,7 +83,7 @@ int main()
   game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
   pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
-  for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
@@ -120,20 +124,20 @@ int main()
   pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
   std::vector<game::CEntity*> vctPhysics = {};
-  for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    pBoxTest->SetPosition(math::CVector3(GenerateFloat(-2.0f, 2.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-2.0f, 2.0f)));
+    pBoxTest->SetPosition(math::CVector3(GenerateFloat(-70.0f, 70.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-40.0f, 40.0f)));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CUBE, render::ERenderMode::SOLID);
     pModelCompTest->SetColor(math::CVector3::Up);
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
+    /*pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
+    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();*/
   }
 
   render::CRender* const pRender = pEngine->GetRender();
   render::CCamera* const pCamera = pEngine->GetCamera();
-  pRender->GetRenderWindow()->SetEnabled(true);
+  pRender->ShowRenderWindow(true);
 
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };
@@ -256,6 +260,8 @@ int main()
       pTimeManager->EndFrame();
     }
   }
+
+  global::mem::s_oMemoryTracker.PrintStats();
 
   // Destroy
   pGameManager->DestroySingleton();

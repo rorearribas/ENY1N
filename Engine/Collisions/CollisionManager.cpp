@@ -84,22 +84,22 @@ namespace collision
   {
     if (m_vctColliders.CurrentSize() >= m_vctColliders.GetMaxSize())
     {
-      std::cout << "You have reached maximum colliders" << std::endl;
+      std::cout << "You have reached maximum colliders!" << std::endl;
       return nullptr;
     }
     switch (_eColliderType)
     {
-    case collision::EColliderType::BOX_COLLIDER: return m_vctColliders.RegisterItem<collision::CBoxCollider>(_pOwner);
-    case collision::EColliderType::SPHERE_COLLIDER: return m_vctColliders.RegisterItem<collision::CSphereCollider>(_pOwner);
-    case collision::EColliderType::CAPSULE_COLLIDER: return m_vctColliders.RegisterItem<collision::CCapsuleCollider>(_pOwner);
-    default: return nullptr;
+      case collision::EColliderType::BOX_COLLIDER: return m_vctColliders.RegisterItem<collision::CBoxCollider>(_pOwner);
+      case collision::EColliderType::SPHERE_COLLIDER: return m_vctColliders.RegisterItem<collision::CSphereCollider>(_pOwner);
+      case collision::EColliderType::CAPSULE_COLLIDER: return m_vctColliders.RegisterItem<collision::CCapsuleCollider>(_pOwner);
+      default: return nullptr;
     }
   }
   // ------------------------------------
   void CCollisionManager::DestroyCollider(collision::CCollider*& _pCollider_)
   {
     bool bOk = m_vctColliders.RemoveItem(_pCollider_);
-    if (!bOk) { std::cout << "Error: Failed to remove collider" << std::endl; }
+    if (!bOk) { std::cout << "Error removing collider!" << std::endl; }
     _pCollider_ = nullptr;
   }
   // ------------------------------------

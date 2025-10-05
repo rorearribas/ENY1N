@@ -27,9 +27,9 @@ namespace engine
     void PushDrawProcess();
     void PushEndDraw();
 
-    scene::CSceneManager* GetSceneManager() const { return m_pSceneManager.get(); }
-    render::CRender* GetRender() const { return m_pRender.get(); }
-    render::CCamera* GetCamera() const { return m_pCamera.get(); }
+    scene::CSceneManager* GetSceneManager() const { return m_pSceneManager; }
+    render::CRender* GetRender() const { return m_pRender; }
+    render::CCamera* GetCamera() const { return m_pCamera; }
 
     // Debug creation
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
@@ -53,9 +53,9 @@ namespace engine
   private:
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);
 
-    std::unique_ptr<scene::CSceneManager> m_pSceneManager = nullptr;
-    std::unique_ptr<render::CRender> m_pRender = nullptr;
-    std::unique_ptr<render::CCamera> m_pCamera = nullptr;
+    scene::CSceneManager* m_pSceneManager = nullptr;
+    render::CRender* m_pRender = nullptr;
+    render::CCamera* m_pCamera = nullptr;
 
     bool m_bInitialized = false;
   };

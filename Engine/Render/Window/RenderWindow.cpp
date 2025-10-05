@@ -8,25 +8,27 @@ extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND _hWnd, UINT _uMsg, WPARAM _wP
 
 namespace render
 {
-  namespace internal_renderwindow
+  namespace internal_window
   {
     static LRESULT CALLBACK WindowProc(HWND _hWnd, uint32_t _uMsg, WPARAM _wParam, LPARAM _lParam)
     {
       if (ImGui_ImplWin32_WndProcHandler(_hWnd, _uMsg, _wParam, _lParam))
+      {
         return true;
+      }
 
       // sort through and find what code to run for the message given
-      switch (_uMsg)
+      switch (_uMsg) 
       {
-      case WM_DESTROY:
-      {
-        PostQuitMessage(0);
-        return 0;
-      }
-      break;
+        case WM_DESTROY:
+        {
+          PostQuitMessage(0);
+          return 0;
+        }
+        break;
 
-      case WM_SIZE:
-      {
+        case WM_SIZE:
+        {
         if (_wParam == SIZE_RESTORED || _wParam == SIZE_MAXIMIZED)
         {
           for (auto& oDelegate : global::delegates::s_vctOnWindowResizeDelegates)
@@ -35,10 +37,9 @@ namespace render
           }
         }
       }
-      break;
-
-      case WM_INPUT:
-      {
+        break;
+        case WM_INPUT:
+        {
         uint32_t uSize = 0;
         GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, nullptr, &uSize, sizeof(RAWINPUTHEADER));
         if (uSize == 0) break;
@@ -63,13 +64,12 @@ namespace render
           global::delegates::s_oOnUpdateKeyboardDelegate(&pRawInput->data.keyboard);
         }
       }
-      break;
+        break;
       }
 
       // Handle any messages the switch statement didn't
       return DefWindowProc(_hWnd, _uMsg, _wParam, _lParam);
     }
-
     static HWND WINAPI CreateWinMain(HINSTANCE _hInstance, uint32_t _uWidth, uint32_t _uHeight)
     {
       // this struct holds information for the window class
@@ -81,7 +81,7 @@ namespace render
       // fill in the struct with the needed information
       wc.cbSize = sizeof(WNDCLASSEX);
       wc.style = CS_HREDRAW | CS_VREDRAW;
-      wc.lpfnWndProc = internal_renderwindow::WindowProc;
+      wc.lpfnWndProc = internal_window::WindowProc;
       wc.hInstance = _hInstance;
       wc.hCursor = LoadCursor(NULL, IDC_ARROW);
       wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
@@ -91,7 +91,7 @@ namespace render
       RegisterClassEx(&wc);
 
       // create the window and use the result as the handle
-      global::window::s_oHwnd = CreateWindowEx
+      HWND hHandle = CreateWindowEx
       (
         NULL,
         L"ENY1N", // name of the window class
@@ -107,25 +107,21 @@ namespace render
         NULL
       ); // used with multiple windows, NULL
 
-      return global::window::s_oHwnd;
+      return hHandle;
     }
   }
   // ------------------------------------
   CRenderWindow::CRenderWindow(uint32_t _uWidth, uint32_t _uHeight)
   {
     HINSTANCE hInstance = GetModuleHandle(nullptr);
-    m_hWnd = internal_renderwindow::CreateWinMain(hInstance, _uWidth, _uHeight);
+    m_hWnd = internal_window::CreateWinMain(hInstance, _uWidth, _uHeight);
+    global::window::s_oHwnd = m_hWnd; // Set instance!
     assert(m_hWnd);
   }
   // ------------------------------------
   void CRenderWindow::SetEnabled(bool _bEnabled) const
   {
     ShowWindow(m_hWnd, _bEnabled);
-  }
-  // ------------------------------------
-  const HWND& CRenderWindow::GetHwnd() const
-  {
-    return m_hWnd;
   }
   // ------------------------------------
   const uint32_t CRenderWindow::GetWidth() const

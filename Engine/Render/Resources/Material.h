@@ -41,6 +41,9 @@ namespace render
       const float& GetShininess() const { return m_fShininess; }
 
     private:
+    void ClearTextures();
+
+    private:
       // ID
       std::string m_sMaterialID = std::string();
 
@@ -51,7 +54,7 @@ namespace render
 
       math::CVector3 m_v3Emissive = math::CVector3::Zero;
       math::CVector3 m_v3Transparent = math::CVector3::Zero;
-      math::CVector3 m_v3Reflective  = math::CVector3::Zero;
+      math::CVector3 m_v3Reflective = math::CVector3::Zero;
 
       float m_fOpacity = 1.0f;
       float m_fShininess = 1.0f;

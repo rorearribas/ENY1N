@@ -322,16 +322,6 @@ namespace scene
     return m_vctSpotLights.RegisterItem();
   }
   // ------------------------------------
-  void CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
-  {
-    bool bOk = m_vctPrimitives.RemoveItem(_pPrimitive_);
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk); // Sanity check
-#endif
-    _pPrimitive_ = nullptr; // Set as nullptr
-  }
-  // ------------------------------------
   void CScene::DestroyModel(render::gfx::CModel*& _pModel_)
   {
     bool bOk = m_vctModels.RemoveItem(_pModel_);
@@ -339,7 +329,15 @@ namespace scene
 #ifdef _DEBUG
     assert(bOk); // Sanity check
 #endif
-    _pModel_ = nullptr; // Set as nullptr
+  }
+  // ------------------------------------
+  void CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
+  {
+    bool bOk = m_vctPrimitives.RemoveItem(_pPrimitive_);
+    UNUSED_VAR(bOk);
+#ifdef _DEBUG
+    assert(bOk); // Sanity check
+#endif
   }
   // ------------------------------------
   void CScene::DestroyLight(render::lights::CBaseLight*& _pLight_)

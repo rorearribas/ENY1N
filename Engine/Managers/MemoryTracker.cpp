@@ -18,7 +18,7 @@ namespace global
     // ------------------------------------
     void CMemoryTracker::PrintStats() const
     {
-      printf("Current size: %zu - Memory peak: %zu\n", m_tAllocatedSize, m_tMemoryPeak);
+      printf("Current size bytes: %zu - Memory peak: %zu\n", m_tAllocatedSize, m_tMemoryPeak);
     }
   }
 }
