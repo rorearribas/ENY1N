@@ -18,9 +18,9 @@ namespace render
     CRender(uint32_t _uX, uint32_t _uY);
     ~CRender();
 
-    void BeginDraw() const;
-    void Draw(scene::CScene* _pScene) const;
-    void EndDraw() const;
+    void BeginDraw();
+    void Draw(scene::CScene* _pScene);
+    void EndDraw();
 
     inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
     inline void ShowRenderWindow(bool _bStatus) { m_pRenderWindow->SetEnabled(_bStatus); }
@@ -38,6 +38,9 @@ namespace render
 
     HRESULT CreateRenderTargetView();
     HRESULT CreateDepthStencilView(uint32_t _uX, uint32_t _uY);
+
+  private:
+    HRESULT SetDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& _oDepthStencilState);
     HRESULT CreateRasterizerState(D3D11_FILL_MODE _eFillMode = D3D11_FILL_SOLID);
     HRESULT CreateBlendState();
 
