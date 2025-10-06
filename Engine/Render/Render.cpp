@@ -17,7 +17,7 @@ namespace render
 
   namespace internal
   {
-    static const wchar_t* s_sPrepareFrameMrk(L"Begin Frame");
+    static const wchar_t* s_sPrepareFrameMrk(L"Clear");
     static const wchar_t* s_sZPrepassMrk(L"Z-Prepass");
     static const wchar_t* s_sDrawModelsMrk(L"Models");
     static const wchar_t* s_sDrawPrimitivesMrk(L"Primitives");
@@ -42,15 +42,18 @@ namespace render
       // Depth
       ID3D11Texture2D* pDepthTexture = nullptr;
       ID3D11DepthStencilView* pDepthStencilView = nullptr;
+
       // Depth state
       ID3D11DepthStencilState* pDepthStencilState = nullptr;
       D3D11_DEPTH_STENCIL_DESC oDepthStencilCfg = D3D11_DEPTH_STENCIL_DESC();
 
       // Rasterizer
       ID3D11RasterizerState* pRasterizer = nullptr;
+      D3D11_RASTERIZER_DESC oRasterizerCfg = D3D11_RASTERIZER_DESC();
 
-      // Blending
+      // Blend
       ID3D11BlendState* pBlendState = nullptr;
+      D3D11_RENDER_TARGET_BLEND_DESC oBlendStateCfg = D3D11_RENDER_TARGET_BLEND_DESC();
 
       // Debug
       ID3DUserDefinedAnnotation* pUserMarker = nullptr;
@@ -153,11 +156,33 @@ namespace render
     hResult = CreateDepthStencilView(_uX, _uY);
     assert(!FAILED(hResult));
 
+    // Set standard rasterizer config
+    internal::s_oPipeline.oRasterizerCfg.FillMode = D3D11_FILL_SOLID;
+    internal::s_oPipeline.oRasterizerCfg.CullMode = D3D11_CULL_BACK;
+    internal::s_oPipeline.oRasterizerCfg.FrontCounterClockwise = false;
+    internal::s_oPipeline.oRasterizerCfg.DepthBias = 1000;
+    internal::s_oPipeline.oRasterizerCfg.DepthBiasClamp = 0.0f;
+    internal::s_oPipeline.oRasterizerCfg.SlopeScaledDepthBias = 1.5f;
+    internal::s_oPipeline.oRasterizerCfg.DepthClipEnable = true;
+    internal::s_oPipeline.oRasterizerCfg.ScissorEnable = true;
+    internal::s_oPipeline.oRasterizerCfg.MultisampleEnable = false;
+    internal::s_oPipeline.oRasterizerCfg.AntialiasedLineEnable = false;
+
     // Create rasterizer
-    hResult = CreateRasterizerState();
+    hResult = CreateRasterizerState(internal::s_oPipeline.oRasterizerCfg);
     assert(!FAILED(hResult));
 
-    hResult = CreateBlendState();
+    // Set standard blend state config
+    internal::s_oPipeline.oBlendStateCfg.BlendEnable = false;
+    internal::s_oPipeline.oBlendStateCfg.SrcBlend = D3D11_BLEND_ONE;
+    internal::s_oPipeline.oBlendStateCfg.DestBlend = D3D11_BLEND_BLEND_FACTOR;
+    internal::s_oPipeline.oBlendStateCfg.BlendOp = D3D11_BLEND_OP_ADD;
+    internal::s_oPipeline.oBlendStateCfg.SrcBlendAlpha = D3D11_BLEND_ONE;
+    internal::s_oPipeline.oBlendStateCfg.DestBlendAlpha = D3D11_BLEND_ZERO;
+    internal::s_oPipeline.oBlendStateCfg.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    internal::s_oPipeline.oBlendStateCfg.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
+
+    hResult = CreateBlendState(internal::s_oPipeline.oBlendStateCfg);
     assert(!FAILED(hResult));
 
     // Update scissor
@@ -334,47 +359,27 @@ namespace render
   // ------------------------------------
   HRESULT CRender::SetDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& _oDepthStencilState)
   {
-    // Set depth stencil state
+    // Create depth stencil state
+    global::dx11::SafeRelease(internal::s_oPipeline.pDepthStencilState);
     return global::dx11::s_pDevice->CreateDepthStencilState(&_oDepthStencilState, &internal::s_oPipeline.pDepthStencilState);
   }
   // ------------------------------------
-  HRESULT CRender::CreateRasterizerState(D3D11_FILL_MODE _eFillMode)
+  HRESULT CRender::CreateRasterizerState(const D3D11_RASTERIZER_DESC& _oRasterizerState)
   {
+    // Create rasterizer state
     global::dx11::SafeRelease(internal::s_oPipeline.pRasterizer);
-
-    D3D11_RASTERIZER_DESC oRasterizerDesc = D3D11_RASTERIZER_DESC();
-    oRasterizerDesc.FillMode = _eFillMode;
-    oRasterizerDesc.CullMode = D3D11_CULL_BACK;
-    oRasterizerDesc.FrontCounterClockwise = false;
-    oRasterizerDesc.DepthBias = false;
-    oRasterizerDesc.DepthBiasClamp = 0;
-    oRasterizerDesc.SlopeScaledDepthBias = 0;
-    oRasterizerDesc.DepthClipEnable = true;
-    oRasterizerDesc.ScissorEnable = true;
-    oRasterizerDesc.MultisampleEnable = false;
-    oRasterizerDesc.AntialiasedLineEnable = false;
-
-    return global::dx11::s_pDevice->CreateRasterizerState(&oRasterizerDesc, &internal::s_oPipeline.pRasterizer);
+    return global::dx11::s_pDevice->CreateRasterizerState(&_oRasterizerState, &internal::s_oPipeline.pRasterizer);
   }
   // ------------------------------------
-  HRESULT CRender::CreateBlendState()
+  HRESULT CRender::CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _oBlendState)
   {
-    global::dx11::SafeRelease(internal::s_oPipeline.pBlendState);
-
-    D3D11_RENDER_TARGET_BLEND_DESC oRenderTargetBlendDesc = D3D11_RENDER_TARGET_BLEND_DESC();
-    oRenderTargetBlendDesc.BlendEnable = false;
-    oRenderTargetBlendDesc.SrcBlend = D3D11_BLEND_ONE;
-    oRenderTargetBlendDesc.DestBlend = D3D11_BLEND_BLEND_FACTOR;
-    oRenderTargetBlendDesc.BlendOp = D3D11_BLEND_OP_ADD;
-    oRenderTargetBlendDesc.SrcBlendAlpha = D3D11_BLEND_ONE;
-    oRenderTargetBlendDesc.DestBlendAlpha = D3D11_BLEND_ZERO;
-    oRenderTargetBlendDesc.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    oRenderTargetBlendDesc.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
-
+    // Create blend desc
     D3D11_BLEND_DESC oBlendDesc = D3D11_BLEND_DESC();
     oBlendDesc.AlphaToCoverageEnable = false;
-    oBlendDesc.RenderTarget[0] = oRenderTargetBlendDesc;
+    oBlendDesc.RenderTarget[0] = _oBlendState;
 
+    // Create blend state
+    global::dx11::SafeRelease(internal::s_oPipeline.pBlendState);
     return global::dx11::s_pDevice->CreateBlendState(&oBlendDesc, &internal::s_oPipeline.pBlendState);
   }
   // ------------------------------------
@@ -491,6 +496,13 @@ namespace render
     // Present
     const uint32_t uFlags = 0;
     internal::s_oPipeline.pSwapChain->Present(m_bVerticalSync, uFlags);
+  }
+  // ------------------------------------
+  void CRender::SetFillMode(D3D11_FILL_MODE _eFillMode)
+  {
+    // Update rasterizer
+    internal::s_oPipeline.oRasterizerCfg.FillMode = _eFillMode;
+    CreateRasterizerState(internal::s_oPipeline.oRasterizerCfg);
   }
   // ------------------------------------
   void CRender::BeginMarker(const wchar_t* _sMarker) const

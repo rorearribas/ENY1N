@@ -24,7 +24,7 @@ namespace render
 
     inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
     inline void ShowRenderWindow(bool _bStatus) { m_pRenderWindow->SetEnabled(_bStatus); }
-    inline void SetFillMode(D3D11_FILL_MODE _eFillMode) { CreateRasterizerState(_eFillMode); }
+    void SetFillMode(D3D11_FILL_MODE _eFillMode);
 
     inline void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
     inline bool IsVSyncEnabled() const { return m_bVerticalSync; }
@@ -41,8 +41,8 @@ namespace render
 
   private:
     HRESULT SetDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& _oDepthStencilState);
-    HRESULT CreateRasterizerState(D3D11_FILL_MODE _eFillMode = D3D11_FILL_SOLID);
-    HRESULT CreateBlendState();
+    HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC& _oRasterizerState);
+    HRESULT CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _oBlendState);
 
     void ConfigureViewport(uint32_t _uX, uint32_t _uY);
     void SetScissorRect(uint32_t _uX, uint32_t _uY);
