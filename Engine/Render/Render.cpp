@@ -160,7 +160,7 @@ namespace render
     internal::s_oPipeline.oRasterizerCfg.FillMode = D3D11_FILL_SOLID;
     internal::s_oPipeline.oRasterizerCfg.CullMode = D3D11_CULL_BACK;
     internal::s_oPipeline.oRasterizerCfg.FrontCounterClockwise = false;
-    internal::s_oPipeline.oRasterizerCfg.DepthBias = 1000;
+    internal::s_oPipeline.oRasterizerCfg.DepthBias = 10; // Z-Fighting
     internal::s_oPipeline.oRasterizerCfg.DepthBiasClamp = 0.0f;
     internal::s_oPipeline.oRasterizerCfg.SlopeScaledDepthBias = 1.5f;
     internal::s_oPipeline.oRasterizerCfg.DepthClipEnable = true;
