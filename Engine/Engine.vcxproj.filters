@@ -78,12 +78,6 @@
     <ClInclude Include="Shaders\Shader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\Standard\ForwardPixelShader.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="Shaders\Standard\ForwardVertexShader.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Render\Lights\SpotLight.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -225,5 +219,6 @@
   <ItemGroup>
     <FxCompile Include="Shaders\Standard\ForwardVertexShader.hlsl" />
     <FxCompile Include="Shaders\Standard\ForwardPixelShader.hlsl" />
+    <FxCompile Include="Shaders\Standard\DeferredPixelShader.hlsl" />
   </ItemGroup>
 </Project>

@@ -83,23 +83,39 @@ namespace render
   // ------------------------------------
   CRender::~CRender()
   {
-    // Delete global resources
-    global::dx11::SafeRelease(global::dx11::s_pDevice);
-    global::dx11::SafeRelease(global::dx11::s_pDeviceContext);
+    // Shutdown ImGui
+    ImGui_ImplDX11_Shutdown();
+    ImGui_ImplWin32_Shutdown();
+    ImGui::DestroyContext();
 
-    // Delete internal resources
-    global::dx11::SafeRelease(internal::s_oPipeline.pSwapChain);
+    // Release DX
     global::dx11::SafeRelease(internal::s_oPipeline.pAlbedoRTV);
-    global::dx11::SafeRelease(internal::s_oPipeline.pDepthTexture);
-    global::dx11::SafeRelease(internal::s_oPipeline.pDepthStencilState);
+    global::dx11::SafeRelease(internal::s_oPipeline.pGBufferRTV);
+    global::dx11::SafeRelease(internal::s_oPipeline.pPositionRTV);
+    global::dx11::SafeRelease(internal::s_oPipeline.pNormalRTV);
+    global::dx11::SafeRelease(internal::s_oPipeline.pSpecularRTV);
+
     global::dx11::SafeRelease(internal::s_oPipeline.pDepthStencilView);
+    global::dx11::SafeRelease(internal::s_oPipeline.pDepthTexture);
+
+    global::dx11::SafeRelease(internal::s_oPipeline.pDepthStencilState);
     global::dx11::SafeRelease(internal::s_oPipeline.pRasterizer);
     global::dx11::SafeRelease(internal::s_oPipeline.pBlendState);
     global::dx11::SafeRelease(internal::s_oPipeline.pUserMarker);
 
-    // Release objetcs
+    // Release shaders
     global::ReleaseObject(internal::s_oPipeline.pPixelShader);
     global::ReleaseObject(internal::s_oPipeline.pVertexShader);
+
+    // Release swap chain
+    global::dx11::SafeRelease(internal::s_oPipeline.pSwapChain);
+
+    // Release device context then device
+    global::dx11::SafeRelease(global::dx11::s_pDeviceContext);
+    global::dx11::SafeRelease(global::dx11::s_pDevice);
+
+    // Release render window
+    global::ReleaseObject(m_pRenderWindow);
   }
   // ------------------------------------
   HRESULT CRender::Init(uint32_t _uX, uint32_t _uY)
@@ -351,8 +367,8 @@ namespace render
     // Create the depth stencil view
     return global::dx11::s_pDevice->CreateDepthStencilView
     (
-      internal::s_oPipeline.pDepthTexture, 
-      &oDepthStencilViewDesc, 
+      internal::s_oPipeline.pDepthTexture,
+      &oDepthStencilViewDesc,
       &internal::s_oPipeline.pDepthStencilView
     );
   }

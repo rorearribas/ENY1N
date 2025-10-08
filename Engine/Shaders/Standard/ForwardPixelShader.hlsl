@@ -49,9 +49,9 @@ struct Spotlight
   float Padding4;
 };
 
-// Samplers
-Texture2D cTexture2D : register(t0);
-SamplerState cSamplerState : register(s0);
+// Texture
+Texture2D tAlbedo : register(t0);
+SamplerState tSamplerState : register(s0);
 
 // PS Input
 struct PS_INPUT
@@ -91,7 +91,7 @@ cbuffer GlobalLightingData : register(b1)
 float4 PSMain(PS_INPUT input) : SV_TARGET
 {
   // Get color + normal
-  float4 v4TargetColor = HasTexture ? cTexture2D.Sample(cSamplerState, input.uv) : float4(input.color, 1.0f);
+  float4 v4TargetColor = HasTexture ? tAlbedo.Sample(tSamplerState, input.uv) : float4(input.color, 1.0f);
   float3 v3Normal = normalize(input.normal);
 
   // If we don't use global illumination we simply return with the desired color!
