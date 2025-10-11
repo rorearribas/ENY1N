@@ -36,8 +36,10 @@ namespace render
     HRESULT CreateDevice(uint32_t _uX, uint32_t _uY);
     HRESULT InitBasicPipeline(uint32_t _uX, uint32_t _uY);
 
-    HRESULT CreateRenderTargetView();
+    HRESULT CreateBackBuffer();
     HRESULT CreateDepthStencilView(uint32_t _uX, uint32_t _uY);
+
+    HRESULT SetupDeferredShading(uint32_t _uX, uint32_t _uY);
 
   private:
     HRESULT SetDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& _oDepthStencilState);

@@ -14,7 +14,7 @@ namespace render
     // ------------------------------------
     CLightManager::CLightManager()
     {
-      HRESULT hResult = m_oLightningBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      HRESULT hResult = m_oLightningBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
     }
@@ -69,7 +69,7 @@ namespace render
 
       // Push buffer
       ID3D11Buffer* pConstantBuffer = m_oLightningBuffer.GetBuffer();
-      global::dx11::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
+      global::dx::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
     }
     // ------------------------------------
     void CLightManager::DestroyLight(render::lights::CBaseLight*& _pLight_)

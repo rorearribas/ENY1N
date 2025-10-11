@@ -5,7 +5,6 @@
 #include "Engine/Managers/InputManager.h"
 #include "Libs/Math/Math.h"
 #include "Libs/Macros/GlobalMacros.h"
-#include "../Collisions/CollisionManager.h"
 
 namespace render
 {
@@ -24,7 +23,7 @@ namespace render
   // ------------------------------------
   CCamera::CCamera()
   {
-    m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+    m_oConstantBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
     m_oFrustumPlanes.resize(internal_camera::s_iFrustumPlanes);
   }
   // ------------------------------------
@@ -102,7 +101,7 @@ namespace render
     assert(bOk);
 
     ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
-    global::dx11::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
+    global::dx::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
   }
   // ------------------------------------
   void CCamera::ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos)

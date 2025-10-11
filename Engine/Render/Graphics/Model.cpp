@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "Engine/Shaders/Standard/ForwardVertexShader.h"
+#include "Engine/Shaders/Pipeline/StandardVS.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
@@ -27,9 +27,9 @@ namespace render
       // Set vertex buffer
       uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
       uint32_t uVertexOffset = 0;
-      global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
-      global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
-      global::dx11::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+      global::dx::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
+      global::dx::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
+      global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
       // Set model matrix
       m_oConstantBuffer.GetData().Matrix = m_oModelTransform.ComputeModelMatrix();
@@ -39,7 +39,7 @@ namespace render
 
       // Apply constant buffer
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
-      global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
+      global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
       // Draw meshes using indices
       for (CMesh* pMesh : m_oModelData.Meshes)
@@ -50,12 +50,12 @@ namespace render
     // ------------------------------------
     HRESULT CModel::CreateInputLayout()
     {
-      return global::dx11::s_pDevice->CreateInputLayout
+      return global::dx::s_pDevice->CreateInputLayout
       (
         SVertexData::s_vctInputElementDesc.data(),
         static_cast<uint32_t>(SVertexData::s_vctInputElementDesc.size()),
-        g_ForwardVertexShader,
-        sizeof(g_ForwardVertexShader),
+        g_StandardVS,
+        sizeof(g_StandardVS),
         &m_pInputLayout
       );
     }
@@ -74,7 +74,7 @@ namespace render
       }
 
       // Init constant buffer
-      m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
       // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
@@ -85,7 +85,7 @@ namespace render
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
       oSubresourceData.pSysMem = m_oModelData.VertexData.data();
-      HRESULT hResult = global::dx11::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
+      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
       if (FAILED(hResult))
       {
         return hResult;
@@ -104,8 +104,8 @@ namespace render
     void CModel::Clear()
     {
       // Clear DX components
-      global::dx11::SafeRelease(m_pVertexBuffer);
-      global::dx11::SafeRelease(m_pInputLayout);
+      global::dx::SafeRelease(m_pVertexBuffer);
+      global::dx::SafeRelease(m_pInputLayout);
 
       // Clear meshes
       for (render::gfx::CMesh* pMesh : m_oModelData.Meshes)

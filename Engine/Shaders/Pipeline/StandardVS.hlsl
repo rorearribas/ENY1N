@@ -1,4 +1,4 @@
-#include "ForwardPixelShader.hlsl"
+#include "ForwardPS.hlsl"
 
 cbuffer Camera : register(b0)
 {

@@ -17,7 +17,7 @@ namespace scene
 {
   CScene::CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex)
   {
-    HRESULT hResult = m_oGlobalLightingBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+    HRESULT hResult = m_oGlobalLightingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
     UNUSED_VAR(hResult);
 #ifdef _DEBUG
     assert(!FAILED(hResult));
@@ -112,7 +112,7 @@ namespace scene
 
     // Apply constant buffer
     ID3D11Buffer* pConstantBuffer = m_oGlobalLightingBuffer.GetBuffer();
-    global::dx11::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
+    global::dx::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
   }
   // ------------------------------------
   void CScene::DestroyAllPrimitives()

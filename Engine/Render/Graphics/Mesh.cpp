@@ -1,6 +1,7 @@
 #include "Mesh.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include <cassert>
+#include "../../Shaders/Shader.h"
 
 namespace render
 {
@@ -36,13 +37,13 @@ namespace render
     void CMesh::Draw()
     {
       // Draw diffuse
-      texture::CTexture* pDiffuseTexture = nullptr;
+      texture::CTexture<texture::SHADER_RESOURCE>* pDiffuseTexture = nullptr;
       for (auto& it : m_dctMaterials)
       {
         pDiffuseTexture = it.second->GetTexture(texture::ETextureType::DIFFUSE);
         if (pDiffuseTexture)
         {
-          pDiffuseTexture->BindTexture();
+          pDiffuseTexture->AttachTexture(shader::E_PIXEL);
           break;
         }
       }
@@ -56,11 +57,11 @@ namespace render
 
       // Set constant buffer
       ID3D11Buffer* pConstantBuffer = m_oConstantModelData.GetBuffer();
-      global::dx11::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
+      global::dx::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
 
       // Draw
-      global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-      global::dx11::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_vctIndices.size()), 0, 0);
+      global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+      global::dx::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_vctIndices.size()), 0, 0);
     }
     // ------------------------------------
     void CMesh::AddMaterial(render::mat::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx)
@@ -74,7 +75,7 @@ namespace render
       ClearBuffers();
 
       // Init constant check texture
-      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantModelData.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
       // Get indexes
       m_vctIndices = std::move(_vctIndices);
@@ -89,7 +90,7 @@ namespace render
       D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = {};
       oSubresourceIndexesData.pSysMem = m_vctIndices.data();
 
-      return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
+      return global::dx::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
     void CMesh::IgnoreGlobalLighting(bool _bState)
@@ -101,7 +102,7 @@ namespace render
     {
       // Mapped vertex buffer (CPU)
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
-      HRESULT hResult = global::dx11::s_pDeviceContext->Map(_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      HRESULT hResult = global::dx::s_pDeviceContext->Map(_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
 
@@ -131,12 +132,12 @@ namespace render
       }
 
       // Unmap
-      global::dx11::s_pDeviceContext->Unmap(_pVertexBuffer, 0);
+      global::dx::s_pDeviceContext->Unmap(_pVertexBuffer, 0);
     }
     // ------------------------------------
     void CMesh::ClearBuffers()
     {
-      global::dx11::SafeRelease(m_pIndexBuffer);
+      global::dx::SafeRelease(m_pIndexBuffer);
       m_oConstantModelData.CleanBuffer();
     }
     // ------------------------------------

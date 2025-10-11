@@ -14,7 +14,7 @@ namespace global
     HWND s_oHwnd = nullptr;
   }
   // DirectX
-  namespace dx11
+  namespace dx
   {
     ID3D11Device* s_pDevice = nullptr;
     ID3D11DeviceContext* s_pDeviceContext = nullptr;

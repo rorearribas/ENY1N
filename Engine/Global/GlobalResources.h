@@ -18,7 +18,7 @@ namespace global
   }
 
   // DirectX
-  namespace dx11
+  namespace dx
   {
     extern ID3D11Device* s_pDevice;
     extern ID3D11DeviceContext* s_pDeviceContext;

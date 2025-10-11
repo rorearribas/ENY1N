@@ -7,99 +7,91 @@ namespace render
 {
   namespace texture
   {
-    // ------------------------------------
-    CTexture::~CTexture()
-    {
-      Clear();
-    }
-    // ------------------------------------
-    void CTexture::BindTexture()
-    {
-      // Bind texture to current pipeline
-      if (m_pShaderResourceView && m_pSamplerState)
-      {
-        global::dx11::s_pDeviceContext->PSSetShaderResources(0, 1, &m_pShaderResourceView);
-        global::dx11::s_pDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState);
-      }
-    }
-    // ------------------------------------
-    HRESULT CTexture::SetTexture(void* _pData, uint32_t _uWidth, uint32_t _uHeight, uint32_t _uChannels)
-    {
-      // Clear
-      Clear();
+    //// ------------------------------------
+    //void CTexture::AttachTexture()
+    //{
+    //  // Attach texture to current pipeline
+    //  if (m_pResourceView && m_pSamplerState)
+    //  {
+    //    global::dx::s_pDeviceContext->PSSetShaderResources(0, 1, &m_pResourceView);
+    //    global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState);
+    //  }
+    //}
+    //// ------------------------------------
+    //template<EViewType T>
+    //void CTexture<T>::DetachTexture()
+    //{
+    //  // Detach texture to current pipeline
+    //  if (m_pResourceView && m_pSamplerState)
+    //  {
+    //    global::dx::s_pDeviceContext->PSSetShaderResources(0, 1, nullptr);
+    //    global::dx::s_pDeviceContext->PSSetSamplers(0, 1, nullptr);
+    //  }
+    //}
+    //// ------------------------------------
+    //void CTexture::FlushTexture()
+    //{
+    //  ClearTexture();
+    //  ClearSampler();
+    //}
+    //// ------------------------------------
+    //HRESULT CTexture::CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _oTextureCfg, uint32_t _uChannels)
+    //{
+    //  // Clear
+    //  ClearTexture();
 
-      // Set values
-      m_uTextureWidth = _uWidth;
-      m_uTextureHeight = _uHeight;
-      m_uChannels = _uChannels;
+    //  // Create texture using raw data!
+    //  D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
+    //  oSubresourceData.pSysMem = _pData;
+    //  oSubresourceData.SysMemPitch = _oTextureCfg.Width * _uChannels;
 
-      // Create texture
-      D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
-      oTextureDesc.Width = m_uTextureWidth;
-      oTextureDesc.Height = m_uTextureHeight;
-      oTextureDesc.MipLevels = 1;
-      oTextureDesc.ArraySize = 1;
-      oTextureDesc.SampleDesc.Count = 1;
-      oTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA
-      oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+    //  return global::dx::s_pDevice->CreateTexture2D(&_oTextureCfg, &oSubresourceData, &m_pTexture);
 
-      D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
-      oSubresourceData.pSysMem = _pData;
-      oSubresourceData.SysMemPitch = m_uTextureWidth * m_uChannels;
+    //  //// Create texture view
+    //  //D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
+    //  //oShaderResourceViewDesc.Format = _oTextureCfg.Format;
+    //  //oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    //  //oShaderResourceViewDesc.Texture2D.MipLevels = 1;
+    //  //return global::dx::s_pDevice->CreateShaderResourceView(m_pTexture, &oShaderResourceViewDesc, &m_pResourceView);
+    //}
+    //// ------------------------------------
+    //HRESULT CTexture::CreateTexture(const D3D11_TEXTURE2D_DESC& _oTextureCfg)
+    //{
+    //  // Clear
+    //  ClearTexture();
 
-      HRESULT hResult = global::dx11::s_pDevice->CreateTexture2D(&oTextureDesc, &oSubresourceData, &m_pTexture);
-      if (FAILED(hResult))
-      {
-        std::cout << "Error creating texture 2D!" << std::endl;
-        return hResult;
-      }
+    //  // Clear empty texture!
+    //  HRESULT hResult = global::dx::s_pDevice->CreateTexture2D(&_oTextureCfg, nullptr, &m_pTexture);
+    //  if (FAILED(hResult))
+    //  {
+    //    std::cout << "Error creating texture 2D!" << std::endl;
+    //    return hResult;
+    //  }
 
-      // Create texture view
-      D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
-      oShaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA
-      oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-      oShaderResourceViewDesc.Texture2D.MipLevels = 1;
-      hResult = global::dx11::s_pDevice->CreateShaderResourceView(m_pTexture, &oShaderResourceViewDesc, &m_pShaderResourceView);
-      if (FAILED(hResult))
-      {
-        std::cout << "Error creating render target view!" << std::endl;
-        return hResult;
-      }
-
-      // Create sampler state
-      D3D11_SAMPLER_DESC oSamplerDesc = D3D11_SAMPLER_DESC();
-
-      // Set config
-      oSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-      oSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-      oSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-      oSamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-      oSamplerDesc.MipLODBias = 0.0f;
-      oSamplerDesc.MaxAnisotropy = 16u;
-      oSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-      oSamplerDesc.BorderColor[0] = 0.0f;
-      oSamplerDesc.BorderColor[1] = 0.0f;
-      oSamplerDesc.BorderColor[2] = 0.0f;
-      oSamplerDesc.BorderColor[3] = 0.0f;
-      oSamplerDesc.MinLOD = 0.0f;
-      oSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-      hResult = global::dx11::s_pDevice->CreateSamplerState(&oSamplerDesc, &m_pSamplerState);
-      if (FAILED(hResult))
-      {
-        std::cout << "Failed to create sampler state!" << std::endl;
-        return hResult;
-      }
-
-      return hResult;
-    }
-    // ------------------------------------
-    void CTexture::Clear()
-    {
-      global::dx11::SafeRelease(m_pTexture);
-      global::dx11::SafeRelease(m_pShaderResourceView);
-      global::dx11::SafeRelease(m_pSamplerState);
-    }
+    //  // Create texture view
+    //  D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
+    //  oShaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    //  oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    //  oShaderResourceViewDesc.Texture2D.MipLevels = 1;
+    //  return global::dx::s_pDevice->CreateShaderResourceView(m_pTexture, &oShaderResourceViewDesc, &m_pResourceView);
+    //}
+    //// ------------------------------------
+    //HRESULT CTexture::CreateSampler(const D3D11_SAMPLER_DESC& _oSamplerCfg)
+    //{
+    //  ClearSampler();
+    //  return global::dx::s_pDevice->CreateSamplerState(&_oSamplerCfg, &m_pSamplerState);
+    //}
+    //// ------------------------------------
+    //void CTexture::ClearTexture()
+    //{
+    //  global::dx::SafeRelease(m_pTexture);
+    //  global::dx::SafeRelease(m_pResourceView);
+    //}
+    //// ------------------------------------
+    //void CTexture::ClearSampler()
+    //{
+    //  global::dx::SafeRelease(m_pSamplerState);
+    //}
   }
 }
 

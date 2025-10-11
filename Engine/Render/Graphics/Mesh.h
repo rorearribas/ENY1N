@@ -48,9 +48,11 @@ namespace render
       void AddMaterial(render::mat::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
       void UpdateVertexColor(ID3D11Buffer* _pVertexBuffer);
 
-      const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
       const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndices.size()); }
       const std::string& GetMeshID() const { return m_sMeshID; }
+
+      TMapMaterials& GetMaterials() { return m_dctMaterials; }
+      const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
 
     private:
       void ClearBuffers();

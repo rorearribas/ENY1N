@@ -273,7 +273,7 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
 // ------------------------------------
 unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
 {
-  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture::s_uChannels);
+  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture<>::s_uChannels);
 }
 // ------------------------------------
 void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, render::texture::ETextureType _eType,
@@ -288,8 +288,54 @@ void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, rende
     assert(pBuffer);
     SUCCESS_LOG("Texture loaded! -> " << oTargetPath.filename());
 
-    render::texture::CTexture* pTexture = pMaterial->CreateTexture(_eType, oTargetPath.filename().stem().string());
-    pTexture->SetTexture(pBuffer, iWidth, iHeight, iChannels);
+    // Register texture
+    using namespace render::texture;
+    CTexture<SHADER_RESOURCE>* pTexture = pMaterial->RegisterTexture(_eType, oTargetPath.filename().stem().string());
+
+    // Set texture config
+    D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
+    oTextureDesc.Width = iWidth;
+    oTextureDesc.Height = iHeight;
+    oTextureDesc.MipLevels = 1;
+    oTextureDesc.ArraySize = 1;
+    oTextureDesc.SampleDesc.Count = 1;
+    oTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA
+    oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // Bind shader resource
+
+    // Create texture
+    HRESULT hResult = pTexture->CreateTexture(pBuffer, oTextureDesc, iChannels);
+    assert(!FAILED(hResult));
+
+    // Set shader resource cfg
+    D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
+    oShaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    oShaderResourceViewDesc.Texture2D.MipLevels = 1;
+
+    // Create shader resource view
+    hResult = pTexture->CreateView(oShaderResourceViewDesc);
+    assert(!FAILED(hResult));
+
+    // Set sampler cfg
+    D3D11_SAMPLER_DESC oSamplerDesc = D3D11_SAMPLER_DESC();
+    oSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    oSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    oSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    oSamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    oSamplerDesc.MipLODBias = 0.0f;
+    oSamplerDesc.MaxAnisotropy = 16u;
+    oSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    oSamplerDesc.BorderColor[0] = 0.0f;
+    oSamplerDesc.BorderColor[1] = 0.0f;
+    oSamplerDesc.BorderColor[2] = 0.0f;
+    oSamplerDesc.BorderColor[3] = 0.0f;
+    oSamplerDesc.MinLOD = 0.0f;
+    oSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    // Create sampler
+    hResult = pTexture->CreateSampler(oSamplerDesc);
+    assert(!FAILED(hResult));
+
     stbi_image_free(pBuffer);
   }
 }

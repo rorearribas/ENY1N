@@ -141,7 +141,7 @@ public:
     m_pDeviceContext->Unmap(m_pBuffer, 0);
     return true;
   }
-  void CleanBuffer() { global::dx11::SafeRelease(m_pBuffer); }
+  void CleanBuffer() { global::dx::SafeRelease(m_pBuffer); }
 
   ID3D11Buffer* GetBuffer() const { return m_pBuffer; }
   T& GetData() { return m_oData; }

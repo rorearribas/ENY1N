@@ -117,6 +117,9 @@
     <ClInclude Include="Collisions\CullingAABB.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Render\RenderTarget.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -215,10 +218,13 @@
     <ClCompile Include="Collisions\CullingAABB.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Render\RenderTarget.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\Standard\ForwardVertexShader.hlsl" />
-    <FxCompile Include="Shaders\Standard\ForwardPixelShader.hlsl" />
-    <FxCompile Include="Shaders\Standard\DeferredPixelShader.hlsl" />
+    <FxCompile Include="Shaders\Pipeline\DeferredPixelShader.hlsl" />
+    <FxCompile Include="Shaders\Pipeline\ForwardPS.hlsl" />
+    <FxCompile Include="Shaders\Pipeline\StandardVS.hlsl" />
   </ItemGroup>
 </Project>

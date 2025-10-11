@@ -1,13 +1,17 @@
 #pragma once
 #include <d3d11.h>
 #include <string>
+#include <cassert>
+#include <type_traits>
+#include "Engine/Global/GlobalResources.h"
+#include "Engine/Shaders/Shader.h"
 
 namespace render
 {
   namespace texture
   {
     // Types
-    enum class ETextureType : uint32_t
+    enum ETextureType : uint32_t
     {
       DIFFUSE,
       SPECULAR,
@@ -29,6 +33,16 @@ namespace render
       COUNT
     };
 
+    enum EViewType : uint32_t
+    {
+      DEPTH_STENCIL,
+      RENDER_TARGET,
+      SHADER_RESOURCE,
+      UNORDERED_ACCESS,
+      UNKNOWN
+    };
+
+    template<EViewType T = EViewType::UNKNOWN>
     class CTexture
     {
     public:
@@ -36,30 +50,222 @@ namespace render
 
     public:
       CTexture(const std::string& _sTextureID) : m_sTextureID(_sTextureID) {}
-      ~CTexture();
+      ~CTexture() { ReleaseTexture(); ReleaseSampler(); ReleaseView(); }
 
-      void BindTexture();
-      HRESULT SetTexture(void* _pData, uint32_t _uWidth, uint32_t _uHeight, uint32_t _uChannels);
-      ID3D11Texture2D* const GetTexture() { return m_pTexture; }
+      void AttachTexture(shader::EShaderType _eShaderType);
+      void DetachTexture();
 
-      ID3D11SamplerState* const GetSamplerState() { return m_pSamplerState; }
-      ID3D11ShaderResourceView* const GetShaderResourceView() { return m_pShaderResourceView; }
+      // Texture and sampler
+      HRESULT CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _oTextureCfg, uint32_t _uChannels = 4);
+      HRESULT CreateTexture(const D3D11_TEXTURE2D_DESC& _oTextureCfg);
+      HRESULT CreateSampler(const D3D11_SAMPLER_DESC& _oSamplerCfg);
+
+      // Create resource
+      template<typename _T>
+      inline HRESULT CreateView(const _T& _oCfg)
+      {
+        if constexpr (T == EViewType::DEPTH_STENCIL && std::is_same<_T, D3D11_DEPTH_STENCIL_VIEW_DESC>::value)
+        {
+          return CreateDepthStencilView(_oCfg);
+        }
+        else if constexpr (T == EViewType::RENDER_TARGET && std::is_same<_T, D3D11_RENDER_TARGET_VIEW_DESC>::value)
+        {
+          return CreateRenderTargetView(_oCfg);
+        }
+        else if constexpr (T == EViewType::SHADER_RESOURCE && std::is_same<_T, D3D11_SHADER_RESOURCE_VIEW_DESC>::value)
+        {
+          return CreateShaderResourceView(_oCfg);
+        }
+        else if constexpr (T == EViewType::UNORDERED_ACCESS && std::is_same<_T, D3D11_UNORDERED_ACCESS_VIEW_DESC>::value)
+        {
+          return CreateUnorderedAccessView(_oCfg);
+        }
+        else
+        {
+          return E_FAIL;
+        }
+      }
+
+      inline ID3D11Texture2D* const GetTexture() { return m_pTexture; }
+      inline void SetTexture(ID3D11Texture2D* _pTexture) { m_pTexture = _pTexture; }
+      inline ID3D11SamplerState* const GetSamplerState() { return m_pSamplerState; }
+      inline void SetSampler(ID3D11SamplerState* _pSampler) { m_pSamplerState = _pSampler; }
+
+      // Get resource
+      inline auto* GetResourceView() const
+      {
+        if constexpr (T == EViewType::SHADER_RESOURCE)
+        {
+          return static_cast<ID3D11ShaderResourceView*>(m_pInternalView);
+        }
+        else if constexpr (T == EViewType::RENDER_TARGET)
+        {
+          return static_cast<ID3D11RenderTargetView*>(m_pInternalView);
+        }
+        else if constexpr (T == EViewType::DEPTH_STENCIL)
+        {
+          return static_cast<ID3D11DepthStencilView*>(m_pInternalView);
+        }
+        else if constexpr (T == EViewType::UNORDERED_ACCESS)
+        {
+          return static_cast<ID3D11UnorderedAccessView*>(m_pInternalView);
+        }
+        else
+        {
+          return nullptr;
+        }
+      }
 
     private:
-      void Clear();
+      void ReleaseTexture();
+      void ReleaseSampler();
+      void ReleaseView();
 
+      // View creation
+      HRESULT CreateDepthStencilView(const D3D11_DEPTH_STENCIL_VIEW_DESC& _oDesc);
+      HRESULT CreateRenderTargetView(const D3D11_RENDER_TARGET_VIEW_DESC& _oDesc);
+      HRESULT CreateShaderResourceView(const D3D11_SHADER_RESOURCE_VIEW_DESC& _oDesc);
+      HRESULT CreateUnorderedAccessView(const D3D11_UNORDERED_ACCESS_VIEW_DESC& _oDesc);
+
+    private:
       // Info
       std::string m_sTextureID;
 
-      uint32_t m_uTextureWidth = 0;
-      uint32_t m_uTextureHeight = 0;
-      uint32_t m_uChannels = 0;
-
       // DirectX
       ID3D11Texture2D* m_pTexture = nullptr;
-      ID3D11ShaderResourceView* m_pShaderResourceView = nullptr;
+      ID3D11View* m_pInternalView = nullptr;
       ID3D11SamplerState* m_pSamplerState = nullptr;
     };
+
+    template<EViewType T>
+    void render::texture::CTexture<T>::AttachTexture(shader::EShaderType _eShaderType)
+    {
+      if constexpr (T != SHADER_RESOURCE)
+      {
+        return;
+      }
+
+      // Attach texture to current pipeline
+      ID3D11ShaderResourceView* pShaderResource = GetResourceView();
+      if (pShaderResource)
+      {
+        switch (_eShaderType)
+        {
+        case render::shader::E_VERTEX:   global::dx::s_pDeviceContext->VSSetShaderResources(0, 1, &pShaderResource); break;
+        case render::shader::E_HULL:     global::dx::s_pDeviceContext->HSSetShaderResources(0, 1, &pShaderResource); break;
+        case render::shader::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetShaderResources(0, 1, &pShaderResource); break;
+        case render::shader::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetShaderResources(0, 1, &pShaderResource); break;
+        case render::shader::E_PIXEL:    global::dx::s_pDeviceContext->PSSetShaderResources(0, 1, &pShaderResource); break;
+        case render::shader::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetShaderResources(0, 1, &pShaderResource); break;
+        }
+      }
+
+      // Attach sampler
+      if (m_pSamplerState)
+      {
+        switch (_eShaderType)
+        {
+        case render::shader::E_VERTEX:   global::dx::s_pDeviceContext->VSSetSamplers(0, 1, &m_pSamplerState); break;
+        case render::shader::E_HULL:     global::dx::s_pDeviceContext->HSSetSamplers(0, 1, &m_pSamplerState); break;
+        case render::shader::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetSamplers(0, 1, &m_pSamplerState); break;
+        case render::shader::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetSamplers(0, 1, &m_pSamplerState); break;
+        case render::shader::E_PIXEL:    global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState); break;
+        case render::shader::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetSamplers(0, 1, &m_pSamplerState); break;
+        }
+      }
+    }
+
+    template<EViewType T>
+    void render::texture::CTexture<T>::DetachTexture()
+    {
+      // Not implemented!
+    }
+
+    template<EViewType T>
+    void render::texture::CTexture<T>::ReleaseTexture()
+    {
+      global::dx::SafeRelease(m_pTexture);
+    }
+
+    template<EViewType T>
+    void render::texture::CTexture<T>::ReleaseSampler()
+    {
+      global::dx::SafeRelease(m_pSamplerState);
+    }
+
+    template<EViewType T>
+    void render::texture::CTexture<T>::ReleaseView()
+    {
+      global::dx::SafeRelease(m_pInternalView);
+    }
+
+    template<EViewType T>
+    HRESULT render::texture::CTexture<T>::CreateSampler(const D3D11_SAMPLER_DESC& _oSamplerCfg)
+    {
+      ReleaseSampler();
+      return global::dx::s_pDevice->CreateSamplerState(&_oSamplerCfg, &m_pSamplerState);
+    }
+
+    template<EViewType T>
+    HRESULT render::texture::CTexture<T>::CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _oTextureCfg, uint32_t _uChannels)
+    {
+      // Clear
+      ReleaseTexture();
+
+      // Create texture using raw data!
+      D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
+      oSubresourceData.pSysMem = _pData;
+      oSubresourceData.SysMemPitch = _oTextureCfg.Width * _uChannels;
+
+      // Create texture
+      return global::dx::s_pDevice->CreateTexture2D(&_oTextureCfg, &oSubresourceData, &m_pTexture);
+    }
+
+    template<EViewType T>
+    HRESULT render::texture::CTexture<T>::CreateTexture(const D3D11_TEXTURE2D_DESC& _oTextureCfg)
+    {
+      // Flush
+      ReleaseTexture();
+
+      // Clear empty texture!
+      return global::dx::s_pDevice->CreateTexture2D(&_oTextureCfg, nullptr, &m_pTexture);
+    }
+
+    template<EViewType T>
+    HRESULT render::texture::CTexture<T>::CreateDepthStencilView(const D3D11_DEPTH_STENCIL_VIEW_DESC& _oDesc)
+    {
+      assert(T == EViewType::DEPTH_STENCIL);
+      ReleaseView();
+      ID3D11DepthStencilView** pView = reinterpret_cast<ID3D11DepthStencilView**>(&m_pInternalView);
+      return global::dx::s_pDevice->CreateDepthStencilView(m_pTexture, &_oDesc, pView);
+    }
+
+    template<EViewType T>
+    HRESULT render::texture::CTexture<T>::CreateRenderTargetView(const D3D11_RENDER_TARGET_VIEW_DESC& _oDesc)
+    {
+      assert(T == EViewType::RENDER_TARGET);
+      ReleaseView();
+      ID3D11RenderTargetView** pView = reinterpret_cast<ID3D11RenderTargetView**>(&m_pInternalView);
+      return global::dx::s_pDevice->CreateRenderTargetView(m_pTexture, &_oDesc, pView);
+    }
+
+    template<EViewType T>
+    HRESULT render::texture::CTexture<T>::CreateShaderResourceView(const D3D11_SHADER_RESOURCE_VIEW_DESC& _oDesc)
+    {
+      assert(T == EViewType::SHADER_RESOURCE);
+      ReleaseView();
+      ID3D11ShaderResourceView** pView = reinterpret_cast<ID3D11ShaderResourceView**>(&m_pInternalView);
+      return global::dx::s_pDevice->CreateShaderResourceView(m_pTexture, &_oDesc, pView);
+    }
+
+    template<EViewType T>
+    HRESULT render::texture::CTexture<T>::CreateUnorderedAccessView(const D3D11_UNORDERED_ACCESS_VIEW_DESC& _oDesc)
+    {
+      assert(T == EViewType::UNORDERED_ACCESS);
+      ReleaseView();
+      ID3D11UnorderedAccessView** pView = reinterpret_cast<ID3D11UnorderedAccessView**>(&m_pInternalView);
+      return global::dx::s_pDevice->CreateUnorderedAccessView(m_pTexture, &_oDesc, pView);
+    }
   }
 }
 

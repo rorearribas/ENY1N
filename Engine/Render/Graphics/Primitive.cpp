@@ -1,6 +1,6 @@
 #include "Primitive.h"
 #include "Engine/Global/GlobalResources.h"
-#include "Engine/Shaders/Standard/ForwardVertexShader.h"
+#include "Engine/Shaders/Pipeline/StandardVS.h"
 #include <cassert>
 #include <iostream>
 #include "Libs/Macros/GlobalMacros.h"
@@ -27,7 +27,7 @@ namespace render
       assert(!FAILED(hResult));
 
       // Create constant model data buffer
-      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantModelData.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
       // Set values
       m_eRenderMode = _eRenderMode;
@@ -44,7 +44,7 @@ namespace render
       assert(!FAILED(hResult));
 
       // Create constant model data buffer
-      m_oConstantModelData.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantModelData.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
       // Set values
       m_eRenderMode = _eRenderMode;
@@ -58,9 +58,9 @@ namespace render
       m_oConstantModelData.CleanBuffer();
 
       // Release dx
-      global::dx11::SafeRelease(m_pVertexBuffer);
-      global::dx11::SafeRelease(m_pIndexBuffer);
-      global::dx11::SafeRelease(m_pInputLayout);
+      global::dx::SafeRelease(m_pVertexBuffer);
+      global::dx::SafeRelease(m_pIndexBuffer);
+      global::dx::SafeRelease(m_pInputLayout);
     }
     // ------------------------------------
     void CPrimitive::Draw()
@@ -68,12 +68,12 @@ namespace render
       // Set general data
       uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
       uint32_t uVertexOffset = 0;
-      global::dx11::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
-      global::dx11::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
+      global::dx::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
+      global::dx::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
 
       // Set topology
       D3D_PRIMITIVE_TOPOLOGY eTopology = (m_eRenderMode == ERenderMode::SOLID) ? D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
-      global::dx11::s_pDeviceContext->IASetPrimitiveTopology(eTopology);
+      global::dx::s_pDeviceContext->IASetPrimitiveTopology(eTopology);
 
       // Set model matrix
       m_oConstantBuffer.GetData().Matrix = m_oTransform.ComputeModelMatrix();
@@ -82,7 +82,7 @@ namespace render
 
       // Apply constant buffer
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
-      global::dx11::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
+      global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
       // Set constants
       m_oConstantModelData.GetData().IgnoreGlobalLighting = m_bIgnoreGlobalLighting;
@@ -92,11 +92,11 @@ namespace render
 
       // Apply constant buffer
       pConstantBuffer = m_oConstantModelData.GetBuffer();
-      global::dx11::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
+      global::dx::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
 
       // Draw
-      global::dx11::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-      global::dx11::s_pDeviceContext->DrawIndexed(m_uIndices, 0, 0);
+      global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+      global::dx::s_pDeviceContext->DrawIndexed(m_uIndices, 0, 0);
     }
     // ------------------------------------
     void CPrimitive::SetRenderMode(render::ERenderMode _eRenderMode)
@@ -117,7 +117,7 @@ namespace render
     {
       // Map
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-      HRESULT hResult = global::dx11::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
 
@@ -132,7 +132,7 @@ namespace render
       }
 
       // Unmap
-      global::dx11::s_pDeviceContext->Unmap(m_pVertexBuffer, 0);
+      global::dx::s_pDeviceContext->Unmap(m_pVertexBuffer, 0);
 
       // Save color
       m_v3Color = _v3Color;
@@ -225,7 +225,7 @@ namespace render
       m_oConstantBuffer.CleanBuffer();
 
       // Create constant buffer
-      m_oConstantBuffer.Init(global::dx11::s_pDevice, global::dx11::s_pDeviceContext);
+      m_oConstantBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
       // Set number of vertices to draw
       m_uVertices = static_cast<uint32_t>(_vctVertexData.size());
@@ -240,7 +240,7 @@ namespace render
       // Create vertex buffer
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
       oSubresourceData.pSysMem = _vctVertexData.data();
-      HRESULT hResult = global::dx11::s_pDevice->CreateBuffer(&oVertexBufferDesc, &oSubresourceData, &m_pVertexBuffer);
+      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&oVertexBufferDesc, &oSubresourceData, &m_pVertexBuffer);
       if (FAILED(hResult))
       {
         return hResult;
@@ -259,17 +259,17 @@ namespace render
       // Create index buffer
       D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = D3D11_SUBRESOURCE_DATA();
       oSubresourceIndexesData.pSysMem = _vctIndices.data();
-      return global::dx11::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
+      return global::dx::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
     HRESULT CPrimitive::CreateInputLayout()
     {
-      return global::dx11::s_pDevice->CreateInputLayout
+      return global::dx::s_pDevice->CreateInputLayout
       (
         render::gfx::SVertexData::s_vctInputElementDesc.data(),
         static_cast<uint32_t>(render::gfx::SVertexData::s_vctInputElementDesc.size()),
-        g_ForwardVertexShader,
-        sizeof(g_ForwardVertexShader),
+        g_StandardVS,
+        sizeof(g_StandardVS),
         &m_pInputLayout
       );
     }
