@@ -17,7 +17,7 @@ namespace render
     void DetachRT();
 
     texture::CTexture<texture::RENDER_TARGET>* GetTexture() const { return m_pTexture; }
-    ID3D11RenderTargetView* GetRenderTargetView() const { return m_pTexture->GetResourceView(); }
+    ID3D11RenderTargetView* GetRT() const { return m_pTexture->GetResourceView(); }
 
   private:
     void CleanRT();

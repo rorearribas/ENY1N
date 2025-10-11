@@ -120,6 +120,9 @@
     <ClInclude Include="Render\RenderTarget.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Shaders\Pipeline\SimplePS.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -226,5 +229,6 @@
     <FxCompile Include="Shaders\Pipeline\DeferredPixelShader.hlsl" />
     <FxCompile Include="Shaders\Pipeline\ForwardPS.hlsl" />
     <FxCompile Include="Shaders\Pipeline\StandardVS.hlsl" />
+    <FxCompile Include="Shaders\Pipeline\SimplePS.hlsl" />
   </ItemGroup>
 </Project>
