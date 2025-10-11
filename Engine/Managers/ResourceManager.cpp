@@ -97,89 +97,87 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
       pMaterial->SetShininess(fTransparent);
     }
 
-    using namespace std::filesystem;
-    using TType = render::texture::ETextureType;
-
     // Diffuse
     aiString sPath;
+    using namespace std::filesystem;
     if (pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::DIFFUSE, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::DIFFUSE, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Specular
     if (pLoadedMaterial->GetTexture(aiTextureType_SPECULAR, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::SPECULAR, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::SPECULAR, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Ambient
     if (pLoadedMaterial->GetTexture(aiTextureType_AMBIENT, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::AMBIENT, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::AMBIENT, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Emissive
     if (pLoadedMaterial->GetTexture(aiTextureType_EMISSIVE, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::EMISSIVE, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::EMISSIVE, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Height
     if (pLoadedMaterial->GetTexture(aiTextureType_HEIGHT, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::HEIGHT, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::HEIGHT, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Normals
     if (pLoadedMaterial->GetTexture(aiTextureType_NORMALS, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::NORMAL, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::NORMAL, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Shininess
     if (pLoadedMaterial->GetTexture(aiTextureType_SHININESS, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::SHININESS, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::SHININESS, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Displacement
     if (pLoadedMaterial->GetTexture(aiTextureType_DISPLACEMENT, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::DISPLACEMENT, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::DISPLACEMENT, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Light map
     if (pLoadedMaterial->GetTexture(aiTextureType_LIGHTMAP, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::LIGHTMAP, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::LIGHTMAP, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Reflection
     if (pLoadedMaterial->GetTexture(aiTextureType_REFLECTION, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::REFLECTION, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::REFLECTION, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Base color
     if (pLoadedMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::BASE_COLOR, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::BASE_COLOR, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Normal camera
     if (pLoadedMaterial->GetTexture(aiTextureType_NORMAL_CAMERA, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::NORMAL_CAMERA, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::NORMAL_CAMERA, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Emission color
     if (pLoadedMaterial->GetTexture(aiTextureType_EMISSION_COLOR, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::EMISSION_COLOR, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::EMISSION_COLOR, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Metalness
     if (pLoadedMaterial->GetTexture(aiTextureType_METALNESS, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::METALNESS, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::METALNESS, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Diffuse roughness
     if (pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::DIFFUSE_ROUGHNESS, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::DIFFUSE_ROUGHNESS, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Ambient occlusion
     if (pLoadedMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, TType::AMBIENT_OCCLUSSION, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::AMBIENT_OCCLUSSION, path(_sPath).parent_path(), sPath.C_Str());
     }
 
     // Add material
@@ -273,10 +271,10 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
 // ------------------------------------
 unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
 {
-  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture<>::s_uChannels);
+  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture2D<>::s_uChannels);
 }
 // ------------------------------------
-void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, render::texture::ETextureType _eType,
+void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, render::ETextureType _eType,
   const std::filesystem::path& _oBasePath, const std::string& _sTextureID)
 {
   std::filesystem::path oTargetPath = _oBasePath / std::filesystem::path(_sTextureID);
@@ -290,7 +288,7 @@ void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, rende
 
     // Register texture
     using namespace render::texture;
-    CTexture<SHADER_RESOURCE>* pTexture = pMaterial->RegisterTexture(_eType, oTargetPath.filename().stem().string());
+    CTexture2D<render::SHADER_RESOURCE>* pTexture = pMaterial->RegisterTexture(_eType, oTargetPath.filename().stem().string());
 
     // Set texture config
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();

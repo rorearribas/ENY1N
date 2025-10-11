@@ -1,7 +1,8 @@
 #pragma once
 #include <d3d11.h>
 #include <string>
-#include "Resources/Texture.h"
+#include "Resources/Texture2D.h"
+#include "Engine/Render/RenderTypes.h"
 
 namespace render
 {
@@ -13,11 +14,12 @@ namespace render
     ~CRenderTarget() { CleanRT(); }
 
     HRESULT CreateRT(uint32_t _uWidth, uint32_t _uHeight, DXGI_FORMAT _eTargetFormat);
-    void AttachRT();
-    void DetachRT();
+    ID3D11Texture2D* GetTexture() const { return *m_pTexture; }
+    ID3D11RenderTargetView* GetRT() const { return m_pTexture->GetView(); }
 
-    texture::CTexture<texture::RENDER_TARGET>* GetTexture() const { return m_pTexture; }
-    ID3D11RenderTargetView* GetRT() const { return m_pTexture->GetResourceView(); }
+    // Override operators
+    inline operator ID3D11RenderTargetView* () const { return GetRT(); }
+    inline operator const ID3D11RenderTargetView* () const { return GetRT(); }
 
   private:
     void CleanRT();
@@ -25,7 +27,7 @@ namespace render
   private:
     // Info
     std::string m_sRenderTargetID = std::string();
-    texture::CTexture<texture::RENDER_TARGET>* m_pTexture = nullptr;
+    texture::CTexture2D<RENDER_TARGET>* m_pTexture = nullptr;
   };
 }
 

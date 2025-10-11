@@ -1,7 +1,7 @@
 #include "Mesh.h"
 #include "Libs/Macros/GlobalMacros.h"
+#include "Engine/Render/RenderTypes.h"
 #include <cassert>
-#include "../../Shaders/Shader.h"
 
 namespace render
 {
@@ -37,13 +37,13 @@ namespace render
     void CMesh::Draw()
     {
       // Draw diffuse
-      texture::CTexture<texture::SHADER_RESOURCE>* pDiffuseTexture = nullptr;
+      texture::CTexture2D<SHADER_RESOURCE>* pDiffuseTexture = nullptr;
       for (auto& it : m_dctMaterials)
       {
-        pDiffuseTexture = it.second->GetTexture(texture::ETextureType::DIFFUSE);
+        pDiffuseTexture = it.second->GetTexture(DIFFUSE);
         if (pDiffuseTexture)
         {
-          pDiffuseTexture->AttachTexture(shader::E_PIXEL);
+          pDiffuseTexture->AttachTexture(E_PIXEL);
           break;
         }
       }

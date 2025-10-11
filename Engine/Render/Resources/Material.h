@@ -1,6 +1,7 @@
 #pragma once
 #include "Libs/Math/Vector3.h"
-#include "Texture.h"
+#include "Engine/Render/RenderTypes.h"
+#include "Texture2D.h"
 #include <string>
 #include <map>
 
@@ -11,14 +12,14 @@ namespace render
     class CMaterial
     {
     public:
-      typedef std::map<texture::ETextureType, texture::CTexture<texture::SHADER_RESOURCE>*> TMapTextures;
+      typedef std::map<ETextureType, texture::CTexture2D<SHADER_RESOURCE>*> TMapTextures;
 
     public:
       CMaterial(std::string _sMaterialId) : m_sMaterialID(_sMaterialId) {}
       ~CMaterial();
 
-      render::texture::CTexture<texture::SHADER_RESOURCE>* const RegisterTexture(texture::ETextureType _eType, std::string _sTextureID);
-      render::texture::CTexture<texture::SHADER_RESOURCE>* const GetTexture(texture::ETextureType _eType);
+      texture::CTexture2D<SHADER_RESOURCE>* const RegisterTexture(ETextureType _eType, std::string _sTextureID);
+      texture::CTexture2D<SHADER_RESOURCE>* const GetTexture(ETextureType _eType);
       inline const std::string& GetMaterialId() const { return m_sMaterialID; }
 
       inline void SetDiffuseColor(math::CVector3 _vDiffuseColor) { m_v3DiffuseColor = _vDiffuseColor; }

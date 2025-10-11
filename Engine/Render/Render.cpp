@@ -13,6 +13,7 @@
 #include "Engine/Shaders/Pipeline/SimplePS.h"
 #include "Engine/Shaders/Pipeline/ForwardPS.h"
 #include "Engine/Shaders/Pipeline/DeferredPixelShader.h"
+#include "RenderTypes.h"
 
 namespace render
 {
@@ -37,14 +38,14 @@ namespace render
       ID3D11RenderTargetView* pBackBuffer = nullptr;
 
       // Deferred shading
-      CRenderTarget* pPositionRT;
-      CRenderTarget* pDiffuseRT;
-      CRenderTarget* pNormalRT;
-      CRenderTarget* pSpecularRT;
+      render::CRenderTarget* pPositionRT;
+      render::CRenderTarget* pDiffuseRT;
+      render::CRenderTarget* pNormalRT;
+      render::CRenderTarget* pSpecularRT;
 
       // Depth
-      texture::CTexture<texture::DEPTH_STENCIL>* pDepthStencilTexture = nullptr;
-      texture::CTexture<texture::SHADER_RESOURCE>* pDepthTexture = nullptr;
+      texture::CTexture2D<DEPTH_STENCIL>* pDepthStencilTexture = nullptr;
+      texture::CTexture2D<SHADER_RESOURCE>* pDepthTexture = nullptr;
       ID3D11DepthStencilState* pDepthStencilState = nullptr;
       D3D11_DEPTH_STENCIL_DESC oDepthStencilCfg = D3D11_DEPTH_STENCIL_DESC();
 
@@ -60,12 +61,12 @@ namespace render
       ID3DUserDefinedAnnotation* pUserMarker = nullptr;
 
       // Standard shaders
-      shader::CShader<shader::EShaderType::E_VERTEX>* pStandardVS;
-      shader::CShader<shader::EShaderType::E_PIXEL>* pSimplePS;
+      shader::CShader<E_VERTEX>* pStandardVS;
+      shader::CShader<E_PIXEL>* pSimplePS;
 
       // Deferred
-      shader::CShader<shader::EShaderType::E_PIXEL>* pDeferredPS;
-      shader::CShader<shader::EShaderType::E_PIXEL>* pCalculateLightsShader;
+      shader::CShader<E_PIXEL>* pDeferredPS;
+      shader::CShader<E_PIXEL>* pCalculateLightsShader;
     };
 
     static SRenderPipeline s_oRender;
@@ -149,10 +150,10 @@ namespace render
     }
 
     // Create shaders for 3D pipeline
-    internal::s_oRender.pStandardVS = new shader::CShader<shader::E_VERTEX>(g_StandardVS, ARRAYSIZE(g_StandardVS));
-    internal::s_oRender.pSimplePS = new shader::CShader<shader::E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
-    internal::s_oRender.pDeferredPS = new shader::CShader<shader::E_PIXEL>(g_DeferredPixelShader, ARRAYSIZE(g_DeferredPixelShader));
-    internal::s_oRender.pCalculateLightsShader = new shader::CShader<shader::E_PIXEL>(g_ForwardPS, ARRAYSIZE(g_ForwardPS));
+    internal::s_oRender.pStandardVS = new shader::CShader<E_VERTEX>(g_StandardVS, ARRAYSIZE(g_StandardVS));
+    internal::s_oRender.pSimplePS = new shader::CShader<E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
+    internal::s_oRender.pDeferredPS = new shader::CShader<E_PIXEL>(g_DeferredPixelShader, ARRAYSIZE(g_DeferredPixelShader));
+    internal::s_oRender.pCalculateLightsShader = new shader::CShader<E_PIXEL>(g_ForwardPS, ARRAYSIZE(g_ForwardPS));
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
@@ -327,7 +328,7 @@ namespace render
     global::dx::SafeRelease(internal::s_oRender.pDepthStencilState);
 
     // Create depth stencil texture
-    internal::s_oRender.pDepthStencilTexture = new texture::CTexture<texture::DEPTH_STENCIL>("DepthStencilTexture");
+    internal::s_oRender.pDepthStencilTexture = new texture::CTexture2D<DEPTH_STENCIL>("DepthStencilTexture");
 
     // Set desc
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -356,8 +357,8 @@ namespace render
     assert(!FAILED(hResult));
 
     // Create depth texture
-    ID3D11Texture2D* pDepthTexture = internal::s_oRender.pDepthStencilTexture->GetTexture();
-    internal::s_oRender.pDepthTexture = new texture::CTexture<texture::SHADER_RESOURCE>("DepthTexture");
+    ID3D11Texture2D* pDepthTexture = *(internal::s_oRender.pDepthStencilTexture);
+    internal::s_oRender.pDepthTexture = new texture::CTexture2D<SHADER_RESOURCE>("DepthTexture");
     internal::s_oRender.pDepthTexture->SetTexture(pDepthTexture);
 
     // Set shader resource view desc
@@ -472,7 +473,7 @@ namespace render
       // Clear back buffer
       ::global::dx::s_pDeviceContext->ClearRenderTargetView(internal::s_oRender.pBackBuffer, internal::s_v4ClearColor);
       // Clear depth stencil view
-      ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetResourceView();
+      ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetView();
       ::global::dx::s_pDeviceContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
       // Prepare ImGu
@@ -497,7 +498,7 @@ namespace render
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
       // Push invalid RT
-      ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetResourceView();
+      ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetView();
       global::dx::s_pDeviceContext->OMSetRenderTargets(0, nullptr, pDepthStencilView);
       // Set depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
@@ -520,13 +521,13 @@ namespace render
 
       // RT list
       ID3D11RenderTargetView* lstRenderViews[4];
-      lstRenderViews[0] = internal::s_oRender.pPositionRT->GetRT();
-      lstRenderViews[1] = internal::s_oRender.pDiffuseRT->GetRT();
-      lstRenderViews[2] = internal::s_oRender.pNormalRT->GetRT();
-      lstRenderViews[3] = internal::s_oRender.pSpecularRT->GetRT();
+      lstRenderViews[0] = *(internal::s_oRender.pPositionRT);
+      lstRenderViews[1] = *(internal::s_oRender.pDiffuseRT);
+      lstRenderViews[2] = *(internal::s_oRender.pNormalRT);
+      lstRenderViews[3] = *(internal::s_oRender.pSpecularRT);
 
       // Set render targets
-      ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetResourceView();
+      ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetView();
       global::dx::s_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(lstRenderViews), &lstRenderViews[0], pDepthStencilView);
       // Set depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
@@ -547,7 +548,7 @@ namespace render
     // Draw primitives
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
-      ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetResourceView();
+      ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetView();
       global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oRender.pBackBuffer, pDepthStencilView);
 
       internal::s_oRender.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;

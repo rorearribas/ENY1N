@@ -4,55 +4,24 @@
 #include <cassert>
 #include <type_traits>
 #include "Engine/Global/GlobalResources.h"
+#include "Engine/Render/RenderTypes.h"
 #include "Engine/Shaders/Shader.h"
 
 namespace render
 {
   namespace texture
   {
-    // Types
-    enum ETextureType : uint32_t
-    {
-      DIFFUSE,
-      SPECULAR,
-      AMBIENT,
-      EMISSIVE,
-      HEIGHT,
-      NORMAL,
-      SHININESS,
-      OPACITY,
-      DISPLACEMENT,
-      LIGHTMAP,
-      REFLECTION,
-      BASE_COLOR,
-      NORMAL_CAMERA,
-      EMISSION_COLOR,
-      METALNESS,
-      DIFFUSE_ROUGHNESS,
-      AMBIENT_OCCLUSSION,
-      COUNT
-    };
-
-    enum EViewType : uint32_t
-    {
-      DEPTH_STENCIL,
-      RENDER_TARGET,
-      SHADER_RESOURCE,
-      UNORDERED_ACCESS,
-      UNKNOWN
-    };
-
     template<EViewType T = EViewType::UNKNOWN>
-    class CTexture
+    class CTexture2D
     {
     public:
       static constexpr uint32_t s_uChannels = 4;
 
     public:
-      CTexture(const std::string& _sTextureID) : m_sTextureID(_sTextureID) {}
-      ~CTexture() { ReleaseTexture(); ReleaseSampler(); ReleaseView(); }
+      CTexture2D(const std::string& _sTextureID) : m_sTextureID(_sTextureID) {}
+      ~CTexture2D() { ReleaseTexture(); ReleaseSampler(); ReleaseView(); }
 
-      void AttachTexture(shader::EShaderType _eShaderType);
+      void AttachTexture(EShaderType _eShaderType);
       void DetachTexture();
 
       // Texture and sampler
@@ -86,13 +55,17 @@ namespace render
         }
       }
 
+      // Override operators
+      inline operator ID3D11Texture2D* () const { return m_pTexture; }
+      inline operator const ID3D11Texture2D* () const { return m_pTexture; }
+
       inline ID3D11Texture2D* const GetTexture() { return m_pTexture; }
       inline void SetTexture(ID3D11Texture2D* _pTexture) { m_pTexture = _pTexture; }
       inline ID3D11SamplerState* const GetSamplerState() { return m_pSamplerState; }
       inline void SetSampler(ID3D11SamplerState* _pSampler) { m_pSamplerState = _pSampler; }
 
       // Get resource
-      inline auto* GetResourceView() const
+      inline auto* GetView() const
       {
         if constexpr (T == EViewType::SHADER_RESOURCE)
         {
@@ -138,7 +111,7 @@ namespace render
     };
 
     template<EViewType T>
-    void render::texture::CTexture<T>::AttachTexture(shader::EShaderType _eShaderType)
+    void render::texture::CTexture2D<T>::AttachTexture(EShaderType _eShaderType)
     {
       if constexpr (T != SHADER_RESOURCE)
       {
@@ -146,17 +119,17 @@ namespace render
       }
 
       // Attach texture to current pipeline
-      ID3D11ShaderResourceView* pShaderResource = GetResourceView();
+      ID3D11ShaderResourceView* pShaderResource = GetView();
       if (pShaderResource)
       {
         switch (_eShaderType)
         {
-        case render::shader::E_VERTEX:   global::dx::s_pDeviceContext->VSSetShaderResources(0, 1, &pShaderResource); break;
-        case render::shader::E_HULL:     global::dx::s_pDeviceContext->HSSetShaderResources(0, 1, &pShaderResource); break;
-        case render::shader::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetShaderResources(0, 1, &pShaderResource); break;
-        case render::shader::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetShaderResources(0, 1, &pShaderResource); break;
-        case render::shader::E_PIXEL:    global::dx::s_pDeviceContext->PSSetShaderResources(0, 1, &pShaderResource); break;
-        case render::shader::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetShaderResources(0, 1, &pShaderResource); break;
+          case E_VERTEX:   global::dx::s_pDeviceContext->VSSetShaderResources(0, 1, &pShaderResource); break;
+          case E_HULL:     global::dx::s_pDeviceContext->HSSetShaderResources(0, 1, &pShaderResource); break;
+          case E_DOMAIN:   global::dx::s_pDeviceContext->DSSetShaderResources(0, 1, &pShaderResource); break;
+          case E_GEOMETRY: global::dx::s_pDeviceContext->GSSetShaderResources(0, 1, &pShaderResource); break;
+          case E_PIXEL:    global::dx::s_pDeviceContext->PSSetShaderResources(0, 1, &pShaderResource); break;
+          case E_COMPUTE:  global::dx::s_pDeviceContext->CSSetShaderResources(0, 1, &pShaderResource); break;
         }
       }
 
@@ -165,49 +138,49 @@ namespace render
       {
         switch (_eShaderType)
         {
-        case render::shader::E_VERTEX:   global::dx::s_pDeviceContext->VSSetSamplers(0, 1, &m_pSamplerState); break;
-        case render::shader::E_HULL:     global::dx::s_pDeviceContext->HSSetSamplers(0, 1, &m_pSamplerState); break;
-        case render::shader::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetSamplers(0, 1, &m_pSamplerState); break;
-        case render::shader::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetSamplers(0, 1, &m_pSamplerState); break;
-        case render::shader::E_PIXEL:    global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState); break;
-        case render::shader::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetSamplers(0, 1, &m_pSamplerState); break;
+          case E_VERTEX:   global::dx::s_pDeviceContext->VSSetSamplers(0, 1, &m_pSamplerState); break;
+          case E_HULL:     global::dx::s_pDeviceContext->HSSetSamplers(0, 1, &m_pSamplerState); break;
+          case E_DOMAIN:   global::dx::s_pDeviceContext->DSSetSamplers(0, 1, &m_pSamplerState); break;
+          case E_GEOMETRY: global::dx::s_pDeviceContext->GSSetSamplers(0, 1, &m_pSamplerState); break;
+          case E_PIXEL:    global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState); break;
+          case E_COMPUTE:  global::dx::s_pDeviceContext->CSSetSamplers(0, 1, &m_pSamplerState); break;
         }
       }
     }
 
     template<EViewType T>
-    void render::texture::CTexture<T>::DetachTexture()
+    void render::texture::CTexture2D<T>::DetachTexture()
     {
       // Not implemented!
     }
 
     template<EViewType T>
-    void render::texture::CTexture<T>::ReleaseTexture()
+    void render::texture::CTexture2D<T>::ReleaseTexture()
     {
       global::dx::SafeRelease(m_pTexture);
     }
 
     template<EViewType T>
-    void render::texture::CTexture<T>::ReleaseSampler()
+    void render::texture::CTexture2D<T>::ReleaseSampler()
     {
       global::dx::SafeRelease(m_pSamplerState);
     }
 
     template<EViewType T>
-    void render::texture::CTexture<T>::ReleaseView()
+    void render::texture::CTexture2D<T>::ReleaseView()
     {
       global::dx::SafeRelease(m_pInternalView);
     }
 
     template<EViewType T>
-    HRESULT render::texture::CTexture<T>::CreateSampler(const D3D11_SAMPLER_DESC& _oSamplerCfg)
+    HRESULT render::texture::CTexture2D<T>::CreateSampler(const D3D11_SAMPLER_DESC& _oSamplerCfg)
     {
       ReleaseSampler();
       return global::dx::s_pDevice->CreateSamplerState(&_oSamplerCfg, &m_pSamplerState);
     }
 
     template<EViewType T>
-    HRESULT render::texture::CTexture<T>::CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _oTextureCfg, uint32_t _uChannels)
+    HRESULT render::texture::CTexture2D<T>::CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _oTextureCfg, uint32_t _uChannels)
     {
       // Clear
       ReleaseTexture();
@@ -222,7 +195,7 @@ namespace render
     }
 
     template<EViewType T>
-    HRESULT render::texture::CTexture<T>::CreateTexture(const D3D11_TEXTURE2D_DESC& _oTextureCfg)
+    HRESULT render::texture::CTexture2D<T>::CreateTexture(const D3D11_TEXTURE2D_DESC& _oTextureCfg)
     {
       // Flush
       ReleaseTexture();
@@ -232,7 +205,7 @@ namespace render
     }
 
     template<EViewType T>
-    HRESULT render::texture::CTexture<T>::CreateDepthStencilView(const D3D11_DEPTH_STENCIL_VIEW_DESC& _oDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateDepthStencilView(const D3D11_DEPTH_STENCIL_VIEW_DESC& _oDesc)
     {
       assert(T == EViewType::DEPTH_STENCIL);
       ReleaseView();
@@ -241,7 +214,7 @@ namespace render
     }
 
     template<EViewType T>
-    HRESULT render::texture::CTexture<T>::CreateRenderTargetView(const D3D11_RENDER_TARGET_VIEW_DESC& _oDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateRenderTargetView(const D3D11_RENDER_TARGET_VIEW_DESC& _oDesc)
     {
       assert(T == EViewType::RENDER_TARGET);
       ReleaseView();
@@ -250,7 +223,7 @@ namespace render
     }
 
     template<EViewType T>
-    HRESULT render::texture::CTexture<T>::CreateShaderResourceView(const D3D11_SHADER_RESOURCE_VIEW_DESC& _oDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateShaderResourceView(const D3D11_SHADER_RESOURCE_VIEW_DESC& _oDesc)
     {
       assert(T == EViewType::SHADER_RESOURCE);
       ReleaseView();
@@ -259,7 +232,7 @@ namespace render
     }
 
     template<EViewType T>
-    HRESULT render::texture::CTexture<T>::CreateUnorderedAccessView(const D3D11_UNORDERED_ACCESS_VIEW_DESC& _oDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateUnorderedAccessView(const D3D11_UNORDERED_ACCESS_VIEW_DESC& _oDesc)
     {
       assert(T == EViewType::UNORDERED_ACCESS);
       ReleaseView();

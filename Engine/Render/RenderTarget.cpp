@@ -1,6 +1,6 @@
 #include "RenderTarget.h"
 #include "Engine/Global/GlobalResources.h"
-#include "Resources/Texture.h"
+#include "Resources/Texture2D.h"
 #include <iostream>
 
 namespace render
@@ -11,7 +11,7 @@ namespace render
     CleanRT();
 
     // Create texture
-    m_pTexture = new texture::CTexture<texture::RENDER_TARGET>(m_sRenderTargetID);
+    m_pTexture = new texture::CTexture2D<RENDER_TARGET>(m_sRenderTargetID);
 
     // Set texture config
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -36,16 +36,6 @@ namespace render
     oRenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
     oRenderTargetDesc.Texture2D.MipSlice = 0;
     return m_pTexture->CreateView(oRenderTargetDesc);
-  }
-  // ------------------------------------
-  void CRenderTarget::AttachRT()
-  {
-
-  }
-  // ------------------------------------
-  void CRenderTarget::DetachRT()
-  {
-
   }
   // ------------------------------------
   void CRenderTarget::CleanRT()

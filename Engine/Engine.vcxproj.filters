@@ -63,7 +63,7 @@
     <ClInclude Include="Render\Resources\Material.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Resources\Texture.h">
+    <ClInclude Include="Render\Resources\Texture2D.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\Graphics\Mesh.h">
@@ -123,6 +123,9 @@
     <ClInclude Include="Shaders\Pipeline\SimplePS.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Render\RenderTypes.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -170,7 +173,7 @@
     <ClCompile Include="Render\Resources\Material.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Resources\Texture.cpp">
+    <ClCompile Include="Render\Resources\Texture2D.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Graphics\Mesh.cpp">

@@ -1,4 +1,4 @@
-#include "Texture.h"
+#include "Texture2D.h"
 #include <iostream>
 #include "Engine/Global/GlobalResources.h"
 #include "Libs/Macros/GlobalMacros.h"
