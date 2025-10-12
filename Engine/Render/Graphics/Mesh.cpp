@@ -36,21 +36,44 @@ namespace render
     // ------------------------------------
     void CMesh::Draw()
     {
-      // Draw diffuse
-      texture::CTexture2D<SHADER_RESOURCE>* pDiffuseTexture = nullptr;
+      // Push textures!
+      bool bHasTexture = false;
       for (auto& it : m_dctMaterials)
       {
-        pDiffuseTexture = it.second->GetTexture(DIFFUSE);
-        if (pDiffuseTexture)
+        texture::CTexture2D<SHADER_RESOURCE>* pDiffuseTexture = it.second->GetTexture(DIFFUSE);
+        texture::CTexture2D<SHADER_RESOURCE>* pNormalTexture = it.second->GetTexture(NORMAL);
+        texture::CTexture2D<SHADER_RESOURCE>* pSpecularTexture = it.second->GetTexture(SPECULAR);
+
+        // Check if has textures
+        if (pDiffuseTexture || pNormalTexture || pSpecularTexture)
         {
-          pDiffuseTexture->AttachTexture(E_PIXEL);
-          break;
+          bHasTexture = true;
         }
+
+        // Texture list
+        ID3D11ShaderResourceView* lstTextures[3] =
+        {
+          pDiffuseTexture ? pDiffuseTexture->GetView() : nullptr,
+          pNormalTexture ? pNormalTexture->GetView() : nullptr,
+          pSpecularTexture ? pSpecularTexture->GetView() : nullptr,
+        };
+        // Bind shaders
+        global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(lstTextures), lstTextures);
+
+        // Sampler list
+        ID3D11SamplerState* lstSamplers[3] =
+        {
+          pDiffuseTexture ? pDiffuseTexture->GetSampler() : nullptr,
+          pNormalTexture ? pNormalTexture->GetSampler() : nullptr,
+          pSpecularTexture ? pSpecularTexture->GetSampler() : nullptr
+        };
+        // Bind samplers
+        global::dx::s_pDeviceContext->PSSetSamplers(0, ARRAYSIZE(lstSamplers), lstSamplers);
       }
 
       // Update buffer
       m_oConstantModelData.GetData().IgnoreGlobalLighting = m_bIgnoreGlobalLighting;
-      m_oConstantModelData.GetData().HasTexture = static_cast<bool>(pDiffuseTexture);
+      m_oConstantModelData.GetData().HasTexture = bHasTexture;
       bool bOk = m_oConstantModelData.WriteBuffer();
       UNUSED_VAR(bOk);
       assert(bOk);

@@ -22,7 +22,7 @@ GBuffer DeferredPSMain(PS_INPUT input)
 {
   GBuffer gBuffer;
 
-  gBuffer.gPosition = input.position;
+  gBuffer.gPosition = float4(input.worldpos, 1.0f);
   gBuffer.gDiffuse = tDiffuse.Sample(tDiffuseSampler, input.uv);
   gBuffer.gNormal = tNormal.Sample(tNormalSampler, input.uv);
   gBuffer.gSpecular = tSpecular.Sample(tSpecularSampler, input.uv);

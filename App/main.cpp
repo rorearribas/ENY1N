@@ -82,11 +82,11 @@ int main()
   game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
   pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 6; uIndex++)
   {
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
+    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-5.0f, 5.0f), GenerateFloat(1.0f, 10.0f), 0.0f));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
@@ -123,7 +123,7 @@ int main()
   pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
   std::vector<game::CEntity*> vctPhysics = {};
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     pBoxTest->SetPosition(math::CVector3(GenerateFloat(-70.0f, 70.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-40.0f, 40.0f)));

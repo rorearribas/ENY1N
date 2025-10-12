@@ -61,7 +61,7 @@ namespace render
 
       inline ID3D11Texture2D* const GetTexture() { return m_pTexture; }
       inline void SetTexture(ID3D11Texture2D* _pTexture) { m_pTexture = _pTexture; }
-      inline ID3D11SamplerState* const GetSamplerState() { return m_pSamplerState; }
+      inline ID3D11SamplerState* const GetSampler() { return m_pSamplerState; }
       inline void SetSampler(ID3D11SamplerState* _pSampler) { m_pSamplerState = _pSampler; }
 
       // Get resource

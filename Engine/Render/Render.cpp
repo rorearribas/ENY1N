@@ -581,7 +581,7 @@ namespace render
       // Attach
       internal::s_oRender.pCalculateLightsShader->AttachShader();
 
-      // --- Lighting Pass: bind SRVs del G-Buffer ---
+      // GBuffer list
       ID3D11ShaderResourceView* gBuffer[4] =
       {
         internal::s_oRender.pPositionRT->GetSRV(),
@@ -589,7 +589,6 @@ namespace render
         internal::s_oRender.pNormalRT->GetSRV(),
         internal::s_oRender.pSpecularRT->GetSRV()
       };
-
       // Bind buffers
       global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(gBuffer), gBuffer);
       // Set linear sampler
