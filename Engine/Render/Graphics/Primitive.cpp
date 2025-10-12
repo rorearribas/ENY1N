@@ -1,6 +1,6 @@
 #include "Primitive.h"
 #include "Engine/Global/GlobalResources.h"
-#include "Engine/Shaders/Pipeline/StandardVS.h"
+#include "Engine/Shaders/Forward/SimpleVS.h"
 #include <cassert>
 #include <iostream>
 #include "Libs/Macros/GlobalMacros.h"
@@ -268,8 +268,8 @@ namespace render
       (
         render::gfx::SVertexData::s_vctInputElementDesc.data(),
         static_cast<uint32_t>(render::gfx::SVertexData::s_vctInputElementDesc.size()),
-        g_StandardVS,
-        sizeof(g_StandardVS),
+        g_SimpleVS,
+        sizeof(g_SimpleVS),
         &m_pInputLayout
       );
     }

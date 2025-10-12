@@ -1,6 +1,6 @@
-// PIXEL SHADER
-#include "DeferredPixelShader.hlsl"
+#include "DrawTriangleVS.hlsl"
 
+// PIXEL SHADER
 struct DirectionalLight
 {
   // 12 + 4 bytes = 16 bytes
@@ -75,39 +75,50 @@ cbuffer GlobalLightingData : register(b1)
   float2 Padding;
 };
 
-float4 PSMain(PS_INPUT gBuffer) : SV_TARGET
+// GBuffer data
+Texture2D gPosition : register(t0);
+Texture2D gDiffuse  : register(t1);
+Texture2D gNormal   : register(t2);
+Texture2D gSpecular : register(t3);
+SamplerState gSampleLinear : register(s0);
+
+float4 PSMain(VS_OUTPUT input) : SV_TARGET
 {
-  return float4(1.0f, 1.0f, 0.0f, 1.0f);
+  float3 pos = gPosition.Sample(gSampleLinear, input.uv).xyz;
+  float3 color = gDiffuse.Sample(gSampleLinear, input.uv).rgb;
+  float3 norm = normalize(gNormal.Sample(gSampleLinear, input.uv).xyz);
+
+  return float4(color, 1.0f);
 
   //// Get color + normal
-  //float4 v4TargetColor = HasTexture ? tDiffuse.Sample(tDiffuseSampler, input.uv) : float4(input.color, 1.0f);
+  //float4 v4TargetColor = /*HasTexture ? tGBufferDiffuse.Sample(tGBufferDiffuseSampler, input.uv) : */float4(1.0f, 1.0f, 1.0f, 1.0f);
   //return float4(v4TargetColor);
-
-  //float3 v3Normal = normalize(input.normal);
-
+  //
+  //float3 v3Normal = float3(1.0f, 1.0f, 1.0f);/*normalize(input.normal);*/
+  //
   //// If we don't use global illumination we simply return with the desired color!
   //if (IgnoreGlobalLighting)
   //{
   //  return float4(v4TargetColor);
   //}
-
+  //
   //// Ambient light
   //float3 v3TotalDiffuse = float3(0.0f, 0.0f, 0.0f);
   //float3 v3AmbientColor = 0.01f * float3(1.0f, 1.0f, 1.0f);
   //v3TotalDiffuse += v3AmbientColor;
-
+  //
   //// Directional light
   //float3 v3LightDir = normalize(directionalLight.Direction);
   //float fDot = max(dot(v3Normal, v3LightDir), 0.0f);
   //v3TotalDiffuse += directionalLight.Color * directionalLight.Intensity * fDot;
-
+  //
   //// Point Lights
   //for (int i = 0; i < RegisteredLights.x; i++)
   //{
   //  PointLight pointLight = pointLights[i];
-  //  float3 v3Diff = pointLight.Position - input.worldpos;
+  //  float3 v3Diff = pointLight.Position - float3(1.0f, 1.0f, 1.0f); /*input.worldpos;*/
   //  float fLength = length(v3Diff);
-
+  //
   //  float3 v3LightDir = normalize(v3Diff);
   //  float fDot = max(dot(v3Normal, v3LightDir), 0.0f);
   //  if (fDot > 0.0f)
@@ -118,18 +129,18 @@ float4 PSMain(PS_INPUT gBuffer) : SV_TARGET
   //    v3TotalDiffuse += v3PointDiffuse;
   //  }
   //}
-
+  //
   //// Spotlights
   //for (int j = 0; j < RegisteredLights.y; j++)
   //{
   //  Spotlight spotlight = spotLights[j];
-  //  float3 v3Diff = spotlight.Position - input.worldpos;
+  //  float3 v3Diff = spotlight.Position - float3(1.0f, 1.0f, 1.0f); /*input.worldpos;*/
   //  float fLength = length(v3Diff); // Distance
-
+  //
   //  // Directions
   //  float3 v3LightDirSpot = normalize(spotlight.Direction);
   //  float3 v3LightDirToPixel = normalize(v3Diff);
-
+  //
   //  float fDot = dot(v3Normal, v3LightDirToPixel);
   //  if (fDot > 0.0f)
   //  {
@@ -137,16 +148,16 @@ float4 PSMain(PS_INPUT gBuffer) : SV_TARGET
   //    float cosTheta = dot(-v3LightDirToPixel, v3LightDirSpot);
   //    float cosInner = cos(radians(15.0f));
   //    float cosOuter = cos(radians(35.0f));
-
+  //
   //    // Attenuation
   //    float fDistanceFalloff = saturate(1.0f - fLength / spotlight.Range);
   //    float fIntensityFalloff = saturate((cosTheta - cosOuter) / (cosInner - cosOuter));
   //    float fFalloff = max(fDistanceFalloff * fIntensityFalloff, 0.0f);
-
+  //
   //    // Apply spot light color
   //    v3TotalDiffuse += spotlight.Color * spotlight.Intensity * fFalloff;
   //  }
   //}
-
+  //
   //return float4(saturate(v4TargetColor.rgb * 0.5 + v3TotalDiffuse * 0.5f), 1.0f);
 }

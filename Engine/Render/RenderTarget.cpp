@@ -26,7 +26,7 @@ namespace render
     HRESULT hResult = m_pTexture->CreateTexture(oTextureDesc);
     if (FAILED(hResult))
     {
-      std::cout << "Error creating render target!" << std::endl;
+      std::cout << "Error creating texture!" << std::endl;
       return hResult;
     }
 
@@ -35,7 +35,24 @@ namespace render
     oRenderTargetDesc.Format = _eTargetFormat;
     oRenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
     oRenderTargetDesc.Texture2D.MipSlice = 0;
-    return m_pTexture->CreateView(oRenderTargetDesc);
+    hResult = m_pTexture->CreateView(oRenderTargetDesc);
+    if (FAILED(hResult))
+    {
+      std::cout << "Error creating target view!" << std::endl;
+      return hResult;
+    }
+
+    //Creating a view of the texture to be used when binding it as a render target
+    D3D11_SHADER_RESOURCE_VIEW_DESC oSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
+    oSRVDesc.Format = _eTargetFormat;
+    oSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    oSRVDesc.Texture2D.MipLevels = 1;
+    return global::dx::s_pDevice->CreateShaderResourceView(GetTexture(), &oSRVDesc, &m_pSRV);
+  }
+  // ------------------------------------
+  void CRenderTarget::ClearRT(const float _v4ClearColor[4])
+  {
+    global::dx::s_pDeviceContext->ClearRenderTargetView(GetRT(), _v4ClearColor);
   }
   // ------------------------------------
   void CRenderTarget::CleanRT()

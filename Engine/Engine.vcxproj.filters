@@ -120,9 +120,6 @@
     <ClInclude Include="Render\RenderTarget.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Shaders\Pipeline\SimplePS.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Render\RenderTypes.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -229,9 +226,10 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\Pipeline\DeferredPixelShader.hlsl" />
-    <FxCompile Include="Shaders\Pipeline\ForwardPS.hlsl" />
-    <FxCompile Include="Shaders\Pipeline\StandardVS.hlsl" />
-    <FxCompile Include="Shaders\Pipeline\SimplePS.hlsl" />
+    <FxCompile Include="Shaders\Deferred\GBufferPS.hlsl" />
+    <FxCompile Include="Shaders\Deferred\LightsPS.hlsl" />
+    <FxCompile Include="Shaders\Forward\SimpleVS.hlsl" />
+    <FxCompile Include="Shaders\Forward\SimplePS.hlsl" />
+    <FxCompile Include="Shaders\Deferred\DrawTriangleVS.hlsl" />
   </ItemGroup>
 </Project>

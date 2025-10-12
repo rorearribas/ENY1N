@@ -1,5 +1,5 @@
 // Simple pixel shader
-#include "StandardVS.hlsl"
+#include "SimpleVS.hlsl"
 
 float4 PSMain(PS_INPUT input) : SV_TARGET
 {

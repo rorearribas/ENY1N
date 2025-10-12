@@ -1,24 +1,14 @@
+#include "SimpleVS.hlsl"
+
 // Diffuse
 Texture2D tDiffuse : register(t0);
 SamplerState tDiffuseSampler : register(s0);
-
 // Normal
 Texture2D tNormal : register(t1);
 SamplerState tNormalSampler : register(s1);
-
 // Specular
 Texture2D tSpecular : register(t2);
 SamplerState tSpecularSampler: register(s2);
-
-// PS Input
-struct PS_INPUT
-{
-  float4 position : SV_POSITION;
-  float3 worldpos : POSITION;
-  float3 normal : NORMAL;
-  float3 color: COLOR;
-  float2 uv : UV;
-};
 
 struct GBuffer
 {

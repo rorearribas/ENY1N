@@ -1,5 +1,5 @@
 #include "Model.h"
-#include "Engine/Shaders/Pipeline/StandardVS.h"
+#include "Engine/Shaders/Forward/SimpleVS.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
@@ -54,8 +54,8 @@ namespace render
       (
         SVertexData::s_vctInputElementDesc.data(),
         static_cast<uint32_t>(SVertexData::s_vctInputElementDesc.size()),
-        g_StandardVS,
-        sizeof(g_StandardVS),
+        g_SimpleVS,
+        sizeof(g_SimpleVS),
         &m_pInputLayout
       );
     }

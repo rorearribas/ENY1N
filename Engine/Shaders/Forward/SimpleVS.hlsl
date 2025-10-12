@@ -1,3 +1,5 @@
+// Simple vertex shader
+
 cbuffer Camera : register(b0)
 {
   matrix viewProjection;

@@ -4,16 +4,20 @@
 #include "Libs/ImGui/imgui_impl_win32.h"
 #include "Libs/ImGui/imgui_impl_dx11.h"
 #include "Engine/Engine.h"
-#include "Libs/Macros/GlobalMacros.h"
-#include "Libs/ImGui/ImGuizmo.h"
+#include "RenderTypes.h"
 #include "Engine/Render/RenderTarget.h"
 
-// Shaders
-#include "Engine/Shaders/Pipeline/StandardVS.h"
-#include "Engine/Shaders/Pipeline/SimplePS.h"
-#include "Engine/Shaders/Pipeline/ForwardPS.h"
-#include "Engine/Shaders/Pipeline/DeferredPixelShader.h"
-#include "RenderTypes.h"
+#include "Libs/Macros/GlobalMacros.h"
+#include "Libs/ImGui/ImGuizmo.h"
+
+// Forward
+#include "Engine/Shaders/Forward/SimpleVS.h"
+#include "Engine/Shaders/Forward/SimplePS.h"
+
+// Deferred
+#include "Engine/Shaders/Deferred/LightsPS.h"
+#include "Engine/Shaders/Deferred/GBufferPS.h"
+#include "Engine/Shaders/Deferred/DrawTriangleVS.h"
 
 namespace render
 {
@@ -42,6 +46,7 @@ namespace render
       render::CRenderTarget* pDiffuseRT;
       render::CRenderTarget* pNormalRT;
       render::CRenderTarget* pSpecularRT;
+      ID3D11SamplerState* pLinearSampler;
 
       // Depth
       texture::CTexture2D<DEPTH_STENCIL>* pDepthStencilTexture = nullptr;
@@ -60,11 +65,11 @@ namespace render
       // Debug
       ID3DUserDefinedAnnotation* pUserMarker = nullptr;
 
-      // Standard shaders
-      shader::CShader<E_VERTEX>* pStandardVS;
+      // Forward
+      shader::CShader<E_VERTEX>* pSimpleVS;
       shader::CShader<E_PIXEL>* pSimplePS;
-
       // Deferred
+      shader::CShader<E_VERTEX>* pDrawTriangle;
       shader::CShader<E_PIXEL>* pDeferredPS;
       shader::CShader<E_PIXEL>* pCalculateLightsShader;
     };
@@ -110,7 +115,7 @@ namespace render
     global::dx::SafeRelease(internal::s_oRender.pUserMarker);
 
     // Release shaders
-    global::ReleaseObject(internal::s_oRender.pStandardVS);
+    global::ReleaseObject(internal::s_oRender.pSimpleVS);
     global::ReleaseObject(internal::s_oRender.pSimplePS);
     global::ReleaseObject(internal::s_oRender.pDeferredPS);
     global::ReleaseObject(internal::s_oRender.pCalculateLightsShader);
@@ -149,11 +154,13 @@ namespace render
       return hResult;
     }
 
-    // Create shaders for 3D pipeline
-    internal::s_oRender.pStandardVS = new shader::CShader<E_VERTEX>(g_StandardVS, ARRAYSIZE(g_StandardVS));
+    // Forward shaders
+    internal::s_oRender.pSimpleVS = new shader::CShader<E_VERTEX>(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
     internal::s_oRender.pSimplePS = new shader::CShader<E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
-    internal::s_oRender.pDeferredPS = new shader::CShader<E_PIXEL>(g_DeferredPixelShader, ARRAYSIZE(g_DeferredPixelShader));
-    internal::s_oRender.pCalculateLightsShader = new shader::CShader<E_PIXEL>(g_ForwardPS, ARRAYSIZE(g_ForwardPS));
+    // Deferred shaders
+    internal::s_oRender.pDrawTriangle = new shader::CShader<E_VERTEX>(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
+    internal::s_oRender.pDeferredPS = new shader::CShader<E_PIXEL>(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
+    internal::s_oRender.pCalculateLightsShader = new shader::CShader<E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
@@ -422,7 +429,31 @@ namespace render
 
     global::ReleaseObject(internal::s_oRender.pSpecularRT);
     internal::s_oRender.pSpecularRT = new CRenderTarget("Specular");
-    return internal::s_oRender.pSpecularRT->CreateRT(_uX, _uY, DXGI_FORMAT_B8G8R8A8_UNORM);
+    hResult = internal::s_oRender.pSpecularRT->CreateRT(_uX, _uY, DXGI_FORMAT_B8G8R8A8_UNORM);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Linear sampler
+    D3D11_SAMPLER_DESC oSamplerDesc = D3D11_SAMPLER_DESC();
+    oSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    oSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    oSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    oSamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    oSamplerDesc.MipLODBias = 0.0f;
+    oSamplerDesc.MaxAnisotropy = 16u;
+    oSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    oSamplerDesc.BorderColor[0] = 0.0f;
+    oSamplerDesc.BorderColor[1] = 0.0f;
+    oSamplerDesc.BorderColor[2] = 0.0f;
+    oSamplerDesc.BorderColor[3] = 0.0f;
+    oSamplerDesc.MinLOD = 0.0f;
+    oSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    // Create sampler
+    global::dx::SafeRelease(internal::s_oRender.pLinearSampler);
+    return global::dx::s_pDevice->CreateSamplerState(&oSamplerDesc, &internal::s_oRender.pLinearSampler);
   }
   // ------------------------------------
   HRESULT CRender::SetDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& _oDepthStencilState)
@@ -503,7 +534,7 @@ namespace render
       // Set depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
 
-      internal::s_oRender.pStandardVS->AttachShader(); // Attach
+      internal::s_oRender.pSimpleVS->AttachShader(); // Attach
       internal::s_oRender.pCalculateLightsShader->DetachShader(); // Detach
       internal::s_oRender.pDeferredPS->DetachShader(); // Detach
       _pScene->DrawModels();
@@ -519,38 +550,71 @@ namespace render
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
 
-      // RT list
-      ID3D11RenderTargetView* lstRenderViews[4];
-      lstRenderViews[0] = *(internal::s_oRender.pPositionRT);
-      lstRenderViews[1] = *(internal::s_oRender.pDiffuseRT);
-      lstRenderViews[2] = *(internal::s_oRender.pNormalRT);
-      lstRenderViews[3] = *(internal::s_oRender.pSpecularRT);
+      // Clear RTs
+      internal::s_oRender.pPositionRT->ClearRT(internal::s_v4ClearColor);
+      internal::s_oRender.pDiffuseRT->ClearRT(internal::s_v4ClearColor);
+      internal::s_oRender.pNormalRT->ClearRT(internal::s_v4ClearColor);
+      internal::s_oRender.pSpecularRT->ClearRT(internal::s_v4ClearColor);
 
+      // RT list
+      ID3D11RenderTargetView* lstRenderTargets[4] = 
+      {
+        *(internal::s_oRender.pPositionRT),
+        *(internal::s_oRender.pDiffuseRT),
+        *(internal::s_oRender.pNormalRT),
+        *(internal::s_oRender.pSpecularRT)
+      };
       // Set render targets
       ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetView();
-      global::dx::s_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(lstRenderViews), &lstRenderViews[0], pDepthStencilView);
+      global::dx::s_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(lstRenderTargets), &lstRenderTargets[0], pDepthStencilView);
       // Set depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
-
-      // Push shaders
-      internal::s_oRender.pStandardVS->AttachShader(); // Push
-      internal::s_oRender.pDeferredPS->AttachShader(); // Detach
-
+      // Push deferred shader
+      internal::s_oRender.pDeferredPS->AttachShader(); // Attach
       // Draw models
       _pScene->DrawModels();
 
-      // Push shader
-      internal::s_oRender.pCalculateLightsShader->AttachShader(); // Attach
+      // Set back buffer
+      global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oRender.pBackBuffer, pDepthStencilView);
+      // Update lightning data
       _pScene->UpdateLighting();
+      // Attach
+      internal::s_oRender.pCalculateLightsShader->AttachShader();
+
+      // --- Lighting Pass: bind SRVs del G-Buffer ---
+      ID3D11ShaderResourceView* gBuffer[4] =
+      {
+        internal::s_oRender.pPositionRT->GetSRV(),
+        internal::s_oRender.pDiffuseRT->GetSRV(),
+        internal::s_oRender.pNormalRT->GetSRV(),
+        internal::s_oRender.pSpecularRT->GetSRV()
+      };
+
+      // Bind buffers
+      global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(gBuffer), gBuffer);
+      // Set linear sampler
+      global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oRender.pLinearSampler);
+
+      // Attach triangle shader
+      internal::s_oRender.pDrawTriangle->AttachShader();
+
+      // Draw fake triangle
+      global::dx::s_pDeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+      global::dx::s_pDeviceContext->IASetInputLayout(nullptr);
+      global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+      global::dx::s_pDeviceContext->Draw(3, 0);
+
+      ID3D11ShaderResourceView* nullSRVs[4] = { nullptr, nullptr, nullptr, nullptr };
+      global::dx::s_pDeviceContext->PSSetShaderResources(0, 4, nullSRVs);
     }
     EndMarker();
 
     // Draw primitives
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
-      ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetView();
-      global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oRender.pBackBuffer, pDepthStencilView);
-
+      internal::s_oRender.pSimpleVS->AttachShader(); // Attach
+      internal::s_oRender.pSimplePS->AttachShader(); // Attach
+      // Change depth stencil state
       internal::s_oRender.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
       internal::s_oRender.oDepthStencilCfg.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
       HRESULT hResult = SetDepthStencilState(internal::s_oRender.oDepthStencilCfg);
