@@ -24,9 +24,6 @@ namespace render
       math::CVector3 Color = math::CVector3::One;
       math::CVector2 UV = math::CVector2::Zero;
 
-      // Material ID
-      uint32_t MaterialID = 0;
-
       bool operator==(const SVertexData& _other) const;
       bool operator!=(const SVertexData& _other) const;
     };
@@ -84,8 +81,7 @@ namespace std
       size_t h1 = hash<int>()(roundFloat(v.Position.x)) ^ hash<int>()(roundFloat(v.Position.y)) ^ hash<int>()(roundFloat(v.Position.z));
       size_t h2 = hash<int>()(roundFloat(v.Normal.x)) ^ hash<int>()(roundFloat(v.Normal.y)) ^ hash<int>()(roundFloat(v.Normal.z));
       size_t h3 = hash<int>()(roundFloat(v.UV.x)) ^ hash<int>()(roundFloat(v.UV.y));
-      size_t h4 = hash<uint32_t>()(v.MaterialID);
-      return h1 ^ (h2 << 1) ^ (h3 << 2) ^ (h4 << 3);
+      return h1 ^ (h2 << 1) ^ (h3 << 2);
     }
   };
 }

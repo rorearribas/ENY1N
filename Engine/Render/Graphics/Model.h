@@ -12,8 +12,8 @@ namespace render
     public:
       struct SModelData
       {
-        std::vector<render::gfx::CMesh*> Meshes;
-        std::vector<render::gfx::SVertexData> VertexData;
+        std::vector<std::shared_ptr<render::gfx::CMesh>> Meshes;
+        std::vector<render::gfx::SVertexData> Vertices;
       };
 
     public:

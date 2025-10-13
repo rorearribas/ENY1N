@@ -29,6 +29,11 @@ namespace render
       HRESULT CreateTexture(const D3D11_TEXTURE2D_DESC& _oTextureCfg);
       HRESULT CreateSampler(const D3D11_SAMPLER_DESC& _oSamplerCfg);
 
+      inline ID3D11Texture2D* const GetTexture() { return m_pTexture; }
+      inline void SetTexture(ID3D11Texture2D* _pTexture) { m_pTexture = _pTexture; }
+      inline ID3D11SamplerState* const GetSampler() { return m_pSamplerState; }
+      inline void SetSampler(ID3D11SamplerState* _pSampler) { m_pSamplerState = _pSampler; }
+
       // Create resource
       template<typename _T>
       inline HRESULT CreateView(const _T& _oCfg)
@@ -54,16 +59,6 @@ namespace render
           return E_FAIL;
         }
       }
-
-      // Override operators
-      inline operator ID3D11Texture2D* () const { return m_pTexture; }
-      inline operator const ID3D11Texture2D* () const { return m_pTexture; }
-
-      inline ID3D11Texture2D* const GetTexture() { return m_pTexture; }
-      inline void SetTexture(ID3D11Texture2D* _pTexture) { m_pTexture = _pTexture; }
-      inline ID3D11SamplerState* const GetSampler() { return m_pSamplerState; }
-      inline void SetSampler(ID3D11SamplerState* _pSampler) { m_pSamplerState = _pSampler; }
-
       // Get resource
       inline auto* GetView() const
       {
@@ -88,6 +83,13 @@ namespace render
           return nullptr;
         }
       }
+
+      // Override operators
+      inline operator ID3D11Texture2D* () const { return m_pTexture; }
+      inline operator const ID3D11Texture2D* () const { return m_pTexture; }
+
+      inline bool operator=(CTexture2D<T>& _other) { return m_sTextureID == _other.m_sTextureID; }
+      inline bool operator=(CTexture2D<T>& _other) const { return m_sTextureID == _other.m_sTextureID; }
 
     private:
       void ReleaseTexture();

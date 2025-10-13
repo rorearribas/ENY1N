@@ -58,6 +58,7 @@ namespace render
   void CRenderTarget::CleanRT()
   {
     global::ReleaseObject(m_pTexture);
+    global::dx::SafeRelease(m_pSRV);
   }
 }
 

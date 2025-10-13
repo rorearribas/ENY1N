@@ -12,13 +12,13 @@ namespace render
     class CMaterial
     {
     public:
-      typedef std::map<ETextureType, texture::CTexture2D<SHADER_RESOURCE>*> TMapTextures;
+      typedef std::unordered_map<ETextureType, std::shared_ptr<texture::CTexture2D<SHADER_RESOURCE>>> TMapTextures;
 
     public:
-      CMaterial(std::string _sMaterialId) : m_sMaterialID(_sMaterialId) {}
+      CMaterial(const std::string& _sMaterialId) : m_sMaterialID(_sMaterialId) {}
       ~CMaterial();
 
-      texture::CTexture2D<SHADER_RESOURCE>* const RegisterTexture(ETextureType _eType, std::string _sTextureID);
+      void SetTexture(std::shared_ptr<texture::CTexture2D<SHADER_RESOURCE>> _pTexture, ETextureType _eType);
       texture::CTexture2D<SHADER_RESOURCE>* const GetTexture(ETextureType _eType);
       inline const std::string& GetMaterialId() const { return m_sMaterialID; }
 

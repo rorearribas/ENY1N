@@ -19,8 +19,7 @@ namespace render
     {
       return Position == _other.Position && // Pos
         Normal == _other.Normal && // Normal
-        UV == _other.UV && // TexCoord
-        MaterialID == _other.MaterialID; // Material ID
+        UV == _other.UV; // TexCoord
     }
     // ------------------------------------
     bool SVertexData::operator!=(const SVertexData& _other) const
@@ -121,41 +120,41 @@ namespace render
       m_bIgnoreGlobalLighting = _bState;
     }
     // ------------------------------------
-    void CMesh::UpdateVertexColor(ID3D11Buffer* _pVertexBuffer)
+    void CMesh::UpdateVertexColor(ID3D11Buffer* /*_pVertexBuffer*/)
     {
-      // Mapped vertex buffer (CPU)
-      D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
-      HRESULT hResult = global::dx::s_pDeviceContext->Map(_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
-      UNUSED_VAR(hResult);
-      assert(!FAILED(hResult));
+      //// Mapped vertex buffer (CPU)
+      //D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
+      //HRESULT hResult = global::dx::s_pDeviceContext->Map(_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      //UNUSED_VAR(hResult);
+      //assert(!FAILED(hResult));
 
-      // Get vertex data
-      SVertexData* pVertexData = static_cast<SVertexData*>(oMappedSubresource.pData);
-      assert(pVertexData);
+      //// Get vertex data
+      //SVertexData* pVertexData = static_cast<SVertexData*>(oMappedSubresource.pData);
+      //assert(pVertexData);
 
-      // Offset
-      uint32_t uOffset = 0;
-      uint32_t uTrianglesSize = static_cast<uint32_t>(m_vctIndices.size()) / 3; // Get triangles
-      for (uint32_t uIndex = 0; uIndex < uTrianglesSize; uIndex++)
-      {
-        // Set pixel color
-        uint32_t uMeshOffset = (static_cast<uint32_t>(m_vctIndices.size()) / uTrianglesSize); // Get mesh offset
-        for (uint32_t uJ = uOffset; uJ < uMeshOffset + uOffset; uJ++)
-        {
-          uint32_t uVertexDataIdx = m_vctIndices[uJ];
-          auto it = m_dctMaterials.find(pVertexData[uVertexDataIdx].MaterialID);
-          if (it != m_dctMaterials.end())
-          {
-            render::mat::CMaterial* pMaterial = it->second;
-            pVertexData[uVertexDataIdx].Color = pMaterial->GetDiffuseColor(); // Set diffuse value.
-          }
-        }
-        // Add offset
-        uOffset += uMeshOffset;
-      }
+      //// Offset
+      //uint32_t uOffset = 0;
+      //uint32_t uTrianglesSize = static_cast<uint32_t>(m_vctIndices.size()) / 3; // Get triangles
+      //for (uint32_t uIndex = 0; uIndex < uTrianglesSize; uIndex++)
+      //{
+      //  // Set pixel color
+      //  uint32_t uMeshOffset = (static_cast<uint32_t>(m_vctIndices.size()) / uTrianglesSize); // Get mesh offset
+      //  for (uint32_t uJ = uOffset; uJ < uMeshOffset + uOffset; uJ++)
+      //  {
+      //    uint32_t uVertexDataIdx = m_vctIndices[uJ];
+      //    auto it = m_dctMaterials.find(pVertexData[uVertexDataIdx].MaterialID);
+      //    if (it != m_dctMaterials.end())
+      //    {
+      //      render::mat::CMaterial* pMaterial = it->second;
+      //      pVertexData[uVertexDataIdx].Color = pMaterial->GetDiffuseColor(); // Set diffuse value.
+      //    }
+      //  }
+      //  // Add offset
+      //  uOffset += uMeshOffset;
+      //}
 
-      // Unmap
-      global::dx::s_pDeviceContext->Unmap(_pVertexBuffer, 0);
+      //// Unmap
+      //global::dx::s_pDeviceContext->Unmap(_pVertexBuffer, 0);
     }
     // ------------------------------------
     void CMesh::ClearBuffers()

@@ -42,7 +42,7 @@ namespace render
       global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
       // Draw meshes using indices
-      for (CMesh* pMesh : m_oModelData.Meshes)
+      for (auto& pMesh : m_oModelData.Meshes)
       {
         pMesh->Draw();
       }
@@ -65,9 +65,9 @@ namespace render
       // Flush model data
       Clear();
 
-      // Try to load model
+      // Load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
-      m_oModelData = std::move(pResourceManager->LoadModel(_sModelPath)); // I should change this!
+      m_oModelData = pResourceManager->LoadModel(_sModelPath); // I should change this!
       if (m_oModelData.Meshes.empty()) 
       {
         return E_FAIL;
@@ -78,23 +78,17 @@ namespace render
 
       // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
-      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::SVertexData) * m_oModelData.VertexData.size()));
+      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::SVertexData) * m_oModelData.Vertices.size()));
       oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
-      oSubresourceData.pSysMem = m_oModelData.VertexData.data();
+      oSubresourceData.pSysMem = m_oModelData.Vertices.data();
       HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
       if (FAILED(hResult))
       {
         return hResult;
-      }
-
-      // Update vertex color
-      for (CMesh* pMesh : m_oModelData.Meshes)
-      {
-        pMesh->UpdateVertexColor(m_pVertexBuffer);
       }
 
       // Create input layout
@@ -108,18 +102,19 @@ namespace render
       global::dx::SafeRelease(m_pInputLayout);
 
       // Clear meshes
-      for (render::gfx::CMesh* pMesh : m_oModelData.Meshes)
+      for (auto& pMesh : m_oModelData.Meshes)
       {
-        global::ReleaseObject(pMesh);
+        pMesh.reset();
       }
+
       m_oModelData.Meshes.clear();
-      m_oModelData.VertexData.clear();
+      m_oModelData.Vertices.clear();
     }
     // ------------------------------------
     void CModel::IgnoreGlobalLighting(bool _bIgnore)
     {
       // Update state!
-      for (CMesh* pMesh : m_oModelData.Meshes)
+      for (auto& pMesh : m_oModelData.Meshes)
       {
         pMesh->IgnoreGlobalLighting(_bIgnore);
       }

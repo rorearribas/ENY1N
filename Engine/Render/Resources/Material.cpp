@@ -16,18 +16,12 @@ namespace render
     texture::CTexture2D<SHADER_RESOURCE>* const CMaterial::GetTexture(ETextureType _eType)
     {
       TMapTextures::iterator it = m_dctTextures.find(_eType);
-      return it != m_dctTextures.end() ? it->second : nullptr;
+      return it != m_dctTextures.end() ? it->second.get() : nullptr;
     }
     // ------------------------------------
-    texture::CTexture2D<SHADER_RESOURCE>* const CMaterial::RegisterTexture(ETextureType _eType, std::string _sTextureID)
+    void CMaterial::SetTexture(std::shared_ptr<texture::CTexture2D<SHADER_RESOURCE>>_pTexture, ETextureType _eType)
     {
-      // Create new texture or get it
-      texture::CTexture2D<SHADER_RESOURCE>*& pTargetTexture = m_dctTextures[_eType];
-      if (!pTargetTexture)
-      {
-        pTargetTexture = new texture::CTexture2D<SHADER_RESOURCE>(_sTextureID);
-      }
-      return pTargetTexture;
+      m_dctTextures[_eType] = _pTexture;
     }
     // ------------------------------------
     void CMaterial::ClearTextures()
@@ -35,7 +29,7 @@ namespace render
       auto it = m_dctTextures.begin();
       for (; it != m_dctTextures.end(); ++it)
       {
-        global::ReleaseObject(it->second);
+        it->second.reset();
       }
       m_dctTextures.clear();
     }

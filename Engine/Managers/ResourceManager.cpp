@@ -12,7 +12,21 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-  // ------------------------------------
+CResourceManager::~CResourceManager()
+{
+  // Clean loaded textures
+  {
+    auto it = m_dctLoadedTextures.begin();
+    for (; it != m_dctLoadedTextures.end(); ++it)
+    {
+      it->second.reset();
+    }
+    m_dctLoadedTextures.clear();
+  }
+  // Clean loaded models
+  m_dctLoadedModels.clear();
+}
+ // ------------------------------------
 char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
 {
   FILE* pFile = nullptr;
@@ -42,6 +56,16 @@ char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
 // ------------------------------------
 render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
 {
+  // Get loaded model
+  {
+    auto it = m_dctLoadedModels.find(_sPath);
+    if (it != m_dctLoadedModels.end())
+    {
+      SUCCESS_LOG("Model loaded! -> " << _sPath);
+      return it->second;
+    }
+  }
+
   // Importer
   Assimp::Importer importer;
 
@@ -188,13 +212,13 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
   render::gfx::CModel::SModelData oModelData = render::gfx::CModel::SModelData();
   std::unordered_map<render::gfx::SVertexData, uint32_t> mVertexMap;
 
-  for (unsigned int uI = 0; uI < pScene->mNumMeshes; uI++)
+  for (uint32_t uI = 0; uI < pScene->mNumMeshes; uI++)
   {
     aiMesh* pSceneMesh = pScene->mMeshes[uI];
     assert(pSceneMesh);
 
     // Create internal mesh
-    render::gfx::CMesh* pMesh = new render::gfx::CMesh(pSceneMesh->mName.C_Str());
+    std::shared_ptr pMesh = std::make_shared<render::gfx::CMesh>(pSceneMesh->mName.C_Str());
     std::vector<uint32_t> vctIndices;
 
     for (uint32_t uJ = 0; uJ < pSceneMesh->mNumFaces; uJ++)
@@ -204,7 +228,6 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
       {
         render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
         uint32_t uPosIdx = oFace.mIndices[uK];
-        oVertexData.MaterialID = pSceneMesh->mMaterialIndex;
 
         // Position
         aiVector3D v3Pos = pSceneMesh->mVertices[uPosIdx];
@@ -245,7 +268,7 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
         {
           uint32_t uNewIdx = static_cast<uint32_t>(mVertexMap.size());
           mVertexMap[oVertexData] = uNewIdx;
-          oModelData.VertexData.emplace_back(std::move(oVertexData));
+          oModelData.Vertices.emplace_back(std::move(oVertexData));
           vctIndices.emplace_back(uNewIdx);
         }
       }
@@ -266,7 +289,8 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
   }
 
   SUCCESS_LOG("Model loaded! -> " << _sPath);
-  return oModelData;
+  m_dctLoadedModels.emplace(_sPath, oModelData);
+  return (--m_dctLoadedModels.end())->second;
 }
 // ------------------------------------
 unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
@@ -281,14 +305,28 @@ void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, rende
   if (oTargetPath.has_filename() && std::filesystem::exists(oTargetPath))
   {
     LOG("Loading texture...");
+    using namespace render::texture;
+    std::string sTextureID = oTargetPath.filename().stem().string();
+
+    // Get registered texture!
+    auto it = m_dctLoadedTextures.find(sTextureID);
+    if (it != m_dctLoadedTextures.end())
+    {
+      pMaterial->SetTexture(it->second, _eType);
+      SUCCESS_LOG("Texture loaded! -> " << oTargetPath.filename());
+      return;
+    }
+
     int iWidth = 0, iHeight = 0, iChannels = 0;
     unsigned char* pBuffer = LoadImage(oTargetPath.string().c_str(), iWidth, iHeight, iChannels);
     assert(pBuffer);
     SUCCESS_LOG("Texture loaded! -> " << oTargetPath.filename());
 
+    // Create texture
+    auto pTexture = std::make_shared<render::texture::CTexture2D<render::SHADER_RESOURCE>>(sTextureID);
+    pMaterial->SetTexture(pTexture, _eType);
     // Register texture
-    using namespace render::texture;
-    CTexture2D<render::SHADER_RESOURCE>* pTexture = pMaterial->RegisterTexture(_eType, oTargetPath.filename().stem().string());
+    m_dctLoadedTextures.emplace(sTextureID, pTexture);
 
     // Set texture config
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();

@@ -556,8 +556,9 @@ namespace render
       internal::s_oRender.pNormalRT->ClearRT(internal::s_v4ClearColor);
       internal::s_oRender.pSpecularRT->ClearRT(internal::s_v4ClearColor);
 
-      // RT list
-      ID3D11RenderTargetView* lstRenderTargets[4] = 
+      // Set GBuffer RTVs
+      constexpr int iGBufferSize(4);
+      ID3D11RenderTargetView* lstGBufferRTV[iGBufferSize] =
       {
         *(internal::s_oRender.pPositionRT),
         *(internal::s_oRender.pDiffuseRT),
@@ -566,7 +567,7 @@ namespace render
       };
       // Set render targets
       ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencilTexture->GetView();
-      global::dx::s_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(lstRenderTargets), &lstRenderTargets[0], pDepthStencilView);
+      global::dx::s_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(lstGBufferRTV), &lstGBufferRTV[0], pDepthStencilView);
       // Set depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
       // Push deferred shader
@@ -582,7 +583,7 @@ namespace render
       internal::s_oRender.pCalculateLightsShader->AttachShader();
 
       // GBuffer list
-      ID3D11ShaderResourceView* gBuffer[4] =
+      ID3D11ShaderResourceView* lstGBufferSRV[iGBufferSize] =
       {
         internal::s_oRender.pPositionRT->GetSRV(),
         internal::s_oRender.pDiffuseRT->GetSRV(),
@@ -590,21 +591,20 @@ namespace render
         internal::s_oRender.pSpecularRT->GetSRV()
       };
       // Bind buffers
-      global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(gBuffer), gBuffer);
+      global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(lstGBufferSRV), lstGBufferSRV);
       // Set linear sampler
       global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oRender.pLinearSampler);
 
       // Attach triangle shader
       internal::s_oRender.pDrawTriangle->AttachShader();
-
       // Draw fake triangle
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
       global::dx::s_pDeviceContext->IASetInputLayout(nullptr);
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
       global::dx::s_pDeviceContext->Draw(3, 0);
-
-      ID3D11ShaderResourceView* nullSRVs[4] = { nullptr, nullptr, nullptr, nullptr };
-      global::dx::s_pDeviceContext->PSSetShaderResources(0, 4, nullSRVs);
+      // Set invalid shaders
+      ID3D11ShaderResourceView* gBufferEmpty[iGBufferSize] = { nullptr, nullptr, nullptr, nullptr };
+      global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(gBufferEmpty), gBufferEmpty);
     }
     EndMarker();
 
