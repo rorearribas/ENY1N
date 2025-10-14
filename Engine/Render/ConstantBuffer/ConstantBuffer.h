@@ -25,16 +25,13 @@ struct __declspec(align(16)) SConstantMatrix
   math::CMatrix4x4 Matrix = math::CMatrix4x4::Identity;
 };
 
-// Check model data
-struct __declspec(align(16)) SConstantModelData
+// Textures data
+struct __declspec(align(16)) STexturesData
 {
-  // 4 byte + 4 byte + 4 byte
-  int IgnoreGlobalLighting = 0;
-  int HasTexture = 0;
-
-  // 8 + 8 Bytes
-  int Padding0 = 0;
-  int Padding1 = 0;
+  int HasDiffuse;
+  int HasNormal;
+  int HasSpecular;
+  int Padding0;
 };
 
 #pragma region Lights
@@ -110,7 +107,7 @@ private:
 
 public:
   CConstantBuffer() {}
-  ~CConstantBuffer() { CleanBuffer(); }
+  ~CConstantBuffer() { Clear(); }
 
   HRESULT Init(ID3D11Device* _pDevice, ID3D11DeviceContext* _pDeviceContext)
   {
@@ -141,7 +138,7 @@ public:
     m_pDeviceContext->Unmap(m_pBuffer, 0);
     return true;
   }
-  void CleanBuffer() { global::dx::SafeRelease(m_pBuffer); }
+  void Clear() { global::dx::SafeRelease(m_pBuffer); }
 
   ID3D11Buffer* GetBuffer() const { return m_pBuffer; }
   T& GetData() { return m_oData; }

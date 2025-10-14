@@ -82,33 +82,33 @@ int main()
   game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
   pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
 
-  for (uint32_t uIndex = 0; uIndex < 100; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(1.0f, 20.0f), GenerateFloat(-20.0f, 20.0f)));
+    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 20.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
   }
 
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
-  {
-    // FBX Test
-    game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-2000.0f, -2000.f), GenerateFloat(1.0f, 20.0f), GenerateFloat(-20.0f, 20.0f)));
-    game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-    pModelTest->LoadModel("models/manhattan/manhattan.fbx");
-    pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
-  }
+  //for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  //{
+  //  // FBX Test
+  //  game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+  //  pModelEnt->SetPosition(math::CVector3(GenerateFloat(-2000.0f, -2000.f), GenerateFloat(1.0f, 20.0f), GenerateFloat(-20.0f, 20.0f)));
+  //  game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
+  //  pModelTest->LoadModel("models/manhattan/manhattan.fbx");
+  //  pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+  //}
 
-  //// OBJ test
-  //game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
-  //pModelEnt2->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
-  //game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
-  //pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
-  //pModelEnt2->SetRotation(math::CVector3(90.0f, 180.0f, 0.0f));
-  //pModelEnt2->SetScale(math::CVector3(0.01f, 0.01f, 0.01f));
+  // OBJ test
+  game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
+  pModelEnt2->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
+  game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
+  pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
+  pModelEnt2->SetRotation(math::CVector3(90.0f, 180.0f, 0.0f));
+  pModelEnt2->SetScale(math::CVector3(0.01f, 0.01f, 0.01f));
 
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)

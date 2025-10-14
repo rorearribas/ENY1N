@@ -59,8 +59,6 @@ namespace render
 
       // Primitive data
       CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
-      CConstantBuffer<SConstantModelData> m_oConstantModelData;
-
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
       ID3D11InputLayout* m_pInputLayout = nullptr;

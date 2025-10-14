@@ -21,7 +21,6 @@ namespace render
       ~CModel();
 
       void Draw();
-      void IgnoreGlobalLighting(bool _bIgnore); // This is trash!!
 
       void SetPosition(const math::CVector3& _v3Position) { m_oModelTransform.SetPosition(_v3Position); }
       const math::CVector3& GetPosition() const { return m_oModelTransform.GetPosition(); }

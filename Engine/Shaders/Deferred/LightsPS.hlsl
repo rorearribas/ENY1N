@@ -50,18 +50,6 @@ struct Spotlight
   float Padding4;
 };
 
-// Constant buffer
-cbuffer ConstantTexture : register(b0)
-{
-  // 4 + 4 + 4
-  int IgnoreGlobalLighting = 0;
-  int HasTexture = 0;
-
-  // 8 + 8
-  int Padding0;
-  int Padding1;
-};
-
 // Constant buffer global lightning
 cbuffer GlobalLightingData : register(b1)
 {
@@ -86,18 +74,12 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
 {
   float3 v3WorldPos = gPosition.Sample(gSampleLinear, input.uv).xyz;
   float3 v3Diffuse = gDiffuse.Sample(gSampleLinear, input.uv).rgb;
+  float3 v3Specular = gSpecular.Sample(gSampleLinear, input.uv).rgb;
   float3 v3Normal = normalize(gNormal.Sample(gSampleLinear, input.uv).xyz);
   v3Normal = normalize(v3Normal * 2.0 - 1.0);
 
-  // Get color + normal
-  float4 v4TargetColor = HasTexture ? float4(v3Diffuse, 1.0f) : float4(1.0f, 1.0f, 1.0f, 1.0f);
-  
-  // If we don't use global illumination we simply return with the desired color!
-  if (IgnoreGlobalLighting)
-  {
-    return float4(v4TargetColor);
-  }
-  
+  float4 v4TargetColor = float4(v3Diffuse, 1.0f);
+
   // Ambient light
   float3 v3TotalDiffuse = float3(0.0f, 0.0f, 0.0f);
   float3 v3AmbientColor = 0.01f * float3(1.0f, 1.0f, 1.0f);

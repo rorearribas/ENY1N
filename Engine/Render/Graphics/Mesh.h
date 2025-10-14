@@ -7,8 +7,8 @@
 #include "Libs/Math/Transform.h"
 
 #include <vector>
-#include <unordered_map>
 
+namespace render { namespace mat { class CMaterial; } }
 namespace render
 {
   namespace gfx
@@ -22,7 +22,7 @@ namespace render
       math::CVector3 Position = math::CVector3::Zero;
       math::CVector3 Normal = math::CVector3::Zero;
       math::CVector3 Color = math::CVector3::One;
-      math::CVector2 UV = math::CVector2::Zero;
+      math::CVector2 TexCoord = math::CVector2::Zero;
 
       bool operator==(const SVertexData& _other) const;
       bool operator!=(const SVertexData& _other) const;
@@ -31,7 +31,6 @@ namespace render
     class CMesh
     {
     public:
-      typedef std::unordered_map<uint32_t, render::mat::CMaterial*> TMapMaterials;
       typedef std::vector<uint32_t> TIndexesList;
 
     public:
@@ -41,30 +40,25 @@ namespace render
       void Draw();
       HRESULT CreateBuffer(TIndexesList& _vctIndices);
 
-      void IgnoreGlobalLighting(bool _bEnabled);
-      void AddMaterial(render::mat::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx);
-      void UpdateVertexColor(ID3D11Buffer* _pVertexBuffer);
+      std::shared_ptr<render::mat::CMaterial> GetMaterial() const { return m_pMaterial; }
+      inline void SetMaterial(std::shared_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }
 
       const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndices.size()); }
       const std::string& GetMeshID() const { return m_sMeshID; }
 
-      TMapMaterials& GetMaterials() { return m_dctMaterials; }
-      const TMapMaterials& GetMaterials() const { return m_dctMaterials; }
-
     private:
       void ClearBuffers();
-      void ClearMaterials();
+      void ClearMaterial();
 
       // Info
       std::string m_sMeshID = std::string();
-      bool m_bIgnoreGlobalLighting = false;
 
       // Materials
-      TMapMaterials m_dctMaterials = TMapMaterials();
+      std::shared_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
       TIndexesList m_vctIndices = TIndexesList();
 
-      // Buffers
-      CConstantBuffer<SConstantModelData> m_oConstantModelData;
+      // Buffer
+      CConstantBuffer<STexturesData> m_oConstantBuffer;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
     };
   }
@@ -77,10 +71,10 @@ namespace std
   {
     size_t operator()(const render::gfx::SVertexData& v) const 
     {
-      auto roundFloat = [](float f) { return static_cast<int>(f * 1000); };
-      size_t h1 = hash<int>()(roundFloat(v.Position.x)) ^ hash<int>()(roundFloat(v.Position.y)) ^ hash<int>()(roundFloat(v.Position.z));
-      size_t h2 = hash<int>()(roundFloat(v.Normal.x)) ^ hash<int>()(roundFloat(v.Normal.y)) ^ hash<int>()(roundFloat(v.Normal.z));
-      size_t h3 = hash<int>()(roundFloat(v.UV.x)) ^ hash<int>()(roundFloat(v.UV.y));
+      auto oHashFunc = [](float f) { return static_cast<int>(f * 1000); };
+      size_t h1 = hash<int>()(oHashFunc(v.Position.x)) ^ hash<int>()(oHashFunc(v.Position.y)) ^ hash<int>()(oHashFunc(v.Position.z));
+      size_t h2 = hash<int>()(oHashFunc(v.Normal.x)) ^ hash<int>()(oHashFunc(v.Normal.y)) ^ hash<int>()(oHashFunc(v.Normal.z));
+      size_t h3 = hash<int>()(oHashFunc(v.TexCoord.x)) ^ hash<int>()(oHashFunc(v.TexCoord.y));
       return h1 ^ (h2 << 1) ^ (h3 << 2);
     }
   };

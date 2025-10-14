@@ -80,13 +80,13 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
   }
 
   // Materials
-  std::vector<render::mat::CMaterial*> vctMaterials;
+  std::vector<std::shared_ptr<render::mat::CMaterial>> vctMaterials;
   vctMaterials.reserve(pScene->mNumMaterials);
 
-  for (uint32_t uIndex = 0; uIndex < pScene->mNumMaterials; uIndex++)
+  for (uint32_t uI = 0; uI < pScene->mNumMaterials; uI++)
   {
     // Get material
-    aiMaterial* pLoadedMaterial = pScene->mMaterials[uIndex];
+    aiMaterial* pLoadedMaterial = pScene->mMaterials[uI];
 
     // Create new material
     auto* pMaterial = new render::mat::CMaterial(pLoadedMaterial->GetName().C_Str());
@@ -223,7 +223,7 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
 
     for (uint32_t uJ = 0; uJ < pSceneMesh->mNumFaces; uJ++)
     {
-      aiFace& oFace = pSceneMesh->mFaces[uJ];
+      const aiFace& oFace = pSceneMesh->mFaces[uJ];
       for (uint32_t uK = 0; uK < oFace.mNumIndices; uK++)
       {
         render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
@@ -251,11 +251,11 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
           oVertexData.Color = math::CVector3(v3Color.r, v3Color.g, v3Color.b);
         }
 
-        // UV
+        // Texture coords
         if (pSceneMesh->HasTextureCoords(0))
         {
           aiVector3D v3Coord = pSceneMesh->mTextureCoords[0][uPosIdx];
-          oVertexData.UV = math::CVector2(v3Coord.x, v3Coord.y);
+          oVertexData.TexCoord = math::CVector2(v3Coord.x, v3Coord.y);
         }
 
         // Add vertices
@@ -279,10 +279,10 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
     UNUSED_VAR(hResult);
     assert(!FAILED(hResult));
 
-    // Set material ID
+    // Add material
     if (pSceneMesh->mMaterialIndex >= 0 && pSceneMesh->mMaterialIndex < (int)vctMaterials.size())
     {
-      pMesh->AddMaterial(vctMaterials[pSceneMesh->mMaterialIndex], pSceneMesh->mMaterialIndex);
+      pMesh->SetMaterial(vctMaterials[pSceneMesh->mMaterialIndex]);
     }
 
     oModelData.Meshes.emplace_back(pMesh);

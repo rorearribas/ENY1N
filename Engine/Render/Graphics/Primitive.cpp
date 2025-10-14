@@ -26,9 +26,6 @@ namespace render
       hResult = CreateBufferFromData(_oData.m_vctVertexData, _oData.m_vctIndices);
       assert(!FAILED(hResult));
 
-      // Create constant model data buffer
-      m_oConstantModelData.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
-
       // Set values
       m_eRenderMode = _eRenderMode;
       m_eType = EPrimitiveType::CUSTOM;
@@ -43,9 +40,6 @@ namespace render
       hResult = CreatePrimitive(_ePrimitiveType, _eRenderMode);
       assert(!FAILED(hResult));
 
-      // Create constant model data buffer
-      m_oConstantModelData.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
-
       // Set values
       m_eRenderMode = _eRenderMode;
       m_eType = _ePrimitiveType;
@@ -54,8 +48,7 @@ namespace render
     CPrimitive::~CPrimitive()
     {
       // Release constant buffers
-      m_oConstantBuffer.CleanBuffer();
-      m_oConstantModelData.CleanBuffer();
+      m_oConstantBuffer.Clear();
 
       // Release dx
       global::dx::SafeRelease(m_pVertexBuffer);
@@ -76,23 +69,14 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(eTopology);
 
       // Set model matrix
-      m_oConstantBuffer.GetData().Matrix = m_oTransform.ComputeModelMatrix();
+      m_oConstantBuffer.GetData().Matrix = m_oTransform.CreateTransform();
       bool bOk = m_oConstantBuffer.WriteBuffer();
+      UNUSED_VAR(bOk);
       assert(bOk);
 
-      // Apply constant buffer
+      // Set constant model matrix
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
-
-      // Set constants
-      m_oConstantModelData.GetData().IgnoreGlobalLighting = m_bIgnoreGlobalLighting;
-      m_oConstantModelData.GetData().HasTexture = false;
-      bOk = m_oConstantModelData.WriteBuffer();
-      assert(bOk);
-
-      // Apply constant buffer
-      pConstantBuffer = m_oConstantModelData.GetBuffer();
-      global::dx::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
 
       // Draw
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -222,7 +206,7 @@ namespace render
       }
 
       // Clean buffer
-      m_oConstantBuffer.CleanBuffer();
+      m_oConstantBuffer.Clear();
 
       // Create constant buffer
       m_oConstantBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);

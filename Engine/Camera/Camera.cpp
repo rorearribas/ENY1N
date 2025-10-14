@@ -29,7 +29,7 @@ namespace render
   // ------------------------------------
   CCamera::~CCamera()
   {
-    m_oConstantBuffer.CleanBuffer();
+    m_oConstantBuffer.Clear();
     m_oFrustumPlanes.clear();
   }
   // ------------------------------------

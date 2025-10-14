@@ -32,7 +32,7 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
       // Set model matrix
-      m_oConstantBuffer.GetData().Matrix = m_oModelTransform.ComputeModelMatrix();
+      m_oConstantBuffer.GetData().Matrix = m_oModelTransform.CreateTransform();
       bool bOk = m_oConstantBuffer.WriteBuffer();
       UNUSED_VAR(bOk);
       assert(bOk);
@@ -109,15 +109,6 @@ namespace render
 
       m_oModelData.Meshes.clear();
       m_oModelData.Vertices.clear();
-    }
-    // ------------------------------------
-    void CModel::IgnoreGlobalLighting(bool _bIgnore)
-    {
-      // Update state!
-      for (auto& pMesh : m_oModelData.Meshes)
-      {
-        pMesh->IgnoreGlobalLighting(_bIgnore);
-      }
     }
   }
 }

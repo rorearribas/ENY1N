@@ -26,7 +26,7 @@ namespace scene
   // ------------------------------------
   CScene::~CScene()
   {
-    m_oGlobalLightingBuffer.CleanBuffer();
+    m_oGlobalLightingBuffer.Clear();
     DestroyAllPrimitives();
     DestroyAllModels();
     DestroyAllLights();

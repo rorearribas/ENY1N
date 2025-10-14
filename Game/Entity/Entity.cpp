@@ -70,7 +70,7 @@ namespace game
     const render::CCamera* pCamera = pEngine->GetCamera();
 
     float matrix[16];
-    math::CMatrix4x4 mTransform = m_oTransform.ComputeModelMatrix();
+    math::CMatrix4x4 mTransform = m_oTransform.CreateTransform();
     memcpy(matrix, mTransform(), sizeof(matrix));
 
     // Get matrix

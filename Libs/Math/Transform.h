@@ -9,7 +9,7 @@ namespace math
     CTransform() {}
     ~CTransform() {}
 
-    const math::CMatrix4x4 ComputeModelMatrix() const;
+    const math::CMatrix4x4 CreateTransform() const;
 
     void SetPosition(const math::CVector3& _v3Pos);
     const math::CVector3& GetPosition() const;

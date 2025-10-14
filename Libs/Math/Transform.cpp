@@ -4,7 +4,7 @@
 namespace math
 {
   // ------------------------------------
-  const math::CMatrix4x4 CTransform::ComputeModelMatrix() const
+  const math::CMatrix4x4 CTransform::CreateTransform() const
   {
     return math::CMatrix4x4::Translate(m_v3Pos) * math::CMatrix4x4::Rotation(m_v3Rot) * math::CMatrix4x4::Scale(m_v3Scale);
   }

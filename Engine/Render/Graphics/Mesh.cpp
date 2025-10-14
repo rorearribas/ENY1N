@@ -12,14 +12,12 @@ namespace render
        { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
        { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
        { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::gfx::SVertexData, UV), D3D11_INPUT_PER_VERTEX_DATA, 0 }
+       { "UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::gfx::SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 }
     };
     // ------------------------------------
     bool SVertexData::operator==(const SVertexData& _other) const
     {
-      return Position == _other.Position && // Pos
-        Normal == _other.Normal && // Normal
-        UV == _other.UV; // TexCoord
+      return Position == _other.Position && Normal == _other.Normal && TexCoord == _other.TexCoord;
     }
     // ------------------------------------
     bool SVertexData::operator!=(const SVertexData& _other) const
@@ -30,65 +28,51 @@ namespace render
     CMesh::~CMesh()
     {
       ClearBuffers();
-      ClearMaterials();
+      ClearMaterial();
     }
     // ------------------------------------
     void CMesh::Draw()
     {
-      // Push textures!
-      bool bHasTexture = false;
-      for (auto& it : m_dctMaterials)
+      // Get textures
+      texture::CTexture2D<SHADER_RESOURCE>* pDiffuseTexture = m_pMaterial ? m_pMaterial->GetTexture(DIFFUSE) : nullptr;
+      texture::CTexture2D<SHADER_RESOURCE>* pNormalTexture = m_pMaterial ? m_pMaterial->GetTexture(NORMAL) : nullptr;
+      texture::CTexture2D<SHADER_RESOURCE>* pSpecularTexture = m_pMaterial ? m_pMaterial->GetTexture(SPECULAR) : nullptr;
+
+      // Texture list
+      ID3D11ShaderResourceView* lstTextures[3] =
       {
-        texture::CTexture2D<SHADER_RESOURCE>* pDiffuseTexture = it.second->GetTexture(DIFFUSE);
-        texture::CTexture2D<SHADER_RESOURCE>* pNormalTexture = it.second->GetTexture(NORMAL);
-        texture::CTexture2D<SHADER_RESOURCE>* pSpecularTexture = it.second->GetTexture(SPECULAR);
+        pDiffuseTexture ? pDiffuseTexture->GetView() : nullptr,
+        pNormalTexture ? pNormalTexture->GetView() : nullptr,
+        pSpecularTexture ? pSpecularTexture->GetView() : nullptr,
+      };
+      // Bind shaders
+      global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(lstTextures), lstTextures);
 
-        // Check if has textures
-        if (pDiffuseTexture || pNormalTexture || pSpecularTexture)
-        {
-          bHasTexture = true;
-        }
-
-        // Texture list
-        ID3D11ShaderResourceView* lstTextures[3] =
-        {
-          pDiffuseTexture ? pDiffuseTexture->GetView() : nullptr,
-          pNormalTexture ? pNormalTexture->GetView() : nullptr,
-          pSpecularTexture ? pSpecularTexture->GetView() : nullptr,
-        };
-        // Bind shaders
-        global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(lstTextures), lstTextures);
-
-        // Sampler list
-        ID3D11SamplerState* lstSamplers[3] =
-        {
-          pDiffuseTexture ? pDiffuseTexture->GetSampler() : nullptr,
-          pNormalTexture ? pNormalTexture->GetSampler() : nullptr,
-          pSpecularTexture ? pSpecularTexture->GetSampler() : nullptr
-        };
-        // Bind samplers
-        global::dx::s_pDeviceContext->PSSetSamplers(0, ARRAYSIZE(lstSamplers), lstSamplers);
-      }
+      // Sampler list
+      ID3D11SamplerState* lstSamplers[3] =
+      {
+        pDiffuseTexture ? pDiffuseTexture->GetSampler() : nullptr,
+        pNormalTexture ? pNormalTexture->GetSampler() : nullptr,
+        pSpecularTexture ? pSpecularTexture->GetSampler() : nullptr
+      };
+      // Bind samplers
+      global::dx::s_pDeviceContext->PSSetSamplers(0, ARRAYSIZE(lstSamplers), lstSamplers);
 
       // Update buffer
-      m_oConstantModelData.GetData().IgnoreGlobalLighting = m_bIgnoreGlobalLighting;
-      m_oConstantModelData.GetData().HasTexture = bHasTexture;
-      bool bOk = m_oConstantModelData.WriteBuffer();
+      m_oConstantBuffer.GetData().HasDiffuse = static_cast<bool>(pDiffuseTexture);
+      m_oConstantBuffer.GetData().HasNormal = static_cast<bool>(pNormalTexture);
+      m_oConstantBuffer.GetData().HasSpecular = static_cast<bool>(pSpecularTexture);
+      bool bOk = m_oConstantBuffer.WriteBuffer();
       UNUSED_VAR(bOk);
       assert(bOk);
 
       // Set constant buffer
-      ID3D11Buffer* pConstantBuffer = m_oConstantModelData.GetBuffer();
+      ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
 
       // Draw
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
       global::dx::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_vctIndices.size()), 0, 0);
-    }
-    // ------------------------------------
-    void CMesh::AddMaterial(render::mat::CMaterial* _pMaterial, const uint32_t& _uMaterialIdx)
-    {
-      m_dctMaterials.emplace(_uMaterialIdx, _pMaterial);
     }
     // ------------------------------------
     HRESULT CMesh::CreateBuffer(TIndexesList& _vctIndices)
@@ -97,7 +81,7 @@ namespace render
       ClearBuffers();
 
       // Init constant check texture
-      m_oConstantModelData.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
+      m_oConstantBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
       // Get indexes
       m_vctIndices = std::move(_vctIndices);
@@ -115,62 +99,16 @@ namespace render
       return global::dx::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
     // ------------------------------------
-    void CMesh::IgnoreGlobalLighting(bool _bState)
-    {
-      m_bIgnoreGlobalLighting = _bState;
-    }
-    // ------------------------------------
-    void CMesh::UpdateVertexColor(ID3D11Buffer* /*_pVertexBuffer*/)
-    {
-      //// Mapped vertex buffer (CPU)
-      //D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
-      //HRESULT hResult = global::dx::s_pDeviceContext->Map(_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
-      //UNUSED_VAR(hResult);
-      //assert(!FAILED(hResult));
-
-      //// Get vertex data
-      //SVertexData* pVertexData = static_cast<SVertexData*>(oMappedSubresource.pData);
-      //assert(pVertexData);
-
-      //// Offset
-      //uint32_t uOffset = 0;
-      //uint32_t uTrianglesSize = static_cast<uint32_t>(m_vctIndices.size()) / 3; // Get triangles
-      //for (uint32_t uIndex = 0; uIndex < uTrianglesSize; uIndex++)
-      //{
-      //  // Set pixel color
-      //  uint32_t uMeshOffset = (static_cast<uint32_t>(m_vctIndices.size()) / uTrianglesSize); // Get mesh offset
-      //  for (uint32_t uJ = uOffset; uJ < uMeshOffset + uOffset; uJ++)
-      //  {
-      //    uint32_t uVertexDataIdx = m_vctIndices[uJ];
-      //    auto it = m_dctMaterials.find(pVertexData[uVertexDataIdx].MaterialID);
-      //    if (it != m_dctMaterials.end())
-      //    {
-      //      render::mat::CMaterial* pMaterial = it->second;
-      //      pVertexData[uVertexDataIdx].Color = pMaterial->GetDiffuseColor(); // Set diffuse value.
-      //    }
-      //  }
-      //  // Add offset
-      //  uOffset += uMeshOffset;
-      //}
-
-      //// Unmap
-      //global::dx::s_pDeviceContext->Unmap(_pVertexBuffer, 0);
-    }
-    // ------------------------------------
     void CMesh::ClearBuffers()
     {
       global::dx::SafeRelease(m_pIndexBuffer);
-      m_oConstantModelData.CleanBuffer();
+      m_oConstantBuffer.Clear();
+      m_vctIndices.clear();
     }
     // ------------------------------------
-    void CMesh::ClearMaterials()
+    void CMesh::ClearMaterial()
     {
-      auto it = m_dctMaterials.begin();
-      for (; it != m_dctMaterials.end(); ++it)
-      {
-        global::ReleaseObject(it->second);
-      }
-      m_dctMaterials.clear();
+      m_pMaterial.reset();
     }
   }
 }
