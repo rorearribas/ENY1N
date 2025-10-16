@@ -36,7 +36,8 @@ PS_INPUT VSMain(VS_INPUT input)
   float4 worldPosition = mul(modelMatrix, float4(input.position, 1.0));
   output.position = mul(viewProjection, worldPosition);
   output.worldpos = worldPosition.xyz;
-  output.normal = input.normal;
+  float3x3 normalMatrix = transpose((float3x3)modelMatrix);
+  output.normal = normalize(mul(normalMatrix, input.normal));
   output.color = input.color;
   output.uv = input.uv;
 

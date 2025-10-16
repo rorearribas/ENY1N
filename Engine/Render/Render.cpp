@@ -404,8 +404,8 @@ namespace render
   HRESULT CRender::SetupDeferredShading(uint32_t _uX, uint32_t _uY)
   {
     global::ReleaseObject(internal::s_oRender.pPositionRT);
-    internal::s_oRender.pPositionRT = new CRenderTarget("Position");
-    HRESULT hResult = internal::s_oRender.pPositionRT->CreateRT(_uX, _uY, DXGI_FORMAT_B8G8R8A8_UNORM);
+    internal::s_oRender.pPositionRT = new CRenderTarget("Position"); 
+    HRESULT hResult = internal::s_oRender.pPositionRT->CreateRT(_uX, _uY, DXGI_FORMAT_R32G32B32A32_FLOAT);
     if (FAILED(hResult))
     {
       return hResult;
@@ -413,7 +413,7 @@ namespace render
 
     global::ReleaseObject(internal::s_oRender.pDiffuseRT);
     internal::s_oRender.pDiffuseRT = new CRenderTarget("Diffuse");
-    hResult = internal::s_oRender.pDiffuseRT->CreateRT(_uX, _uY, DXGI_FORMAT_B8G8R8A8_UNORM);
+    hResult = internal::s_oRender.pDiffuseRT->CreateRT(_uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM);
     if (FAILED(hResult))
     {
       return hResult;
@@ -429,7 +429,7 @@ namespace render
 
     global::ReleaseObject(internal::s_oRender.pSpecularRT);
     internal::s_oRender.pSpecularRT = new CRenderTarget("Specular");
-    hResult = internal::s_oRender.pSpecularRT->CreateRT(_uX, _uY, DXGI_FORMAT_B8G8R8A8_UNORM);
+    hResult = internal::s_oRender.pSpecularRT->CreateRT(_uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM);
     if (FAILED(hResult))
     {
       return hResult;
@@ -597,11 +597,12 @@ namespace render
 
       // Attach triangle shader
       internal::s_oRender.pDrawTriangle->AttachShader();
-      // Draw quad!
+      // Draw triangle as fake quad!
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
       global::dx::s_pDeviceContext->IASetInputLayout(nullptr);
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
       global::dx::s_pDeviceContext->Draw(3, 0);
+
       // Set invalid shaders
       ID3D11ShaderResourceView* gBufferEmpty[iSize] = { nullptr, nullptr, nullptr, nullptr };
       global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(gBufferEmpty), gBufferEmpty);

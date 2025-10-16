@@ -28,13 +28,18 @@ struct GBuffer
   float4 gSpecular : SV_Target3;
 };
 
+float3 unpack_normal(float3 _v3Normal)
+{
+  return _v3Normal * 2.0f - 1.0f;
+}
+
 GBuffer DeferredPSMain(PS_INPUT input)
 {
   GBuffer gOutputBuffer;
   // Set position
   gOutputBuffer.gPosition = float4(input.worldpos, 1.0f);
   // Set normal
-  gOutputBuffer.gNormal = HasNormal ? tNormal.Sample(tNormalSampler, input.uv) : float4(input.normal, 1.0f);
+  gOutputBuffer.gNormal = HasNormal ? float4(unpack_normal(tNormal.Sample(tNormalSampler, input.uv).xyz), 1.0f) : float4(input.normal, 1.0f);
   // Set diffuse
   gOutputBuffer.gDiffuse = HasDiffuse ? tDiffuse.Sample(tDiffuseSampler, input.uv) : float4(input.color, 1.0f);
   // Set specular

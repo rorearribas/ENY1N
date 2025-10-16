@@ -86,7 +86,7 @@ int main()
   {
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 20.0f), GenerateFloat(-10.0f, 10.0f)));
+    pModelEnt->SetPosition(math::CVector3(-10.0f, 20.0f, 0.0f));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
@@ -125,7 +125,7 @@ int main()
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::gfx::EPrimitiveType::E3D_PLANE, render::ERenderMode::SOLID);
-  pPlaneModel->SetColor(math::CVector3(1.0f, 1.0f, 1.0f));
+  pPlaneModel->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
