@@ -50,9 +50,9 @@ namespace math
   // ------------------------------------
   math::CVector2 CVector2::Normalize(const CVector2& _v2)
   {
-    math::CVector2 v2Dir = _v2;
-    v2Dir.Normalize();
-    return v2Dir;
+    math::CVector2 v2Normalized = _v2;
+    v2Normalized.Normalize();
+    return v2Normalized;
   }
 }
 

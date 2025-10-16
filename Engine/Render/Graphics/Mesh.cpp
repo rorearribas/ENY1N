@@ -75,7 +75,7 @@ namespace render
       global::dx::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_vctIndices.size()), 0, 0);
     }
     // ------------------------------------
-    HRESULT CMesh::CreateBuffer(TIndexesList& _vctIndices)
+    HRESULT CMesh::CreateBuffer(TIndicesList& _vctIndices)
     {
       // Clean mesh
       ClearBuffers();

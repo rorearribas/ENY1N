@@ -9,6 +9,7 @@ namespace math
   math::CVector3 CVector3::Backward(0.0f, 0.0f, -1.0f);
   math::CVector3 CVector3::Right(1.0f, 0.0f, 0.0f);
   math::CVector3 CVector3::Up(0.0f, 1.0f, 0.0f);
+
   // ------------------------------------
   void CVector3::Normalize()
   {
@@ -129,10 +130,10 @@ namespace math
   {
     switch (_uIndex)
     {
-      case 0: return this->x;
-      case 1: return this->y;
-      case 2: return this->z;
-      default: return FLT_MAX;
+    case 0: return this->x;
+    case 1: return this->y;
+    case 2: return this->z;
+    default: return FLT_MAX;
     }
   }
   // ------------------------------------

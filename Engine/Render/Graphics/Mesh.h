@@ -31,20 +31,20 @@ namespace render
     class CMesh
     {
     public:
-      typedef std::vector<uint32_t> TIndexesList;
+      typedef std::vector<uint32_t> TIndicesList;
 
     public:
       CMesh(const std::string& _sMeshName) : m_sMeshID(_sMeshName) {}
       ~CMesh();
 
       void Draw();
-      HRESULT CreateBuffer(TIndexesList& _vctIndices);
+      HRESULT CreateBuffer(TIndicesList& _vctIndices);
 
-      std::shared_ptr<render::mat::CMaterial> GetMaterial() const { return m_pMaterial; }
+      inline std::shared_ptr<render::mat::CMaterial> GetMaterial() const { return m_pMaterial; }
       inline void SetMaterial(std::shared_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }
 
-      const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndices.size()); }
-      const std::string& GetMeshID() const { return m_sMeshID; }
+      inline const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndices.size()); }
+      inline const std::string& GetMeshID() const { return m_sMeshID; }
 
     private:
       void ClearBuffers();
@@ -55,7 +55,7 @@ namespace render
 
       // Materials
       std::shared_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
-      TIndexesList m_vctIndices = TIndexesList();
+      TIndicesList m_vctIndices = TIndicesList();
 
       // Buffer
       CConstantBuffer<STexturesData> m_oConstantBuffer;

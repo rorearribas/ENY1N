@@ -183,7 +183,6 @@
     <ClInclude Include="Scenes\SceneManager.h" />
     <ClInclude Include="Scenes\Scene.h" />
     <ClInclude Include="Render\Resources\Texture2D.h" />
-    <ClInclude Include="Render\Graphics\Shape.h" />
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Render\Lights\SpotLight.h" />
     <ClInclude Include="Collisions\SphereCollider.h" />
@@ -218,7 +217,6 @@
     <ClCompile Include="Scenes\SceneManager.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Render\Resources\Texture2D.cpp" />
-    <ClCompile Include="Render\Graphics\Shape.cpp" />
     <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="Render\Lights\SpotLight.cpp" />
     <ClCompile Include="Collisions\SphereCollider.cpp" />

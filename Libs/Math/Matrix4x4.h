@@ -12,22 +12,17 @@ namespace math
     static constexpr int s_iRowSize = 4;
 
     // column-major (DirectX/HLSL)
-    typedef float TMatrix4x4[s_iColumnSize][s_iRowSize];
     typedef float TMatrix16[s_iColumnSize * s_iRowSize];
-    union
-    {
-      TMatrix4x4 m4x4; // for debugging purposes only
-      TMatrix16 m16; // column-major style
-    };
+    TMatrix16 m; // column-major style
 
   public:
     static const CMatrix4x4 Identity;
     static const CMatrix4x4 Zero;
 
     CMatrix4x4() = default;
-    CMatrix4x4(const TMatrix4x4& _mMatrix)
+    CMatrix4x4(const TMatrix16& _mMatrix)
     {
-      std::memcpy(m16, _mMatrix, sizeof(TMatrix4x4));
+      std::memcpy(m, _mMatrix, sizeof(TMatrix16));
     }
     CMatrix4x4
     (
@@ -42,23 +37,23 @@ namespace math
     {
       if (this != &_Other)
       {
-        std::memcpy(m16, _Other.m16, sizeof(float) * (s_iColumnSize * s_iRowSize));
+        std::memcpy(m, _Other.m, sizeof(float) * (s_iColumnSize * s_iRowSize));
       }
       return *this;
     }
     inline math::CVector3 operator*(const math::CVector3& _v3Other) const
     {
-      float fX = _v3Other.x * m16[0] + _v3Other.y * m16[4] + _v3Other.z * m16[8] + m16[12];
-      float fY = _v3Other.x * m16[1] + _v3Other.y * m16[5] + _v3Other.z * m16[9] + m16[13];
-      float fZ = _v3Other.x * m16[2] + _v3Other.y * m16[6] + _v3Other.z * m16[10] + m16[14];
+      float fX = _v3Other.x * m[0] + _v3Other.y * m[4] + _v3Other.z * m[8] + m[12];
+      float fY = _v3Other.x * m[1] + _v3Other.y * m[5] + _v3Other.z * m[9] + m[13];
+      float fZ = _v3Other.x * m[2] + _v3Other.y * m[6] + _v3Other.z * m[10] + m[14];
       return math::CVector3(fX, fY, fZ);
     }
 
-    inline const float* operator()() const { return &m16[0]; }
-    inline float* operator()() { return &m16[0]; }
+    inline operator const float* () const { return &m[0]; }
+    inline operator float*() { return &m[0]; }
 
-    inline float operator[] (int _iPos) const { return m16[_iPos]; }
-    inline float& operator[] (int _iPos) { return m16[_iPos]; }
+    inline float operator[] (int _iPos) const { return m[_iPos]; }
+    inline float& operator[] (int _iPos) { return m[_iPos]; }
 
     static CMatrix4x4 LookAt(const CVector3& _v3Pos, const CVector3& _vTarget, const CVector3& _vUp);
     static CMatrix4x4 RotationAxis(const CVector3& _v3Axis, float _fAngle);
@@ -69,7 +64,13 @@ namespace math
     static CMatrix4x4 CreateOrtographicMatrix(float _fWidth, float _fHeight, float _fNear, float _fFar);
 
     static CMatrix4x4 Translate(const CVector3& _v3Translate);
+    math::CVector3 GetTranslate() const;
+
     static CMatrix4x4 Scale(const CVector3& _v3Scale);
+    math::CVector3 GetScale() const;
+    const bool HasScaleUniform() const;
+
     static CMatrix4x4 Rotation(const CVector3& _v3Rot);
+    math::CVector3 GetRotation() const;
   };
 }

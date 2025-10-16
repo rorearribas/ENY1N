@@ -41,7 +41,7 @@ namespace render
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
-      // Draw meshes using indices
+      // Draw meshes
       for (auto& pMesh : m_oModelData.Meshes)
       {
         pMesh->Draw();

@@ -69,9 +69,6 @@
     <ClInclude Include="Render\Graphics\Mesh.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Graphics\Shape.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Render\Lights\Light.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -174,9 +171,6 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Graphics\Mesh.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="Render\Graphics\Shape.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Lights\Light.cpp">

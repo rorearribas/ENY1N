@@ -69,10 +69,6 @@ namespace game
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     const render::CCamera* pCamera = pEngine->GetCamera();
 
-    float matrix[16];
-    math::CMatrix4x4 mTransform = m_oTransform.CreateTransform();
-    memcpy(matrix, mTransform(), sizeof(matrix));
-
     // Get matrix
     float fTranslation[3] = { m_oTransform.GetPosition().x, m_oTransform.GetPosition().y, m_oTransform.GetPosition().z };
     float fRotation[3] = { m_oTransform.GetRotation().x, m_oTransform.GetRotation().y, m_oTransform.GetRotation().z };
@@ -86,37 +82,28 @@ namespace game
     const math::CMatrix4x4& viewMatrix = pCamera->GetViewMatrix();
     const math::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
 
-    // Recompose matrix
-    ImGuizmo::RecomposeMatrixFromComponents(fTranslation, fRotation, fScale, matrix);
-
     // Manipulate gizmo
-    if (ImGuizmo::Manipulate(viewMatrix(), projectionMatrix(), s_eGizmoOperation, s_eGizmoMode, matrix))
+    math::CMatrix4x4 mMatrix = m_oTransform.CreateTransform();
+    if (ImGuizmo::Manipulate(viewMatrix, projectionMatrix, s_eGizmoOperation, s_eGizmoMode, mMatrix))
     {
-      // Decompose matrix
-      ImGuizmo::DecomposeMatrixToComponents(matrix, fTranslation, fRotation, fScale);
-
       // Apply modifications
       switch (s_eGizmoOperation)
       {
-      case ImGuizmo::TRANSLATE:
-      {
-        SetPosition(math::CVector3(fTranslation[0], fTranslation[1], fTranslation[2]));
-      }
-      break;
-      case ImGuizmo::ROTATE:
-      {
-        math::CVector3 vNewRot = m_oTransform.GetRotation();
-        vNewRot.x += (fRotation[0] - vNewRot.x);
-        vNewRot.y += (fRotation[1] - vNewRot.y);
-        vNewRot.z += (fRotation[2] - vNewRot.z);
-        SetRotation(vNewRot);
-      }
-      break;
-      case ImGuizmo::SCALE:
-      {
-        SetScale(math::CVector3(fScale[0], fScale[1], fScale[2]));
-      }
-      break;
+        case ImGuizmo::TRANSLATE:
+        {
+          SetPosition(mMatrix.GetTranslate());
+        }
+        break;
+        case ImGuizmo::ROTATE:
+        {
+          SetRotation(mMatrix.GetRotation());
+        }
+        break;
+        case ImGuizmo::SCALE:
+        {
+          SetScale(mMatrix.GetScale());
+        }
+        break;
       }
     }
 

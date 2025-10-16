@@ -259,8 +259,8 @@ namespace render
     float fHalfWidth = fHalfHeight * m_fAspectRatio;
 
     // Get axis
-    math::CVector3 v3Right = math::CVector3::Cross(math::CVector3::Up, m_v3Dir).Normalize();
-    math::CVector3 v3Up = math::CVector3::Cross(m_v3Dir, v3Right).Normalize();
+    math::CVector3 v3Right = math::CVector3::Normalize(math::CVector3::Cross(math::CVector3::Up, m_v3Dir));
+    math::CVector3 v3Up = math::CVector3::Normalize(math::CVector3::Cross(m_v3Dir, v3Right));
 
     math::CVector3 v3FrontFar = m_v3Dir * m_fFar;
     math::CVector3 v3FrontNear = m_v3Dir * m_fNear;
@@ -270,10 +270,10 @@ namespace render
 
     m_oFrustumPlanes[0].Set(v3NearPos, m_v3Dir); // Near
     m_oFrustumPlanes[1].Set(v3FarPos, -m_v3Dir); // Far
-    m_oFrustumPlanes[2].Set(v3NearPos, math::CVector3::Cross(v3FrontFar - v3Right * fHalfHeight, v3Up).Normalize()); // Right
-    m_oFrustumPlanes[3].Set(v3NearPos, math::CVector3::Cross(v3Up, v3FrontFar + v3Right * fHalfHeight).Normalize()); // Left
-    m_oFrustumPlanes[4].Set(v3NearPos, math::CVector3::Cross(v3Right, v3FrontFar - v3Up * fHalfWidth).Normalize()); // Top
-    m_oFrustumPlanes[5].Set(v3NearPos, math::CVector3::Cross(v3FrontFar + v3Up * fHalfWidth, v3Right).Normalize()); // Bottom
+    m_oFrustumPlanes[2].Set(v3NearPos, math::CVector3::Normalize(math::CVector3::Cross(v3FrontFar - v3Right * fHalfHeight, v3Up))); // Right
+    m_oFrustumPlanes[3].Set(v3NearPos, math::CVector3::Normalize(math::CVector3::Cross(v3Up, v3FrontFar + v3Right * fHalfHeight))); // Left
+    m_oFrustumPlanes[4].Set(v3NearPos, math::CVector3::Normalize(math::CVector3::Cross(v3Right, v3FrontFar - v3Up * fHalfWidth))); // Top
+    m_oFrustumPlanes[5].Set(v3NearPos, math::CVector3::Normalize(math::CVector3::Cross(v3FrontFar + v3Up * fHalfWidth, v3Right))); // Bottom
 
     //// Planes
     //math::CVector3 v3CenterNear = m_v3Pos + m_v3Dir * m_fNear;

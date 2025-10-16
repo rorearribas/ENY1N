@@ -27,10 +27,10 @@ namespace math
     float _m41, float _m42, float _m43, float _m44
   )
   {
-    m16[0] = _m11; m16[4] = _m12; m16[8] = _m13; m16[12] = _m14;
-    m16[1] = _m21; m16[5] = _m22; m16[9] = _m23; m16[13] = _m24;
-    m16[2] = _m31; m16[6] = _m32; m16[10] = _m33; m16[14] = _m34;
-    m16[3] = _m41; m16[7] = _m42; m16[11] = _m43; m16[15] = _m44;
+    m[0] = _m11; m[4] = _m12; m[8] = _m13; m[12] = _m14;
+    m[1] = _m21; m[5] = _m22; m[9] = _m23; m[13] = _m24;
+    m[2] = _m31; m[6] = _m32; m[10] = _m33; m[14] = _m34;
+    m[3] = _m41; m[7] = _m42; m[11] = _m43; m[15] = _m44;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::operator*(const CMatrix4x4& _Other) const
@@ -40,11 +40,11 @@ namespace math
     {
       for (int iRow = 0; iRow < s_iRowSize; ++iRow)
       {
-        mMatrix.m16[iColumn * 4 + iRow] =
-          this->m16[0 * 4 + iRow] * _Other.m16[iColumn * 4 + 0] +
-          this->m16[1 * 4 + iRow] * _Other.m16[iColumn * 4 + 1] +
-          this->m16[2 * 4 + iRow] * _Other.m16[iColumn * 4 + 2] +
-          this->m16[3 * 4 + iRow] * _Other.m16[iColumn * 4 + 3];
+        mMatrix.m[iColumn * 4 + iRow] =
+          this->m[0 * 4 + iRow] * _Other.m[iColumn * 4 + 0] +
+          this->m[1 * 4 + iRow] * _Other.m[iColumn * 4 + 1] +
+          this->m[2 * 4 + iRow] * _Other.m[iColumn * 4 + 2] +
+          this->m[3 * 4 + iRow] * _Other.m[iColumn * 4 + 3];
       }
     }
     return mMatrix;
@@ -57,12 +57,12 @@ namespace math
     float fTan = tanf(fFovRadians / 2.0f);
 
     CMatrix4x4 mPerspective = CMatrix4x4::Identity;
-    mPerspective.m16[0] = 1.0f / (_fAspectRatio * fTan);
-    mPerspective.m16[5] = 1.0f / fTan;
-    mPerspective.m16[10] = _fFar / (_fFar - _fNear);
-    mPerspective.m16[11] = 1.0f;
-    mPerspective.m16[14] = -_fNear * _fFar / (_fFar - _fNear);
-    mPerspective.m16[15] = 0.0f;
+    mPerspective.m[0] = 1.0f / (_fAspectRatio * fTan);
+    mPerspective.m[5] = 1.0f / fTan;
+    mPerspective.m[10] = _fFar / (_fFar - _fNear);
+    mPerspective.m[11] = 1.0f;
+    mPerspective.m[14] = -_fNear * _fFar / (_fFar - _fNear);
+    mPerspective.m[15] = 0.0f;
     return mPerspective;
   }
   // ------------------------------------
@@ -70,45 +70,45 @@ namespace math
   {
     // DirectX style
     CMatrix4x4 mOrtographic = CMatrix4x4::Identity;
-    mOrtographic.m16[0] = 2.0f / _fWidth;
-    mOrtographic.m16[5] = 2.0f / _fHeight;
-    mOrtographic.m16[10] = 1.0f / (_fNear - _fFar);
-    mOrtographic.m16[14] = -_fNear / (_fNear - _fFar);
-    mOrtographic.m16[15] = 1.0f;
+    mOrtographic.m[0] = 2.0f / _fWidth;
+    mOrtographic.m[5] = 2.0f / _fHeight;
+    mOrtographic.m[10] = 1.0f / (_fNear - _fFar);
+    mOrtographic.m[14] = -_fNear / (_fNear - _fFar);
+    mOrtographic.m[15] = 1.0f;
     return mOrtographic;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _v3Pos, const CVector3& _v3Target, const CVector3& _v3Up)
   {
     // Get dir
-    CVector3 v3Forward = (_v3Target - _v3Pos).Normalize();
+    CVector3 v3Forward = math::CVector3::Normalize(_v3Target - _v3Pos);
     // Right
-    CVector3 v3Right = _v3Up.Cross(v3Forward).Normalize();
+    CVector3 v3Right = math::CVector3::Normalize(_v3Up.Cross(v3Forward));
     // Up
-    CVector3 v3Up = v3Forward.Cross(v3Right).Normalize();
+    CVector3 v3Up = math::CVector3::Normalize(v3Forward.Cross(v3Right));
 
     // Compose matrix
     CMatrix4x4 mLookAt = CMatrix4x4::Identity;
 
-    mLookAt.m16[0] = v3Right.x;
-    mLookAt.m16[4] = v3Right.y;
-    mLookAt.m16[8] = v3Right.z;
-    mLookAt.m16[3] = 0.0f;
+    mLookAt.m[0] = v3Right.x;
+    mLookAt.m[4] = v3Right.y;
+    mLookAt.m[8] = v3Right.z;
+    mLookAt.m[3] = 0.0f;
 
-    mLookAt.m16[1] = v3Up.x;
-    mLookAt.m16[5] = v3Up.y;
-    mLookAt.m16[9] = v3Up.z;
-    mLookAt.m16[7] = 0.0f;
+    mLookAt.m[1] = v3Up.x;
+    mLookAt.m[5] = v3Up.y;
+    mLookAt.m[9] = v3Up.z;
+    mLookAt.m[7] = 0.0f;
 
-    mLookAt.m16[2] = v3Forward.x;
-    mLookAt.m16[6] = v3Forward.y;
-    mLookAt.m16[10] = v3Forward.z;
-    mLookAt.m16[11] = 0.0f;
+    mLookAt.m[2] = v3Forward.x;
+    mLookAt.m[6] = v3Forward.y;
+    mLookAt.m[10] = v3Forward.z;
+    mLookAt.m[11] = 0.0f;
 
-    mLookAt.m16[12] = -v3Right.Dot(_v3Pos);
-    mLookAt.m16[13] = -v3Up.Dot(_v3Pos);
-    mLookAt.m16[14] = -v3Forward.Dot(_v3Pos);
-    mLookAt.m16[15] = 1.0f;
+    mLookAt.m[12] = -v3Right.Dot(_v3Pos);
+    mLookAt.m[13] = -v3Up.Dot(_v3Pos);
+    mLookAt.m[14] = -v3Forward.Dot(_v3Pos);
+    mLookAt.m[15] = 1.0f;
 
     return mLookAt;
   }
@@ -116,19 +116,39 @@ namespace math
   math::CMatrix4x4 CMatrix4x4::Translate(const CVector3& _v3Translate)
   {
     CMatrix4x4 mTranslate = CMatrix4x4::Identity;
-    mTranslate.m16[12] = _v3Translate.x;
-    mTranslate.m16[13] = _v3Translate.y;
-    mTranslate.m16[14] = _v3Translate.z;
+    mTranslate.m[12] = _v3Translate.x;
+    mTranslate.m[13] = _v3Translate.y;
+    mTranslate.m[14] = _v3Translate.z;
     return mTranslate;
+  }
+  // ------------------------------------
+  math::CVector3 CMatrix4x4::GetTranslate() const
+  {
+    return math::CVector3(m[12], m[13], m[14]);
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Scale(const CVector3& _v3Scale)
   {
     CMatrix4x4 mScale = CMatrix4x4::Identity;
-    mScale.m16[0] = _v3Scale.x;
-    mScale.m16[5] = _v3Scale.y;
-    mScale.m16[10] = _v3Scale.z;
+    mScale.m[0] = _v3Scale.x;
+    mScale.m[5] = _v3Scale.y;
+    mScale.m[10] = _v3Scale.z;
     return mScale;
+  }
+  // ------------------------------------
+  math::CVector3 CMatrix4x4::GetScale() const
+  {
+    math::CVector3 v3Scale;
+    v3Scale.x = sqrtf(m[0] * m[0] + m[1] * m[1] + m[2] * m[2]);
+    v3Scale.y = sqrtf(m[4] * m[4] + m[5] * m[5] + m[6] * m[6]);
+    v3Scale.z = sqrtf(m[8] * m[8] + m[9] * m[9] + m[10] * m[10]);
+    return v3Scale;
+  }
+  // ------------------------------------
+  const bool CMatrix4x4::HasScaleUniform() const
+  {
+    math::CVector3 v3Scale = GetScale();
+    return fabs(v3Scale.x - v3Scale.y) < math::s_fEpsilon5 && fabs(v3Scale.x - v3Scale.z) < math::s_fEpsilon5;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _v3Rot)
@@ -139,26 +159,44 @@ namespace math
 
     // Roll (Z)
     CMatrix4x4 mRoll = CMatrix4x4::Identity;
-    mRoll.m16[0] = cos(fRoll);
-    mRoll.m16[1] = sin(fRoll);
-    mRoll.m16[4] = -sin(fRoll);
-    mRoll.m16[5] = cos(fRoll);
+    mRoll.m[0] = cos(fRoll);
+    mRoll.m[1] = sin(fRoll);
+    mRoll.m[4] = -sin(fRoll);
+    mRoll.m[5] = cos(fRoll);
 
     // Pitch (X)
     CMatrix4x4 mPitch = CMatrix4x4::Identity;
-    mPitch.m16[5] = cos(fPitch);
-    mPitch.m16[6] = sin(fPitch);
-    mPitch.m16[9] = -sin(fPitch);
-    mPitch.m16[10] = cos(fPitch);
+    mPitch.m[5] = cos(fPitch);
+    mPitch.m[6] = sin(fPitch);
+    mPitch.m[9] = -sin(fPitch);
+    mPitch.m[10] = cos(fPitch);
 
     // Yaw (Y)
     CMatrix4x4 mYaw = CMatrix4x4::Identity;
-    mYaw.m16[0] = cos(fYaw);
-    mYaw.m16[2] = -sin(fYaw);
-    mYaw.m16[8] = sin(fYaw);
-    mYaw.m16[10] = cos(fYaw);
+    mYaw.m[0] = cos(fYaw);
+    mYaw.m[2] = -sin(fYaw);
+    mYaw.m[8] = sin(fYaw);
+    mYaw.m[10] = cos(fYaw);
 
     return mYaw * mPitch * mRoll;
+  }
+  // ------------------------------------
+  math::CVector3 CMatrix4x4::GetRotation() const
+  {
+    math::CVector3 v3Rot = math::CVector3::Zero;
+    // Get axis with uniform scale
+    math::CVector3 xAxis = math::CVector3(m[0], m[1], m[2]);
+    math::CVector3 yAxis = math::CVector3(m[4], m[5], m[6]);
+    math::CVector3 zAxis = math::CVector3(m[8], m[9], m[10]);
+    // Normalize
+    xAxis.Normalize();
+    yAxis.Normalize();
+    zAxis.Normalize();
+    // Calculate rot
+    v3Rot.y = math::Rad2Degrees(atan2f(zAxis.x, sqrtf(zAxis.y * zAxis.y + zAxis.z * zAxis.z))); // yaw
+    v3Rot.x = math::Rad2Degrees(atan2f(-zAxis.y, zAxis.z)); // pitch
+    v3Rot.z = math::Rad2Degrees(atan2f(-yAxis.x, xAxis.x)); // roll
+    return v3Rot;
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::RotationAxis(const CVector3& _v3Axis, float _fAngle)
@@ -169,19 +207,19 @@ namespace math
     float fOffset = 1.0f - fCos;
 
     CMatrix4x4 mRot(CMatrix4x4::Identity);
-    mRot.m16[0] = _v3Axis.x * _v3Axis.x * fOffset + fCos;
-    mRot.m16[4] = _v3Axis.x * _v3Axis.y * fOffset - _v3Axis.z * fSin;
-    mRot.m16[8] = _v3Axis.x * _v3Axis.z * fOffset + _v3Axis.y * fSin;
+    mRot.m[0] = _v3Axis.x * _v3Axis.x * fOffset + fCos;
+    mRot.m[4] = _v3Axis.x * _v3Axis.y * fOffset - _v3Axis.z * fSin;
+    mRot.m[8] = _v3Axis.x * _v3Axis.z * fOffset + _v3Axis.y * fSin;
 
-    mRot.m16[1] = _v3Axis.y * _v3Axis.x * fOffset + _v3Axis.z * fSin;
-    mRot.m16[5] = _v3Axis.y * _v3Axis.y * fOffset + fCos;
-    mRot.m16[9] = _v3Axis.y * _v3Axis.z * fOffset - _v3Axis.x * fSin;
+    mRot.m[1] = _v3Axis.y * _v3Axis.x * fOffset + _v3Axis.z * fSin;
+    mRot.m[5] = _v3Axis.y * _v3Axis.y * fOffset + fCos;
+    mRot.m[9] = _v3Axis.y * _v3Axis.z * fOffset - _v3Axis.x * fSin;
 
-    mRot.m16[2] = _v3Axis.z * _v3Axis.x * fOffset - _v3Axis.y * fSin;
-    mRot.m16[6] = _v3Axis.z * _v3Axis.y * fOffset + _v3Axis.x * fSin;
-    mRot.m16[10] = _v3Axis.z * _v3Axis.z * fOffset + fCos;
+    mRot.m[2] = _v3Axis.z * _v3Axis.x * fOffset - _v3Axis.y * fSin;
+    mRot.m[6] = _v3Axis.z * _v3Axis.y * fOffset + _v3Axis.x * fSin;
+    mRot.m[10] = _v3Axis.z * _v3Axis.z * fOffset + fCos;
 
-    mRot.m16[15] = 1.0f;
+    mRot.m[15] = 1.0f;
 
     return mRot;
   }
@@ -236,7 +274,7 @@ namespace math
     {
       for (int iColumn = 0; iColumn < s_iColumnSize; ++iColumn)
       {
-        mTranspose.m16[iColumn * 4 + iRow] = _mMatrix.m16[iRow * 4 + iColumn];
+        mTranspose.m[iColumn * 4 + iRow] = _mMatrix.m[iRow * 4 + iColumn];
       }
     }
     return mTranspose;

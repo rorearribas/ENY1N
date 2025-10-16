@@ -55,7 +55,7 @@ namespace collision
     const math::CVector3& v3WorldPos = GetWorldPos();
     m_v3EndSegmentPoint = v3WorldPos + (v3TargetAxis * fHalfSize);
     m_v3StartSegmentPoint = v3WorldPos - (v3TargetAxis * fHalfSize);
-    m_v3SegmentDir = (m_v3EndSegmentPoint - m_v3StartSegmentPoint).Normalize();
+    m_v3SegmentDir = math::CVector3::Normalize(m_v3EndSegmentPoint - m_v3StartSegmentPoint);
   }
   // ------------------------------------
   void CCapsuleCollider::SetRadius(float _fRadius)
@@ -232,7 +232,7 @@ namespace collision
     float fCapsuleWidth = GetRadius() + GetRadius();
     if (fDist <= fCapsuleWidth)
     {
-      _oHitEvent_.Normal = (GetWorldPos() - _pOther->GetCenter()).Normalize();
+      _oHitEvent_.Normal = math::CVector3::Normalize(GetWorldPos() - _pOther->GetCenter());
       _oHitEvent_.Depth = fCapsuleWidth - sqrtf(fDist);
       _oHitEvent_.ImpactPoint = GetWorldPos() + (_oHitEvent_.Normal * GetRadius());
       return true;
