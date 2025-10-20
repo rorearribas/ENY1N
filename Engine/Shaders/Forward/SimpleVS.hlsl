@@ -1,13 +1,14 @@
 // Simple vertex shader
 
-cbuffer Camera : register(b0)
+cbuffer ConstantTransforms : register(b0)
 {
-  matrix viewProjection;
-};
-
-cbuffer ModelMatrix : register(b1)
-{
-  matrix modelMatrix;
+  // MVP
+  matrix View;
+  matrix Projection;
+  matrix Model;
+  // Inverse
+  matrix InvView;
+  matrix InvProjection;
 };
 
 // Vertex input
@@ -33,10 +34,14 @@ PS_INPUT VSMain(VS_INPUT input)
 {
   PS_INPUT output;
 
-  float4 worldPosition = mul(modelMatrix, float4(input.position, 1.0));
+  // MVP
+  float4 worldPosition = mul(Model, float4(input.position, 1.0));
+  matrix viewProjection = mul(Projection, View);
   output.position = mul(viewProjection, worldPosition);
+
   output.worldpos = worldPosition.xyz;
-  float3x3 normalMatrix = transpose((float3x3)modelMatrix);
+  float3x3 normalMatrix = transpose((float3x3)Model);
+
   output.normal = normalize(mul(normalMatrix, input.normal));
   output.color = input.color;
   output.uv = input.uv;

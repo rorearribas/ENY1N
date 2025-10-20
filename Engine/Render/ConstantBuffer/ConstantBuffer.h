@@ -19,10 +19,20 @@
 | matriz NxM      | N×16 bytes     |
 */
 
-// Model matrix
-struct __declspec(align(16)) SConstantMatrix
+// Matrix
+struct __declspec(align(16)) SConstantTransforms
 {
-  math::CMatrix4x4 Matrix = math::CMatrix4x4::Identity;
+  // MVP
+  math::CMatrix4x4 View = math::CMatrix4x4::Identity;
+  math::CMatrix4x4 Projection = math::CMatrix4x4::Identity;
+  math::CMatrix4x4 Model = math::CMatrix4x4::Identity;
+  // Inverse
+  math::CMatrix4x4 InvView = math::CMatrix4x4::Identity;
+  math::CMatrix4x4 InvProjection = math::CMatrix4x4::Identity;
+  // Projection CFG
+  float FarPlane = 10000.0f;
+  float NearPlane = 0.01f;
+  float Padding[2];
 };
 
 // Textures data
@@ -31,7 +41,7 @@ struct __declspec(align(16)) STexturesData
   int HasDiffuse;
   int HasNormal;
   int HasSpecular;
-  int Padding0;
+  int Padding;
 };
 
 #pragma region Lights

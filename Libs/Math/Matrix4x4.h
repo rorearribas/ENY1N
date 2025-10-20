@@ -20,9 +20,9 @@ namespace math
     static const CMatrix4x4 Zero;
 
     CMatrix4x4() = default;
-    CMatrix4x4(const TMatrix16& _mMatrix)
+    CMatrix4x4(const CMatrix4x4& _mMatrix)
     {
-      std::memcpy(m, _mMatrix, sizeof(TMatrix16));
+      std::memcpy(m, _mMatrix.m, sizeof(TMatrix16));
     }
     CMatrix4x4
     (
@@ -58,7 +58,11 @@ namespace math
     static CMatrix4x4 LookAt(const CVector3& _v3Pos, const CVector3& _vTarget, const CVector3& _vUp);
     static CMatrix4x4 RotationAxis(const CVector3& _v3Axis, float _fAngle);
     static CMatrix4x4 AlignMatrix(const CVector3& _v3Current, const CVector3& _v3Target);
-    static CMatrix4x4 Transpose(const CMatrix4x4& matrix);
+
+    static CMatrix4x4 Invert(const CMatrix4x4& _mMatrix);
+    void Invert();
+    static CMatrix4x4 Transpose(const CMatrix4x4& _mMatrix);
+    void Transpose();
 
     static CMatrix4x4 CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar);
     static CMatrix4x4 CreateOrtographicMatrix(float _fWidth, float _fHeight, float _fNear, float _fFar);

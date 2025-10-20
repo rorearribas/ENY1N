@@ -113,6 +113,175 @@ namespace math
     return mLookAt;
   }
   // ------------------------------------
+  math::CMatrix4x4 CMatrix4x4::RotationAxis(const CVector3& _v3Axis, float _fAngle)
+  {
+    // We are supposing that the axis is normalized!!
+    float fCos = cosf(_fAngle);
+    float fSin = sinf(_fAngle);
+    float fOffset = 1.0f - fCos;
+
+    CMatrix4x4 mRot(CMatrix4x4::Identity);
+    mRot.m[0] = _v3Axis.x * _v3Axis.x * fOffset + fCos;
+    mRot.m[4] = _v3Axis.x * _v3Axis.y * fOffset - _v3Axis.z * fSin;
+    mRot.m[8] = _v3Axis.x * _v3Axis.z * fOffset + _v3Axis.y * fSin;
+
+    mRot.m[1] = _v3Axis.y * _v3Axis.x * fOffset + _v3Axis.z * fSin;
+    mRot.m[5] = _v3Axis.y * _v3Axis.y * fOffset + fCos;
+    mRot.m[9] = _v3Axis.y * _v3Axis.z * fOffset - _v3Axis.x * fSin;
+
+    mRot.m[2] = _v3Axis.z * _v3Axis.x * fOffset - _v3Axis.y * fSin;
+    mRot.m[6] = _v3Axis.z * _v3Axis.y * fOffset + _v3Axis.x * fSin;
+    mRot.m[10] = _v3Axis.z * _v3Axis.z * fOffset + fCos;
+
+    mRot.m[15] = 1.0f;
+
+    return mRot;
+  }
+  // ------------------------------------
+  // https://iquilezles.org/articles/noacos/
+  math::CMatrix4x4 CMatrix4x4::AlignMatrix(const CVector3& _v3Current, const CVector3& _v3Target)
+  {
+    const float fDot = math::CVector3::Dot(_v3Current, _v3Target);
+    if (std::abs(fDot) > (1.0f - math::s_fEpsilon3))
+    {
+      if (fDot > 0.0f)
+      {
+        return Identity;
+      }
+
+      // Calculate 180 degrees
+      math::CVector3 v3Orthogonal = math::CVector3::Cross(_v3Current, math::CVector3::Right);
+      if (v3Orthogonal.Magnitude() < math::s_fEpsilon3)
+      {
+        v3Orthogonal = math::CVector3::Cross(_v3Current, math::CVector3::Up);
+      }
+      v3Orthogonal.Normalize();
+      return CMatrix4x4::RotationAxis(v3Orthogonal, math::s_fPI);
+    }
+
+    const math::CVector3 v3Cross = math::CVector3::Cross(_v3Current, _v3Target);
+    const float fK = 1.0f / (1.0f + fDot);
+
+    return CMatrix4x4
+    (
+      v3Cross.x * v3Cross.x * fK + fDot,
+      v3Cross.y * v3Cross.x * fK - v3Cross.z,
+      v3Cross.z * v3Cross.x * fK + v3Cross.y,
+      0.0f,
+
+      v3Cross.x * v3Cross.y * fK + v3Cross.z,
+      v3Cross.y * v3Cross.y * fK + fDot,
+      v3Cross.z * v3Cross.y * fK - v3Cross.x,
+      0.0f,
+
+      v3Cross.x * v3Cross.z * fK - v3Cross.y,
+      v3Cross.y * v3Cross.z * fK + v3Cross.x,
+      v3Cross.z * v3Cross.z * fK + fDot,
+      0.0f, 0.0f, 0.0f, 0.0f, 1.0f
+    );
+  }
+  // ------------------------------------
+  math::CMatrix4x4 CMatrix4x4::Invert(const math::CMatrix4x4& _mMatrix)
+  {
+    math::CMatrix4x4 mCurrent(_mMatrix);
+    math::CMatrix4x4 mInvert = math::CMatrix4x4::Identity;
+
+    // Forward elimination
+    for (uint32_t i = 0; i < 3; i++)
+    {
+      // Step 1: Choose a pivot (largest value in the column)
+      uint32_t pivot = i;
+      float pivotSize = std::fabs(mCurrent.m[i * 4 + i]); // column i, row i
+
+      for (uint32_t row = i + 1; row < 4; row++)
+      {
+        float tmp = std::fabs(mCurrent.m[i * 4 + row]); // column i, row
+        if (tmp > pivotSize)
+        {
+          pivot = row;
+          pivotSize = tmp;
+        }
+      }
+
+      if (pivotSize == 0.0f)
+        return math::CMatrix4x4(); // Singular matrix, no inverse
+
+    // Step 1b: Swap rows
+      if (pivot != i)
+      {
+        for (uint32_t col = 0; col < 4; col++)
+        {
+          std::swap(mCurrent.m[col * 4 + i], mCurrent.m[col * 4 + pivot]);
+          std::swap(mInvert.m[col * 4 + i], mInvert.m[col * 4 + pivot]);
+        }
+      }
+
+      // Step 2: Eliminate entries below the pivot
+      for (uint32_t row = i + 1; row < 4; row++)
+      {
+        float f = mCurrent.m[i * 4 + row] / mCurrent.m[i * 4 + i];
+        for (uint32_t col = 0; col < 4; col++)
+        {
+          mCurrent.m[col * 4 + row] -= f * mCurrent.m[col * 4 + i];
+          mInvert.m[col * 4 + row] -= f * mInvert.m[col * 4 + i];
+        }
+        mCurrent.m[i * 4 + row] = 0.0f; // Correct for numerical round-off
+      }
+    }
+
+    // Step 3: Normalize the diagonal to 1
+    for (uint32_t i = 0; i < 4; i++)
+    {
+      float divisor = mCurrent.m[i * 4 + i];
+      for (uint32_t col = 0; col < 4; col++)
+      {
+        mCurrent.m[col * 4 + i] /= divisor;
+        mInvert.m[col * 4 + i] /= divisor;
+      }
+      mCurrent.m[i * 4 + i] = 1.0f;
+    }
+
+    // Step 4: Eliminate entries above the pivot
+    for (int i = 3; i >= 0; i--)
+    {
+      for (int row = i - 1; row >= 0; row--)
+      {
+        float f = mCurrent.m[i * 4 + row];
+        for (uint32_t col = 0; col < 4; col++)
+        {
+          mCurrent.m[col * 4 + row] -= f * mCurrent.m[col * 4 + i];
+          mInvert.m[col * 4 + row] -= f * mInvert.m[col * 4 + i];
+        }
+        mCurrent.m[i * 4 + row] = 0.0f; // Correct for numerical round-off
+      }
+    }
+
+    return mInvert;
+  }
+  // ------------------------------------
+  void CMatrix4x4::Invert()
+  {
+    *this = Invert(*this);
+  }
+  // ------------------------------------
+  math::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)
+  {
+    CMatrix4x4 mTranspose = CMatrix4x4::Identity;
+    for (int iRow = 0; iRow < s_iRowSize; ++iRow)
+    {
+      for (int iColumn = 0; iColumn < s_iColumnSize; ++iColumn)
+      {
+        mTranspose.m[iColumn * 4 + iRow] = _mMatrix.m[iRow * 4 + iColumn];
+      }
+    }
+    return mTranspose;
+  }
+  // ------------------------------------
+  void CMatrix4x4::Transpose()
+  {
+    *this = Transpose(*this);
+  }
+  // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Translate(const CVector3& _v3Translate)
   {
     CMatrix4x4 mTranslate = CMatrix4x4::Identity;
@@ -197,86 +366,5 @@ namespace math
     v3Rot.x = math::Rad2Degrees(atan2f(-zAxis.y, zAxis.z)); // pitch
     v3Rot.z = math::Rad2Degrees(atan2f(-yAxis.x, xAxis.x)); // roll
     return v3Rot;
-  }
-  // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::RotationAxis(const CVector3& _v3Axis, float _fAngle)
-  {
-    // We are supposing that the axis is normalized!!
-    float fCos = cosf(_fAngle);
-    float fSin = sinf(_fAngle);
-    float fOffset = 1.0f - fCos;
-
-    CMatrix4x4 mRot(CMatrix4x4::Identity);
-    mRot.m[0] = _v3Axis.x * _v3Axis.x * fOffset + fCos;
-    mRot.m[4] = _v3Axis.x * _v3Axis.y * fOffset - _v3Axis.z * fSin;
-    mRot.m[8] = _v3Axis.x * _v3Axis.z * fOffset + _v3Axis.y * fSin;
-
-    mRot.m[1] = _v3Axis.y * _v3Axis.x * fOffset + _v3Axis.z * fSin;
-    mRot.m[5] = _v3Axis.y * _v3Axis.y * fOffset + fCos;
-    mRot.m[9] = _v3Axis.y * _v3Axis.z * fOffset - _v3Axis.x * fSin;
-
-    mRot.m[2] = _v3Axis.z * _v3Axis.x * fOffset - _v3Axis.y * fSin;
-    mRot.m[6] = _v3Axis.z * _v3Axis.y * fOffset + _v3Axis.x * fSin;
-    mRot.m[10] = _v3Axis.z * _v3Axis.z * fOffset + fCos;
-
-    mRot.m[15] = 1.0f;
-
-    return mRot;
-  }
-  // ------------------------------------
-  // https://iquilezles.org/articles/noacos/
-  math::CMatrix4x4 CMatrix4x4::AlignMatrix(const CVector3& _v3Current, const CVector3& _v3Target)
-  {
-    const float fDot = math::CVector3::Dot(_v3Current, _v3Target);
-    if (std::abs(fDot) > (1.0f - math::s_fEpsilon3))
-    {
-      if (fDot > 0.0f)
-      {
-        return Identity;
-      }
-
-      // Calculate 180 degrees
-      math::CVector3 v3Orthogonal = math::CVector3::Cross(_v3Current, math::CVector3::Right);
-      if (v3Orthogonal.Magnitude() < math::s_fEpsilon3)
-      {
-        v3Orthogonal = math::CVector3::Cross(_v3Current, math::CVector3::Up);
-      }
-      v3Orthogonal.Normalize();
-      return CMatrix4x4::RotationAxis(v3Orthogonal, math::s_fPI);
-    }
-
-    const math::CVector3 v3Cross = math::CVector3::Cross(_v3Current, _v3Target);
-    const float fK = 1.0f / (1.0f + fDot);
-
-    return CMatrix4x4
-    (
-      v3Cross.x * v3Cross.x * fK + fDot,
-      v3Cross.y * v3Cross.x * fK - v3Cross.z,
-      v3Cross.z * v3Cross.x * fK + v3Cross.y,
-      0.0f,
-
-      v3Cross.x * v3Cross.y * fK + v3Cross.z,
-      v3Cross.y * v3Cross.y * fK + fDot,
-      v3Cross.z * v3Cross.y * fK - v3Cross.x,
-      0.0f,
-
-      v3Cross.x * v3Cross.z * fK - v3Cross.y,
-      v3Cross.y * v3Cross.z * fK + v3Cross.x,
-      v3Cross.z * v3Cross.z * fK + fDot,
-      0.0f, 0.0f, 0.0f, 0.0f, 1.0f
-    );
-  }
-  // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)
-  {
-    CMatrix4x4 mTranspose = CMatrix4x4::Identity;
-    for (int iRow = 0; iRow < s_iRowSize; ++iRow)
-    {
-      for (int iColumn = 0; iColumn < s_iColumnSize; ++iColumn)
-      {
-        mTranspose.m[iColumn * 4 + iRow] = _mMatrix.m[iRow * 4 + iColumn];
-      }
-    }
-    return mTranspose;
   }
 }

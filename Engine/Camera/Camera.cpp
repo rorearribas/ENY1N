@@ -23,13 +23,11 @@ namespace render
   // ------------------------------------
   CCamera::CCamera()
   {
-    m_oConstantBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
     m_oFrustumPlanes.resize(internal_camera::s_iFrustumPlanes);
   }
   // ------------------------------------
   CCamera::~CCamera()
   {
-    m_oConstantBuffer.Clear();
     m_oFrustumPlanes.clear();
   }
   // ------------------------------------
@@ -93,15 +91,6 @@ namespace render
 
     // Update frustum
     BuildFrustumPlanes();
-
-    // Update constant buffer
-    m_oConstantBuffer.GetData().Matrix = m_mProjection * m_mViewMatrix;
-    bool bOk = m_oConstantBuffer.WriteBuffer();
-    UNUSED_VAR(bOk);
-    assert(bOk);
-
-    ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
-    global::dx::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
   }
   // ------------------------------------
   void CCamera::ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos)

@@ -6,6 +6,7 @@
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/Math/Math.h"
 #include "PrimitiveUtils.h"
+#include "Engine/Engine.h"
 
 namespace render
 {
@@ -47,9 +48,6 @@ namespace render
     // ------------------------------------
     CPrimitive::~CPrimitive()
     {
-      // Release constant buffers
-      m_oConstantBuffer.Clear();
-
       // Release dx
       global::dx::SafeRelease(m_pVertexBuffer);
       global::dx::SafeRelease(m_pIndexBuffer);
@@ -69,14 +67,9 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(eTopology);
 
       // Set model matrix
-      m_oConstantBuffer.GetData().Matrix = m_oTransform.CreateTransform();
-      bool bOk = m_oConstantBuffer.WriteBuffer();
-      UNUSED_VAR(bOk);
-      assert(bOk);
-
-      // Set constant model matrix
-      ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
-      global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
+      math::CMatrix4x4 mModel = m_oTransform.CreateTransform();
+      engine::CEngine* pEngine = engine::CEngine::GetInstance();
+      pEngine->GetRender()->SetModelMatrix(mModel);
 
       // Draw
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -204,12 +197,6 @@ namespace render
       {
         return E_FAIL;
       }
-
-      // Clean buffer
-      m_oConstantBuffer.Clear();
-
-      // Create constant buffer
-      m_oConstantBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
       // Set number of vertices to draw
       m_uVertices = static_cast<uint32_t>(_vctVertexData.size());

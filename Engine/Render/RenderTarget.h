@@ -30,6 +30,6 @@ namespace render
     // Info
     std::string m_sRenderTargetID = std::string();
     texture::CTexture2D<RENDER_TARGET>* m_pTexture = nullptr;
-    ID3D11ShaderResourceView* m_pSRV;
+    ID3D11ShaderResourceView* m_pSRV = nullptr;
   };
 }

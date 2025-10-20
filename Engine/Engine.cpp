@@ -46,9 +46,10 @@ namespace engine
     m_pRender->BeginDraw();
   }
   // ------------------------------------
-  void CEngine::PushDrawProcess()
+  void CEngine::PushDraw()
   {
     // Draw current scene
+    m_pRender->SetCurrentCamera(m_pCamera);
     m_pRender->Draw(m_pSceneManager->GetCurrentScene());
   }
   // ------------------------------------

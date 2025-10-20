@@ -142,21 +142,13 @@ namespace scene
     }
 
     // Fill primitive data
-    using namespace render::gfx;
-   SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
-    (
-      _fRadius,
-      _fHeight,
-      _iSubvH,
-      _iSubvV,
-      _eRenderMode
-    );
+    auto oPrimitiveData = render::gfx::CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
 
     // Compute normals
-    CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+    render::gfx::CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
 
     // Create temporal item + set pos
-    CPrimitive* pPrimitive = m_vctDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
+    render::gfx::CPrimitive* pPrimitive = m_vctDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
 
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check

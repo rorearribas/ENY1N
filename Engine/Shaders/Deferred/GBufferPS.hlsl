@@ -22,10 +22,9 @@ cbuffer TexturesData : register(b0)
 
 struct GBuffer
 {
-  float4 gPosition : SV_Target0;
-  float4 gDiffuse : SV_Target1;
-  float4 gNormal : SV_Target2;
-  float4 gSpecular : SV_Target3;
+  float4 gDiffuse : SV_Target0;
+  float4 gNormal : SV_Target1;
+  float4 gSpecular : SV_Target2;
 };
 
 float3 unpack_normal(float3 _v3Normal)
@@ -36,8 +35,6 @@ float3 unpack_normal(float3 _v3Normal)
 GBuffer DeferredPSMain(PS_INPUT input)
 {
   GBuffer gOutputBuffer;
-  // Set position
-  gOutputBuffer.gPosition = float4(input.worldpos, 1.0f);
   // Set normal
   gOutputBuffer.gNormal = HasNormal ? float4(unpack_normal(tNormal.Sample(tNormalSampler, input.uv).xyz), 1.0f) : float4(input.normal, 1.0f);
   // Set diffuse

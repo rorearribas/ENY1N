@@ -22,12 +22,12 @@ namespace render
 
       void Draw();
 
-      void SetPosition(const math::CVector3& _v3Position) { m_oModelTransform.SetPosition(_v3Position); }
-      const math::CVector3& GetPosition() const { return m_oModelTransform.GetPosition(); }
-      void SetRotation(const math::CVector3& _v3Rot) { m_oModelTransform.SetRotation(_v3Rot); }
-      const math::CVector3& GetRotation() const { return m_oModelTransform.GetRotation(); }
-      void SetScale(const math::CVector3& _v3Scale) { m_oModelTransform.SetScale(_v3Scale); }
-      const math::CVector3& GetScale() const { return m_oModelTransform.GetScale(); }
+      void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
+      const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+      void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
+      const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
+      void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
+      const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
     private:
       void Clear();
@@ -38,11 +38,10 @@ namespace render
       // DirectX
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11InputLayout* m_pInputLayout = nullptr;
-      CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
 
       // Model info
       SModelData m_oModelData = SModelData();
-      math::CTransform m_oModelTransform = math::CTransform();
+      math::CTransform m_oTransform = math::CTransform();
     };
   }
 }

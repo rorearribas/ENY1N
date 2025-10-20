@@ -23,6 +23,9 @@ namespace render
     void EndDraw();
 
     inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
+    inline void SetCurrentCamera(const render::CCamera* _pCamera) { m_pCamera = _pCamera; }
+    void SetModelMatrix(const math::CMatrix4x4& _mModel);
+
     inline void ShowRenderWindow(bool _bStatus) { m_pRenderWindow->SetEnabled(_bStatus); }
     void SetFillMode(D3D11_FILL_MODE _eFillMode);
 
@@ -54,6 +57,7 @@ namespace render
 
   private:
     render::CRenderWindow* m_pRenderWindow = nullptr;
+    const render::CCamera* m_pCamera = nullptr;
     bool m_bVerticalSync = false;
   };
 }

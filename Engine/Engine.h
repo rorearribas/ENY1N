@@ -24,7 +24,7 @@ namespace engine
     void Init(uint32_t _uWidth, uint32_t _uHeight);
 
     void PushBeginDraw();
-    void PushDrawProcess();
+    void PushDraw();
     void PushEndDraw();
 
     scene::CSceneManager* GetSceneManager() const { return m_pSceneManager; }

@@ -21,6 +21,7 @@ namespace render
       CTexture2D(const std::string& _sTextureID) : m_sTextureID(_sTextureID) {}
       ~CTexture2D() { ReleaseTexture(); ReleaseSampler(); ReleaseView(); }
 
+      void CopyTexture(ID3D11Texture2D* _pTexture);
       void AttachTexture(EShaderType _eShaderType);
       void DetachTexture();
 
@@ -29,8 +30,8 @@ namespace render
       HRESULT CreateTexture(const D3D11_TEXTURE2D_DESC& _oTextureCfg);
       HRESULT CreateSampler(const D3D11_SAMPLER_DESC& _oSamplerCfg);
 
-      inline ID3D11Texture2D* const GetTexture() { return m_pTexture; }
-      inline void SetTexture(ID3D11Texture2D* _pTexture) { m_pTexture = _pTexture; }
+      inline ID3D11Texture2D* const GetTexture() { return m_pInternalTexture; }
+      inline void SetTexture(ID3D11Texture2D* _pTexture) { m_pInternalTexture = _pTexture; }
       inline ID3D11SamplerState* const GetSampler() { return m_pSamplerState; }
       inline void SetSampler(ID3D11SamplerState* _pSampler) { m_pSamplerState = _pSampler; }
 
@@ -85,8 +86,8 @@ namespace render
       }
 
       // Override operators
-      inline operator ID3D11Texture2D* () const { return m_pTexture; }
-      inline operator const ID3D11Texture2D* () const { return m_pTexture; }
+      inline operator ID3D11Texture2D* () const { return m_pInternalTexture; }
+      inline operator const ID3D11Texture2D* () const { return m_pInternalTexture; }
 
       inline bool operator=(CTexture2D<T>& _other) { return m_sTextureID == _other.m_sTextureID; }
       inline bool operator=(CTexture2D<T>& _other) const { return m_sTextureID == _other.m_sTextureID; }
@@ -107,10 +108,17 @@ namespace render
       std::string m_sTextureID;
 
       // DirectX
-      ID3D11Texture2D* m_pTexture = nullptr;
       ID3D11View* m_pInternalView = nullptr;
+      ID3D11Texture2D* m_pInternalTexture = nullptr;
       ID3D11SamplerState* m_pSamplerState = nullptr;
     };
+
+    template<EViewType T>
+    void render::texture::CTexture2D<T>::CopyTexture(ID3D11Texture2D* _pTexture)
+    {
+      assert(m_pInternalTexture && _pTexture);
+      global::dx::s_pDeviceContext->CopyResource(m_pInternalTexture, _pTexture);
+    }
 
     template<EViewType T>
     void render::texture::CTexture2D<T>::AttachTexture(EShaderType _eShaderType)
@@ -159,7 +167,7 @@ namespace render
     template<EViewType T>
     void render::texture::CTexture2D<T>::ReleaseTexture()
     {
-      global::dx::SafeRelease(m_pTexture);
+      global::dx::SafeRelease(m_pInternalTexture);
     }
 
     template<EViewType T>
@@ -193,7 +201,7 @@ namespace render
       oSubresourceData.SysMemPitch = _oTextureCfg.Width * _uChannels;
 
       // Create texture
-      return global::dx::s_pDevice->CreateTexture2D(&_oTextureCfg, &oSubresourceData, &m_pTexture);
+      return global::dx::s_pDevice->CreateTexture2D(&_oTextureCfg, &oSubresourceData, &m_pInternalTexture);
     }
 
     template<EViewType T>
@@ -203,7 +211,7 @@ namespace render
       ReleaseTexture();
 
       // Clear empty texture!
-      return global::dx::s_pDevice->CreateTexture2D(&_oTextureCfg, nullptr, &m_pTexture);
+      return global::dx::s_pDevice->CreateTexture2D(&_oTextureCfg, nullptr, &m_pInternalTexture);
     }
 
     template<EViewType T>
@@ -212,7 +220,7 @@ namespace render
       assert(T == EViewType::DEPTH_STENCIL);
       ReleaseView();
       ID3D11DepthStencilView** pView = reinterpret_cast<ID3D11DepthStencilView**>(&m_pInternalView);
-      return global::dx::s_pDevice->CreateDepthStencilView(m_pTexture, &_oDesc, pView);
+      return global::dx::s_pDevice->CreateDepthStencilView(m_pInternalTexture, &_oDesc, pView);
     }
 
     template<EViewType T>
@@ -221,7 +229,7 @@ namespace render
       assert(T == EViewType::RENDER_TARGET);
       ReleaseView();
       ID3D11RenderTargetView** pView = reinterpret_cast<ID3D11RenderTargetView**>(&m_pInternalView);
-      return global::dx::s_pDevice->CreateRenderTargetView(m_pTexture, &_oDesc, pView);
+      return global::dx::s_pDevice->CreateRenderTargetView(m_pInternalTexture, &_oDesc, pView);
     }
 
     template<EViewType T>
@@ -230,7 +238,7 @@ namespace render
       assert(T == EViewType::SHADER_RESOURCE);
       ReleaseView();
       ID3D11ShaderResourceView** pView = reinterpret_cast<ID3D11ShaderResourceView**>(&m_pInternalView);
-      return global::dx::s_pDevice->CreateShaderResourceView(m_pTexture, &_oDesc, pView);
+      return global::dx::s_pDevice->CreateShaderResourceView(m_pInternalTexture, &_oDesc, pView);
     }
 
     template<EViewType T>
@@ -239,7 +247,7 @@ namespace render
       assert(T == EViewType::UNORDERED_ACCESS);
       ReleaseView();
       ID3D11UnorderedAccessView** pView = reinterpret_cast<ID3D11UnorderedAccessView**>(&m_pInternalView);
-      return global::dx::s_pDevice->CreateUnorderedAccessView(m_pTexture, &_oDesc, pView);
+      return global::dx::s_pDevice->CreateUnorderedAccessView(m_pInternalTexture, &_oDesc, pView);
     }
   }
 }

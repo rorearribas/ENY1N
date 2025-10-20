@@ -30,7 +30,7 @@ namespace render
       return hResult;
     }
 
-    //Creating a view of the texture to be used when binding it as a render target
+    // Creating a view of the texture to be used when binding it as a render target
     D3D11_RENDER_TARGET_VIEW_DESC oRenderTargetDesc = D3D11_RENDER_TARGET_VIEW_DESC();
     oRenderTargetDesc.Format = _eTargetFormat;
     oRenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
@@ -42,7 +42,7 @@ namespace render
       return hResult;
     }
 
-    //Creating a view of the texture to be used when binding it as a render target
+    // Creating a view of the texture to be used when binding it as a render target
     D3D11_SHADER_RESOURCE_VIEW_DESC oSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
     oSRVDesc.Format = _eTargetFormat;
     oSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;

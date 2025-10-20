@@ -61,7 +61,6 @@ namespace render
 
     void ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos);
 
-    CConstantBuffer<SConstantMatrix> m_oConstantBuffer;
     math::CMatrix4x4 m_mViewMatrix = math::CMatrix4x4::Identity;
     math::CMatrix4x4 m_mProjection = math::CMatrix4x4::Identity;
 

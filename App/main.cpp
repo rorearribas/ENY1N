@@ -207,7 +207,7 @@ int main()
       }
 
       // Draw
-      pEngine->PushDrawProcess();
+      pEngine->PushDraw();
 
       if (ImGui::Button("Show wireframe"))
       {

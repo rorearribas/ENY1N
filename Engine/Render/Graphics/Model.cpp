@@ -1,6 +1,8 @@
 #include "Model.h"
 #include "Engine/Shaders/Forward/SimpleVS.h"
 #include "Engine/Global/GlobalResources.h"
+#include "Engine/Engine.h"
+#include "Engine/Render/Render.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include <cassert>
@@ -32,14 +34,9 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
       // Set model matrix
-      m_oConstantBuffer.GetData().Matrix = m_oModelTransform.CreateTransform();
-      bool bOk = m_oConstantBuffer.WriteBuffer();
-      UNUSED_VAR(bOk);
-      assert(bOk);
-
-      // Apply constant buffer
-      ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
-      global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
+      math::CMatrix4x4 mModel = m_oTransform.CreateTransform();
+      engine::CEngine* pEngine = engine::CEngine::GetInstance();
+      pEngine->GetRender()->SetModelMatrix(mModel);
 
       // Draw meshes
       for (auto& pMesh : m_oModelData.Meshes)
@@ -72,9 +69,6 @@ namespace render
       {
         return E_FAIL;
       }
-
-      // Init constant buffer
-      m_oConstantBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
       // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();

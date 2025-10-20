@@ -42,15 +42,18 @@ namespace render
       ID3D11RenderTargetView* pBackBuffer = nullptr;
 
       // Deferred shading
-      render::CRenderTarget* pPositionRT;
       render::CRenderTarget* pDiffuseRT;
       render::CRenderTarget* pNormalRT;
       render::CRenderTarget* pSpecularRT;
       ID3D11SamplerState* pLinearSampler;
 
+      // Constant buffer
+      CConstantBuffer<SConstantTransforms> oConstantTransforms;
+
       // Depth
       texture::CTexture2D<DEPTH_STENCIL>* pDepthStencil = nullptr;
       texture::CTexture2D<SHADER_RESOURCE>* pDepthTexture = nullptr;
+
       ID3D11DepthStencilState* pDepthStencilState = nullptr;
       D3D11_DEPTH_STENCIL_DESC oDepthStencilCfg = D3D11_DEPTH_STENCIL_DESC();
 
@@ -99,18 +102,21 @@ namespace render
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();
 
+    // Clear constant buffer
+    internal::s_oRender.oConstantTransforms.Clear();
+
     // Release depth
     global::dx::SafeRelease(internal::s_oRender.pDepthStencilState);
     global::ReleaseObject(internal::s_oRender.pDepthStencil);
     global::ReleaseObject(internal::s_oRender.pDepthTexture);
 
     // Release render targets
-    global::dx::SafeRelease(internal::s_oRender.pRasterizer);
-
     global::ReleaseObject(internal::s_oRender.pDiffuseRT);
     global::ReleaseObject(internal::s_oRender.pNormalRT);
     global::ReleaseObject(internal::s_oRender.pSpecularRT);
 
+    // Release rasterizer, blending..
+    global::dx::SafeRelease(internal::s_oRender.pRasterizer);
     global::dx::SafeRelease(internal::s_oRender.pBlendState);
     global::dx::SafeRelease(internal::s_oRender.pUserMarker);
 
@@ -165,6 +171,9 @@ namespace render
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
     global::delegates::s_vctOnWindowResizeDelegates.emplace_back(oResizeDelegate);
+
+    // Init constant buffer
+    internal::s_oRender.oConstantTransforms.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
     // Get user def
     global::dx::s_pDeviceContext->QueryInterface
@@ -343,20 +352,16 @@ namespace render
     oTextureDesc.Height = _uY;
     oTextureDesc.MipLevels = 1;
     oTextureDesc.ArraySize = 1;
-    oTextureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
     oTextureDesc.SampleDesc.Count = 1;
-    oTextureDesc.SampleDesc.Quality = 0;
-    oTextureDesc.Usage = D3D11_USAGE_DEFAULT;
-    oTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
-    oTextureDesc.CPUAccessFlags = 0;
-    oTextureDesc.MiscFlags = 0;
+    oTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS; // Format
+    oTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
 
     HRESULT hResult = internal::s_oRender.pDepthStencil->CreateTexture(oTextureDesc);
     assert(!FAILED(hResult));
 
     // Set depth stencil view desc
     D3D11_DEPTH_STENCIL_VIEW_DESC oDepthStencilViewDesc = D3D11_DEPTH_STENCIL_VIEW_DESC();
-    oDepthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    oDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
     oDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
     // Create the depth stencil view
@@ -364,25 +369,30 @@ namespace render
     assert(!FAILED(hResult));
 
     // Create depth texture
-    ID3D11Texture2D* pDepthTexture = *(internal::s_oRender.pDepthStencil);
     internal::s_oRender.pDepthTexture = new texture::CTexture2D<SHADER_RESOURCE>("DepthTexture");
-    internal::s_oRender.pDepthTexture->SetTexture(pDepthTexture);
 
-    // Set shader resource view desc
-    D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
-    oShaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
-    oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    oShaderResourceViewDesc.Texture2D.MipLevels = 1;
+    // Set texture config
+    oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // Texture shader
+    hResult = internal::s_oRender.pDepthTexture->CreateTexture(oTextureDesc);
+    if (FAILED(hResult))
+    {
+      std::cout << "Error creating texture!" << std::endl;
+      return hResult;
+    }
 
-    // Create the shader resource view
-    hResult = internal::s_oRender.pDepthTexture->CreateView(oShaderResourceViewDesc);
+    // Creating view
+    D3D11_SHADER_RESOURCE_VIEW_DESC oSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
+    oSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    oSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    oSRVDesc.Texture2D.MipLevels = 1;
+    hResult = internal::s_oRender.pDepthTexture->CreateView(oSRVDesc);
     assert(!FAILED(hResult));
 
     // Create standard depth stencil state
     internal::s_oRender.oDepthStencilCfg.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
     internal::s_oRender.oDepthStencilCfg.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
     internal::s_oRender.oDepthStencilCfg.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    internal::s_oRender.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    internal::s_oRender.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_EQUAL;
     internal::s_oRender.oDepthStencilCfg.DepthEnable = true;
     internal::s_oRender.oDepthStencilCfg.StencilEnable = true;
 
@@ -403,17 +413,9 @@ namespace render
   // ------------------------------------
   HRESULT CRender::SetupDeferredShading(uint32_t _uX, uint32_t _uY)
   {
-    global::ReleaseObject(internal::s_oRender.pPositionRT);
-    internal::s_oRender.pPositionRT = new CRenderTarget("Position"); 
-    HRESULT hResult = internal::s_oRender.pPositionRT->CreateRT(_uX, _uY, DXGI_FORMAT_R32G32B32A32_FLOAT);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
     global::ReleaseObject(internal::s_oRender.pDiffuseRT);
     internal::s_oRender.pDiffuseRT = new CRenderTarget("Diffuse");
-    hResult = internal::s_oRender.pDiffuseRT->CreateRT(_uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM);
+    HRESULT hResult = internal::s_oRender.pDiffuseRT->CreateRT(_uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM);
     if (FAILED(hResult))
     {
       return hResult;
@@ -522,22 +524,51 @@ namespace render
   {
     BeginMarker(internal::s_sZPrepassMrk);
     {
+      // Set constant transform
+      if (m_pCamera)
+      {
+        SConstantTransforms& oData = internal::s_oRender.oConstantTransforms.GetData();
+        oData.Projection = m_pCamera->GetProjectionMatrix();
+        oData.InvProjection =  math::CMatrix4x4::Invert(m_pCamera->GetProjectionMatrix());
+        oData.View = m_pCamera->GetViewMatrix();
+        oData.InvView = math::CMatrix4x4::Invert(m_pCamera->GetViewMatrix());
+        oData.FarPlane = m_pCamera->GetFar();
+        oData.NearPlane = m_pCamera->GetNear();
+
+        // Write
+        bool bOk = internal::s_oRender.oConstantTransforms.WriteBuffer();
+        UNUSED_VAR(bOk);
+        assert(bOk);
+
+        ID3D11Buffer* pConstantBuffer = internal::s_oRender.oConstantTransforms.GetBuffer();
+        global::dx::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
+      }
+
       // Set depth stencil config
       internal::s_oRender.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_LESS;
       internal::s_oRender.oDepthStencilCfg.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
       HRESULT hResult = SetDepthStencilState(internal::s_oRender.oDepthStencilCfg);
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
+
       // Push invalid RT
       ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencil->GetView();
       global::dx::s_pDeviceContext->OMSetRenderTargets(0, nullptr, pDepthStencilView);
       // Set depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
 
-      internal::s_oRender.pSimpleVS->AttachShader(); // Attach
-      internal::s_oRender.pCalculateLightsShader->DetachShader(); // Detach
-      internal::s_oRender.pDeferredPS->DetachShader(); // Detach
+      // Attach simple vertex shader
+      internal::s_oRender.pSimpleVS->AttachShader();
+      // Detach g-buffer pass
+      internal::s_oRender.pDeferredPS->DetachShader();
+      internal::s_oRender.pCalculateLightsShader->DetachShader();
+
+      // Draw z-prepass
       _pScene->DrawModels();
+
+      // Copy depth texture!
+      ID3D11Texture2D* pTexture = internal::s_oRender.pDepthStencil->GetTexture();
+      internal::s_oRender.pDepthTexture->CopyTexture(pTexture);
     }
     EndMarker();
 
@@ -551,52 +582,58 @@ namespace render
       assert(!FAILED(hResult));
 
       // Clear RTs
-      internal::s_oRender.pPositionRT->ClearRT(internal::s_v4ClearColor);
       internal::s_oRender.pDiffuseRT->ClearRT(internal::s_v4ClearColor);
       internal::s_oRender.pNormalRT->ClearRT(internal::s_v4ClearColor);
       internal::s_oRender.pSpecularRT->ClearRT(internal::s_v4ClearColor);
 
       // Set GBuffer RTVs
-      constexpr int iSize(4);
-      ID3D11RenderTargetView* lstGBufferRTV[iSize] =
+      constexpr int iRenderTargets(3);
+      ID3D11RenderTargetView* lstGBufferRTV[iRenderTargets] =
       {
-        *(internal::s_oRender.pPositionRT),
         *(internal::s_oRender.pDiffuseRT),
         *(internal::s_oRender.pNormalRT),
         *(internal::s_oRender.pSpecularRT)
       };
       // Set render targets
       ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencil->GetView();
-      global::dx::s_pDeviceContext->OMSetRenderTargets(ARRAYSIZE(lstGBufferRTV), &lstGBufferRTV[0], pDepthStencilView);
+      global::dx::s_pDeviceContext->OMSetRenderTargets(iRenderTargets, lstGBufferRTV, pDepthStencilView);
       // Set depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
-      // Push deferred shader
-      internal::s_oRender.pDeferredPS->AttachShader(); // Attach
+      // Attach g-buffer(pixel shader)
+      internal::s_oRender.pDeferredPS->AttachShader();
       // Draw models
       _pScene->DrawModels();
 
-      // Set back buffer
-      global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oRender.pBackBuffer, pDepthStencilView);
-      // Update lightning data
-      _pScene->UpdateLighting();
-      // Attach
+      // Remove render targets
+      ID3D11RenderTargetView* lstEmptyRTs[iRenderTargets] = { nullptr, nullptr, nullptr };
+      global::dx::s_pDeviceContext->OMSetRenderTargets(iRenderTargets, lstEmptyRTs, nullptr);
+      // Attach triangle shader (vertex shader)
+      internal::s_oRender.pDrawTriangle->AttachShader();
+      // Attach calculate lights shader(pixel shader)
       internal::s_oRender.pCalculateLightsShader->AttachShader();
 
+      // Set transform constant
+      ID3D11Buffer* pConstantBuffer = internal::s_oRender.oConstantTransforms.GetBuffer();
+      global::dx::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
+      // Update lightning data
+      _pScene->UpdateLighting();
+
       // GBuffer list
-      ID3D11ShaderResourceView* lstGBufferSRV[iSize] =
+      constexpr int iTexturesSize(4);
+      ID3D11ShaderResourceView* lstGBufferSRV[iTexturesSize] =
       {
-        internal::s_oRender.pPositionRT->GetSRV(),
+        internal::s_oRender.pDepthTexture->GetView(),
         internal::s_oRender.pDiffuseRT->GetSRV(),
         internal::s_oRender.pNormalRT->GetSRV(),
         internal::s_oRender.pSpecularRT->GetSRV()
       };
       // Bind buffers
-      global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(lstGBufferSRV), lstGBufferSRV);
+      global::dx::s_pDeviceContext->PSSetShaderResources(0, iTexturesSize, &lstGBufferSRV[0]);
       // Set linear sampler
       global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oRender.pLinearSampler);
 
-      // Attach triangle shader
-      internal::s_oRender.pDrawTriangle->AttachShader();
+      // Attach back buffer
+      global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oRender.pBackBuffer, pDepthStencilView);
       // Draw triangle as fake quad!
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
       global::dx::s_pDeviceContext->IASetInputLayout(nullptr);
@@ -604,28 +641,28 @@ namespace render
       global::dx::s_pDeviceContext->Draw(3, 0);
 
       // Set invalid shaders
-      ID3D11ShaderResourceView* gBufferEmpty[iSize] = { nullptr, nullptr, nullptr, nullptr };
-      global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(gBufferEmpty), gBufferEmpty);
+      ID3D11ShaderResourceView* lstEmptyTextures[iTexturesSize] = { nullptr, nullptr, nullptr, nullptr };
+      global::dx::s_pDeviceContext->PSSetShaderResources(0, iTexturesSize, lstEmptyTextures);
     }
     EndMarker();
 
     // Draw primitives
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
-      internal::s_oRender.pSimpleVS->AttachShader(); // Attach
-      internal::s_oRender.pSimplePS->AttachShader(); // Attach
+      // Attach simple vertex shader
+      internal::s_oRender.pSimpleVS->AttachShader();
+      // Attach simple pixel shader
+      internal::s_oRender.pSimplePS->AttachShader();
+
       // Change depth stencil state
       internal::s_oRender.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
       internal::s_oRender.oDepthStencilCfg.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
       HRESULT hResult = SetDepthStencilState(internal::s_oRender.oDepthStencilCfg);
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
+
       // Push depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
-
-      // Attach shader
-      internal::s_oRender.pSimplePS->AttachShader();
-
       // Draw primitives
       _pScene->DrawPrimitives();
     }
@@ -649,6 +686,16 @@ namespace render
     // Present
     const uint32_t uFlags = 0;
     internal::s_oRender.pSwapChain->Present(m_bVerticalSync, uFlags);
+  }
+  // ------------------------------------
+  void CRender::SetModelMatrix(const math::CMatrix4x4& _mModel)
+  {
+    // Write
+    SConstantTransforms& oData = internal::s_oRender.oConstantTransforms.GetData();
+    oData.Model = _mModel;
+    bool bOk = internal::s_oRender.oConstantTransforms.WriteBuffer();
+    UNUSED_VAR(bOk);
+    assert(bOk);
   }
   // ------------------------------------
   void CRender::SetFillMode(D3D11_FILL_MODE _eFillMode)
