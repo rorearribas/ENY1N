@@ -73,15 +73,6 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
-  // Create spot light
-  game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot light");
-  pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
-  pSpotLight->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
-
-  // Create point light
-  game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
-  pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
-
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     // FBX Test
@@ -91,16 +82,6 @@ int main()
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
   }
-
-  //for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
-  //{
-  //  // FBX Test
-  //  game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-  //  pModelEnt->SetPosition(math::CVector3(GenerateFloat(-2000.0f, -2000.f), GenerateFloat(1.0f, 20.0f), GenerateFloat(-20.0f, 20.0f)));
-  //  game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-  //  pModelTest->LoadModel("models/manhattan/manhattan.fbx");
-  //  pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
-  //}
 
   // OBJ test
   game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
@@ -254,13 +235,27 @@ int main()
       {
         pTimeManager->SetMaxFPS(999);
       }
-
       ImGui::End();
 
       ImGui::Begin("TEST - RAYCAST");
       if (ImGui::Button("Enabled"))
       {
         bThrowRay = !bThrowRay;
+      }
+      ImGui::End();
+
+      ImGui::Begin("Create Lights");
+      if (ImGui::Button("Create point light"))
+      {
+        // Create point light
+        game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
+        pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
+      }
+      if (ImGui::Button("Create spot light"))
+      {
+        // Create spot light
+        game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot Light");
+        pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
       }
       ImGui::End();
 

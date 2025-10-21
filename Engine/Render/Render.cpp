@@ -646,7 +646,7 @@ namespace render
     }
     EndMarker();
 
-    // Draw primitives
+    // Draw primitives (forward rendering)
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
       // Attach simple vertex shader

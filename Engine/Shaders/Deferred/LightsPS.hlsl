@@ -22,7 +22,7 @@ struct PointLight
   float3 Color;
   float Padding1;
 
-  // 4 + 4 bytes = 8 bytes
+  // 4 + 4 + 8 bytes = 16 bytes
   float Range;
   float Intensity;
   float2 Padding;
@@ -42,12 +42,10 @@ struct Spotlight
   float3 Color;
   float Padding2;
 
-  // 4 + 4 + 4 + 4 = 16 bytes
+  // 4 + 4 + 8 = 16 bytes
   float Range;
-  float Padding3;
-
   float Intensity;
-  float Padding4;
+  float Padding3;
 };
 
 cbuffer ConstantTransforms : register(b0)
@@ -110,21 +108,13 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   float fDepth = gDepth.Sample(gSampleLinear, input.uv).r;
   float3 v3WorldPos = GetPositionFromDepth(input.uv, fDepth, mul(InvView, InvProjection));
 
-  // View direction (camera position from InvView matrix)
-  float3 v3ViewDir = normalize(InvView[3].xyz - v3WorldPos);
-
   // Add ambient light
-  float3 v3TotalLight = 0.1f * float3(1.0f, 1.0f, 1.0f);
+  float3 v3TotalLight = 0.5f * float3(1.0f, 1.0f, 1.0f);
 
   // Directional light
-  {
-    float3 v3LightDir = normalize(directionalLight.Direction);
-    float fDiffuse = max(dot(v3Normal, v3LightDir), 0.0f);
-    float3 v3HalfDir = normalize(v3LightDir + v3ViewDir);
-    float fSpecular = pow(max(dot(v3Normal, v3HalfDir), 0.0f), 32.0f); // shininess
-    // Add directional light
-    v3TotalLight += directionalLight.Color * directionalLight.Intensity * (fDiffuse + fSpecular);
-  }
+  float3 v3LightDir = normalize(directionalLight.Direction);
+  float fDot = max(dot(v3Normal, -v3LightDir), 0.0f);
+  v3TotalLight += directionalLight.Color * directionalLight.Intensity * fDot;
 
   // Point Lights
   for (int i = 0; i < RegisteredLights.x; i++)
@@ -136,13 +126,12 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
       continue;
     }
 
+    // Calculate point light
     float3 v3LightDir = normalize(pointLight.Position - v3WorldPos);
     float fDiffuse = max(dot(v3Normal, v3LightDir), 0.0f);
-    float3 v3HalfDir = normalize(v3LightDir + v3ViewDir);
-    float fSpecular = pow(max(dot(v3Normal, v3HalfDir), 0.0f), 32.0f);
-
     float fFalloff = saturate(1.0f - fDist / pointLight.Range);
-    v3TotalLight += pointLight.Color * pointLight.Intensity * fFalloff * (fDiffuse + fSpecular);
+    // Add light
+    v3TotalLight += pointLight.Color * pointLight.Intensity * fFalloff;
   }
 
   // Spot lights
@@ -155,11 +144,9 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
       continue;
     }
 
+    // Calculate spot light
     float3 v3LightDir = normalize(spotlight.Position - v3WorldPos);
     float3 v3SpotDir = normalize(spotlight.Direction);
-    float fDiffuse = max(dot(v3Normal, v3LightDir), 0.0f);
-    float3 v3HalfDir = normalize(v3LightDir + v3ViewDir);
-    float fSpecular = pow(max(dot(v3Normal, v3HalfDir), 0.0f), 32.0f);
 
     float fSpotFactor = dot(-v3LightDir, v3SpotDir);
     float fInner = cos(radians(15.0f));
@@ -168,10 +155,8 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
     float fDistanceFalloff = saturate(1.0f - fDist / spotlight.Range);
     float fFalloff = fAngleFalloff * fDistanceFalloff;
 
-    v3TotalLight += spotlight.Color * spotlight.Intensity * fFalloff * (fDiffuse + fSpecular);
+    // Add color
+    v3TotalLight += spotlight.Color * spotlight.Intensity * fFalloff;
   }
-
-  // Final color
-  float3 finalColor = v3Diffuse * v3TotalLight + v3Specular * v3TotalLight;
-  return float4(saturate(finalColor), 1.0f);
+  return float4(saturate(v3TotalLight * v3Diffuse), 1.0f);
 }
