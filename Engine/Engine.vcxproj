@@ -153,15 +153,16 @@
   <ItemGroup>
     <ClInclude Include="Collisions\CapsuleCollider.h" />
     <ClInclude Include="Collisions\CollisionManager.h" />
-    <ClInclude Include="Collisions\CullingAABB.h" />
+    <ClInclude Include="Collisions\BoundingBox.h" />
     <ClInclude Include="Managers\MemoryTracker.h" />
+    <ClInclude Include="Render\Graphics\RenderInstance.h" />
     <ClInclude Include="Physics\PhysicsManager.h" />
     <ClInclude Include="Collisions\Collider.h" />
     <ClInclude Include="Render\RenderTypes.h" />
     <ClInclude Include="Render\RenderTarget.h" />
     <ClInclude Include="Utils\Plane.h" />
     <ClInclude Include="Utils\Ray.h" />
-    <ClInclude Include="Render\Graphics\PrimitiveUtils.h" />
+    <ClInclude Include="Render\Utils\PrimitiveUtils.h" />
     <ClInclude Include="Render\Lights\WIP\LightManager.h" />
     <ClInclude Include="Physics\Rigidbody.h" />
     <ClInclude Include="Render\Graphics\Mesh.h" />
@@ -188,15 +189,16 @@
     <ClInclude Include="Collisions\SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Render\Graphics\RenderInstance.cpp" />
     <ClCompile Include="Collisions\CapsuleCollider.cpp" />
     <ClCompile Include="Collisions\CollisionManager.cpp" />
-    <ClCompile Include="Collisions\CullingAABB.cpp" />
+    <ClCompile Include="Collisions\BoundingBox.cpp" />
     <ClCompile Include="Managers\MemoryTracker.cpp" />
     <ClCompile Include="Physics\PhysicsManager.cpp" />
     <ClCompile Include="Render\RenderTarget.cpp" />
     <ClCompile Include="Utils\Plane.cpp" />
     <ClCompile Include="Utils\Ray.cpp" />
-    <ClCompile Include="Render\Graphics\PrimitiveUtils.cpp" />
+    <ClCompile Include="Render\Utils\PrimitiveUtils.cpp" />
     <ClCompile Include="Render\Lights\WIP\LightManager.cpp" />
     <ClCompile Include="Render\Graphics\Mesh.cpp" />
     <ClCompile Include="Render\Lights\Light.cpp" />

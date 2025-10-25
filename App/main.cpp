@@ -73,11 +73,11 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 5; uIndex++)
   {
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(-10.0f, 20.0f, 0.0f));
+    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 40.0f), GenerateFloat(-20.0f, 20.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
@@ -107,7 +107,7 @@ int main()
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::gfx::EPrimitiveType::E3D_PLANE, render::ERenderMode::SOLID);
   pPlaneModel->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
-  pPlaneEntity->SetScale(math::CVector3(200.0f, 0.0f, 200.0f));
+  pPlaneEntity->SetScale(math::CVector3(200.0f, 1.0f, 200.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
   pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
   collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());

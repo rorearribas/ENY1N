@@ -5,6 +5,7 @@
 #include "Engine/Render/Render.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
+#include "Libs/Math/Math.h"
 #include <cassert>
 
 namespace render
@@ -29,7 +30,6 @@ namespace render
       // Set vertex buffer
       uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
       uint32_t uVertexOffset = 0;
-      global::dx::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -43,18 +43,8 @@ namespace render
       {
         pMesh->Draw();
       }
-    }
-    // ------------------------------------
-    HRESULT CModel::CreateInputLayout()
-    {
-      return global::dx::s_pDevice->CreateInputLayout
-      (
-        SVertexData::s_vctInputElementDesc.data(),
-        static_cast<uint32_t>(SVertexData::s_vctInputElementDesc.size()),
-        g_SimpleVS,
-        sizeof(g_SimpleVS),
-        &m_pInputLayout
-      );
+
+      m_oBoundingBox.DrawDebug();
     }
     // ------------------------------------
     HRESULT CModel::InitModel(const char* _sModelPath)
@@ -65,10 +55,13 @@ namespace render
       // Load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
       m_oModelData = pResourceManager->LoadModel(_sModelPath); // I should change this!
-      if (m_oModelData.Meshes.empty()) 
+      if (m_oModelData.Meshes.empty())
       {
         return E_FAIL;
       }
+
+      // Update AABB
+      CalculateAABB();
 
       // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
@@ -79,21 +72,13 @@ namespace render
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
       oSubresourceData.pSysMem = m_oModelData.Vertices.data();
-      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
-      if (FAILED(hResult))
-      {
-        return hResult;
-      }
-
-      // Create input layout
-      return CreateInputLayout();
+      return global::dx::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
     }
     // ------------------------------------
     void CModel::Clear()
     {
-      // Clear DX components
+      // Clear vertex buffer
       global::dx::SafeRelease(m_pVertexBuffer);
-      global::dx::SafeRelease(m_pInputLayout);
 
       // Clear meshes
       for (auto& pMesh : m_oModelData.Meshes)
@@ -103,6 +88,39 @@ namespace render
 
       m_oModelData.Meshes.clear();
       m_oModelData.Vertices.clear();
+    }
+    // ------------------------------------
+    void CModel::CalculateAABB()
+    {
+      if (m_oModelData.Vertices.empty())
+      {
+        return;
+      }
+
+      const math::CMatrix4x4 mTransform = m_oTransform.CreateTransform();
+      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
+      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+      // Compute AABB
+      for (auto& oVertexData : m_oModelData.Vertices)
+      {
+        // Get vertex pos
+        math::CVector3 v3VertexPos = mTransform * oVertexData.Position;
+
+        // Calculate Min
+        v3Min.x = math::Min<float>(v3Min.x, v3VertexPos.x);
+        v3Min.y = math::Min<float>(v3Min.y, v3VertexPos.y);
+        v3Min.z = math::Min<float>(v3Min.z, v3VertexPos.z);
+
+        // Calculate Max
+        v3Max.x = math::Max<float>(v3Max.x, v3VertexPos.x);
+        v3Max.y = math::Max<float>(v3Max.y, v3VertexPos.y);
+        v3Max.z = math::Max<float>(v3Max.z, v3VertexPos.z);
+      }
+
+      // Apply min-max
+      m_oBoundingBox.SetMin(v3Min);
+      m_oBoundingBox.SetMax(v3Max);
     }
   }
 }

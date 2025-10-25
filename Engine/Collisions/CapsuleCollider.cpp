@@ -30,7 +30,7 @@ namespace collision
     {
       const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
       assert(&oBoxCollider);
-      return oBoxCollider.IsOBBEnabled() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckBoxCollision(&oBoxCollider, _oHitEvent_);
+      return oBoxCollider.IsOBB() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckBoxCollision(&oBoxCollider, _oHitEvent_);
     }
     case EColliderType::SPHERE_COLLIDER:
     {

@@ -24,8 +24,8 @@ namespace render
 
     inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
     inline void SetCurrentCamera(const render::CCamera* _pCamera) { m_pCamera = _pCamera; }
-    void SetModelMatrix(const math::CMatrix4x4& _mModel);
 
+    void SetModelMatrix(const math::CMatrix4x4& _mModel);
     inline void ShowRenderWindow(bool _bStatus) { m_pRenderWindow->SetEnabled(_bStatus); }
     void SetFillMode(D3D11_FILL_MODE _eFillMode);
 
@@ -44,7 +44,7 @@ namespace render
     HRESULT CreateBackBuffer();
 
   private:
-    HRESULT SetDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& _oDepthStencilState);
+    HRESULT CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& _oDepthStencilState);
     HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC& _oRasterizerState);
     HRESULT CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _oBlendState);
 

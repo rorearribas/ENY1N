@@ -11,7 +11,7 @@ namespace render
     CleanRT();
 
     // Create texture
-    m_pTexture = new texture::CTexture2D<RENDER_TARGET>(m_sRenderTargetID);
+    m_pTexture = new texture::CTexture2D<RENDER_TARGET>();
 
     // Set texture config
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -26,7 +26,7 @@ namespace render
     HRESULT hResult = m_pTexture->CreateTexture(oTextureDesc);
     if (FAILED(hResult))
     {
-      std::cout << "Error creating texture!" << std::endl;
+      ERROR_LOG("Error creating texture!");
       return hResult;
     }
 
@@ -38,7 +38,7 @@ namespace render
     hResult = m_pTexture->CreateView(oRenderTargetDesc);
     if (FAILED(hResult))
     {
-      std::cout << "Error creating target view!" << std::endl;
+      ERROR_LOG("Error creating target view!");
       return hResult;
     }
 

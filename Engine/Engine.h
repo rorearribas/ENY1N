@@ -27,9 +27,10 @@ namespace engine
     void PushDraw();
     void PushEndDraw();
 
-    scene::CSceneManager* GetSceneManager() const { return m_pSceneManager; }
-    render::CRender* GetRender() const { return m_pRender; }
-    render::CCamera* GetCamera() const { return m_pCamera; }
+    // Getters
+    inline scene::CSceneManager* GetSceneManager() const { return m_pSceneManager; }
+    inline render::CRender* GetRender() const { return m_pRender; }
+    inline render::CCamera* GetCamera() const { return m_pCamera; }
 
     // Debug creation
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
@@ -38,16 +39,16 @@ namespace engine
     void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
     void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
 
-    // Element creation
+    // Graphics creation
     render::gfx::CPrimitive* const CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
+    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive);
     render::gfx::CModel* const CreateModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);
+    void DestroyModel(render::gfx::CModel*& _pModel);
 
+    // Lights creation
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
     render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
-
-    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive);
-    void DestroyModel(render::gfx::CModel*& _pModel);
     void DestroyLight(render::lights::CBaseLight*& pLight_);
 
   private:

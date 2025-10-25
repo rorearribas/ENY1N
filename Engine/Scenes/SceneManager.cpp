@@ -18,18 +18,18 @@ namespace scene
   {
     int iCurrentIdx = 0;
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene*& _pScene)
-    {
-      _pScene = new scene::CScene(iCurrentIdx++);
-      _pScene->SetSceneEnabled(false);
-    });
+      {
+        _pScene = new scene::CScene(iCurrentIdx++);
+        _pScene->SetEnabled(false);
+      });
   }
   // ------------------------------------
   void CSceneManager::DisableAllScenes() const
   {
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [&](scene::CScene* _pScene)
-    {
-      _pScene->SetSceneEnabled(false);
-    });
+      {
+        _pScene->SetEnabled(false);
+      });
   }
   // ------------------------------------
   void CSceneManager::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
@@ -77,7 +77,7 @@ namespace scene
   {
     if (_uIndex > (s_iMaxScenes - 1)) return;
     m_pCurrentScene = m_vctScenes[_uIndex];
-    m_pCurrentScene->SetSceneEnabled(_bEnabled);
+    m_pCurrentScene->SetEnabled(_bEnabled);
   }
   // ------------------------------------
   render::gfx::CPrimitive* const CSceneManager::CreatePrimitive
@@ -144,8 +144,8 @@ namespace scene
   void CSceneManager::DestroyAllScenes()
   {
     std::for_each(m_vctScenes.begin(), m_vctScenes.end(), [](CScene*& _pScene)
-    {
-      global::ReleaseObject(_pScene);
-    });
+      {
+        global::ReleaseObject(_pScene);
+      });
   }
 }

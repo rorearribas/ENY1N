@@ -13,19 +13,19 @@ namespace render
     class CDirectionalLight;
 
     // WIP -> Posiblemente en un futuro se utilice para hacer una gestion más global
-    class CLightManager
+    class CLightsManager
     {
     private:
-      static int constexpr s_iMaxSpotLights = 100;
-      static int constexpr s_iMaxPointLights = 100;
+      static uint32_t constexpr s_uMaxSpotLights = 100;
+      static uint32_t constexpr s_uMaxPointLights = 100;
 
     public:
-      typedef std::array<render::lights::CPointLight*, s_iMaxPointLights> TPointLightsList;
-      typedef std::array<render::lights::CSpotLight*, s_iMaxSpotLights> TSpotLightsList;
+      typedef std::array<render::lights::CPointLight*, s_uMaxPointLights> TPointLightsList;
+      typedef std::array<render::lights::CSpotLight*, s_uMaxSpotLights> TSpotLightsList;
 
     public:
-      CLightManager();
-      ~CLightManager();
+      CLightsManager();
+      ~CLightsManager();
 
       void Update();
 
@@ -54,7 +54,7 @@ namespace render
       uint32_t m_uRegisteredSpotLights = 0;
 
       // Global lightning buffer
-      CConstantBuffer<SGlobalLightingData<s_iMaxPointLights, s_iMaxSpotLights>> m_oLightningBuffer;
+      CConstantBuffer<SGlobalLightingData<s_uMaxPointLights, s_uMaxSpotLights>> m_oLightningBuffer;
     };
   }
 }

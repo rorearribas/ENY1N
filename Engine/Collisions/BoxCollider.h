@@ -2,7 +2,6 @@
 #include "Collider.h"
 #include "Libs/Math/Vector3.h"
 
-namespace render { namespace gfx { class CPrimitive; } }
 namespace collision { class CSphereCollider; }
 
 namespace collision
@@ -11,14 +10,15 @@ namespace collision
   {
   public:
     CBoxCollider(void* _pOwner);
-    virtual ~CBoxCollider();
+    ~CBoxCollider();
 
     virtual bool CheckCollision(const CCollider& _pOther, SHitEvent& _oHitEvent_) override;
     virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
-    inline void SetOBBEnabled(bool _bEnabled) { m_bOBBEnabled = _bEnabled; }
-    inline bool IsOBBEnabled() const { return m_bOBBEnabled; }
+    // Oriented bounding box mode
+    inline void SetOBB(bool _bEnabled) { m_bOBB = _bEnabled; }
+    inline const bool& IsOBB() const { return m_bOBB; }
 
     inline const math::CVector3& GetSize() const { return m_v3Size; }
     inline void SetSize(const math::CVector3& _v3Size) { m_v3Size = _v3Size; RecalculateCollider(); }
@@ -52,7 +52,7 @@ namespace collision
     // Size
     math::CVector3 m_v3Size = math::CVector3::One;
 
-    // Min - Max
+    // Min-Max (World)
     math::CVector3 m_v3Max = math::CVector3::Zero;
     math::CVector3 m_v3Min = math::CVector3::Zero;
 
@@ -60,11 +60,10 @@ namespace collision
     math::CVector3 m_v3Right = math::CVector3::Right;
     math::CVector3 m_v3Up = math::CVector3::Up;
     math::CVector3 m_v3Forward = math::CVector3::Forward;
-    bool m_bOBBEnabled = true;
+    bool m_bOBB;
 
     // Extents
     std::vector<math::CVector3> m_v3Extents;
-    std::vector<render::gfx::CPrimitive*> m_vctPrimitives;
   };
 }
 

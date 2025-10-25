@@ -9,6 +9,10 @@ cbuffer ConstantTransforms : register(b0)
   // Inverse
   matrix InvView;
   matrix InvProjection;
+  // Projection CFG
+  float FarPlane;
+  float NearPlane;
+  float2 Padding0;
 };
 
 // Vertex input

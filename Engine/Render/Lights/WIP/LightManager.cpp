@@ -12,19 +12,19 @@ namespace render
   namespace lights
   {
     // ------------------------------------
-    CLightManager::CLightManager()
+    CLightsManager::CLightsManager()
     {
       HRESULT hResult = m_oLightningBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
     }
     // ------------------------------------
-    CLightManager::~CLightManager()
+    CLightsManager::~CLightsManager()
     {
       Clean();
     }
     // ------------------------------------
-    void CLightManager::Update()
+    void CLightsManager::Update()
     {
       // Get data
       auto& oGlobalLightningData = m_oLightningBuffer.GetData();
@@ -72,7 +72,7 @@ namespace render
       global::dx::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
     }
     // ------------------------------------
-    void CLightManager::DestroyLight(render::lights::CBaseLight*& _pLight_)
+    void CLightsManager::DestroyLight(render::lights::CBaseLight*& _pLight_)
     {
       switch (_pLight_->GetLightType())
       {
@@ -97,22 +97,22 @@ namespace render
       }
     }
     // ------------------------------------
-    render::lights::CDirectionalLight* CLightManager::CreateDirectionalLight()
+    render::lights::CDirectionalLight* CLightsManager::CreateDirectionalLight()
     {
       if (m_pDirectionalLight)
       {
-        std::cout << "There is a directional light in the current scene" << std::endl;
+        WARNING_LOG("There is a directional light in the current scene!" );
         return m_pDirectionalLight;
       }
       m_pDirectionalLight = new render::lights::CDirectionalLight();
       return m_pDirectionalLight;
     }
     // ------------------------------------
-    render::lights::CPointLight* CLightManager::CreatePointLight()
+    render::lights::CPointLight* CLightsManager::CreatePointLight()
     {
-      if (m_uRegisteredPointLights >= s_iMaxSpotLights)
+      if (m_uRegisteredPointLights >= s_uMaxSpotLights)
       {
-        std::cout << "You have reached maximum point lights in the current scene" << std::endl;
+        WARNING_LOG("You have reached maximum point lights in the current scene");
         return nullptr;
       }
       render::lights::CPointLight*& pPointLight = m_vctPointLights[m_uRegisteredPointLights++];
@@ -120,11 +120,11 @@ namespace render
       return pPointLight;
     }
     // ------------------------------------
-    render::lights::CSpotLight* CLightManager::CreateSpotLight()
+    render::lights::CSpotLight* CLightsManager::CreateSpotLight()
     {
-      if (m_uRegisteredSpotLights >= s_iMaxSpotLights)
+      if (m_uRegisteredSpotLights >= s_uMaxSpotLights)
       {
-        std::cout << "You have reached maximum spot lights in the current scene" << std::endl;
+        WARNING_LOG("You have reached maximum spot lights in the current scene");
         return nullptr;
       }
       render::lights::CSpotLight*& pSpotLight = m_vctSpotLights[m_uRegisteredSpotLights++];
@@ -132,27 +132,27 @@ namespace render
       return pSpotLight;
     }
     // ------------------------------------
-    void CLightManager::Clean()
+    void CLightsManager::Clean()
     {
       // Destroy directional light
       global::ReleaseObject(m_pDirectionalLight);
 
       // Destroy point lights
       std::for_each(m_vctPointLights.begin(), m_vctPointLights.end(), [](render::lights::CPointLight*& _pLight)
-        {
-          global::ReleaseObject(_pLight);
-        });
+      {
+        global::ReleaseObject(_pLight);
+      });
       m_uRegisteredPointLights = 0;
 
       // Destroy spot lights
       std::for_each(m_vctSpotLights.begin(), m_vctSpotLights.end(), [](render::lights::CSpotLight*& _pLight)
-        {
-          global::ReleaseObject(_pLight);
-        });
+      {
+        global::ReleaseObject(_pLight);
+      });
       m_uRegisteredSpotLights = 0;
     }
     // ------------------------------------
-    void CLightManager::DestroyPointLight(render::lights::CBaseLight*& pLight_)
+    void CLightsManager::DestroyPointLight(render::lights::CBaseLight*& pLight_)
     {
       auto it = std::find(m_vctPointLights.begin(), m_vctPointLights.end(), pLight_);
       if (it != m_vctPointLights.end())
@@ -161,13 +161,13 @@ namespace render
         m_uRegisteredPointLights--;
 
         auto oReorderFunc = std::remove_if(m_vctPointLights.begin(), m_vctPointLights.end(),
-          [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+        [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
         std::fill(oReorderFunc, m_vctPointLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;
     }
     // ------------------------------------
-    void CLightManager::DestroySpotLight(render::lights::CBaseLight*& pLight_)
+    void CLightsManager::DestroySpotLight(render::lights::CBaseLight*& pLight_)
     {
       auto it = std::find(m_vctSpotLights.begin(), m_vctSpotLights.end(), pLight_);
       if (it != m_vctSpotLights.end())
@@ -176,7 +176,7 @@ namespace render
         m_uRegisteredSpotLights--;
 
         auto oReorderFunc = std::remove_if(m_vctSpotLights.begin(), m_vctSpotLights.end(),
-          [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+        [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
         std::fill(oReorderFunc, m_vctSpotLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;

@@ -13,7 +13,6 @@ namespace utils
     {
       if (m_uRegisteredItems >= MAX_ITEMS)
       {
-        std::cout << "Maximum items reached!" << std::endl;
         return nullptr;
       }
 

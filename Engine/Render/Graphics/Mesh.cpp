@@ -7,13 +7,6 @@ namespace render
 {
   namespace gfx
   {
-    std::vector<D3D11_INPUT_ELEMENT_DESC> SVertexData::s_vctInputElementDesc =
-    {
-       { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Position), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Normal), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetof(render::gfx::SVertexData, Color), D3D11_INPUT_PER_VERTEX_DATA, 0 },
-       { "UV", 0, DXGI_FORMAT_R32G32_FLOAT, 0, offsetof(render::gfx::SVertexData, TexCoord), D3D11_INPUT_PER_VERTEX_DATA, 0 }
-    };
     // ------------------------------------
     bool SVertexData::operator==(const SVertexData& _other) const
     {

@@ -67,7 +67,7 @@ namespace physics
   {
     if (m_vctRigidbodys.CurrentSize() >= m_vctRigidbodys.GetMaxSize())
     {
-      std::cout << "You have reached maximum rigidbodys!" << std::endl;
+      WARNING_LOG("You have reached maximum rigidbodys!");
       return nullptr;
     }
     return m_vctRigidbodys.RegisterItem(_eRigidbodyType);
@@ -76,7 +76,10 @@ namespace physics
   void CPhysicsManager::DestroyRigidbody(CRigidbody*& _pRigidbody)
   {
     bool bOk = m_vctRigidbodys.RemoveItem(_pRigidbody);
-    if (!bOk) { std::cout << "Error removing rigidbody!" << std::endl; }
+    if (!bOk) 
+    {
+      ERROR_LOG("Error removing rigidbody!");    
+    }
     _pRigidbody = nullptr;
   }
   // ------------------------------------

@@ -80,7 +80,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   {
     PointLight pointLight = pointLights[i];
     float fDist = distance(pointLight.Position, v3WorldPos);
-    if (fDist > pointLight.Range) 
+    if (fDist > pointLight.Range)
     {
       continue;
     }
@@ -99,7 +99,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   {
     Spotlight spotLight = spotLights[j];
     float fDist = distance(spotLight.Position, v3WorldPos);
-    if (fDist > spotLight.Range) 
+    if (fDist > spotLight.Range)
     {
       continue;
     }

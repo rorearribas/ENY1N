@@ -103,7 +103,7 @@ namespace game
     case collision::EColliderType::BOX_COLLIDER:
     {
       collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(m_pCollider);
-      bool bOBBEnabled = pBoxCollider->IsOBBEnabled();
+      bool bOBB = pBoxCollider->IsOBB();
 
       float v3Size[3] = { pBoxCollider->GetSize().x, pBoxCollider->GetSize().y, pBoxCollider->GetSize().z };
       float v3Max[3] = { pBoxCollider->GetMax().x, pBoxCollider->GetMax().y, pBoxCollider->GetMax().z };
@@ -113,12 +113,12 @@ namespace game
       ImGui::InputFloat3("Size", v3Size);
       ImGui::InputFloat3("Max", v3Max);
       ImGui::InputFloat3("Min", v3Min);
-      ImGui::Checkbox("OBB Enabled", &bOBBEnabled);
+      ImGui::Checkbox("OBB Enabled", &bOBB);
       ImGui::Checkbox("Debug Mode", &m_bDebugMode);
       ImGui::Separator();
 
       // Apply values
-      pBoxCollider->SetOBBEnabled(bOBBEnabled);
+      pBoxCollider->SetOBB(bOBB);
       math::CVector3 v3CurrentSize(v3Size[0], v3Size[1], v3Size[2]);
       if (!v3CurrentSize.Equal(pBoxCollider->GetSize()))
       {

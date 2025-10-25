@@ -40,35 +40,36 @@ namespace render
 
       void Draw();
 
-      void SetRenderMode(render::ERenderMode _eRenderMode);
-      void IgnoreGlobalLighting(bool _bIgnore); // This is trash!!
-
-      void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
-      const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-      void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
-      const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-      void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
-      const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+      void SetRenderMode(ERenderMode _eRenderMode);
+      inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
       void SetColor(const math::CVector3& _v3Color);
-      const math::CVector3& GetColor() const { return m_v3Color; }
+      inline const math::CVector3& GetColor() const { return m_v3Color; }
+
+      inline const EPrimitiveType& GetPrimitiveType() const { return m_ePrimitiveType; }
+      inline void SetIgnoreLighting(bool _bIgnore) { m_bIgnoreLighting = _bIgnore; }
+
+      inline void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
+      inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+      inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
+      inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
+      inline void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
+      inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
     private:
       HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode);
       HRESULT CreateBufferFromData(const std::vector<render::gfx::SVertexData>&, const std::vector<uint32_t>&);
-      HRESULT CreateInputLayout();
 
       // Primitive data
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
-      ID3D11InputLayout* m_pInputLayout = nullptr;
 
       // Data
-      render::ERenderMode m_eRenderMode = render::ERenderMode::SOLID;
-      gfx::EPrimitiveType m_eType = gfx::EPrimitiveType::INVALID;
+      ERenderMode m_eRenderMode = ERenderMode::SOLID;
+      EPrimitiveType m_ePrimitiveType = EPrimitiveType::INVALID;
 
       math::CTransform m_oTransform = math::CTransform();
       math::CVector3 m_v3Color = math::CVector3::One;
-      bool m_bIgnoreGlobalLighting = false;
+      bool m_bIgnoreLighting = false;
 
       uint32_t m_uVertices = 0;
       uint32_t m_uIndices = 0;

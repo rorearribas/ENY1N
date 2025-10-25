@@ -14,11 +14,12 @@ namespace scene
     static int constexpr s_iMaxScenes = 1;
     typedef std::array<CScene*, s_iMaxScenes> TSceneList;
 
+  public:
     CSceneManager();
     ~CSceneManager();
 
-    const TSceneList& GetScenes() { return m_vctScenes; }
-    scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
+    inline scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
+    inline const TSceneList& GetScenes() { return m_vctScenes; }
 
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
     void DisableAllScenes() const;

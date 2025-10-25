@@ -10,7 +10,7 @@ namespace collision
   {
   public:
     CSphereCollider(void* _pOwner) : CCollider(EColliderType::SPHERE_COLLIDER, _pOwner) {}
-    virtual ~CSphereCollider() {}
+    ~CSphereCollider() {}
 
     virtual bool CheckCollision(const CCollider&, SHitEvent& _oHitEvent_) override;
     virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;

@@ -18,17 +18,17 @@ namespace render
       }
 
       // sort through and find what code to run for the message given
-      switch (_uMsg) 
+      switch (_uMsg)
       {
-        case WM_DESTROY:
-        {
-          PostQuitMessage(0);
-          return 0;
-        }
-        break;
+      case WM_DESTROY:
+      {
+        PostQuitMessage(0);
+        return 0;
+      }
+      break;
 
-        case WM_SIZE:
-        {
+      case WM_SIZE:
+      {
         if (_wParam == SIZE_RESTORED || _wParam == SIZE_MAXIMIZED)
         {
           for (auto& oDelegate : global::delegates::s_vctOnWindowResizeDelegates)
@@ -37,9 +37,9 @@ namespace render
           }
         }
       }
-        break;
-        case WM_INPUT:
-        {
+      break;
+      case WM_INPUT:
+      {
         uint32_t uSize = 0;
         GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, nullptr, &uSize, sizeof(RAWINPUTHEADER));
         if (uSize == 0) break;
@@ -64,7 +64,7 @@ namespace render
           global::delegates::s_oOnUpdateKeyboardDelegate(&pRawInput->data.keyboard);
         }
       }
-        break;
+      break;
       }
 
       // Handle any messages the switch statement didn't

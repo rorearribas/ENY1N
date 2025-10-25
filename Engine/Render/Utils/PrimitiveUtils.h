@@ -1,6 +1,7 @@
 #pragma once
+#include "Engine/Render/Graphics/Primitive.h"
+#include "Engine/Render/Graphics/Mesh.h"
 #include <vector>
-#include "Primitive.h"
 
 namespace render
 {

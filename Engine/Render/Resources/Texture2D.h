@@ -18,12 +18,12 @@ namespace render
       static constexpr uint32_t s_uChannels = 4;
 
     public:
-      CTexture2D(const std::string& _sTextureID) : m_sTextureID(_sTextureID) {}
+      CTexture2D() = default;
       ~CTexture2D() { ReleaseTexture(); ReleaseSampler(); ReleaseView(); }
 
       void CopyTexture(ID3D11Texture2D* _pTexture);
-      void AttachTexture(EShaderType _eShaderType);
-      void DetachTexture();
+      void AttachTexture(uint32_t _uSlot, EShaderType _eShaderType);
+      void AttachSampler(uint32_t _uSlot, EShaderType _eShaderType);
 
       // Texture and sampler
       HRESULT CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _oTextureCfg, uint32_t _uChannels = 4);
@@ -89,9 +89,6 @@ namespace render
       inline operator ID3D11Texture2D* () const { return m_pInternalTexture; }
       inline operator const ID3D11Texture2D* () const { return m_pInternalTexture; }
 
-      inline bool operator=(CTexture2D<T>& _other) { return m_sTextureID == _other.m_sTextureID; }
-      inline bool operator=(CTexture2D<T>& _other) const { return m_sTextureID == _other.m_sTextureID; }
-
     private:
       void ReleaseTexture();
       void ReleaseSampler();
@@ -104,9 +101,6 @@ namespace render
       HRESULT CreateUnorderedAccessView(const D3D11_UNORDERED_ACCESS_VIEW_DESC& _oDesc);
 
     private:
-      // Info
-      std::string m_sTextureID;
-
       // DirectX
       ID3D11View* m_pInternalView = nullptr;
       ID3D11Texture2D* m_pInternalTexture = nullptr;
@@ -121,7 +115,7 @@ namespace render
     }
 
     template<EViewType T>
-    void render::texture::CTexture2D<T>::AttachTexture(EShaderType _eShaderType)
+    void render::texture::CTexture2D<T>::AttachTexture(uint32_t _uSlot, EShaderType _eShaderType)
     {
       if constexpr (T != SHADER_RESOURCE)
       {
@@ -134,13 +128,22 @@ namespace render
       {
         switch (_eShaderType)
         {
-          case E_VERTEX:   global::dx::s_pDeviceContext->VSSetShaderResources(0, 1, &pShaderResource); break;
-          case E_HULL:     global::dx::s_pDeviceContext->HSSetShaderResources(0, 1, &pShaderResource); break;
-          case E_DOMAIN:   global::dx::s_pDeviceContext->DSSetShaderResources(0, 1, &pShaderResource); break;
-          case E_GEOMETRY: global::dx::s_pDeviceContext->GSSetShaderResources(0, 1, &pShaderResource); break;
-          case E_PIXEL:    global::dx::s_pDeviceContext->PSSetShaderResources(0, 1, &pShaderResource); break;
-          case E_COMPUTE:  global::dx::s_pDeviceContext->CSSetShaderResources(0, 1, &pShaderResource); break;
+          case E_VERTEX:   global::dx::s_pDeviceContext->VSSetShaderResources(_uSlot, 1, &pShaderResource); break;
+          case E_HULL:     global::dx::s_pDeviceContext->HSSetShaderResources(_uSlot, 1, &pShaderResource); break;
+          case E_DOMAIN:   global::dx::s_pDeviceContext->DSSetShaderResources(_uSlot, 1, &pShaderResource); break;
+          case E_GEOMETRY: global::dx::s_pDeviceContext->GSSetShaderResources(_uSlot, 1, &pShaderResource); break;
+          case E_PIXEL:    global::dx::s_pDeviceContext->PSSetShaderResources(_uSlot, 1, &pShaderResource); break;
+          case E_COMPUTE:  global::dx::s_pDeviceContext->CSSetShaderResources(_uSlot, 1, &pShaderResource); break;
         }
+      }
+    }
+
+    template<EViewType T>
+    void render::texture::CTexture2D<T>::AttachSampler(uint32_t _uSlot, EShaderType _eShaderType)
+    {
+      if constexpr (T != SHADER_RESOURCE)
+      {
+        return;
       }
 
       // Attach sampler
@@ -148,20 +151,14 @@ namespace render
       {
         switch (_eShaderType)
         {
-          case E_VERTEX:   global::dx::s_pDeviceContext->VSSetSamplers(0, 1, &m_pSamplerState); break;
-          case E_HULL:     global::dx::s_pDeviceContext->HSSetSamplers(0, 1, &m_pSamplerState); break;
-          case E_DOMAIN:   global::dx::s_pDeviceContext->DSSetSamplers(0, 1, &m_pSamplerState); break;
-          case E_GEOMETRY: global::dx::s_pDeviceContext->GSSetSamplers(0, 1, &m_pSamplerState); break;
-          case E_PIXEL:    global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &m_pSamplerState); break;
-          case E_COMPUTE:  global::dx::s_pDeviceContext->CSSetSamplers(0, 1, &m_pSamplerState); break;
+          case E_VERTEX:   global::dx::s_pDeviceContext->VSSetSamplers(_uSlot, 1, &m_pSamplerState); break;
+          case E_HULL:     global::dx::s_pDeviceContext->HSSetSamplers(_uSlot, 1, &m_pSamplerState); break;
+          case E_DOMAIN:   global::dx::s_pDeviceContext->DSSetSamplers(_uSlot, 1, &m_pSamplerState); break;
+          case E_GEOMETRY: global::dx::s_pDeviceContext->GSSetSamplers(_uSlot, 1, &m_pSamplerState); break;
+          case E_PIXEL:    global::dx::s_pDeviceContext->PSSetSamplers(_uSlot, 1, &m_pSamplerState); break;
+          case E_COMPUTE:  global::dx::s_pDeviceContext->CSSetSamplers(_uSlot, 1, &m_pSamplerState); break;
         }
       }
-    }
-
-    template<EViewType T>
-    void render::texture::CTexture2D<T>::DetachTexture()
-    {
-      // Not implemented!
     }
 
     template<EViewType T>
@@ -209,7 +206,6 @@ namespace render
     {
       // Flush
       ReleaseTexture();
-
       // Clear empty texture!
       return global::dx::s_pDevice->CreateTexture2D(&_oTextureCfg, nullptr, &m_pInternalTexture);
     }

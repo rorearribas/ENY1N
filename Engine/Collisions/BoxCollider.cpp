@@ -13,7 +13,8 @@ namespace collision
     static const float s_fDebugRadius = 0.025f;
   }
   // ------------------------------------
-  CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(collision::EColliderType::BOX_COLLIDER, _pOwner)
+  CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(collision::EColliderType::BOX_COLLIDER, _pOwner),
+  m_bOBB(false)
   {
     ComputeMinMax();
     ComputeExtents();
@@ -21,7 +22,7 @@ namespace collision
   // ------------------------------------
   CBoxCollider::~CBoxCollider()
   {
-    m_vctPrimitives.clear();
+    m_v3Extents.clear();
   }
   // ------------------------------------
   bool CBoxCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
@@ -30,18 +31,18 @@ namespace collision
     assert(eColliderType != EColliderType::INVALID);
     switch (eColliderType)
     {
-    case EColliderType::BOX_COLLIDER:
-    {
-      const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
-      assert(&oBoxCollider);
-      return IsOBBEnabled() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckAABBCollision(&oBoxCollider, _oHitEvent_);
-    }
-    case EColliderType::SPHERE_COLLIDER:
-    {
-      const CSphereCollider& oSphereCollider = static_cast<const CSphereCollider&>(_oCollider);
-      assert(&oSphereCollider);
-      return IsOBBEnabled() ? CheckOBBSphereCollision(&oSphereCollider, _oHitEvent_) : CheckSphereCollision(&oSphereCollider, _oHitEvent_);
-    }
+      case EColliderType::BOX_COLLIDER:
+      {
+        const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
+        assert(&oBoxCollider);
+        return IsOBB() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckAABBCollision(&oBoxCollider, _oHitEvent_);
+      }
+      case EColliderType::SPHERE_COLLIDER:
+      {
+        const CSphereCollider& oSphereCollider = static_cast<const CSphereCollider&>(_oCollider);
+        assert(&oSphereCollider);
+        return IsOBB() ? CheckOBBSphereCollision(&oSphereCollider, _oHitEvent_) : CheckSphereCollision(&oSphereCollider, _oHitEvent_);
+      }
     }
     return false;
   }
@@ -128,21 +129,6 @@ namespace collision
   std::vector<math::CVector3> CBoxCollider::GetAxisDirectors() const
   {
     return std::vector<math::CVector3> { m_v3Right, m_v3Up, m_v3Forward };
-  }
-  // ------------------------------------
-  void CBoxCollider::DrawDebug()
-  {
-    // Draw cube
-    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    pEngine->DrawCube(GetPosition(), GetSize(), GetRotation(), math::CVector3::One, render::ERenderMode::WIREFRAME);
-
-    // Draw extents
-    float fMagnitude = m_v3Size.Magnitude();
-    for (size_t tIndex = 0; tIndex < m_v3Extents.size(); tIndex++)
-    {
-      math::CVector3 v3Pos = m_v3Extents[tIndex];
-      pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::Right, render::ERenderMode::WIREFRAME);
-    }
   }
   // ------------------------------------
   bool CBoxCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
@@ -343,5 +329,20 @@ namespace collision
     math::CVector3 v3HalfSize = m_v3Size * 0.5f;
     m_v3Min = GetPosition() - v3HalfSize;
     m_v3Max = GetPosition() + v3HalfSize;
+  }
+  // ------------------------------------
+  void CBoxCollider::DrawDebug()
+  {
+    // Draw cube
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    pEngine->DrawCube(GetPosition(), GetSize(), GetRotation(), math::CVector3::One, render::ERenderMode::WIREFRAME);
+
+    // Draw extents
+    float fMagnitude = m_v3Size.Magnitude();
+    for (size_t tIndex = 0; tIndex < m_v3Extents.size(); tIndex++)
+    {
+      math::CVector3 v3Pos = m_v3Extents[tIndex];
+      pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::Right, render::ERenderMode::WIREFRAME);
+    }
   }
 }

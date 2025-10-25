@@ -14,19 +14,10 @@
 
 CResourceManager::~CResourceManager()
 {
-  // Clean loaded textures
-  {
-    auto it = m_dctLoadedTextures.begin();
-    for (; it != m_dctLoadedTextures.end(); ++it)
-    {
-      it->second.reset();
-    }
-    m_dctLoadedTextures.clear();
-  }
   // Clean loaded models
   m_dctLoadedModels.clear();
 }
- // ------------------------------------
+// ------------------------------------
 char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
 {
   FILE* pFile = nullptr;
@@ -71,8 +62,8 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
 
   // Read file
   LOG("Loading model -> " << _sPath);
-  uint32_t uFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals /*| aiProcess_GlobalScale*/;
-  const aiScene* pScene = importer.ReadFile(_sPath, uFlags);
+  int32_t iFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_ImproveCacheLocality;
+  const aiScene* pScene = importer.ReadFile(_sPath, iFlags);
   if (!pScene)
   {
     ERROR_LOG("Error loading model! " << importer.GetErrorString());
@@ -308,25 +299,14 @@ void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, rende
     using namespace render::texture;
     std::string sTextureID = oTargetPath.filename().stem().string();
 
-    // Get registered texture!
-    auto it = m_dctLoadedTextures.find(sTextureID);
-    if (it != m_dctLoadedTextures.end())
-    {
-      pMaterial->SetTexture(it->second, _eType);
-      SUCCESS_LOG("Texture loaded! -> " << oTargetPath.filename());
-      return;
-    }
-
     int iWidth = 0, iHeight = 0, iChannels = 0;
     unsigned char* pBuffer = LoadImage(oTargetPath.string().c_str(), iWidth, iHeight, iChannels);
     assert(pBuffer);
     SUCCESS_LOG("Texture loaded! -> " << oTargetPath.filename());
 
     // Create texture
-    auto pTexture = std::make_shared<render::texture::CTexture2D<render::SHADER_RESOURCE>>(sTextureID);
+    auto pTexture = std::make_shared<render::texture::CTexture2D<render::SHADER_RESOURCE>>();
     pMaterial->SetTexture(pTexture, _eType);
-    // Register texture
-    m_dctLoadedTextures.emplace(sTextureID, pTexture);
 
     // Set texture config
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -350,26 +330,6 @@ void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, rende
 
     // Create shader resource view
     hResult = pTexture->CreateView(oShaderResourceViewDesc);
-    assert(!FAILED(hResult));
-
-    // Set sampler cfg
-    D3D11_SAMPLER_DESC oSamplerDesc = D3D11_SAMPLER_DESC();
-    oSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    oSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    oSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    oSamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
-    oSamplerDesc.MipLODBias = 0.0f;
-    oSamplerDesc.MaxAnisotropy = 16u;
-    oSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    oSamplerDesc.BorderColor[0] = 0.0f;
-    oSamplerDesc.BorderColor[1] = 0.0f;
-    oSamplerDesc.BorderColor[2] = 0.0f;
-    oSamplerDesc.BorderColor[3] = 0.0f;
-    oSamplerDesc.MinLOD = 0.0f;
-    oSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-    // Create sampler
-    hResult = pTexture->CreateSampler(oSamplerDesc);
     assert(!FAILED(hResult));
 
     stbi_image_free(pBuffer);

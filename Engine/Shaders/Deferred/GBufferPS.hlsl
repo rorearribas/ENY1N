@@ -17,7 +17,7 @@ cbuffer TexturesData : register(b0)
   int HasDiffuse;
   int HasNormal;
   int HasSpecular;
-  int Padding0;
+  int Padding1;
 };
 
 struct GBuffer

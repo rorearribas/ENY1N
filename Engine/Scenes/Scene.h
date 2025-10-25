@@ -15,28 +15,30 @@ namespace scene
   {
   private:
     //@Note: if you change this values you will also need to change the array size in hlsl
-    static int constexpr s_iMaxSpotLights = 100;
-    static int constexpr s_iMaxPointLights = 100;
+    static uint32_t constexpr s_uMaxSpotLights = 100u;
+    static uint32_t constexpr s_uMaxPointLights = 100u;
 
-    typedef utils::CFixedPool<render::lights::CPointLight, s_iMaxPointLights> TPointLightsList;
-    typedef utils::CFixedPool<render::lights::CSpotLight, s_iMaxSpotLights> TSpotLightsList;
+    typedef utils::CFixedPool<render::lights::CPointLight, s_uMaxPointLights> TPointLightsList;
+    typedef utils::CFixedPool<render::lights::CSpotLight, s_uMaxSpotLights> TSpotLightsList;
 
   private:
-    static int constexpr s_iMaxModels = 1000;
-    static int constexpr s_iMaxDebugItems = 1000;
-    static int constexpr s_iMaxPrimitives = 10000;
+    static uint32_t constexpr s_uMaxModels = 1000u;
+    static uint32_t constexpr s_uMaxInstancesPerModel = 128u;
 
-    typedef utils::CFixedPool<render::gfx::CPrimitive, s_iMaxDebugItems> TDebugItemList;
-    typedef utils::CFixedPool<render::gfx::CPrimitive, s_iMaxPrimitives> TPrimitiveList;
-    typedef utils::CFixedPool<render::gfx::CModel, s_iMaxPrimitives> TModelList;
+    static uint32_t constexpr s_iMaxDebugItems = 5000u;
+    static uint32_t constexpr s_iMaxPrimitives = 1000u;
+
+    typedef utils::CFixedPool<render::gfx::CModel, s_iMaxPrimitives> TModels;
+    typedef utils::CFixedPool<render::gfx::CPrimitive, s_iMaxPrimitives> TPrimitives;
+    typedef utils::CFixedPool<render::gfx::CPrimitive, s_iMaxDebugItems> TDebugItems;
 
   public:
     CScene(uint32_t _uIndex);
     ~CScene();
 
-    const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
-    void SetSceneEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
-    const bool IsEnabled() const { return m_bEnabled; }
+    inline void SetEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
+    inline const bool IsEnabled() const { return m_bEnabled; }
+    inline const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
     // Debug creation
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
@@ -63,7 +65,7 @@ namespace scene
     // Draw calls
     void DrawPrimitives();
     void DrawModels();
-    void UpdateLighting();
+    void ApplyLightning();
 
   private:
     void DestroyAllPrimitives();
@@ -74,10 +76,11 @@ namespace scene
     bool m_bEnabled = false;
     uint32_t m_uSceneIdx = 0;
 
+  private:
     // Graphics
-    TModelList m_vctModels = TModelList();
-    TPrimitiveList m_vctPrimitives = TPrimitiveList();
-    TDebugItemList m_vctDebugItems = TDebugItemList();
+    TModels m_vctModels = TModels();
+    TPrimitives m_vctPrimitives = TPrimitives();
+    TDebugItems m_vctDebugItems = TDebugItems();
 
     // Lights
     render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
@@ -85,6 +88,6 @@ namespace scene
     TSpotLightsList m_vctSpotLights = TSpotLightsList();
 
     // Global lightning buffer
-    CConstantBuffer<SGlobalLightingData<s_iMaxPointLights, s_iMaxSpotLights>> m_oGlobalLightingBuffer;
+    CConstantBuffer<SGlobalLightingData<s_uMaxPointLights, s_uMaxSpotLights>> m_oGlobalLightingBuffer;
   };
 }

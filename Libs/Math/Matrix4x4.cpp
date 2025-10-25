@@ -326,13 +326,6 @@ namespace math
     float fYaw = math::Deg2Radians(_v3Rot.y);
     float fRoll = math::Deg2Radians(_v3Rot.z);
 
-    // Roll (Z)
-    CMatrix4x4 mRoll = CMatrix4x4::Identity;
-    mRoll.m[0] = cos(fRoll);
-    mRoll.m[1] = sin(fRoll);
-    mRoll.m[4] = -sin(fRoll);
-    mRoll.m[5] = cos(fRoll);
-
     // Pitch (X)
     CMatrix4x4 mPitch = CMatrix4x4::Identity;
     mPitch.m[5] = cos(fPitch);
@@ -340,7 +333,14 @@ namespace math
     mPitch.m[9] = -sin(fPitch);
     mPitch.m[10] = cos(fPitch);
 
-    // Yaw (Y)
+    // Roll (Y)
+    CMatrix4x4 mRoll = CMatrix4x4::Identity;
+    mRoll.m[0] = cos(fRoll);
+    mRoll.m[1] = sin(fRoll);
+    mRoll.m[4] = -sin(fRoll);
+    mRoll.m[5] = cos(fRoll);
+
+    // Yaw (Z)
     CMatrix4x4 mYaw = CMatrix4x4::Identity;
     mYaw.m[0] = cos(fYaw);
     mYaw.m[2] = -sin(fYaw);

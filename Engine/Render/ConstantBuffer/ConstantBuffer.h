@@ -148,5 +148,5 @@ public:
 private:
   ID3D11Buffer* m_pBuffer = nullptr;
   ID3D11DeviceContext* m_pDeviceContext = nullptr;
-  T m_oData;
+  T m_oData = T();
 };

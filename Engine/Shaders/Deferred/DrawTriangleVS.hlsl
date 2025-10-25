@@ -1,11 +1,11 @@
 // Draw triangle - deferred pipeline
-struct VS_OUTPUT 
+struct VS_OUTPUT
 {
   float4 pos : SV_POSITION;
   float2 uv  : TEXCOORD0;
 };
 
-VS_OUTPUT VS_FullscreenTriangle(uint id : SV_VertexID) 
+VS_OUTPUT VS_FullscreenTriangle(uint id : SV_VertexID)
 {
   VS_OUTPUT output;
   float2 vertices[3] = { float2(-1.0, -1.0), float2(-1.0,  3.0), float2(3.0, -1.0) };

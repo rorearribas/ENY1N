@@ -9,7 +9,7 @@ namespace render
   class CRenderTarget
   {
   public:
-    CRenderTarget(const std::string& _sRenderTargetID) : m_sRenderTargetID(_sRenderTargetID) {}
+    CRenderTarget() = default;
     ~CRenderTarget() { CleanRT(); }
 
     HRESULT CreateRT(uint32_t _uWidth, uint32_t _uHeight, DXGI_FORMAT _eTargetFormat);
@@ -27,8 +27,7 @@ namespace render
     void CleanRT();
 
   private:
-    // Info
-    std::string m_sRenderTargetID = std::string();
+    // Data
     texture::CTexture2D<RENDER_TARGET>* m_pTexture = nullptr;
     ID3D11ShaderResourceView* m_pSRV = nullptr;
   };

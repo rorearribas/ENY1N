@@ -96,7 +96,7 @@
     <ClInclude Include="Physics\Rigidbody.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Graphics\PrimitiveUtils.h">
+    <ClInclude Include="Render\Utils\PrimitiveUtils.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Managers\MemoryTracker.h">
@@ -111,13 +111,16 @@
     <ClInclude Include="Collisions\CapsuleCollider.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Collisions\CullingAABB.h">
+    <ClInclude Include="Collisions\BoundingBox.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderTarget.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderTypes.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Graphics\RenderInstance.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -197,7 +200,7 @@
     <ClCompile Include="Physics\Rigidbody.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Graphics\PrimitiveUtils.cpp">
+    <ClCompile Include="Render\Utils\PrimitiveUtils.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Managers\MemoryTracker.cpp">
@@ -212,10 +215,13 @@
     <ClCompile Include="Collisions\CapsuleCollider.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Collisions\CullingAABB.cpp">
+    <ClCompile Include="Collisions\BoundingBox.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\RenderTarget.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Graphics\RenderInstance.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

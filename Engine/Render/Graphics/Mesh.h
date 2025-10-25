@@ -13,11 +13,10 @@ namespace render
 {
   namespace gfx
   {
+    static std::vector<D3D11_INPUT_ELEMENT_DESC> s_vctInputElementDesc;
+
     struct SVertexData
     {
-      // Input element desc
-      static std::vector<D3D11_INPUT_ELEMENT_DESC> s_vctInputElementDesc;
-
       // Vertex data
       math::CVector3 Position = math::CVector3::Zero;
       math::CVector3 Normal = math::CVector3::Zero;
@@ -41,7 +40,7 @@ namespace render
       HRESULT CreateBuffer(TIndicesList& _vctIndices);
 
       inline std::shared_ptr<render::mat::CMaterial> GetMaterial() const { return m_pMaterial; }
-      inline void SetMaterial(std::shared_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }
+      inline void SetMaterial(std::shared_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = _pMaterial; }
 
       inline const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndices.size()); }
       inline const std::string& GetMeshID() const { return m_sMeshID; }
@@ -64,12 +63,12 @@ namespace render
   }
 }
 
-namespace std 
+namespace std
 {
   template <>
-  struct hash<render::gfx::SVertexData> 
+  struct hash<render::gfx::SVertexData>
   {
-    size_t operator()(const render::gfx::SVertexData& v) const 
+    size_t operator()(const render::gfx::SVertexData& v) const
     {
       auto oHashFunc = [](float f) { return static_cast<int>(f * 1000); };
       size_t h1 = hash<int>()(oHashFunc(v.Position.x)) ^ hash<int>()(oHashFunc(v.Position.y)) ^ hash<int>()(oHashFunc(v.Position.z));

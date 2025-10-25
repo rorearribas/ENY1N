@@ -42,7 +42,7 @@ namespace render
       inline const float& GetShininess() const { return m_fShininess; }
 
     private:
-    void ClearTextures();
+      void ClearTextures();
 
     private:
       // ID

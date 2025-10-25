@@ -1,12 +1,14 @@
 #include "Primitive.h"
+#include "Engine/Engine.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Shaders/Forward/SimpleVS.h"
-#include <cassert>
-#include <iostream>
+#include "Engine/Render/Utils/PrimitiveUtils.h"
+
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/Math/Math.h"
-#include "PrimitiveUtils.h"
-#include "Engine/Engine.h"
+
+#include <cassert>
+#include <iostream>
 
 namespace render
 {
@@ -20,30 +22,26 @@ namespace render
 
     CPrimitive::CPrimitive(SCustomPrimitive& _oData, render::ERenderMode _eRenderMode)
     {
-      HRESULT hResult = CreateInputLayout();
-      assert(!FAILED(hResult));
-
       // Create from custom data
-      hResult = CreateBufferFromData(_oData.m_vctVertexData, _oData.m_vctIndices);
+      HRESULT hResult = CreateBufferFromData(_oData.m_vctVertexData, _oData.m_vctIndices);
+      UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
 
       // Set values
       m_eRenderMode = _eRenderMode;
-      m_eType = EPrimitiveType::CUSTOM;
+      m_ePrimitiveType = EPrimitiveType::CUSTOM;
     }
     // ------------------------------------
     CPrimitive::CPrimitive(EPrimitiveType _ePrimitiveType, ERenderMode _eRenderMode)
     {
-      HRESULT hResult = CreateInputLayout();
-      assert(!FAILED(hResult));
-
       // Create buffer from presets
-      hResult = CreatePrimitive(_ePrimitiveType, _eRenderMode);
+      HRESULT hResult = CreatePrimitive(_ePrimitiveType, _eRenderMode);
+      UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
 
       // Set values
       m_eRenderMode = _eRenderMode;
-      m_eType = _ePrimitiveType;
+      m_ePrimitiveType = _ePrimitiveType;
     }
     // ------------------------------------
     CPrimitive::~CPrimitive()
@@ -51,7 +49,6 @@ namespace render
       // Release dx
       global::dx::SafeRelease(m_pVertexBuffer);
       global::dx::SafeRelease(m_pIndexBuffer);
-      global::dx::SafeRelease(m_pInputLayout);
     }
     // ------------------------------------
     void CPrimitive::Draw()
@@ -59,7 +56,6 @@ namespace render
       // Set general data
       uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
       uint32_t uVertexOffset = 0;
-      global::dx::s_pDeviceContext->IASetInputLayout(m_pInputLayout);
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
 
       // Set topology
@@ -81,13 +77,8 @@ namespace render
       if (m_eRenderMode != _eRenderMode)
       {
         m_eRenderMode = _eRenderMode;
-        CreatePrimitive(m_eType, m_eRenderMode);
+        CreatePrimitive(m_ePrimitiveType, m_eRenderMode);
       }
-    }
-    // ------------------------------------
-    void CPrimitive::IgnoreGlobalLighting(bool _bState)
-    {
-      m_bIgnoreGlobalLighting = _bState;
     }
     // ------------------------------------
     void CPrimitive::SetColor(const math::CVector3& _v3Color)
@@ -119,7 +110,7 @@ namespace render
     {
       switch (_ePrimitiveType)
       {
-        // 2D Implementation
+      // 2D Implementation
       case EPrimitiveType::E2D_SQUARE:
       {
         return CreateBufferFromData
@@ -193,7 +184,7 @@ namespace render
     // ------------------------------------
     HRESULT CPrimitive::CreateBufferFromData(const std::vector<render::gfx::SVertexData>& _vctVertexData, const std::vector<uint32_t>& _vctIndices)
     {
-      if (_vctVertexData.empty() || _vctIndices.empty()) 
+      if (_vctVertexData.empty() || _vctIndices.empty())
       {
         return E_FAIL;
       }
@@ -231,18 +222,6 @@ namespace render
       D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = D3D11_SUBRESOURCE_DATA();
       oSubresourceIndexesData.pSysMem = _vctIndices.data();
       return global::dx::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
-    }
-    // ------------------------------------
-    HRESULT CPrimitive::CreateInputLayout()
-    {
-      return global::dx::s_pDevice->CreateInputLayout
-      (
-        render::gfx::SVertexData::s_vctInputElementDesc.data(),
-        static_cast<uint32_t>(render::gfx::SVertexData::s_vctInputElementDesc.size()),
-        g_SimpleVS,
-        sizeof(g_SimpleVS),
-        &m_pInputLayout
-      );
     }
   }
 }

@@ -20,9 +20,12 @@ namespace global
   // DirectX
   namespace dx
   {
+    // Device
     extern ID3D11Device* s_pDevice;
     extern ID3D11DeviceContext* s_pDeviceContext;
-
+    // Vertex Inputs
+    extern D3D11_INPUT_ELEMENT_DESC TStandardInputDesc[4];
+    // Release memory
     template<typename _ID3D11Resource>
     inline bool SafeRelease(_ID3D11Resource*& _pPtr)
     {

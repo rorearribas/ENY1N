@@ -1,6 +1,7 @@
 #pragma once
 #include "Libs/Math/Transform.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Engine/Collisions/BoundingBox.h"
 #include "Mesh.h"
 
 namespace render
@@ -22,26 +23,29 @@ namespace render
 
       void Draw();
 
-      void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
-      const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-      void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
-      const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-      void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
-      const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+      inline void SetPosition(const math::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); CalculateAABB(); }
+      inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+      inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); CalculateAABB(); }
+      inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
+      inline void SetScale(const math::CVector3& _v3Scl) { m_oTransform.SetScale(_v3Scl); CalculateAABB(); }
+      inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+
+      inline void SetBoundingBox(const collision::CBoundingBox& _oBoundingBox) { m_oBoundingBox = _oBoundingBox; }
+      inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
 
     private:
-      void Clear();
       HRESULT InitModel(const char* _sModelPath);
-      HRESULT CreateInputLayout();
+      void CalculateAABB();
+      void Clear();
 
     private:
       // DirectX
       ID3D11Buffer* m_pVertexBuffer = nullptr;
-      ID3D11InputLayout* m_pInputLayout = nullptr;
 
       // Model info
       SModelData m_oModelData = SModelData();
       math::CTransform m_oTransform = math::CTransform();
+      collision::CBoundingBox m_oBoundingBox;
     };
   }
 }

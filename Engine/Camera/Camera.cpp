@@ -86,41 +86,34 @@ namespace render
     // Interpolate FOV
     m_fDesiredFov = math::Lerp(m_fDesiredFov, m_fFov, internal_camera::s_fInterpolateSpeed * _fDeltaTime);
 
-    // Update projection matrix
+    //@Note i should change this!!
     UpdateProjectionMatrix(GetProjectionMode());
 
     // Update frustum
     BuildFrustumPlanes();
   }
   // ------------------------------------
-  void CCamera::ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos)
+  bool CCamera::IsOnFrustum(const collision::CBoundingBox& _oBoundingBox)
   {
-    if (!internal_camera::s_bWasRightButtonPressed && _bMousePressed)
-    {
-      internal_camera::s_v2LastPosition = _vMousePos;
-      internal_camera::s_bWasRightButtonPressed = true;
-    }
-    else if (internal_camera::s_bWasRightButtonPressed && !_bMousePressed)
-    {
-      int iLastX = static_cast<int>(internal_camera::s_v2LastPosition.x);
-      int iLastY = static_cast<int>(internal_camera::s_v2LastPosition.y);
-      SetCursorPos(iLastX, iLastY);
-      internal_camera::s_bWasRightButtonPressed = false;
-    }
+    UNUSED_VAR(_oBoundingBox);
+    return true;
+  }
+  // ------------------------------------
+  void CCamera::SetProjectionMode(EProjectionMode _eProjectionMode)
+  {
+    // Reset values
+    m_v3Rot = math::CVector3::Zero;
+    m_v3Dir = math::CVector3::Forward;
+    m_v3Pos.z = 0.0f;
 
-    while (_bMousePressed ? ::ShowCursor(!_bMousePressed) >= 0 : ::ShowCursor(!_bMousePressed) < 0);
-  }
-  // ------------------------------------
-  void CCamera::AddDisplacement(const math::CVector3& _v3Delta)
-  {
-    m_v3Pos += _v3Delta;
-    UpdateViewMatrix(m_eProjectionMode);
-  }
-  // ------------------------------------
-  void CCamera::AddRotation(const math::CVector3& _v3DeltaRot)
-  {
-    m_v3Rot += _v3DeltaRot;
-    UpdateViewMatrix(m_eProjectionMode);
+    // Update projection matrix
+    UpdateProjectionMatrix(_eProjectionMode);
+
+    // Update view matrix
+    UpdateViewMatrix(_eProjectionMode);
+
+    // Set projection mode
+    m_eProjectionMode = _eProjectionMode;
   }
   // ------------------------------------
   void CCamera::LookAt(const math::CVector3& _v3LookAt)
@@ -141,18 +134,16 @@ namespace render
     SetRotation(math::CVector3(fPitch, fYaw, 0.0f));
   }
   // ------------------------------------
-  void CCamera::SetProjectionMode(EProjectionMode _eProjectionMode)
+  void CCamera::AddDisplacement(const math::CVector3& _v3Delta)
   {
-    // Reset values
-    m_v3Rot = math::CVector3::Zero;
-    m_v3Dir = math::CVector3::Forward;
-    m_v3Pos.z = 0.0f;
-
-    // Update view matrix
-    UpdateViewMatrix(_eProjectionMode);
-
-    // Set projection mode
-    m_eProjectionMode = _eProjectionMode;
+    m_v3Pos += _v3Delta;
+    UpdateViewMatrix(m_eProjectionMode);
+  }
+  // ------------------------------------
+  void CCamera::AddRotation(const math::CVector3& _v3DeltaRot)
+  {
+    m_v3Rot += _v3DeltaRot;
+    UpdateViewMatrix(m_eProjectionMode);
   }
   // ------------------------------------
   void CCamera::UpdateProjectionMatrix(EProjectionMode _eProjectionMode)
@@ -303,5 +294,23 @@ namespace render
     //pEngine->DrawLine(m_v3Pos, m_v3Pos + v3NearTopRight, math::CVector3::Forward);
     //pEngine->DrawLine(m_v3Pos, m_v3Pos + v3NearBottomLeft, math::CVector3::Forward);
     //pEngine->DrawLine(m_v3Pos, m_v3Pos + v3NearBottomRight, math::CVector3::Forward);
+  }
+  // ------------------------------------
+  void CCamera::ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos)
+  {
+    if (!internal_camera::s_bWasRightButtonPressed && _bMousePressed)
+    {
+      internal_camera::s_v2LastPosition = _vMousePos;
+      internal_camera::s_bWasRightButtonPressed = true;
+    }
+    else if (internal_camera::s_bWasRightButtonPressed && !_bMousePressed)
+    {
+      int iLastX = static_cast<int>(internal_camera::s_v2LastPosition.x);
+      int iLastY = static_cast<int>(internal_camera::s_v2LastPosition.y);
+      SetCursorPos(iLastX, iLastY);
+      internal_camera::s_bWasRightButtonPressed = false;
+    }
+
+    while (_bMousePressed ? ::ShowCursor(!_bMousePressed) >= 0 : ::ShowCursor(!_bMousePressed) < 0);
   }
 }

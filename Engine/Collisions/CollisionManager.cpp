@@ -84,15 +84,15 @@ namespace collision
   {
     if (m_vctColliders.CurrentSize() >= m_vctColliders.GetMaxSize())
     {
-      std::cout << "You have reached maximum colliders!" << std::endl;
+      WARNING_LOG("You have reached maximum colliders!");
       return nullptr;
     }
     switch (_eColliderType)
     {
-      case collision::EColliderType::BOX_COLLIDER: return m_vctColliders.RegisterItem<collision::CBoxCollider>(_pOwner);
-      case collision::EColliderType::SPHERE_COLLIDER: return m_vctColliders.RegisterItem<collision::CSphereCollider>(_pOwner);
-      case collision::EColliderType::CAPSULE_COLLIDER: return m_vctColliders.RegisterItem<collision::CCapsuleCollider>(_pOwner);
-      default: return nullptr;
+    case collision::EColliderType::BOX_COLLIDER: return m_vctColliders.RegisterItem<collision::CBoxCollider>(_pOwner);
+    case collision::EColliderType::SPHERE_COLLIDER: return m_vctColliders.RegisterItem<collision::CSphereCollider>(_pOwner);
+    case collision::EColliderType::CAPSULE_COLLIDER: return m_vctColliders.RegisterItem<collision::CCapsuleCollider>(_pOwner);
+    default: return nullptr;
     }
   }
   // ------------------------------------

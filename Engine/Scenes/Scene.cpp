@@ -1,13 +1,13 @@
 #include "Scene.h"
-#include "Engine/Global/GlobalResources.h"
 #include "Engine/Engine.h"
 #include "Engine/Utils/Plane.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Render/Lights/Light.h"
 #include "Engine/Render/Lights/DirectionalLight.h"
-#include "Engine/Render/Graphics/PrimitiveUtils.h"
-#include "Libs/Macros/GlobalMacros.h"
+#include "Engine/Render/Utils/PrimitiveUtils.h"
+#include "Engine/Global/GlobalResources.h"
 
+#include "Libs/Macros/GlobalMacros.h"
 #include <algorithm>
 #include <random>
 #include <cassert>
@@ -58,14 +58,21 @@ namespace scene
   // ------------------------------------
   void CScene::DrawModels()
   {
+    // Check frustum
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    render::CCamera* pCamera = pEngine->GetCamera();
+
     for (uint32_t uIndex = 0; uIndex < m_vctModels.CurrentSize(); uIndex++)
     {
       render::gfx::CModel* pModel = m_vctModels[uIndex];
-      pModel->Draw();
+      if (pCamera->IsOnFrustum(pModel->GetBoundingBox()))
+      {
+        pModel->Draw();
+      }
     }
   }
   // ------------------------------------
-  void CScene::UpdateLighting()
+  void CScene::ApplyLightning()
   {
     // Fill data
     auto& oGlobalLightingData = m_oGlobalLightingBuffer.GetData();
@@ -137,7 +144,7 @@ namespace scene
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
-      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      WARNING_LOG("You have reached maximum temporal items in the current scene");
       return;
     }
 
@@ -155,7 +162,7 @@ namespace scene
 #endif
 
     // Set values
-    pPrimitive->IgnoreGlobalLighting(true);
+    pPrimitive->SetIgnoreLighting(true);
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetRotation(_v3Rot);
     pPrimitive->SetColor(_v3Color);
@@ -165,7 +172,7 @@ namespace scene
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
-      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
     }
 
@@ -177,7 +184,7 @@ namespace scene
 #endif
 
     // Set values
-    pPrimitive->IgnoreGlobalLighting(true);
+    pPrimitive->SetIgnoreLighting(true);
     pPrimitive->SetPosition(_v3Pos);
     pPrimitive->SetRotation(_v3Rot);
     pPrimitive->SetScale(_v3Size);
@@ -188,7 +195,7 @@ namespace scene
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
-      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
     }
 
@@ -198,8 +205,7 @@ namespace scene
     CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, oPrimitiveData.m_vctVertexData);
 
     // Fill indices
-    oPrimitiveData.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ?
-      CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
+    oPrimitiveData.m_vctIndices = (_eRenderMode == render::ERenderMode::SOLID) ? CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
       CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
 
     // Compute normals
@@ -212,7 +218,7 @@ namespace scene
 #endif
 
     // Set values
-    pSpherePrimitive->IgnoreGlobalLighting(true);
+    pSpherePrimitive->SetIgnoreLighting(true);
     pSpherePrimitive->SetPosition(_v3Pos);
     pSpherePrimitive->SetColor(_v3Color);
   }
@@ -221,7 +227,7 @@ namespace scene
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
-      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
     }
 
@@ -235,7 +241,7 @@ namespace scene
 #endif
 
     // Set values
-    pPlanePrimitive->IgnoreGlobalLighting(true);
+    pPlanePrimitive->SetIgnoreLighting(true);
     pPlanePrimitive->SetPosition(_oPlane.GetPos());
     pPlanePrimitive->SetScale(_v3Size);
     pPlanePrimitive->SetColor(_v3Color);
@@ -245,7 +251,7 @@ namespace scene
   {
     if (m_vctDebugItems.CurrentSize() >= m_vctDebugItems.GetMaxSize())
     {
-      std::cout << "You have reached maximum temporal items in the current scene" << std::endl;
+      WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
     }
 
@@ -259,7 +265,7 @@ namespace scene
 #endif
 
     // Set values
-    pPrimitive->IgnoreGlobalLighting(true);
+    pPrimitive->SetIgnoreLighting(true);
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
@@ -267,7 +273,7 @@ namespace scene
   {
     if (m_vctPrimitives.CurrentSize() >= m_vctPrimitives.GetMaxSize())
     {
-      std::cout << "You have reached maximum primitives in the current scene" << std::endl;
+      WARNING_LOG("You have reached maximum primitives in the current scene!");
       return nullptr;
     }
     return m_vctPrimitives.RegisterItem(_eType, _eRenderMode);
@@ -277,7 +283,7 @@ namespace scene
   {
     if (m_vctModels.CurrentSize() >= m_vctModels.GetMaxSize())
     {
-      std::cout << "You have reached maximum models in the current scene" << std::endl;
+      WARNING_LOG("You have reached maximum primitives in the current scene!");
       return nullptr;
     }
     return m_vctModels.RegisterItem(_sModelPath);
@@ -287,7 +293,7 @@ namespace scene
   {
     if (m_pDirectionalLight)
     {
-      std::cout << "There is a directional light in the current scene" << std::endl;
+      WARNING_LOG("There is a directional light in the current scene!");
       return m_pDirectionalLight;
     }
     m_pDirectionalLight = new render::lights::CDirectionalLight();
@@ -296,9 +302,9 @@ namespace scene
   // ------------------------------------
   render::lights::CPointLight* const CScene::CreatePointLight()
   {
-    if (m_vctPointLights.CurrentSize() >= s_iMaxPointLights)
+    if (m_vctPointLights.CurrentSize() >= s_uMaxPointLights)
     {
-      std::cout << "You have reached maximum point lights in the current scene" << std::endl;
+      WARNING_LOG("You have reached maximum point lights in the current scene!");
       return nullptr;
     }
     return m_vctPointLights.RegisterItem();
@@ -306,9 +312,9 @@ namespace scene
   // ------------------------------------
   render::lights::CSpotLight* const CScene::CreateSpotLight()
   {
-    if (m_vctSpotLights.CurrentSize() >= s_iMaxSpotLights)
+    if (m_vctSpotLights.CurrentSize() >= s_uMaxSpotLights)
     {
-      std::cout << "You have reached maximum spot lights in the current scene" << std::endl;
+      WARNING_LOG("You have reached maximum spot lights in the current scene!");
       return nullptr;
     }
     return m_vctSpotLights.RegisterItem();

@@ -18,11 +18,10 @@ public:
   [[nodiscard]] render::gfx::CModel::SModelData LoadModel(const char* _sPath);
 
 private:
-  void RegisterTexture(render::mat::CMaterial*& pMaterial, render::ETextureType _eType, 
-  const std::filesystem::path& _oBasePath, const std::string& _sTextureID);
+  void RegisterTexture(render::mat::CMaterial*& pMaterial, render::ETextureType _eType,
+    const std::filesystem::path& _oBasePath, const std::string& _sTextureID);
 
 private:
-  std::unordered_map<std::string, TSharedTexture> m_dctLoadedTextures;
   std::unordered_map<std::string, render::gfx::CModel::SModelData> m_dctLoadedModels;
 };
 
