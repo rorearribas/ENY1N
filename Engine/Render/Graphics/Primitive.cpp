@@ -23,7 +23,7 @@ namespace render
     CPrimitive::CPrimitive(SCustomPrimitive& _oData, render::ERenderMode _eRenderMode)
     {
       // Create from custom data
-      HRESULT hResult = CreateBufferFromData(_oData.m_vctVertexData, _oData.m_vctIndices);
+      HRESULT hResult = CreateBuffer(_oData.m_vctVertexData, _oData.m_vctIndices);
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
 
@@ -46,7 +46,11 @@ namespace render
     // ------------------------------------
     CPrimitive::~CPrimitive()
     {
-      // Release dx
+      Clear();
+    }
+    // ------------------------------------
+    void CPrimitive::Clear()
+    {
       global::dx::SafeRelease(m_pVertexBuffer);
       global::dx::SafeRelease(m_pIndexBuffer);
     }
@@ -110,86 +114,92 @@ namespace render
     {
       switch (_ePrimitiveType)
       {
-      // 2D Implementation
-      case EPrimitiveType::E2D_SQUARE:
-      {
-        return CreateBufferFromData
-        (
-          CPrimitiveUtils::s_oCubePrimitive,
-          _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oSquareIndices : CPrimitiveUtils::s_oSquareWireframeIndices
-        );
-      }
-      case EPrimitiveType::E2D_CIRCLE:
-      {
-        SCustomPrimitive oPrimitiveData = CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, _eRenderMode);
-        return CreateBufferFromData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
-      }
-      break;
-      case EPrimitiveType::E2D_TRIANGLE:
-      {
-        return CreateBufferFromData
-        (
-          CPrimitiveUtils::s_oTrianglePrimitive,
-          _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oTriangleIndices : CPrimitiveUtils::s_oWireframeTriangleIndices
-        );
-      }
-      break;
-      // 3D Implementation
-      case EPrimitiveType::E3D_PLANE:
-      {
-        return CreateBufferFromData
-        (
-          CPrimitiveUtils::s_oPlanePrimitive,
-          _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices
-        );
-      }
-      case EPrimitiveType::E3D_CUBE:
-      {
-        return CreateBufferFromData
-        (
-          CPrimitiveUtils::s_oCubePrimitive,
-          _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oWireframeCubeIndices
-        );
-      }
-      case EPrimitiveType::E3D_SPHERE:
-      {
-        std::vector<render::gfx::SVertexData> vctVertexData = std::vector<render::gfx::SVertexData>();
-        CPrimitiveUtils::CreateSphere(s_fStandardRadius, s_iSubvH, s_iSubvV, vctVertexData);
-
-        const auto& vctIndices = _eRenderMode == (render::ERenderMode::SOLID) ?
-          CPrimitiveUtils::GetSphereIndices(s_iSubvH, s_iSubvV) :
+        // 2D Implementation
+        case EPrimitiveType::E2D_SQUARE:
+        {
+          // Create 2D Square
+          return CreateBuffer
+          (
+            CPrimitiveUtils::s_oCubePrimitive,
+            _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oSquareIndices : CPrimitiveUtils::s_oSquareWireframeIndices
+          );
+        }
+        case EPrimitiveType::E2D_CIRCLE:
+        { 
+          // Create 2D Circle
+          SCustomPrimitive oPrimitiveData = CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, _eRenderMode);
+          return CreateBuffer(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+        }
+        break;
+        case EPrimitiveType::E2D_TRIANGLE:
+        {
+          // Create 2D Triangle
+          return CreateBuffer
+          (
+            CPrimitiveUtils::s_oTrianglePrimitive,
+            _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oTriangleIndices : CPrimitiveUtils::s_oWireframeTriangleIndices
+          );
+        }
+        break;
+        // 3D Implementation
+        case EPrimitiveType::E3D_PLANE:
+        {
+          // Create 3D Plane
+          return CreateBuffer
+          (
+            CPrimitiveUtils::s_oPlanePrimitive,
+            _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices
+          );
+        }
+        case EPrimitiveType::E3D_CUBE:
+        {
+          // Create 3D Cube
+          return CreateBuffer
+          (
+            CPrimitiveUtils::s_oCubePrimitive,
+            _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oWireframeCubeIndices
+          );
+        }
+        case EPrimitiveType::E3D_SPHERE:
+        {
+          // Create sphere
+          std::vector<render::gfx::SVertexData> vctVertexData = std::vector<render::gfx::SVertexData>();
+          CPrimitiveUtils::CreateSphere(s_fStandardRadius, s_iSubvH, s_iSubvV, vctVertexData);
+          // Get indices
+          const auto& vctIndices = _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::GetSphereIndices(s_iSubvH, s_iSubvV) :
           CPrimitiveUtils::GetWireframeSphereIndices(s_iSubvH, s_iSubvV);
-        CPrimitiveUtils::ComputeNormals(vctVertexData, vctIndices);
-
-        return CreateBufferFromData(vctVertexData, vctIndices);
+          // Calculate normals
+          CPrimitiveUtils::ComputeNormals(vctVertexData, vctIndices);
+          // Create buffer
+          return CreateBuffer(vctVertexData, vctIndices);
+        }
+        case EPrimitiveType::E3D_CAPSULE:
+        {
+          // Create capsule
+          SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
+          (
+            s_fStandardRadius,
+            s_fCapsuleHeight,
+            s_iSubvH,
+            s_iSubvV,
+            _eRenderMode
+          );
+          CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+          return CreateBuffer(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
+        }
+        break;
       }
-      case EPrimitiveType::E3D_CAPSULE:
-      {
-        SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
-        (
-          s_fStandardRadius,
-          s_fCapsuleHeight,
-          s_iSubvH,
-          s_iSubvV,
-          _eRenderMode
-        );
-        CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
-        return CreateBufferFromData(oPrimitiveData.m_vctVertexData, oPrimitiveData.m_vctIndices);
-      }
-      break;
-      }
-
       return S_FALSE;
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBufferFromData(const std::vector<render::gfx::SVertexData>& _vctVertexData, const std::vector<uint32_t>& _vctIndices)
+    HRESULT CPrimitive::CreateBuffer(const std::vector<render::gfx::SVertexData>& _vctVertexData, const std::vector<uint32_t>& _vctIndices)
     {
       if (_vctVertexData.empty() || _vctIndices.empty())
       {
         return E_FAIL;
       }
 
-      // Set number of vertices to draw
+      // Set vertex data
       m_uVertices = static_cast<uint32_t>(_vctVertexData.size());
 
       // Config vertex buffer
@@ -221,7 +231,58 @@ namespace render
       // Create index buffer
       D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = D3D11_SUBRESOURCE_DATA();
       oSubresourceIndexesData.pSysMem = _vctIndices.data();
-      return global::dx::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
+      hResult = global::dx::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+
+      // Update bounding box
+      return CalculateBoundingBox();
+    }
+    // ------------------------------------
+    HRESULT CPrimitive::CalculateBoundingBox()
+    {
+      if (m_uVertices == 0)
+      {
+        return E_FAIL;
+      }
+
+      D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+      HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
+      UNUSED_VAR(hResult);
+      assert(!FAILED(hResult));
+
+      // Get data
+      render::gfx::SVertexData* pPrimitiveData = (render::gfx::SVertexData*)(oMappedSubresource.pData);
+      assert(pPrimitiveData);
+
+      // Compute bounding box
+      const math::CMatrix4x4 mTransform = m_oTransform.CreateTransform();
+      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
+      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+      for (uint32_t uIndex = 0; uIndex < m_uVertices; ++uIndex)
+      {
+        // Get vertex pos
+        math::CVector3 v3VertexPos = mTransform * pPrimitiveData[uIndex].Position;
+
+        // Calculate Min
+        v3Min.x = math::Min<float>(v3Min.x, v3VertexPos.x);
+        v3Min.y = math::Min<float>(v3Min.y, v3VertexPos.y);
+        v3Min.z = math::Min<float>(v3Min.z, v3VertexPos.z);
+
+        // Calculate Max
+        v3Max.x = math::Max<float>(v3Max.x, v3VertexPos.x);
+        v3Max.y = math::Max<float>(v3Max.y, v3VertexPos.y);
+        v3Max.z = math::Max<float>(v3Max.z, v3VertexPos.z);
+      }
+
+      // Apply min-max
+      m_oBoundingBox.SetMin(v3Min);
+      m_oBoundingBox.SetMax(v3Max);
+
+      return S_OK;
     }
   }
 }

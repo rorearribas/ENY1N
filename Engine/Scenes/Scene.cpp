@@ -34,19 +34,29 @@ namespace scene
   // ------------------------------------
   void CScene::DrawPrimitives()
   {
+    // Check frustum
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    render::CCamera* pCamera = pEngine->GetCamera();
+
     // Draw primitives
     for (uint32_t uIndex = 0; uIndex < m_vctPrimitives.CurrentSize(); uIndex++)
     {
       render::gfx::CPrimitive* pPrimitive = m_vctPrimitives[uIndex];
-      pPrimitive->Draw();
+      if (pCamera->IsOnFrustum(pPrimitive->GetBoundingBox()))
+      {
+        pPrimitive->Draw();
+      }
     }
 
-    // Draw temporal primitives
+    // Draw debug primitives
     uint32_t uTempSize = m_vctDebugItems.CurrentSize();
     for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
     {
-      render::gfx::CPrimitive* pPrimitiveItem = m_vctDebugItems[uIndex];
-      pPrimitiveItem->Draw();
+      render::gfx::CPrimitive* pDebug = m_vctDebugItems[uIndex];
+      if (pCamera->IsOnFrustum(pDebug->GetBoundingBox()))
+      {
+        pDebug->Draw();
+      }
     }
 
     // Clean after draw
@@ -62,6 +72,7 @@ namespace scene
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     render::CCamera* pCamera = pEngine->GetCamera();
 
+    // Draw
     for (uint32_t uIndex = 0; uIndex < m_vctModels.CurrentSize(); uIndex++)
     {
       render::gfx::CModel* pModel = m_vctModels[uIndex];

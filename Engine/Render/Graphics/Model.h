@@ -23,11 +23,11 @@ namespace render
 
       void Draw();
 
-      inline void SetPosition(const math::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); CalculateAABB(); }
+      inline void SetPosition(const math::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); CalculateBoundingBox(); }
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-      inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); CalculateAABB(); }
+      inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); CalculateBoundingBox(); }
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-      inline void SetScale(const math::CVector3& _v3Scl) { m_oTransform.SetScale(_v3Scl); CalculateAABB(); }
+      inline void SetScale(const math::CVector3& _v3Scl) { m_oTransform.SetScale(_v3Scl); CalculateBoundingBox(); }
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
       inline void SetBoundingBox(const collision::CBoundingBox& _oBoundingBox) { m_oBoundingBox = _oBoundingBox; }
@@ -35,15 +35,14 @@ namespace render
 
     private:
       HRESULT InitModel(const char* _sModelPath);
-      void CalculateAABB();
+      HRESULT CalculateBoundingBox();
       void Clear();
 
     private:
-      // DirectX
+      // Model data
       ID3D11Buffer* m_pVertexBuffer = nullptr;
-
-      // Model info
       SModelData m_oModelData = SModelData();
+
       math::CTransform m_oTransform = math::CTransform();
       collision::CBoundingBox m_oBoundingBox;
     };

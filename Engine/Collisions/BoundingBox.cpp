@@ -4,6 +4,22 @@
 namespace collision
 {
   // ------------------------------------
+  std::vector<math::CVector3> CBoundingBox::GetExtents() const
+  {
+    std::vector<math::CVector3> vctExtents = 
+    {
+      math::CVector3(m_v3Min.x, m_v3Min.y, m_v3Min.z),
+      math::CVector3(m_v3Max.x, m_v3Min.y, m_v3Min.z),
+      math::CVector3(m_v3Min.x, m_v3Max.y, m_v3Min.z),
+      math::CVector3(m_v3Max.x, m_v3Max.y, m_v3Min.z),
+      math::CVector3(m_v3Min.x, m_v3Min.y, m_v3Max.z),
+      math::CVector3(m_v3Max.x, m_v3Min.y, m_v3Max.z),
+      math::CVector3(m_v3Min.x, m_v3Max.y, m_v3Max.z),
+      math::CVector3(m_v3Max.x, m_v3Max.y, m_v3Max.z)
+    };
+    return vctExtents;
+  }
+  // ------------------------------------
   void CBoundingBox::DrawDebug()
   {
     // Draw cube

@@ -9,18 +9,20 @@
 
 namespace render
 {
+  enum class EProjectionMode
+  {
+    PERSPECTIVE,
+    ORTOGRAPHIC
+  };
+
   class CCamera
   {
-  public:
-    enum class EProjectionMode
-    {
-      PERSPECTIVE,
-      ORTOGRAPHIC
-    };
+  private:
+    static uint32_t constexpr s_iFrustumPlanes = 6;
 
   public:
-    CCamera();
-    ~CCamera();
+    CCamera() {}
+    ~CCamera() {}
 
     void Update(float _fDeltaTime);
     bool IsOnFrustum(const collision::CBoundingBox& _oBoundingBox);
@@ -75,14 +77,13 @@ namespace render
     float m_fMovementVelocity = 25.0f;
 
     float m_fFov = 45.0f;
-    float m_fDesiredFov = 45.0f;
     float m_fZoomScale = 0.01f;
 
     float m_fFar = 10000.0f;
     float m_fNear = 0.01f;
     float m_fAspectRatio = 1.77778f;
 
-    std::vector<math::CPlane> m_oFrustumPlanes;
+    math::CPlane m_oPlanes[s_iFrustumPlanes];
     EProjectionMode m_eProjectionMode = EProjectionMode::PERSPECTIVE;
   };
 }

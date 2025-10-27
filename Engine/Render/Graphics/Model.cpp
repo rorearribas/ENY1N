@@ -43,8 +43,6 @@ namespace render
       {
         pMesh->Draw();
       }
-
-      m_oBoundingBox.DrawDebug();
     }
     // ------------------------------------
     HRESULT CModel::InitModel(const char* _sModelPath)
@@ -60,9 +58,6 @@ namespace render
         return E_FAIL;
       }
 
-      // Update AABB
-      CalculateAABB();
-
       // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
       oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::SVertexData) * m_oModelData.Vertices.size()));
@@ -72,7 +67,14 @@ namespace render
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
       oSubresourceData.pSysMem = m_oModelData.Vertices.data();
-      return global::dx::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
+      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+
+      // Update bounding box
+      return CalculateBoundingBox();
     }
     // ------------------------------------
     void CModel::Clear()
@@ -90,18 +92,18 @@ namespace render
       m_oModelData.Vertices.clear();
     }
     // ------------------------------------
-    void CModel::CalculateAABB()
+    HRESULT CModel::CalculateBoundingBox()
     {
       if (m_oModelData.Vertices.empty())
       {
-        return;
+        return E_FAIL;
       }
 
+      // Compute bounding box
       const math::CMatrix4x4 mTransform = m_oTransform.CreateTransform();
       math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
       math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
-      // Compute AABB
       for (auto& oVertexData : m_oModelData.Vertices)
       {
         // Get vertex pos
@@ -121,6 +123,8 @@ namespace render
       // Apply min-max
       m_oBoundingBox.SetMin(v3Min);
       m_oBoundingBox.SetMax(v3Max);
+
+      return S_OK;
     }
   }
 }

@@ -15,6 +15,7 @@ namespace collision
     inline void SetMax(const math::CVector3& _v3Max) { m_v3Max = _v3Max; }
     inline const math::CVector3& GetMax() const { return m_v3Max; }
 
+    std::vector<math::CVector3> GetExtents() const;
     inline math::CVector3 GetCenter() const { return math::CVector3(m_v3Max + m_v3Min) * 0.5f; }
     inline math::CVector3 GetHalfSize() const { return math::CVector3(m_v3Max - m_v3Min) * 0.5f; }
     inline math::CVector3 GetSize() const { return math::CVector3(m_v3Max - m_v3Min); }

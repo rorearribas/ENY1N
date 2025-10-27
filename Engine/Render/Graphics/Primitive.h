@@ -48,17 +48,23 @@ namespace render
       inline const EPrimitiveType& GetPrimitiveType() const { return m_ePrimitiveType; }
       inline void SetIgnoreLighting(bool _bIgnore) { m_bIgnoreLighting = _bIgnore; }
 
-      inline void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); }
+      inline void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); CalculateBoundingBox(); }
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-      inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
+      inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); CalculateBoundingBox(); }
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-      inline void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
+      inline void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); CalculateBoundingBox(); }
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
-    private:
-      HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode);
-      HRESULT CreateBufferFromData(const std::vector<render::gfx::SVertexData>&, const std::vector<uint32_t>&);
+      inline void SetBoundingBox(const collision::CBoundingBox& _oBoundingBox) { m_oBoundingBox = _oBoundingBox; }
+      inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
 
+    private:
+      HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode);
+      HRESULT CreateBuffer(const std::vector<render::gfx::SVertexData>& _vctVertexData, const std::vector<uint32_t>& _vctIndices);
+      HRESULT CalculateBoundingBox();
+      void Clear();
+
+    private:
       // Primitive data
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
@@ -68,11 +74,14 @@ namespace render
       EPrimitiveType m_ePrimitiveType = EPrimitiveType::INVALID;
 
       math::CTransform m_oTransform = math::CTransform();
+      collision::CBoundingBox m_oBoundingBox;
+
       math::CVector3 m_v3Color = math::CVector3::One;
       bool m_bIgnoreLighting = false;
 
       uint32_t m_uVertices = 0;
       uint32_t m_uIndices = 0;
+
     };
   }
 }
