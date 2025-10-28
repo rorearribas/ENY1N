@@ -73,7 +73,8 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
-  for (uint32_t uIndex = 0; uIndex < 5; uIndex++)
+  std::vector<game::CEntity*> vctModels = {};
+  for (uint32_t uIndex = 0; uIndex < 100; uIndex++)
   {
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
@@ -81,6 +82,8 @@ int main()
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+
+    vctModels.emplace_back(pModelEnt);
   }
 
   // OBJ test
@@ -113,14 +116,13 @@ int main()
   collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());
   pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
-  std::vector<game::CEntity*> vctPhysics = {};
   for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     pBoxTest->SetPosition(math::CVector3(GenerateFloat(-70.0f, 70.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-40.0f, 40.0f)));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CUBE, render::ERenderMode::SOLID);
-    pModelCompTest->SetColor(math::CVector3::Up);
+    pModelCompTest->SetColor(math::CVector3(1.0f, 1.0f, 1.0f));
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
@@ -199,23 +201,16 @@ int main()
         pEngine->GetRender()->SetFillMode(D3D11_FILL_SOLID);
       }
 
-      ImGui::Begin("TEST - PHYSICS");
+      ImGui::Begin("TEST - CULLING");
       if (ImGui::Button("Enabled"))
       {
-        for (auto& pEntity : vctPhysics)
+        static bool bState = false;
+        bState = !bState;
+
+        for (auto& pEntity : vctModels)
         {
-          auto* pComponent = pEntity->GetComponent<game::CRigidbodyComponent>();
-          physics::ERigidbodyType eRigidbodyType = pComponent->GetRigidbodyType();
-          switch (eRigidbodyType)
-          {
-          case physics::KINEMATIC:
-            eRigidbodyType = physics::DYNAMIC;
-            break;
-          case physics::DYNAMIC:
-            eRigidbodyType = physics::KINEMATIC;
-            break;
-          }
-          pComponent->SetRigidbodyType(eRigidbodyType);
+          auto* pComponent = pEntity->GetComponent<game::CModelComponent>();
+          pComponent->SetCullingEnabled(bState);
         }
       }
 

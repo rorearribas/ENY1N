@@ -231,5 +231,6 @@
     <FxCompile Include="Shaders\Forward\SimpleVS.hlsl" />
     <FxCompile Include="Shaders\Forward\SimplePS.hlsl" />
     <FxCompile Include="Shaders\Deferred\DrawTriangleVS.hlsl" />
+    <FxCompile Include="Shaders\Forward\ForwardLights.hlsl" />
   </ItemGroup>
 </Project>

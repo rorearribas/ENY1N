@@ -23,12 +23,15 @@ namespace render
 
       void Draw();
 
-      inline void SetPosition(const math::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); CalculateBoundingBox(); }
+      void SetPosition(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-      inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); CalculateBoundingBox(); }
+      void SetRotation(const math::CVector3& _v3Rot);
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-      inline void SetScale(const math::CVector3& _v3Scl) { m_oTransform.SetScale(_v3Scl); CalculateBoundingBox(); }
+      void SetScale(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+
+      void SetCullingEnabled(bool _bCull);
+      inline const bool& IsCullingEnabled() const { return m_bCullingEnabled; }
 
       inline void SetBoundingBox(const collision::CBoundingBox& _oBoundingBox) { m_oBoundingBox = _oBoundingBox; }
       inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
@@ -44,7 +47,9 @@ namespace render
       SModelData m_oModelData = SModelData();
 
       math::CTransform m_oTransform = math::CTransform();
+
       collision::CBoundingBox m_oBoundingBox;
+      bool m_bCullingEnabled = true;
     };
   }
 }

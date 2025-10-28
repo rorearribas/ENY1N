@@ -63,6 +63,18 @@ namespace game
     }
   }
   // ------------------------------------
+  void CModelComponent::SetCullingEnabled(bool _bCull)
+  {
+    if (m_pPrimitive)
+    {
+      m_pPrimitive->SetCullingEnabled(_bCull);
+    }
+    if (m_pModel)
+    {
+      m_pModel->SetCullingEnabled(_bCull);
+    }
+  }
+  // ------------------------------------
   void CModelComponent::SetRenderMode(render::ERenderMode _eRenderMode)
   {
     if (m_pPrimitive)

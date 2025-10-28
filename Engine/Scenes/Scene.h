@@ -22,15 +22,15 @@ namespace scene
     typedef utils::CFixedPool<render::lights::CSpotLight, s_uMaxSpotLights> TSpotLightsList;
 
   private:
-    static uint32_t constexpr s_uMaxModels = 1000u;
+    static uint32_t constexpr s_uMaxModels = 10000u;
     static uint32_t constexpr s_uMaxInstancesPerModel = 128u;
 
-    static uint32_t constexpr s_iMaxDebugItems = 5000u;
-    static uint32_t constexpr s_iMaxPrimitives = 1000u;
+    static uint32_t constexpr s_uMaxPrimitives = 1000u;
+    static uint32_t constexpr s_uMaxDebugItems = 5000u;
 
-    typedef utils::CFixedPool<render::gfx::CModel, s_iMaxPrimitives> TModels;
-    typedef utils::CFixedPool<render::gfx::CPrimitive, s_iMaxPrimitives> TPrimitives;
-    typedef utils::CFixedPool<render::gfx::CPrimitive, s_iMaxDebugItems> TDebugItems;
+    typedef utils::CFixedPool<render::gfx::CModel, s_uMaxModels> TModels;
+    typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxPrimitives> TPrimitives;
+    typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugItems> TDebugItems;
 
   public:
     CScene(uint32_t _uIndex);
@@ -63,8 +63,9 @@ namespace scene
     friend class render::CRender;
 
     // Draw calls
-    void DrawPrimitives();
     void DrawModels();
+    void DrawPrimitives();
+    void DrawDebug();
     void ApplyLightning();
 
   private:

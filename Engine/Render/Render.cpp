@@ -13,6 +13,7 @@
 // Forward
 #include "Engine/Shaders/Forward/SimpleVS.h"
 #include "Engine/Shaders/Forward/SimplePS.h"
+#include "Engine/Shaders/Forward/ForwardLights.h"
 
 // Deferred
 #include "Engine/Shaders/Deferred/LightsPS.h"
@@ -74,11 +75,12 @@ namespace render
       // Forward
       shader::CShader<E_VERTEX>* pSimpleVS;
       shader::CShader<E_PIXEL>* pSimplePS;
+      shader::CShader<E_PIXEL>* pForwardLights;
 
       // Deferred
       shader::CShader<E_VERTEX>* pDrawTriangle;
-      shader::CShader<E_PIXEL>* pDeferredPS;
-      shader::CShader<E_PIXEL>* pCalculateLightsShader;
+      shader::CShader<E_PIXEL>* pGBufferDeferred;
+      shader::CShader<E_PIXEL>* pDeferredLights;
     };
 
     static SRenderPipeline s_oRender;
@@ -125,11 +127,15 @@ namespace render
     global::dx::SafeRelease(internal::s_oRender.StandardLayout);
     global::dx::SafeRelease(internal::s_oRender.pUserMarker);
 
-    // Release shaders
+    // Release shaders (forward)
     global::ReleaseObject(internal::s_oRender.pSimpleVS);
     global::ReleaseObject(internal::s_oRender.pSimplePS);
-    global::ReleaseObject(internal::s_oRender.pDeferredPS);
-    global::ReleaseObject(internal::s_oRender.pCalculateLightsShader);
+    global::ReleaseObject(internal::s_oRender.pForwardLights);
+
+    // Release shaders (deferred)
+    global::ReleaseObject(internal::s_oRender.pDrawTriangle);
+    global::ReleaseObject(internal::s_oRender.pGBufferDeferred);
+    global::ReleaseObject(internal::s_oRender.pDeferredLights);
 
     // Release swap chain
     global::dx::SafeRelease(internal::s_oRender.pSwapChain);
@@ -168,11 +174,12 @@ namespace render
     // Forward shaders
     internal::s_oRender.pSimpleVS = new shader::CShader<E_VERTEX>(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
     internal::s_oRender.pSimplePS = new shader::CShader<E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
+    internal::s_oRender.pForwardLights = new shader::CShader<E_PIXEL>(g_ForwardLights, ARRAYSIZE(g_ForwardLights));
 
     // Deferred shaders
     internal::s_oRender.pDrawTriangle = new shader::CShader<E_VERTEX>(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
-    internal::s_oRender.pDeferredPS = new shader::CShader<E_PIXEL>(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
-    internal::s_oRender.pCalculateLightsShader = new shader::CShader<E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
+    internal::s_oRender.pGBufferDeferred = new shader::CShader<E_PIXEL>(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
+    internal::s_oRender.pDeferredLights = new shader::CShader<E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
 
     // Create standard layout
     uint32_t uLayoutSize = ARRAYSIZE(global::dx::TStandardInputDesc);
@@ -600,8 +607,8 @@ namespace render
       // Attach simple vertex shader
       internal::s_oRender.pSimpleVS->AttachShader();
       // Detach g-buffer pass
-      internal::s_oRender.pDeferredPS->DetachShader();
-      internal::s_oRender.pCalculateLightsShader->DetachShader();
+      internal::s_oRender.pGBufferDeferred->DetachShader();
+      internal::s_oRender.pDeferredLights->DetachShader();
 
       // Draw z-prepass
       _pScene->DrawModels();
@@ -640,7 +647,7 @@ namespace render
       // Set depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
       // Attach g-buffer(pixel shader)
-      internal::s_oRender.pDeferredPS->AttachShader();
+      internal::s_oRender.pGBufferDeferred->AttachShader();
 
       // Set linear sampler(read textures)
       global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oRender.pLinearSampler);
@@ -653,7 +660,7 @@ namespace render
       // Attach triangle shader (vertex shader)
       internal::s_oRender.pDrawTriangle->AttachShader();
       // Attach calculate lights shader(pixel shader)
-      internal::s_oRender.pCalculateLightsShader->AttachShader();
+      internal::s_oRender.pDeferredLights->AttachShader();
 
       // Set transform constant
       ID3D11Buffer* pConstantBuffer = internal::s_oRender.oConstantTransforms.GetBuffer();
@@ -690,11 +697,6 @@ namespace render
     // Draw primitives (forward rendering)
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
-      // Attach simple vertex shader
-      internal::s_oRender.pSimpleVS->AttachShader();
-      // Attach simple pixel shader
-      internal::s_oRender.pSimplePS->AttachShader();
-
       // Change depth stencil state
       internal::s_oRender.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
       internal::s_oRender.oDepthStencilCfg.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
@@ -706,8 +708,17 @@ namespace render
       // Set input layout
       global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oRender.StandardLayout);
 
+      // Attach simple vertex shader
+      internal::s_oRender.pSimpleVS->AttachShader();
+      // Attach forward lights (pixel) shader
+      internal::s_oRender.pForwardLights->AttachShader();
       // Draw primitives
       _pScene->DrawPrimitives();
+
+      // Attach simple pixel shader
+      internal::s_oRender.pSimplePS->AttachShader();
+      // Draw debug
+      _pScene->DrawDebug();
     }
     EndMarker();
   }

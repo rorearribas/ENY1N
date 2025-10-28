@@ -76,12 +76,63 @@ namespace render
       global::dx::s_pDeviceContext->DrawIndexed(m_uIndices, 0, 0);
     }
     // ------------------------------------
+    void CPrimitive::SetPosition(const math::CVector3& _v3Pos)
+    {
+      // Set pos
+      m_oTransform.SetPosition(_v3Pos);
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        CalculateBoundingBox();
+      }
+    }
+    // ------------------------------------
+    void CPrimitive::SetRotation(const math::CVector3& _v3Rot)
+    {
+      // Set rot
+      m_oTransform.SetRotation(_v3Rot);
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        CalculateBoundingBox();
+      }
+    }
+    // ------------------------------------
+    void CPrimitive::SetScale(const math::CVector3& _v3Scl)
+    {
+      // Set scale
+      m_oTransform.SetScale(_v3Scl);
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        CalculateBoundingBox();
+      }
+    }
+    // ------------------------------------
     void CPrimitive::SetRenderMode(render::ERenderMode _eRenderMode)
     {
       if (m_eRenderMode != _eRenderMode)
       {
         m_eRenderMode = _eRenderMode;
         CreatePrimitive(m_ePrimitiveType, m_eRenderMode);
+      }
+    }
+    // ------------------------------------
+    void CPrimitive::SetCullingEnabled(bool _bCull)
+    {
+      // Set state
+      if (m_bCullingEnabled != _bCull)
+      {
+        m_bCullingEnabled = _bCull;
+      }
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        CalculateBoundingBox();
       }
     }
     // ------------------------------------
@@ -238,7 +289,7 @@ namespace render
       }
 
       // Update bounding box
-      return CalculateBoundingBox();
+      return m_bCullingEnabled ? CalculateBoundingBox() : S_OK;
     }
     // ------------------------------------
     HRESULT CPrimitive::CalculateBoundingBox()

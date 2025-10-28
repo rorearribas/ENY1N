@@ -32,40 +32,6 @@ namespace scene
     DestroyAllLights();
   }
   // ------------------------------------
-  void CScene::DrawPrimitives()
-  {
-    // Check frustum
-    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    render::CCamera* pCamera = pEngine->GetCamera();
-
-    // Draw primitives
-    for (uint32_t uIndex = 0; uIndex < m_vctPrimitives.CurrentSize(); uIndex++)
-    {
-      render::gfx::CPrimitive* pPrimitive = m_vctPrimitives[uIndex];
-      if (pCamera->IsOnFrustum(pPrimitive->GetBoundingBox()))
-      {
-        pPrimitive->Draw();
-      }
-    }
-
-    // Draw debug primitives
-    uint32_t uTempSize = m_vctDebugItems.CurrentSize();
-    for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
-    {
-      render::gfx::CPrimitive* pDebug = m_vctDebugItems[uIndex];
-      if (pCamera->IsOnFrustum(pDebug->GetBoundingBox()))
-      {
-        pDebug->Draw();
-      }
-    }
-
-    // Clean after draw
-    if (uTempSize > 0)
-    {
-      m_vctDebugItems.ClearAll();
-    }
-  }
-  // ------------------------------------
   void CScene::DrawModels()
   {
     // Check frustum
@@ -75,11 +41,67 @@ namespace scene
     // Draw
     for (uint32_t uIndex = 0; uIndex < m_vctModels.CurrentSize(); uIndex++)
     {
+      bool bDrawModel = true;
       render::gfx::CModel* pModel = m_vctModels[uIndex];
-      if (pCamera->IsOnFrustum(pModel->GetBoundingBox()))
+      if (pModel->IsCullingEnabled())
+      {
+        bDrawModel = pCamera->IsOnFrustum(pModel->GetBoundingBox());
+      }
+      if (bDrawModel)
       {
         pModel->Draw();
       }
+    }
+  }
+  // ------------------------------------
+  void CScene::DrawPrimitives()
+  {
+    // Check frustum
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    render::CCamera* pCamera = pEngine->GetCamera();
+
+    // Draw primitives
+    for (uint32_t uIndex = 0; uIndex < m_vctPrimitives.CurrentSize(); uIndex++)
+    {
+      bool bDrawPrimitive = true;
+      render::gfx::CPrimitive* pPrimitive = m_vctPrimitives[uIndex];
+      if (pPrimitive->IsCullingEnabled())
+      {
+        bDrawPrimitive = pCamera->IsOnFrustum(pPrimitive->GetBoundingBox());
+      }
+      if (bDrawPrimitive)
+      {
+        pPrimitive->Draw();
+      }
+    }
+  }
+  // ------------------------------------
+  void CScene::DrawDebug()
+  {
+    // Check frustum
+    engine::CEngine* pEngine = engine::CEngine::GetInstance();
+    render::CCamera* pCamera = pEngine->GetCamera();
+
+    // Draw debug primitives
+    uint32_t uTempSize = m_vctDebugItems.CurrentSize();
+    for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
+    {
+      bool bDrawDebug = true;
+      render::gfx::CPrimitive* pDebug = m_vctDebugItems[uIndex];
+      if (pDebug->IsCullingEnabled())
+      {
+        bDrawDebug = pCamera->IsOnFrustum(pDebug->GetBoundingBox());
+      }
+      if (bDrawDebug)
+      {
+        pDebug->Draw();
+      }
+    }
+
+    // Clean after draw
+    if (uTempSize > 0)
+    {
+      m_vctDebugItems.ClearAll();
     }
   }
   // ------------------------------------
@@ -294,7 +316,7 @@ namespace scene
   {
     if (m_vctModels.CurrentSize() >= m_vctModels.GetMaxSize())
     {
-      WARNING_LOG("You have reached maximum primitives in the current scene!");
+      WARNING_LOG("You have reached maximum models in the current scene!");
       return nullptr;
     }
     return m_vctModels.RegisterItem(_sModelPath);

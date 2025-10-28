@@ -40,20 +40,23 @@ namespace render
 
       void Draw();
 
-      void SetRenderMode(ERenderMode _eRenderMode);
-      inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
+      void SetPosition(const math::CVector3& _v3Pos);
+      inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+      void SetRotation(const math::CVector3& _v3Rot);
+      inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
+      void SetScale(const math::CVector3& _v3Scl);
+      inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+
       void SetColor(const math::CVector3& _v3Color);
       inline const math::CVector3& GetColor() const { return m_v3Color; }
 
+      void SetRenderMode(ERenderMode _eRenderMode);
+      inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
       inline const EPrimitiveType& GetPrimitiveType() const { return m_ePrimitiveType; }
-      inline void SetIgnoreLighting(bool _bIgnore) { m_bIgnoreLighting = _bIgnore; }
 
-      inline void SetPosition(const math::CVector3& _v3Position) { m_oTransform.SetPosition(_v3Position); CalculateBoundingBox(); }
-      inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
-      inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); CalculateBoundingBox(); }
-      inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-      inline void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); CalculateBoundingBox(); }
-      inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+      inline void SetIgnoreLighting(bool _bIgnore) { m_bIgnoreLighting = _bIgnore; }
+      void SetCullingEnabled(bool _bCull);
+      inline const bool& IsCullingEnabled() const { return m_bCullingEnabled; }
 
       inline void SetBoundingBox(const collision::CBoundingBox& _oBoundingBox) { m_oBoundingBox = _oBoundingBox; }
       inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
@@ -78,6 +81,7 @@ namespace render
 
       math::CVector3 m_v3Color = math::CVector3::One;
       bool m_bIgnoreLighting = false;
+      bool m_bCullingEnabled = true;
 
       uint32_t m_uVertices = 0;
       uint32_t m_uIndices = 0;

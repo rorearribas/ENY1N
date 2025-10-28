@@ -45,6 +45,57 @@ namespace render
       }
     }
     // ------------------------------------
+    void CModel::SetPosition(const math::CVector3& _v3Pos)
+    {
+      // Set pos
+      m_oTransform.SetPosition(_v3Pos);
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        CalculateBoundingBox();
+      }
+    }
+    // ------------------------------------
+    void CModel::SetRotation(const math::CVector3& _v3Rot)
+    {
+      // Set rot
+      m_oTransform.SetRotation(_v3Rot);
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        CalculateBoundingBox();
+      }
+    }
+    // ------------------------------------
+    void CModel::SetScale(const math::CVector3& _v3Scl)
+    {
+      // Set scale
+      m_oTransform.SetScale(_v3Scl);
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        CalculateBoundingBox();
+      }
+    }
+    // ------------------------------------
+    void CModel::SetCullingEnabled(bool _bCull)
+    {
+      // Set state
+      if (m_bCullingEnabled != _bCull)
+      {
+        m_bCullingEnabled = _bCull;
+      }
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        CalculateBoundingBox();
+      }
+    }
+    // ------------------------------------
     HRESULT CModel::InitModel(const char* _sModelPath)
     {
       // Flush model data
@@ -74,7 +125,7 @@ namespace render
       }
 
       // Update bounding box
-      return CalculateBoundingBox();
+      return m_bCullingEnabled ? CalculateBoundingBox() : S_OK;
     }
     // ------------------------------------
     void CModel::Clear()
