@@ -46,11 +46,11 @@ namespace render
       render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
 
       // Point lights
-      TPointLightsList m_vctPointLights = {};
+      TPointLightsList m_lstPointLights = {};
       uint32_t m_uRegisteredPointLights = 0;
 
       // Spot lights
-      TSpotLightsList m_vctSpotLights = {};
+      TSpotLightsList m_lstSpotLights = {};
       uint32_t m_uRegisteredSpotLights = 0;
 
       // Global lightning buffer

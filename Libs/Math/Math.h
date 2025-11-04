@@ -99,7 +99,7 @@ namespace math
 
   inline bool SeparateAxisTheorem
   (
-    const std::vector<math::CVector3>& _vctPointsA, const std::vector<math::CVector3>& _vctPointsB,
+    const std::vector<math::CVector3>& _lstPointsA, const std::vector<math::CVector3>& _lstPointsB,
     const math::CVector3& _v3Axis, math::CVector3& _v3ImpactPoint_, math::CVector3& _v3Normal_, float& _fDepth_
   )
   {
@@ -111,7 +111,7 @@ namespace math
     // Get A Values
     float fMinA = FLT_MAX, fMaxA = -FLT_MAX;
     math::CVector3 v3ClosestPointA = math::CVector3::Zero;
-    for (const math::CVector3& v3Vertex : _vctPointsA)
+    for (const math::CVector3& v3Vertex : _lstPointsA)
     {
       float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
       if (fDot < fMinA)
@@ -125,7 +125,7 @@ namespace math
     // Get B Values
     float fMinB = FLT_MAX, fMaxB = -FLT_MAX;
     math::CVector3 v3ClosestPointB = math::CVector3::Zero;
-    for (const math::CVector3& v3Vertex : _vctPointsB)
+    for (const math::CVector3& v3Vertex : _lstPointsB)
     {
       float fDot = math::CVector3::Dot(v3Vertex, _v3Axis);
       if (fDot < fMinB)

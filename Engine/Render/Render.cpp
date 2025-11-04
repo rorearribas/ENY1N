@@ -36,6 +36,23 @@ namespace render
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
 
+    // Standard Input
+    static const int s_iStandardLayoutSize(4);
+    static const D3D11_INPUT_ELEMENT_DESC s_tStandardLayout[s_iStandardLayoutSize] =
+    {
+      { "POSITION", 0,    DXGI_FORMAT_R32G32B32_FLOAT,  0, 0,                          D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 0
+      { "NORMAL",   0,    DXGI_FORMAT_R32G32B32_FLOAT,  0, sizeof(math::CVector3),     D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 12
+      { "COLOR",    0,    DXGI_FORMAT_R32G32B32_FLOAT,  0, sizeof(math::CVector3) * 2, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 24
+      { "UV",       0,    DXGI_FORMAT_R32G32_FLOAT,     0, sizeof(math::CVector3) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 36
+    };
+    // Instancing
+    static const int s_iInstancingLayoutSize(1);
+    static const D3D11_INPUT_ELEMENT_DESC s_tInstancingLayout[s_iInstancingLayoutSize] =
+    {
+      // Vertex data
+      { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(math::CVector3), D3D11_INPUT_PER_INSTANCE_DATA, 0 },
+    };
+
     struct SRenderPipeline
     {
       // Swap chain + render target
@@ -43,10 +60,10 @@ namespace render
       ID3D11RenderTargetView* pBackBuffer = nullptr;
 
       // Deferred shading
-      render::CRenderTarget* pDiffuseRT;
-      render::CRenderTarget* pNormalRT;
-      render::CRenderTarget* pSpecularRT;
-      ID3D11SamplerState* pLinearSampler;
+      render::CRenderTarget* pDiffuseRT = nullptr;
+      render::CRenderTarget* pNormalRT = nullptr;
+      render::CRenderTarget* pSpecularRT = nullptr;
+      ID3D11SamplerState* pLinearSampler = nullptr;
 
       // Constant buffer
       CConstantBuffer<SConstantTransforms> oConstantTransforms;
@@ -67,20 +84,20 @@ namespace render
       D3D11_RENDER_TARGET_BLEND_DESC oBlendStateCfg = D3D11_RENDER_TARGET_BLEND_DESC();
 
       // Layouts
-      ID3D11InputLayout* StandardLayout = nullptr;
+      ID3D11InputLayout* pStandardLayout = nullptr;
 
       // Debug
       ID3DUserDefinedAnnotation* pUserMarker = nullptr;
 
       // Forward
-      shader::CShader<E_VERTEX>* pSimpleVS;
-      shader::CShader<E_PIXEL>* pSimplePS;
-      shader::CShader<E_PIXEL>* pForwardLights;
+      shader::CShader<E_VERTEX>* pSimpleVS = nullptr;
+      shader::CShader<E_PIXEL>* pSimplePS = nullptr;
+      shader::CShader<E_PIXEL>* pForwardLights = nullptr;
 
       // Deferred
-      shader::CShader<E_VERTEX>* pDrawTriangle;
-      shader::CShader<E_PIXEL>* pGBufferDeferred;
-      shader::CShader<E_PIXEL>* pDeferredLights;
+      shader::CShader<E_VERTEX>* pDrawTriangle = nullptr;
+      shader::CShader<E_PIXEL>* pGBufferDeferred = nullptr;
+      shader::CShader<E_PIXEL>* pDeferredLights = nullptr;
     };
 
     static SRenderPipeline s_oRender;
@@ -124,7 +141,7 @@ namespace render
     // Release rasterizer, blending..
     global::dx::SafeRelease(internal::s_oRender.pRasterizer);
     global::dx::SafeRelease(internal::s_oRender.pBlendState);
-    global::dx::SafeRelease(internal::s_oRender.StandardLayout);
+    global::dx::SafeRelease(internal::s_oRender.pStandardLayout);
     global::dx::SafeRelease(internal::s_oRender.pUserMarker);
 
     // Release shaders (forward)
@@ -182,14 +199,13 @@ namespace render
     internal::s_oRender.pDeferredLights = new shader::CShader<E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
 
     // Create standard layout
-    uint32_t uLayoutSize = ARRAYSIZE(global::dx::TStandardInputDesc);
     hResult = global::dx::s_pDevice->CreateInputLayout
     (
-      global::dx::TStandardInputDesc, 
-      uLayoutSize,
+      internal::s_tStandardLayout,
+      internal::s_iStandardLayoutSize,
       g_SimpleVS, 
       sizeof(g_SimpleVS),
-      &internal::s_oRender.StandardLayout
+      &internal::s_oRender.pStandardLayout
     );
     if (FAILED(hResult))
     {
@@ -198,7 +214,7 @@ namespace render
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
-    global::delegates::s_vctOnWindowResizeDelegates.emplace_back(oResizeDelegate);
+    global::delegates::s_lstOnWindowResizeDelegates.emplace_back(oResizeDelegate);
 
     // Init constant buffer
     hResult = internal::s_oRender.oConstantTransforms.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
@@ -602,7 +618,7 @@ namespace render
       ID3D11DepthStencilView* pDepthStencilView = internal::s_oRender.pDepthStencil->GetView();
       global::dx::s_pDeviceContext->OMSetRenderTargets(0, nullptr, pDepthStencilView);
       // Set input layout
-      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oRender.StandardLayout);
+      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oRender.pStandardLayout);
 
       // Attach simple vertex shader
       internal::s_oRender.pSimpleVS->AttachShader();
@@ -653,6 +669,7 @@ namespace render
       global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oRender.pLinearSampler);
       // Draw models
       _pScene->DrawModels();
+      _pScene->DrawInstances(); // This is not yet implemented!
 
       // Remove render targets
       ID3D11RenderTargetView* lstEmptyRTs[iRenderTargets] = { nullptr, nullptr, nullptr };
@@ -706,7 +723,7 @@ namespace render
       // Push depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oRender.pDepthStencilState, 1);
       // Set input layout
-      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oRender.StandardLayout);
+      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oRender.pStandardLayout);
 
       // Attach simple vertex shader
       internal::s_oRender.pSimpleVS->AttachShader();

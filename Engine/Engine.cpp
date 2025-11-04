@@ -33,7 +33,7 @@ namespace engine
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CEngine::OnWindowResizeEvent, this);
-    global::delegates::s_vctOnWindowResizeDelegates.push_back(oResizeDelegate);
+    global::delegates::s_lstOnWindowResizeDelegates.push_back(oResizeDelegate);
 
     // Marked as initialized
     m_bInitialized = true;
@@ -57,32 +57,6 @@ namespace engine
   {
     // End 
     m_pRender->EndDraw();
-  }
-  // ------------------------------------
-  void CEngine::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
-    float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
-  {
-    m_pSceneManager->DrawCapsule(_v3Pos, _v3Rot, _v3Color, _fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
-  }
-  // ------------------------------------
-  void CEngine::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
-  {
-    m_pSceneManager->DrawCube(_v3Pos, _v3Size, _v3Rot, _v3Color, _eRenderMode);
-  }
-  // ------------------------------------
-  void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
-  {
-    m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iSubvH, _iSubvV, _v3Color, _eRenderMode);
-  }
-  // ------------------------------------
-  void CEngine::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
-  {
-    m_pSceneManager->DrawPlane(_oPlane, _v3Size, _v3Color, _eRenderMode);
-  }
-  // ------------------------------------
-  void CEngine::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
-  {
-    m_pSceneManager->DrawLine(_v3Start, _v3Dest, _v3Color);
   }
   // ------------------------------------
   render::gfx::CPrimitive* const CEngine::CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
@@ -126,6 +100,32 @@ namespace engine
   {
     assert(pLight_);
     m_pSceneManager->DestroyLight(pLight_);
+  }
+  // ------------------------------------
+  void CEngine::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
+    float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
+  {
+    m_pSceneManager->DrawCapsule(_v3Pos, _v3Rot, _v3Color, _fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
+  }
+  // ------------------------------------
+  void CEngine::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  {
+    m_pSceneManager->DrawCube(_v3Pos, _v3Size, _v3Rot, _v3Color, _eRenderMode);
+  }
+  // ------------------------------------
+  void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  {
+    m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iSubvH, _iSubvV, _v3Color, _eRenderMode);
+  }
+  // ------------------------------------
+  void CEngine::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  {
+    m_pSceneManager->DrawPlane(_oPlane, _v3Size, _v3Color, _eRenderMode);
+  }
+  // ------------------------------------
+  void CEngine::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
+  {
+    m_pSceneManager->DrawLine(_v3Start, _v3Dest, _v3Color);
   }
   // ------------------------------------
   void CEngine::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)

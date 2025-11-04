@@ -40,7 +40,7 @@ namespace render
       // Update point lights
       for (uint32_t uIndex = 0; uIndex < m_uRegisteredPointLights; uIndex++)
       {
-        render::lights::CPointLight* pPointLight = m_vctPointLights[uIndex];
+        render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex];
         oGlobalLightningData.PointLights[uIndex].Position = pPointLight->GetPosition();
         oGlobalLightningData.PointLights[uIndex].Color = pPointLight->GetColor();
         oGlobalLightningData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
@@ -52,7 +52,7 @@ namespace render
       // Update spot lights
       for (uint32_t uIndex = 0; uIndex < m_uRegisteredSpotLights; uIndex++)
       {
-        render::lights::CSpotLight* pSpotLight = m_vctSpotLights[uIndex];
+        render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex];
         oGlobalLightningData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
         oGlobalLightningData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
         oGlobalLightningData.SpotLights[uIndex].Color = pSpotLight->GetColor();
@@ -115,7 +115,7 @@ namespace render
         WARNING_LOG("You have reached maximum point lights in the current scene");
         return nullptr;
       }
-      render::lights::CPointLight*& pPointLight = m_vctPointLights[m_uRegisteredPointLights++];
+      render::lights::CPointLight*& pPointLight = m_lstPointLights[m_uRegisteredPointLights++];
       pPointLight = new render::lights::CPointLight();
       return pPointLight;
     }
@@ -127,7 +127,7 @@ namespace render
         WARNING_LOG("You have reached maximum spot lights in the current scene");
         return nullptr;
       }
-      render::lights::CSpotLight*& pSpotLight = m_vctSpotLights[m_uRegisteredSpotLights++];
+      render::lights::CSpotLight*& pSpotLight = m_lstSpotLights[m_uRegisteredSpotLights++];
       pSpotLight = new render::lights::CSpotLight();
       return pSpotLight;
     }
@@ -138,14 +138,14 @@ namespace render
       global::ReleaseObject(m_pDirectionalLight);
 
       // Destroy point lights
-      std::for_each(m_vctPointLights.begin(), m_vctPointLights.end(), [](render::lights::CPointLight*& _pLight)
+      std::for_each(m_lstPointLights.begin(), m_lstPointLights.end(), [](render::lights::CPointLight*& _pLight)
       {
         global::ReleaseObject(_pLight);
       });
       m_uRegisteredPointLights = 0;
 
       // Destroy spot lights
-      std::for_each(m_vctSpotLights.begin(), m_vctSpotLights.end(), [](render::lights::CSpotLight*& _pLight)
+      std::for_each(m_lstSpotLights.begin(), m_lstSpotLights.end(), [](render::lights::CSpotLight*& _pLight)
       {
         global::ReleaseObject(_pLight);
       });
@@ -154,30 +154,30 @@ namespace render
     // ------------------------------------
     void CLightsManager::DestroyPointLight(render::lights::CBaseLight*& pLight_)
     {
-      auto it = std::find(m_vctPointLights.begin(), m_vctPointLights.end(), pLight_);
-      if (it != m_vctPointLights.end())
+      auto it = std::find(m_lstPointLights.begin(), m_lstPointLights.end(), pLight_);
+      if (it != m_lstPointLights.end())
       {
         global::ReleaseObject(*it);
         m_uRegisteredPointLights--;
 
-        auto oReorderFunc = std::remove_if(m_vctPointLights.begin(), m_vctPointLights.end(),
+        auto oReorderFunc = std::remove_if(m_lstPointLights.begin(), m_lstPointLights.end(),
         [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
-        std::fill(oReorderFunc, m_vctPointLights.end(), nullptr); // Set nullptr
+        std::fill(oReorderFunc, m_lstPointLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;
     }
     // ------------------------------------
     void CLightsManager::DestroySpotLight(render::lights::CBaseLight*& pLight_)
     {
-      auto it = std::find(m_vctSpotLights.begin(), m_vctSpotLights.end(), pLight_);
-      if (it != m_vctSpotLights.end())
+      auto it = std::find(m_lstSpotLights.begin(), m_lstSpotLights.end(), pLight_);
+      if (it != m_lstSpotLights.end())
       {
         global::ReleaseObject(*it);
         m_uRegisteredSpotLights--;
 
-        auto oReorderFunc = std::remove_if(m_vctSpotLights.begin(), m_vctSpotLights.end(),
+        auto oReorderFunc = std::remove_if(m_lstSpotLights.begin(), m_lstSpotLights.end(),
         [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
-        std::fill(oReorderFunc, m_vctSpotLights.end(), nullptr); // Set nullptr
+        std::fill(oReorderFunc, m_lstSpotLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;
     }

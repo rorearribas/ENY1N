@@ -21,18 +21,18 @@ namespace collision
 
     void Update(float _fDeltaTime);
 
-    const TColliderList& GetColliderList() { return m_vctColliders; }
+    const TColliderList& GetColliderList() { return m_lstColliders; }
     collision::CCollider* CreateCollider(collision::EColliderType _eColliderType, void* _pOwner);
     void DestroyCollider(collision::CCollider*& _pCollider_);
 
     bool Raycast(const physics::CRay& _oRaycast, float _fMaxDistance, SHitEvent& _oHitEvent_, ECollisionMask _eMask = ECollisionMask::DEFAULT);
-    bool RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<SHitEvent>& _vctHits_, ECollisionMask _eMask = ECollisionMask::DEFAULT);
+    bool RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<SHitEvent>& _lstHits_, ECollisionMask _eMask = ECollisionMask::DEFAULT);
 
   private:
     void Clean();
 
   private:
-    TColliderList m_vctColliders;
+    TColliderList m_lstColliders;
     std::unordered_map<collision::CCollider*, std::unordered_set<collision::CCollider*>> m_dctHandleCollisions;
   };
 }

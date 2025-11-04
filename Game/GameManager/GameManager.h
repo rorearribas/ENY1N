@@ -26,7 +26,7 @@ namespace game
   private:
     void DestroyAll();
 
-    TEntitiesList m_vctEntitiesList = TEntitiesList();
+    TEntitiesList m_lstEntitiesList = TEntitiesList();
     uint32_t m_uRegisteredEntities = 0;
   };
 }

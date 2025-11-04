@@ -23,7 +23,7 @@ namespace reflection
     void ClearAllTypes();
 
   private:
-    TTypes m_vctTypes = TTypes();
+    TTypes m_lstTypes = TTypes();
     int m_iRegisteredTypes = 0;
   };
 }

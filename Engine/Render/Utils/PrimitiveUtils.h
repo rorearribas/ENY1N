@@ -44,12 +44,12 @@ namespace render
       static gfx::SCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode);
 
       // 3D Sphere
-      static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::gfx::SVertexData>& _vctVertexData_);
+      static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::gfx::SVertexData>& _lstVertexData_);
       static std::vector<uint32_t> GetSphereIndices(int _iStacks, int _iSlices);
       static std::vector<uint32_t> GetWireframeSphereIndices(int _iStacks, int _iSlices);
 
       // Normals
-      static void ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _vctIndices);
+      static void ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _lstIndices);
       static void ComputeBasicNormals(std::vector<SVertexData>& _oVertexData);
     };
 

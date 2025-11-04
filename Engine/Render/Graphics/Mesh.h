@@ -13,8 +13,6 @@ namespace render
 {
   namespace gfx
   {
-    static std::vector<D3D11_INPUT_ELEMENT_DESC> s_vctInputElementDesc;
-
     struct SVertexData
     {
       // Vertex data
@@ -37,12 +35,12 @@ namespace render
       ~CMesh();
 
       void Draw();
-      HRESULT CreateBuffer(TIndicesList& _vctIndices);
+      HRESULT CreateBuffer(TIndicesList& _lstIndices);
 
       inline std::shared_ptr<render::mat::CMaterial> GetMaterial() const { return m_pMaterial; }
       inline void SetMaterial(std::shared_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = _pMaterial; }
 
-      inline const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_vctIndices.size()); }
+      inline const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_lstIndices.size()); }
       inline const std::string& GetMeshID() const { return m_sMeshID; }
 
     private:
@@ -54,7 +52,7 @@ namespace render
 
       // Materials
       std::shared_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
-      TIndicesList m_vctIndices = TIndicesList();
+      TIndicesList m_lstIndices = TIndicesList();
 
       // Buffer
       CConstantBuffer<STexturesData> m_oConstantBuffer;

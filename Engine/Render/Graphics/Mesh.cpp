@@ -65,10 +65,10 @@ namespace render
 
       // Draw
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-      global::dx::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_vctIndices.size()), 0, 0);
+      global::dx::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_lstIndices.size()), 0, 0);
     }
     // ------------------------------------
-    HRESULT CMesh::CreateBuffer(TIndicesList& _vctIndices)
+    HRESULT CMesh::CreateBuffer(TIndicesList& _lstIndices)
     {
       // Clean mesh
       ClearBuffers();
@@ -77,17 +77,17 @@ namespace render
       m_oConstantBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
 
       // Get indexes
-      m_vctIndices = std::move(_vctIndices);
+      m_lstIndices = std::move(_lstIndices);
 
       // Config index buffer
       D3D11_BUFFER_DESC oIndexBufferDesc = D3D11_BUFFER_DESC();
       oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-      oIndexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(uint32_t) * m_vctIndices.size()));
+      oIndexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(uint32_t) * m_lstIndices.size()));
       oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
       oIndexBufferDesc.CPUAccessFlags = 0;
 
       D3D11_SUBRESOURCE_DATA oSubresourceIndexesData = {};
-      oSubresourceIndexesData.pSysMem = m_vctIndices.data();
+      oSubresourceIndexesData.pSysMem = m_lstIndices.data();
 
       return global::dx::s_pDevice->CreateBuffer(&oIndexBufferDesc, &oSubresourceIndexesData, &m_pIndexBuffer);
     }
@@ -96,7 +96,7 @@ namespace render
     {
       global::dx::SafeRelease(m_pIndexBuffer);
       m_oConstantBuffer.Clear();
-      m_vctIndices.clear();
+      m_lstIndices.clear();
     }
     // ------------------------------------
     void CMesh::ClearMaterial()

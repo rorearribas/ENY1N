@@ -73,7 +73,7 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
-  std::vector<game::CEntity*> vctModels = {};
+  std::vector<game::CEntity*> lstModels = {};
   for (uint32_t uIndex = 0; uIndex < 100; uIndex++)
   {
     // FBX Test
@@ -83,7 +83,7 @@ int main()
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
 
-    vctModels.emplace_back(pModelEnt);
+    lstModels.emplace_back(pModelEnt);
   }
 
   // OBJ test
@@ -175,10 +175,10 @@ int main()
           oRay.DrawRay(fMaxDistance, math::CVector3::Right);
 
           // Throw ray
-          std::vector<collision::SHitEvent> vctHits;
-          if (pCollManager->RaycastAll(oRay, fMaxDistance, vctHits))
+          std::vector<collision::SHitEvent> lstHits;
+          if (pCollManager->RaycastAll(oRay, fMaxDistance, lstHits))
           {
-            for (auto& HitEvent : vctHits)
+            for (auto& HitEvent : lstHits)
             {
               pEngine->DrawSphere(HitEvent.ImpactPoint, 0.05f, 8, 8, math::CVector3::Up, render::ERenderMode::WIREFRAME);
             }
@@ -207,7 +207,7 @@ int main()
         static bool bState = false;
         bState = !bState;
 
-        for (auto& pEntity : vctModels)
+        for (auto& pEntity : lstModels)
         {
           auto* pComponent = pEntity->GetComponent<game::CModelComponent>();
           pComponent->SetCullingEnabled(bState);

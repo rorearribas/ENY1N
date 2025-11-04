@@ -17,8 +17,8 @@ namespace reflection
       reflection::CTypeManager::GetInstance()->RegisterClass(this);
     }
 
-    inline const std::vector<CVariable*>& GetVariables() const { return m_vctVariables; }
-    inline const std::vector<CFunctionBase*>& GetFunctions() const { return m_vctFunctions; }
+    inline const std::vector<CVariable*>& GetVariables() const { return m_lstVariables; }
+    inline const std::vector<CFunctionBase*>& GetFunctions() const { return m_lstFunctions; }
 
     inline const char* GetClassId() const { return m_sClassId; }
     template<typename _Type>
@@ -28,14 +28,14 @@ namespace reflection
     template<class Object, class RETURN_TYPE, class... Args>
     inline void RegisterFunction(CFunction<RETURN_TYPE(Object::*)(Args...)>& _oFunction)
     {
-      m_vctFunctions.emplace_back(&_oFunction);
+      m_lstFunctions.emplace_back(&_oFunction);
     }
     inline void RegisterVariable(CVariable* _pVariable)
     {
-      auto it = std::find(m_vctVariables.begin(), m_vctVariables.end(), _pVariable);
-      if (it == m_vctVariables.end())
+      auto it = std::find(m_lstVariables.begin(), m_lstVariables.end(), _pVariable);
+      if (it == m_lstVariables.end())
       {
-        m_vctVariables.emplace_back(_pVariable);
+        m_lstVariables.emplace_back(_pVariable);
       }
     }
 
@@ -43,7 +43,7 @@ namespace reflection
     const char* m_sClassId = nullptr;
 
     // Reflection
-    std::vector<CVariable*> m_vctVariables = {};
-    std::vector<CFunctionBase*> m_vctFunctions = {};
+    std::vector<CVariable*> m_lstVariables = {};
+    std::vector<CFunctionBase*> m_lstFunctions = {};
   };
 }

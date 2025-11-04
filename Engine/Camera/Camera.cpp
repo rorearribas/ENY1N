@@ -80,19 +80,19 @@ namespace render
   bool CCamera::IsOnFrustum(const collision::CBoundingBox& _oBoundingBox)
   {
     // Get extents
-    std::vector<math::CVector3> vctExtents = _oBoundingBox.GetExtents();
+    std::vector<math::CVector3> lstExtents = _oBoundingBox.GetExtents();
 
     // Do cull test
     uint32_t uIndex = 0;
     while (uIndex != s_iFrustumPlanes)
     {
       uint32_t uCullTest = 0;
-      for (const math::CVector3& v3Extent : vctExtents)
+      for (const math::CVector3& v3Extent : lstExtents)
       {
         uCullTest += m_oPlanes[uIndex].DistanceToPoint(v3Extent) < 0.0f ? 1 : 0;
       }
       // Is plane valid ?
-      if (uCullTest == static_cast<uint32_t>(vctExtents.size()))
+      if (uCullTest == static_cast<uint32_t>(lstExtents.size()))
       {
         return false;
       }

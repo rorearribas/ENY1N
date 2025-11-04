@@ -86,16 +86,16 @@ namespace game
     case render::lights::ELightType::POINT_LIGHT:
     {
       render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(m_pLight);
-      float vctColor[3] = { pPointLight->GetColor().x, pPointLight->GetColor().y, pPointLight->GetColor().z };
+      float lstColor[3] = { pPointLight->GetColor().x, pPointLight->GetColor().y, pPointLight->GetColor().z };
       float fIntensity = pPointLight->GetIntensity();
       float fRange = pPointLight->GetRange();
 
       ImGui::Text("POINT LIGHT");
-      ImGui::InputFloat3("Color", vctColor);
+      ImGui::InputFloat3("Color", lstColor);
       ImGui::InputFloat("Range", &fRange);
       ImGui::InputFloat("Intensity", &fIntensity);
 
-      math::CVector3 v3Color(vctColor[0], vctColor[1], vctColor[2]);
+      math::CVector3 v3Color(lstColor[0], lstColor[1], lstColor[2]);
       pPointLight->SetColor(v3Color);
       pPointLight->SetRange(fRange);
       pPointLight->SetIntensity(fIntensity);
@@ -107,19 +107,19 @@ namespace game
     case render::lights::ELightType::SPOT_LIGHT:
     {
       render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight);
-      float vctDir[3] = { pSpotLight->GetDirection().x, pSpotLight->GetDirection().y, pSpotLight->GetDirection().z };
-      float vctColor[3] = { pSpotLight->GetColor().x, pSpotLight->GetColor().y, pSpotLight->GetColor().z };
+      float lstDir[3] = { pSpotLight->GetDirection().x, pSpotLight->GetDirection().y, pSpotLight->GetDirection().z };
+      float lstColor[3] = { pSpotLight->GetColor().x, pSpotLight->GetColor().y, pSpotLight->GetColor().z };
       float fIntensity = pSpotLight->GetIntensity();
       float fRange = pSpotLight->GetRange();
 
       ImGui::Text("SPOT LIGHT");
-      ImGui::InputFloat3("Direction", vctDir);
-      ImGui::InputFloat3("Color", vctColor);
+      ImGui::InputFloat3("Direction", lstDir);
+      ImGui::InputFloat3("Color", lstColor);
       ImGui::InputFloat("Range", &fRange);
       ImGui::InputFloat("Intensity", &fIntensity);
 
-      math::CVector3 v3Dir(vctDir[0], vctDir[1], vctDir[2]);
-      math::CVector3 v3Color(vctColor[0], vctColor[1], vctColor[2]);
+      math::CVector3 v3Dir(lstDir[0], lstDir[1], lstDir[2]);
+      math::CVector3 v3Color(lstColor[0], lstColor[1], lstColor[2]);
 
       pSpotLight->SetDirection(v3Dir);
       pSpotLight->SetColor(v3Color);

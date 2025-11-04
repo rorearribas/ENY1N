@@ -24,7 +24,7 @@ namespace physics
 
   private:
     void Clear();
-    TRigidbodysList m_vctRigidbodys;
+    TRigidbodysList m_lstRigidbodys;
   };
 }
 

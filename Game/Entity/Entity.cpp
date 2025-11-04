@@ -22,7 +22,7 @@ namespace game
     if (m_bTickEnabled)
     {
       // Update components
-      for (CComponent* pComponent : m_vctComponents)
+      for (CComponent* pComponent : m_lstComponents)
       {
         if (pComponent)
         {
@@ -133,7 +133,7 @@ namespace game
     }
 
     // Draw debug on components
-    for (CComponent* pComponent : m_vctComponents)
+    for (CComponent* pComponent : m_lstComponents)
     {
       if (pComponent)
       {
@@ -150,7 +150,7 @@ namespace game
     m_oTransform.SetPosition(_v3Position);
 
     // Notify to components
-    for (game::CComponent* pComponent : m_vctComponents)
+    for (game::CComponent* pComponent : m_lstComponents)
     {
       if (pComponent)
       {
@@ -164,7 +164,7 @@ namespace game
     m_oTransform.SetRotation(_v3Rot);
 
     // Notify to components
-    for (game::CComponent* pComponent : m_vctComponents)
+    for (game::CComponent* pComponent : m_lstComponents)
     {
       if (pComponent)
       {
@@ -178,7 +178,7 @@ namespace game
     m_oTransform.SetScale(_v3Scale);
 
     // Notify to components
-    for (game::CComponent* pComponent : m_vctComponents)
+    for (game::CComponent* pComponent : m_lstComponents)
     {
       if (pComponent)
       {
@@ -190,7 +190,7 @@ namespace game
   void CEntity::OnCollisionEnter(const collision::SHitEvent& _oHitEvent)
   {
     // Notify to components
-    for (game::CComponent* pComponent : m_vctComponents)
+    for (game::CComponent* pComponent : m_lstComponents)
     {
       if (pComponent)
       {
@@ -202,7 +202,7 @@ namespace game
   void CEntity::OnCollisionStay(const collision::SHitEvent& _oHitEvent)
   {
     // Notify to components
-    for (game::CComponent* pComponent : m_vctComponents)
+    for (game::CComponent* pComponent : m_lstComponents)
     {
       if (pComponent)
       {
@@ -214,7 +214,7 @@ namespace game
   void CEntity::OnCollisionExit(const collision::SHitEvent& _oHitEvent)
   {
     // Notify to components
-    for (game::CComponent* pComponent : m_vctComponents)
+    for (game::CComponent* pComponent : m_lstComponents)
     {
       if (pComponent)
       {
@@ -225,7 +225,7 @@ namespace game
   // ------------------------------------
   void CEntity::Clear()
   {
-    std::for_each(m_vctComponents.begin(), m_vctComponents.end(), [](CComponent*& _pComponent)
+    std::for_each(m_lstComponents.begin(), m_lstComponents.end(), [](CComponent*& _pComponent)
     {
       global::ReleaseObject(_pComponent);
     });

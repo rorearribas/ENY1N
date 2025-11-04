@@ -53,7 +53,7 @@ namespace collision
     const math::CVector3& v3RayDir = _oRay.GetDir();
     math::CVector3 v3Delta = v3RayOrigin - GetPosition();
 
-    const std::vector<math::CVector3> vctAxis = GetAxisDirectors();
+    const std::vector<math::CVector3> lstAxis = GetAxisDirectors();
     math::CVector3 v3HalfSize = (m_v3Max - m_v3Min) * 0.5f;
 
     float fMinValue = -FLT_MAX;
@@ -63,7 +63,7 @@ namespace collision
     // Standard slab algorithm
     for (uint32_t uIndex = 0; uIndex < 3; ++uIndex)
     {
-      const math::CVector3& v3Axis = vctAxis[uIndex];
+      const math::CVector3& v3Axis = lstAxis[uIndex];
       float fDotDelta = math::CVector3::Dot(v3Axis, v3Delta);
       float fDotRayDir = math::CVector3::Dot(v3Axis, v3RayDir);
 
@@ -113,8 +113,8 @@ namespace collision
 
     if (iHitAxis >= 0)
     {
-      float fDot = math::CVector3::Dot(vctAxis[iHitAxis], v3RayDir);
-      _oHitEvent_.Normal = (fDot < 0.0f) ? vctAxis[iHitAxis] : -vctAxis[iHitAxis];
+      float fDot = math::CVector3::Dot(lstAxis[iHitAxis], v3RayDir);
+      _oHitEvent_.Normal = (fDot < 0.0f) ? lstAxis[iHitAxis] : -lstAxis[iHitAxis];
     }
 
     return true;
@@ -136,7 +136,7 @@ namespace collision
     const std::vector<math::CVector3>& v3Extents = this->GetExtents();
     const std::vector<math::CVector3>& v3OtherExtents = _pOther->GetExtents();
 
-    std::vector<math::CVector3> vctAxis =
+    std::vector<math::CVector3> lstAxis =
     {
       // Normals 
       this->m_v3Right,
@@ -164,7 +164,7 @@ namespace collision
     math::CVector3 v3Normal = math::CVector3::Zero;
     float fDepth = FLT_MAX;
 
-    for (const math::CVector3& v3Axis : vctAxis)
+    for (const math::CVector3& v3Axis : lstAxis)
     {
       if (math::SeparateAxisTheorem(v3Extents, v3OtherExtents, v3Axis, v3ImpactPoint, v3Normal, fDepth))
       {

@@ -71,8 +71,8 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
   }
 
   // Materials
-  std::vector<std::shared_ptr<render::mat::CMaterial>> vctMaterials;
-  vctMaterials.reserve(pScene->mNumMaterials);
+  std::vector<std::shared_ptr<render::mat::CMaterial>> lstMaterials;
+  lstMaterials.reserve(pScene->mNumMaterials);
 
   for (uint32_t uI = 0; uI < pScene->mNumMaterials; uI++)
   {
@@ -196,7 +196,7 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
     }
 
     // Add material
-    vctMaterials.emplace_back(std::move(pMaterial));
+    lstMaterials.emplace_back(std::move(pMaterial));
   }
 
   // Load meshes
@@ -210,7 +210,7 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
 
     // Create internal mesh
     std::shared_ptr pMesh = std::make_shared<render::gfx::CMesh>(pSceneMesh->mName.C_Str());
-    std::vector<uint32_t> vctIndices;
+    std::vector<uint32_t> lstIndices;
 
     for (uint32_t uJ = 0; uJ < pSceneMesh->mNumFaces; uJ++)
     {
@@ -253,27 +253,27 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
         auto it = mVertexMap.find(oVertexData);
         if (it != mVertexMap.end())
         {
-          vctIndices.emplace_back(it->second);
+          lstIndices.emplace_back(it->second);
         }
         else
         {
           uint32_t uNewIdx = static_cast<uint32_t>(mVertexMap.size());
           mVertexMap[oVertexData] = uNewIdx;
           oModelData.Vertices.emplace_back(std::move(oVertexData));
-          vctIndices.emplace_back(uNewIdx);
+          lstIndices.emplace_back(uNewIdx);
         }
       }
     }
 
     // Index buffer
-    HRESULT hResult = pMesh->CreateBuffer(vctIndices);
+    HRESULT hResult = pMesh->CreateBuffer(lstIndices);
     UNUSED_VAR(hResult);
     assert(!FAILED(hResult));
 
     // Add material
-    if (pSceneMesh->mMaterialIndex >= 0 && pSceneMesh->mMaterialIndex < (int)vctMaterials.size())
+    if (pSceneMesh->mMaterialIndex >= 0 && pSceneMesh->mMaterialIndex < (int)lstMaterials.size())
     {
-      pMesh->SetMaterial(vctMaterials[pSceneMesh->mMaterialIndex]);
+      pMesh->SetMaterial(lstMaterials[pSceneMesh->mMaterialIndex]);
     }
 
     oModelData.Meshes.emplace_back(pMesh);

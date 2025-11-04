@@ -15,21 +15,12 @@ namespace scene
     typedef std::array<CScene*, s_iMaxScenes> TSceneList;
 
   public:
-    CSceneManager();
-    ~CSceneManager();
-
-    inline scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
-    inline const TSceneList& GetScenes() { return m_vctScenes; }
+    CSceneManager() { CreateScenes(); }
+    ~CSceneManager() { DestroyAllScenes(); }
 
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
-    void DisableAllScenes() const;
-
-    // Debug creation
-    void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
-    void DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
-    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
-    void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
-    void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
+    inline scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
+    inline const TSceneList& GetScenes() { return m_lstScenes; }
 
     // Element creation
     render::gfx::CPrimitive* const CreatePrimitive(const render::gfx::EPrimitiveType&, render::ERenderMode, uint32_t _uSceneIndex = 0);
@@ -43,11 +34,19 @@ namespace scene
     void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
     void DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uSceneIndex = 0);
 
+    // Debug creation
+    void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
+    void DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
+    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iStacks, int _iSlices, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
+    void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
+    void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
+
   private:
     void CreateScenes();
     void DestroyAllScenes();
 
-    TSceneList m_vctScenes = TSceneList();
+  private:
+    TSceneList m_lstScenes = TSceneList();
     mutable scene::CScene* m_pCurrentScene = nullptr;
   };
 }

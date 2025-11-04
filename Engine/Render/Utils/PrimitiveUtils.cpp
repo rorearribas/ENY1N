@@ -168,11 +168,11 @@ namespace render
     void CPrimitiveUtils::CreateSphere
     (
       float _fRadius, int _iStacks, int _iSlices,
-      std::vector<render::gfx::SVertexData>& _vctVertexData_
+      std::vector<render::gfx::SVertexData>& _lstVertexData_
     )
     {
       // Clear
-      _vctVertexData_.clear();
+      _lstVertexData_.clear();
 
       // Generate vertex data
       for (int uX = 0; uX <= _iStacks; ++uX)
@@ -194,7 +194,7 @@ namespace render
           oVertexData.Normal = math::CVector3::Normalize(v3VertexPos);
           oVertexData.TexCoord = math::CVector2((static_cast<float>(uJ) / _iSlices), 1.0f - (static_cast<float>(uX) / _iStacks));
 
-          _vctVertexData_.emplace_back(oVertexData);
+          _lstVertexData_.emplace_back(oVertexData);
         }
       }
     }
@@ -202,7 +202,7 @@ namespace render
     // Generate sphere indices
     std::vector<uint32_t> CPrimitiveUtils::GetSphereIndices(int _iStacks, int _iSlices)
     {
-      std::vector<uint32_t> vctIndices = {};
+      std::vector<uint32_t> lstIndices = {};
       for (int i = 0; i < _iStacks; ++i)
       {
         for (int j = 0; j < _iSlices; ++j)
@@ -210,22 +210,22 @@ namespace render
           int iFirst = (i * (_iSlices + 1)) + j;
           int iSecond = iFirst + _iSlices + 1;
 
-          vctIndices.emplace_back(iFirst);
-          vctIndices.emplace_back(iSecond);
-          vctIndices.emplace_back(iFirst + 1);
+          lstIndices.emplace_back(iFirst);
+          lstIndices.emplace_back(iSecond);
+          lstIndices.emplace_back(iFirst + 1);
 
-          vctIndices.emplace_back(iSecond);
-          vctIndices.emplace_back(iSecond + 1);
-          vctIndices.emplace_back(iFirst + 1);
+          lstIndices.emplace_back(iSecond);
+          lstIndices.emplace_back(iSecond + 1);
+          lstIndices.emplace_back(iFirst + 1);
         }
       }
-      return vctIndices;
+      return lstIndices;
     }
 
     // ------------------------------------
     std::vector<uint32_t> CPrimitiveUtils::GetWireframeSphereIndices(int _iStacks, int _iSlices)
     {
-      std::vector<uint32_t> vctWireframeIndices = {};
+      std::vector<uint32_t> lstWireframeIndices = {};
       for (int iI = 0; iI < _iStacks; ++iI)
       {
         for (int iJ = 0; iJ < _iSlices; ++iJ)
@@ -236,17 +236,17 @@ namespace render
 
           if (iJ < _iSlices)
           {
-            vctWireframeIndices.emplace_back(iCurrent);
-            vctWireframeIndices.emplace_back(iNext);
+            lstWireframeIndices.emplace_back(iCurrent);
+            lstWireframeIndices.emplace_back(iNext);
           }
           if (iI < _iStacks)
           {
-            vctWireframeIndices.emplace_back(iCurrent);
-            vctWireframeIndices.emplace_back(iAbove);
+            lstWireframeIndices.emplace_back(iCurrent);
+            lstWireframeIndices.emplace_back(iAbove);
           }
         }
       }
-      return vctWireframeIndices;
+      return lstWireframeIndices;
     }
 
     // ------------------------------------
@@ -288,7 +288,7 @@ namespace render
             // Add vertex
             render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
             oVertexData.Position = math::CVector3(fX, fY, fZ);
-            oCustomPrimitive.m_vctVertexData.emplace_back(oVertexData);
+            oCustomPrimitive.m_lstVertexData.emplace_back(oVertexData);
           }
         }
       };
@@ -304,11 +304,11 @@ namespace render
             int iNext = iCurrent + 1;
             int iAbove = iCurrent + (_iSlices + 1);
 
-            oCustomPrimitive.m_vctIndices.emplace_back(iCurrent);
-            oCustomPrimitive.m_vctIndices.emplace_back(iNext);
+            oCustomPrimitive.m_lstIndices.emplace_back(iCurrent);
+            oCustomPrimitive.m_lstIndices.emplace_back(iNext);
 
-            oCustomPrimitive.m_vctIndices.emplace_back(iCurrent);
-            oCustomPrimitive.m_vctIndices.emplace_back(iAbove);
+            oCustomPrimitive.m_lstIndices.emplace_back(iCurrent);
+            oCustomPrimitive.m_lstIndices.emplace_back(iAbove);
           }
         }
       };
@@ -323,23 +323,23 @@ namespace render
             int iFirst = _iStartIdx + (uX * (_iSlices + 1)) + uJ;
             int iSecond = iFirst + _iSlices + 1;
 
-            oCustomPrimitive.m_vctIndices.emplace_back(iFirst);
-            oCustomPrimitive.m_vctIndices.emplace_back(_bInverseCCW ? iSecond : (iFirst + 1));
-            oCustomPrimitive.m_vctIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : iSecond);
+            oCustomPrimitive.m_lstIndices.emplace_back(iFirst);
+            oCustomPrimitive.m_lstIndices.emplace_back(_bInverseCCW ? iSecond : (iFirst + 1));
+            oCustomPrimitive.m_lstIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : iSecond);
 
-            oCustomPrimitive.m_vctIndices.emplace_back(iSecond);
-            oCustomPrimitive.m_vctIndices.emplace_back(_bInverseCCW ? (iSecond + 1) : (iFirst + 1));
-            oCustomPrimitive.m_vctIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : (iSecond + 1));
+            oCustomPrimitive.m_lstIndices.emplace_back(iSecond);
+            oCustomPrimitive.m_lstIndices.emplace_back(_bInverseCCW ? (iSecond + 1) : (iFirst + 1));
+            oCustomPrimitive.m_lstIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : (iSecond + 1));
           }
         }
       };
 
       // Top semi-sphere
-      int iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_vctVertexData.size());
+      int iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_lstVertexData.size());
       oComputeSemiSphereLamb();
-      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_vctVertexData.size()); ++iIdx)
+      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_lstVertexData.size()); ++iIdx)
       {
-        oCustomPrimitive.m_vctVertexData[iIdx].Position.y += (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.m_lstVertexData[iIdx].Position.y += (fDiff >= 0 ? fDiff : 0.0f);
       }
       // Compute top semi-sphere indices
       _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx) :
@@ -349,7 +349,7 @@ namespace render
       if (fDiff >= 0.0f)
       {
         const int s_iMaxBodySubdv = _eRenderMode == render::ERenderMode::SOLID ? _iSubvH : 1;
-        iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_vctVertexData.size());
+        iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_lstVertexData.size());
         for (int iX = 0; iX <= s_iMaxBodySubdv; ++iX)
         {
           float fY = math::Lerp(-fHalfHeight + _fRadius, fHalfHeight - _fRadius, static_cast<float>(iX) / s_iMaxBodySubdv);
@@ -361,7 +361,7 @@ namespace render
 
             render::gfx::SVertexData oVertexData = {};
             oVertexData.Position = math::CVector3(fX, fY, fZ);
-            oCustomPrimitive.m_vctVertexData.emplace_back(oVertexData);
+            oCustomPrimitive.m_lstVertexData.emplace_back(oVertexData);
           }
         }
         // Compute body indices
@@ -370,11 +370,11 @@ namespace render
       }
 
       // Bottom semi-sphere
-      iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_vctVertexData.size());
+      iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_lstVertexData.size());
       oComputeSemiSphereLamb(true);
-      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_vctVertexData.size()); ++iIdx)
+      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_lstVertexData.size()); ++iIdx)
       {
-        oCustomPrimitive.m_vctVertexData[iIdx].Position.y -= (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.m_lstVertexData[iIdx].Position.y -= (fDiff >= 0 ? fDiff : 0.0f);
       }
 
       // Compute bottom semi-sphere indices
@@ -389,8 +389,8 @@ namespace render
     {
       // Create primitive
       gfx::SCustomPrimitive oCustomPrimitive;
-      oCustomPrimitive.m_vctVertexData = s_oPlanePrimitive;
-      oCustomPrimitive.m_vctIndices = _eRenderMode == render::ERenderMode::SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
+      oCustomPrimitive.m_lstVertexData = s_oPlanePrimitive;
+      oCustomPrimitive.m_lstIndices = _eRenderMode == render::ERenderMode::SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
 
       // Invert indices
       const math::CVector3& v3Normal = _oPlane.GetNormal();
@@ -399,7 +399,7 @@ namespace render
         size_t iSize = _eRenderMode == render::ERenderMode::SOLID ? 3 : 2;
         for (size_t i = 0; i < s_oPlaneIndices.size(); i += iSize)
         {
-          std::swap(oCustomPrimitive.m_vctIndices[i], oCustomPrimitive.m_vctIndices[i + 2]);
+          std::swap(oCustomPrimitive.m_lstIndices[i], oCustomPrimitive.m_lstIndices[i + 2]);
         }
       }
 
@@ -422,7 +422,7 @@ namespace render
       }
 
       // Rotate vertices
-      for (auto& oVertexData : oCustomPrimitive.m_vctVertexData)
+      for (auto& oVertexData : oCustomPrimitive.m_lstVertexData)
       {
         oVertexData.Position = mRot * oVertexData.Position;
         oVertexData.Normal = v3Normal;
@@ -442,19 +442,19 @@ namespace render
       oVertexData.Position = _v3Origin;
 
       uint32_t uIndex = 0;
-      oPrimitive.m_vctVertexData.emplace_back(oVertexData);
-      oPrimitive.m_vctIndices.emplace_back(uIndex++);
+      oPrimitive.m_lstVertexData.emplace_back(oVertexData);
+      oPrimitive.m_lstIndices.emplace_back(uIndex++);
 
       // Fill data 
       oVertexData.Position = _v3Dest;
-      oPrimitive.m_vctVertexData.emplace_back(oVertexData);
-      oPrimitive.m_vctIndices.emplace_back(uIndex);
+      oPrimitive.m_lstVertexData.emplace_back(oVertexData);
+      oPrimitive.m_lstIndices.emplace_back(uIndex);
 
       return oPrimitive;
     }
 
     // ------------------------------------
-    void CPrimitiveUtils::ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _vctIndices)
+    void CPrimitiveUtils::ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _lstIndices)
     {
       // Reset normals
       for (auto& oVertex : _oVertexData)
@@ -463,7 +463,7 @@ namespace render
       }
 
       // Calculate normals
-      long lSize = static_cast<long>(_vctIndices.size());
+      long lSize = static_cast<long>(_lstIndices.size());
       for (long lIdx = 0; lIdx < lSize; lIdx += 3)
       {
         if (lIdx + 1 >= lSize || lIdx + 2 >= lSize)
@@ -471,9 +471,9 @@ namespace render
           break;
         }
 
-        int i0 = _vctIndices[lIdx];
-        int i1 = _vctIndices[lIdx + 1];
-        int i2 = _vctIndices[lIdx + 2];
+        int i0 = _lstIndices[lIdx];
+        int i1 = _lstIndices[lIdx + 1];
+        int i2 = _lstIndices[lIdx + 2];
 
         const math::CVector3& v0 = _oVertexData[i0].Position;
         const math::CVector3& v1 = _oVertexData[i1].Position;

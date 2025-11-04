@@ -29,12 +29,12 @@ namespace utils
 
       for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
       {
-        if (!m_vctAssignedBlocks.test(tIndex))
+        if (!m_lstAssignedBlocks.test(tIndex))
         {
-          void* pMem = static_cast<void*>(&m_vctPool[tIndex]);
+          void* pMem = static_cast<void*>(&m_lstPool[tIndex]);
           T* pItem = new (pMem) T(std::forward<Args>(args)...);
 
-          m_vctAssignedBlocks.set(tIndex);
+          m_lstAssignedBlocks.set(tIndex);
           ++m_uRegisteredItems;
           return pItem;
         }
@@ -43,63 +43,54 @@ namespace utils
       return nullptr;
     }
 
-    bool RemoveItem(T*& _pItem_);
-    void ClearAll();
-
-    const uint32_t& CurrentSize() const { return m_uRegisteredItems; }
-    size_t GetMaxSize() const { return MAX_ITEMS; }
-
     T* operator[](size_t index)
     {
-      bool bAssignedBlock = (index < MAX_ITEMS&& m_vctAssignedBlocks.test(index));
-      return bAssignedBlock ? reinterpret_cast<T*>(&m_vctPool[index]) : nullptr;
+      bool bAssignedBlock = (index < MAX_ITEMS && m_lstAssignedBlocks.test(index));
+      return bAssignedBlock ? reinterpret_cast<T*>(&m_lstPool[index]) : nullptr;
     }
 
     const T* operator[](size_t index) const
     {
-      bool bAssignedBlock = (index < MAX_ITEMS&& m_vctAssignedBlocks.test(index));
-      return bAssignedBlock ? reinterpret_cast<const T*>(&m_vctPool[index]) : nullptr;
+      bool bAssignedBlock = (index < MAX_ITEMS && m_lstAssignedBlocks.test(index));
+      return bAssignedBlock ? reinterpret_cast<const T*>(&m_lstPool[index]) : nullptr;
     }
+
+    bool RemoveItem(T*& _pItem_);
+    void ClearAll();
+
+    const uint32_t& GetCurrentSize() const { return m_uRegisteredItems; }
+    size_t GetMaxSize() const { return MAX_ITEMS; }
+
+    T* begin() { return reinterpret_cast<T*>(m_lstPool); }
+    T* end() { return reinterpret_cast<T*>(m_lstPool) + MAX_ITEMS; }
+
+    const T* begin() const { return reinterpret_cast<const T*>(m_lstPool); }
+    const T* end() const { return reinterpret_cast<const T*>(m_lstPool) + MAX_ITEMS; }
 
   private:
     void Init()
     {
-      m_vctAssignedBlocks.reset();
+      m_lstAssignedBlocks.reset();
     }
 
   private:
-    std::aligned_storage_t<sizeof(T), alignof(std::max_align_t)> m_vctPool[MAX_ITEMS];
-    std::bitset<MAX_ITEMS> m_vctAssignedBlocks;
+    std::aligned_storage_t<sizeof(T), alignof(std::max_align_t)> m_lstPool[MAX_ITEMS];
+    std::bitset<MAX_ITEMS> m_lstAssignedBlocks;
     uint32_t m_uRegisteredItems;
   };
-
-  template<typename T, size_t MAX_ITEMS>
-  void CFixedPool<T, MAX_ITEMS>::ClearAll()
-  {
-    for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
-    {
-      if (m_vctAssignedBlocks.test(tIndex))
-      {
-        T* pItem = reinterpret_cast<T*>(&m_vctPool[tIndex]);
-        pItem->~T();
-        m_vctAssignedBlocks.reset(tIndex);
-      }
-    }
-    m_uRegisteredItems = 0;
-  }
 
   template<typename T, size_t MAX_ITEMS>
   bool CFixedPool<T, MAX_ITEMS>::RemoveItem(T*& _pItem_)
   {
     for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
     {
-      if (m_vctAssignedBlocks.test(tIndex))
+      if (m_lstAssignedBlocks.test(tIndex))
       {
-        T* pItem = reinterpret_cast<T*>(&m_vctPool[tIndex]);
+        T* pItem = reinterpret_cast<T*>(&m_lstPool[tIndex]);
         if (pItem == _pItem_)
         {
           pItem->~T();
-          m_vctAssignedBlocks.reset(tIndex);
+          m_lstAssignedBlocks.reset(tIndex);
           _pItem_ = nullptr;
           --m_uRegisteredItems;
           return true;
@@ -107,5 +98,20 @@ namespace utils
       }
     }
     return false;
+  }
+
+  template<typename T, size_t MAX_ITEMS>
+  void CFixedPool<T, MAX_ITEMS>::ClearAll()
+  {
+    for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
+    {
+      if (m_lstAssignedBlocks.test(tIndex))
+      {
+        T* pItem = reinterpret_cast<T*>(&m_lstPool[tIndex]);
+        pItem->~T();
+        m_lstAssignedBlocks.reset(tIndex);
+      }
+    }
+    m_uRegisteredItems = 0;
   }
 }

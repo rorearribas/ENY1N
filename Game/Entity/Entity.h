@@ -37,14 +37,14 @@ namespace game
     {
       if (m_iRegisteredComponents >= s_iMaxComponents) return nullptr;
       T* pComponent = new T(this, std::forward<Args>(args)...);
-      m_vctComponents[m_iRegisteredComponents++] = pComponent;
+      m_lstComponents[m_iRegisteredComponents++] = pComponent;
       return static_cast<T*>(pComponent);
     }
     template<typename T>
     inline T* GetComponent()
     {
       // @TODO: Hay que evitar usar dynamic cast!!
-      for (CComponent* pComp : m_vctComponents)
+      for (CComponent* pComp : m_lstComponents)
       {
         T* pComponent = dynamic_cast<T*>(pComp);
         if (pComponent) return pComponent;
@@ -61,7 +61,7 @@ namespace game
     void Clear();
 
   private:
-    TComponentsList m_vctComponents = {};
+    TComponentsList m_lstComponents = {};
     math::CTransform m_oTransform;
 
     std::string m_sEntityName = {};

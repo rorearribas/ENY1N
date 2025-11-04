@@ -23,8 +23,7 @@ namespace global
     // Device
     extern ID3D11Device* s_pDevice;
     extern ID3D11DeviceContext* s_pDeviceContext;
-    // Vertex Inputs
-    extern D3D11_INPUT_ELEMENT_DESC TStandardInputDesc[4];
+
     // Release memory
     template<typename _ID3D11Resource>
     inline bool SafeRelease(_ID3D11Resource*& _pPtr)
@@ -53,7 +52,7 @@ namespace global
   // Global delegates
   namespace delegates
   {
-    extern std::vector< utils::CDelegate<void(uint32_t, uint32_t)>> s_vctOnWindowResizeDelegates;
+    extern std::vector< utils::CDelegate<void(uint32_t, uint32_t)>> s_lstOnWindowResizeDelegates;
     extern utils::CDelegate<void(RAWKEYBOARD*)> s_oOnUpdateKeyboardDelegate;
     extern utils::CDelegate<void(RAWMOUSE*)> s_oUpdateMouseDelegate;
   }

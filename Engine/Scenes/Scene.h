@@ -40,17 +40,11 @@ namespace scene
     inline const bool IsEnabled() const { return m_bEnabled; }
     inline const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
-    // Debug creation
-    void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
-    void DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
-    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
-    void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
-    void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
-
-    // Element creation
+    // Objects
     render::gfx::CPrimitive* const CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode);
     render::gfx::CModel* const CreateModel(const char* _sModelPath);
 
+    // Lighting
     render::lights::CDirectionalLight* const CreateDirectionalLight();
     render::lights::CPointLight* const CreatePointLight();
     render::lights::CSpotLight* const CreateSpotLight();
@@ -59,19 +53,24 @@ namespace scene
     void DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_);
     void DestroyLight(render::lights::CBaseLight*& pLight_);
 
+    // Debug
+    void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
+    void DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
+    void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
+    void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
+    void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
+
   private:
     friend class render::CRender;
 
     // Draw calls
     void DrawModels();
+    void DrawInstances();
     void DrawPrimitives();
     void DrawDebug();
     void ApplyLightning();
 
-  private:
-    void DestroyAllPrimitives();
-    void DestroyAllModels();
-    void DestroyAllLights();
+    void CleanAll();
 
   private:
     bool m_bEnabled = false;
@@ -79,14 +78,14 @@ namespace scene
 
   private:
     // Graphics
-    TModels m_vctModels = TModels();
-    TPrimitives m_vctPrimitives = TPrimitives();
-    TDebugItems m_vctDebugItems = TDebugItems();
+    TModels m_lstModels = TModels();
+    TPrimitives m_lstPrimitives = TPrimitives();
+    TDebugItems m_lstDebugItems = TDebugItems();
 
     // Lights
     render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
-    TPointLightsList m_vctPointLights = TPointLightsList();
-    TSpotLightsList m_vctSpotLights = TSpotLightsList();
+    TPointLightsList m_lstPointLights = TPointLightsList();
+    TSpotLightsList m_lstSpotLights = TSpotLightsList();
 
     // Global lightning buffer
     CConstantBuffer<SGlobalLightingData<s_uMaxPointLights, s_uMaxSpotLights>> m_oGlobalLightingBuffer;

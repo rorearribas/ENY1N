@@ -51,7 +51,7 @@ namespace render
       m_oTransform.SetPosition(_v3Pos);
 
       // Update bounding box
-      if (m_bCullingEnabled)
+      if (m_bCullEnabled)
       {
         CalculateBoundingBox();
       }
@@ -63,7 +63,7 @@ namespace render
       m_oTransform.SetRotation(_v3Rot);
 
       // Update bounding box
-      if (m_bCullingEnabled)
+      if (m_bCullEnabled)
       {
         CalculateBoundingBox();
       }
@@ -75,7 +75,7 @@ namespace render
       m_oTransform.SetScale(_v3Scl);
 
       // Update bounding box
-      if (m_bCullingEnabled)
+      if (m_bCullEnabled)
       {
         CalculateBoundingBox();
       }
@@ -84,13 +84,13 @@ namespace render
     void CModel::SetCullingEnabled(bool _bCull)
     {
       // Set state
-      if (m_bCullingEnabled != _bCull)
+      if (m_bCullEnabled != _bCull)
       {
-        m_bCullingEnabled = _bCull;
+        m_bCullEnabled = _bCull;
       }
 
       // Update bounding box
-      if (m_bCullingEnabled)
+      if (m_bCullEnabled)
       {
         CalculateBoundingBox();
       }
@@ -125,7 +125,7 @@ namespace render
       }
 
       // Update bounding box
-      return m_bCullingEnabled ? CalculateBoundingBox() : S_OK;
+      return m_bCullEnabled ? CalculateBoundingBox() : S_OK;
     }
     // ------------------------------------
     void CModel::Clear()

@@ -18,9 +18,9 @@ namespace game
 #ifdef DEBUG_MODE
     ImGui::Begin("Entity Selector");
     // Show the list of entities
-    for (uint32_t uIndex = 0; uIndex < m_vctEntitiesList.CurrentSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetCurrentSize(); ++uIndex)
     {
-      CEntity* pEntity = m_vctEntitiesList[uIndex];
+      CEntity* pEntity = m_lstEntitiesList[uIndex];
       if (pEntity)
       {
         std::string sLabel = pEntity->GetName() + "##" + std::to_string(uIndex);
@@ -33,9 +33,9 @@ namespace game
     ImGui::End();
 #endif
     // Update
-    for (uint32_t uIndex = 0; uIndex < m_vctEntitiesList.CurrentSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetCurrentSize(); ++uIndex)
     {
-      CEntity* pEntity = m_vctEntitiesList[uIndex];
+      CEntity* pEntity = m_lstEntitiesList[uIndex];
       if (pEntity)
       {
         pEntity->Update(_fDeltaTime);
@@ -53,12 +53,12 @@ namespace game
   // ------------------------------------
   void CGameManager::DestroyAll()
   {
-    m_vctEntitiesList.ClearAll();
+    m_lstEntitiesList.ClearAll();
   }
   // ------------------------------------
   CEntity* CGameManager::CreateEntity(const char* _sEntityName)
   {
-    if (m_uRegisteredEntities >= m_vctEntitiesList.GetMaxSize())
+    if (m_uRegisteredEntities >= m_lstEntitiesList.GetMaxSize())
       return nullptr;
 
     // Check collision name
@@ -67,7 +67,7 @@ namespace game
 
     for (uint32_t uIndex = 0; uIndex < m_uRegisteredEntities; uIndex++)
     {
-      CEntity* pEntity = m_vctEntitiesList[uIndex];
+      CEntity* pEntity = m_lstEntitiesList[uIndex];
       if (pEntity && pEntity->GetName() == sTargetEntityID)
       {
         std::ostringstream oStringStream;
@@ -78,21 +78,21 @@ namespace game
 
     // Register entity
     m_uRegisteredEntities++;
-    CEntity* pEntity = m_vctEntitiesList.RegisterItem(sTargetEntityID.c_str());
+    CEntity* pEntity = m_lstEntitiesList.RegisterItem(sTargetEntityID.c_str());
     return pEntity;
   }
   // ------------------------------------
   bool CGameManager::DestroyEntity(const char* _sEntityName)
   {
     CEntity* pEntity = nullptr;
-    for (uint32_t uIndex = 0; uIndex < m_vctEntitiesList.GetMaxSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetMaxSize(); ++uIndex)
     {
-      pEntity = m_vctEntitiesList[uIndex];
+      pEntity = m_lstEntitiesList[uIndex];
       if (pEntity && pEntity->GetName() == _sEntityName)
       {
         break;
       }
     }
-    return m_vctEntitiesList.RemoveItem(pEntity);
+    return m_lstEntitiesList.RemoveItem(pEntity);
   }
 }

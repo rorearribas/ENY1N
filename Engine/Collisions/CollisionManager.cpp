@@ -12,10 +12,10 @@ namespace collision
   void CCollisionManager::Update(float /*_fDeltaTime*/)
   {
     // Check collisions
-    for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
+    for (uint32_t uI = 0; uI < m_lstColliders.CurrentSize(); ++uI)
     {
       // Get current collider
-      collision::CCollider* pCollider = m_vctColliders[uI];
+      collision::CCollider* pCollider = m_lstColliders[uI];
 
       // Initialize the set of previous colliders for this collider if not already done
       if (m_dctHandleCollisions.find(pCollider) == m_dctHandleCollisions.end())
@@ -23,10 +23,10 @@ namespace collision
         m_dctHandleCollisions[pCollider] = std::unordered_set<collision::CCollider*>();
       }
 
-      for (uint32_t uJ = uI + 1; uJ < m_vctColliders.CurrentSize(); ++uJ)
+      for (uint32_t uJ = uI + 1; uJ < m_lstColliders.CurrentSize(); ++uJ)
       {
         // Get target collider
-        collision::CCollider* pTargetCollider = m_vctColliders[uJ];
+        collision::CCollider* pTargetCollider = m_lstColliders[uJ];
 
         // Create hit event data
         collision::SHitEvent oHitEvent = collision::SHitEvent();
@@ -82,23 +82,23 @@ namespace collision
   // ------------------------------------
   collision::CCollider* CCollisionManager::CreateCollider(collision::EColliderType _eColliderType, void* _pOwner)
   {
-    if (m_vctColliders.CurrentSize() >= m_vctColliders.GetMaxSize())
+    if (m_lstColliders.CurrentSize() >= m_lstColliders.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum colliders!");
       return nullptr;
     }
     switch (_eColliderType)
     {
-    case collision::EColliderType::BOX_COLLIDER: return m_vctColliders.RegisterItem<collision::CBoxCollider>(_pOwner);
-    case collision::EColliderType::SPHERE_COLLIDER: return m_vctColliders.RegisterItem<collision::CSphereCollider>(_pOwner);
-    case collision::EColliderType::CAPSULE_COLLIDER: return m_vctColliders.RegisterItem<collision::CCapsuleCollider>(_pOwner);
+    case collision::EColliderType::BOX_COLLIDER: return m_lstColliders.RegisterItem<collision::CBoxCollider>(_pOwner);
+    case collision::EColliderType::SPHERE_COLLIDER: return m_lstColliders.RegisterItem<collision::CSphereCollider>(_pOwner);
+    case collision::EColliderType::CAPSULE_COLLIDER: return m_lstColliders.RegisterItem<collision::CCapsuleCollider>(_pOwner);
     default: return nullptr;
     }
   }
   // ------------------------------------
   void CCollisionManager::DestroyCollider(collision::CCollider*& _pCollider_)
   {
-    bool bOk = m_vctColliders.RemoveItem(_pCollider_);
+    bool bOk = m_lstColliders.RemoveItem(_pCollider_);
     if (!bOk) { std::cout << "Error removing collider!" << std::endl; }
     _pCollider_ = nullptr;
   }
@@ -107,9 +107,9 @@ namespace collision
   {
     bool bHit = false;
     float fClosestDistance = _fMaxDistance;
-    for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
+    for (uint32_t uI = 0; uI < m_lstColliders.CurrentSize(); ++uI)
     {
-      collision::CCollider* pCollider = m_vctColliders[uI];
+      collision::CCollider* pCollider = m_lstColliders[uI];
       const collision::ECollisionMask& eCollMask = pCollider->GetCollisionMask();
       if ((eCollMask & _eMask) == 0)
       {
@@ -129,12 +129,12 @@ namespace collision
     return bHit;
   }
   // ------------------------------------
-  bool CCollisionManager::RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<SHitEvent>& _vctOutHits_, ECollisionMask _eMask)
+  bool CCollisionManager::RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<SHitEvent>& _lstOutHits_, ECollisionMask _eMask)
   {
-    _vctOutHits_.clear();
-    for (uint32_t uI = 0; uI < m_vctColliders.CurrentSize(); ++uI)
+    _lstOutHits_.clear();
+    for (uint32_t uI = 0; uI < m_lstColliders.CurrentSize(); ++uI)
     {
-      collision::CCollider* pCollider = m_vctColliders[uI];
+      collision::CCollider* pCollider = m_lstColliders[uI];
       if ((pCollider->GetCollisionMask() & _eMask) == 0)
       {
         continue;
@@ -145,14 +145,14 @@ namespace collision
       bool bCorrectDist = oHitEvent.Distance <= _fMaxDistance;
       if (bIntersect && bCorrectDist)
       {
-        _vctOutHits_.emplace_back(oHitEvent);
+        _lstOutHits_.emplace_back(oHitEvent);
       }
     }
-    return _vctOutHits_.size() > 0;
+    return _lstOutHits_.size() > 0;
   }
   // ------------------------------------
   void CCollisionManager::Clean()
   {
-    m_vctColliders.ClearAll();
+    m_lstColliders.ClearAll();
   }
 }

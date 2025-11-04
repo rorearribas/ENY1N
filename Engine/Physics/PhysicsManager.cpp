@@ -20,9 +20,9 @@ namespace physics
   // ------------------------------------
   void CPhysicsManager::Update(float _fDeltaTime)
   {
-    for (uint32_t uIndex = 0; uIndex < m_vctRigidbodys.CurrentSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstRigidbodys.GetCurrentSize(); ++uIndex)
     {
-      physics::CRigidbody* pRigidbody = m_vctRigidbodys[uIndex];
+      physics::CRigidbody* pRigidbody = m_lstRigidbodys[uIndex];
       bool bDynamic = pRigidbody->GetRigidbodyType() == physics::ERigidbodyType::DYNAMIC;
       if (!bDynamic) continue;
 
@@ -65,17 +65,17 @@ namespace physics
   // ------------------------------------
   CRigidbody* CPhysicsManager::CreateRigidbody(ERigidbodyType _eRigidbodyType)
   {
-    if (m_vctRigidbodys.CurrentSize() >= m_vctRigidbodys.GetMaxSize())
+    if (m_lstRigidbodys.GetCurrentSize() >= m_lstRigidbodys.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum rigidbodys!");
       return nullptr;
     }
-    return m_vctRigidbodys.RegisterItem(_eRigidbodyType);
+    return m_lstRigidbodys.RegisterItem(_eRigidbodyType);
   }
   // ------------------------------------
   void CPhysicsManager::DestroyRigidbody(CRigidbody*& _pRigidbody)
   {
-    bool bOk = m_vctRigidbodys.RemoveItem(_pRigidbody);
+    bool bOk = m_lstRigidbodys.RemoveItem(_pRigidbody);
     if (!bOk) 
     {
       ERROR_LOG("Error removing rigidbody!");    
@@ -85,6 +85,6 @@ namespace physics
   // ------------------------------------
   void CPhysicsManager::Clear()
   {
-    m_vctRigidbodys.ClearAll();
+    m_lstRigidbodys.ClearAll();
   }
 }

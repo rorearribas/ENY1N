@@ -68,7 +68,7 @@ float4 PSMain(PS_INPUT input) : SV_TARGET
   float3 v3WorldPos = input.worldpos;
 
   // Add ambient light
-  float3 v3TotalLight = 0.5f * float3(1.0f, 1.0f, 1.0f);
+  float3 v3TotalLight = 0.1f * float3(1.0f, 1.0f, 1.0f);
 
   // Directional light
   float3 v3LightDir = normalize(directionalLight.Direction);

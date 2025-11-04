@@ -31,7 +31,7 @@ namespace render
       {
         if (_wParam == SIZE_RESTORED || _wParam == SIZE_MAXIMIZED)
         {
-          for (auto& oDelegate : global::delegates::s_vctOnWindowResizeDelegates)
+          for (auto& oDelegate : global::delegates::s_lstOnWindowResizeDelegates)
           {
             oDelegate((uint32_t)(LOWORD(_lParam)), (uint32_t)(HIWORD(_lParam)));
           }
