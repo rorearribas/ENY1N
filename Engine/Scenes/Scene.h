@@ -65,7 +65,6 @@ namespace scene
 
     // Draw calls
     void DrawModels();
-    void DrawInstances();
     void DrawPrimitives();
     void DrawDebug();
     void ApplyLightning();

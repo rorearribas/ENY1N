@@ -74,7 +74,7 @@ int main()
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
 
   std::vector<game::CEntity*> lstModels = {};
-  for (uint32_t uIndex = 0; uIndex < 100; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 5; uIndex++)
   {
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");

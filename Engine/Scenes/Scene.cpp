@@ -262,42 +262,29 @@ namespace scene
     render::CCamera* pCamera = pEngine->GetCamera();
 
     // Draw
-    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetCurrentSize(); uIndex++)
+    for (render::gfx::CModel& rModel : m_lstModels)
     {
-      render::gfx::CModel* pModel = m_lstModels[uIndex];
-      if (!pModel->IsVisible())
+      if (!rModel.IsVisible() && !rModel.HasInstances())
       {
         continue;
       }
 
-      bool bDrawModel = true;
-      if (pModel->IsCullingEnabled()) // Check culling
+      // Draw model
+      if (rModel.IsVisible())
       {
-        bDrawModel = pCamera->IsOnFrustum(pModel->GetBoundingBox());
-      }
-      if (bDrawModel)
-      {
-        pModel->Draw();
-      }
-    }
-  }
-  // ------------------------------------
-  void CScene::DrawInstances()
-  {
-    // Check frustum
-    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    render::CCamera* pCamera = pEngine->GetCamera();
-
-    // Draw
-    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetCurrentSize(); uIndex++)
-    {
-      render::gfx::CModel* pModel = m_lstModels[uIndex];
-      if (!pModel->HasInstances())
-      {
-        return;
+        bool bDrawModel = true;
+        if (rModel.IsCullingEnabled()) // Check culling
+        {
+          bDrawModel = pCamera->IsOnFrustum(rModel.GetBoundingBox());
+        }
+        if (bDrawModel)
+        {
+          rModel.Draw();
+        }
       }
 
-      for (render::gfx::CRenderInstance& rInstance : pModel->GetInstances())
+      // Draw instances
+      for (render::gfx::CRenderInstance& rInstance : rModel.GetInstances())
       {
         if (!rInstance.IsVisible())
         {

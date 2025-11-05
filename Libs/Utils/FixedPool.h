@@ -58,14 +58,14 @@ namespace utils
     bool RemoveItem(T*& _pItem_);
     void ClearAll();
 
+    T* begin() { return reinterpret_cast<T*>(m_lstPool); }
+    const T* begin() const { return reinterpret_cast<const T*>(m_lstPool); }
+
+    T* end() { return reinterpret_cast<T*>(m_lstPool) + m_uRegisteredItems; }
+    const T* end() const { return reinterpret_cast<const T*>(m_lstPool) + m_uRegisteredItems; }
+
     const uint32_t& GetCurrentSize() const { return m_uRegisteredItems; }
     size_t GetMaxSize() const { return MAX_ITEMS; }
-
-    T* begin() { return reinterpret_cast<T*>(m_lstPool); }
-    T* end() { return reinterpret_cast<T*>(m_lstPool) + MAX_ITEMS; }
-
-    const T* begin() const { return reinterpret_cast<const T*>(m_lstPool); }
-    const T* end() const { return reinterpret_cast<const T*>(m_lstPool) + MAX_ITEMS; }
 
   private:
     void Init()

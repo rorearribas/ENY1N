@@ -669,7 +669,6 @@ namespace render
       global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oRender.pLinearSampler);
       // Draw models
       _pScene->DrawModels();
-      _pScene->DrawInstances(); // This is not yet implemented!
 
       // Remove render targets
       ID3D11RenderTargetView* lstEmptyRTs[iRenderTargets] = { nullptr, nullptr, nullptr };
