@@ -45,29 +45,31 @@ char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
   return cBuffer;
 }
 // ------------------------------------
-render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
+render::gfx::CModel* CResourceManager::LoadModel(const char* _sPath, bool& _bCached_)
 {
   // Get loaded model
   {
+    _bCached_ = false;
     auto it = m_dctLoadedModels.find(_sPath);
     if (it != m_dctLoadedModels.end())
     {
-      SUCCESS_LOG("Model loaded! -> " << _sPath);
-      return it->second;
+      _bCached_ = true;
+      SUCCESS_LOG("Model cached! -> " << _sPath);
+      return it->second.get();
     }
   }
 
   // Importer
-  Assimp::Importer importer;
+  Assimp::Importer rImporter;
 
   // Read file
   LOG("Loading model -> " << _sPath);
   int32_t iFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_ImproveCacheLocality;
-  const aiScene* pScene = importer.ReadFile(_sPath, iFlags);
+  const aiScene* pScene = rImporter.ReadFile(_sPath, iFlags);
   if (!pScene)
   {
-    ERROR_LOG("Error loading model! " << importer.GetErrorString());
-    return render::gfx::CModel::SModelData();
+    ERROR_LOG("Error loading model! " << rImporter.GetErrorString());
+    return nullptr;
   }
 
   // Materials
@@ -117,82 +119,82 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
     using namespace std::filesystem;
     if (pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::DIFFUSE, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::DIFFUSE, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Specular
     if (pLoadedMaterial->GetTexture(aiTextureType_SPECULAR, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::SPECULAR, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::SPECULAR, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Ambient
     if (pLoadedMaterial->GetTexture(aiTextureType_AMBIENT, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::AMBIENT, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::AMBIENT, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Emissive
     if (pLoadedMaterial->GetTexture(aiTextureType_EMISSIVE, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::EMISSIVE, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::EMISSIVE, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Height
     if (pLoadedMaterial->GetTexture(aiTextureType_HEIGHT, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::HEIGHT, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::HEIGHT, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Normals
     if (pLoadedMaterial->GetTexture(aiTextureType_NORMALS, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::NORMAL, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::NORMAL, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Shininess
     if (pLoadedMaterial->GetTexture(aiTextureType_SHININESS, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::SHININESS, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::SHININESS, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Displacement
     if (pLoadedMaterial->GetTexture(aiTextureType_DISPLACEMENT, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::DISPLACEMENT, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::DISPLACEMENT, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Light map
     if (pLoadedMaterial->GetTexture(aiTextureType_LIGHTMAP, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::LIGHTMAP, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::LIGHTMAP, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Reflection
     if (pLoadedMaterial->GetTexture(aiTextureType_REFLECTION, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::REFLECTION, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::REFLECTION, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Base color
     if (pLoadedMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::BASE_COLOR, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::BASE_COLOR, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Normal camera
     if (pLoadedMaterial->GetTexture(aiTextureType_NORMAL_CAMERA, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::NORMAL_CAMERA, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::NORMAL_CAMERA, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Emission color
     if (pLoadedMaterial->GetTexture(aiTextureType_EMISSION_COLOR, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::EMISSION_COLOR, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::EMISSION_COLOR, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Metalness
     if (pLoadedMaterial->GetTexture(aiTextureType_METALNESS, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::METALNESS, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::METALNESS, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Diffuse roughness
     if (pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::DIFFUSE_ROUGHNESS, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::DIFFUSE_ROUGHNESS, path(_sPath).parent_path(), sPath.C_Str());
     }
     // Ambient occlusion
     if (pLoadedMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &sPath) == aiReturn_SUCCESS)
     {
-      RegisterTexture(pMaterial, render::AMBIENT_OCCLUSSION, path(_sPath).parent_path(), sPath.C_Str());
+      RegisterTexture(pMaterial, render::ETextureType::AMBIENT_OCCLUSSION, path(_sPath).parent_path(), sPath.C_Str());
     }
 
     // Add material
@@ -200,7 +202,7 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
   }
 
   // Load meshes
-  render::gfx::CModel::SModelData oModelData = render::gfx::CModel::SModelData();
+  render::gfx::CModel::SModelData rModelData = render::gfx::CModel::SModelData();
   std::unordered_map<render::gfx::SVertexData, uint32_t> mVertexMap;
 
   for (uint32_t uI = 0; uI < pScene->mNumMeshes; uI++)
@@ -259,7 +261,7 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
         {
           uint32_t uNewIdx = static_cast<uint32_t>(mVertexMap.size());
           mVertexMap[oVertexData] = uNewIdx;
-          oModelData.Vertices.emplace_back(std::move(oVertexData));
+          rModelData.Vertices.emplace_back(std::move(oVertexData));
           lstIndices.emplace_back(uNewIdx);
         }
       }
@@ -276,12 +278,15 @@ render::gfx::CModel::SModelData CResourceManager::LoadModel(const char* _sPath)
       pMesh->SetMaterial(lstMaterials[pSceneMesh->mMaterialIndex]);
     }
 
-    oModelData.Meshes.emplace_back(pMesh);
+    rModelData.Meshes.emplace_back(pMesh);
   }
 
   SUCCESS_LOG("Model loaded! -> " << _sPath);
-  m_dctLoadedModels.emplace(_sPath, oModelData);
-  return (--m_dctLoadedModels.end())->second;
+  std::shared_ptr<render::gfx::CModel> pModel = std::make_shared<render::gfx::CModel>(rModelData);
+  SUCCESS_LOG("Model created! -> " << _sPath);
+
+  m_dctLoadedModels.emplace(_sPath, pModel);
+  return (--m_dctLoadedModels.end())->second.get();
 }
 // ------------------------------------
 unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
@@ -305,7 +310,7 @@ void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, rende
     SUCCESS_LOG("Texture loaded! -> " << oTargetPath.filename());
 
     // Create texture
-    auto pTexture = std::make_shared<render::texture::CTexture2D<render::SHADER_RESOURCE>>();
+    auto pTexture = std::make_shared<render::texture::CTexture2D<render::EViewType::SHADER_RESOURCE>>();
     pMaterial->SetTexture(pTexture, _eType);
 
     // Set texture config

@@ -1,5 +1,10 @@
 #include "ModelComponent.h"
+
 #include "Engine/Engine.h"
+#include "Engine/Render/Graphics/Primitive.h"
+#include "Engine/Render/Graphics/Model.h"
+#include "Engine/Render/Graphics/RenderInstance.h"
+
 #include "Game/Entity/Entity.h"
 #include <cassert>
 
@@ -31,18 +36,36 @@ namespace game
 
     // Create model
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    m_pModel = pEngine->CreateModel(_sModelPath);
+    render::gfx::CModel* pModel = pEngine->LoadModel(_sModelPath);
 #ifdef _DEBUG
-    assert(m_pModel);
+    assert(pModel);
 #endif
+    if (pModel->HasInstances())
+    {
+      // Assign last created!
+      render::gfx::TInstances& rInstances = pModel->GetInstances();
+      m_pInstance = (rInstances.end() - 1);
+      m_pModel = nullptr;
 
-    // Update transform
-    m_pModel->SetPosition(GetPosition());
-    m_pModel->SetRotation(GetRotation());
-    m_pModel->SetScale(GetScale());
+      // Update transform
+      m_pInstance->SetPosition(GetPosition());
+      m_pInstance->SetRotation(GetRotation());
+      m_pInstance->SetScale(GetScale());
+    }
+    else
+    {
+      // Set model
+      m_pModel = pModel;
+      m_pInstance = nullptr;
+
+      // Update transform
+      m_pModel->SetPosition(GetPosition());
+      m_pModel->SetRotation(GetRotation());
+      m_pModel->SetScale(GetScale());
+    }
   }
   // ------------------------------------
-  void CModelComponent::CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode)
+  void CModelComponent::CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode)
   {
     // Flush
     Clean();
@@ -72,6 +95,10 @@ namespace game
     if (m_pModel)
     {
       m_pModel->SetCullingEnabled(_bCull);
+    }
+    if (m_pInstance)
+    {
+      m_pInstance->SetCullingEnabled(_bCull);
     }
   }
   // ------------------------------------
@@ -116,6 +143,10 @@ namespace game
     {
       m_pModel->SetPosition(_v3Position);
     }
+    if (m_pInstance)
+    {
+      m_pInstance->SetPosition(_v3Position);
+    }
   }
   // ------------------------------------
   const math::CVector3& CModelComponent::GetPosition() const
@@ -133,6 +164,10 @@ namespace game
     {
       m_pModel->SetRotation(_v3Rot);
     }
+    if (m_pInstance)
+    {
+      m_pInstance->SetRotation(_v3Rot);
+    }
   }
   // ------------------------------------
   const math::CVector3& CModelComponent::GetRotation() const
@@ -140,15 +175,19 @@ namespace game
     return m_pOwner->GetRotation();
   }
   // ------------------------------------
-  void CModelComponent::SetScale(const math::CVector3& _v3Scale)
+  void CModelComponent::SetScale(const math::CVector3& _v3Scl)
   {
     if (m_pPrimitive)
     {
-      m_pPrimitive->SetScale(_v3Scale);
+      m_pPrimitive->SetScale(_v3Scl);
     }
     if (m_pModel)
     {
-      m_pModel->SetScale(_v3Scale);
+      m_pModel->SetScale(_v3Scl);
+    }
+    if (m_pInstance)
+    {
+      m_pInstance->SetScale(_v3Scl);
     }
   }
   // ------------------------------------

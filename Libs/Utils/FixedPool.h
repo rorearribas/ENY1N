@@ -9,15 +9,15 @@
 
 namespace utils
 {
-  template<typename T, size_t MAX_ITEMS>
+  template<typename T, uint32_t MAX_ITEMS>
   class CFixedPool
   {
   public:
     CFixedPool() : m_uRegisteredItems(0) { Init(); }
-    ~CFixedPool() { ClearAll(); }
+    ~CFixedPool() { Clear(); }
 
     template<typename ...Args>
-    T* RegisterItem(Args&&... args)
+    inline T* Create(Args&&... args)
     {
       if (m_uRegisteredItems >= MAX_ITEMS)
       {
@@ -27,14 +27,14 @@ namespace utils
         return nullptr;
       }
 
-      for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
+      for (uint32_t uIndex = 0; uIndex < MAX_ITEMS; ++uIndex)
       {
-        if (!m_lstAssignedBlocks.test(tIndex))
+        if (!m_lstAssignedBlocks.test(uIndex))
         {
-          void* pMem = static_cast<void*>(&m_lstPool[tIndex]);
+          void* pMem = static_cast<void*>(&m_lstPool[uIndex]);
           T* pItem = new (pMem) T(std::forward<Args>(args)...);
 
-          m_lstAssignedBlocks.set(tIndex);
+          m_lstAssignedBlocks.set(uIndex);
           ++m_uRegisteredItems;
           return pItem;
         }
@@ -43,29 +43,56 @@ namespace utils
       return nullptr;
     }
 
-    T* operator[](size_t index)
+    inline bool Insert(T* _pData)
     {
-      bool bAssignedBlock = (index < MAX_ITEMS && m_lstAssignedBlocks.test(index));
-      return bAssignedBlock ? reinterpret_cast<T*>(&m_lstPool[index]) : nullptr;
+      if (m_uRegisteredItems >= MAX_ITEMS)
+      {
+#ifdef _DEBUG
+        assert(false);
+#endif
+        return false;
+      }
+
+      for (uint32_t uIndex = 0; uIndex < MAX_ITEMS; ++uIndex)
+      {
+        if (!m_lstAssignedBlocks.test(uIndex))
+        {
+          // Set
+          T* pMem = reinterpret_cast<T*>(m_lstPool) + uIndex;
+          pMem = _pData;
+
+          m_lstAssignedBlocks.set(uIndex);
+          ++m_uRegisteredItems;
+          return true;
+        }
+      }
+
+      return false;
     }
 
-    const T* operator[](size_t index) const
+    inline T* operator[](uint32_t _uIndex)
     {
-      bool bAssignedBlock = (index < MAX_ITEMS && m_lstAssignedBlocks.test(index));
-      return bAssignedBlock ? reinterpret_cast<const T*>(&m_lstPool[index]) : nullptr;
+      bool bAssignedBlock = (_uIndex < MAX_ITEMS && m_lstAssignedBlocks.test(_uIndex));
+      return bAssignedBlock ? reinterpret_cast<T*>(&m_lstPool[_uIndex]) : nullptr;
     }
 
-    bool RemoveItem(T*& _pItem_);
-    void ClearAll();
+    inline const T* operator[](uint32_t _uIndex) const
+    {
+      bool bAssignedBlock = (_uIndex < MAX_ITEMS && m_lstAssignedBlocks.test(_uIndex));
+      return bAssignedBlock ? reinterpret_cast<const T*>(&m_lstPool[_uIndex]) : nullptr;
+    }
 
-    T* begin() { return reinterpret_cast<T*>(m_lstPool); }
-    const T* begin() const { return reinterpret_cast<const T*>(m_lstPool); }
+    bool Remove(T*& _pItem_);
+    void Clear();
 
-    T* end() { return reinterpret_cast<T*>(m_lstPool) + m_uRegisteredItems; }
-    const T* end() const { return reinterpret_cast<const T*>(m_lstPool) + m_uRegisteredItems; }
+    inline T* begin() { return reinterpret_cast<T*>(m_lstPool); }
+    inline const T* begin() const { return reinterpret_cast<const T*>(m_lstPool); }
 
-    const uint32_t& GetCurrentSize() const { return m_uRegisteredItems; }
-    size_t GetMaxSize() const { return MAX_ITEMS; }
+    inline T* end() { return reinterpret_cast<T*>(m_lstPool) + m_uRegisteredItems; }
+    inline const T* end() const { return reinterpret_cast<const T*>(m_lstPool) + m_uRegisteredItems; }
+
+    inline const uint32_t& GetCurrentSize() const { return m_uRegisteredItems; }
+    inline uint32_t GetMaxSize() const { return MAX_ITEMS; }
 
   private:
     void Init()
@@ -79,18 +106,18 @@ namespace utils
     uint32_t m_uRegisteredItems;
   };
 
-  template<typename T, size_t MAX_ITEMS>
-  bool CFixedPool<T, MAX_ITEMS>::RemoveItem(T*& _pItem_)
+  template<typename T, uint32_t MAX_ITEMS>
+  bool CFixedPool<T, MAX_ITEMS>::Remove(T*& _pItem_)
   {
-    for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
+    for (uint32_t uIndex = 0; uIndex < MAX_ITEMS; ++uIndex)
     {
-      if (m_lstAssignedBlocks.test(tIndex))
+      if (m_lstAssignedBlocks.test(uIndex))
       {
-        T* pItem = reinterpret_cast<T*>(&m_lstPool[tIndex]);
+        T* pItem = reinterpret_cast<T*>(&m_lstPool[uIndex]);
         if (pItem == _pItem_)
         {
           pItem->~T();
-          m_lstAssignedBlocks.reset(tIndex);
+          m_lstAssignedBlocks.reset(uIndex);
           _pItem_ = nullptr;
           --m_uRegisteredItems;
           return true;
@@ -100,16 +127,16 @@ namespace utils
     return false;
   }
 
-  template<typename T, size_t MAX_ITEMS>
-  void CFixedPool<T, MAX_ITEMS>::ClearAll()
+  template<typename T, uint32_t MAX_ITEMS>
+  void CFixedPool<T, MAX_ITEMS>::Clear()
   {
-    for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
+    for (uint32_t uIndex = 0; uIndex < MAX_ITEMS; ++uIndex)
     {
-      if (m_lstAssignedBlocks.test(tIndex))
+      if (m_lstAssignedBlocks.test(uIndex))
       {
-        T* pItem = reinterpret_cast<T*>(&m_lstPool[tIndex]);
+        T* pItem = reinterpret_cast<T*>(&m_lstPool[uIndex]);
         pItem->~T();
-        m_lstAssignedBlocks.reset(tIndex);
+        m_lstAssignedBlocks.reset(uIndex);
       }
     }
     m_uRegisteredItems = 0;

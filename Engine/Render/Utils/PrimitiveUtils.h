@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Mesh.h"
+#include "Engine/Utils/Plane.h"
 #include <vector>
 
 namespace render

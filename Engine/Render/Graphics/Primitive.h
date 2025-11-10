@@ -1,10 +1,11 @@
 #pragma once
+#include "Engine/Render/RenderTypes.h"
+#include "Engine/Collisions/BoundingBox.h"
+
 #include "Libs/Math/Vector3.h"
 #include "Libs/Math/Matrix4x4.h"
-#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 #include "Libs/Math/Transform.h"
-#include "Engine/Render/Render.h"
-#include <d3d11.h>
+
 #include <vector>
 #include "Mesh.h"
 
@@ -12,19 +13,6 @@ namespace render
 {
   namespace gfx
   {
-    enum class EPrimitiveType
-    {
-      E2D_SQUARE,
-      E2D_CIRCLE,
-      E2D_TRIANGLE,
-      E3D_PLANE,
-      E3D_CUBE,
-      E3D_SPHERE,
-      E3D_CAPSULE,
-      CUSTOM,
-      INVALID
-    };
-
     struct SCustomPrimitive
     {
       std::vector<render::gfx::SVertexData> m_lstVertexData;

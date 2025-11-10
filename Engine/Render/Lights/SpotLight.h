@@ -5,13 +5,13 @@ namespace render
 {
   namespace lights
   {
-    class CSpotLight : public CBaseLight
+    class CSpotLight : public CLight
     {
     public:
       static math::CVector3 s_vDefaultDirection;
 
     public:
-      CSpotLight() : CBaseLight(SPOT_LIGHT) { SetDirection(s_vDefaultDirection); }
+      CSpotLight() : CLight(ELightType::SPOT_LIGHT) { SetDirection(s_vDefaultDirection); }
       virtual ~CSpotLight() {}
 
       // Range

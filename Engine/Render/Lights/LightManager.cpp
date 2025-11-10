@@ -72,22 +72,22 @@ namespace render
       global::dx::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
     }
     // ------------------------------------
-    void CLightsManager::DestroyLight(render::lights::CBaseLight*& _pLight_)
+    void CLightsManager::DestroyLight(render::lights::CLight*& _pLight_)
     {
       switch (_pLight_->GetLightType())
       {
-      case render::lights::ELightType::DIRECTIONAL_LIGHT:
+      case render::ELightType::DIRECTIONAL_LIGHT:
       {
         global::ReleaseObject(m_pDirectionalLight);
         _pLight_ = nullptr;
       }
       break;
-      case render::lights::ELightType::POINT_LIGHT:
+      case render::ELightType::POINT_LIGHT:
       {
         DestroyPointLight(_pLight_);
       }
       break;
-      case render::lights::ELightType::SPOT_LIGHT:
+      case render::ELightType::SPOT_LIGHT:
       {
         DestroySpotLight(_pLight_);
       }
@@ -152,7 +152,7 @@ namespace render
       m_uRegisteredSpotLights = 0;
     }
     // ------------------------------------
-    void CLightsManager::DestroyPointLight(render::lights::CBaseLight*& pLight_)
+    void CLightsManager::DestroyPointLight(render::lights::CLight*& pLight_)
     {
       auto it = std::find(m_lstPointLights.begin(), m_lstPointLights.end(), pLight_);
       if (it != m_lstPointLights.end())
@@ -161,13 +161,13 @@ namespace render
         m_uRegisteredPointLights--;
 
         auto oReorderFunc = std::remove_if(m_lstPointLights.begin(), m_lstPointLights.end(),
-        [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+        [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
         std::fill(oReorderFunc, m_lstPointLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;
     }
     // ------------------------------------
-    void CLightsManager::DestroySpotLight(render::lights::CBaseLight*& pLight_)
+    void CLightsManager::DestroySpotLight(render::lights::CLight*& pLight_)
     {
       auto it = std::find(m_lstSpotLights.begin(), m_lstSpotLights.end(), pLight_);
       if (it != m_lstSpotLights.end())
@@ -176,7 +176,7 @@ namespace render
         m_uRegisteredSpotLights--;
 
         auto oReorderFunc = std::remove_if(m_lstSpotLights.begin(), m_lstSpotLights.end(),
-        [](render::lights::CBaseLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
+        [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
         std::fill(oReorderFunc, m_lstSpotLights.end(), nullptr); // Set nullptr
       }
       pLight_ = nullptr;

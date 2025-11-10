@@ -1,17 +1,19 @@
 #pragma once
-#include "Engine/Render/Render.h"
-#include "Libs/Utils/Singleton.h"
+#include "Engine/Render/RenderTypes.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Scenes/SceneManager.h"
+#include "Libs/Utils/Singleton.h"
 
-namespace render { namespace lights { class CBaseLight; } }
-namespace render { namespace lights { class CSpotLight; } }
-namespace render { namespace lights { class CPointLight; } }
-namespace render { namespace lights { class CDirectionalLight; } }
+namespace render { class CRender; }
+namespace render { class CCamera; }
 
 namespace render { namespace gfx { class CModel; } }
 namespace render { namespace gfx { class CPrimitive; } }
-namespace render { class CCamera; }
+
+namespace render { namespace lights { class CLight; } }
+namespace render { namespace lights { class CSpotLight; } }
+namespace render { namespace lights { class CPointLight; } }
+namespace render { namespace lights { class CDirectionalLight; } }
 
 namespace engine
 {
@@ -33,16 +35,16 @@ namespace engine
     inline render::CCamera* GetCamera() const { return m_pCamera; }
 
     // Graphics creation
-    render::gfx::CPrimitive* const CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
+    render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
     void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive);
-    render::gfx::CModel* const CreateModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);
+    render::gfx::CModel* const LoadModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);
     void DestroyModel(render::gfx::CModel*& _pModel);
 
     // Lights creation
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
     render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
-    void DestroyLight(render::lights::CBaseLight*& pLight_);
+    void DestroyLight(render::lights::CLight*& pLight_);
 
     // Debug creation
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);

@@ -163,7 +163,7 @@
     <ClInclude Include="Utils\Plane.h" />
     <ClInclude Include="Utils\Ray.h" />
     <ClInclude Include="Render\Utils\PrimitiveUtils.h" />
-    <ClInclude Include="Render\Lights\WIP\LightManager.h" />
+    <ClInclude Include="Render\Lights\LightManager.h" />
     <ClInclude Include="Physics\Rigidbody.h" />
     <ClInclude Include="Render\Graphics\Mesh.h" />
     <ClInclude Include="Render\Lights\Light.h" />
@@ -199,7 +199,7 @@
     <ClCompile Include="Utils\Plane.cpp" />
     <ClCompile Include="Utils\Ray.cpp" />
     <ClCompile Include="Render\Utils\PrimitiveUtils.cpp" />
-    <ClCompile Include="Render\Lights\WIP\LightManager.cpp" />
+    <ClCompile Include="Render\Lights\LightManager.cpp" />
     <ClCompile Include="Render\Graphics\Mesh.cpp" />
     <ClCompile Include="Render\Lights\Light.cpp" />
     <ClCompile Include="Render\Resources\Material.cpp" />

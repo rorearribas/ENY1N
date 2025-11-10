@@ -6,10 +6,10 @@ namespace render
 {
   namespace lights
   {
-    class CPointLight : public CBaseLight
+    class CPointLight : public CLight
     {
     public:
-      CPointLight() : CBaseLight(POINT_LIGHT) {}
+      CPointLight() : CLight(ELightType::POINT_LIGHT) {}
       virtual ~CPointLight() {}
 
       // Range

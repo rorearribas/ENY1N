@@ -5,6 +5,7 @@
 #include "Engine/Render/Lights/Light.h"
 #include "Engine/Render/Lights/DirectionalLight.h"
 #include "Engine/Render/Utils/PrimitiveUtils.h"
+#include "Engine/Managers/ResourceManager.h"
 #include "Engine/Global/GlobalResources.h"
 
 #include "Libs/Macros/GlobalMacros.h"
@@ -26,27 +27,43 @@ namespace scene
   // ------------------------------------
   CScene::~CScene()
   {
-    CleanAll();
+    Clear();
   }
   // ------------------------------------
-  render::gfx::CPrimitive* const CScene::CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode)
+  render::gfx::CPrimitive* const CScene::CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode)
   {
     if (m_lstPrimitives.GetCurrentSize() >= m_lstPrimitives.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum primitives in the current scene!");
       return nullptr;
     }
-    return m_lstPrimitives.RegisterItem(_eType, _eRenderMode);
+    return m_lstPrimitives.Create(_eType, _eRenderMode);
   }
   // ------------------------------------
-  render::gfx::CModel* const CScene::CreateModel(const char* _sModelPath)
+  render::gfx::CModel* const CScene::LoadModel(const char* _sModelPath)
   {
     if (m_lstModels.GetCurrentSize() >= m_lstModels.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum models in the current scene!");
       return nullptr;
     }
-    return m_lstModels.RegisterItem(_sModelPath);
+
+    // Load model
+    bool bCached = false;
+    CResourceManager* pResourceManager = CResourceManager::GetInstance();
+    render::gfx::CModel* pModel = pResourceManager->LoadModel(_sModelPath, bCached);
+    assert(pModel);
+
+    if (bCached)
+    {
+      pModel->CreateInstance();
+    }
+    else
+    {
+      m_lstModels.Insert(pModel);
+    }
+
+    return pModel;
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CScene::CreateDirectionalLight()
@@ -67,7 +84,7 @@ namespace scene
       WARNING_LOG("You have reached maximum point lights in the current scene!");
       return nullptr;
     }
-    return m_lstPointLights.RegisterItem();
+    return m_lstPointLights.Create();
   }
   // ------------------------------------
   render::lights::CSpotLight* const CScene::CreateSpotLight()
@@ -77,12 +94,12 @@ namespace scene
       WARNING_LOG("You have reached maximum spot lights in the current scene!");
       return nullptr;
     }
-    return m_lstSpotLights.RegisterItem();
+    return m_lstSpotLights.Create();
   }
   // ------------------------------------
   void CScene::DestroyModel(render::gfx::CModel*& _pModel_)
   {
-    bool bOk = m_lstModels.RemoveItem(_pModel_);
+    bool bOk = m_lstModels.Remove(_pModel_, false);
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk); // Sanity check
@@ -91,37 +108,37 @@ namespace scene
   // ------------------------------------
   void CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
   {
-    bool bOk = m_lstPrimitives.RemoveItem(_pPrimitive_);
+    bool bOk = m_lstPrimitives.Remove(_pPrimitive_);
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk); // Sanity check
 #endif
   }
   // ------------------------------------
-  void CScene::DestroyLight(render::lights::CBaseLight*& _pLight_)
+  void CScene::DestroyLight(render::lights::CLight*& _pLight_)
   {
     bool bOk = false;
     switch (_pLight_->GetLightType())
     {
-    case render::lights::ELightType::DIRECTIONAL_LIGHT:
-    {
-      bOk = global::ReleaseObject(m_pDirectionalLight);
-    }
-    break;
-    case render::lights::ELightType::POINT_LIGHT:
-    {
-      render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(_pLight_);
-      bOk = m_lstPointLights.RemoveItem(pPointLight);
-    }
-    break;
-    case render::lights::ELightType::SPOT_LIGHT:
-    {
-      render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(_pLight_);
-      bOk = m_lstSpotLights.RemoveItem(pSpotLight);
-    }
-    break;
-    default:
+      case render::ELightType::DIRECTIONAL_LIGHT:
+      {
+        bOk = global::ReleaseObject(m_pDirectionalLight);
+      }
       break;
+      case render::ELightType::POINT_LIGHT:
+      {
+        render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(_pLight_);
+        bOk = m_lstPointLights.Remove(pPointLight);
+      }
+      break;
+      case render::ELightType::SPOT_LIGHT:
+      {
+        render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(_pLight_);
+        bOk = m_lstSpotLights.Remove(pSpotLight);
+      }
+      break;
+      default:
+        break;
     }
 
 #ifdef _DEBUG
@@ -146,7 +163,7 @@ namespace scene
     render::gfx::CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_lstVertexData, oPrimitiveData.m_lstIndices);
 
     // Create temporal item + set pos
-    render::gfx::CPrimitive* pPrimitive = m_lstDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
+    render::gfx::CPrimitive* pPrimitive = m_lstDebugItems.Create(oPrimitiveData, _eRenderMode);
 
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
@@ -168,7 +185,7 @@ namespace scene
 
     // Create cube
     using namespace render::gfx;
-    CPrimitive* pPrimitive = m_lstDebugItems.RegisterItem(EPrimitiveType::E3D_CUBE, _eRenderMode);
+    CPrimitive* pPrimitive = m_lstDebugItems.Create(render::EPrimitiveType::E3D_CUBE, _eRenderMode);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -201,7 +218,7 @@ namespace scene
     CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_lstVertexData, oPrimitiveData.m_lstIndices);
 
     // Create temporal item + set pos
-    CPrimitive* pSpherePrimitive = m_lstDebugItems.RegisterItem(oPrimitiveData, _eRenderMode);
+    CPrimitive* pSpherePrimitive = m_lstDebugItems.Create(oPrimitiveData, _eRenderMode);
 #ifdef _DEBUG
     assert(pSpherePrimitive); // Sanity check
 #endif
@@ -223,7 +240,7 @@ namespace scene
     auto oData = render::gfx::CPrimitiveUtils::CreatePlane(_oPlane, _eRenderMode);
 
     // Create primitive
-    render::gfx::CPrimitive* pPlanePrimitive = m_lstDebugItems.RegisterItem(oData, _eRenderMode);
+    render::gfx::CPrimitive* pPlanePrimitive = m_lstDebugItems.Create(oData, _eRenderMode);
 #ifdef _DEBUG
     assert(pPlanePrimitive); // Sanity check
 #endif
@@ -246,7 +263,7 @@ namespace scene
     using namespace render::gfx;
     SCustomPrimitive oData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
     // Create temporal item
-    CPrimitive* pPrimitive = m_lstDebugItems.RegisterItem(oData, render::ERenderMode::WIREFRAME);
+    CPrimitive* pPrimitive = m_lstDebugItems.Create(oData, render::ERenderMode::WIREFRAME);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -262,29 +279,30 @@ namespace scene
     render::CCamera* pCamera = pEngine->GetCamera();
 
     // Draw
-    for (render::gfx::CModel& rModel : m_lstModels)
+    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetCurrentSize(); uIndex++)
     {
-      if (!rModel.IsVisible() && !rModel.HasInstances())
+      render::gfx::CModel* pModel = m_lstModels[uIndex];
+      if (!pModel->IsVisible() && !pModel->HasInstances())
       {
         continue;
       }
 
       // Draw model
-      if (rModel.IsVisible())
+      if (pModel->IsVisible())
       {
         bool bDrawModel = true;
-        if (rModel.IsCullingEnabled()) // Check culling
+        if (pModel->IsCullingEnabled()) // Check culling
         {
-          bDrawModel = pCamera->IsOnFrustum(rModel.GetBoundingBox());
+          bDrawModel = pCamera->IsOnFrustum(pModel->GetBoundingBox());
         }
         if (bDrawModel)
         {
-          rModel.Draw();
+          pModel->Draw();
         }
       }
 
       // Draw instances
-      for (render::gfx::CRenderInstance& rInstance : rModel.GetInstances())
+      for (render::gfx::CRenderInstance& rInstance : pModel->GetInstances())
       {
         if (!rInstance.IsVisible())
         {
@@ -362,7 +380,7 @@ namespace scene
     // Clean after draw
     if (uTempSize > 0)
     {
-      m_lstDebugItems.ClearAll();
+      m_lstDebugItems.Clear();
     }
   }
   // ------------------------------------
@@ -416,16 +434,16 @@ namespace scene
     global::dx::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
   }
   // ------------------------------------
-  void CScene::CleanAll()
+  void CScene::Clear()
   {
     // Models + primitives
-    m_lstPrimitives.ClearAll();
-    m_lstModels.ClearAll();
+    m_lstPrimitives.Clear();
+    m_lstModels.Clear();
 
     // Lighting
     global::ReleaseObject(m_pDirectionalLight);
-    m_lstPointLights.ClearAll();
-    m_lstSpotLights.ClearAll();
+    m_lstPointLights.Clear();
+    m_lstSpotLights.Clear();
 
     // Constant buffer
     m_oGlobalLightingBuffer.Clear();

@@ -1,10 +1,14 @@
 #pragma once
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Engine/Render/RenderTypes.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
 #include "Engine/Render/Lights/SpotLight.h"
 #include "Engine/Render/Lights/PointLight.h"
+#include "Engine/Utils/Plane.h"
+
 #include "Libs/Utils/FixedPool.h"
+#include "Libs/Utils/FixedList.h"
 
 namespace render { class CRender; }
 namespace render { namespace lights { class CDirectionalLight; } }
@@ -28,7 +32,7 @@ namespace scene
     static uint32_t constexpr s_uMaxPrimitives = 1000u;
     static uint32_t constexpr s_uMaxDebugItems = 5000u;
 
-    typedef utils::CFixedPool<render::gfx::CModel, s_uMaxModels> TModels;
+    typedef utils::CFixedList<render::gfx::CModel, s_uMaxModels> TModels;
     typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxPrimitives> TPrimitives;
     typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugItems> TDebugItems;
 
@@ -41,8 +45,8 @@ namespace scene
     inline const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
     // Objects
-    render::gfx::CPrimitive* const CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode);
-    render::gfx::CModel* const CreateModel(const char* _sModelPath);
+    render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode);
+    render::gfx::CModel* const LoadModel(const char* _sModelPath);
 
     // Lighting
     render::lights::CDirectionalLight* const CreateDirectionalLight();
@@ -51,7 +55,7 @@ namespace scene
 
     void DestroyModel(render::gfx::CModel*& pModel_);
     void DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_);
-    void DestroyLight(render::lights::CBaseLight*& pLight_);
+    void DestroyLight(render::lights::CLight*& pLight_);
 
     // Debug
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
@@ -69,7 +73,7 @@ namespace scene
     void DrawDebug();
     void ApplyLightning();
 
-    void CleanAll();
+    void Clear();
 
   private:
     bool m_bEnabled = false;

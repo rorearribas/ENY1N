@@ -70,12 +70,12 @@ namespace physics
       WARNING_LOG("You have reached maximum rigidbodys!");
       return nullptr;
     }
-    return m_lstRigidbodys.RegisterItem(_eRigidbodyType);
+    return m_lstRigidbodys.Create(_eRigidbodyType);
   }
   // ------------------------------------
   void CPhysicsManager::DestroyRigidbody(CRigidbody*& _pRigidbody)
   {
-    bool bOk = m_lstRigidbodys.RemoveItem(_pRigidbody);
+    bool bOk = m_lstRigidbodys.Remove(_pRigidbody);
     if (!bOk) 
     {
       ERROR_LOG("Error removing rigidbody!");    
@@ -85,6 +85,6 @@ namespace physics
   // ------------------------------------
   void CPhysicsManager::Clear()
   {
-    m_lstRigidbodys.ClearAll();
+    m_lstRigidbodys.Clear();
   }
 }

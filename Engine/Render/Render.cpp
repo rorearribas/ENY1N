@@ -49,8 +49,8 @@ namespace render
     static const int s_iInstancingLayoutSize(1);
     static const D3D11_INPUT_ELEMENT_DESC s_tInstancingLayout[s_iInstancingLayoutSize] =
     {
-      // Vertex data
-      { "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(math::CVector3), D3D11_INPUT_PER_INSTANCE_DATA, 0 },
+      // Transform
+      { "TRANSFORM_INSTANCE", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(math::CVector3), D3D11_INPUT_PER_INSTANCE_DATA, 0 },
     };
 
     struct SRenderPipeline
@@ -69,8 +69,8 @@ namespace render
       CConstantBuffer<SConstantTransforms> oConstantTransforms;
 
       // Depth
-      texture::CTexture2D<DEPTH_STENCIL>* pDepthStencil = nullptr;
-      texture::CTexture2D<SHADER_RESOURCE>* pDepthTexture = nullptr;
+      texture::CTexture2D<EViewType::DEPTH_STENCIL>* pDepthStencil = nullptr;
+      texture::CTexture2D<EViewType::SHADER_RESOURCE>* pDepthTexture = nullptr;
 
       ID3D11DepthStencilState* pDepthStencilState = nullptr;
       D3D11_DEPTH_STENCIL_DESC oDepthStencilCfg = D3D11_DEPTH_STENCIL_DESC();
@@ -90,14 +90,14 @@ namespace render
       ID3DUserDefinedAnnotation* pUserMarker = nullptr;
 
       // Forward
-      shader::CShader<E_VERTEX>* pSimpleVS = nullptr;
-      shader::CShader<E_PIXEL>* pSimplePS = nullptr;
-      shader::CShader<E_PIXEL>* pForwardLights = nullptr;
+      shader::CShader<EShaderType::E_VERTEX>* pSimpleVS = nullptr;
+      shader::CShader<EShaderType::E_PIXEL>* pSimplePS = nullptr;
+      shader::CShader<EShaderType::E_PIXEL>* pForwardLights = nullptr;
 
       // Deferred
-      shader::CShader<E_VERTEX>* pDrawTriangle = nullptr;
-      shader::CShader<E_PIXEL>* pGBufferDeferred = nullptr;
-      shader::CShader<E_PIXEL>* pDeferredLights = nullptr;
+      shader::CShader<EShaderType::E_VERTEX>* pDrawTriangle = nullptr;
+      shader::CShader<EShaderType::E_PIXEL>* pGBufferDeferred = nullptr;
+      shader::CShader<EShaderType::E_PIXEL>* pDeferredLights = nullptr;
     };
 
     static SRenderPipeline s_oRender;
@@ -189,14 +189,14 @@ namespace render
     }
 
     // Forward shaders
-    internal::s_oRender.pSimpleVS = new shader::CShader<E_VERTEX>(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
-    internal::s_oRender.pSimplePS = new shader::CShader<E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
-    internal::s_oRender.pForwardLights = new shader::CShader<E_PIXEL>(g_ForwardLights, ARRAYSIZE(g_ForwardLights));
+    internal::s_oRender.pSimpleVS = new shader::CShader<EShaderType::E_VERTEX>(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
+    internal::s_oRender.pSimplePS = new shader::CShader<EShaderType::E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
+    internal::s_oRender.pForwardLights = new shader::CShader<EShaderType::E_PIXEL>(g_ForwardLights, ARRAYSIZE(g_ForwardLights));
 
     // Deferred shaders
-    internal::s_oRender.pDrawTriangle = new shader::CShader<E_VERTEX>(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
-    internal::s_oRender.pGBufferDeferred = new shader::CShader<E_PIXEL>(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
-    internal::s_oRender.pDeferredLights = new shader::CShader<E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
+    internal::s_oRender.pDrawTriangle = new shader::CShader<EShaderType::E_VERTEX>(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
+    internal::s_oRender.pGBufferDeferred = new shader::CShader<EShaderType::E_PIXEL>(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
+    internal::s_oRender.pDeferredLights = new shader::CShader<EShaderType::E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
 
     // Create standard layout
     hResult = global::dx::s_pDevice->CreateInputLayout
@@ -405,7 +405,7 @@ namespace render
     global::dx::SafeRelease(internal::s_oRender.pDepthStencilState);
 
     // Create depth stencil texture
-    internal::s_oRender.pDepthStencil = new texture::CTexture2D<DEPTH_STENCIL>();
+    internal::s_oRender.pDepthStencil = new texture::CTexture2D<EViewType::DEPTH_STENCIL>();
 
     // Set desc
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -430,7 +430,7 @@ namespace render
     assert(!FAILED(hResult));
 
     // Create depth texture
-    internal::s_oRender.pDepthTexture = new texture::CTexture2D<SHADER_RESOURCE>();
+    internal::s_oRender.pDepthTexture = new texture::CTexture2D<EViewType::SHADER_RESOURCE>();
 
     // Set texture config
     oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // Texture shader

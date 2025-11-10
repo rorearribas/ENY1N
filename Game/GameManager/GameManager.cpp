@@ -53,7 +53,7 @@ namespace game
   // ------------------------------------
   void CGameManager::DestroyAll()
   {
-    m_lstEntitiesList.ClearAll();
+    m_lstEntitiesList.Clear();
   }
   // ------------------------------------
   CEntity* CGameManager::CreateEntity(const char* _sEntityName)
@@ -78,7 +78,7 @@ namespace game
 
     // Register entity
     m_uRegisteredEntities++;
-    CEntity* pEntity = m_lstEntitiesList.RegisterItem(sTargetEntityID.c_str());
+    CEntity* pEntity = m_lstEntitiesList.Create(sTargetEntityID.c_str());
     return pEntity;
   }
   // ------------------------------------
@@ -93,6 +93,6 @@ namespace game
         break;
       }
     }
-    return m_lstEntitiesList.RemoveItem(pEntity);
+    return m_lstEntitiesList.Remove(pEntity);
   }
 }

@@ -13,13 +13,13 @@ namespace render
       ClearTextures();
     }
     // ------------------------------------
-    texture::CTexture2D<SHADER_RESOURCE>* const CMaterial::GetTexture(ETextureType _eType)
+    texture::TSharedTexture const CMaterial::GetTexture(ETextureType _eType)
     {
       TMapTextures::iterator it = m_dctTextures.find(_eType);
-      return it != m_dctTextures.end() ? it->second.get() : nullptr;
+      return it != m_dctTextures.end() ? it->second : nullptr;
     }
     // ------------------------------------
-    void CMaterial::SetTexture(std::shared_ptr<texture::CTexture2D<SHADER_RESOURCE>>_pTexture, ETextureType _eType)
+    void CMaterial::SetTexture(texture::TSharedTexture _pTexture, ETextureType _eType)
     {
       m_dctTextures[_eType] = _pTexture;
     }

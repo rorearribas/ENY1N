@@ -15,7 +15,7 @@ namespace physics
     typedef utils::CDelegate<void(const math::CVector3&)> TOnRotationChangedDelegate;
 
   public:
-    explicit CRigidbody(const ERigidbodyType _eRigidbodyType = KINEMATIC) : m_eRigidbodyType(_eRigidbodyType) {}
+    CRigidbody(const ERigidbodyType _eRigidbodyType = KINEMATIC) : m_eRigidbodyType(_eRigidbodyType) {}
     ~CRigidbody() {}
 
     void SetRigidbodyType(ERigidbodyType _eRigidbodyType);

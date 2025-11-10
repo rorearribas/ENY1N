@@ -11,7 +11,7 @@ namespace render
     CleanRT();
 
     // Create texture
-    m_pTexture = new texture::CTexture2D<RENDER_TARGET>();
+    m_pTexture = new texture::CTexture2D<render::EViewType::RENDER_TARGET>();
 
     // Set texture config
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();

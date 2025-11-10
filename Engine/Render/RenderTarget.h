@@ -28,7 +28,7 @@ namespace render
 
   private:
     // Data
-    texture::CTexture2D<RENDER_TARGET>* m_pTexture = nullptr;
+    texture::CTexture2D<render::EViewType::RENDER_TARGET>* m_pTexture = nullptr;
     ID3D11ShaderResourceView* m_pSRV = nullptr;
   };
 }

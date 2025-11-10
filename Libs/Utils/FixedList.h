@@ -5,11 +5,11 @@
 
 namespace utils
 {
-  template<typename T, size_t MAX_ITEMS>
+  template<typename T, uint32_t MAX_ITEMS>
   class CFixedList {
   public:
     template<typename Inheritance = T, typename ...Args>
-    T* RegisterItem(Args&&... args)
+    inline T* Create(Args&&... args)
     {
       if (m_uRegisteredItems >= MAX_ITEMS)
       {
@@ -21,27 +21,32 @@ namespace utils
       return m_lstFixed[m_uRegisteredItems++];
     }
 
-    T* operator[](int _iIndex) { return m_lstFixed[_iIndex]; }
+    inline T* Insert(T* _pMem)
+    {
+      if (m_uRegisteredItems >= MAX_ITEMS)
+      {
+        return nullptr;
+      }
+      m_lstFixed[m_uRegisteredItems] = _pMem;
+      return m_lstFixed[m_uRegisteredItems++];
+    }
 
-    bool RemoveItem(T* _pItem_);
-    void ClearAll();
+    inline T* operator[](uint32_t _uIndex) { return m_lstFixed[_uIndex]; }
+    inline const T* operator[](uint32_t _uIndex) const { return m_lstFixed[_uIndex]; }
 
-    T* begin() { return m_lstFixed.begin(); }
-    const T* begin() const { return m_lstFixed.begin(); }
+    bool Remove(T* _pItem_, bool _bDelete = true);
+    void Clear();
 
-    const T* end() const { return m_lstFixed.begin() + m_uRegisteredItems; }
-    T* end() { return m_lstFixed.begin() + m_uRegisteredItems; }
-
-    const uint32_t& CurrentSize() const { return m_uRegisteredItems; }
-    size_t GetMaxSize() const { return static_cast<size_t>(MAX_ITEMS); }
+    inline const uint32_t& GetCurrentSize() const { return m_uRegisteredItems; }
+    inline uint32_t GetMaxSize() const { return MAX_ITEMS; }
 
   private:
     std::array<T*, MAX_ITEMS> m_lstFixed = std::array<T*, MAX_ITEMS>();
     uint32_t m_uRegisteredItems = 0;
   };
 
-  template<typename T, size_t MAX_ITEMS>
-  void CFixedList<T, MAX_ITEMS>::ClearAll()
+  template<typename T, uint32_t MAX_ITEMS>
+  void CFixedList<T, MAX_ITEMS>::Clear()
   {
     for (uint32_t uIndex = 0; uIndex < m_uRegisteredItems; uIndex++)
     {
@@ -50,18 +55,20 @@ namespace utils
     m_uRegisteredItems = 0;
   }
 
-  template<typename T, size_t MAX_ITEMS>
-  bool CFixedList<T, MAX_ITEMS>::RemoveItem(T* _pItem_)
+  template<typename T, uint32_t MAX_ITEMS>
+  bool CFixedList<T, MAX_ITEMS>::Remove(T* _pItem_, bool _bDelete)
   {
     auto it = std::find(m_lstFixed.begin(), m_lstFixed.end(), _pItem_);
     if (it != m_lstFixed.end() && *it)
     {
-      global::ReleaseObject(*it);
+      if (_bDelete)
+      {
+        global::ReleaseObject(*it);
+      }
       m_uRegisteredItems--;
 
-      auto oReorderFunc = std::remove_if(m_lstFixed.begin(), m_lstFixed.end(),
-        [](T* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
-      std::fill(oReorderFunc, m_lstFixed.end(), nullptr); // Set nullptr
+      auto oFunc = std::remove_if(m_lstFixed.begin(), m_lstFixed.end(), [](T* _pPtr) { return _pPtr == nullptr; });
+      std::fill(oFunc, m_lstFixed.end(), nullptr); // Set nullptr
 
       return true;
     }

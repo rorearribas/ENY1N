@@ -23,8 +23,8 @@ namespace scene
     inline const TSceneList& GetScenes() { return m_lstScenes; }
 
     // Element creation
-    render::gfx::CPrimitive* const CreatePrimitive(const render::gfx::EPrimitiveType&, render::ERenderMode, uint32_t _uSceneIndex = 0);
-    render::gfx::CModel* const CreateModel(const char*, uint32_t _uSceneIndex = 0);
+    render::gfx::CPrimitive* const CreatePrimitive(const render::EPrimitiveType&, render::ERenderMode, uint32_t _uSceneIndex = 0);
+    render::gfx::CModel* const LoadModel(const char*, uint32_t _uSceneIndex = 0);
 
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
@@ -32,7 +32,7 @@ namespace scene
 
     void DestroyModel(render::gfx::CModel*& pModel_, uint32_t _uSceneIndex = 0);
     void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
-    void DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uSceneIndex = 0);
+    void DestroyLight(render::lights::CLight*& _pLight_, uint32_t _uSceneIndex = 0);
 
     // Debug creation
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);

@@ -11,6 +11,9 @@ namespace render
 {
   namespace gfx
   {
+    static constexpr uint32_t s_uMaxInstances = 128u;
+    typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstances> TInstances;
+
     class CModel
     {
     public:
@@ -21,25 +24,25 @@ namespace render
       };
 
     public:
-      static uint32_t constexpr s_uMaxInstances = 128u;
-      typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstances> TInstances;
-
-    public:
-      CModel(const char* _sModelPath);
+      CModel(const SModelData& _rModelData);
       ~CModel();
 
       void Draw();
 
-      inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
-      inline const bool& IsVisible() const { return m_bVisible; }
-      inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
-
+      CRenderInstance* CreateInstance();
       const bool HasInstances() const { return m_lstInstances.GetCurrentSize() > 0; }
+
       const TInstances& GetInstances() const { return m_lstInstances; }
       TInstances& GetInstances() { return m_lstInstances; }
 
+      void ComputeBoundingBox(const math::CMatrix4x4& _mTransform, collision::CBoundingBox& _rBoundingBox_) const;
+      inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
+
       void SetCullingEnabled(bool _bCull);
       inline const bool& IsCullingEnabled() const { return m_bCullEnabled; }
+
+      inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
+      inline const bool& IsVisible() const { return m_bVisible; }
 
       void SetPosition(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
@@ -49,17 +52,14 @@ namespace render
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
     private:
-      HRESULT InitModel(const char* _sModelPath);
-      HRESULT CalculateBoundingBox();
+      HRESULT InitModel(const SModelData& _rModelData);
       void Clear();
 
     private:
-      // Model data
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       SModelData m_oModelData = SModelData();
       TInstances m_lstInstances = TInstances();
 
-    private:
       math::CTransform m_oTransform = math::CTransform();
       collision::CBoundingBox m_oBoundingBox = collision::CBoundingBox();
 

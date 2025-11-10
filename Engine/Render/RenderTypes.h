@@ -2,7 +2,15 @@
 
 namespace render
 {
-  enum EShaderType : int32_t
+  // Render modes
+  enum class ERenderMode
+  {   
+    SOLID, 
+    WIREFRAME 
+  };
+
+  // Shader types
+  enum class EShaderType
   {
     E_VERTEX,
     E_HULL,
@@ -12,7 +20,8 @@ namespace render
     E_COMPUTE
   };
 
-  enum EViewType : uint32_t
+  // View types
+  enum class EViewType
   {
     DEPTH_STENCIL,
     RENDER_TARGET,
@@ -21,8 +30,8 @@ namespace render
     UNKNOWN
   };
 
-  // Types
-  enum ETextureType : uint32_t
+  // Textures types
+  enum class ETextureType
   {
     DIFFUSE,
     SPECULAR,
@@ -42,6 +51,29 @@ namespace render
     DIFFUSE_ROUGHNESS,
     AMBIENT_OCCLUSSION,
     COUNT
+  };
+
+  // Light types
+  enum class ELightType
+  {
+    DIRECTIONAL_LIGHT,
+    POINT_LIGHT,
+    SPOT_LIGHT,
+    INVALID
+  };
+  
+  // Primitive types
+  enum class EPrimitiveType
+  {
+    E2D_SQUARE,
+    E2D_CIRCLE,
+    E2D_TRIANGLE,
+    E3D_PLANE,
+    E3D_CUBE,
+    E3D_SPHERE,
+    E3D_CAPSULE,
+    CUSTOM,
+    INVALID
   };
 }
 

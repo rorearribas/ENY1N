@@ -15,6 +15,10 @@
 
 #include "Engine/Managers/ResourceManager.h"
 #include "Engine/Managers/InputManager.h"
+#include "Engine/Collisions/CollisionManager.h"
+#include "Engine/Collisions/BoxCollider.h"
+#include "Engine/Physics/PhysicsManager.h"
+#include "Engine/Render/RenderTypes.h"
 
 #include "Game/GameManager/GameManager.h"
 #include "Game/Entity/Components/ModelComponent/ModelComponent.h"
@@ -22,9 +26,6 @@
 #include "Game/Entity/Components/CollisionComponent/CollisionComponent.h"
 #include "Game/Entity/Components/RigidbodyComponent/RigidbodyComponent.h"
 
-#include "Engine/Collisions/CollisionManager.h"
-#include "Engine/Collisions/BoxCollider.h"
-#include "Engine/Physics/PhysicsManager.h"
 #include "Libs/ImGui/imgui.h"
 #include "Libs/Math/Math.h"
 #include "Reflection/TypeManager.h"
@@ -39,8 +40,8 @@ float GenerateFloat(float min, float max)
 
 static bool bThrowRay = false;
 
-#define WIDTH 2560
-#define HEIGHT 1440
+#define WIDTH 1920
+#define HEIGHT 1080
 
 int main()
 {
@@ -71,14 +72,14 @@ int main()
 
   // Create directional light
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
-  pDirectionalLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::DIRECTIONAL_LIGHT);
+  pDirectionalLight->RegisterComponent<game::CLightComponent>(render::ELightType::DIRECTIONAL_LIGHT);
 
   std::vector<game::CEntity*> lstModels = {};
   for (uint32_t uIndex = 0; uIndex < 5; uIndex++)
   {
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 40.0f), GenerateFloat(-20.0f, 20.0f)));
+    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-30.0f, 30.0f), GenerateFloat(10.0f, 20.0f), GenerateFloat(-20.0f, 20.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
@@ -86,13 +87,13 @@ int main()
     lstModels.emplace_back(pModelEnt);
   }
 
-  // OBJ test
-  game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
-  pModelEnt2->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
-  game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
-  pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
-  pModelEnt2->SetRotation(math::CVector3(90.0f, 180.0f, 0.0f));
-  pModelEnt2->SetScale(math::CVector3(0.01f, 0.01f, 0.01f));
+  //// OBJ test
+  //game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
+  //pModelEnt2->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
+  //game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
+  //pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
+  //pModelEnt2->SetRotation(math::CVector3(90.0f, 180.0f, 0.0f));
+  //pModelEnt2->SetScale(math::CVector3(0.01f, 0.01f, 0.01f));
 
   // Sphere collider
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
@@ -100,7 +101,7 @@ int main()
     game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Capsule");
     pCapsuleEntity->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
     game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
+    pModelCompTest->CreatePrimitive(render::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
     pModelCompTest->SetColor(math::CVector3::Forward);
     pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
     pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
@@ -108,7 +109,7 @@ int main()
 
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
-  pPlaneModel->CreatePrimitive(render::gfx::EPrimitiveType::E3D_PLANE, render::ERenderMode::SOLID);
+  pPlaneModel->CreatePrimitive(render::EPrimitiveType::E3D_PLANE, render::ERenderMode::SOLID);
   pPlaneModel->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 1.0f, 200.0f));
   game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
@@ -121,7 +122,7 @@ int main()
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     pBoxTest->SetPosition(math::CVector3(GenerateFloat(-70.0f, 70.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-40.0f, 40.0f)));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::gfx::EPrimitiveType::E3D_CUBE, render::ERenderMode::SOLID);
+    pModelCompTest->CreatePrimitive(render::EPrimitiveType::E3D_CUBE, render::ERenderMode::SOLID);
     pModelCompTest->SetColor(math::CVector3(1.0f, 1.0f, 1.0f));
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
     pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
@@ -244,13 +245,13 @@ int main()
       {
         // Create point light
         game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
-        pPointLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::POINT_LIGHT);
+        pPointLight->RegisterComponent<game::CLightComponent>(render::ELightType::POINT_LIGHT);
       }
       if (ImGui::Button("Create spot light"))
       {
         // Create spot light
         game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot Light");
-        pSpotLight->RegisterComponent<game::CLightComponent>(render::lights::ELightType::SPOT_LIGHT);
+        pSpotLight->RegisterComponent<game::CLightComponent>(render::ELightType::SPOT_LIGHT);
       }
       ImGui::End();
 

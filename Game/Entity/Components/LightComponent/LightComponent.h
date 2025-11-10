@@ -1,5 +1,6 @@
 #pragma once
 #include "Game/Entity/Components/Component.h"
+#include "Engine/Render/RenderTypes.h"
 #include "Engine/Render/Lights/Light.h"
 #include "Libs/Math/Vector3.h"
 
@@ -10,12 +11,12 @@ namespace game
   class CLightComponent : public CComponent
   {
   public:
-    CLightComponent(CEntity* _pOwner, render::lights::ELightType _eLightType);
+    CLightComponent(CEntity* _pOwner, render::ELightType _eLightType);
     virtual ~CLightComponent();
 
-    inline render::lights::CBaseLight* GetLight() const { return m_pLight; }
-    void SetLightType(render::lights::ELightType _eLightType);
-    render::lights::ELightType GetLightType() const;
+    inline render::lights::CLight* GetLight() const { return m_pLight; }
+    void SetLightType(render::ELightType _eLightType);
+    render::ELightType GetLightType() const;
 
     void SetPosition(const math::CVector3& _v3Position);
     const math::CVector3& GetPosition() const;
@@ -29,10 +30,10 @@ namespace game
 
   private:
     void Clean();
-    void CreateLight(render::lights::ELightType _eLightType);
+    void CreateLight(render::ELightType _eLightType);
 
   private:
-    render::lights::CBaseLight* m_pLight = nullptr;
+    render::lights::CLight* m_pLight = nullptr;
   };
 }
 

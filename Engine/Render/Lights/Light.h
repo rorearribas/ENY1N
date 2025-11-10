@@ -1,23 +1,16 @@
 #pragma once
 #include "Libs/Math/Transform.h"
+#include "Engine/Render/RenderTypes.h"
 
 namespace render
 {
   namespace lights
   {
-    enum ELightType
-    {
-      DIRECTIONAL_LIGHT,
-      POINT_LIGHT,
-      SPOT_LIGHT,
-      INVALID
-    };
-
-    class CBaseLight
+    class CLight
     {
     public:
-      CBaseLight(ELightType _eLightType) : m_eLightType(_eLightType) {}
-      virtual ~CBaseLight() {}
+      CLight(ELightType _eLightType) : m_eLightType(_eLightType) {}
+      virtual ~CLight() {}
 
       const ELightType& GetLightType() const { return m_eLightType; }
       void SetPosition(const math::CVector3& _v3Pos) { m_v3Position = _v3Pos; }
@@ -29,7 +22,7 @@ namespace render
 
     private:
       // Type
-      ELightType m_eLightType = INVALID;
+      ELightType m_eLightType = ELightType::INVALID;
 
       // Properties
       math::CVector3 m_v3Position = math::CVector3::Zero;

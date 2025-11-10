@@ -12,10 +12,9 @@ namespace render
 {
   namespace gfx
   {
-    // ------------------------------------
-    CModel::CModel(const char* _sModelPath)
+    CModel::CModel(const SModelData& _rModelData)
     {
-      HRESULT hResult = InitModel(_sModelPath);
+      HRESULT hResult = InitModel(_rModelData);
       UNUSED_VAR(hResult);
       assert(!FAILED(hResult));
     }
@@ -34,15 +33,16 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
       // Set model matrix
-      math::CMatrix4x4 mModel = m_oTransform.CreateTransform();
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      pEngine->GetRender()->SetModelMatrix(mModel);
+      pEngine->GetRender()->SetModelMatrix(m_oTransform.CreateTransform());
 
       // Draw meshes
       for (auto& pMesh : m_oModelData.Meshes)
       {
         pMesh->Draw();
       }
+
+      m_oBoundingBox.DrawDebug();
     }
     // ------------------------------------
     void CModel::SetPosition(const math::CVector3& _v3Pos)
@@ -53,7 +53,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        CalculateBoundingBox();
+        ComputeBoundingBox(m_oTransform.CreateTransform(), m_oBoundingBox);
       }
     }
     // ------------------------------------
@@ -65,7 +65,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        CalculateBoundingBox();
+        ComputeBoundingBox(m_oTransform.CreateTransform(), m_oBoundingBox);
       }
     }
     // ------------------------------------
@@ -77,7 +77,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        CalculateBoundingBox();
+        ComputeBoundingBox(m_oTransform.CreateTransform(), m_oBoundingBox);
       }
     }
     // ------------------------------------
@@ -92,22 +92,22 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        CalculateBoundingBox();
+        ComputeBoundingBox(m_oTransform.CreateTransform(), m_oBoundingBox);
       }
     }
     // ------------------------------------
-    HRESULT CModel::InitModel(const char* _sModelPath)
+    HRESULT CModel::InitModel(const SModelData& _rModelData)
     {
-      // Flush model data
-      Clear();
-
-      // Load model
-      CResourceManager* pResourceManager = CResourceManager::GetInstance();
-      m_oModelData = pResourceManager->LoadModel(_sModelPath); // I should change this!
-      if (m_oModelData.Meshes.empty())
+      if (_rModelData.Meshes.empty())
       {
         return E_FAIL;
       }
+
+      // Flush model data
+      Clear();
+
+      // Set model data
+      m_oModelData = _rModelData;
 
       // We create here the vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
@@ -125,7 +125,22 @@ namespace render
       }
 
       // Update bounding box
-      return m_bCullEnabled ? CalculateBoundingBox() : S_OK;
+      if (m_bCullEnabled)
+      {
+        ComputeBoundingBox(m_oTransform.CreateTransform(), m_oBoundingBox);
+      }
+
+      return hResult;
+    }
+    // ------------------------------------
+    CRenderInstance* CModel::CreateInstance()
+    {
+      if (m_lstInstances.GetCurrentSize() >= m_lstInstances.GetMaxSize())
+      {
+        WARNING_LOG("You have reached maximum instances in this model!");
+        return nullptr;
+      }
+      return m_lstInstances.Create(this);
     }
     // ------------------------------------
     void CModel::Clear()
@@ -143,22 +158,21 @@ namespace render
       m_oModelData.Vertices.clear();
     }
     // ------------------------------------
-    HRESULT CModel::CalculateBoundingBox()
+    void CModel::ComputeBoundingBox(const math::CMatrix4x4& _mTransform, collision::CBoundingBox& _rBoundingBox_) const
     {
       if (m_oModelData.Vertices.empty())
       {
-        return E_FAIL;
+        return;
       }
 
       // Compute bounding box
-      const math::CMatrix4x4 mTransform = m_oTransform.CreateTransform();
       math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
       math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
       for (auto& oVertexData : m_oModelData.Vertices)
       {
         // Get vertex pos
-        math::CVector3 v3VertexPos = mTransform * oVertexData.Position;
+        math::CVector3 v3VertexPos = _mTransform * oVertexData.Position;
 
         // Calculate Min
         v3Min.x = math::Min<float>(v3Min.x, v3VertexPos.x);
@@ -171,11 +185,8 @@ namespace render
         v3Max.z = math::Max<float>(v3Max.z, v3VertexPos.z);
       }
 
-      // Apply min-max
-      m_oBoundingBox.SetMin(v3Min);
-      m_oBoundingBox.SetMax(v3Max);
-
-      return S_OK;
+      // Get bounding
+      _rBoundingBox_ = collision::CBoundingBox(v3Min, v3Max);
     }
   }
 }

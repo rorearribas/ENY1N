@@ -1,9 +1,11 @@
 #include "Engine.h"
-#include "Libs/Macros/GlobalMacros.h"
+
+#include "Engine/Render/Render.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/InputManager.h"
 #include "Engine/Shaders/Shader.h"
 
+#include "Libs/Macros/GlobalMacros.h"
 #include <cassert>
 #include <iostream>
 
@@ -59,14 +61,14 @@ namespace engine
     m_pRender->EndDraw();
   }
   // ------------------------------------
-  render::gfx::CPrimitive* const CEngine::CreatePrimitive(render::gfx::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
+  render::gfx::CPrimitive* const CEngine::CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreatePrimitive(_eType, _eRenderMode, _uSceneIndex);
   }
   // ------------------------------------
-  render::gfx::CModel* const CEngine::CreateModel(const char* _sModelPath, uint32_t _uSceneIndex)
+  render::gfx::CModel* const CEngine::LoadModel(const char* _sModelPath, uint32_t _uSceneIndex)
   {
-    return m_pSceneManager->CreateModel(_sModelPath, _uSceneIndex);
+    return m_pSceneManager->LoadModel(_sModelPath, _uSceneIndex);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CEngine::CreateDirectionalLight(uint32_t _uSceneIndex)
@@ -96,7 +98,7 @@ namespace engine
     m_pSceneManager->DestroyModel(pModel_);
   }
   // ------------------------------------
-  void CEngine::DestroyLight(render::lights::CBaseLight*& pLight_)
+  void CEngine::DestroyLight(render::lights::CLight*& pLight_)
   {
     assert(pLight_);
     m_pSceneManager->DestroyLight(pLight_);

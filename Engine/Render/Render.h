@@ -7,8 +7,6 @@ namespace scene { class CScene; }
 
 namespace render
 {
-  enum class ERenderMode { SOLID, WIREFRAME };
-
   class CRender
   {
   public:

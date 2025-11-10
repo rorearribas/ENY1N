@@ -14,7 +14,7 @@ namespace scene
   // ------------------------------------
   render::gfx::CPrimitive* const CSceneManager::CreatePrimitive
   (
-    const render::gfx::EPrimitiveType& _ePrimitiveType,
+    const render::EPrimitiveType& _ePrimitiveType,
     render::ERenderMode _eRenderMode,
     uint32_t _uSceneIndex
   )
@@ -24,11 +24,11 @@ namespace scene
     return pScene->CreatePrimitive(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
-  render::gfx::CModel* const CSceneManager::CreateModel(const char* _sModelPath, uint32_t _uSceneIndex)
+  render::gfx::CModel* const CSceneManager::LoadModel(const char* _sModelPath, uint32_t _uSceneIndex)
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_lstScenes[_uSceneIndex];
-    return pScene->CreateModel(_sModelPath);
+    return pScene->LoadModel(_sModelPath);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CSceneManager::CreateDirectionalLight(uint32_t _uSceneIndex)
@@ -66,7 +66,7 @@ namespace scene
     pScene->DestroyPrimitive(_pPrimitive_);
   }
   // ------------------------------------
-  void CSceneManager::DestroyLight(render::lights::CBaseLight*& _pLight_, uint32_t _uIndex)
+  void CSceneManager::DestroyLight(render::lights::CLight*& _pLight_, uint32_t _uIndex)
   {
     if (static_cast<size_t>(_uIndex) > (m_lstScenes.size() - 1)) return;
     scene::CScene* pScene = m_lstScenes.at(_uIndex);
