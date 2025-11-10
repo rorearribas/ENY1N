@@ -5,10 +5,10 @@ namespace render
 {
   namespace gfx
   {
-    void CRenderInstance::Draw()
+    CRenderInstance::CRenderInstance(CModel* _pModel, uint32_t _uId) : m_pModel(_pModel)
     {
-      // Not implemented yet!
-      m_oBoundingBox.DrawDebug();
+      assert(_uId != s_uInvalidID);
+      m_uInstanceID = _uId;
     }
     // ------------------------------------
     void CRenderInstance::SetPosition(const math::CVector3& _v3Pos)
@@ -19,7 +19,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        m_pModel->ComputeBoundingBox(m_oTransform.CreateTransform(), m_oBoundingBox);
+        m_pModel->ComputeBoundingBox(GetMatrix(), m_oBoundingBox);
       }
     }
     // ------------------------------------
@@ -31,7 +31,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        m_pModel->ComputeBoundingBox(m_oTransform.CreateTransform(), m_oBoundingBox);
+        m_pModel->ComputeBoundingBox(GetMatrix(), m_oBoundingBox);
       }
     }
     // ------------------------------------
@@ -43,7 +43,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        m_pModel->ComputeBoundingBox(m_oTransform.CreateTransform(), m_oBoundingBox);
+        m_pModel->ComputeBoundingBox(GetMatrix(), m_oBoundingBox);
       }
     }
     // ------------------------------------
@@ -58,7 +58,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        m_pModel->ComputeBoundingBox(m_oTransform.CreateTransform(), m_oBoundingBox);
+        m_pModel->ComputeBoundingBox(m_oTransform.GetMatrix(), m_oBoundingBox);
       }
     }
   }

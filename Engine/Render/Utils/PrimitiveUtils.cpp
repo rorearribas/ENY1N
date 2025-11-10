@@ -7,7 +7,7 @@ namespace render
   namespace gfx
   {
     // Triangle Primitive
-    const std::vector<render::gfx::SVertexData> CPrimitiveUtils::s_oTrianglePrimitive =
+    const std::vector<render::gfx::TVertexData> CPrimitiveUtils::s_oTrianglePrimitive =
     {
       { math::CVector3(0.0f, 0.5f, 0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
       { math::CVector3(0.5f, -0.5f,  0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
@@ -15,7 +15,7 @@ namespace render
     };
 
     // Cube Primitive
-    const std::vector<render::gfx::SVertexData> CPrimitiveUtils::s_oCubePrimitive =
+    const std::vector<render::gfx::TVertexData> CPrimitiveUtils::s_oCubePrimitive =
     {
       // FRONT
      { math::CVector3(-0.5f, -0.5f,  0.5f), math::CVector3(0.0f,  0.0f,  1.0f) },
@@ -56,7 +56,7 @@ namespace render
 
     // Plane Primitive
     static const math::CVector3 s_oPlaneNormal(0.0f, 1.0f, 0.0f);
-    const std::vector<render::gfx::SVertexData> CPrimitiveUtils::s_oPlanePrimitive =
+    const std::vector<render::gfx::TVertexData> CPrimitiveUtils::s_oPlanePrimitive =
     {
       { math::CVector3(-0.5f, 0.0f, -0.5f), s_oPlaneNormal },  // Bottom-left
       { math::CVector3(-0.5f, 0.0f,  0.5f), s_oPlaneNormal },  // Top-left
@@ -168,7 +168,7 @@ namespace render
     void CPrimitiveUtils::CreateSphere
     (
       float _fRadius, int _iStacks, int _iSlices,
-      std::vector<render::gfx::SVertexData>& _lstVertexData_
+      std::vector<render::gfx::TVertexData>& _lstVertexData_
     )
     {
       // Clear
@@ -187,10 +187,10 @@ namespace render
           float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
 
           // Add vertex
-          render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
+          render::gfx::TVertexData oVertexData = render::gfx::TVertexData();
           math::CVector3 v3VertexPos(fX, fY, fZ);
 
-          oVertexData.Position = v3VertexPos;
+          oVertexData.VertexPos = v3VertexPos;
           oVertexData.Normal = math::CVector3::Normalize(v3VertexPos);
           oVertexData.TexCoord = math::CVector2((static_cast<float>(uJ) / _iSlices), 1.0f - (static_cast<float>(uX) / _iStacks));
 
@@ -286,8 +286,8 @@ namespace render
             }
 
             // Add vertex
-            render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
-            oVertexData.Position = math::CVector3(fX, fY, fZ);
+            render::gfx::TVertexData oVertexData = render::gfx::TVertexData();
+            oVertexData.VertexPos = math::CVector3(fX, fY, fZ);
             oCustomPrimitive.m_lstVertexData.emplace_back(oVertexData);
           }
         }
@@ -339,7 +339,7 @@ namespace render
       oComputeSemiSphereLamb();
       for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_lstVertexData.size()); ++iIdx)
       {
-        oCustomPrimitive.m_lstVertexData[iIdx].Position.y += (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.m_lstVertexData[iIdx].VertexPos.y += (fDiff >= 0 ? fDiff : 0.0f);
       }
       // Compute top semi-sphere indices
       _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx) :
@@ -359,8 +359,8 @@ namespace render
             float fX = _fRadius * cosf(fTheta);
             float fZ = _fRadius * sinf(fTheta);
 
-            render::gfx::SVertexData oVertexData = {};
-            oVertexData.Position = math::CVector3(fX, fY, fZ);
+            render::gfx::TVertexData oVertexData = {};
+            oVertexData.VertexPos = math::CVector3(fX, fY, fZ);
             oCustomPrimitive.m_lstVertexData.emplace_back(oVertexData);
           }
         }
@@ -374,7 +374,7 @@ namespace render
       oComputeSemiSphereLamb(true);
       for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_lstVertexData.size()); ++iIdx)
       {
-        oCustomPrimitive.m_lstVertexData[iIdx].Position.y -= (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.m_lstVertexData[iIdx].VertexPos.y -= (fDiff >= 0 ? fDiff : 0.0f);
       }
 
       // Compute bottom semi-sphere indices
@@ -424,7 +424,7 @@ namespace render
       // Rotate vertices
       for (auto& oVertexData : oCustomPrimitive.m_lstVertexData)
       {
-        oVertexData.Position = mRot * oVertexData.Position;
+        oVertexData.VertexPos = mRot * oVertexData.VertexPos;
         oVertexData.Normal = v3Normal;
       }
 
@@ -438,15 +438,15 @@ namespace render
       gfx::SCustomPrimitive oPrimitive = gfx::SCustomPrimitive();
 
       // Fill data 
-      render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
-      oVertexData.Position = _v3Origin;
+      render::gfx::TVertexData oVertexData = render::gfx::TVertexData();
+      oVertexData.VertexPos = _v3Origin;
 
       uint32_t uIndex = 0;
       oPrimitive.m_lstVertexData.emplace_back(oVertexData);
       oPrimitive.m_lstIndices.emplace_back(uIndex++);
 
       // Fill data 
-      oVertexData.Position = _v3Dest;
+      oVertexData.VertexPos = _v3Dest;
       oPrimitive.m_lstVertexData.emplace_back(oVertexData);
       oPrimitive.m_lstIndices.emplace_back(uIndex);
 
@@ -454,7 +454,7 @@ namespace render
     }
 
     // ------------------------------------
-    void CPrimitiveUtils::ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _lstIndices)
+    void CPrimitiveUtils::ComputeNormals(std::vector<TVertexData>& _oVertexData, const std::vector<uint32_t>& _lstIndices)
     {
       // Reset normals
       for (auto& oVertex : _oVertexData)
@@ -475,9 +475,9 @@ namespace render
         int i1 = _lstIndices[lIdx + 1];
         int i2 = _lstIndices[lIdx + 2];
 
-        const math::CVector3& v0 = _oVertexData[i0].Position;
-        const math::CVector3& v1 = _oVertexData[i1].Position;
-        const math::CVector3& v2 = _oVertexData[i2].Position;
+        const math::CVector3& v0 = _oVertexData[i0].VertexPos;
+        const math::CVector3& v1 = _oVertexData[i1].VertexPos;
+        const math::CVector3& v2 = _oVertexData[i2].VertexPos;
 
         math::CVector3 v3Edge01 = v1 - v0;
         math::CVector3 v3Edge02 = v2 - v0;
@@ -496,12 +496,12 @@ namespace render
     }
 
     // ------------------------------------
-    void CPrimitiveUtils::ComputeBasicNormals(std::vector<SVertexData>& _oVertexData)
+    void CPrimitiveUtils::ComputeBasicNormals(std::vector<TVertexData>& _oVertexData)
     {
       // Set normals
       for (auto& oVertex : _oVertexData)
       {
-        oVertex.Normal = math::CVector3::Normalize(oVertex.Position);
+        oVertex.Normal = math::CVector3::Normalize(oVertex.VertexPos);
       }
     }
   }

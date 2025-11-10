@@ -90,7 +90,8 @@ namespace scene
     TPointLightsList m_lstPointLights = TPointLightsList();
     TSpotLightsList m_lstSpotLights = TSpotLightsList();
 
-    // Global lightning buffer
+    // Buffers
     CConstantBuffer<SGlobalLightingData<s_uMaxPointLights, s_uMaxSpotLights>> m_oGlobalLightingBuffer;
+    CConstantBuffer<SHandleInstancing> m_oHandleInstancingBuffer;
   };
 }

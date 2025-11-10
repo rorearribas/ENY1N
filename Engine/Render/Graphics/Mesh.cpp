@@ -8,23 +8,13 @@ namespace render
   namespace gfx
   {
     // ------------------------------------
-    bool SVertexData::operator==(const SVertexData& _other) const
-    {
-      return Position == _other.Position && Normal == _other.Normal && TexCoord == _other.TexCoord;
-    }
-    // ------------------------------------
-    bool SVertexData::operator!=(const SVertexData& _other) const
-    {
-      return !(*this == _other);
-    }
-    // ------------------------------------
     CMesh::~CMesh()
     {
       ClearBuffers();
       ClearMaterial();
     }
     // ------------------------------------
-    void CMesh::Draw()
+    void CMesh::Draw(uint32_t _uInstanceCount)
     {
       // Get textures
       texture::TSharedTexture pDiffuseTexture = m_pMaterial ? m_pMaterial->GetTexture(render::ETextureType::DIFFUSE) : nullptr;
@@ -63,9 +53,18 @@ namespace render
       ID3D11Buffer* pConstantBuffer = m_oConstantBuffer.GetBuffer();
       global::dx::s_pDeviceContext->PSSetConstantBuffers(0, 1, &pConstantBuffer);
 
-      // Draw
+      // Set index buffer
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-      global::dx::s_pDeviceContext->DrawIndexed(static_cast<uint32_t>(m_lstIndices.size()), 0, 0);
+
+      uint32_t uSize = static_cast<uint32_t>(m_lstIndices.size());
+      if (_uInstanceCount > 0)
+      {
+        global::dx::s_pDeviceContext->DrawIndexedInstanced(uSize, _uInstanceCount, 0, 0, 0);
+      }
+      else
+      {
+        global::dx::s_pDeviceContext->DrawIndexed(uSize, 0, 0);
+      }
     }
     // ------------------------------------
     HRESULT CMesh::CreateBuffer(TIndicesList& _lstIndices)

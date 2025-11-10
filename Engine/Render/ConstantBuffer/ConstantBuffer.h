@@ -3,7 +3,7 @@
 #include "Libs/Math/Matrix4x4.h"
 #include "Engine/Global/GlobalResources.h"
 
-static int constexpr s_iAlignMemory = 16;
+static constexpr uint32_t s_uAlign = 16;
 /* Reference table
 | HLSL Type       | Size (bytes)   | Equivalent
 |-----------------|----------------|------------------------
@@ -20,7 +20,7 @@ static int constexpr s_iAlignMemory = 16;
 */
 
 // Matrix
-struct __declspec(align(s_iAlignMemory)) SConstantTransforms
+struct __declspec(align(s_uAlign)) SConstantTransforms
 {
   // MVP
   math::CMatrix4x4 View = math::CMatrix4x4::Identity;
@@ -35,8 +35,15 @@ struct __declspec(align(s_iAlignMemory)) SConstantTransforms
   float Padding[2];
 };
 
+// Handle instancing
+struct __declspec(align(s_uAlign)) SHandleInstancing
+{
+  bool IsInstantiated = false;
+  float Padding[3];
+};
+
 // Textures data
-struct __declspec(align(s_iAlignMemory)) STexturesData
+struct __declspec(align(s_uAlign)) STexturesData
 {
   int HasDiffuse;
   int HasNormal;
@@ -45,7 +52,7 @@ struct __declspec(align(s_iAlignMemory)) STexturesData
 };
 
 // Directional lights
-struct __declspec(align(s_iAlignMemory)) SDirectionaLight
+struct __declspec(align(s_uAlign)) SDirectionaLight
 {
   // 12 + 4 Bytes
   math::CVector3 Direction;
@@ -55,7 +62,7 @@ struct __declspec(align(s_iAlignMemory)) SDirectionaLight
   float Intensity;
 };
 // Point lights
-struct __declspec(align(s_iAlignMemory)) SPointLight
+struct __declspec(align(s_uAlign)) SPointLight
 {
   // 12 + 4 Bytes
   math::CVector3 Position;
@@ -70,7 +77,7 @@ struct __declspec(align(s_iAlignMemory)) SPointLight
   float Padding[2];
 };
 // Spot lights
-struct __declspec(align(s_iAlignMemory)) SSpotLight
+struct __declspec(align(s_uAlign)) SSpotLight
 {
   // 12 + 4 Bytes
   math::CVector3 Position;
@@ -88,7 +95,7 @@ struct __declspec(align(s_iAlignMemory)) SSpotLight
 };
 
 template<size_t MAX_POINT_LIGHTS, size_t MAX_SPOT_LIGHTS>
-struct __declspec(align(s_iAlignMemory)) SGlobalLightingData
+struct __declspec(align(s_uAlign)) SGlobalLightingData
 {
   // Lights [144 Bytes]
   SDirectionaLight DirectionalLight;

@@ -58,7 +58,7 @@ cbuffer GlobalLightingData : register(b1)
 
   // Handle lights
   int2 RegisteredLights;
-  float2 Padding1;
+  float2 Padding2;
 };
 
 float4 PSMain(PS_INPUT input) : SV_TARGET

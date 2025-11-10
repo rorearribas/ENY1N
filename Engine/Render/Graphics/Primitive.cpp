@@ -58,7 +58,7 @@ namespace render
     void CPrimitive::Draw()
     {
       // Set general data
-      uint32_t uVertexStride = sizeof(render::gfx::SVertexData);
+      uint32_t uVertexStride = sizeof(render::gfx::TVertexData);
       uint32_t uVertexOffset = 0;
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
 
@@ -67,9 +67,8 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(eTopology);
 
       // Set model matrix
-      math::CMatrix4x4 mModel = m_oTransform.CreateTransform();
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      pEngine->GetRender()->SetModelMatrix(mModel);
+      pEngine->GetRender()->SetModelMatrix(m_oTransform.GetMatrix());
 
       // Draw
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -145,7 +144,7 @@ namespace render
       assert(!FAILED(hResult));
 
       // Get data
-      render::gfx::SVertexData* pPrimitiveData = (render::gfx::SVertexData*)(oMappedSubresource.pData);
+      render::gfx::TVertexData* pPrimitiveData = (render::gfx::TVertexData*)(oMappedSubresource.pData);
       assert(pPrimitiveData);
 
       // Update color
@@ -214,7 +213,7 @@ namespace render
         case EPrimitiveType::E3D_SPHERE:
         {
           // Create sphere
-          std::vector<render::gfx::SVertexData> lstVertexData = std::vector<render::gfx::SVertexData>();
+          std::vector<render::gfx::TVertexData> lstVertexData = std::vector<render::gfx::TVertexData>();
           CPrimitiveUtils::CreateSphere(s_fStandardRadius, s_iSubvH, s_iSubvV, lstVertexData);
           // Get indices
           const auto& lstIndices = _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::GetSphereIndices(s_iSubvH, s_iSubvV) :
@@ -243,7 +242,7 @@ namespace render
       return S_FALSE;
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBuffer(const std::vector<render::gfx::SVertexData>& _lstVertexData, const std::vector<uint32_t>& _lstIndices)
+    HRESULT CPrimitive::CreateBuffer(const std::vector<render::gfx::TVertexData>& _lstVertexData, const std::vector<uint32_t>& _lstIndices)
     {
       if (_lstVertexData.empty() || _lstIndices.empty())
       {
@@ -255,7 +254,7 @@ namespace render
 
       // Config vertex buffer
       D3D11_BUFFER_DESC oVertexBufferDesc = D3D11_BUFFER_DESC();
-      oVertexBufferDesc.ByteWidth = static_cast<uint32_t>(sizeof(render::gfx::SVertexData) * _lstVertexData.size());
+      oVertexBufferDesc.ByteWidth = static_cast<uint32_t>(sizeof(render::gfx::TVertexData) * _lstVertexData.size());
       oVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
       oVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       oVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -305,18 +304,18 @@ namespace render
       assert(!FAILED(hResult));
 
       // Get data
-      render::gfx::SVertexData* pPrimitiveData = (render::gfx::SVertexData*)(oMappedSubresource.pData);
+      render::gfx::TVertexData* pPrimitiveData = (render::gfx::TVertexData*)(oMappedSubresource.pData);
       assert(pPrimitiveData);
 
       // Compute bounding box
-      const math::CMatrix4x4 mTransform = m_oTransform.CreateTransform();
+      const math::CMatrix4x4 mTransform = m_oTransform.GetMatrix();
       math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
       math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
 
       for (uint32_t uIndex = 0; uIndex < m_uVertices; ++uIndex)
       {
         // Get vertex pos
-        math::CVector3 v3VertexPos = mTransform * pPrimitiveData[uIndex].Position;
+        math::CVector3 v3VertexPos = mTransform * pPrimitiveData[uIndex].VertexPos;
 
         // Calculate Min
         v3Min.x = math::Min<float>(v3Min.x, v3VertexPos.x);

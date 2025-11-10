@@ -13,18 +13,6 @@ namespace render
 {
   namespace gfx
   {
-    struct SVertexData
-    {
-      // Vertex data
-      math::CVector3 Position = math::CVector3::Zero;
-      math::CVector3 Normal = math::CVector3::Zero;
-      math::CVector3 Color = math::CVector3::One;
-      math::CVector2 TexCoord = math::CVector2::Zero;
-
-      bool operator==(const SVertexData& _other) const;
-      bool operator!=(const SVertexData& _other) const;
-    };
-
     class CMesh
     {
     public:
@@ -34,7 +22,7 @@ namespace render
       CMesh(const std::string& _sMeshName) : m_sMeshID(_sMeshName) {}
       ~CMesh();
 
-      void Draw();
+      void Draw(uint32_t _uInstanceCount = 0);
       HRESULT CreateBuffer(TIndicesList& _lstIndices);
 
       inline std::shared_ptr<render::mat::CMaterial> GetMaterial() const { return m_pMaterial; }
@@ -59,20 +47,4 @@ namespace render
       ID3D11Buffer* m_pIndexBuffer = nullptr;
     };
   }
-}
-
-namespace std
-{
-  template <>
-  struct hash<render::gfx::SVertexData>
-  {
-    size_t operator()(const render::gfx::SVertexData& v) const
-    {
-      auto oHashFunc = [](float f) { return static_cast<int>(f * 1000); };
-      size_t h1 = hash<int>()(oHashFunc(v.Position.x)) ^ hash<int>()(oHashFunc(v.Position.y)) ^ hash<int>()(oHashFunc(v.Position.z));
-      size_t h2 = hash<int>()(oHashFunc(v.Normal.x)) ^ hash<int>()(oHashFunc(v.Normal.y)) ^ hash<int>()(oHashFunc(v.Normal.z));
-      size_t h3 = hash<int>()(oHashFunc(v.TexCoord.x)) ^ hash<int>()(oHashFunc(v.TexCoord.y));
-      return h1 ^ (h2 << 1) ^ (h3 << 2);
-    }
-  };
 }

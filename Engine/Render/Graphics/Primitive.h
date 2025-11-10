@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Render/RenderTypes.h"
+#include "Engine/Render/Graphics/Model.h"
 #include "Engine/Collisions/BoundingBox.h"
 
 #include "Libs/Math/Vector3.h"
@@ -7,7 +8,6 @@
 #include "Libs/Math/Transform.h"
 
 #include <vector>
-#include "Mesh.h"
 
 namespace render
 {
@@ -15,7 +15,7 @@ namespace render
   {
     struct SCustomPrimitive
     {
-      std::vector<render::gfx::SVertexData> m_lstVertexData;
+      std::vector<render::gfx::TVertexData> m_lstVertexData;
       std::vector<uint32_t> m_lstIndices;
     };
 
@@ -51,7 +51,7 @@ namespace render
 
     private:
       HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode);
-      HRESULT CreateBuffer(const std::vector<render::gfx::SVertexData>& _lstVertexData, const std::vector<uint32_t>& _lstIndices);
+      HRESULT CreateBuffer(const std::vector<render::gfx::TVertexData>& _lstVertexData, const std::vector<uint32_t>& _lstIndices);
       HRESULT CalculateBoundingBox();
       void Clear();
 

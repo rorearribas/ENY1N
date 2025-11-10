@@ -202,8 +202,8 @@ render::gfx::CModel* CResourceManager::LoadModel(const char* _sPath, bool& _bCac
   }
 
   // Load meshes
-  render::gfx::CModel::SModelData rModelData = render::gfx::CModel::SModelData();
-  std::unordered_map<render::gfx::SVertexData, uint32_t> mVertexMap;
+  render::gfx::CModel::TModelData rModelData = render::gfx::CModel::TModelData();
+  std::unordered_map<render::gfx::TVertexData, uint32_t> mVertexMap;
 
   for (uint32_t uI = 0; uI < pScene->mNumMeshes; uI++)
   {
@@ -219,12 +219,12 @@ render::gfx::CModel* CResourceManager::LoadModel(const char* _sPath, bool& _bCac
       const aiFace& oFace = pSceneMesh->mFaces[uJ];
       for (uint32_t uK = 0; uK < oFace.mNumIndices; uK++)
       {
-        render::gfx::SVertexData oVertexData = render::gfx::SVertexData();
+        render::gfx::TVertexData oVertexData = render::gfx::TVertexData();
         uint32_t uPosIdx = oFace.mIndices[uK];
 
         // Position
         aiVector3D v3Pos = pSceneMesh->mVertices[uPosIdx];
-        oVertexData.Position = math::CVector3(v3Pos.x, v3Pos.y, v3Pos.z);
+        oVertexData.VertexPos = math::CVector3(v3Pos.x, v3Pos.y, v3Pos.z);
 
         // Normal
         if (pSceneMesh->HasNormals())

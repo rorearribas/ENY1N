@@ -37,25 +37,24 @@ namespace render
     static const float s_fMaxDepth(1.0f);
 
     // Standard Input
-    static const int s_iStandardLayoutSize(4);
-    static const D3D11_INPUT_ELEMENT_DESC s_tStandardLayout[s_iStandardLayoutSize] =
+    static const int s_iLayoutSize(8);
+    static const D3D11_INPUT_ELEMENT_DESC s_tStandardLayout[s_iLayoutSize] =
     {
-      { "POSITION", 0,    DXGI_FORMAT_R32G32B32_FLOAT,  0, 0,                          D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 0
-      { "NORMAL",   0,    DXGI_FORMAT_R32G32B32_FLOAT,  0, sizeof(math::CVector3),     D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 12
-      { "COLOR",    0,    DXGI_FORMAT_R32G32B32_FLOAT,  0, sizeof(math::CVector3) * 2, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 24
-      { "UV",       0,    DXGI_FORMAT_R32G32_FLOAT,     0, sizeof(math::CVector3) * 3, D3D11_INPUT_PER_VERTEX_DATA, 0 }, // 36
-    };
-    // Instancing
-    static const int s_iInstancingLayoutSize(1);
-    static const D3D11_INPUT_ELEMENT_DESC s_tInstancingLayout[s_iInstancingLayoutSize] =
-    {
-      // Transform
-      { "TRANSFORM_INSTANCE", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, sizeof(math::CVector3), D3D11_INPUT_PER_INSTANCE_DATA, 0 },
+      // Vertex layout
+      { "VERTEXPOS",          0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 12
+      { "NORMAL",             0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 24
+      { "COLOR",              0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 36
+      { "UV",                 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 48
+      // Instancing
+      { "INSTANCE_TRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 16
+      { "INSTANCE_TRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 32
+      { "INSTANCE_TRANSFORM", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 48
+      { "INSTANCE_TRANSFORM", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 64
     };
 
     struct SRenderPipeline
     {
-      // Swap chain + render target
+      // Swap chain + RT
       IDXGISwapChain* pSwapChain = nullptr;
       ID3D11RenderTargetView* pBackBuffer = nullptr;
 
@@ -202,7 +201,7 @@ namespace render
     hResult = global::dx::s_pDevice->CreateInputLayout
     (
       internal::s_tStandardLayout,
-      internal::s_iStandardLayoutSize,
+      internal::s_iLayoutSize,
       g_SimpleVS, 
       sizeof(g_SimpleVS),
       &internal::s_oRender.pStandardLayout

@@ -19,10 +19,9 @@ namespace scene
   CScene::CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex)
   {
     HRESULT hResult = m_oGlobalLightingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
-    UNUSED_VAR(hResult);
-#ifdef _DEBUG
     assert(!FAILED(hResult));
-#endif
+    hResult = m_oHandleInstancingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
+    assert(!FAILED(hResult));
   }
   // ------------------------------------
   CScene::~CScene()
@@ -278,6 +277,10 @@ namespace scene
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     render::CCamera* pCamera = pEngine->GetCamera();
 
+    // I have to change this!!!
+    ID3D11Buffer* pConstantBuffer = m_oHandleInstancingBuffer.GetBuffer();
+    global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
+
     // Draw
     for (uint32_t uIndex = 0; uIndex < m_lstModels.GetCurrentSize(); uIndex++)
     {
@@ -301,8 +304,9 @@ namespace scene
         }
       }
 
-      // Draw instances
-      for (render::gfx::CRenderInstance& rInstance : pModel->GetInstances())
+      // Handle instances
+      std::vector<uint32_t> lstInstancesIds = std::vector<uint32_t>();
+      for (const render::gfx::CRenderInstance& rInstance : pModel->GetInstances())
       {
         if (!rInstance.IsVisible())
         {
@@ -316,10 +320,31 @@ namespace scene
         }
         if (bDrawInstance)
         {
-          rInstance.Draw();
+          lstInstancesIds.emplace_back(rInstance.GetInstanceID());
         }
       }
+
+      if (lstInstancesIds.size() > 0)
+      {
+        // Write
+        m_oHandleInstancingBuffer.GetData().IsInstantiated = true;
+        bool bOk = m_oHandleInstancingBuffer.WriteBuffer();
+        UNUSED_VAR(bOk);
+        assert(bOk);
+
+        // Draw instances
+        pModel->DrawInstances(lstInstancesIds);
+      }
     }
+
+    // Write
+    m_oHandleInstancingBuffer.GetData().IsInstantiated = false;
+    bool bOk = m_oHandleInstancingBuffer.WriteBuffer();
+    UNUSED_VAR(bOk);
+    assert(bOk);
+
+    ID3D11Buffer* pInvalidBuffer = nullptr;
+    global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pInvalidBuffer);
   }
   // ------------------------------------
   void CScene::DrawPrimitives()

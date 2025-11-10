@@ -11,29 +11,46 @@ namespace render
 {
   namespace gfx
   {
+    struct TVertexData
+    {
+      math::CVector3 VertexPos = math::CVector3::Zero;
+      math::CVector3 Normal = math::CVector3::Zero;
+      math::CVector3 Color = math::CVector3::One;
+      math::CVector2 TexCoord = math::CVector2::Zero;
+
+      bool operator==(const TVertexData& _other) const;
+      bool operator!=(const TVertexData& _other) const;
+    };
+
+    struct TInstanceData
+    {
+      math::CMatrix4x4 Transform = math::CMatrix4x4::Identity;
+    };
+
     static constexpr uint32_t s_uMaxInstances = 128u;
     typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstances> TInstances;
 
     class CModel
     {
     public:
-      struct SModelData
+      struct TModelData
       {
         std::vector<std::shared_ptr<render::gfx::CMesh>> Meshes;
-        std::vector<render::gfx::SVertexData> Vertices;
+        std::vector<render::gfx::TVertexData> Vertices;
       };
 
     public:
-      CModel(const SModelData& _rModelData);
+      CModel(const TModelData& _rModelData);
       ~CModel();
 
       void Draw();
+      void DrawInstances(const std::vector<uint32_t>& _vctDrawableIds);
 
       CRenderInstance* CreateInstance();
       const bool HasInstances() const { return m_lstInstances.GetCurrentSize() > 0; }
 
-      const TInstances& GetInstances() const { return m_lstInstances; }
       TInstances& GetInstances() { return m_lstInstances; }
+      const TInstances& GetInstances() const { return m_lstInstances; }
 
       void ComputeBoundingBox(const math::CMatrix4x4& _mTransform, collision::CBoundingBox& _rBoundingBox_) const;
       inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
@@ -52,14 +69,19 @@ namespace render
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
     private:
-      HRESULT InitModel(const SModelData& _rModelData);
+      HRESULT InitModel(const TModelData& _rModelData);
       void Clear();
 
     private:
+      // Buffers
       ID3D11Buffer* m_pVertexBuffer = nullptr;
-      SModelData m_oModelData = SModelData();
+      ID3D11Buffer* m_pInstanceBuffer = nullptr;
+
+    private:
+      TModelData m_oModelData = TModelData();
       TInstances m_lstInstances = TInstances();
 
+    private:
       math::CTransform m_oTransform = math::CTransform();
       collision::CBoundingBox m_oBoundingBox = collision::CBoundingBox();
 
@@ -69,3 +91,18 @@ namespace render
   }
 }
 
+namespace std
+{
+  template <>
+  struct hash<render::gfx::TVertexData>
+  {
+    size_t operator()(const render::gfx::TVertexData& v) const
+    {
+      auto oFunc = [](float f) { return static_cast<int>(f * 1000); };
+      size_t h1 = hash<int>()(oFunc(v.VertexPos.x)) ^ hash<int>()(oFunc(v.VertexPos.y)) ^ hash<int>()(oFunc(v.VertexPos.z));
+      size_t h2 = hash<int>()(oFunc(v.Normal.x)) ^ hash<int>()(oFunc(v.Normal.y)) ^ hash<int>()(oFunc(v.Normal.z));
+      size_t h3 = hash<int>()(oFunc(v.TexCoord.x)) ^ hash<int>()(oFunc(v.TexCoord.y));
+      return h1 ^ (h2 << 1) ^ (h3 << 2);
+    }
+  };
+}

@@ -83,7 +83,7 @@ namespace game
     const math::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
 
     // Manipulate gizmo
-    math::CMatrix4x4 mMatrix = m_oTransform.CreateTransform();
+    math::CMatrix4x4 mMatrix = m_oTransform.GetMatrix();
     if (ImGuizmo::Manipulate(viewMatrix, projectionMatrix, s_eGizmoOperation, s_eGizmoMode, mMatrix))
     {
       // Apply modifications

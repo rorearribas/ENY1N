@@ -60,7 +60,9 @@ cbuffer ConstantTransforms : register(b0)
   // Projection CFG
   float FarPlane;
   float NearPlane;
-  float2 Padding0;
+  // Instancing
+  int ComputeInstance;
+  int Padding0;
 };
 
 // Constant buffer global lightning

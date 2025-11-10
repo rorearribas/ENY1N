@@ -12,9 +12,9 @@ namespace render
     {
     public:
       // Primitive data
-      static const std::vector<render::gfx::SVertexData> s_oTrianglePrimitive;
-      static const std::vector<render::gfx::SVertexData> s_oCubePrimitive;
-      static const std::vector<render::gfx::SVertexData> s_oPlanePrimitive;
+      static const std::vector<render::gfx::TVertexData> s_oTrianglePrimitive;
+      static const std::vector<render::gfx::TVertexData> s_oCubePrimitive;
+      static const std::vector<render::gfx::TVertexData> s_oPlanePrimitive;
 
       // 2D Square
       static const std::vector<uint32_t> s_oSquareIndices;
@@ -45,13 +45,13 @@ namespace render
       static gfx::SCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode);
 
       // 3D Sphere
-      static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::gfx::SVertexData>& _lstVertexData_);
+      static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::gfx::TVertexData>& _lstVertexData_);
       static std::vector<uint32_t> GetSphereIndices(int _iStacks, int _iSlices);
       static std::vector<uint32_t> GetWireframeSphereIndices(int _iStacks, int _iSlices);
 
       // Normals
-      static void ComputeNormals(std::vector<SVertexData>& _oVertexData, const std::vector<uint32_t>& _lstIndices);
-      static void ComputeBasicNormals(std::vector<SVertexData>& _oVertexData);
+      static void ComputeNormals(std::vector<TVertexData>& _oVertexData, const std::vector<uint32_t>& _lstIndices);
+      static void ComputeBasicNormals(std::vector<TVertexData>& _oVertexData);
     };
 
   }
