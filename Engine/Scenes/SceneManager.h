@@ -18,20 +18,23 @@ namespace scene
     CSceneManager() { CreateScenes(); }
     ~CSceneManager() { DestroyAllScenes(); }
 
+    // Handle scene
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
     inline scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
     inline const TSceneList& GetScenes() { return m_lstScenes; }
 
-    // Element creation
+    // Handle graphics
     render::gfx::CPrimitive* const CreatePrimitive(const render::EPrimitiveType&, render::ERenderMode, uint32_t _uSceneIndex = 0);
-    render::gfx::CModel* const LoadModel(const char*, uint32_t _uSceneIndex = 0);
+    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
 
+    render::gfx::CModel* const LoadModel(const char*, uint32_t _uSceneIndex = 0);
+    void DestroyModel(render::gfx::CModel*& _pModel_, uint32_t _uSceneIndex = 0);
+    void DestroyInstance(render::gfx::CRenderInstance*& _pIntance_, uint32_t _uSceneIndex = 0);
+
+    // Handle lights
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
     render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
-
-    void DestroyModel(render::gfx::CModel*& pModel_, uint32_t _uSceneIndex = 0);
-    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
     void DestroyLight(render::lights::CLight*& _pLight_, uint32_t _uSceneIndex = 0);
 
     // Debug creation

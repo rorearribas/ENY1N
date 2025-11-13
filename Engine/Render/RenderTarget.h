@@ -12,11 +12,11 @@ namespace render
     CRenderTarget() = default;
     ~CRenderTarget() { CleanRT(); }
 
-    HRESULT CreateRT(uint32_t _uWidth, uint32_t _uHeight, DXGI_FORMAT _eTargetFormat);
+    HRESULT CreateRT(uint32_t _uWidth, uint32_t _uHeight, DXGI_FORMAT _eFormat);
     void ClearRT(const float _v4ClearColor[4]);
 
-    ID3D11Texture2D* GetTexture() const { return *m_pTexture; }
-    ID3D11RenderTargetView* GetRT() const { return m_pTexture->GetView(); }
+    ID3D11Texture2D* GetTexture() const { return m_pRTTexture->GetData(); }
+    ID3D11RenderTargetView* GetRT() const { return m_pRTTexture->GetView(); }
     ID3D11ShaderResourceView* GetSRV() const { return m_pSRV; }
 
     // Override operators
@@ -27,8 +27,7 @@ namespace render
     void CleanRT();
 
   private:
-    // Data
-    texture::CTexture2D<render::EViewType::RENDER_TARGET>* m_pTexture = nullptr;
+    texture::CTexture2D<render::EViewType::RENDER_TARGET>* m_pRTTexture = nullptr;
     ID3D11ShaderResourceView* m_pSRV = nullptr;
   };
 }

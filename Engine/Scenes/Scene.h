@@ -19,42 +19,48 @@ namespace scene
   {
   private:
     //@Note: if you change this values you will also need to change the array size in hlsl
-    static uint32_t constexpr s_uMaxSpotLights = 100u;
-    static uint32_t constexpr s_uMaxPointLights = 100u;
+    static constexpr uint32_t s_uMaxSpotLights = 100u;
+    static constexpr uint32_t s_uMaxPointLights = 100u;
 
+    typedef CConstantBuffer<SGlobalLightingData<s_uMaxPointLights, s_uMaxSpotLights>> TLightingBuffer;
     typedef utils::CFixedPool<render::lights::CPointLight, s_uMaxPointLights> TPointLightsList;
     typedef utils::CFixedPool<render::lights::CSpotLight, s_uMaxSpotLights> TSpotLightsList;
 
   private:
-    static uint32_t constexpr s_uMaxModels = 10000u;
-    static uint32_t constexpr s_uMaxInstancesPerModel = 128u;
-
-    static uint32_t constexpr s_uMaxPrimitives = 1000u;
-    static uint32_t constexpr s_uMaxDebugItems = 5000u;
-
+    // Models
+    static constexpr uint32_t s_uMaxModels = 500u;
     typedef utils::CFixedList<render::gfx::CModel, s_uMaxModels> TModels;
+    typedef CConstantBuffer<SHandleInstancing> TInstancingBuffer;
+
+    // Primitives
+    static constexpr uint32_t s_uMaxPrimitives = 500u;
     typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxPrimitives> TPrimitives;
-    typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugItems> TDebugItems;
+
+    // Debug primitives
+    static constexpr uint32_t s_uMaxDebugPrimitives = 1000u;
+    typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugPrimitives> TDebugItems;
 
   public:
     CScene(uint32_t _uIndex);
     ~CScene();
 
+    // Handle scene
     inline void SetEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
     inline const bool IsEnabled() const { return m_bEnabled; }
     inline const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
-    // Objects
+    // Handle graphics
     render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode);
-    render::gfx::CModel* const LoadModel(const char* _sModelPath);
+    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
 
-    // Lighting
+    render::gfx::CModel* const LoadModel(const char* _sModelPath);
+    void DestroyModel(render::gfx::CModel*& _pModel_);
+    void DestroyInstance(render::gfx::CRenderInstance*& _pInstance_);
+
+    // Handle lights
     render::lights::CDirectionalLight* const CreateDirectionalLight();
     render::lights::CPointLight* const CreatePointLight();
     render::lights::CSpotLight* const CreateSpotLight();
-
-    void DestroyModel(render::gfx::CModel*& pModel_);
-    void DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_);
     void DestroyLight(render::lights::CLight*& pLight_);
 
     // Debug
@@ -71,7 +77,7 @@ namespace scene
     void DrawModels();
     void DrawPrimitives();
     void DrawDebug();
-    void ApplyLightning();
+    void UpdateLightning();
 
     void Clear();
 
@@ -85,13 +91,13 @@ namespace scene
     TPrimitives m_lstPrimitives = TPrimitives();
     TDebugItems m_lstDebugItems = TDebugItems();
 
-    // Lights
+    // Lights -> Lighting manager WIP
     render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
     TPointLightsList m_lstPointLights = TPointLightsList();
     TSpotLightsList m_lstSpotLights = TSpotLightsList();
 
     // Buffers
-    CConstantBuffer<SGlobalLightingData<s_uMaxPointLights, s_uMaxSpotLights>> m_oGlobalLightingBuffer;
-    CConstantBuffer<SHandleInstancing> m_oHandleInstancingBuffer;
+    TLightingBuffer m_oLightingBuffer;
+    CConstantBuffer<SHandleInstancing> m_oInstancingBuffer;
   };
 }

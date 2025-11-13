@@ -55,7 +55,7 @@ render::gfx::CModel* CResourceManager::LoadModel(const char* _sPath, bool& _bCac
     {
       _bCached_ = true;
       SUCCESS_LOG("Model cached! -> " << _sPath);
-      return it->second.get();
+      return it->second;
     }
   }
 
@@ -282,11 +282,11 @@ render::gfx::CModel* CResourceManager::LoadModel(const char* _sPath, bool& _bCac
   }
 
   SUCCESS_LOG("Model loaded! -> " << _sPath);
-  std::shared_ptr<render::gfx::CModel> pModel = std::make_shared<render::gfx::CModel>(rModelData);
+  render::gfx::CModel* pModel = new render::gfx::CModel(rModelData);
   SUCCESS_LOG("Model created! -> " << _sPath);
 
   m_dctLoadedModels.emplace(_sPath, pModel);
-  return (--m_dctLoadedModels.end())->second.get();
+  return (--m_dctLoadedModels.end())->second;
 }
 // ------------------------------------
 unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)

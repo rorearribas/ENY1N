@@ -153,7 +153,7 @@ namespace render
     };
 
     // ------------------------------------
-    gfx::SCustomPrimitive CPrimitiveUtils::Create2DCircle
+    gfx::TCustomPrimitive CPrimitiveUtils::Create2DCircle
     (
       float /*_fStandardRadius*/,
       int /*_iSubvH*/,
@@ -161,7 +161,7 @@ namespace render
       render::ERenderMode /*_eRenderMode*/
     )
     {
-      return gfx::SCustomPrimitive();
+      return gfx::TCustomPrimitive();
     }
 
     // ------------------------------------
@@ -250,7 +250,7 @@ namespace render
     }
 
     // ------------------------------------
-    gfx::SCustomPrimitive CPrimitiveUtils::CreateCapsule
+    gfx::TCustomPrimitive CPrimitiveUtils::CreateCapsule
     (
       float _fRadius,
       float _fHeight,
@@ -260,7 +260,7 @@ namespace render
     )
     {
       // Create primitve
-      gfx::SCustomPrimitive oCustomPrimitive = gfx::SCustomPrimitive();
+      gfx::TCustomPrimitive oCustomPrimitive = gfx::TCustomPrimitive();
 
       // Calculate values
       float fHalfHeight = _fHeight * 0.5f;
@@ -385,10 +385,10 @@ namespace render
     }
 
     // ------------------------------------
-    gfx::SCustomPrimitive CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode)
+    gfx::TCustomPrimitive CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode)
     {
       // Create primitive
-      gfx::SCustomPrimitive oCustomPrimitive;
+      gfx::TCustomPrimitive oCustomPrimitive;
       oCustomPrimitive.m_lstVertexData = s_oPlanePrimitive;
       oCustomPrimitive.m_lstIndices = _eRenderMode == render::ERenderMode::SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
 
@@ -432,10 +432,10 @@ namespace render
     }
 
     // ------------------------------------
-    gfx::SCustomPrimitive CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest)
+    gfx::TCustomPrimitive CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest)
     {
       // Create primitive
-      gfx::SCustomPrimitive oPrimitive = gfx::SCustomPrimitive();
+      gfx::TCustomPrimitive oPrimitive = gfx::TCustomPrimitive();
 
       // Fill data 
       render::gfx::TVertexData oVertexData = render::gfx::TVertexData();

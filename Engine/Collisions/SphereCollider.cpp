@@ -12,7 +12,7 @@ namespace collision
     static const int s_iMaxSubvV(8);
   }
 
-  bool CSphereCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
+  bool CSphereCollider::CheckCollision(const CCollider& _oCollider, THitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
     assert(eColliderType != EColliderType::INVALID);
@@ -35,7 +35,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CSphereCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
+  bool CSphereCollider::IntersectRay(const physics::CRay& _oRay, THitEvent& _oHitEvent_, const float& _fMaxDistance)
   {
     float fDist = 0.0f;
     math::CVector3 v3ClosestPoint = math::CVector3::Zero;
@@ -56,7 +56,7 @@ namespace collision
     m_v3Center = GetPosition();
   }
   // ------------------------------------
-  bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     const math::CVector3 v3Center = GetCenter();
     math::CVector3 v3Offset = v3Center - _pOther->GetCenter();
@@ -79,7 +79,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CSphereCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CSphereCollider::CheckOBBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     // Get OBB data
     const math::CVector3& v3OBBCenter = _pOther->GetCenter();
@@ -121,7 +121,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CSphereCollider::CheckAABBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CSphereCollider::CheckAABBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     // We have to find the closest point.
     const math::CVector3& v3Center = GetCenter();

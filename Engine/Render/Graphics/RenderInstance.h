@@ -18,8 +18,12 @@ namespace render
       CRenderInstance(CModel* _pModel, uint32_t _uId);
       ~CRenderInstance() {}
 
+      inline const render::gfx::CModel* GetModel() const { return m_pModel; }
+      inline const uint32_t GetInstanceID() const { return m_uInstanceID; }
+
       void SetCullingEnabled(bool _bCull);
       inline const bool& IsCullingEnabled() const { return m_bCullEnabled; }
+      inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
 
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool& IsVisible() const { return m_bVisible; }
@@ -34,9 +38,6 @@ namespace render
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
       void SetScale(const math::CVector3& _v3Scale);
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
-
-      inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
-      inline const uint32_t GetInstanceID() const { return m_uInstanceID; }
 
     private:
       render::gfx::CModel* m_pModel = nullptr;

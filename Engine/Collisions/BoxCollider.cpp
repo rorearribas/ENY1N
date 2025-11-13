@@ -25,7 +25,7 @@ namespace collision
     m_v3Extents.clear();
   }
   // ------------------------------------
-  bool CBoxCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
+  bool CBoxCollider::CheckCollision(const CCollider& _oCollider, THitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
     assert(eColliderType != EColliderType::INVALID);
@@ -47,7 +47,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CBoxCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
+  bool CBoxCollider::IntersectRay(const physics::CRay& _oRay, THitEvent& _oHitEvent_, const float& _fMaxDistance)
   {
     const math::CVector3& v3RayOrigin = _oRay.GetOrigin();
     const math::CVector3& v3RayDir = _oRay.GetDir();
@@ -131,7 +131,7 @@ namespace collision
     return std::vector<math::CVector3> { m_v3Right, m_v3Up, m_v3Forward };
   }
   // ------------------------------------
-  bool CBoxCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CBoxCollider::CheckOBBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     const std::vector<math::CVector3>& v3Extents = this->GetExtents();
     const std::vector<math::CVector3>& v3OtherExtents = _pOther->GetExtents();
@@ -180,7 +180,7 @@ namespace collision
     return true;
   }
   // ------------------------------------
-  bool CBoxCollider::CheckAABBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CBoxCollider::CheckAABBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     bool bCheckCollision = (m_v3Min.x <= _pOther->m_v3Max.x && m_v3Max.x >= _pOther->m_v3Min.x) &&
       (m_v3Min.y <= _pOther->m_v3Max.y && m_v3Max.y >= _pOther->m_v3Min.y) &&
@@ -230,7 +230,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CBoxCollider::CheckOBBSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CBoxCollider::CheckOBBSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     // Get OBB data
     const math::CVector3& v3OBBCenter = GetCenter();
@@ -272,7 +272,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CBoxCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CBoxCollider::CheckSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     // We have to find the closest point.
     const math::CVector3& v3SphereCenter = _pOther->GetCenter();

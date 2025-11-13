@@ -18,9 +18,9 @@ namespace scene
 {
   CScene::CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex)
   {
-    HRESULT hResult = m_oGlobalLightingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
+    HRESULT hResult = m_oLightingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
     assert(!FAILED(hResult));
-    hResult = m_oHandleInstancingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
+    hResult = m_oInstancingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
     assert(!FAILED(hResult));
   }
   // ------------------------------------
@@ -37,6 +37,15 @@ namespace scene
       return nullptr;
     }
     return m_lstPrimitives.Create(_eType, _eRenderMode);
+  }
+  // ------------------------------------
+  void CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
+  {
+    bool bOk = m_lstPrimitives.Remove(_pPrimitive_);
+    UNUSED_VAR(bOk);
+#ifdef _DEBUG
+    assert(bOk); // Sanity check
+#endif
   }
   // ------------------------------------
   render::gfx::CModel* const CScene::LoadModel(const char* _sModelPath)
@@ -63,6 +72,25 @@ namespace scene
     }
 
     return pModel;
+  }
+  // ------------------------------------
+  void CScene::DestroyModel(render::gfx::CModel*& _pModel_)
+  {
+    bool bOk = m_lstModels.Remove(_pModel_, false);
+    UNUSED_VAR(bOk);
+#ifdef _DEBUG
+    assert(bOk); // Sanity check
+#endif
+  }
+  // ------------------------------------
+  void CScene::DestroyInstance(render::gfx::CRenderInstance*& _pInstance_)
+  {
+    // @Hack -> Im not proud about this shit!
+    render::gfx::CModel* pParentModel = const_cast<render::gfx::CModel*>(_pInstance_->GetModel());
+    assert(pParentModel);
+    bool bOk = pParentModel->RemoveInstance(_pInstance_);
+    UNUSED_VAR(bOk);
+    assert(bOk && !_pInstance_);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CScene::CreateDirectionalLight()
@@ -94,24 +122,6 @@ namespace scene
       return nullptr;
     }
     return m_lstSpotLights.Create();
-  }
-  // ------------------------------------
-  void CScene::DestroyModel(render::gfx::CModel*& _pModel_)
-  {
-    bool bOk = m_lstModels.Remove(_pModel_, false);
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk); // Sanity check
-#endif
-  }
-  // ------------------------------------
-  void CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
-  {
-    bool bOk = m_lstPrimitives.Remove(_pPrimitive_);
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk); // Sanity check
-#endif
   }
   // ------------------------------------
   void CScene::DestroyLight(render::lights::CLight*& _pLight_)
@@ -206,7 +216,7 @@ namespace scene
 
     // Fill primitive data
     using namespace render::gfx;
-    SCustomPrimitive oPrimitiveData = SCustomPrimitive();
+    TCustomPrimitive oPrimitiveData = TCustomPrimitive();
     CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, oPrimitiveData.m_lstVertexData);
 
     // Fill indices
@@ -260,7 +270,7 @@ namespace scene
 
     // Create data
     using namespace render::gfx;
-    SCustomPrimitive oData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
+    TCustomPrimitive oData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
     // Create temporal item
     CPrimitive* pPrimitive = m_lstDebugItems.Create(oData, render::ERenderMode::WIREFRAME);
 #ifdef _DEBUG
@@ -278,7 +288,7 @@ namespace scene
     render::CCamera* pCamera = pEngine->GetCamera();
 
     // I have to change this!!!
-    ID3D11Buffer* pConstantBuffer = m_oHandleInstancingBuffer.GetBuffer();
+    ID3D11Buffer* pConstantBuffer = m_oInstancingBuffer.GetBuffer();
     global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
     // Draw
@@ -305,7 +315,7 @@ namespace scene
       }
 
       // Handle instances
-      std::vector<uint32_t> lstInstancesIds = std::vector<uint32_t>();
+      std::vector<uint32_t> lstDrawableInstances = std::vector<uint32_t>();
       for (const render::gfx::CRenderInstance& rInstance : pModel->GetInstances())
       {
         if (!rInstance.IsVisible())
@@ -320,26 +330,26 @@ namespace scene
         }
         if (bDrawInstance)
         {
-          lstInstancesIds.emplace_back(rInstance.GetInstanceID());
+          lstDrawableInstances.emplace_back(rInstance.GetInstanceID());
         }
       }
 
-      if (lstInstancesIds.size() > 0)
+      if (lstDrawableInstances.size() > 0)
       {
         // Write
-        m_oHandleInstancingBuffer.GetData().IsInstantiated = true;
-        bool bOk = m_oHandleInstancingBuffer.WriteBuffer();
+        m_oInstancingBuffer.GetData().IsInstantiated = true;
+        bool bOk = m_oInstancingBuffer.WriteBuffer();
         UNUSED_VAR(bOk);
         assert(bOk);
 
         // Draw instances
-        pModel->DrawInstances(lstInstancesIds);
+        pModel->DrawInstances(lstDrawableInstances);
       }
     }
 
     // Write
-    m_oHandleInstancingBuffer.GetData().IsInstantiated = false;
-    bool bOk = m_oHandleInstancingBuffer.WriteBuffer();
+    m_oInstancingBuffer.GetData().IsInstantiated = false;
+    bool bOk = m_oInstancingBuffer.WriteBuffer();
     UNUSED_VAR(bOk);
     assert(bOk);
 
@@ -409,53 +419,53 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::ApplyLightning()
+  void CScene::UpdateLightning()
   {
-    // Fill data
-    auto& oGlobalLightingData = m_oGlobalLightingBuffer.GetData();
+    // Update buffer
+    auto& rData = m_oLightingBuffer.GetData();
 
     // Directional light
     if (m_pDirectionalLight)
     {
-      oGlobalLightingData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
-      oGlobalLightingData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
-      oGlobalLightingData.DirectionalLight.Direction = m_pDirectionalLight->GetDirection();
+      rData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
+      rData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
+      rData.DirectionalLight.Direction = m_pDirectionalLight->GetDirection();
     }
 
     // Point lights
     for (uint32_t uIndex = 0; uIndex < m_lstPointLights.GetCurrentSize(); uIndex++)
     {
       const render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex];
-      oGlobalLightingData.PointLights[uIndex].Position = pPointLight->GetPosition();
-      oGlobalLightingData.PointLights[uIndex].Color = pPointLight->GetColor();
-      oGlobalLightingData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
-      oGlobalLightingData.PointLights[uIndex].Range = pPointLight->GetRange();
+      rData.PointLights[uIndex].Position = pPointLight->GetPosition();
+      rData.PointLights[uIndex].Color = pPointLight->GetColor();
+      rData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
+      rData.PointLights[uIndex].Range = pPointLight->GetRange();
     }
     // Set the number of registered point lights
-    oGlobalLightingData.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetCurrentSize());
+    rData.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetCurrentSize());
 
     // Spot lights
     for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetCurrentSize(); uIndex++)
     {
       const render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex];
-      oGlobalLightingData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
-      oGlobalLightingData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
-      oGlobalLightingData.SpotLights[uIndex].Color = pSpotLight->GetColor();
-      oGlobalLightingData.SpotLights[uIndex].Range = pSpotLight->GetRange();
-      oGlobalLightingData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
+      rData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
+      rData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
+      rData.SpotLights[uIndex].Color = pSpotLight->GetColor();
+      rData.SpotLights[uIndex].Range = pSpotLight->GetRange();
+      rData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
     }
     // Set the number of registered spot lights
-    oGlobalLightingData.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetCurrentSize());
+    rData.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetCurrentSize());
 
     // Write buffer
-    bool bOk = m_oGlobalLightingBuffer.WriteBuffer();
+    bool bOk = m_oLightingBuffer.WriteBuffer();
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk); // Sanity check
 #endif
 
     // Apply constant buffer
-    ID3D11Buffer* pConstantBuffer = m_oGlobalLightingBuffer.GetBuffer();
+    ID3D11Buffer* pConstantBuffer = m_oLightingBuffer.GetBuffer();
     global::dx::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
   }
   // ------------------------------------
@@ -471,6 +481,6 @@ namespace scene
     m_lstSpotLights.Clear();
 
     // Constant buffer
-    m_oGlobalLightingBuffer.Clear();
+    m_oLightingBuffer.Clear();
   }
 }

@@ -12,8 +12,8 @@ namespace collision
     CSphereCollider(void* _pOwner) : CCollider(EColliderType::SPHERE_COLLIDER, _pOwner) {}
     ~CSphereCollider() {}
 
-    virtual bool CheckCollision(const CCollider&, SHitEvent& _oHitEvent_) override;
-    virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
+    virtual bool CheckCollision(const CCollider&, THitEvent& _oHitEvent_) override;
+    virtual bool IntersectRay(const physics::CRay& _oRay, THitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
     inline void SetCenter(const math::CVector3& _v3Center) { m_v3Center = _v3Center; }
@@ -24,9 +24,9 @@ namespace collision
     virtual void DrawDebug() override;
 
   private:
-    bool CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const;
-    bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
-    bool CheckAABBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
+    bool CheckSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const;
+    bool CheckOBBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const;
+    bool CheckAABBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const;
 
     math::CVector3 m_v3Center = math::CVector3::Zero; // World position
     float m_fRadius = 0.5f; // Radius

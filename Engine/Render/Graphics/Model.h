@@ -46,9 +46,7 @@ namespace render
       void Draw();
       void DrawInstances(const std::vector<uint32_t>& _vctDrawableIds);
 
-      CRenderInstance* CreateInstance();
       const bool HasInstances() const { return m_lstInstances.GetCurrentSize() > 0; }
-
       TInstances& GetInstances() { return m_lstInstances; }
       const TInstances& GetInstances() const { return m_lstInstances; }
 
@@ -67,6 +65,9 @@ namespace render
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
       void SetScale(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+
+      CRenderInstance* CreateInstance();
+      bool RemoveInstance(CRenderInstance*& _pRenderInstance_);
 
     private:
       HRESULT InitModel(const TModelData& _rModelData);

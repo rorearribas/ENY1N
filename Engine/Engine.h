@@ -34,13 +34,15 @@ namespace engine
     inline render::CRender* GetRender() const { return m_pRender; }
     inline render::CCamera* GetCamera() const { return m_pCamera; }
 
-    // Graphics creation
+    // Handle graphics
     render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
     void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive);
-    render::gfx::CModel* const LoadModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);
-    void DestroyModel(render::gfx::CModel*& _pModel);
 
-    // Lights creation
+    render::gfx::CModel* const LoadModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);
+    void DestroyModel(render::gfx::CModel*& _pModel_, uint32_t _uSceneIndex = 0);
+    void DestroyInstance(render::gfx::CRenderInstance*& _pInstance_, uint32_t _uSceneIndex = 0);
+
+    // Handle lights
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
     render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);

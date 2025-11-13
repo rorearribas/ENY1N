@@ -25,7 +25,7 @@ namespace collision
     INVALID
   };
 
-  struct SHitEvent
+  struct THitEvent
   {
     math::CVector3 Normal = math::CVector3::Zero;
     math::CVector3 ImpactPoint = math::CVector3::Zero;
@@ -37,15 +37,15 @@ namespace collision
   class CCollider
   {
   public:
-    typedef utils::CDelegate<void(const collision::SHitEvent&)> TOnCollisionEvent;
+    typedef utils::CDelegate<void(const collision::THitEvent&)> TOnCollisionEvent;
     friend class CCollisionManager;
 
   public:
     CCollider(EColliderType _eColliderType, void* _pOwner) : m_eColliderType(_eColliderType), m_pOwner(_pOwner) {}
     virtual ~CCollider() {}
 
-    virtual bool CheckCollision(const collision::CCollider&, collision::SHitEvent&) = 0;
-    virtual bool IntersectRay(const physics::CRay&, collision::SHitEvent&, const float&) = 0;
+    virtual bool CheckCollision(const collision::CCollider&, collision::THitEvent&) = 0;
+    virtual bool IntersectRay(const physics::CRay&, collision::THitEvent&, const float&) = 0;
     virtual void RecalculateCollider() = 0;
     virtual void DrawDebug() = 0;
 

@@ -12,8 +12,8 @@ namespace collision
     CCapsuleCollider(void* _pOwner) : CCollider(EColliderType::CAPSULE_COLLIDER, _pOwner) {}
     ~CCapsuleCollider() {}
 
-    virtual bool CheckCollision(const CCollider& _pOther, SHitEvent& _oHitEvent_) override;
-    virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
+    virtual bool CheckCollision(const CCollider& _pOther, THitEvent& _oHitEvent_) override;
+    virtual bool IntersectRay(const physics::CRay& _oRay, THitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
     inline math::CVector3 GetWorldPos() const { return GetPosition() + GetLocalCenter(); }
@@ -35,10 +35,10 @@ namespace collision
     virtual void DrawDebug() override;
 
   private:
-    bool CheckCapsuleCollision(const CCapsuleCollider* _pOther, SHitEvent& _oHitEvent_) const;
-    bool CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const;
-    bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
-    bool CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
+    bool CheckCapsuleCollision(const CCapsuleCollider* _pOther, THitEvent& _oHitEvent_) const;
+    bool CheckSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const;
+    bool CheckOBBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const;
+    bool CheckBoxCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const;
 
   private:
     // Capsule properties

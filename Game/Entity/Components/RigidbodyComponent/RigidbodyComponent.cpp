@@ -23,7 +23,7 @@ namespace game
     m_pRigidbody->SetRigidbodyType(_eRigidbodyType);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionEnter(const collision::SHitEvent& _oHitEvent)
+  void CRigidbodyComponent::OnCollisionEnter(const collision::THitEvent& _oHitEvent)
   {
     // Set new state
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
@@ -57,7 +57,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionStay(const collision::SHitEvent& _oHitEvent)
+  void CRigidbodyComponent::OnCollisionStay(const collision::THitEvent& _oHitEvent)
   {
     math::CVector3 v3CurrentVelocity = m_pRigidbody->GetVelocity();
     math::CVector3 v3VelocityDir = math::CVector3::Normalize(v3CurrentVelocity);
@@ -95,7 +95,7 @@ namespace game
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::COLLIDING);
   }
   // ------------------------------------
-  void CRigidbodyComponent::OnCollisionExit(const collision::SHitEvent&)
+  void CRigidbodyComponent::OnCollisionExit(const collision::THitEvent&)
   {
     m_pRigidbody->SetCurrentState(physics::ERigidbodyState::IN_THE_AIR);
   }

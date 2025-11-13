@@ -11,10 +11,10 @@ namespace collision
 {
   namespace internal_capsule_collider
   {
-    static constexpr int s_iMaxDebugSubv = 12;
+    static constexpr uint32_t s_uDebugSubv = 12;
   }
 
-  bool CCapsuleCollider::CheckCollision(const CCollider& _oCollider, SHitEvent& _oHitEvent_)
+  bool CCapsuleCollider::CheckCollision(const CCollider& _oCollider, THitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
     assert(eColliderType != EColliderType::INVALID);
@@ -87,13 +87,13 @@ namespace collision
       math::CVector3::One, // Color
       m_fRadius, // Radius
       m_fHeight, // Height
-      internal_capsule_collider::s_iMaxDebugSubv, // Horizontal
-      internal_capsule_collider::s_iMaxDebugSubv, // Vertical
+      internal_capsule_collider::s_uDebugSubv, // Horizontal
+      internal_capsule_collider::s_uDebugSubv, // Vertical
       render::ERenderMode::WIREFRAME
     );
   }
   // ------------------------------------
-  bool CCapsuleCollider::IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance)
+  bool CCapsuleCollider::IntersectRay(const physics::CRay& _oRay, THitEvent& _oHitEvent_, const float& _fMaxDistance)
   {
     bool bCalculateSegment = true;
     float fClosestDist = FLT_MAX, fTempDist = FLT_MAX;
@@ -155,7 +155,7 @@ namespace collision
     return true;
   }
   // ------------------------------------
-  bool CCapsuleCollider::CheckCapsuleCollision(const CCapsuleCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CCapsuleCollider::CheckCapsuleCollision(const CCapsuleCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     const math::CVector3 v3Center = GetWorldPos();
     math::CVector3 v3Offset = v3Center - _pOther->GetWorldPos();
@@ -183,7 +183,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CCapsuleCollider::CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CCapsuleCollider::CheckOBBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     float fCapsuleRadius = GetRadius();
     math::CVector3 v3HalfSize = _pOther->GetHalfSize();
@@ -225,7 +225,7 @@ namespace collision
     return bCollision;
   }
   // ------------------------------------
-  bool CCapsuleCollider::CheckBoxCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CCapsuleCollider::CheckBoxCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     //@Note: Review this!
     float fDist = math::SqDistPointSegment(GetEndSegmentPoint(), GetStartSegmentPoint(), _pOther->GetCenter());
@@ -240,7 +240,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
-  bool CCapsuleCollider::CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const
+  bool CCapsuleCollider::CheckSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const
   {
     // Compute (squared) distance between sphere center and capsule line segment
     float fDist = math::SqDistPointSegment(GetEndSegmentPoint(), GetStartSegmentPoint(), _pOther->GetCenter());

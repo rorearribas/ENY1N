@@ -53,9 +53,9 @@ namespace game
     }
 
     // Notifications
-    void OnCollisionEnter(const collision::SHitEvent&);
-    void OnCollisionStay(const collision::SHitEvent&);
-    void OnCollisionExit(const collision::SHitEvent&);
+    void OnCollisionEnter(const collision::THitEvent&);
+    void OnCollisionStay(const collision::THitEvent&);
+    void OnCollisionExit(const collision::THitEvent&);
 
   private:
     void Clear();

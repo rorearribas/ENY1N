@@ -33,16 +33,16 @@ namespace render
       static const std::vector<uint32_t> s_oWireframePlaneIndices;
 
       // 2D Circle
-      static gfx::SCustomPrimitive Create2DCircle(float _fRadius, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
+      static gfx::TCustomPrimitive Create2DCircle(float _fRadius, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
 
       // 3D Line
-      static gfx::SCustomPrimitive CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest);
+      static gfx::TCustomPrimitive CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest);
 
       // 3D Plane
-      static gfx::SCustomPrimitive CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode);
+      static gfx::TCustomPrimitive CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode);
 
       // 3D Capsule
-      static gfx::SCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode);
+      static gfx::TCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode);
 
       // 3D Sphere
       static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::gfx::TVertexData>& _lstVertexData_);

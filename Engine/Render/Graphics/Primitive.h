@@ -13,7 +13,7 @@ namespace render
 {
   namespace gfx
   {
-    struct SCustomPrimitive
+    struct TCustomPrimitive
     {
       std::vector<render::gfx::TVertexData> m_lstVertexData;
       std::vector<uint32_t> m_lstIndices;
@@ -22,7 +22,7 @@ namespace render
     class CPrimitive
     {
     public:
-      CPrimitive(SCustomPrimitive& _oData, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
+      CPrimitive(TCustomPrimitive& _oData, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
       CPrimitive(EPrimitiveType _eType, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
       ~CPrimitive();
 

@@ -20,9 +20,9 @@ namespace game
     inline void SetMass(float _fMass) { m_pRigidbody->SetMass(_fMass); }
 
   protected:
-    virtual void OnCollisionEnter(const collision::SHitEvent&) override;
-    virtual void OnCollisionStay(const collision::SHitEvent&) override;
-    virtual void OnCollisionExit(const collision::SHitEvent&) override;
+    virtual void OnCollisionEnter(const collision::THitEvent&) override;
+    virtual void OnCollisionStay(const collision::THitEvent&) override;
+    virtual void OnCollisionExit(const collision::THitEvent&) override;
     virtual void DrawDebug() override;
 
   private:

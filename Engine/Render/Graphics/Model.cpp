@@ -212,19 +212,6 @@ namespace render
       return hResult;
     }
     // ------------------------------------
-    CRenderInstance* CModel::CreateInstance()
-    {
-      if (m_lstInstances.GetCurrentSize() >= m_lstInstances.GetMaxSize())
-      {
-        WARNING_LOG("You have reached maximum instances in this model!");
-        return nullptr;
-      }
-      
-      // Create instance
-      uint32_t uInstanceID = m_lstInstances.GetCurrentSize();
-      return m_lstInstances.Create(this, uInstanceID);
-    }
-    // ------------------------------------
     void CModel::Clear()
     {
       // Clear buffers
@@ -269,6 +256,24 @@ namespace render
 
       // Get bounding
       _rBoundingBox_ = collision::CBoundingBox(v3Min, v3Max);
+    }
+    // ------------------------------------
+    CRenderInstance* CModel::CreateInstance()
+    {
+      if (m_lstInstances.GetCurrentSize() >= m_lstInstances.GetMaxSize())
+      {
+        WARNING_LOG("You have reached maximum instances in this model!");
+        return nullptr;
+      }
+
+      // Create instance
+      uint32_t uInstanceID = m_lstInstances.GetCurrentSize();
+      return m_lstInstances.Create(this, uInstanceID);
+    }
+    // ------------------------------------
+    bool CModel::RemoveInstance(CRenderInstance*& _pRenderInstance_)
+    {
+      return m_lstInstances.Remove(_pRenderInstance_);
     }
   }
 }

@@ -16,8 +16,8 @@ namespace render
     class CLightsManager
     {
     private:
-      static uint32_t constexpr s_uMaxSpotLights = 100;
-      static uint32_t constexpr s_uMaxPointLights = 100;
+      static constexpr uint32_t s_uMaxSpotLights = 100;
+      static constexpr uint32_t s_uMaxPointLights = 100;
 
     public:
       typedef std::array<render::lights::CPointLight*, s_uMaxPointLights> TPointLightsList;

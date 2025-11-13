@@ -27,6 +27,10 @@ namespace game
     {
       pEngine->DestroyModel(m_pModel);
     }
+    if (m_pInstance)
+    {
+      pEngine->DestroyInstance(m_pInstance);
+    }
   }
   // ------------------------------------
   void CModelComponent::LoadModel(const char* _sModelPath)

@@ -84,7 +84,7 @@ namespace render
 
     // Do cull test
     uint32_t uIndex = 0;
-    while (uIndex != s_iFrustumPlanes)
+    while (uIndex != s_uFrustumPlanes)
     {
       uint32_t uCullTest = 0;
       for (const math::CVector3& v3Extent : lstExtents)
@@ -183,7 +183,6 @@ namespace render
 
       // Calculate dir
       m_v3Dir = mRotMatrix * math::CVector3::Forward;
-
       v3TargetPos = m_v3Pos + m_v3Dir;
 
       // Calculate up direction

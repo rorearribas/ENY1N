@@ -23,9 +23,9 @@ namespace game
     virtual void OnRotationChanged(const math::CVector3&) {}
     virtual void OnScaleChanged(const math::CVector3&) {}
 
-    virtual void OnCollisionEnter(const collision::SHitEvent&) {}
-    virtual void OnCollisionStay(const collision::SHitEvent&) {}
-    virtual void OnCollisionExit(const collision::SHitEvent&) {}
+    virtual void OnCollisionEnter(const collision::THitEvent&) {}
+    virtual void OnCollisionStay(const collision::THitEvent&) {}
+    virtual void OnCollisionExit(const collision::THitEvent&) {}
 
     virtual void DrawDebug() {}
 

@@ -24,11 +24,32 @@ namespace scene
     return pScene->CreatePrimitive(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
+  void CSceneManager::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex)
+  {
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1)) return;
+    scene::CScene* pScene = m_lstScenes.at(_uSceneIndex);
+    pScene->DestroyPrimitive(_pPrimitive_);
+  }
+  // ------------------------------------
   render::gfx::CModel* const CSceneManager::LoadModel(const char* _sModelPath, uint32_t _uSceneIndex)
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1)) return nullptr;
     scene::CScene* pScene = m_lstScenes[_uSceneIndex];
     return pScene->LoadModel(_sModelPath);
+  }
+  // ------------------------------------
+  void CSceneManager::DestroyModel(render::gfx::CModel*& _pModel_, uint32_t _uSceneIndex)
+  {
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1)) return;
+    scene::CScene* pScene = m_lstScenes.at(_uSceneIndex);
+    pScene->DestroyModel(_pModel_);
+  }
+  // ------------------------------------
+  void CSceneManager::DestroyInstance(render::gfx::CRenderInstance*& _pIntance_, uint32_t _uSceneIndex)
+  {
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1)) return;
+    scene::CScene* pScene = m_lstScenes.at(_uSceneIndex);
+    pScene->DestroyInstance(_pIntance_);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CSceneManager::CreateDirectionalLight(uint32_t _uSceneIndex)
@@ -52,24 +73,10 @@ namespace scene
     return pScene->CreateSpotLight();
   }
   // ------------------------------------
-  void CSceneManager::DestroyModel(render::gfx::CModel*& _pModel_, uint32_t _uIndex)
+  void CSceneManager::DestroyLight(render::lights::CLight*& _pLight_, uint32_t _uSceneIndex)
   {
-    if (static_cast<size_t>(_uIndex) > (m_lstScenes.size() - 1)) return;
-    scene::CScene* pScene = m_lstScenes.at(_uIndex);
-    pScene->DestroyModel(_pModel_);
-  }
-  // ------------------------------------
-  void CSceneManager::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uIndex)
-  {
-    if (static_cast<size_t>(_uIndex) > (m_lstScenes.size() - 1)) return;
-    scene::CScene* pScene = m_lstScenes.at(_uIndex);
-    pScene->DestroyPrimitive(_pPrimitive_);
-  }
-  // ------------------------------------
-  void CSceneManager::DestroyLight(render::lights::CLight*& _pLight_, uint32_t _uIndex)
-  {
-    if (static_cast<size_t>(_uIndex) > (m_lstScenes.size() - 1)) return;
-    scene::CScene* pScene = m_lstScenes.at(_uIndex);
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1)) return;
+    scene::CScene* pScene = m_lstScenes.at(_uSceneIndex);
     pScene->DestroyLight(_pLight_);
   }
   // ------------------------------------

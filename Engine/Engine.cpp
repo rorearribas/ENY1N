@@ -66,9 +66,27 @@ namespace engine
     return m_pSceneManager->CreatePrimitive(_eType, _eRenderMode, _uSceneIndex);
   }
   // ------------------------------------
+  void CEngine::DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_)
+  {
+    assert(pPrimitive_);
+    m_pSceneManager->DestroyPrimitive(pPrimitive_);
+  }
+  // ------------------------------------
   render::gfx::CModel* const CEngine::LoadModel(const char* _sModelPath, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->LoadModel(_sModelPath, _uSceneIndex);
+  }
+  // ------------------------------------
+  void CEngine::DestroyModel(render::gfx::CModel*& _pModel_, uint32_t _uSceneIndex)
+  {
+    assert(_pModel_);
+    m_pSceneManager->DestroyModel(_pModel_, _uSceneIndex);
+  }
+  // ------------------------------------
+  void CEngine::DestroyInstance(render::gfx::CRenderInstance*& _pInstance_, uint32_t _uSceneIndex)
+  {
+    assert(_pInstance_);
+    m_pSceneManager->DestroyInstance(_pInstance_, _uSceneIndex);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CEngine::CreateDirectionalLight(uint32_t _uSceneIndex)
@@ -84,18 +102,6 @@ namespace engine
   render::lights::CSpotLight* const CEngine::CreateSpotLight(uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreateSpotLight(_uSceneIndex);
-  }
-  // ------------------------------------
-  void CEngine::DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_)
-  {
-    assert(pPrimitive_);
-    m_pSceneManager->DestroyPrimitive(pPrimitive_);
-  }
-  // ------------------------------------
-  void CEngine::DestroyModel(render::gfx::CModel*& pModel_)
-  {
-    assert(pModel_);
-    m_pSceneManager->DestroyModel(pModel_);
   }
   // ------------------------------------
   void CEngine::DestroyLight(render::lights::CLight*& pLight_)

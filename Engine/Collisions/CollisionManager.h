@@ -25,8 +25,8 @@ namespace collision
     collision::CCollider* CreateCollider(collision::EColliderType _eColliderType, void* _pOwner);
     void DestroyCollider(collision::CCollider*& _pCollider_);
 
-    bool Raycast(const physics::CRay& _oRaycast, float _fMaxDistance, SHitEvent& _oHitEvent_, ECollisionMask _eMask = ECollisionMask::DEFAULT);
-    bool RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<SHitEvent>& _lstHits_, ECollisionMask _eMask = ECollisionMask::DEFAULT);
+    bool Raycast(const physics::CRay& _oRaycast, float _fMaxDistance, THitEvent& _oHitEvent_, ECollisionMask _eMask = ECollisionMask::DEFAULT);
+    bool RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<THitEvent>& _lstHits_, ECollisionMask _eMask = ECollisionMask::DEFAULT);
 
   private:
     void Clean();

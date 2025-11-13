@@ -12,8 +12,8 @@ namespace collision
     CBoxCollider(void* _pOwner);
     ~CBoxCollider();
 
-    virtual bool CheckCollision(const CCollider& _pOther, SHitEvent& _oHitEvent_) override;
-    virtual bool IntersectRay(const physics::CRay& _oRay, SHitEvent& _oHitEvent_, const float& _fMaxDistance) override;
+    virtual bool CheckCollision(const CCollider& _pOther, THitEvent& _oHitEvent_) override;
+    virtual bool IntersectRay(const physics::CRay& _oRay, THitEvent& _oHitEvent_, const float& _fMaxDistance) override;
     virtual void RecalculateCollider() override;
 
     // Oriented bounding box mode
@@ -39,11 +39,11 @@ namespace collision
     virtual void DrawDebug() override;
 
   private:
-    bool CheckOBBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
-    bool CheckAABBCollision(const CBoxCollider* _pOther, SHitEvent& _oHitEvent_) const;
+    bool CheckOBBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const;
+    bool CheckAABBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const;
 
-    bool CheckOBBSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const;
-    bool CheckSphereCollision(const CSphereCollider* _pOther, SHitEvent& _oHitEvent_) const;
+    bool CheckOBBSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const;
+    bool CheckSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const;
 
     void ComputeExtents();
     void ComputeMinMax();

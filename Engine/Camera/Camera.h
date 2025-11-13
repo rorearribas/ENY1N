@@ -18,7 +18,7 @@ namespace render
   class CCamera
   {
   private:
-    static uint32_t constexpr s_iFrustumPlanes = 6;
+    static constexpr uint32_t s_uFrustumPlanes = 6;
 
   public:
     CCamera() {}
@@ -83,7 +83,7 @@ namespace render
     float m_fNear = 0.01f;
     float m_fAspectRatio = 1.77778f;
 
-    math::CPlane m_oPlanes[s_iFrustumPlanes];
+    math::CPlane m_oPlanes[s_uFrustumPlanes];
     EProjectionMode m_eProjectionMode = EProjectionMode::PERSPECTIVE;
   };
 }

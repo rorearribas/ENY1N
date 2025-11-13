@@ -19,7 +19,7 @@ private:
     const std::filesystem::path& _oBasePath, const std::string& _sTextureID);
 
 private:
-  std::unordered_map<std::string, std::shared_ptr<render::gfx::CModel>> m_dctLoadedModels;
+  std::unordered_map<std::string, render::gfx::CModel*> m_dctLoadedModels;
 };
 
 

@@ -20,7 +20,7 @@ namespace render
     static constexpr int s_iSubvH = 12;
     static constexpr int s_iSubvV = 12;
 
-    CPrimitive::CPrimitive(SCustomPrimitive& _oData, render::ERenderMode _eRenderMode)
+    CPrimitive::CPrimitive(TCustomPrimitive& _oData, render::ERenderMode _eRenderMode)
     {
       // Create from custom data
       HRESULT hResult = CreateBuffer(_oData.m_lstVertexData, _oData.m_lstIndices);
@@ -57,7 +57,7 @@ namespace render
     // ------------------------------------
     void CPrimitive::Draw()
     {
-      // Set general data
+      // Set vertex buffer
       uint32_t uVertexStride = sizeof(render::gfx::TVertexData);
       uint32_t uVertexOffset = 0;
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
@@ -177,7 +177,7 @@ namespace render
         case EPrimitiveType::E2D_CIRCLE:
         { 
           // Create 2D Circle
-          SCustomPrimitive oPrimitiveData = CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, _eRenderMode);
+          TCustomPrimitive oPrimitiveData = CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, _eRenderMode);
           return CreateBuffer(oPrimitiveData.m_lstVertexData, oPrimitiveData.m_lstIndices);
         }
         break;
@@ -226,7 +226,7 @@ namespace render
         case EPrimitiveType::E3D_CAPSULE:
         {
           // Create capsule
-          SCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
+          TCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule
           (
             s_fStandardRadius,
             s_fCapsuleHeight,

@@ -75,7 +75,7 @@ int main()
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::ELightType::DIRECTIONAL_LIGHT);
 
   std::vector<game::CEntity*> lstModels = {};
-  for (uint32_t uIndex = 0; uIndex < 1000; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 129; uIndex++)
   {
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
@@ -176,7 +176,7 @@ int main()
           oRay.DrawRay(fMaxDistance, math::CVector3::Right);
 
           // Throw ray
-          std::vector<collision::SHitEvent> lstHits;
+          std::vector<collision::THitEvent> lstHits;
           if (pCollManager->RaycastAll(oRay, fMaxDistance, lstHits))
           {
             for (auto& HitEvent : lstHits)

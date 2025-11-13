@@ -29,7 +29,7 @@ namespace collision
         collision::CCollider* pTargetCollider = m_lstColliders[uJ];
 
         // Create hit event data
-        collision::SHitEvent oHitEvent = collision::SHitEvent();
+        collision::THitEvent oHitEvent = collision::THitEvent();
         if (pCollider->CheckCollision(*pTargetCollider, oHitEvent))
         {
           // Collision Enter
@@ -103,7 +103,7 @@ namespace collision
     _pCollider_ = nullptr;
   }
   // ------------------------------------
-  bool CCollisionManager::Raycast(const physics::CRay& _oRaycast, float _fMaxDistance, SHitEvent& oHitEvent_, ECollisionMask _eMask)
+  bool CCollisionManager::Raycast(const physics::CRay& _oRaycast, float _fMaxDistance, THitEvent& oHitEvent_, ECollisionMask _eMask)
   {
     bool bHit = false;
     float fClosestDistance = _fMaxDistance;
@@ -116,7 +116,7 @@ namespace collision
         continue;
       }
 
-      collision::SHitEvent oHitEvent = collision::SHitEvent();
+      collision::THitEvent oHitEvent = collision::THitEvent();
       bool bIntersect = pCollider->IntersectRay(_oRaycast, oHitEvent, _fMaxDistance);
       bool bCorrectDist = oHitEvent.Distance <= fClosestDistance;
       if (bIntersect && bCorrectDist)
@@ -129,7 +129,7 @@ namespace collision
     return bHit;
   }
   // ------------------------------------
-  bool CCollisionManager::RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<SHitEvent>& _lstOutHits_, ECollisionMask _eMask)
+  bool CCollisionManager::RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<THitEvent>& _lstOutHits_, ECollisionMask _eMask)
   {
     _lstOutHits_.clear();
     for (uint32_t uI = 0; uI < m_lstColliders.GetCurrentSize(); ++uI)
@@ -140,7 +140,7 @@ namespace collision
         continue;
       }
 
-      collision::SHitEvent oHitEvent = collision::SHitEvent();
+      collision::THitEvent oHitEvent = collision::THitEvent();
       bool bIntersect = pCollider->IntersectRay(_oRaycast, oHitEvent, _fMaxDistance);
       bool bCorrectDist = oHitEvent.Distance <= _fMaxDistance;
       if (bIntersect && bCorrectDist)
