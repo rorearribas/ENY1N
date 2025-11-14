@@ -36,7 +36,7 @@ GBuffer DeferredPSMain(PS_INPUT input)
 {
   GBuffer gOutputBuffer;
   // Set normal
-  gOutputBuffer.gNormal = /*HasNormal ? float4(unpack_normal(tNormal.Sample(tNormalSampler, input.uv).xyz), 1.0f) :*/ float4(input.normal, 1.0f);
+  gOutputBuffer.gNormal = HasNormal ? float4(unpack_normal(tNormal.Sample(tNormalSampler, input.uv).xyz), 1.0f) : float4(input.normal, 1.0f);
   // Set diffuse
   gOutputBuffer.gDiffuse = HasDiffuse ? tDiffuse.Sample(tDiffuseSampler, input.uv) : float4(input.color, 1.0f);
   // Set specular
