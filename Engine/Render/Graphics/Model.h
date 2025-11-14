@@ -27,7 +27,7 @@ namespace render
       math::CMatrix4x4 Transform = math::CMatrix4x4::Identity;
     };
 
-    static constexpr uint32_t s_uMaxInstances = 128u;
+    static constexpr uint32_t s_uMaxInstances = 1024u;
     typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstances> TInstances;
 
     class CModel
@@ -37,6 +37,7 @@ namespace render
       {
         std::vector<std::shared_ptr<render::gfx::CMesh>> Meshes;
         std::vector<render::gfx::TVertexData> Vertices;
+        char AssetPath[128];
       };
 
     public:
@@ -44,9 +45,8 @@ namespace render
       ~CModel();
 
       void Draw();
-      void DrawInstances(const std::vector<uint32_t>& _vctDrawableIds);
+      void DrawInstances(const std::vector<uint32_t>& lstDrawableInstances);
 
-      const bool HasInstances() const { return m_lstInstances.GetCurrentSize() > 0; }
       TInstances& GetInstances() { return m_lstInstances; }
       const TInstances& GetInstances() const { return m_lstInstances; }
 
@@ -60,14 +60,18 @@ namespace render
       inline const bool& IsVisible() const { return m_bVisible; }
 
       void SetPosition(const math::CVector3& _v3Pos);
-      inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+      inline const math::CVector3& GetPosition() const { return m_oTransform.GetTranslation(); }
       void SetRotation(const math::CVector3& _v3Rot);
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
       void SetScale(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
       CRenderInstance* CreateInstance();
-      bool RemoveInstance(CRenderInstance*& _pRenderInstance_);
+      bool RemoveInstance(uint32_t _uInstanceID);
+
+      const bool HasInstances() const { return m_lstInstances.GetCurrentSize() > 0; }
+      const bool AllowInstances() const { return m_lstInstances.GetCurrentSize() < m_lstInstances.GetMaxSize(); }
+      std::string GetAssetPath() const { return std::string(m_oModelData.AssetPath); }
 
     private:
       HRESULT InitModel(const TModelData& _rModelData);

@@ -58,7 +58,7 @@ PS_INPUT VSMain(VS_INPUT input)
   output.worldpos = worldPosition.xyz;
 
   float3x3 normalMatrix = transpose((float3x3)modelMatrix);
-  output.normal = normalize(mul(Model, input.normal));
+  output.normal = normalize(mul(normalMatrix, input.normal));
 
   output.color = input.color;
   output.uv = input.uv;

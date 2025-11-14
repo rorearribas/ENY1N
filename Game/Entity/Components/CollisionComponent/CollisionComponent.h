@@ -23,9 +23,9 @@ namespace game
     collision::ECollisionMask GetCollisionMask() const;
 
     void SetPosition(const math::CVector3& _v3Position);
-    const math::CVector3& GetPosition() const;
+    math::CVector3 GetPosition() const;
     void SetRotation(const math::CVector3& _v3Rotation);
-    const math::CVector3& GetRotation() const;
+    math::CVector3 GetRotation() const;
 
     inline void SetDebugMode(bool _bEnabled) { m_bDebugMode = _bEnabled; }
     inline const bool IsDebugEnabled() const { return m_bDebugMode; }

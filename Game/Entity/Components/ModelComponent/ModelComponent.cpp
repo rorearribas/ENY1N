@@ -3,7 +3,6 @@
 #include "Engine/Engine.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
-#include "Engine/Render/Graphics/RenderInstance.h"
 
 #include "Game/Entity/Entity.h"
 #include <cassert>
@@ -23,13 +22,14 @@ namespace game
     {
       pEngine->DestroyPrimitive(m_pPrimitive);
     }
-    if (m_pModel)
+    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
+    if (m_wpModel.IsValid() && !bIsInstance)
     {
-      pEngine->DestroyModel(m_pModel);
+      pEngine->DestroyModel(m_wpModel);
     }
-    if (m_pInstance)
+    if (m_wpModel.IsValid() && bIsInstance)
     {
-      pEngine->DestroyInstance(m_pInstance);
+      m_wpModel->RemoveInstance(m_uInstanceID);
     }
   }
   // ------------------------------------
@@ -40,32 +40,27 @@ namespace game
 
     // Create model
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    render::gfx::CModel* pModel = pEngine->LoadModel(_sModelPath);
+    m_wpModel = pEngine->LoadModel(_sModelPath);
 #ifdef _DEBUG
-    assert(pModel);
+    assert(m_wpModel.IsValid());
 #endif
-    if (pModel->HasInstances())
+    if (m_wpModel->HasInstances())
     {
-      // Assign last created!
-      render::gfx::TInstances& rInstances = pModel->GetInstances();
-      m_pInstance = (rInstances.end() - 1);
-      m_pModel = nullptr;
+      // Set instance ID
+      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
+      m_uInstanceID = rInstances.last()->GetInstanceID();
 
       // Update transform
-      m_pInstance->SetPosition(GetPosition());
-      m_pInstance->SetRotation(GetRotation());
-      m_pInstance->SetScale(GetScale());
+      rInstances[m_uInstanceID]->SetPosition(GetPosition());
+      rInstances[m_uInstanceID]->SetRotation(GetRotation());
+      rInstances[m_uInstanceID]->SetScale(GetScale());
     }
     else
     {
-      // Set model
-      m_pModel = pModel;
-      m_pInstance = nullptr;
-
       // Update transform
-      m_pModel->SetPosition(GetPosition());
-      m_pModel->SetRotation(GetRotation());
-      m_pModel->SetScale(GetScale());
+      m_wpModel->SetPosition(GetPosition());
+      m_wpModel->SetRotation(GetRotation());
+      m_wpModel->SetScale(GetScale());
     }
   }
   // ------------------------------------
@@ -96,13 +91,15 @@ namespace game
     {
       m_pPrimitive->SetCullingEnabled(_bCull);
     }
-    if (m_pModel)
+    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
+    if (m_wpModel.IsValid() && !bIsInstance)
     {
-      m_pModel->SetCullingEnabled(_bCull);
+      m_wpModel->SetCullingEnabled(_bCull);
     }
-    if (m_pInstance)
+    if (m_wpModel.IsValid() && bIsInstance)
     {
-      m_pInstance->SetCullingEnabled(_bCull);
+      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
+      rInstances[m_uInstanceID]->SetCullingEnabled(_bCull);
     }
   }
   // ------------------------------------
@@ -137,23 +134,25 @@ namespace game
     SetScale(_v3Scale);
   }
   // ------------------------------------
-  void CModelComponent::SetPosition(const math::CVector3& _v3Position)
+  void CModelComponent::SetPosition(const math::CVector3& _v3Pos)
   {
     if (m_pPrimitive)
     {
-      m_pPrimitive->SetPosition(_v3Position);
+      m_pPrimitive->SetPosition(_v3Pos);
     }
-    if (m_pModel)
+    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
+    if (m_wpModel.IsValid() && !bIsInstance)
     {
-      m_pModel->SetPosition(_v3Position);
+      m_wpModel->SetPosition(_v3Pos);
     }
-    if (m_pInstance)
+    if (m_wpModel.IsValid() && bIsInstance)
     {
-      m_pInstance->SetPosition(_v3Position);
+      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
+      rInstances[m_uInstanceID]->SetPosition(_v3Pos);
     }
   }
   // ------------------------------------
-  const math::CVector3& CModelComponent::GetPosition() const
+  math::CVector3 CModelComponent::GetPosition() const
   {
     return m_pOwner->GetPosition();
   }
@@ -163,18 +162,22 @@ namespace game
     if (m_pPrimitive)
     {
       m_pPrimitive->SetRotation(_v3Rot);
+      return;
     }
-    if (m_pModel)
+
+    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
+    if (m_wpModel.IsValid() && !bIsInstance)
     {
-      m_pModel->SetRotation(_v3Rot);
+      m_wpModel->SetRotation(_v3Rot);
     }
-    if (m_pInstance)
+    if (m_wpModel.IsValid() && bIsInstance)
     {
-      m_pInstance->SetRotation(_v3Rot);
+      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
+      rInstances[m_uInstanceID]->SetRotation(_v3Rot);
     }
   }
   // ------------------------------------
-  const math::CVector3& CModelComponent::GetRotation() const
+  math::CVector3 CModelComponent::GetRotation() const
   {
     return m_pOwner->GetRotation();
   }
@@ -185,19 +188,20 @@ namespace game
     {
       m_pPrimitive->SetScale(_v3Scl);
     }
-    if (m_pModel)
+    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
+    if (m_wpModel.IsValid() && !bIsInstance)
     {
-      m_pModel->SetScale(_v3Scl);
+      m_wpModel->SetScale(_v3Scl);
     }
-    if (m_pInstance)
+    if (m_wpModel.IsValid() && bIsInstance)
     {
-      m_pInstance->SetScale(_v3Scl);
+      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
+      rInstances[m_uInstanceID]->SetScale(_v3Scl);
     }
   }
   // ------------------------------------
-  const math::CVector3& CModelComponent::GetScale() const
+  math::CVector3 CModelComponent::GetScale() const
   {
     return m_pOwner->GetScale();
   }
-  // ------------------------------------
 }

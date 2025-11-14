@@ -38,7 +38,7 @@ namespace render
       inline const bool& IsCullingEnabled() const { return m_bCullingEnabled; }
 
       void SetPosition(const math::CVector3& _v3Pos);
-      inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+      inline const math::CVector3& GetPosition() const { return m_oTransform.GetTranslation(); }
       void SetRotation(const math::CVector3& _v3Rot);
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
       void SetScale(const math::CVector3& _v3Scl);

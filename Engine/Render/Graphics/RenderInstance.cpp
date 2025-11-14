@@ -7,7 +7,7 @@ namespace render
   {
     CRenderInstance::CRenderInstance(CModel* _pModel, uint32_t _uId) : m_pModel(_pModel)
     {
-      assert(_uId != s_uInvalidID);
+      assert(_uId != render::instance::s_uInvalidID);
       m_uInstanceID = _uId;
     }
     // ------------------------------------

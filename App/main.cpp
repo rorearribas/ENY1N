@@ -75,16 +75,22 @@ int main()
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::ELightType::DIRECTIONAL_LIGHT);
 
   std::vector<game::CEntity*> lstModels = {};
-  for (uint32_t uIndex = 0; uIndex < 129; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 1000; uIndex++)
   {
+    //using Clock = std::chrono::high_resolution_clock;
+    //auto startTime = Clock::now();
+
     // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 20.0f), GenerateFloat(-20.0f, 50.0f)));
+    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 20.0f), GenerateFloat(-200.0f, 500.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
-
     lstModels.emplace_back(pModelEnt);
+
+    //auto endTime = Clock::now();
+    //std::chrono::duration<double, std::milli> elapsed = endTime - startTime;
+    //std::cout << "Tiempo transcurrido: " << elapsed.count() << " ms\n";
   }
 
   //// OBJ test

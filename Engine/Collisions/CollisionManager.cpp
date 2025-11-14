@@ -89,10 +89,10 @@ namespace collision
     }
     switch (_eColliderType)
     {
-    case collision::EColliderType::BOX_COLLIDER: return m_lstColliders.Create<collision::CBoxCollider>(_pOwner);
-    case collision::EColliderType::SPHERE_COLLIDER: return m_lstColliders.Create<collision::CSphereCollider>(_pOwner);
-    case collision::EColliderType::CAPSULE_COLLIDER: return m_lstColliders.Create<collision::CCapsuleCollider>(_pOwner);
-    default: return nullptr;
+      case collision::EColliderType::BOX_COLLIDER: return m_lstColliders.Create<collision::CBoxCollider>(_pOwner);
+      case collision::EColliderType::SPHERE_COLLIDER: return m_lstColliders.Create<collision::CSphereCollider>(_pOwner);
+      case collision::EColliderType::CAPSULE_COLLIDER: return m_lstColliders.Create<collision::CCapsuleCollider>(_pOwner);
+      default: return nullptr;
     }
   }
   // ------------------------------------

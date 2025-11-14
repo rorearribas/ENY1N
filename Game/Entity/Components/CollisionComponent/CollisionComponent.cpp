@@ -61,7 +61,7 @@ namespace game
     m_pCollider->RecalculateCollider();
   }
   // ------------------------------------
-  const math::CVector3& CCollisionComponent::GetPosition() const
+  math::CVector3 CCollisionComponent::GetPosition() const
   {
     return m_pCollider->GetPosition();
   }
@@ -72,7 +72,7 @@ namespace game
     m_pCollider->RecalculateCollider();
   }
   // ------------------------------------
-  const math::CVector3& CCollisionComponent::GetRotation() const
+  math::CVector3 CCollisionComponent::GetRotation() const
   {
     return m_pCollider->GetRotation();
   }

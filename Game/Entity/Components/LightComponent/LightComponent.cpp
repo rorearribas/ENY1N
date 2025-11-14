@@ -157,9 +157,9 @@ namespace game
     }
   }
   // ------------------------------------
-  const math::CVector3& CLightComponent::GetPosition() const
+  math::CVector3 CLightComponent::GetPosition() const
   {
-    return m_pLight ? m_pLight->GetPosition() : m_pOwner->GetPosition();
+    return m_pLight->GetPosition();
   }
   // ------------------------------------
   void CLightComponent::SetDirection(const math::CVector3& _v3Dir)
@@ -167,7 +167,7 @@ namespace game
     m_pLight->SetDirection(_v3Dir);
   }
   // ------------------------------------
-  const math::CVector3& CLightComponent::GetDirection() const
+  math::CVector3 CLightComponent::GetDirection() const
   {
     return m_pLight->GetDirection();
   }

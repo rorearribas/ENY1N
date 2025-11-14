@@ -36,17 +36,16 @@ namespace engine
 
     // Handle graphics
     render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
-    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive);
+    bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
 
-    render::gfx::CModel* const LoadModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);
-    void DestroyModel(render::gfx::CModel*& _pModel_, uint32_t _uSceneIndex = 0);
-    void DestroyInstance(render::gfx::CRenderInstance*& _pInstance_, uint32_t _uSceneIndex = 0);
+    utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);
+    bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_, uint32_t _uSceneIndex = 0);
 
     // Handle lights
     render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
     render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
     render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
-    void DestroyLight(render::lights::CLight*& pLight_);
+    bool DestroyLight(render::lights::CLight*& _pLight_);
 
     // Debug creation
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);

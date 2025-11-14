@@ -284,11 +284,20 @@ namespace math
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Translate(const CVector3& _v3Translate)
   {
+    // Create translate matrix
     CMatrix4x4 mTranslate = CMatrix4x4::Identity;
     mTranslate.m[12] = _v3Translate.x;
     mTranslate.m[13] = _v3Translate.y;
     mTranslate.m[14] = _v3Translate.z;
     return mTranslate;
+  }
+  // ------------------------------------
+  void CMatrix4x4::SetTranslate(const CVector3& _v3Translate)
+  {
+    // Set translate
+    this->m[12] = _v3Translate.x;
+    this->m[13] = _v3Translate.y;
+    this->m[14] = _v3Translate.z;
   }
   // ------------------------------------
   math::CVector3 CMatrix4x4::GetTranslate() const

@@ -63,7 +63,7 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
     }
     // ------------------------------------
-    void CModel::DrawInstances(const std::vector<uint32_t>& _vctDrawableIds)
+    void CModel::DrawInstances(const std::vector<uint32_t>& lstDrawableInstances)
     {
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
       HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
@@ -75,11 +75,14 @@ namespace render
       assert(pInstanceData);
 
       // Set values
-      uint32_t uInstanceCount = static_cast<uint32_t>(_vctDrawableIds.size());
+      uint32_t uInstanceCount = static_cast<uint32_t>(lstDrawableInstances.size());
       for (uint32_t uIndex = 0; uIndex < uInstanceCount; ++uIndex)
       {
-        uint32_t uTargetID = _vctDrawableIds[uIndex];
-        pInstanceData[uIndex].Transform = m_lstInstances[uTargetID]->GetMatrix();
+        uint32_t uTargetID = lstDrawableInstances[uIndex];
+        if (render::gfx::CRenderInstance* pInstance = m_lstInstances[uTargetID])
+        {
+          pInstanceData[uIndex].Transform = pInstance->GetMatrix();
+        }
       }
 
       // Unmap
@@ -92,10 +95,11 @@ namespace render
       uint32_t lstStrides[uBuffersCount] = { sizeof(TVertexData), sizeof(TInstanceData) };
       uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
 
+      // Bind buffers
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-      // Set model matrix
+      // Set this model matrix
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
       pEngine->GetRender()->SetModelMatrix(m_oTransform.GetMatrix());
 
@@ -109,6 +113,52 @@ namespace render
       ID3D11Buffer* pRemoveBuffers[uBuffersCount] = { nullptr, nullptr };
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pRemoveBuffers, lstStrides, lstOffsets);
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
+    }
+    // ------------------------------------
+    void CModel::ComputeBoundingBox(const math::CMatrix4x4& _mTransform, collision::CBoundingBox& _rBoundingBox_) const
+    {
+      if (m_oModelData.Vertices.empty())
+      {
+        return;
+      }
+
+      // Compute bounding box
+      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
+      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+      for (auto& oVertexData : m_oModelData.Vertices)
+      {
+        // Get vertex pos
+        math::CVector3 v3VertexPos = _mTransform * oVertexData.VertexPos;
+
+        // Calculate Min
+        v3Min.x = math::Min<float>(v3Min.x, v3VertexPos.x);
+        v3Min.y = math::Min<float>(v3Min.y, v3VertexPos.y);
+        v3Min.z = math::Min<float>(v3Min.z, v3VertexPos.z);
+
+        // Calculate Max
+        v3Max.x = math::Max<float>(v3Max.x, v3VertexPos.x);
+        v3Max.y = math::Max<float>(v3Max.y, v3VertexPos.y);
+        v3Max.z = math::Max<float>(v3Max.z, v3VertexPos.z);
+      }
+
+      // Get bounding
+      _rBoundingBox_ = collision::CBoundingBox(v3Min, v3Max);
+    }
+    // ------------------------------------
+    void CModel::SetCullingEnabled(bool _bCull)
+    {
+      // Set state
+      if (m_bCullEnabled != _bCull)
+      {
+        m_bCullEnabled = _bCull;
+      }
+
+      // Update bounding box
+      if (m_bCullEnabled)
+      {
+        ComputeBoundingBox(m_oTransform.GetMatrix(), m_oBoundingBox);
+      }
     }
     // ------------------------------------
     void CModel::SetPosition(const math::CVector3& _v3Pos)
@@ -147,19 +197,26 @@ namespace render
       }
     }
     // ------------------------------------
-    void CModel::SetCullingEnabled(bool _bCull)
+    CRenderInstance* CModel::CreateInstance()
     {
-      // Set state
-      if (m_bCullEnabled != _bCull)
+      if (!AllowInstances())
       {
-        m_bCullEnabled = _bCull;
+        WARNING_LOG("You have reached maximum instances in this model!");
+        return nullptr;
       }
 
-      // Update bounding box
-      if (m_bCullEnabled)
+      // Create instance
+      uint32_t uInstanceID = m_lstInstances.GetCurrentSize();
+      return m_lstInstances.Create(this, uInstanceID);
+    }
+    // ------------------------------------
+    bool CModel::RemoveInstance(uint32_t _uInstanceID)
+    {
+      if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uInstanceID])
       {
-        ComputeBoundingBox(m_oTransform.GetMatrix(), m_oBoundingBox);
+        return m_lstInstances.Remove(pInstance);
       }
+      return false;
     }
     // ------------------------------------
     HRESULT CModel::InitModel(const TModelData& _rModelData)
@@ -218,62 +275,16 @@ namespace render
       global::dx::SafeRelease(m_pVertexBuffer);
       global::dx::SafeRelease(m_pInstanceBuffer);
 
-      // Clear meshes data
+      // Clear model data
       for (auto& pMesh : m_oModelData.Meshes)
       {
         pMesh.reset();
       }
       m_oModelData.Meshes.clear();
       m_oModelData.Vertices.clear();
-    }
-    // ------------------------------------
-    void CModel::ComputeBoundingBox(const math::CMatrix4x4& _mTransform, collision::CBoundingBox& _rBoundingBox_) const
-    {
-      if (m_oModelData.Vertices.empty())
-      {
-        return;
-      }
 
-      // Compute bounding box
-      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
-      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-
-      for (auto& oVertexData : m_oModelData.Vertices)
-      {
-        // Get vertex pos
-        math::CVector3 v3VertexPos = _mTransform * oVertexData.VertexPos;
-
-        // Calculate Min
-        v3Min.x = math::Min<float>(v3Min.x, v3VertexPos.x);
-        v3Min.y = math::Min<float>(v3Min.y, v3VertexPos.y);
-        v3Min.z = math::Min<float>(v3Min.z, v3VertexPos.z);
-
-        // Calculate Max
-        v3Max.x = math::Max<float>(v3Max.x, v3VertexPos.x);
-        v3Max.y = math::Max<float>(v3Max.y, v3VertexPos.y);
-        v3Max.z = math::Max<float>(v3Max.z, v3VertexPos.z);
-      }
-
-      // Get bounding
-      _rBoundingBox_ = collision::CBoundingBox(v3Min, v3Max);
-    }
-    // ------------------------------------
-    CRenderInstance* CModel::CreateInstance()
-    {
-      if (m_lstInstances.GetCurrentSize() >= m_lstInstances.GetMaxSize())
-      {
-        WARNING_LOG("You have reached maximum instances in this model!");
-        return nullptr;
-      }
-
-      // Create instance
-      uint32_t uInstanceID = m_lstInstances.GetCurrentSize();
-      return m_lstInstances.Create(this, uInstanceID);
-    }
-    // ------------------------------------
-    bool CModel::RemoveInstance(CRenderInstance*& _pRenderInstance_)
-    {
-      return m_lstInstances.Remove(_pRenderInstance_);
+      // Clear instances
+      m_lstInstances.Clear();
     }
   }
 }

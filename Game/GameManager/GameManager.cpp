@@ -16,9 +16,11 @@ namespace game
   {
     static int iSelectedIdx = -1;
 #ifdef DEBUG_MODE
+    static std::vector<std::string> lstDeleteActors = {};
+
     ImGui::Begin("Entity Selector");
     // Show the list of entities
-    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetCurrentSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetMaxSize(); ++uIndex)
     {
       CEntity* pEntity = m_lstEntitiesList[uIndex];
       if (pEntity)
@@ -28,9 +30,23 @@ namespace game
         {
           iSelectedIdx = uIndex;
         }
+
+        ImGui::SameLine();
+        ImGui::PushID(uIndex);
+        if (ImGui::Button("Destroy"))
+        {
+          lstDeleteActors.emplace_back(pEntity->GetName());
+        }
+        ImGui::PopID();
       }
     }
     ImGui::End();
+
+    for (std::string sActorID : lstDeleteActors)
+    {
+      DestroyEntity(sActorID.c_str());
+    }
+    lstDeleteActors.clear();
 #endif
     // Update
     for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetCurrentSize(); ++uIndex)
@@ -62,23 +78,24 @@ namespace game
       return nullptr;
 
     // Check collision name
-    std::string sTargetEntityID = _sEntityName;
-    uint32_t uNameSuffix = 1;
-
-    for (uint32_t uIndex = 0; uIndex < m_uRegisteredEntities; uIndex++)
+    std::string sTarget = _sEntityName;
+    auto it = m_uSetNames.find(sTarget);
+    if (it != m_uSetNames.end())
     {
-      CEntity* pEntity = m_lstEntitiesList[uIndex];
-      if (pEntity && pEntity->GetName() == sTargetEntityID)
+      uint32_t uNameSuffix = 1;
+      while (it != m_uSetNames.end())
       {
         std::ostringstream oStringStream;
         oStringStream << _sEntityName << "_" << uNameSuffix++;
-        sTargetEntityID = oStringStream.str();
+        sTarget = oStringStream.str();
+        it = m_uSetNames.find(sTarget);
       }
     }
+    m_uSetNames.emplace(sTarget);
 
     // Register entity
     m_uRegisteredEntities++;
-    CEntity* pEntity = m_lstEntitiesList.Create(sTargetEntityID.c_str());
+    CEntity* pEntity = m_lstEntitiesList.Create(sTarget.c_str());
     return pEntity;
   }
   // ------------------------------------

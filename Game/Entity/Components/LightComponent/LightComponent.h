@@ -19,9 +19,9 @@ namespace game
     render::ELightType GetLightType() const;
 
     void SetPosition(const math::CVector3& _v3Position);
-    const math::CVector3& GetPosition() const;
+    math::CVector3 GetPosition() const;
     void SetDirection(const math::CVector3& _v3Rot);
-    const math::CVector3& GetDirection() const;
+    math::CVector3 GetDirection() const;
 
     virtual void DrawDebug() override;
 

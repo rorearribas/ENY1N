@@ -8,7 +8,7 @@
 #include "Engine/Utils/Plane.h"
 
 #include "Libs/Utils/FixedPool.h"
-#include "Libs/Utils/FixedList.h"
+#include "Libs/Utils/UniquePtrList.h"
 
 namespace render { class CRender; }
 namespace render { namespace lights { class CDirectionalLight; } }
@@ -29,7 +29,7 @@ namespace scene
   private:
     // Models
     static constexpr uint32_t s_uMaxModels = 500u;
-    typedef utils::CFixedList<render::gfx::CModel, s_uMaxModels> TModels;
+    typedef utils::CUniquePtrList<render::gfx::CModel, s_uMaxModels> TModels;
     typedef CConstantBuffer<SHandleInstancing> TInstancingBuffer;
 
     // Primitives
@@ -51,17 +51,16 @@ namespace scene
 
     // Handle graphics
     render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode);
-    void DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
+    bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
 
-    render::gfx::CModel* const LoadModel(const char* _sModelPath);
-    void DestroyModel(render::gfx::CModel*& _pModel_);
-    void DestroyInstance(render::gfx::CRenderInstance*& _pInstance_);
+    utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char* _sModelPath);
+    bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _pModel_);
 
     // Handle lights
     render::lights::CDirectionalLight* const CreateDirectionalLight();
     render::lights::CPointLight* const CreatePointLight();
     render::lights::CSpotLight* const CreateSpotLight();
-    void DestroyLight(render::lights::CLight*& pLight_);
+    bool DestroyLight(render::lights::CLight*& pLight_);
 
     // Debug
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);

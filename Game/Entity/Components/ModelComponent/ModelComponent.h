@@ -1,7 +1,9 @@
 #pragma once
 #include "Game/Entity/Components/Component.h"
+#include "Engine/Render/Graphics/RenderInstance.h"
 #include "Engine/Render/RenderTypes.h"
 #include "Libs/Math/Vector3.h"
+#include <Libs/Utils/UniquePtrList.h>
 
 namespace render { namespace gfx { class CRenderInstance; } }
 namespace render { namespace gfx { class CPrimitive; } }
@@ -24,11 +26,11 @@ namespace game
     void SetColor(const math::CVector3& _v3Color);
 
     void SetPosition(const math::CVector3& _v3Position);
-    const math::CVector3& GetPosition() const;
+    math::CVector3 GetPosition() const;
     void SetRotation(const math::CVector3& _v3Rot);
-    const math::CVector3& GetRotation() const;
+    math::CVector3 GetRotation() const;
     void SetScale(const math::CVector3& _v3Scl);
-    const math::CVector3& GetScale() const;
+    math::CVector3 GetScale() const;
 
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;
@@ -39,9 +41,12 @@ namespace game
     void Clean();
 
   private:
-    render::gfx::CRenderInstance* m_pInstance = nullptr;
+    // Primitive
     render::gfx::CPrimitive* m_pPrimitive = nullptr;
-    render::gfx::CModel* m_pModel = nullptr;
+
+    // Model
+    utils::CWeakPtr<render::gfx::CModel> m_wpModel;
+    uint32_t m_uInstanceID = render::instance::s_uInvalidID;
   };
 }
 

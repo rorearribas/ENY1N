@@ -1,4 +1,4 @@
-#include "Camera.h"
+﻿#include "Camera.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Libs/ImGui/imgui.h"
 #include "Engine/Engine.h"
@@ -79,26 +79,24 @@ namespace render
   // ------------------------------------
   bool CCamera::IsOnFrustum(const collision::CBoundingBox& _oBoundingBox)
   {
-    // Get extents
-    std::vector<math::CVector3> lstExtents = _oBoundingBox.GetExtents();
-
-    // Do cull test
-    uint32_t uIndex = 0;
-    while (uIndex != s_uFrustumPlanes)
+    const math::CVector3& v3Center = _oBoundingBox.GetCenter();
+    const math::CVector3& v3HalfExtents = _oBoundingBox.GetHalfSize();
+    for (uint32_t uIndex = 0; uIndex < s_uFrustumPlanes; ++uIndex)
     {
-      uint32_t uCullTest = 0;
-      for (const math::CVector3& v3Extent : lstExtents)
-      {
-        uCullTest += m_oPlanes[uIndex].DistanceToPoint(v3Extent) < 0.0f ? 1 : 0;
-      }
-      // Is plane valid ?
-      if (uCullTest == static_cast<uint32_t>(lstExtents.size()))
+      const math::CPlane& rPlane = m_oPlanes[uIndex];
+      const math::CVector3& v3Normal = rPlane.GetNormal();
+      // Get each component!
+      const float fX = std::abs(v3Normal.x);
+      const float fY = std::abs(v3Normal.y);
+      const float fZ = std::abs(v3Normal.z);
+      // Compute test
+      const float fDistance = rPlane.DistanceToPoint(v3Center);
+      const float fRadius = (v3HalfExtents.x * fX) + (v3HalfExtents.y * fY) + (v3HalfExtents.z * fZ);
+      if ((fDistance + fRadius) < 0.0f)
       {
         return false;
       }
-      uIndex++;
     }
-
     return true;
   }
   // ------------------------------------
@@ -248,7 +246,7 @@ namespace render
     math::CVector3 v3Up = math::CVector3::Normalize(math::CVector3::Cross(m_v3Dir, v3Right));
 
     math::CVector3 v3FarRight = v3FarDir + (v3Right * fHalfHSide);
-    math::CVector3 v3FarLeft = v3FarDir - ( v3Right * fHalfHSide);
+    math::CVector3 v3FarLeft = v3FarDir - (v3Right * fHalfHSide);
     math::CVector3 v3FarTop = v3FarDir + (v3Up * fHalfVSide);
     math::CVector3 v3FarBottom = v3FarDir - (v3Up * fHalfVSide);
 

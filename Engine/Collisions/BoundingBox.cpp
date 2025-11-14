@@ -4,20 +4,18 @@
 namespace collision
 {
   // ------------------------------------
-  std::vector<math::CVector3> CBoundingBox::GetExtents() const
+  void CBoundingBox::GetExtents(math::CVector3 lstExtents[8]) const
   {
-    std::vector<math::CVector3> lstExtents = 
+    lstExtents[0] = m_v3Min;
     {
-      math::CVector3(m_v3Min.x, m_v3Min.y, m_v3Min.z),
-      math::CVector3(m_v3Max.x, m_v3Min.y, m_v3Min.z),
-      math::CVector3(m_v3Min.x, m_v3Max.y, m_v3Min.z),
-      math::CVector3(m_v3Max.x, m_v3Max.y, m_v3Min.z),
-      math::CVector3(m_v3Min.x, m_v3Min.y, m_v3Max.z),
-      math::CVector3(m_v3Max.x, m_v3Min.y, m_v3Max.z),
-      math::CVector3(m_v3Min.x, m_v3Max.y, m_v3Max.z),
-      math::CVector3(m_v3Max.x, m_v3Max.y, m_v3Max.z)
-    };
-    return lstExtents;
+      lstExtents[1] = math::CVector3(m_v3Max.x, m_v3Min.y, m_v3Min.z);
+      lstExtents[2] = math::CVector3(m_v3Min.x, m_v3Max.y, m_v3Min.z);
+      lstExtents[3] = math::CVector3(m_v3Max.x, m_v3Max.y, m_v3Min.z);
+      lstExtents[4] = math::CVector3(m_v3Min.x, m_v3Min.y, m_v3Max.z);
+      lstExtents[5] = math::CVector3(m_v3Max.x, m_v3Min.y, m_v3Max.z);
+      lstExtents[6] = math::CVector3(m_v3Min.x, m_v3Max.y, m_v3Max.z);
+    }
+    lstExtents[7] = m_v3Max;
   }
   // ------------------------------------
   void CBoundingBox::DrawDebug()

@@ -66,27 +66,21 @@ namespace engine
     return m_pSceneManager->CreatePrimitive(_eType, _eRenderMode, _uSceneIndex);
   }
   // ------------------------------------
-  void CEngine::DestroyPrimitive(render::gfx::CPrimitive*& pPrimitive_)
+  bool CEngine::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
   {
-    assert(pPrimitive_);
-    m_pSceneManager->DestroyPrimitive(pPrimitive_);
+    assert(_pPrimitive_);
+    return m_pSceneManager->DestroyPrimitive(_pPrimitive_);
   }
   // ------------------------------------
-  render::gfx::CModel* const CEngine::LoadModel(const char* _sModelPath, uint32_t _uSceneIndex)
+  utils::CWeakPtr<render::gfx::CModel> const CEngine::LoadModel(const char* _sModelPath, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->LoadModel(_sModelPath, _uSceneIndex);
   }
   // ------------------------------------
-  void CEngine::DestroyModel(render::gfx::CModel*& _pModel_, uint32_t _uSceneIndex)
+  bool CEngine::DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_, uint32_t _uSceneIndex)
   {
-    assert(_pModel_);
-    m_pSceneManager->DestroyModel(_pModel_, _uSceneIndex);
-  }
-  // ------------------------------------
-  void CEngine::DestroyInstance(render::gfx::CRenderInstance*& _pInstance_, uint32_t _uSceneIndex)
-  {
-    assert(_pInstance_);
-    m_pSceneManager->DestroyInstance(_pInstance_, _uSceneIndex);
+    assert(_wpModel_.IsValid());
+    return m_pSceneManager->DestroyModel(_wpModel_, _uSceneIndex);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CEngine::CreateDirectionalLight(uint32_t _uSceneIndex)
@@ -104,10 +98,10 @@ namespace engine
     return m_pSceneManager->CreateSpotLight(_uSceneIndex);
   }
   // ------------------------------------
-  void CEngine::DestroyLight(render::lights::CLight*& pLight_)
+  bool CEngine::DestroyLight(render::lights::CLight*& _pLight_)
   {
-    assert(pLight_);
-    m_pSceneManager->DestroyLight(pLight_);
+    assert(_pLight_);
+    return m_pSceneManager->DestroyLight(_pLight_);
   }
   // ------------------------------------
   void CEngine::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,

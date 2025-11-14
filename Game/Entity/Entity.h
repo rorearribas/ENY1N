@@ -26,11 +26,11 @@ namespace game
     const std::string& GetName() const { return m_sEntityName; }
 
     void SetPosition(const math::CVector3& _v3Position);
-    const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+    inline math::CVector3 GetPosition() const { return m_oTransform.GetTranslation(); }
     void SetRotation(const math::CVector3& _v3Rot);
-    const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
+    inline math::CVector3 GetRotation() const { return m_oTransform.GetRotation(); }
     void SetScale(const math::CVector3& _v3Scale);
-    const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+    inline math::CVector3 GetScale() const { return m_oTransform.GetScale(); }
 
     template<typename T, typename ...Args>
     inline T* RegisterComponent(Args&&... args)

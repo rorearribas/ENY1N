@@ -12,11 +12,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
-CResourceManager::~CResourceManager()
-{
-  // Clean loaded models
-  m_dctLoadedModels.clear();
-}
 // ------------------------------------
 char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
 {
@@ -45,20 +40,8 @@ char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
   return cBuffer;
 }
 // ------------------------------------
-render::gfx::CModel* CResourceManager::LoadModel(const char* _sPath, bool& _bCached_)
+std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sPath)
 {
-  // Get loaded model
-  {
-    _bCached_ = false;
-    auto it = m_dctLoadedModels.find(_sPath);
-    if (it != m_dctLoadedModels.end())
-    {
-      _bCached_ = true;
-      SUCCESS_LOG("Model cached! -> " << _sPath);
-      return it->second;
-    }
-  }
-
   // Importer
   Assimp::Importer rImporter;
 
@@ -201,10 +184,12 @@ render::gfx::CModel* CResourceManager::LoadModel(const char* _sPath, bool& _bCac
     lstMaterials.emplace_back(std::move(pMaterial));
   }
 
-  // Load meshes
+  // Create model data
   render::gfx::CModel::TModelData rModelData = render::gfx::CModel::TModelData();
-  std::unordered_map<render::gfx::TVertexData, uint32_t> mVertexMap;
+  memcpy(rModelData.AssetPath, _sPath, 128); // Set path
 
+  // Load meshes
+  std::unordered_map<render::gfx::TVertexData, uint32_t> mVertexMap;
   for (uint32_t uI = 0; uI < pScene->mNumMeshes; uI++)
   {
     aiMesh* pSceneMesh = pScene->mMeshes[uI];
@@ -281,12 +266,10 @@ render::gfx::CModel* CResourceManager::LoadModel(const char* _sPath, bool& _bCac
     rModelData.Meshes.emplace_back(pMesh);
   }
 
-  SUCCESS_LOG("Model loaded! -> " << _sPath);
-  render::gfx::CModel* pModel = new render::gfx::CModel(rModelData);
-  SUCCESS_LOG("Model created! -> " << _sPath);
-
-  m_dctLoadedModels.emplace(_sPath, pModel);
-  return (--m_dctLoadedModels.end())->second;
+  SUCCESS_LOG("Loaded model data! -> " << _sPath);
+  std::unique_ptr<render::gfx::CModel> pModel = std::make_unique<render::gfx::CModel>(rModelData);
+  SUCCESS_LOG("Created model! -> " << _sPath);
+  return pModel;
 }
 // ------------------------------------
 unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)

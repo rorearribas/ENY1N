@@ -7,13 +7,15 @@
 namespace render { namespace gfx { class CModel; } }
 namespace render
 {
+  namespace instance
+  {
+    static constexpr uint32_t s_uInvalidID = 0xFFFFFFFFu;
+  }
+
   namespace gfx
   {
     class CRenderInstance
     {
-    private:
-      static constexpr uint32_t s_uInvalidID = 0xFFFFFFFFu;
-
     public:
       CRenderInstance(CModel* _pModel, uint32_t _uId);
       ~CRenderInstance() {}
@@ -33,7 +35,7 @@ namespace render
       inline math::CMatrix4x4 GetMatrix() const { return m_oTransform.GetMatrix(); }
 
       void SetPosition(const math::CVector3& _v3Position);
-      inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+      inline const math::CVector3& GetPosition() const { return m_oTransform.GetTranslation(); }
       void SetRotation(const math::CVector3& _v3Rot);
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
       void SetScale(const math::CVector3& _v3Scale);
@@ -41,7 +43,7 @@ namespace render
 
     private:
       render::gfx::CModel* m_pModel = nullptr;
-      uint32_t m_uInstanceID = s_uInvalidID;
+      uint32_t m_uInstanceID = render::instance::s_uInvalidID;
 
     private:
       math::CTransform m_oTransform = math::CTransform();

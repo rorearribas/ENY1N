@@ -43,33 +43,6 @@ namespace utils
       return nullptr;
     }
 
-    inline bool Insert(T* _pData)
-    {
-      if (m_uRegisteredItems >= MAX_ITEMS)
-      {
-#ifdef _DEBUG
-        assert(false);
-#endif
-        return false;
-      }
-
-      for (uint32_t uIndex = 0; uIndex < MAX_ITEMS; ++uIndex)
-      {
-        if (!m_lstAssignedBlocks.test(uIndex))
-        {
-          // Set
-          T* pMem = reinterpret_cast<T*>(m_lstPool) + uIndex;
-          pMem = _pData;
-
-          m_lstAssignedBlocks.set(uIndex);
-          ++m_uRegisteredItems;
-          return true;
-        }
-      }
-
-      return false;
-    }
-
     inline T* operator[](uint32_t _uIndex)
     {
       bool bAssignedBlock = (_uIndex < MAX_ITEMS && m_lstAssignedBlocks.test(_uIndex));
@@ -90,6 +63,9 @@ namespace utils
 
     inline T* end() { return reinterpret_cast<T*>(m_lstPool) + m_uRegisteredItems; }
     inline const T* end() const { return reinterpret_cast<const T*>(m_lstPool) + m_uRegisteredItems; }
+
+    inline T* last() { return reinterpret_cast<T*>(&m_lstPool[m_uRegisteredItems > 0 ? (m_uRegisteredItems - 1) : 0]); }
+    inline const T* last() const { return reinterpret_cast<const T*>(&m_lstPool[m_uRegisteredItems > 0 ? (m_uRegisteredItems - 1) : 0]); }
 
     inline const uint32_t& GetCurrentSize() const { return m_uRegisteredItems; }
     inline uint32_t GetMaxSize() const { return MAX_ITEMS; }

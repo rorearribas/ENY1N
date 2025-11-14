@@ -55,11 +55,11 @@ namespace collision
     inline void SetCollisionMask(const ECollisionMask& _eCollisionMask) { m_eCollisionMask = _eCollisionMask; }
     inline const collision::ECollisionMask& GetCollisionMask() const { return m_eCollisionMask; }
 
-    inline const math::CVector3& GetPosition() const { return m_oTransform.GetPosition(); }
+    inline math::CVector3 GetPosition() const { return m_oTransform.GetTranslation(); }
     inline void SetPosition(const math::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }
-    inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
+    inline math::CVector3 GetRotation() const { return m_oTransform.GetRotation(); }
     inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
-    inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+    inline math::CVector3 GetScale() const { return m_oTransform.GetScale(); }
     inline void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
 
     // Bind

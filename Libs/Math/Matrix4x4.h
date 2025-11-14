@@ -68,6 +68,7 @@ namespace math
     static CMatrix4x4 CreateOrtographicMatrix(float _fWidth, float _fHeight, float _fNear, float _fFar);
 
     static CMatrix4x4 Translate(const CVector3& _v3Translate);
+    void SetTranslate(const CVector3& _v3Translate);
     math::CVector3 GetTranslate() const;
 
     static CMatrix4x4 Scale(const CVector3& _v3Scale);

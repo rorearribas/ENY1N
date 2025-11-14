@@ -39,58 +39,54 @@ namespace scene
     return m_lstPrimitives.Create(_eType, _eRenderMode);
   }
   // ------------------------------------
-  void CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
+  bool CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
   {
-    bool bOk = m_lstPrimitives.Remove(_pPrimitive_);
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk); // Sanity check
-#endif
+    return m_lstPrimitives.Remove(_pPrimitive_);
   }
   // ------------------------------------
-  render::gfx::CModel* const CScene::LoadModel(const char* _sModelPath)
+  utils::CWeakPtr<render::gfx::CModel> const CScene::LoadModel(const char* _sModelPath)
   {
-    if (m_lstModels.GetCurrentSize() >= m_lstModels.GetMaxSize())
+    // Check preload model
+    utils::CWeakPtr<render::gfx::CModel> wpModel;
+    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetCurrentSize(); uIndex++)
+    {
+      utils::CWeakPtr<render::gfx::CModel> wpCurrentModel = m_lstModels[uIndex];
+      if (!wpCurrentModel.IsValid())
+      {
+        continue;
+      }
+      if (wpCurrentModel->AllowInstances() && wpCurrentModel->GetAssetPath() == _sModelPath)
+      {
+        wpModel = wpCurrentModel;
+        break;
+      }
+    }
+
+    if (m_lstModels.GetCurrentSize() >= m_lstModels.GetMaxSize() && !wpModel.IsValid())
     {
       WARNING_LOG("You have reached maximum models in the current scene!");
-      return nullptr;
+      return utils::CWeakPtr<render::gfx::CModel>();
     }
 
-    // Load model
-    bool bCached = false;
-    CResourceManager* pResourceManager = CResourceManager::GetInstance();
-    render::gfx::CModel* pModel = pResourceManager->LoadModel(_sModelPath, bCached);
-    assert(pModel);
-
-    if (bCached)
-    {
-      pModel->CreateInstance();
+    // Create instance
+    if (wpModel.IsValid() && wpModel->CreateInstance())
+    {      
+      LOG("Created Instance! -> " << _sModelPath);
     }
     else
-    {
-      m_lstModels.Insert(pModel);
+    { 
+      // Load model
+      CResourceManager* pResourceManager = CResourceManager::GetInstance();
+      std::unique_ptr<render::gfx::CModel> pLoadedModel = pResourceManager->LoadModel(_sModelPath);
+      wpModel = m_lstModels.Insert(std::move(pLoadedModel));
     }
 
-    return pModel;
+    return wpModel;
   }
   // ------------------------------------
-  void CScene::DestroyModel(render::gfx::CModel*& _pModel_)
+  bool CScene::DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_)
   {
-    bool bOk = m_lstModels.Remove(_pModel_, false);
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk); // Sanity check
-#endif
-  }
-  // ------------------------------------
-  void CScene::DestroyInstance(render::gfx::CRenderInstance*& _pInstance_)
-  {
-    // @Hack -> Im not proud about this shit!
-    render::gfx::CModel* pParentModel = const_cast<render::gfx::CModel*>(_pInstance_->GetModel());
-    assert(pParentModel);
-    bool bOk = pParentModel->RemoveInstance(_pInstance_);
-    UNUSED_VAR(bOk);
-    assert(bOk && !_pInstance_);
+    return m_lstModels.Remove(_wpModel_);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CScene::CreateDirectionalLight()
@@ -124,7 +120,7 @@ namespace scene
     return m_lstSpotLights.Create();
   }
   // ------------------------------------
-  void CScene::DestroyLight(render::lights::CLight*& _pLight_)
+  bool CScene::DestroyLight(render::lights::CLight*& _pLight_)
   {
     bool bOk = false;
     switch (_pLight_->GetLightType())
@@ -147,13 +143,10 @@ namespace scene
       }
       break;
       default:
-        break;
+      break;
     }
-
-#ifdef _DEBUG
-    assert(bOk); // Sanity check
-#endif
     _pLight_ = nullptr; // Set as nullptr
+    return bOk;
   }
   // ------------------------------------
   void CScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
@@ -287,15 +280,15 @@ namespace scene
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     render::CCamera* pCamera = pEngine->GetCamera();
 
-    // I have to change this!!!
+    // I must change this!!!
     ID3D11Buffer* pConstantBuffer = m_oInstancingBuffer.GetBuffer();
     global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
     // Draw
     for (uint32_t uIndex = 0; uIndex < m_lstModels.GetCurrentSize(); uIndex++)
     {
-      render::gfx::CModel* pModel = m_lstModels[uIndex];
-      if (!pModel->IsVisible() && !pModel->HasInstances())
+      render::gfx::CModel* pModel = m_lstModels[uIndex].GetPtr();
+      if (!pModel)
       {
         continue;
       }
@@ -336,23 +329,22 @@ namespace scene
 
       if (lstDrawableInstances.size() > 0)
       {
-        // Write
+        // Set instance mode!
         m_oInstancingBuffer.GetData().IsInstantiated = true;
         bool bOk = m_oInstancingBuffer.WriteBuffer();
-        UNUSED_VAR(bOk);
         assert(bOk);
 
         // Draw instances
         pModel->DrawInstances(lstDrawableInstances);
+
+        // Set default state
+        m_oInstancingBuffer.GetData().IsInstantiated = false;
+        bOk = m_oInstancingBuffer.WriteBuffer();
+        assert(bOk);
       }
     }
 
-    // Write
-    m_oInstancingBuffer.GetData().IsInstantiated = false;
-    bool bOk = m_oInstancingBuffer.WriteBuffer();
-    UNUSED_VAR(bOk);
-    assert(bOk);
-
+    // Set invalid constant buffer
     ID3D11Buffer* pInvalidBuffer = nullptr;
     global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pInvalidBuffer);
   }
@@ -424,7 +416,12 @@ namespace scene
     // Update buffer
     auto& rData = m_oLightingBuffer.GetData();
 
-    // Directional light
+    // Reset value
+    rData.DirectionalLight.Intensity = 0.0f;
+    rData.DirectionalLight.Color = render::lights::CDirectionalLight::s_vDefaultDirectionalColor;
+    rData.DirectionalLight.Direction = render::lights::CDirectionalLight::s_vDefaultDirection;
+
+    // Apply direction
     if (m_pDirectionalLight)
     {
       rData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
@@ -435,7 +432,13 @@ namespace scene
     // Point lights
     for (uint32_t uIndex = 0; uIndex < m_lstPointLights.GetCurrentSize(); uIndex++)
     {
-      const render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex];
+      render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex];
+      if (!pPointLight)
+      {
+        continue;
+      }
+
+      // Set
       rData.PointLights[uIndex].Position = pPointLight->GetPosition();
       rData.PointLights[uIndex].Color = pPointLight->GetColor();
       rData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
@@ -447,7 +450,13 @@ namespace scene
     // Spot lights
     for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetCurrentSize(); uIndex++)
     {
-      const render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex];
+      render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex];
+      if (!pSpotLight)
+      {
+        continue;
+      }
+
+      // Set
       rData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
       rData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
       rData.SpotLights[uIndex].Color = pSpotLight->GetColor();

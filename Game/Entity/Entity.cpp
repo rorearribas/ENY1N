@@ -70,7 +70,7 @@ namespace game
     const render::CCamera* pCamera = pEngine->GetCamera();
 
     // Get matrix
-    float fTranslation[3] = { m_oTransform.GetPosition().x, m_oTransform.GetPosition().y, m_oTransform.GetPosition().z };
+    float fTranslation[3] = { m_oTransform.GetTranslation().x, m_oTransform.GetTranslation().y, m_oTransform.GetTranslation().z };
     float fRotation[3] = { m_oTransform.GetRotation().x, m_oTransform.GetRotation().y, m_oTransform.GetRotation().z };
     float fScale[3] = { m_oTransform.GetScale().x, m_oTransform.GetScale().y, m_oTransform.GetScale().z };
 
