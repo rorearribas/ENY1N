@@ -13,14 +13,14 @@ namespace math
   void CTransform::SetRotation(const math::CVector3& _v3Rotation)
   {
     // Calculate valid angle!
-    math::CVector3 v3Rot = _v3Rotation;
-    v3Rot.x = CalculateEulerAngle(_v3Rotation.x);
-    v3Rot.y = CalculateEulerAngle(_v3Rotation.y);
-    v3Rot.z = CalculateEulerAngle(_v3Rotation.z);
+    math::CVector3 v3Angle = _v3Rotation;
+    v3Angle.x = CalculateEulerAngle(_v3Rotation.x);
+    v3Angle.y = CalculateEulerAngle(_v3Rotation.y);
+    v3Angle.z = CalculateEulerAngle(_v3Rotation.z);
 
     // Update transform
     math::CVector3 v3Translate = m_mTransform.GetTranslate();
-    m_mTransform = CMatrix4x4::Rotation(_v3Rotation) * CMatrix4x4::Scale(m_mTransform.GetScale());
+    m_mTransform = CMatrix4x4::Rotation(v3Angle) * CMatrix4x4::Scale(m_mTransform.GetScale());
     m_mTransform.SetTranslate(v3Translate);
   }
   // ------------------------------------

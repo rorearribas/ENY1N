@@ -79,16 +79,19 @@ namespace game
 
     // Check collision name
     std::string sTarget = _sEntityName;
-    auto it = m_uSetNames.find(sTarget);
-    if (it != m_uSetNames.end())
+    if (m_uSetNames.count(sTarget))
     {
-      uint32_t uNameSuffix = 1;
-      while (it != m_uSetNames.end())
+      uint32_t& uNextSuffix = m_uMapNextSuffix[_sEntityName];
+      if (uNextSuffix == 0) 
+      {
+        uNextSuffix = 1;
+      }
+      while (m_uSetNames.count(sTarget)) 
       {
         std::ostringstream oStringStream;
-        oStringStream << _sEntityName << "_" << uNameSuffix++;
+        oStringStream << _sEntityName << "_" << uNextSuffix;
         sTarget = oStringStream.str();
-        it = m_uSetNames.find(sTarget);
+        uNextSuffix++;
       }
     }
     m_uSetNames.emplace(sTarget);

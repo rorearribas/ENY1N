@@ -109,7 +109,7 @@ namespace utils
     bool Remove(CWeakPtr<T>& _pItem_);
     void Clear();
 
-    inline const uint32_t& GetCurrentSize() const { return m_uRegisteredItems; }
+    inline const uint32_t& GetSize() const { return m_uRegisteredItems; }
     inline const bool IsEmpty() const { return m_uRegisteredItems == 0; }
     inline uint32_t GetMaxSize() const { return MAX_ITEMS; }
 

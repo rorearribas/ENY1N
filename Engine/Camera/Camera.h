@@ -29,6 +29,7 @@ namespace render
 
     const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjection; }
+    math::CMatrix4x4 GetViewProjection() const { return m_mProjection * m_mViewMatrix; }
 
     inline const math::CVector3& GetCameraDir() const { return m_v3Dir; }
     inline void SetPosition(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; UpdateViewMatrix(GetProjectionMode()); }

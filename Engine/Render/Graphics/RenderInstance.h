@@ -32,7 +32,7 @@ namespace render
 
       inline void SetTransform(const math::CTransform& _oTransform) { m_oTransform = _oTransform; }
       inline const math::CTransform& GetTransform() const { return m_oTransform; }
-      inline math::CMatrix4x4 GetMatrix() const { return m_oTransform.GetMatrix(); }
+      inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
 
       void SetPosition(const math::CVector3& _v3Position);
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetTranslation(); }

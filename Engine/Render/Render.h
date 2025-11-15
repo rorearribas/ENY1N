@@ -42,7 +42,6 @@ namespace render
     HRESULT CreateBackBuffer();
 
   private:
-    HRESULT CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& _oDepthStencilState);
     HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC& _oRasterizerState);
     HRESULT CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _oBlendState);
 

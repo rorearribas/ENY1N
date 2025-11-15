@@ -48,7 +48,7 @@ namespace scene
   {
     // Check preload model
     utils::CWeakPtr<render::gfx::CModel> wpModel;
-    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetCurrentSize(); uIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetSize(); uIndex++)
     {
       utils::CWeakPtr<render::gfx::CModel> wpCurrentModel = m_lstModels[uIndex];
       if (!wpCurrentModel.IsValid())
@@ -62,7 +62,7 @@ namespace scene
       }
     }
 
-    if (m_lstModels.GetCurrentSize() >= m_lstModels.GetMaxSize() && !wpModel.IsValid())
+    if (m_lstModels.GetSize() >= m_lstModels.GetMaxSize() && !wpModel.IsValid())
     {
       WARNING_LOG("You have reached maximum models in the current scene!");
       return utils::CWeakPtr<render::gfx::CModel>();
@@ -285,10 +285,10 @@ namespace scene
     global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
     // Draw
-    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetCurrentSize(); uIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetSize(); uIndex++)
     {
-      render::gfx::CModel* pModel = m_lstModels[uIndex].GetPtr();
-      if (!pModel)
+      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uIndex];
+      if (!pModel.IsValid())
       {
         continue;
       }

@@ -30,12 +30,25 @@
 #include "Libs/Math/Math.h"
 #include "Reflection/TypeManager.h"
 
+static std::random_device rd;
+std::mt19937 s_oGenerator(rd());
+
 float GenerateFloat(float min, float max)
 {
-  static std::random_device rd;
-  static std::mt19937 gen(rd());
   std::uniform_real_distribution<float> dist(min, max);
-  return dist(gen);
+  return dist(s_oGenerator);
+}
+
+const std::string& GenerateString(const std::vector<std::string>& lstStrings)
+{
+  if (lstStrings.empty())
+  {
+    static const std::string s_sEmpty = "";
+    return s_sEmpty;
+  }
+  std::uniform_int_distribution<size_t> oDistribution(0, lstStrings.size() - 1);
+  size_t uRandomIndex = oDistribution(s_oGenerator);
+  return lstStrings[uRandomIndex];
 }
 
 static bool bThrowRay = false;
@@ -74,23 +87,22 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::ELightType::DIRECTIONAL_LIGHT);
 
-  std::vector<game::CEntity*> lstModels = {};
+  std::vector<std::string> vAvailableModels = 
+  {
+    "models/spaceship/fbx/spaceship.fbx",
+    "models/wolf/Wolf.fbx",
+    "models/plant/Low-Poly Plant_.fbx"
+  };
+
   for (uint32_t uIndex = 0; uIndex < 1000; uIndex++)
   {
-    //using Clock = std::chrono::high_resolution_clock;
-    //auto startTime = Clock::now();
-
-    // FBX Test
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 20.0f), GenerateFloat(-200.0f, 500.0f)));
-    game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-    pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
-    pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
-    lstModels.emplace_back(pModelEnt);
+    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f),GenerateFloat(10.0f, 100.0f), GenerateFloat(-100.0f, 100.0f)));
 
-    //auto endTime = Clock::now();
-    //std::chrono::duration<double, std::milli> elapsed = endTime - startTime;
-    //std::cout << "Tiempo transcurrido: " << elapsed.count() << " ms\n";
+    const std::string& sModel = GenerateString(vAvailableModels);
+    game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
+    pModelTest->LoadModel(sModel.c_str());
+    pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
   }
 
   //// OBJ test
@@ -100,38 +112,22 @@ int main()
   //pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
   //pModelEnt2->SetRotation(math::CVector3(90.0f, 180.0f, 0.0f));
   //pModelEnt2->SetScale(math::CVector3(0.01f, 0.01f, 0.01f));
-
-  // Sphere collider
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
-  {
-    game::CEntity* pCapsuleEntity = pGameManager->CreateEntity("Capsule");
-    pCapsuleEntity->SetPosition(math::CVector3(0.0f, 10.0f, 0.0f));
-    game::CModelComponent* pModelCompTest = pCapsuleEntity->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::EPrimitiveType::E3D_CAPSULE, render::ERenderMode::WIREFRAME);
-    pModelCompTest->SetColor(math::CVector3::Forward);
-    pCapsuleEntity->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::CAPSULE_COLLIDER);
-    pCapsuleEntity->RegisterComponent<game::CRigidbodyComponent>();
-  }
-
+  
+  // Create plane
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::EPrimitiveType::E3D_PLANE, render::ERenderMode::SOLID);
   pPlaneModel->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 1.0f, 200.0f));
-  game::CCollisionComponent* pCollisionComponent = pPlaneEntity->RegisterComponent<game::CCollisionComponent>();
-  pCollisionComponent->CreateCollider(collision::EColliderType::BOX_COLLIDER);
-  collision::CBoxCollider* pBoxCollider = static_cast<collision::CBoxCollider*>(pCollisionComponent->GetCollider());
-  pBoxCollider->SetSize(math::CVector3(200.0f, 0.0f, 200.0f));
 
+  // Create 3 box
   for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    pBoxTest->SetPosition(math::CVector3(GenerateFloat(-70.0f, 70.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-40.0f, 40.0f)));
+    pBoxTest->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::EPrimitiveType::E3D_CUBE, render::ERenderMode::SOLID);
     pModelCompTest->SetColor(math::CVector3(1.0f, 1.0f, 1.0f));
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-    pBoxTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
   render::CRender* const pRender = pEngine->GetRender();
@@ -198,46 +194,6 @@ int main()
 
       // Draw
       pEngine->PushDraw();
-
-      if (ImGui::Button("Show wireframe"))
-      {
-        pEngine->GetRender()->SetFillMode(D3D11_FILL_WIREFRAME);
-      }
-      if (ImGui::Button("Show lit"))
-      {
-        pEngine->GetRender()->SetFillMode(D3D11_FILL_SOLID);
-      }
-
-      ImGui::Begin("TEST - CULLING");
-      if (ImGui::Button("Enabled"))
-      {
-        static bool bState = false;
-        bState = !bState;
-
-        for (auto& pEntity : lstModels)
-        {
-          auto* pComponent = pEntity->GetComponent<game::CModelComponent>();
-          pComponent->SetCullingEnabled(bState);
-        }
-      }
-
-      if (ImGui::Button("30"))
-      {
-        pTimeManager->SetMaxFPS(30);
-      }
-      if (ImGui::Button("60"))
-      {
-        pTimeManager->SetMaxFPS(60);
-      }
-      if (ImGui::Button("144"))
-      {
-        pTimeManager->SetMaxFPS(144);
-      }
-      if (ImGui::Button("999"))
-      {
-        pTimeManager->SetMaxFPS(999);
-      }
-      ImGui::End();
 
       ImGui::Begin("TEST - RAYCAST");
       if (ImGui::Button("Enabled"))

@@ -27,8 +27,9 @@ namespace game
   private:
     void DestroyAll();
 
-    std::unordered_set<std::string> m_uSetNames;
     TEntitiesList m_lstEntitiesList = TEntitiesList();
+    std::unordered_map<std::string, uint32_t> m_uMapNextSuffix;
+    std::unordered_set<std::string> m_uSetNames;
     uint32_t m_uRegisteredEntities = 0;
   };
 }

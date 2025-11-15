@@ -47,7 +47,8 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
 
   // Read file
   LOG("Loading model -> " << _sPath);
-  int32_t iFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_ImproveCacheLocality;
+  int32_t iFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals 
+  | aiProcess_ImproveCacheLocality | aiProcess_OptimizeMeshes;
   const aiScene* pScene = rImporter.ReadFile(_sPath, iFlags);
   if (!pScene)
   {

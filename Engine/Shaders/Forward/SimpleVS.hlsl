@@ -2,15 +2,10 @@
 
 cbuffer ConstantTransforms : register(b0)
 {
-  // MVP
-  matrix View;
-  matrix Projection;
+  // Transforms
   matrix Model;
-
-  // Inverse
-  matrix InvView;
-  matrix InvProjection;
-
+  matrix ViewProjection;
+  matrix InvViewProjection;
   // Projection CFG
   float FarPlane;
   float NearPlane;
@@ -53,8 +48,7 @@ PS_INPUT VSMain(VS_INPUT input)
   matrix modelMatrix = IsInstantiated ? input.instanceMatrix : Model;
   float4 worldPosition = mul(modelMatrix, float4(input.position, 1.0));
 
-  matrix viewProjection = mul(Projection, View);
-  output.position = mul(viewProjection, worldPosition);
+  output.position = mul(ViewProjection, worldPosition);
   output.worldpos = worldPosition.xyz;
 
   float3x3 normalMatrix = transpose((float3x3)modelMatrix);

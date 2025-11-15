@@ -24,7 +24,10 @@ namespace physics
     {
       physics::CRigidbody* pRigidbody = m_lstRigidbodys[uIndex];
       bool bDynamic = pRigidbody->GetRigidbodyType() == physics::ERigidbodyType::DYNAMIC;
-      if (!bDynamic) continue;
+      if (!bDynamic)
+      {
+        continue;
+      }
 
       // Apply gravity force
       pRigidbody->m_v3Acceleration += internal_physics_manager::s_v3GravityForce;

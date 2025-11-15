@@ -27,7 +27,7 @@ namespace render
       math::CMatrix4x4 Transform = math::CMatrix4x4::Identity;
     };
 
-    static constexpr uint32_t s_uMaxInstances = 1024u;
+    static constexpr uint32_t s_uMaxInstances = 50000u; // Testing
     typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstances> TInstances;
 
     class CModel

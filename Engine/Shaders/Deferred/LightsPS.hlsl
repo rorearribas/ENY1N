@@ -50,19 +50,14 @@ struct Spotlight
 
 cbuffer ConstantTransforms : register(b0)
 {
-  // MVP
-  matrix View;
-  matrix Projection;
+  // Transforms
   matrix Model;
-  // Inverse
-  matrix InvView;
-  matrix InvProjection;
+  matrix ViewProjection;
+  matrix InvViewProjection;
   // Projection CFG
   float FarPlane;
   float NearPlane;
-  // Instancing
-  int ComputeInstance;
-  int Padding0;
+  float2 Padding0;
 };
 
 // Constant buffer global lightning
@@ -108,7 +103,7 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   float3 v3Specular = gSpecular.Sample(gSampleLinear, input.uv).rgb;
   // Get world pos
   float fDepth = gDepth.Sample(gSampleLinear, input.uv).r;
-  float3 v3WorldPos = GetPositionFromDepth(input.uv, fDepth, mul(InvView, InvProjection));
+  float3 v3WorldPos = GetPositionFromDepth(input.uv, fDepth, InvViewProjection);
 
   // Add ambient light
   float3 v3TotalLight = 0.1f * float3(1.0f, 1.0f, 1.0f);

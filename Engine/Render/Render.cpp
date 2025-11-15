@@ -71,8 +71,10 @@ namespace render
       texture::CTexture2D<EViewType::DEPTH_STENCIL>* pDepthStencil = nullptr;
       texture::CTexture2D<EViewType::SHADER_RESOURCE>* pDepthTexture = nullptr;
 
-      ID3D11DepthStencilState* pDepthStencilState = nullptr;
-      D3D11_DEPTH_STENCIL_DESC oDepthStencilCfg = D3D11_DEPTH_STENCIL_DESC();
+      // Stencils
+      ID3D11DepthStencilState* pZPrepassStencilState = nullptr;
+      ID3D11DepthStencilState* pDeferredStencilState = nullptr;
+      ID3D11DepthStencilState* pDebugStencilState = nullptr;
 
       // Rasterizer
       ID3D11RasterizerState* pRasterizer = nullptr;
@@ -128,7 +130,6 @@ namespace render
     internal::s_oPipeline.oRenderTransform.Clear();
 
     // Release depth
-    global::dx::SafeRelease(internal::s_oPipeline.pDepthStencilState);
     global::ReleaseObject(internal::s_oPipeline.pDepthStencil);
     global::ReleaseObject(internal::s_oPipeline.pDepthTexture);
 
@@ -136,6 +137,11 @@ namespace render
     global::ReleaseObject(internal::s_oPipeline.pDiffuseRT);
     global::ReleaseObject(internal::s_oPipeline.pNormalRT);
     global::ReleaseObject(internal::s_oPipeline.pSpecularRT);
+
+    // Release stencils
+    global::dx::SafeRelease(internal::s_oPipeline.pZPrepassStencilState);
+    global::dx::SafeRelease(internal::s_oPipeline.pDeferredStencilState);
+    global::dx::SafeRelease(internal::s_oPipeline.pDebugStencilState);
 
     // Release rasterizer, blending..
     global::dx::SafeRelease(internal::s_oPipeline.pRasterizer);
@@ -260,9 +266,9 @@ namespace render
     internal::s_oPipeline.oRasterizerCfg.FillMode = D3D11_FILL_SOLID;
     internal::s_oPipeline.oRasterizerCfg.CullMode = D3D11_CULL_BACK;
     internal::s_oPipeline.oRasterizerCfg.FrontCounterClockwise = false;
-    internal::s_oPipeline.oRasterizerCfg.DepthBias = 10; // Z-Fighting
+    internal::s_oPipeline.oRasterizerCfg.DepthBias = 0; // decals -> (10)
     internal::s_oPipeline.oRasterizerCfg.DepthBiasClamp = 0.0f;
-    internal::s_oPipeline.oRasterizerCfg.SlopeScaledDepthBias = 1.5f;
+    internal::s_oPipeline.oRasterizerCfg.SlopeScaledDepthBias = 0.0f; // decals -> (1.5f)
     internal::s_oPipeline.oRasterizerCfg.DepthClipEnable = true;
     internal::s_oPipeline.oRasterizerCfg.ScissorEnable = true;
     internal::s_oPipeline.oRasterizerCfg.MultisampleEnable = false;
@@ -401,7 +407,6 @@ namespace render
   {
     // Release resources
     global::ReleaseObject(internal::s_oPipeline.pDepthStencil);
-    global::dx::SafeRelease(internal::s_oPipeline.pDepthStencilState);
 
     // Create depth stencil texture
     internal::s_oPipeline.pDepthStencil = new texture::CTexture2D<EViewType::DEPTH_STENCIL>();
@@ -448,27 +453,43 @@ namespace render
     hResult = internal::s_oPipeline.pDepthTexture->CreateView(oSRVDesc);
     assert(!FAILED(hResult));
 
-    // Create standard depth stencil state
-    internal::s_oPipeline.oDepthStencilCfg.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
-    internal::s_oPipeline.oDepthStencilCfg.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-    internal::s_oPipeline.oDepthStencilCfg.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    internal::s_oPipeline.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_EQUAL;
-    internal::s_oPipeline.oDepthStencilCfg.DepthEnable = true;
-    internal::s_oPipeline.oDepthStencilCfg.StencilEnable = true;
+    // Create standard depth stencil state for zprepass
+    D3D11_DEPTH_STENCIL_DESC oDepthStencilDesc = D3D11_DEPTH_STENCIL_DESC();
+    oDepthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+    oDepthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+    oDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    oDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    oDepthStencilDesc.DepthEnable = true;
+    oDepthStencilDesc.StencilEnable = true;
 
     // Front-face
-    internal::s_oPipeline.oDepthStencilCfg.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    internal::s_oPipeline.oDepthStencilCfg.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-    internal::s_oPipeline.oDepthStencilCfg.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    internal::s_oPipeline.oDepthStencilCfg.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    oDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    oDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+    oDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    oDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     // Back-face
-    internal::s_oPipeline.oDepthStencilCfg.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    internal::s_oPipeline.oDepthStencilCfg.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-    internal::s_oPipeline.oDepthStencilCfg.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    internal::s_oPipeline.oDepthStencilCfg.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    oDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    oDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+    oDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    oDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-    return CreateDepthStencilState(internal::s_oPipeline.oDepthStencilCfg);
+    // Z-Prepass
+    global::dx::SafeRelease(internal::s_oPipeline.pZPrepassStencilState);
+    hResult = global::dx::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &internal::s_oPipeline.pZPrepassStencilState);
+    assert(!FAILED(hResult));
+
+    // Deferred
+    oDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    oDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    global::dx::SafeRelease(internal::s_oPipeline.pDeferredStencilState);
+    hResult = global::dx::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &internal::s_oPipeline.pDeferredStencilState);
+    assert(!FAILED(hResult));
+
+    // Primitives (debug)
+    oDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    global::dx::SafeRelease(internal::s_oPipeline.pDebugStencilState);
+    return global::dx::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &internal::s_oPipeline.pDebugStencilState);
   }
   // ------------------------------------
   HRESULT CRender::SetupDeferredShading(uint32_t _uX, uint32_t _uY)
@@ -516,13 +537,6 @@ namespace render
     // Create sampler
     global::dx::SafeRelease(internal::s_oPipeline.pLinearSampler);
     return global::dx::s_pDevice->CreateSamplerState(&oSamplerDesc, &internal::s_oPipeline.pLinearSampler);
-  }
-  // ------------------------------------
-  HRESULT CRender::CreateDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& _oDepthStencilState)
-  {
-    // Create depth stencil state
-    global::dx::SafeRelease(internal::s_oPipeline.pDepthStencilState);
-    return global::dx::s_pDevice->CreateDepthStencilState(&_oDepthStencilState, &internal::s_oPipeline.pDepthStencilState);
   }
   // ------------------------------------
   HRESULT CRender::CreateRasterizerState(const D3D11_RASTERIZER_DESC& _oRasterizerState)
@@ -589,11 +603,9 @@ namespace render
       {
         // Calculate projection and invert projection
         SConstantTransforms& rTransform = internal::s_oPipeline.oRenderTransform.GetData();
-        rTransform.Projection = m_pCamera->GetProjectionMatrix();
-        rTransform.InvProjection = math::CMatrix4x4::Invert(m_pCamera->GetProjectionMatrix());
-        // Calculate view and invert view
-        rTransform.View = m_pCamera->GetViewMatrix();
-        rTransform.InvView = math::CMatrix4x4::Invert(m_pCamera->GetViewMatrix());
+        math::CMatrix4x4 mViewProjection = m_pCamera->GetViewProjection();
+        rTransform.ViewProjection = mViewProjection;
+        rTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
         // Set near + far
         rTransform.FarPlane = m_pCamera->GetFar();
         rTransform.NearPlane = m_pCamera->GetNear();
@@ -607,26 +619,18 @@ namespace render
         global::dx::s_pDeviceContext->VSSetConstantBuffers(0, 1, &pConstantBuffer);
       }
 
-      // Create depth stencil config
-      internal::s_oPipeline.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_LESS;
-      internal::s_oPipeline.oDepthStencilCfg.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-      HRESULT hResult = CreateDepthStencilState(internal::s_oPipeline.oDepthStencilCfg);
-      UNUSED_VAR(hResult);
-      assert(!FAILED(hResult));
-      // Set depth stencil state
-      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDepthStencilState, 1);
-
       // Push invalid RT
       ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.pDepthStencil->GetView();
       global::dx::s_pDeviceContext->OMSetRenderTargets(0, nullptr, pDepthStencilView);
       // Set input layout
       global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pStandardLayout);
+      // Set depth stencil state for zprepass
+      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pZPrepassStencilState, 1);
 
+      // Detach simple pixel shader
+      internal::s_oPipeline.pSimplePS->DetachShader();
       // Attach simple vertex shader
       internal::s_oPipeline.pSimpleVS->AttachShader();
-      // Detach g-buffer pass
-      internal::s_oPipeline.pGBufferDeferred->DetachShader();
-      internal::s_oPipeline.pDeferredLights->DetachShader();
 
       // Draw z-prepass
       _pScene->DrawModels();
@@ -640,12 +644,6 @@ namespace render
     // Draw models
     BeginMarker(internal::s_sDrawModelsMrk);
     {
-      internal::s_oPipeline.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-      internal::s_oPipeline.oDepthStencilCfg.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-      HRESULT hResult = CreateDepthStencilState(internal::s_oPipeline.oDepthStencilCfg);
-      UNUSED_VAR(hResult);
-      assert(!FAILED(hResult));
-
       // Clear RTs
       internal::s_oPipeline.pDiffuseRT->ClearRT(internal::s_v4ClearColor);
       internal::s_oPipeline.pNormalRT->ClearRT(internal::s_v4ClearColor);
@@ -663,7 +661,7 @@ namespace render
       ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.pDepthStencil->GetView();
       global::dx::s_pDeviceContext->OMSetRenderTargets(uRenderTargets, lstGBufferRTV, pDepthStencilView);
       // Set depth stencil state
-      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDepthStencilState, 1);
+      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDeferredStencilState, 1);
       // Attach g-buffer(pixel shader)
       internal::s_oPipeline.pGBufferDeferred->AttachShader();
 
@@ -715,17 +713,8 @@ namespace render
     // Draw primitives (forward rendering)
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
-      // Change depth stencil state
-      internal::s_oPipeline.oDepthStencilCfg.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-      internal::s_oPipeline.oDepthStencilCfg.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-      HRESULT hResult = CreateDepthStencilState(internal::s_oPipeline.oDepthStencilCfg);
-      UNUSED_VAR(hResult);
-      assert(!FAILED(hResult));
-      // Push depth stencil state
-      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDepthStencilState, 1);
-      // Set input layout
-      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pStandardLayout);
-
+      // Set depth stencil state
+      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDebugStencilState, 1);
       // Attach simple vertex shader
       internal::s_oPipeline.pSimpleVS->AttachShader();
       // Attach forward lights (pixel) shader

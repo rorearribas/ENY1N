@@ -22,13 +22,10 @@ static constexpr uint32_t s_uAlign = 16;
 // Matrix
 struct __declspec(align(s_uAlign)) SConstantTransforms
 {
-  // MVP
-  math::CMatrix4x4 View = math::CMatrix4x4::Identity;
-  math::CMatrix4x4 Projection = math::CMatrix4x4::Identity;
+  // Transforms
   math::CMatrix4x4 Model = math::CMatrix4x4::Identity;
-  // Inverse
-  math::CMatrix4x4 InvView = math::CMatrix4x4::Identity;
-  math::CMatrix4x4 InvProjection = math::CMatrix4x4::Identity;
+  math::CMatrix4x4 ViewProjection = math::CMatrix4x4::Identity;
+  math::CMatrix4x4 InvViewProjection = math::CMatrix4x4::Identity;
   // Projection CFG
   float FarPlane = 10000.0f;
   float NearPlane = 0.01f;
