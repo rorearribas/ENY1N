@@ -8,7 +8,7 @@ namespace utils
   template<typename T, uint32_t MAX_ITEMS>
   class CFixedList {
   public:
-    template<typename Inheritance = T, typename ...Args>
+    template<typename _Type = T, typename ...Args>
     inline T* Create(Args&&... args)
     {
       if (m_uRegisteredItems >= MAX_ITEMS)
@@ -16,7 +16,7 @@ namespace utils
         return nullptr;
       }
 
-      Inheritance* pItem = new Inheritance(std::forward<Args>(args)...);
+      _Type* pItem = new _Type(std::forward<Args>(args)...);
       m_lstFixed[m_uRegisteredItems] = pItem;
       return m_lstFixed[m_uRegisteredItems++];
     }

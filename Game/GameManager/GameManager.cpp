@@ -49,7 +49,7 @@ namespace game
     lstDeleteActors.clear();
 #endif
     // Update
-    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetCurrentSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetSize(); ++uIndex)
     {
       CEntity* pEntity = m_lstEntitiesList[uIndex];
       if (pEntity)

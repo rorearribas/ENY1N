@@ -31,7 +31,7 @@ namespace scene
   // ------------------------------------
   render::gfx::CPrimitive* const CScene::CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode)
   {
-    if (m_lstPrimitives.GetCurrentSize() >= m_lstPrimitives.GetMaxSize())
+    if (m_lstPrimitives.GetSize() >= m_lstPrimitives.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum primitives in the current scene!");
       return nullptr;
@@ -51,11 +51,8 @@ namespace scene
     for (uint32_t uIndex = 0; uIndex < m_lstModels.GetSize(); uIndex++)
     {
       utils::CWeakPtr<render::gfx::CModel> wpCurrentModel = m_lstModels[uIndex];
-      if (!wpCurrentModel.IsValid())
-      {
-        continue;
-      }
-      if (wpCurrentModel->AllowInstances() && wpCurrentModel->GetAssetPath() == _sModelPath)
+      bool bPreloaded = wpCurrentModel->AllowInstancing() && (wpCurrentModel->GetAssetPath() == _sModelPath);
+      if (bPreloaded)
       {
         wpModel = wpCurrentModel;
         break;
@@ -102,7 +99,7 @@ namespace scene
   // ------------------------------------
   render::lights::CPointLight* const CScene::CreatePointLight()
   {
-    if (m_lstPointLights.GetCurrentSize() >= s_uMaxPointLights)
+    if (m_lstPointLights.GetSize() >= s_uMaxPointLights)
     {
       WARNING_LOG("You have reached maximum point lights in the current scene!");
       return nullptr;
@@ -112,7 +109,7 @@ namespace scene
   // ------------------------------------
   render::lights::CSpotLight* const CScene::CreateSpotLight()
   {
-    if (m_lstSpotLights.GetCurrentSize() >= s_uMaxSpotLights)
+    if (m_lstSpotLights.GetSize() >= s_uMaxSpotLights)
     {
       WARNING_LOG("You have reached maximum spot lights in the current scene!");
       return nullptr;
@@ -152,7 +149,7 @@ namespace scene
   void CScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
     float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
   {
-    if (m_lstDebugItems.GetCurrentSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum temporal items in the current scene");
       return;
@@ -160,9 +157,6 @@ namespace scene
 
     // Fill primitive data
     auto oPrimitiveData = render::gfx::CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
-
-    // Compute normals
-    render::gfx::CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_lstVertexData, oPrimitiveData.m_lstIndices);
 
     // Create temporal item + set pos
     render::gfx::CPrimitive* pPrimitive = m_lstDebugItems.Create(oPrimitiveData, _eRenderMode);
@@ -179,7 +173,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_lstDebugItems.GetCurrentSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
@@ -201,7 +195,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_lstDebugItems.GetCurrentSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
@@ -210,14 +204,11 @@ namespace scene
     // Fill primitive data
     using namespace render::gfx;
     TCustomPrimitive oPrimitiveData = TCustomPrimitive();
-    CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, oPrimitiveData.m_lstVertexData);
+    CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, oPrimitiveData.PrimitiveData);
 
     // Fill indices
-    oPrimitiveData.m_lstIndices = (_eRenderMode == render::ERenderMode::SOLID) ? CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
+    oPrimitiveData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ? CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
       CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
-
-    // Compute normals
-    CPrimitiveUtils::ComputeNormals(oPrimitiveData.m_lstVertexData, oPrimitiveData.m_lstIndices);
 
     // Create temporal item + set pos
     CPrimitive* pSpherePrimitive = m_lstDebugItems.Create(oPrimitiveData, _eRenderMode);
@@ -232,7 +223,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_lstDebugItems.GetCurrentSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
@@ -255,7 +246,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
-    if (m_lstDebugItems.GetCurrentSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
@@ -274,18 +265,14 @@ namespace scene
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawModels()
+  void CScene::DrawModels(const render::CCamera* _pCamera)
   {
-    // Check frustum
-    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    render::CCamera* pCamera = pEngine->GetCamera();
-
     // I must change this!!!
     ID3D11Buffer* pConstantBuffer = m_oInstancingBuffer.GetBuffer();
     global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
 
     // Draw
-    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetSize(); uIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetMaxSize(); uIndex++)
     {
       utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uIndex];
       if (!pModel.IsValid())
@@ -299,7 +286,7 @@ namespace scene
         bool bDrawModel = true;
         if (pModel->IsCullingEnabled()) // Check culling
         {
-          bDrawModel = pCamera->IsOnFrustum(pModel->GetBoundingBox());
+          bDrawModel = _pCamera->IsOnFrustum(pModel->GetWorldBoudingBox());
         }
         if (bDrawModel)
         {
@@ -308,26 +295,30 @@ namespace scene
       }
 
       // Handle instances
-      std::vector<uint32_t> lstDrawableInstances = std::vector<uint32_t>();
-      for (const render::gfx::CRenderInstance& rInstance : pModel->GetInstances())
+      uint32_t uSize = 0;
+      render::gfx::TDrawableInstances lstDrawableInstances = render::gfx::TDrawableInstances();
+
+      render::gfx::TInstances& lstInstances = pModel->GetInstances();
+      for (uint32_t uInstance = 0; uInstance < lstInstances.GetMaxSize(); uInstance++)
       {
-        if (!rInstance.IsVisible())
+        render::gfx::CRenderInstance* pInstance = lstInstances[uInstance];
+        if (!pInstance || !pInstance->IsVisible())
         {
           continue;
         }
 
         bool bDrawInstance = true;
-        if (rInstance.IsCullingEnabled()) // Check culling
+        if (pInstance->IsCullingEnabled()) // Check culling
         {
-          bDrawInstance = pCamera->IsOnFrustum(rInstance.GetBoundingBox());
+          bDrawInstance = _pCamera->IsOnFrustum(pInstance->GetWorldBoundingBox());
         }
         if (bDrawInstance)
         {
-          lstDrawableInstances.emplace_back(rInstance.GetInstanceID());
+          lstDrawableInstances[uSize++] = pInstance->GetInstanceID();
         }
       }
 
-      if (lstDrawableInstances.size() > 0)
+      if (uSize > 0)
       {
         // Set instance mode!
         m_oInstancingBuffer.GetData().IsInstantiated = true;
@@ -335,7 +326,7 @@ namespace scene
         assert(bOk);
 
         // Draw instances
-        pModel->DrawInstances(lstDrawableInstances);
+        pModel->DrawInstances(lstDrawableInstances, uSize);
 
         // Set default state
         m_oInstancingBuffer.GetData().IsInstantiated = false;
@@ -356,7 +347,7 @@ namespace scene
     render::CCamera* pCamera = pEngine->GetCamera();
 
     // Draw primitives
-    for (uint32_t uIndex = 0; uIndex < m_lstPrimitives.GetCurrentSize(); uIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_lstPrimitives.GetSize(); uIndex++)
     {
       render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uIndex];
       if (!pPrimitive->IsVisible())
@@ -383,7 +374,7 @@ namespace scene
     render::CCamera* pCamera = pEngine->GetCamera();
 
     // Draw debug primitives
-    uint32_t uTempSize = m_lstDebugItems.GetCurrentSize();
+    uint32_t uTempSize = m_lstDebugItems.GetSize();
     for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
     {
       render::gfx::CPrimitive* pDebug = m_lstDebugItems[uIndex];
@@ -430,7 +421,7 @@ namespace scene
     }
 
     // Point lights
-    for (uint32_t uIndex = 0; uIndex < m_lstPointLights.GetCurrentSize(); uIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_lstPointLights.GetSize(); uIndex++)
     {
       render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex];
       if (!pPointLight)
@@ -445,10 +436,10 @@ namespace scene
       rData.PointLights[uIndex].Range = pPointLight->GetRange();
     }
     // Set the number of registered point lights
-    rData.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetCurrentSize());
+    rData.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetSize());
 
     // Spot lights
-    for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetCurrentSize(); uIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetSize(); uIndex++)
     {
       render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex];
       if (!pSpotLight)
@@ -464,7 +455,7 @@ namespace scene
       rData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
     }
     // Set the number of registered spot lights
-    rData.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetCurrentSize());
+    rData.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetSize());
 
     // Write buffer
     bool bOk = m_oLightingBuffer.WriteBuffer();

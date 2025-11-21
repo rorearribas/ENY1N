@@ -10,6 +10,7 @@
 #include "Libs/Utils/FixedPool.h"
 #include "Libs/Utils/UniquePtrList.h"
 
+namespace render { class CCamera; }
 namespace render { class CRender; }
 namespace render { namespace lights { class CDirectionalLight; } }
 
@@ -73,7 +74,7 @@ namespace scene
     friend class render::CRender;
 
     // Draw calls
-    void DrawModels();
+    void DrawModels(const render::CCamera* _pCamera);
     void DrawPrimitives();
     void DrawDebug();
     void UpdateLightning();

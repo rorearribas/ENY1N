@@ -13,12 +13,6 @@ namespace render
 {
   namespace gfx
   {
-    struct TCustomPrimitive
-    {
-      std::vector<render::gfx::TVertexData> m_lstVertexData;
-      std::vector<uint32_t> m_lstIndices;
-    };
-
     class CPrimitive
     {
     public:
@@ -51,15 +45,16 @@ namespace render
 
     private:
       HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode);
-      HRESULT CreateBuffer(const std::vector<render::gfx::TVertexData>& _lstVertexData, const std::vector<uint32_t>& _lstIndices);
+      HRESULT CreateBuffer(const std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData, const std::vector<uint32_t>& _lstIndices);
       HRESULT CalculateBoundingBox();
       void Clear();
 
     private:
-      // Primitive data
+      // Buffers
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
 
+    private:
       // Data
       ERenderMode m_eRenderMode = ERenderMode::SOLID;
       EPrimitiveType m_ePrimitiveType = EPrimitiveType::INVALID;
@@ -73,7 +68,6 @@ namespace render
 
       uint32_t m_uVertices = 0;
       uint32_t m_uIndices = 0;
-
     };
   }
 }

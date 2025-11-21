@@ -17,15 +17,14 @@ namespace render
     class CRenderInstance
     {
     public:
-      CRenderInstance(CModel* _pModel, uint32_t _uId);
+      CRenderInstance(const render::gfx::CModel* _pParent, uint32_t _uId);
       ~CRenderInstance() {}
 
-      inline const render::gfx::CModel* GetModel() const { return m_pModel; }
       inline const uint32_t GetInstanceID() const { return m_uInstanceID; }
+      inline const collision::CBoundingBox& GetWorldBoundingBox() const { return m_oWorldAABB; }
 
       void SetCullingEnabled(bool _bCull);
       inline const bool& IsCullingEnabled() const { return m_bCullEnabled; }
-      inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
 
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool& IsVisible() const { return m_bVisible; }
@@ -42,12 +41,15 @@ namespace render
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
     private:
-      render::gfx::CModel* m_pModel = nullptr;
+      void ComputeWorldAABB(const collision::CBoundingBox& _rLocalAABB, collision::CBoundingBox& _rWorldAABB_);
+
+    private:
+      const render::gfx::CModel* m_pParent = nullptr;
       uint32_t m_uInstanceID = render::instance::s_uInvalidID;
 
     private:
+      collision::CBoundingBox m_oWorldAABB = collision::CBoundingBox();
       math::CTransform m_oTransform = math::CTransform();
-      collision::CBoundingBox m_oBoundingBox = collision::CBoundingBox();
 
       bool m_bCullEnabled = true;
       bool m_bVisible = true;

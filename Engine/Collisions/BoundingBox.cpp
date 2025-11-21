@@ -18,7 +18,7 @@ namespace collision
     lstExtents[7] = m_v3Max;
   }
   // ------------------------------------
-  void CBoundingBox::DrawDebug()
+  void CBoundingBox::DrawDebug() const
   {
     // Draw cube
     engine::CEngine* pEngine = engine::CEngine::GetInstance();

@@ -123,6 +123,9 @@
     <ClInclude Include="Render\Graphics\RenderInstance.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Shaders\Deferred\StandardVS.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -231,6 +234,6 @@
     <FxCompile Include="Shaders\Forward\SimpleVS.hlsl" />
     <FxCompile Include="Shaders\Forward\SimplePS.hlsl" />
     <FxCompile Include="Shaders\Deferred\DrawTriangleVS.hlsl" />
-    <FxCompile Include="Shaders\Forward\ForwardLights.hlsl" />
+    <FxCompile Include="Shaders\Deferred\StandardVS.hlsl" />
   </ItemGroup>
 </Project>

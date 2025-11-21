@@ -47,8 +47,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
 
   // Read file
   LOG("Loading model -> " << _sPath);
-  int32_t iFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals 
-  | aiProcess_ImproveCacheLocality | aiProcess_OptimizeMeshes;
+  int32_t iFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_ImproveCacheLocality | aiProcess_OptimizeMeshes;
   const aiScene* pScene = rImporter.ReadFile(_sPath, iFlags);
   if (!pScene)
   {
@@ -205,40 +204,33 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
       const aiFace& oFace = pSceneMesh->mFaces[uJ];
       for (uint32_t uK = 0; uK < oFace.mNumIndices; uK++)
       {
-        render::gfx::TVertexData oVertexData = render::gfx::TVertexData();
+        render::gfx::TVertexData rVertexData = render::gfx::TVertexData();
         uint32_t uPosIdx = oFace.mIndices[uK];
 
         // Position
         aiVector3D v3Pos = pSceneMesh->mVertices[uPosIdx];
-        oVertexData.VertexPos = math::CVector3(v3Pos.x, v3Pos.y, v3Pos.z);
+        rVertexData.VertexPos = math::CVector3(v3Pos.x, v3Pos.y, v3Pos.z);
 
         // Normal
         if (pSceneMesh->HasNormals())
         {
           aiVector3D v3Normal = pSceneMesh->mNormals[uPosIdx];
-          oVertexData.Normal = math::CVector3(v3Normal.x, v3Normal.y, v3Normal.z);
+          rVertexData.Normal = math::CVector3(v3Normal.x, v3Normal.y, v3Normal.z);
         }
         else
         {
           WARNING_LOG("Normals are not defined correctly in: " + pMesh->GetMeshID());
         }
 
-        // Color
-        if (pSceneMesh->HasVertexColors(0))
-        {
-          aiColor4D v3Color = pSceneMesh->mColors[0][uPosIdx];
-          oVertexData.Color = math::CVector3(v3Color.r, v3Color.g, v3Color.b);
-        }
-
         // Texture coords
         if (pSceneMesh->HasTextureCoords(0))
         {
           aiVector3D v3Coord = pSceneMesh->mTextureCoords[0][uPosIdx];
-          oVertexData.TexCoord = math::CVector2(v3Coord.x, v3Coord.y);
+          rVertexData.TexCoord = math::CVector2(v3Coord.x, v3Coord.y);
         }
 
         // Add vertices
-        auto it = mVertexMap.find(oVertexData);
+        auto it = mVertexMap.find(rVertexData);
         if (it != mVertexMap.end())
         {
           lstIndices.emplace_back(it->second);
@@ -246,8 +238,8 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
         else
         {
           uint32_t uNewIdx = static_cast<uint32_t>(mVertexMap.size());
-          mVertexMap[oVertexData] = uNewIdx;
-          rModelData.Vertices.emplace_back(std::move(oVertexData));
+          mVertexMap[rVertexData] = uNewIdx;
+          rModelData.Vertices.emplace_back(std::move(rVertexData));
           lstIndices.emplace_back(uNewIdx);
         }
       }

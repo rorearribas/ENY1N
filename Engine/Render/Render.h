@@ -16,14 +16,13 @@ namespace render
     CRender(uint32_t _uX, uint32_t _uY);
     ~CRender();
 
-    void BeginDraw();
+    void PrepareFrame();
     void Draw(scene::CScene* _pScene);
-    void EndDraw();
 
     inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
-    inline void SetCurrentCamera(const render::CCamera* _pCamera) { m_pCamera = _pCamera; }
-
+    inline void SetCamera(const render::CCamera* _pCamera) { m_pCamera = _pCamera; }
     void SetModelMatrix(const math::CMatrix4x4& _mModel);
+
     inline void ShowRenderWindow(bool _bStatus) { m_pRenderWindow->SetEnabled(_bStatus); }
     void SetFillMode(D3D11_FILL_MODE _eFillMode);
 

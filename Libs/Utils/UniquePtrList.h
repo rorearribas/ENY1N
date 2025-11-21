@@ -14,7 +14,7 @@ namespace utils
     m_pPtr(_pPtr), m_uTargetGen(_uTargetGen), m_uCurrentGen(_uCurrentGen) {}
     ~CWeakPtr() { m_pPtr = nullptr; }
 
-    inline bool IsValid() const { return m_uTargetGen ? (*m_uTargetGen == m_uCurrentGen) : false; }
+    inline bool IsValid() const { return m_uTargetGen ? *m_uTargetGen == m_uCurrentGen : false; }
     inline T* GetPtr() const { return m_pPtr; }
 
     inline T* operator->() { return m_pPtr; }
@@ -37,7 +37,10 @@ namespace utils
     };
 
   public:
-    template<typename Inheritance = T, typename ...Args>
+    CUniquePtrList() {}
+    ~CUniquePtrList() { Clear(); }
+
+    template<typename _Type = T, typename ...Args>
     inline CWeakPtr<T> Create(Args&&... args)
     {
       if (m_uRegisteredItems >= MAX_ITEMS)
@@ -48,13 +51,14 @@ namespace utils
       for (uint32_t uI = 0; uI < MAX_ITEMS; ++uI)
       {
         TInternalData& pData = m_lstInternalData[uI];
-        if (pData.uPtr)
-        {
+        if (!pData.uPtr)
           continue;
-        }
+
         // Create ptr 
-        pData.uPtr = std::make_unique<Inheritance>(std::forward<Args>(args)...);
-        pData.uGeneration++, m_uRegisteredItems++;
+        pData.uPtr = std::make_unique<_Type>(std::forward<Args>(args)...);
+        pData.uGeneration++;
+
+        m_uRegisteredItems++;
         return CWeakPtr<T>(pData.uPtr.get(), &pData.uGeneration, pData.uGeneration);
       }
 
@@ -74,12 +78,13 @@ namespace utils
       {
         TInternalData& pData = m_lstInternalData[uI];
         if (pData.uPtr)
-        {
           continue;
-        }
+
         // Register data
         pData.uPtr = std::move(_pMem);
-        pData.uGeneration++, m_uRegisteredItems++;
+        pData.uGeneration++;
+
+        m_uRegisteredItems++;
         return CWeakPtr<T>(pData.uPtr.get(), &pData.uGeneration, pData.uGeneration);
       }
 

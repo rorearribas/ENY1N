@@ -11,24 +11,8 @@ namespace render
 {
   namespace gfx
   {
-    struct TVertexData
-    {
-      math::CVector3 VertexPos = math::CVector3::Zero;
-      math::CVector3 Normal = math::CVector3::Zero;
-      math::CVector3 Color = math::CVector3::One;
-      math::CVector2 TexCoord = math::CVector2::Zero;
-
-      bool operator==(const TVertexData& _other) const;
-      bool operator!=(const TVertexData& _other) const;
-    };
-
-    struct TInstanceData
-    {
-      math::CMatrix4x4 Transform = math::CMatrix4x4::Identity;
-    };
-
-    static constexpr uint32_t s_uMaxInstances = 50000u; // Testing
-    typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstances> TInstances;
+    typedef std::vector<std::shared_ptr<render::gfx::CMesh>> TMeshes;
+    typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxModelInstances> TInstances;
 
     class CModel
     {
@@ -41,17 +25,11 @@ namespace render
       };
 
     public:
-      CModel(const TModelData& _rModelData);
+      CModel(TModelData& _rModelData);
       ~CModel();
 
       void Draw();
-      void DrawInstances(const std::vector<uint32_t>& lstDrawableInstances);
-
-      TInstances& GetInstances() { return m_lstInstances; }
-      const TInstances& GetInstances() const { return m_lstInstances; }
-
-      void ComputeBoundingBox(const math::CMatrix4x4& _mTransform, collision::CBoundingBox& _rBoundingBox_) const;
-      inline const collision::CBoundingBox& GetBoundingBox() const { return m_oBoundingBox; }
+      void DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint32_t _uSize);
 
       void SetCullingEnabled(bool _bCull);
       inline const bool& IsCullingEnabled() const { return m_bCullEnabled; }
@@ -66,16 +44,26 @@ namespace render
       void SetScale(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
+      inline const collision::CBoundingBox& GetWorldBoudingBox() const { return m_oWorldAABB; }
+      inline const collision::CBoundingBox& GetLocalBoundingBox() const { return m_oLocalAABB; }
+
       CRenderInstance* CreateInstance();
       bool RemoveInstance(uint32_t _uInstanceID);
 
-      const bool HasInstances() const { return m_lstInstances.GetCurrentSize() > 0; }
-      const bool AllowInstances() const { return m_lstInstances.GetCurrentSize() < m_lstInstances.GetMaxSize(); }
-      std::string GetAssetPath() const { return std::string(m_oModelData.AssetPath); }
+      inline TInstances& GetInstances() { return m_lstInstances; }
+      inline const TInstances& GetInstances() const { return m_lstInstances; }
+
+      inline std::string GetAssetPath() const { return std::string(m_sAssetPath); }
+      inline const bool AllowInstancing() const { return m_lstInstances.GetSize() < m_lstInstances.GetMaxSize(); }
+      inline const bool HasInstances() const { return GetInstances().GetSize() > 0; }
 
     private:
-      HRESULT InitModel(const TModelData& _rModelData);
+      HRESULT InitModel(TModelData& _rModelData);
       void Clear();
+
+    private:
+      void ComputeWorldAABB(const collision::CBoundingBox& _rLocalAABB, collision::CBoundingBox& _rWorldAABB_);
+      void ComputeLocalAABB(const std::vector<render::gfx::TVertexData>& _lstVertexData, collision::CBoundingBox& _rLocalAABB_);
 
     private:
       // Buffers
@@ -83,31 +71,17 @@ namespace render
       ID3D11Buffer* m_pInstanceBuffer = nullptr;
 
     private:
-      TModelData m_oModelData = TModelData();
+      TMeshes m_lstMeshes = TMeshes();
       TInstances m_lstInstances = TInstances();
 
     private:
       math::CTransform m_oTransform = math::CTransform();
-      collision::CBoundingBox m_oBoundingBox = collision::CBoundingBox();
+      collision::CBoundingBox m_oLocalAABB = collision::CBoundingBox();
+      collision::CBoundingBox m_oWorldAABB = collision::CBoundingBox();
 
+      char m_sAssetPath[128];
       bool m_bCullEnabled = true;
       bool m_bVisible = true;
     };
   }
-}
-
-namespace std
-{
-  template <>
-  struct hash<render::gfx::TVertexData>
-  {
-    size_t operator()(const render::gfx::TVertexData& v) const
-    {
-      auto oFunc = [](float f) { return static_cast<int>(f * 1000); };
-      size_t h1 = hash<int>()(oFunc(v.VertexPos.x)) ^ hash<int>()(oFunc(v.VertexPos.y)) ^ hash<int>()(oFunc(v.VertexPos.z));
-      size_t h2 = hash<int>()(oFunc(v.Normal.x)) ^ hash<int>()(oFunc(v.Normal.y)) ^ hash<int>()(oFunc(v.Normal.z));
-      size_t h3 = hash<int>()(oFunc(v.TexCoord.x)) ^ hash<int>()(oFunc(v.TexCoord.y));
-      return h1 ^ (h2 << 1) ^ (h3 << 2);
-    }
-  };
 }

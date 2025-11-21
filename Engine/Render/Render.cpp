@@ -10,12 +10,12 @@
 #include "Libs/Macros/GlobalMacros.h"
 #include "Libs/ImGui/ImGuizmo.h"
 
-// Forward
+// Debug
 #include "Engine/Shaders/Forward/SimpleVS.h"
 #include "Engine/Shaders/Forward/SimplePS.h"
-#include "Engine/Shaders/Forward/ForwardLights.h"
 
 // Deferred
+#include "Engine/Shaders/Deferred/StandardVS.h"
 #include "Engine/Shaders/Deferred/LightsPS.h"
 #include "Engine/Shaders/Deferred/GBufferPS.h"
 #include "Engine/Shaders/Deferred/DrawTriangleVS.h"
@@ -37,14 +37,27 @@ namespace render
     static const float s_fMaxDepth(1.0f);
 
     // Standard Input
-    static const int s_iLayoutSize(8);
-    static const D3D11_INPUT_ELEMENT_DESC s_tStandardLayout[s_iLayoutSize] =
+    static const int s_iStandardLayoutSize(7);
+    static const D3D11_INPUT_ELEMENT_DESC s_tStandardLayout[s_iStandardLayoutSize] =
     {
       // Vertex layout
       { "VERTEXPOS",          0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 12
       { "NORMAL",             0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 24
-      { "COLOR",              0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 36
-      { "UV",                 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 48
+      { "UV",                 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 36
+      // Instancing
+      { "INSTANCE_TRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 16
+      { "INSTANCE_TRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 32
+      { "INSTANCE_TRANSFORM", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 48
+      { "INSTANCE_TRANSFORM", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 64
+    };
+
+    // Debug input
+    static const int s_iDebugLayoutSize(6);
+    static const D3D11_INPUT_ELEMENT_DESC s_tPrimitivesLayout[s_iDebugLayoutSize] =
+    {
+      // Vertex layout
+      { "VERTEXPOS",          0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 12
+      { "COLOR",              0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 24
       // Instancing
       { "INSTANCE_TRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 16
       { "INSTANCE_TRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 32
@@ -86,6 +99,7 @@ namespace render
 
       // Layouts
       ID3D11InputLayout* pStandardLayout = nullptr;
+      ID3D11InputLayout* pDebugLayout = nullptr;
 
       // Debug
       ID3DUserDefinedAnnotation* pUserMarker = nullptr;
@@ -93,9 +107,9 @@ namespace render
       // Forward
       shader::CShader<EShaderType::E_VERTEX>* pSimpleVS = nullptr;
       shader::CShader<EShaderType::E_PIXEL>* pSimplePS = nullptr;
-      shader::CShader<EShaderType::E_PIXEL>* pForwardLights = nullptr;
 
       // Deferred
+      shader::CShader<EShaderType::E_VERTEX>* pStandardVS = nullptr;
       shader::CShader<EShaderType::E_VERTEX>* pDrawTriangle = nullptr;
       shader::CShader<EShaderType::E_PIXEL>* pGBufferDeferred = nullptr;
       shader::CShader<EShaderType::E_PIXEL>* pDeferredLights = nullptr;
@@ -143,18 +157,21 @@ namespace render
     global::dx::SafeRelease(internal::s_oPipeline.pDeferredStencilState);
     global::dx::SafeRelease(internal::s_oPipeline.pDebugStencilState);
 
+    // Release layouts
+    global::dx::SafeRelease(internal::s_oPipeline.pStandardLayout);
+    global::dx::SafeRelease(internal::s_oPipeline.pDebugLayout);
+
     // Release rasterizer, blending..
     global::dx::SafeRelease(internal::s_oPipeline.pRasterizer);
     global::dx::SafeRelease(internal::s_oPipeline.pBlendState);
-    global::dx::SafeRelease(internal::s_oPipeline.pStandardLayout);
     global::dx::SafeRelease(internal::s_oPipeline.pUserMarker);
 
     // Release shaders (forward)
     global::ReleaseObject(internal::s_oPipeline.pSimpleVS);
     global::ReleaseObject(internal::s_oPipeline.pSimplePS);
-    global::ReleaseObject(internal::s_oPipeline.pForwardLights);
 
     // Release shaders (deferred)
+    global::ReleaseObject(internal::s_oPipeline.pStandardVS);
     global::ReleaseObject(internal::s_oPipeline.pDrawTriangle);
     global::ReleaseObject(internal::s_oPipeline.pGBufferDeferred);
     global::ReleaseObject(internal::s_oPipeline.pDeferredLights);
@@ -196,9 +213,9 @@ namespace render
     // Forward shaders
     internal::s_oPipeline.pSimpleVS = new shader::CShader<EShaderType::E_VERTEX>(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
     internal::s_oPipeline.pSimplePS = new shader::CShader<EShaderType::E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
-    internal::s_oPipeline.pForwardLights = new shader::CShader<EShaderType::E_PIXEL>(g_ForwardLights, ARRAYSIZE(g_ForwardLights));
 
     // Deferred shaders
+    internal::s_oPipeline.pStandardVS = new shader::CShader<EShaderType::E_VERTEX>(g_StandardVS, ARRAYSIZE(g_StandardVS));
     internal::s_oPipeline.pDrawTriangle = new shader::CShader<EShaderType::E_VERTEX>(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
     internal::s_oPipeline.pGBufferDeferred = new shader::CShader<EShaderType::E_PIXEL>(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
     internal::s_oPipeline.pDeferredLights = new shader::CShader<EShaderType::E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
@@ -206,11 +223,25 @@ namespace render
     // Create standard layout
     hResult = global::dx::s_pDevice->CreateInputLayout
     (
-      internal::s_tStandardLayout,
-      internal::s_iLayoutSize,
-      g_SimpleVS, 
-      sizeof(g_SimpleVS),
+      internal::s_tStandardLayout, 
+      internal::s_iStandardLayoutSize,
+      g_StandardVS, 
+      sizeof(g_StandardVS),
       &internal::s_oPipeline.pStandardLayout
+    );
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Create debug layout
+    hResult = global::dx::s_pDevice->CreateInputLayout
+    (
+      internal::s_tPrimitivesLayout,
+      internal::s_iDebugLayoutSize,
+      g_SimpleVS,
+      sizeof(g_SimpleVS),
+      &internal::s_oPipeline.pDebugLayout
     );
     if (FAILED(hResult))
     {
@@ -523,9 +554,9 @@ namespace render
     oSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
     oSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     oSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    oSamplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+    oSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     oSamplerDesc.MipLODBias = 0.0f;
-    oSamplerDesc.MaxAnisotropy = 16u;
+    oSamplerDesc.MaxAnisotropy = 1u;
     oSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     oSamplerDesc.BorderColor[0] = 0.0f;
     oSamplerDesc.BorderColor[1] = 0.0f;
@@ -572,16 +603,21 @@ namespace render
     }
   }
   // ------------------------------------
-  void CRender::BeginDraw()
+  void CRender::PrepareFrame()
   {
     // Clear resources
     BeginMarker(internal::s_sPrepareFrameMrk);
     {
       // Clear back buffer
       ::global::dx::s_pDeviceContext->ClearRenderTargetView(internal::s_oPipeline.pBackBuffer, internal::s_v4ClearColor);
+
+      // Clear RTs
+      internal::s_oPipeline.pDiffuseRT->ClearRT(internal::s_v4ClearColor);
+      internal::s_oPipeline.pNormalRT->ClearRT(internal::s_v4ClearColor);
+      internal::s_oPipeline.pSpecularRT->ClearRT(internal::s_v4ClearColor);
+
       // Clear depth stencil view
-      ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.pDepthStencil->GetView();
-      ::global::dx::s_pDeviceContext->ClearDepthStencilView(pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+      ::global::dx::s_pDeviceContext->ClearDepthStencilView(internal::s_oPipeline.pDepthStencil->GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
       // Prepare ImGu
       ::ImGui_ImplDX11_NewFrame();
@@ -630,10 +666,10 @@ namespace render
       // Detach simple pixel shader
       internal::s_oPipeline.pSimplePS->DetachShader();
       // Attach simple vertex shader
-      internal::s_oPipeline.pSimpleVS->AttachShader();
+      internal::s_oPipeline.pStandardVS->AttachShader();
 
       // Draw z-prepass
-      _pScene->DrawModels();
+      _pScene->DrawModels(m_pCamera);
 
       // Copy depth texture!
       ID3D11Texture2D* pTexture = internal::s_oPipeline.pDepthStencil->GetData();
@@ -644,11 +680,6 @@ namespace render
     // Draw models
     BeginMarker(internal::s_sDrawModelsMrk);
     {
-      // Clear RTs
-      internal::s_oPipeline.pDiffuseRT->ClearRT(internal::s_v4ClearColor);
-      internal::s_oPipeline.pNormalRT->ClearRT(internal::s_v4ClearColor);
-      internal::s_oPipeline.pSpecularRT->ClearRT(internal::s_v4ClearColor);
-
       // Set GBuffer RTVs
       static constexpr uint32_t uRenderTargets(3);
       ID3D11RenderTargetView* lstGBufferRTV[uRenderTargets] =
@@ -668,7 +699,7 @@ namespace render
       // Set linear sampler(read textures)
       global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oPipeline.pLinearSampler);
       // Draw models
-      _pScene->DrawModels();
+      _pScene->DrawModels(m_pCamera);
 
       // Remove render targets
       ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };
@@ -713,25 +744,26 @@ namespace render
     // Draw primitives (forward rendering)
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
+      // Set input layout
+      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pDebugLayout);
       // Set depth stencil state
       global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDebugStencilState, 1);
-      // Attach simple vertex shader
+
+      // Attach shaders
       internal::s_oPipeline.pSimpleVS->AttachShader();
-      // Attach forward lights (pixel) shader
-      internal::s_oPipeline.pForwardLights->AttachShader();
+      internal::s_oPipeline.pSimplePS->AttachShader();
+
       // Draw primitives
       _pScene->DrawPrimitives();
-
-      // Attach simple pixel shader
-      internal::s_oPipeline.pSimplePS->AttachShader();
       // Draw debug
       _pScene->DrawDebug();
+
+      //// Detach shaders
+      //internal::s_oPipeline.pSimpleVS->DetachShader();
+      //internal::s_oPipeline.pSimplePS->DetachShader();
     }
     EndMarker();
-  }
-  // ------------------------------------
-  void CRender::EndDraw()
-  {
+
     // Update resources
     global::dx::s_pDeviceContext->OMSetBlendState(internal::s_oPipeline.pBlendState, nullptr, 0xFFFFFFFF);
     global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pRasterizer);

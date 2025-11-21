@@ -23,11 +23,12 @@ namespace engine
     assert(!m_bInitialized);
     LOG("Initializing engine...");
 
-    // Create render
-    m_pRender = new render::CRender(_uWidth, _uHeight);
-
     // Create camera
     m_pCamera = new render::CCamera();
+
+    // Create render
+    m_pRender = new render::CRender(_uWidth, _uHeight);
+    m_pRender->SetCamera(m_pCamera);
 
     // Create scene manager
     m_pSceneManager = new scene::CSceneManager();
@@ -42,23 +43,16 @@ namespace engine
     SUCCESS_LOG("Engine initialized correctly!");
   }
   // ------------------------------------
-  void CEngine::PushBeginDraw()
+  void CEngine::PrepareFrame()
   {
-    // Begin
-    m_pRender->BeginDraw();
+    // Prepare
+    m_pRender->PrepareFrame();
   }
   // ------------------------------------
-  void CEngine::PushDraw()
+  void CEngine::Draw()
   {
-    // Draw current scene
-    m_pRender->SetCurrentCamera(m_pCamera);
+    // Draw
     m_pRender->Draw(m_pSceneManager->GetCurrentScene());
-  }
-  // ------------------------------------
-  void CEngine::PushEndDraw()
-  {
-    // End 
-    m_pRender->EndDraw();
   }
   // ------------------------------------
   render::gfx::CPrimitive* const CEngine::CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)

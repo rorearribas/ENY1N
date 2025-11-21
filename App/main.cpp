@@ -89,23 +89,23 @@ int main()
 
   std::vector<std::string> vAvailableModels = 
   {
-    "models/spaceship/fbx/spaceship.fbx",
+    "models/house/fbx/cottage_fbx.fbx"/*,
     "models/wolf/Wolf.fbx",
-    "models/plant/Low-Poly Plant_.fbx"
+    "models/plant/Low-Poly Plant_.fbx"*/
   };
 
-  for (uint32_t uIndex = 0; uIndex < 1000; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 50; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f),GenerateFloat(10.0f, 100.0f), GenerateFloat(-100.0f, 100.0f)));
+    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f),GenerateFloat(10.0f, 100.0f), GenerateFloat(-10.0f, 10.0f)));
 
-    const std::string& sModel = GenerateString(vAvailableModels);
+    //const std::string& sModel = /*GenerateString(vAvailableModels*/);
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-    pModelTest->LoadModel(sModel.c_str());
+    pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
     pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
   }
 
-  //// OBJ test
+  // OBJ test
   //game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
   //pModelEnt2->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
   //game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
@@ -127,7 +127,8 @@ int main()
     pBoxTest->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::EPrimitiveType::E3D_CUBE, render::ERenderMode::SOLID);
-    pModelCompTest->SetColor(math::CVector3(1.0f, 1.0f, 1.0f));
+    pModelCompTest->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
+    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
   }
 
   render::CRender* const pRender = pEngine->GetRender();
@@ -147,7 +148,7 @@ int main()
     else
     {
       // Push begin draw
-      pEngine->PushBeginDraw();
+      pEngine->PrepareFrame();
 
       // Calculate delta
       pTimeManager->BeginFrame();
@@ -192,13 +193,23 @@ int main()
         m_fFixedDeltaAccumulator -= fFixedDelta;
       }
 
-      // Draw
-      pEngine->PushDraw();
-
-      ImGui::Begin("TEST - RAYCAST");
-      if (ImGui::Button("Enabled"))
+      ImGui::Begin("Testing");
+      if (ImGui::Button("Enabled Raycast"))
       {
         bThrowRay = !bThrowRay;
+      }
+      if (ImGui::Button("Add random models (500 units)"))
+      {
+        for (uint32_t uIndex = 0; uIndex < 500; uIndex++)
+        {
+          game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+          pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-100.0f, 100.0f)));
+
+          const std::string& sModel = GenerateString(vAvailableModels);
+          game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
+          pModelTest->LoadModel(sModel.c_str());
+          pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+        }
       }
       ImGui::End();
 
@@ -217,8 +228,10 @@ int main()
       }
       ImGui::End();
 
-      // End draw
-      pEngine->PushEndDraw();
+      // Draw
+      pEngine->Draw();
+
+      // End frame
       pTimeManager->EndFrame();
     }
   }

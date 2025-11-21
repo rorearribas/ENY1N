@@ -1,4 +1,4 @@
-// Simple vertex shader - ENY1N
+// Standard vertex shader - ENY1N
 
 cbuffer ConstantTransforms : register(b0)
 {
@@ -24,7 +24,8 @@ struct VS_INPUT
 {
   // Layout
   float3 position : VERTEXPOS;
-  float3 color: COLOR;
+  float3 normal : NORMAL;
+  float2 uv : UV;
 
   // Instancing
   float4x4 instanceMatrix : INSTANCE_TRANSFORM;
@@ -34,7 +35,9 @@ struct VS_INPUT
 struct PS_INPUT
 {
   float4 position : SV_POSITION;
-  float3 color: COLOR;
+  float3 worldpos : POSITION;
+  float3 normal : NORMAL;
+  float2 uv : UV;
 };
 
 PS_INPUT VSMain(VS_INPUT input)
@@ -42,8 +45,14 @@ PS_INPUT VSMain(VS_INPUT input)
   PS_INPUT output;
 
   matrix modelMatrix = IsInstantiated ? input.instanceMatrix : Model;
-  output.position = mul(ViewProjection, mul(modelMatrix, float4(input.position, 1.0)));
-  output.color = input.color;
+  float4 worldPosition = mul(modelMatrix, float4(input.position, 1.0));
+
+  output.position = mul(ViewProjection, worldPosition);
+  output.worldpos = worldPosition.xyz;
+
+  float3x3 normalMatrix = transpose((float3x3)modelMatrix);
+  output.normal = normalize(mul(normalMatrix, input.normal));
+  output.uv = input.uv;
 
   return output;
 }

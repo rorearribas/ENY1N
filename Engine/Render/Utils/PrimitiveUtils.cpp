@@ -7,7 +7,7 @@ namespace render
   namespace gfx
   {
     // Triangle Primitive
-    const std::vector<render::gfx::TVertexData> CPrimitiveUtils::s_oTrianglePrimitive =
+    const std::vector<render::gfx::TPrimitiveData> CPrimitiveUtils::s_oTrianglePrimitive =
     {
       { math::CVector3(0.0f, 0.5f, 0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
       { math::CVector3(0.5f, -0.5f,  0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
@@ -15,53 +15,53 @@ namespace render
     };
 
     // Cube Primitive
-    const std::vector<render::gfx::TVertexData> CPrimitiveUtils::s_oCubePrimitive =
+    const std::vector<render::gfx::TPrimitiveData> CPrimitiveUtils::s_oCubePrimitive =
     {
       // FRONT
-     { math::CVector3(-0.5f, -0.5f,  0.5f), math::CVector3(0.0f,  0.0f,  1.0f) },
-     { math::CVector3(-0.5f,  0.5f,  0.5f), math::CVector3(0.0f,  0.0f,  1.0f) },
-     { math::CVector3(0.5f,  0.5f,  0.5f), math::CVector3(0.0f,  0.0f,  1.0f) },
-     { math::CVector3(0.5f, -0.5f,  0.5f), math::CVector3(0.0f,  0.0f,  1.0f) },
+      { math::CVector3(-0.5f, -0.5f, 0.5f),  math::CVector3(0.0f, 0.0f,  1.0f) },
+      { math::CVector3(-0.5f, 0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
+      { math::CVector3(0.5f,  0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
+      { math::CVector3(0.5f, -0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
 
-     // BACK
-     { math::CVector3(0.5f, -0.5f, -0.5f), math::CVector3(0.0f,  0.0f, -1.0f) },
-     { math::CVector3(0.5f,  0.5f, -0.5f), math::CVector3(0.0f,  0.0f, -1.0f) },
-     { math::CVector3(-0.5f,  0.5f, -0.5f), math::CVector3(0.0f,  0.0f, -1.0f) },
-     { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(0.0f,  0.0f, -1.0f) },
+      // BACK
+      { math::CVector3(0.5f, -0.5f,  -0.5f), math::CVector3(0.0f, 0.0f, -1.0f) },
+      { math::CVector3(0.5f,  0.5f,  -0.5f), math::CVector3(0.0f, 0.0f, -1.0f) },
+      { math::CVector3(-0.5f, 0.5f, -0.5f),  math::CVector3(0.0f, 0.0f, -1.0f) },
+      { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(0.0f, 0.0f, -1.0f) },
 
-     // LEFT
-     { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(-1.0f,  0.0f,  0.0f) },
-     { math::CVector3(-0.5f,  0.5f, -0.5f), math::CVector3(-1.0f,  0.0f,  0.0f) },
-     { math::CVector3(-0.5f,  0.5f,  0.5f), math::CVector3(-1.0f,  0.0f,  0.0f) },
-     { math::CVector3(-0.5f, -0.5f,  0.5f), math::CVector3(-1.0f,  0.0f,  0.0f) },
+      // LEFT
+      { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(-1.0f, 0.0f, 0.0f) },
+      { math::CVector3(-0.5f, 0.5f, -0.5f),  math::CVector3(-1.0f, 0.0f, 0.0f) },
+      { math::CVector3(-0.5f, 0.5f, 0.5f),   math::CVector3(-1.0f, 0.0f, 0.0f) },
+      { math::CVector3(-0.5f, -0.5f, 0.5f),  math::CVector3(-1.0f, 0.0f, 0.0f) },
 
-     // RIGHT
-     { math::CVector3(0.5f, -0.5f,  0.5f), math::CVector3(1.0f,  0.0f,  0.0f) },
-     { math::CVector3(0.5f,  0.5f,  0.5f), math::CVector3(1.0f,  0.0f,  0.0f) },
-     { math::CVector3(0.5f,  0.5f, -0.5f), math::CVector3(1.0f,  0.0f,  0.0f) },
-     { math::CVector3(0.5f, -0.5f, -0.5f), math::CVector3(1.0f,  0.0f,  0.0f) },
+      // RIGHT
+      { math::CVector3(0.5f, -0.5f,  0.5f),  math::CVector3(1.0f, 0.0f, 0.0f)  },
+      { math::CVector3(0.5f,  0.5f,  0.5f),  math::CVector3(1.0f, 0.0f, 0.0f)  },
+      { math::CVector3(0.5f,  0.5f, -0.5f),  math::CVector3(1.0f, 0.0f, 0.0f)  },
+      { math::CVector3(0.5f, -0.5f, -0.5f),  math::CVector3(1.0f, 0.0f, 0.0f)  },
 
-     // UP
-     { math::CVector3(-0.5f,  0.5f,  0.5f), math::CVector3(0.0f,  1.0f,  0.0f) },
-     { math::CVector3(-0.5f,  0.5f, -0.5f), math::CVector3(0.0f,  1.0f,  0.0f) },
-     { math::CVector3(0.5f,  0.5f, -0.5f), math::CVector3(0.0f,  1.0f,  0.0f) },
-     { math::CVector3(0.5f,  0.5f,  0.5f), math::CVector3(0.0f,  1.0f,  0.0f) },
+      // UP
+      { math::CVector3(-0.5f, 0.5f,  0.5f),  math::CVector3(0.0f, 1.0f, 0.0f)  },
+      { math::CVector3(-0.5f, 0.5f, -0.5f),  math::CVector3(0.0f, 1.0f, 0.0f)  },
+      { math::CVector3(0.5f,  0.5f, -0.5f),  math::CVector3(0.0f, 1.0f, 0.0f)  },
+      { math::CVector3(0.5f,  0.5f,  0.5f),  math::CVector3(0.0f, 1.0f, 0.0f)  },
 
-     // BOTTOM
-     { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(0.0f, -1.0f,  0.0f), math::CVector3(1,1,1) },
-     { math::CVector3(-0.5f, -0.5f,  0.5f), math::CVector3(0.0f, -1.0f,  0.0f), math::CVector3(1,1,1) },
-     { math::CVector3(0.5f, -0.5f,  0.5f), math::CVector3(0.0f, -1.0f,  0.0f), math::CVector3(1,1,1) },
-     { math::CVector3(0.5f, -0.5f, -0.5f), math::CVector3(0.0f, -1.0f,  0.0f), math::CVector3(1,1,1) },
+      // BOTTOM
+      { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(0.0f, -1.0f, 0.0f) },
+      { math::CVector3(-0.5f, -0.5f, 0.5f),  math::CVector3(0.0f, -1.0f, 0.0f) },
+      { math::CVector3(0.5f, -0.5f, 0.5f),   math::CVector3(0.0f, -1.0f, 0.0f) },
+      { math::CVector3(0.5f, -0.5f, -0.5f),  math::CVector3(0.0f, -1.0f, 0.0f) },
     };
 
     // Plane Primitive
     static const math::CVector3 s_oPlaneNormal(0.0f, 1.0f, 0.0f);
-    const std::vector<render::gfx::TVertexData> CPrimitiveUtils::s_oPlanePrimitive =
+    const std::vector<render::gfx::TPrimitiveData> CPrimitiveUtils::s_oPlanePrimitive =
     {
-      { math::CVector3(-0.5f, 0.0f, -0.5f), s_oPlaneNormal },  // Bottom-left
-      { math::CVector3(-0.5f, 0.0f,  0.5f), s_oPlaneNormal },  // Top-left
-      { math::CVector3(0.5f, 0.0f,  0.5f), s_oPlaneNormal },  // Top-right
-      { math::CVector3(0.5f, 0.0f, -0.5f), s_oPlaneNormal }   // Bottom-right
+      { math::CVector3(-0.5f, 0.0f, -0.5f),  s_oPlaneNormal },  // Bottom-left
+      { math::CVector3(-0.5f, 0.0f,  0.5f),  s_oPlaneNormal },  // Top-left
+      { math::CVector3(0.5f,  0.0f,  0.5f),  s_oPlaneNormal },  // Top-right
+      { math::CVector3(0.5f,  0.0f, -0.5f),  s_oPlaneNormal }   // Bottom-right
     };
 
     // 2D Square Indices
@@ -96,23 +96,18 @@ namespace render
       // FRONT
       0, 3, 1,
       1, 3, 2,
-
       // BACK
       4, 7, 5,
       5, 7, 6,
-
       // LEFT
       8, 11, 9,
       9, 11, 10,
-
       // RIGHT
       12, 15, 13,
       13, 15, 14,
-
       // UP
       16, 19, 17,
       17, 19, 18,
-
       // BOTTOM
       20, 23, 21,
       21, 23, 22
@@ -121,19 +116,14 @@ namespace render
     {
       // FRONT FACE EDGES
       0, 1, 1, 2, 2, 3, 3, 0,
-
       // BACK FACE EDGES
       4, 5, 5, 6, 6, 7, 7, 4,
-
       // LEFT FACE EDGES
       8, 9, 9, 10, 10, 11, 11, 8,
-
       // RIGHT FACE EDGES
       12, 13, 13, 14, 14, 15, 15, 12,
-
       // TOP FACE EDGES
       16, 17, 17, 18, 18, 19, 19, 16,
-
       // BOTTOM FACE EDGES
       20, 21, 21, 22, 22, 23, 23, 20
     };
@@ -168,11 +158,11 @@ namespace render
     void CPrimitiveUtils::CreateSphere
     (
       float _fRadius, int _iStacks, int _iSlices,
-      std::vector<render::gfx::TVertexData>& _lstVertexData_
+      std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData_
     )
     {
       // Clear
-      _lstVertexData_.clear();
+      _lstPrimitiveData_.clear();
 
       // Generate vertex data
       for (int uX = 0; uX <= _iStacks; ++uX)
@@ -187,14 +177,11 @@ namespace render
           float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
 
           // Add vertex
-          render::gfx::TVertexData oVertexData = render::gfx::TVertexData();
+          render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
           math::CVector3 v3VertexPos(fX, fY, fZ);
 
-          oVertexData.VertexPos = v3VertexPos;
-          oVertexData.Normal = math::CVector3::Normalize(v3VertexPos);
-          oVertexData.TexCoord = math::CVector2((static_cast<float>(uJ) / _iSlices), 1.0f - (static_cast<float>(uX) / _iStacks));
-
-          _lstVertexData_.emplace_back(oVertexData);
+          rPrimitiveData.VertexPos = v3VertexPos;
+          _lstPrimitiveData_.emplace_back(rPrimitiveData);
         }
       }
     }
@@ -286,9 +273,9 @@ namespace render
             }
 
             // Add vertex
-            render::gfx::TVertexData oVertexData = render::gfx::TVertexData();
-            oVertexData.VertexPos = math::CVector3(fX, fY, fZ);
-            oCustomPrimitive.m_lstVertexData.emplace_back(oVertexData);
+            render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
+            rPrimitiveData.VertexPos = math::CVector3(fX, fY, fZ);
+            oCustomPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
           }
         }
       };
@@ -304,11 +291,11 @@ namespace render
             int iNext = iCurrent + 1;
             int iAbove = iCurrent + (_iSlices + 1);
 
-            oCustomPrimitive.m_lstIndices.emplace_back(iCurrent);
-            oCustomPrimitive.m_lstIndices.emplace_back(iNext);
+            oCustomPrimitive.Indices.emplace_back(iCurrent);
+            oCustomPrimitive.Indices.emplace_back(iNext);
 
-            oCustomPrimitive.m_lstIndices.emplace_back(iCurrent);
-            oCustomPrimitive.m_lstIndices.emplace_back(iAbove);
+            oCustomPrimitive.Indices.emplace_back(iCurrent);
+            oCustomPrimitive.Indices.emplace_back(iAbove);
           }
         }
       };
@@ -323,23 +310,23 @@ namespace render
             int iFirst = _iStartIdx + (uX * (_iSlices + 1)) + uJ;
             int iSecond = iFirst + _iSlices + 1;
 
-            oCustomPrimitive.m_lstIndices.emplace_back(iFirst);
-            oCustomPrimitive.m_lstIndices.emplace_back(_bInverseCCW ? iSecond : (iFirst + 1));
-            oCustomPrimitive.m_lstIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : iSecond);
+            oCustomPrimitive.Indices.emplace_back(iFirst);
+            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? iSecond : (iFirst + 1));
+            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? (iFirst + 1) : iSecond);
 
-            oCustomPrimitive.m_lstIndices.emplace_back(iSecond);
-            oCustomPrimitive.m_lstIndices.emplace_back(_bInverseCCW ? (iSecond + 1) : (iFirst + 1));
-            oCustomPrimitive.m_lstIndices.emplace_back(_bInverseCCW ? (iFirst + 1) : (iSecond + 1));
+            oCustomPrimitive.Indices.emplace_back(iSecond);
+            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? (iSecond + 1) : (iFirst + 1));
+            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? (iFirst + 1) : (iSecond + 1));
           }
         }
       };
 
       // Top semi-sphere
-      int iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_lstVertexData.size());
+      int iCacheStartIdx = static_cast<int>(oCustomPrimitive.PrimitiveData.size());
       oComputeSemiSphereLamb();
-      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_lstVertexData.size()); ++iIdx)
+      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.PrimitiveData.size()); ++iIdx)
       {
-        oCustomPrimitive.m_lstVertexData[iIdx].VertexPos.y += (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.PrimitiveData[iIdx].VertexPos.y += (fDiff >= 0 ? fDiff : 0.0f);
       }
       // Compute top semi-sphere indices
       _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx) :
@@ -349,7 +336,7 @@ namespace render
       if (fDiff >= 0.0f)
       {
         const int s_iMaxBodySubdv = _eRenderMode == render::ERenderMode::SOLID ? _iSubvH : 1;
-        iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_lstVertexData.size());
+        iCacheStartIdx = static_cast<int>(oCustomPrimitive.PrimitiveData.size());
         for (int iX = 0; iX <= s_iMaxBodySubdv; ++iX)
         {
           float fY = math::Lerp(-fHalfHeight + _fRadius, fHalfHeight - _fRadius, static_cast<float>(iX) / s_iMaxBodySubdv);
@@ -359,9 +346,9 @@ namespace render
             float fX = _fRadius * cosf(fTheta);
             float fZ = _fRadius * sinf(fTheta);
 
-            render::gfx::TVertexData oVertexData = {};
-            oVertexData.VertexPos = math::CVector3(fX, fY, fZ);
-            oCustomPrimitive.m_lstVertexData.emplace_back(oVertexData);
+            render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
+            rPrimitiveData.VertexPos = math::CVector3(fX, fY, fZ);
+            oCustomPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
           }
         }
         // Compute body indices
@@ -370,11 +357,11 @@ namespace render
       }
 
       // Bottom semi-sphere
-      iCacheStartIdx = static_cast<int>(oCustomPrimitive.m_lstVertexData.size());
+      iCacheStartIdx = static_cast<int>(oCustomPrimitive.PrimitiveData.size());
       oComputeSemiSphereLamb(true);
-      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.m_lstVertexData.size()); ++iIdx)
+      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.PrimitiveData.size()); ++iIdx)
       {
-        oCustomPrimitive.m_lstVertexData[iIdx].VertexPos.y -= (fDiff >= 0 ? fDiff : 0.0f);
+        oCustomPrimitive.PrimitiveData[iIdx].VertexPos.y -= (fDiff >= 0 ? fDiff : 0.0f);
       }
 
       // Compute bottom semi-sphere indices
@@ -389,8 +376,8 @@ namespace render
     {
       // Create primitive
       gfx::TCustomPrimitive oCustomPrimitive;
-      oCustomPrimitive.m_lstVertexData = s_oPlanePrimitive;
-      oCustomPrimitive.m_lstIndices = _eRenderMode == render::ERenderMode::SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
+      oCustomPrimitive.PrimitiveData = s_oPlanePrimitive;
+      oCustomPrimitive.Indices = _eRenderMode == render::ERenderMode::SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
 
       // Invert indices
       const math::CVector3& v3Normal = _oPlane.GetNormal();
@@ -399,7 +386,7 @@ namespace render
         size_t iSize = _eRenderMode == render::ERenderMode::SOLID ? 3 : 2;
         for (size_t i = 0; i < s_oPlaneIndices.size(); i += iSize)
         {
-          std::swap(oCustomPrimitive.m_lstIndices[i], oCustomPrimitive.m_lstIndices[i + 2]);
+          std::swap(oCustomPrimitive.Indices[i], oCustomPrimitive.Indices[i + 2]);
         }
       }
 
@@ -421,11 +408,10 @@ namespace render
         mRot = math::CMatrix4x4::RotationAxis(v3Dir, fAngle);
       }
 
-      // Rotate vertices
-      for (auto& oVertexData : oCustomPrimitive.m_lstVertexData)
+      // Apply vertex pos
+      for (auto& oVertexData : oCustomPrimitive.PrimitiveData)
       {
         oVertexData.VertexPos = mRot * oVertexData.VertexPos;
-        oVertexData.Normal = v3Normal;
       }
 
       return oCustomPrimitive;
@@ -438,71 +424,19 @@ namespace render
       gfx::TCustomPrimitive oPrimitive = gfx::TCustomPrimitive();
 
       // Fill data 
-      render::gfx::TVertexData oVertexData = render::gfx::TVertexData();
-      oVertexData.VertexPos = _v3Origin;
+      render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
+      rPrimitiveData.VertexPos = _v3Origin;
 
       uint32_t uIndex = 0;
-      oPrimitive.m_lstVertexData.emplace_back(oVertexData);
-      oPrimitive.m_lstIndices.emplace_back(uIndex++);
+      oPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
+      oPrimitive.Indices.emplace_back(uIndex++);
 
       // Fill data 
-      oVertexData.VertexPos = _v3Dest;
-      oPrimitive.m_lstVertexData.emplace_back(oVertexData);
-      oPrimitive.m_lstIndices.emplace_back(uIndex);
+      rPrimitiveData.VertexPos = _v3Dest;
+      oPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
+      oPrimitive.Indices.emplace_back(uIndex);
 
       return oPrimitive;
-    }
-
-    // ------------------------------------
-    void CPrimitiveUtils::ComputeNormals(std::vector<TVertexData>& _oVertexData, const std::vector<uint32_t>& _lstIndices)
-    {
-      // Reset normals
-      for (auto& oVertex : _oVertexData)
-      {
-        oVertex.Normal = math::CVector3::Zero;
-      }
-
-      // Calculate normals
-      long lSize = static_cast<long>(_lstIndices.size());
-      for (long lIdx = 0; lIdx < lSize; lIdx += 3)
-      {
-        if (lIdx + 1 >= lSize || lIdx + 2 >= lSize)
-        {
-          break;
-        }
-
-        int i0 = _lstIndices[lIdx];
-        int i1 = _lstIndices[lIdx + 1];
-        int i2 = _lstIndices[lIdx + 2];
-
-        const math::CVector3& v0 = _oVertexData[i0].VertexPos;
-        const math::CVector3& v1 = _oVertexData[i1].VertexPos;
-        const math::CVector3& v2 = _oVertexData[i2].VertexPos;
-
-        math::CVector3 v3Edge01 = v1 - v0;
-        math::CVector3 v3Edge02 = v2 - v0;
-        math::CVector3 v3Normal = math::CVector3::Normalize(math::CVector3::Cross(v3Edge01, v3Edge02));
-
-        _oVertexData[i0].Normal += v3Normal;
-        _oVertexData[i1].Normal += v3Normal;
-        _oVertexData[i2].Normal += v3Normal;
-      }
-
-      // Normalize
-      for (auto& oVertex : _oVertexData)
-      {
-        oVertex.Normal = math::CVector3::Normalize(oVertex.Normal);
-      }
-    }
-
-    // ------------------------------------
-    void CPrimitiveUtils::ComputeBasicNormals(std::vector<TVertexData>& _oVertexData)
-    {
-      // Set normals
-      for (auto& oVertex : _oVertexData)
-      {
-        oVertex.Normal = math::CVector3::Normalize(oVertex.VertexPos);
-      }
     }
   }
 }

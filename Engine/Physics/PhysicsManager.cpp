@@ -20,7 +20,7 @@ namespace physics
   // ------------------------------------
   void CPhysicsManager::Update(float _fDeltaTime)
   {
-    for (uint32_t uIndex = 0; uIndex < m_lstRigidbodys.GetCurrentSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstRigidbodys.GetSize(); ++uIndex)
     {
       physics::CRigidbody* pRigidbody = m_lstRigidbodys[uIndex];
       bool bDynamic = pRigidbody->GetRigidbodyType() == physics::ERigidbodyType::DYNAMIC;
@@ -68,7 +68,7 @@ namespace physics
   // ------------------------------------
   CRigidbody* CPhysicsManager::CreateRigidbody(ERigidbodyType _eRigidbodyType)
   {
-    if (m_lstRigidbodys.GetCurrentSize() >= m_lstRigidbodys.GetMaxSize())
+    if (m_lstRigidbodys.GetSize() >= m_lstRigidbodys.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum rigidbodys!");
       return nullptr;

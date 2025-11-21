@@ -13,17 +13,7 @@ namespace render
   namespace gfx
   {
     // ------------------------------------
-    bool TVertexData::operator==(const TVertexData& _other) const
-    {
-      return VertexPos == _other.VertexPos && Normal == _other.Normal && TexCoord == _other.TexCoord;
-    }
-    // ------------------------------------
-    bool TVertexData::operator!=(const TVertexData& _other) const
-    {
-      return !(*this == _other);
-    }
-    // ------------------------------------
-    CModel::CModel(const TModelData& _rModelData)
+    CModel::CModel(TModelData& _rModelData)
     {
       HRESULT hResult = InitModel(_rModelData);
       UNUSED_VAR(hResult);
@@ -52,9 +42,9 @@ namespace render
       pEngine->GetRender()->SetModelMatrix(m_oTransform.GetMatrix());
 
       // Draw meshes
-      for (auto& pMesh : m_oModelData.Meshes)
+      for (std::shared_ptr<CMesh>& rMesh : m_lstMeshes)
       {
-        pMesh->Draw();
+        rMesh->Draw();
       }
 
       // Unbind buffers
@@ -63,25 +53,25 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
     }
     // ------------------------------------
-    void CModel::DrawInstances(const std::vector<uint32_t>& lstDrawableInstances)
+    void CModel::DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint32_t _uSize)
     {
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
       HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
-      UNUSED_VAR(hResult);
-      assert(!FAILED(hResult));
-
-      // Update instance data
-      TInstanceData* pInstanceData = static_cast<TInstanceData*>(oMappedSubresource.pData);
-      assert(pInstanceData);
+      if (FAILED(hResult))
+      {
+        ERROR_LOG("Error mapping buffer!");
+        return;
+      }
 
       // Set values
-      uint32_t uInstanceCount = static_cast<uint32_t>(lstDrawableInstances.size());
-      for (uint32_t uIndex = 0; uIndex < uInstanceCount; ++uIndex)
+      TInstanceData* pInstanceData = static_cast<TInstanceData*>(oMappedSubresource.pData);
+      for (uint32_t uIndex = 0; uIndex < _uSize; ++uIndex)
       {
-        uint32_t uTargetID = lstDrawableInstances[uIndex];
+        uint32_t uTargetID = _lstDrawableInstances[uIndex];
         if (render::gfx::CRenderInstance* pInstance = m_lstInstances[uTargetID])
         {
           pInstanceData[uIndex].Transform = pInstance->GetMatrix();
+          pInstance->GetWorldBoundingBox().DrawDebug();
         }
       }
 
@@ -104,46 +94,15 @@ namespace render
       pEngine->GetRender()->SetModelMatrix(m_oTransform.GetMatrix());
 
       // Draw instancing
-      for (auto& pMesh : m_oModelData.Meshes)
+      for (std::shared_ptr<CMesh>& rMesh : m_lstMeshes)
       {
-        pMesh->Draw(uInstanceCount);
+        rMesh->Draw(_uSize);
       }
 
       // Unbind buffers
       ID3D11Buffer* pRemoveBuffers[uBuffersCount] = { nullptr, nullptr };
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pRemoveBuffers, lstStrides, lstOffsets);
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
-    }
-    // ------------------------------------
-    void CModel::ComputeBoundingBox(const math::CMatrix4x4& _mTransform, collision::CBoundingBox& _rBoundingBox_) const
-    {
-      if (m_oModelData.Vertices.empty())
-      {
-        return;
-      }
-
-      // Compute bounding box
-      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
-      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-
-      for (auto& oVertexData : m_oModelData.Vertices)
-      {
-        // Get vertex pos
-        math::CVector3 v3VertexPos = _mTransform * oVertexData.VertexPos;
-
-        // Calculate Min
-        v3Min.x = math::Min<float>(v3Min.x, v3VertexPos.x);
-        v3Min.y = math::Min<float>(v3Min.y, v3VertexPos.y);
-        v3Min.z = math::Min<float>(v3Min.z, v3VertexPos.z);
-
-        // Calculate Max
-        v3Max.x = math::Max<float>(v3Max.x, v3VertexPos.x);
-        v3Max.y = math::Max<float>(v3Max.y, v3VertexPos.y);
-        v3Max.z = math::Max<float>(v3Max.z, v3VertexPos.z);
-      }
-
-      // Get bounding
-      _rBoundingBox_ = collision::CBoundingBox(v3Min, v3Max);
     }
     // ------------------------------------
     void CModel::SetCullingEnabled(bool _bCull)
@@ -157,7 +116,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeBoundingBox(m_oTransform.GetMatrix(), m_oBoundingBox);
+        ComputeWorldAABB(m_oLocalAABB, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -169,7 +128,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeBoundingBox(m_oTransform.GetMatrix(), m_oBoundingBox);
+        ComputeWorldAABB(m_oLocalAABB, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -181,7 +140,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeBoundingBox(m_oTransform.GetMatrix(), m_oBoundingBox);
+        ComputeWorldAABB(m_oLocalAABB, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -193,33 +152,33 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeBoundingBox(m_oTransform.GetMatrix(), m_oBoundingBox);
+        ComputeWorldAABB(m_oLocalAABB, m_oWorldAABB);
       }
     }
     // ------------------------------------
     CRenderInstance* CModel::CreateInstance()
     {
-      if (!AllowInstances())
+      if (!AllowInstancing())
       {
         WARNING_LOG("You have reached maximum instances in this model!");
         return nullptr;
       }
 
       // Create instance
-      uint32_t uInstanceID = m_lstInstances.GetCurrentSize();
+      uint32_t uInstanceID = m_lstInstances.GetSize();
       return m_lstInstances.Create(this, uInstanceID);
     }
     // ------------------------------------
-    bool CModel::RemoveInstance(uint32_t _uInstanceID)
+    bool CModel::RemoveInstance(uint32_t _uID)
     {
-      if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uInstanceID])
+      if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uID])
       {
         return m_lstInstances.Remove(pInstance);
       }
       return false;
     }
     // ------------------------------------
-    HRESULT CModel::InitModel(const TModelData& _rModelData)
+    HRESULT CModel::InitModel(TModelData& _rModelData)
     {
       if (_rModelData.Meshes.empty())
       {
@@ -229,44 +188,99 @@ namespace render
       // Flush model data
       Clear();
 
-      // Set model data
-      m_oModelData = _rModelData;
+      // Set data
+      m_lstMeshes = std::move(_rModelData.Meshes); 
+      memcpy(m_sAssetPath, _rModelData.AssetPath, strlen(_rModelData.AssetPath));
 
       // We create here the vertex buffer
-      D3D11_BUFFER_DESC oVertexBufferDescriptor = D3D11_BUFFER_DESC();
-      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(TVertexData) * m_oModelData.Vertices.size()));
-      oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
-      oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-      oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+      D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
+      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TVertexData) * _rModelData.Vertices.size()));
+      rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+      rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+      rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
       D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
-      oSubresourceData.pSysMem = m_oModelData.Vertices.data();
-      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pVertexBuffer);
+      oSubresourceData.pSysMem = _rModelData.Vertices.data();
+      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &oSubresourceData, &m_pVertexBuffer);
       if (FAILED(hResult))
       {
         return hResult;
       }
 
       // We create here the instance buffer
-      oVertexBufferDescriptor.ByteWidth = static_cast<uint32_t>((sizeof(TInstanceData) * s_uMaxInstances));
-      oVertexBufferDescriptor.Usage = D3D11_USAGE_DYNAMIC;
-      oVertexBufferDescriptor.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-      oVertexBufferDescriptor.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TInstanceData) * s_uMaxModelInstances));
+      rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+      rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+      rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-      oSubresourceData.pSysMem = new TInstanceData[s_uMaxInstances];
-      hResult = global::dx::s_pDevice->CreateBuffer(&oVertexBufferDescriptor, &oSubresourceData, &m_pInstanceBuffer);
+      oSubresourceData.pSysMem = new TInstanceData[s_uMaxModelInstances];
+      hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &oSubresourceData, &m_pInstanceBuffer);
       if (FAILED(hResult))
       {
         return hResult;
       }
 
-      // Update bounding box
-      if (m_bCullEnabled)
-      {
-        ComputeBoundingBox(m_oTransform.GetMatrix(), m_oBoundingBox);
-      }
+      // Calculate local AABB
+      ComputeLocalAABB(_rModelData.Vertices, m_oLocalAABB);
 
       return hResult;
+    }
+    // ------------------------------------
+    void CModel::ComputeWorldAABB(const collision::CBoundingBox& _rLocalAABB, collision::CBoundingBox& _rWorldAABB_)
+    {
+      math::CVector3 lstExtents[8];
+      _rLocalAABB.GetExtents(lstExtents);
+
+      // Compute world AABB
+      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
+      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+      for (uint32_t uIndex = 0; uIndex < 8; uIndex++)
+      {
+        // Calculate extent pos
+        math::CVector3 v3Extent = m_oTransform.GetMatrix() * lstExtents[uIndex];
+
+        // Calculate Min
+        v3Min.x = math::Min(v3Min.x, v3Extent.x);
+        v3Min.y = math::Min(v3Min.y, v3Extent.y);
+        v3Min.z = math::Min(v3Min.z, v3Extent.z);
+
+        // Calculate Max
+        v3Max.x = math::Max(v3Max.x, v3Extent.x);
+        v3Max.y = math::Max(v3Max.y, v3Extent.y);
+        v3Max.z = math::Max(v3Max.z, v3Extent.z);
+      }
+
+      // Set world bounding
+      _rWorldAABB_ = collision::CBoundingBox(v3Min, v3Max);
+    }
+    // ------------------------------------
+    void CModel::ComputeLocalAABB(const std::vector<render::gfx::TVertexData>& _lstVertexData, collision::CBoundingBox& _rLocalAABB_)
+    {
+      if (_lstVertexData.empty())
+      {
+        return;
+      }
+
+      // Compute AABB
+      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
+      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+      for (auto& rVertexData : _lstVertexData)
+      {
+        // Calculate Min
+        v3Min.x = math::Min(v3Min.x, rVertexData.VertexPos.x);
+        v3Min.y = math::Min(v3Min.y, rVertexData.VertexPos.y);
+        v3Min.z = math::Min(v3Min.z, rVertexData.VertexPos.z);
+
+        // Calculate Max
+        v3Max.x = math::Max(v3Max.x, rVertexData.VertexPos.x);
+        v3Max.y = math::Max(v3Max.y, rVertexData.VertexPos.y);
+        v3Max.z = math::Max(v3Max.z, rVertexData.VertexPos.z);
+      }
+
+      // Set local bounding
+      _rLocalAABB_ = collision::CBoundingBox(v3Min, v3Max);
     }
     // ------------------------------------
     void CModel::Clear()
@@ -276,15 +290,14 @@ namespace render
       global::dx::SafeRelease(m_pInstanceBuffer);
 
       // Clear model data
-      for (auto& pMesh : m_oModelData.Meshes)
+      for (auto& pMesh : m_lstMeshes)
       {
         pMesh.reset();
       }
-      m_oModelData.Meshes.clear();
-      m_oModelData.Vertices.clear();
+      m_lstMeshes.clear();
 
       // Clear instances
       m_lstInstances.Clear();
     }
-  }
+}
 }

@@ -25,7 +25,7 @@ namespace render
     ~CCamera() {}
 
     void Update(float _fDeltaTime);
-    bool IsOnFrustum(const collision::CBoundingBox& _oBoundingBox);
+    bool IsOnFrustum(const collision::CBoundingBox& _oBoundingBox) const;
 
     const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjection; }

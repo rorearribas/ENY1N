@@ -77,7 +77,7 @@ namespace render
     BuildFrustumPlanes();
   }
   // ------------------------------------
-  bool CCamera::IsOnFrustum(const collision::CBoundingBox& _oBoundingBox)
+  bool CCamera::IsOnFrustum(const collision::CBoundingBox& _oBoundingBox) const
   {
     const math::CVector3& v3Center = _oBoundingBox.GetCenter();
     const math::CVector3& v3HalfExtents = _oBoundingBox.GetHalfSize();
