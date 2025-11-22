@@ -34,6 +34,9 @@ namespace render
       void SetCullingEnabled(bool _bCull);
       inline const bool& IsCullingEnabled() const { return m_bCullEnabled; }
 
+      inline const collision::CBoundingBox& GetWorldBoudingBox() const { return m_oWorldAABB; }
+      inline const collision::CBoundingBox& GetLocalBoundingBox() const { return m_oLocalAABB; }
+
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool& IsVisible() const { return m_bVisible; }
 
@@ -43,9 +46,6 @@ namespace render
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
       void SetScale(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
-
-      inline const collision::CBoundingBox& GetWorldBoudingBox() const { return m_oWorldAABB; }
-      inline const collision::CBoundingBox& GetLocalBoundingBox() const { return m_oLocalAABB; }
 
       CRenderInstance* CreateInstance();
       bool RemoveInstance(uint32_t _uInstanceID);
@@ -60,10 +60,6 @@ namespace render
     private:
       HRESULT InitModel(TModelData& _rModelData);
       void Clear();
-
-    private:
-      void ComputeWorldAABB(const collision::CBoundingBox& _rLocalAABB, collision::CBoundingBox& _rWorldAABB_);
-      void ComputeLocalAABB(const std::vector<render::gfx::TVertexData>& _lstVertexData, collision::CBoundingBox& _rLocalAABB_);
 
     private:
       // Buffers

@@ -34,7 +34,7 @@ namespace render
       {
         oGlobalLightningData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
         oGlobalLightningData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
-        oGlobalLightningData.DirectionalLight.Direction = m_pDirectionalLight->GetDirection();
+        oGlobalLightningData.DirectionalLight.Direction = m_pDirectionalLight->GetDir();
       }
 
       // Update point lights
@@ -54,7 +54,7 @@ namespace render
       {
         render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex];
         oGlobalLightningData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
-        oGlobalLightningData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
+        oGlobalLightningData.SpotLights[uIndex].Direction = pSpotLight->GetDir();
         oGlobalLightningData.SpotLights[uIndex].Color = pSpotLight->GetColor();
         oGlobalLightningData.SpotLights[uIndex].Range = pSpotLight->GetRange();
         oGlobalLightningData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();

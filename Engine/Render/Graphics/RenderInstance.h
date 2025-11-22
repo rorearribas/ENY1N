@@ -41,9 +41,6 @@ namespace render
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
 
     private:
-      void ComputeWorldAABB(const collision::CBoundingBox& _rLocalAABB, collision::CBoundingBox& _rWorldAABB_);
-
-    private:
       const render::gfx::CModel* m_pParent = nullptr;
       uint32_t m_uInstanceID = render::instance::s_uInvalidID;
 

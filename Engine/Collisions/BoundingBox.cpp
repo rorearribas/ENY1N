@@ -18,10 +18,42 @@ namespace collision
     lstExtents[7] = m_v3Max;
   }
   // ------------------------------------
-  void CBoundingBox::DrawDebug() const
+  void CBoundingBox::DrawDebug(math::CVector3 _v3Color) const
   {
     // Draw cube
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    pEngine->DrawCube(GetCenter(), GetSize(), math::CVector3::Zero, math::CVector3::Right, render::ERenderMode::WIREFRAME);
+    pEngine->DrawCube(GetCenter(), GetSize(), math::CVector3::Zero, _v3Color, render::ERenderMode::WIREFRAME);
   }
+  // ------------------------------------
+  void ComputeWorldAABB(const CBoundingBox& _rLocalAABB, const math::CTransform& _mTransform, CBoundingBox& _rWorldAABB_)
+  {
+    const int iExtentsCount = 8;
+    math::CVector3 lstExtents[iExtentsCount];
+    _rLocalAABB.GetExtents(lstExtents);
+
+    // Compute world AABB
+    math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
+    math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+    for (uint32_t uI = 0; uI < iExtentsCount; uI++)
+    {
+      // Calculate extent pos
+      math::CVector3 v3Extent = _mTransform.GetMatrix() * lstExtents[uI];
+
+      // Calculate Min
+      v3Min.x = math::Min(v3Min.x, v3Extent.x);
+      v3Min.y = math::Min(v3Min.y, v3Extent.y);
+      v3Min.z = math::Min(v3Min.z, v3Extent.z);
+
+      // Calculate Max
+      v3Max.x = math::Max(v3Max.x, v3Extent.x);
+      v3Max.y = math::Max(v3Max.y, v3Extent.y);
+      v3Max.z = math::Max(v3Max.z, v3Extent.z);
+    }
+
+    // Set World AABB
+    _rWorldAABB_.SetMin(v3Min);
+    _rWorldAABB_.SetMax(v3Max);
+  }
+
 }

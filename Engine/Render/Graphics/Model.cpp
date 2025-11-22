@@ -71,7 +71,6 @@ namespace render
         if (render::gfx::CRenderInstance* pInstance = m_lstInstances[uTargetID])
         {
           pInstanceData[uIndex].Transform = pInstance->GetMatrix();
-          pInstance->GetWorldBoundingBox().DrawDebug();
         }
       }
 
@@ -116,7 +115,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeWorldAABB(m_oLocalAABB, m_oWorldAABB);
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -128,7 +127,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeWorldAABB(m_oLocalAABB, m_oWorldAABB);
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -140,7 +139,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeWorldAABB(m_oLocalAABB, m_oWorldAABB);
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -152,7 +151,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeWorldAABB(m_oLocalAABB, m_oWorldAABB);
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -221,66 +220,9 @@ namespace render
       }
 
       // Calculate local AABB
-      ComputeLocalAABB(_rModelData.Vertices, m_oLocalAABB);
+      collision::ComputeLocalAABB(_rModelData.Vertices, m_oLocalAABB);
 
-      return hResult;
-    }
-    // ------------------------------------
-    void CModel::ComputeWorldAABB(const collision::CBoundingBox& _rLocalAABB, collision::CBoundingBox& _rWorldAABB_)
-    {
-      math::CVector3 lstExtents[8];
-      _rLocalAABB.GetExtents(lstExtents);
-
-      // Compute world AABB
-      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
-      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-
-      for (uint32_t uIndex = 0; uIndex < 8; uIndex++)
-      {
-        // Calculate extent pos
-        math::CVector3 v3Extent = m_oTransform.GetMatrix() * lstExtents[uIndex];
-
-        // Calculate Min
-        v3Min.x = math::Min(v3Min.x, v3Extent.x);
-        v3Min.y = math::Min(v3Min.y, v3Extent.y);
-        v3Min.z = math::Min(v3Min.z, v3Extent.z);
-
-        // Calculate Max
-        v3Max.x = math::Max(v3Max.x, v3Extent.x);
-        v3Max.y = math::Max(v3Max.y, v3Extent.y);
-        v3Max.z = math::Max(v3Max.z, v3Extent.z);
-      }
-
-      // Set world bounding
-      _rWorldAABB_ = collision::CBoundingBox(v3Min, v3Max);
-    }
-    // ------------------------------------
-    void CModel::ComputeLocalAABB(const std::vector<render::gfx::TVertexData>& _lstVertexData, collision::CBoundingBox& _rLocalAABB_)
-    {
-      if (_lstVertexData.empty())
-      {
-        return;
-      }
-
-      // Compute AABB
-      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
-      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-
-      for (auto& rVertexData : _lstVertexData)
-      {
-        // Calculate Min
-        v3Min.x = math::Min(v3Min.x, rVertexData.VertexPos.x);
-        v3Min.y = math::Min(v3Min.y, rVertexData.VertexPos.y);
-        v3Min.z = math::Min(v3Min.z, rVertexData.VertexPos.z);
-
-        // Calculate Max
-        v3Max.x = math::Max(v3Max.x, rVertexData.VertexPos.x);
-        v3Max.y = math::Max(v3Max.y, rVertexData.VertexPos.y);
-        v3Max.z = math::Max(v3Max.z, rVertexData.VertexPos.z);
-      }
-
-      // Set local bounding
-      _rLocalAABB_ = collision::CBoundingBox(v3Min, v3Max);
+      return S_OK;
     }
     // ------------------------------------
     void CModel::Clear()

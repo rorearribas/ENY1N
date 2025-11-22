@@ -13,11 +13,11 @@ namespace render
       virtual ~CPointLight() {}
 
       // Range
-      void SetRange(float _fRange) { m_fRange = _fRange; }
-      const float& GetRange() const { return m_fRange; }
+      inline void SetRange(float _fRange) { m_fRange = _fRange; }
+      inline const float& GetRange() const { return m_fRange; }
       // Intensity
-      void SetIntensity(float _fIntensity) { m_fIntensity = _fIntensity; }
-      const float& GetIntensity() const { return m_fIntensity; }
+      inline void SetIntensity(float _fIntensity) { m_fIntensity = _fIntensity; }
+      inline const float& GetIntensity() const { return m_fIntensity; }
 
     private:
       // Properties

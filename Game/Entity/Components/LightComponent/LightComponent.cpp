@@ -69,16 +69,21 @@ namespace game
     case render::ELightType::DIRECTIONAL_LIGHT:
     {
       render::lights::CDirectionalLight* pDirectional = static_cast<render::lights::CDirectionalLight*>(m_pLight);
-      float dir[3] = { pDirectional->GetDirection().x, pDirectional->GetDirection().y, pDirectional->GetDirection().z };
       float color[3] = { pDirectional->GetColor().x, pDirectional->GetColor().y, pDirectional->GetColor().z };
       float fIntensity = pDirectional->GetIntensity();
 
       ImGui::Text("DIRECTIONAL LIGHT");
-      ImGui::InputFloat3("Direction", dir);
       ImGui::InputFloat3("Color", color);
       ImGui::InputFloat("Intensity", &fIntensity);
 
-      pDirectional->SetDirection(math::CVector3(dir[0], dir[1], dir[2]));
+      // Create rotation matrix
+      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(pEntity->GetRotation());
+      math::CVector3 v3Dir = mRotMatrix * math::CVector3::Forward;
+
+      float dir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
+      ImGui::InputFloat3("Direction", dir);
+      pDirectional->SetDir(math::CVector3(dir[0], dir[1], dir[2]));
+
       pDirectional->SetColor(math::CVector3(color[0], color[1], color[2]));
       pDirectional->SetIntensity(fIntensity);
     }
@@ -100,33 +105,40 @@ namespace game
       pPointLight->SetRange(fRange);
       pPointLight->SetIntensity(fIntensity);
 
-      // Draw sphere
+      // Draw debug
       engine::CEngine::GetInstance()->DrawSphere(pPointLight->GetPosition(), fRange, 12, 12, v3Color, render::ERenderMode::WIREFRAME);
     }
     break;
     case render::ELightType::SPOT_LIGHT:
     {
       render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight);
-      float lstDir[3] = { pSpotLight->GetDirection().x, pSpotLight->GetDirection().y, pSpotLight->GetDirection().z };
       float lstColor[3] = { pSpotLight->GetColor().x, pSpotLight->GetColor().y, pSpotLight->GetColor().z };
       float fIntensity = pSpotLight->GetIntensity();
       float fRange = pSpotLight->GetRange();
 
       ImGui::Text("SPOT LIGHT");
-      ImGui::InputFloat3("Direction", lstDir);
-      ImGui::InputFloat3("Color", lstColor);
-      ImGui::InputFloat("Range", &fRange);
-      ImGui::InputFloat("Intensity", &fIntensity);
 
-      math::CVector3 v3Dir(lstDir[0], lstDir[1], lstDir[2]);
+      // Create rotation matrix
+      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(pEntity->GetRotation());
+      math::CVector3 v3Dir = mRotMatrix * math::CVector3::Forward;
+      float dir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
+      ImGui::InputFloat3("Direction", dir);
+      v3Dir = math::CVector3(dir[0], dir[1], dir[2]);
+      pSpotLight->SetDir(v3Dir);
+
       math::CVector3 v3Color(lstColor[0], lstColor[1], lstColor[2]);
-
-      pSpotLight->SetDirection(v3Dir);
+      ImGui::InputFloat3("Color", lstColor);
+      v3Color = math::CVector3(lstColor[0], lstColor[1], lstColor[2]);
       pSpotLight->SetColor(v3Color);
-      pSpotLight->SetIntensity(fIntensity);
+
+      ImGui::InputFloat("Range", &fRange);
       pSpotLight->SetRange(fRange);
 
-      // Draw line
+      ImGui::InputFloat("Intensity", &fIntensity);
+      pSpotLight->SetIntensity(fIntensity);
+
+      // Draw debug
+      engine::CEngine::GetInstance()->DrawCube(pSpotLight->GetPosition(), math::CVector3::One, math::CVector3::Zero, v3Color, render::ERenderMode::WIREFRAME);
       engine::CEngine::GetInstance()->DrawLine(pSpotLight->GetPosition(), pSpotLight->GetPosition() + (v3Dir * fRange), v3Color);
     }
     break;
@@ -164,12 +176,12 @@ namespace game
   // ------------------------------------
   void CLightComponent::SetDirection(const math::CVector3& _v3Dir)
   {
-    m_pLight->SetDirection(_v3Dir);
+    m_pLight->SetDir(_v3Dir);
   }
   // ------------------------------------
   math::CVector3 CLightComponent::GetDirection() const
   {
-    return m_pLight->GetDirection();
+    return m_pLight->GetDir();
   }
   // ------------------------------------
 }

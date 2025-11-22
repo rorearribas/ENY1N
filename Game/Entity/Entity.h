@@ -13,7 +13,7 @@ namespace game
   {
   public:
     static int constexpr s_iMaxComponents = 25;
-    typedef std::array<CComponent*, s_iMaxComponents> TComponentsList;
+    typedef std::array<CComponent*, s_iMaxComponents> TComponents;
 
   public:
     CEntity(std::string _sEntityName) : m_sEntityName(_sEntityName) {}
@@ -23,7 +23,10 @@ namespace game
     void DrawDebug();
 
     void SetTickEnabled(bool _bStatus) { m_bTickEnabled = _bStatus; }
+    const bool IsTickable() const { return m_bTickEnabled; }
+
     const std::string& GetName() const { return m_sEntityName; }
+    inline const math::CTransform& GetTransform() const { return m_oTransform; }
 
     void SetPosition(const math::CVector3& _v3Position);
     inline math::CVector3 GetPosition() const { return m_oTransform.GetTranslation(); }
@@ -61,7 +64,7 @@ namespace game
     void Clear();
 
   private:
-    TComponentsList m_lstComponents = {};
+    TComponents m_lstComponents = TComponents();
     math::CTransform m_oTransform;
 
     std::string m_sEntityName = {};

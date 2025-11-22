@@ -371,9 +371,9 @@ namespace math
     yAxis.Normalize();
     zAxis.Normalize();
     // Calculate rot
-    v3Rot.y = math::Rad2Degrees(atan2f(zAxis.x, sqrtf(zAxis.y * zAxis.y + zAxis.z * zAxis.z))); // yaw
     v3Rot.x = math::Rad2Degrees(atan2f(-zAxis.y, zAxis.z)); // pitch
-    v3Rot.z = math::Rad2Degrees(atan2f(-yAxis.x, xAxis.x)); // roll
+    v3Rot.y = math::Rad2Degrees(atan2f(zAxis.x, sqrtf(zAxis.y * zAxis.y + zAxis.z * zAxis.z))); // roll
+    v3Rot.z = math::Rad2Degrees(atan2f(-yAxis.x, xAxis.x)); // yaw
     return v3Rot;
   }
 }

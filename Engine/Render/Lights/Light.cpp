@@ -8,7 +8,7 @@ namespace render
     const float s_fMaxValue(1.0f);
     const float s_fMinValue(0.0f);
     // ------------------------------------
-    void CLight::SetDirection(const math::CVector3& _v3Dir)
+    void CLight::SetDir(const math::CVector3& _v3Dir)
     {
       m_v3Direction.x = math::Clamp(_v3Dir.x, -s_fMaxValue, s_fMaxValue);
       m_v3Direction.y = math::Clamp(_v3Dir.y, -s_fMaxValue, s_fMaxValue);

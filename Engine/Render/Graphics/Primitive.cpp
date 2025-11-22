@@ -49,12 +49,6 @@ namespace render
       Clear();
     }
     // ------------------------------------
-    void CPrimitive::Clear()
-    {
-      global::dx::SafeRelease(m_pVertexBuffer);
-      global::dx::SafeRelease(m_pIndexBuffer);
-    }
-    // ------------------------------------
     void CPrimitive::Draw()
     {
       // Set vertex buffer
@@ -63,7 +57,8 @@ namespace render
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, 1, &m_pVertexBuffer, &uVertexStride, &uVertexOffset);
 
       // Set topology
-      D3D_PRIMITIVE_TOPOLOGY eTopology = (m_eRenderMode == ERenderMode::SOLID) ? D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
+      bool bSolid = m_eRenderMode == ERenderMode::SOLID;
+      D3D_PRIMITIVE_TOPOLOGY eTopology = bSolid ? D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST : D3D11_PRIMITIVE_TOPOLOGY_LINELIST;
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(eTopology);
 
       // Set model matrix
@@ -83,7 +78,7 @@ namespace render
       // Update bounding box
       if (m_bCullingEnabled)
       {
-        CalculateBoundingBox();
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -95,7 +90,7 @@ namespace render
       // Update bounding box
       if (m_bCullingEnabled)
       {
-        CalculateBoundingBox();
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -107,16 +102,7 @@ namespace render
       // Update bounding box
       if (m_bCullingEnabled)
       {
-        CalculateBoundingBox();
-      }
-    }
-    // ------------------------------------
-    void CPrimitive::SetRenderMode(render::ERenderMode _eRenderMode)
-    {
-      if (m_eRenderMode != _eRenderMode)
-      {
-        m_eRenderMode = _eRenderMode;
-        CreatePrimitive(m_ePrimitiveType, m_eRenderMode);
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -131,7 +117,16 @@ namespace render
       // Update bounding box
       if (m_bCullingEnabled)
       {
-        CalculateBoundingBox();
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
+      }
+    }
+    // ------------------------------------
+    void CPrimitive::SetRenderMode(render::ERenderMode _eRenderMode)
+    {
+      if (m_eRenderMode != _eRenderMode)
+      {
+        m_eRenderMode = _eRenderMode;
+        CreatePrimitive(m_ePrimitiveType, m_eRenderMode);
       }
     }
     // ------------------------------------
@@ -284,52 +279,16 @@ namespace render
         return hResult;
       }
 
-      // Update bounding box
-      return m_bCullingEnabled ? CalculateBoundingBox() : S_OK;
-    }
-    // ------------------------------------
-    HRESULT CPrimitive::CalculateBoundingBox()
-    {
-      if (m_uVertices == 0)
-      {
-        return E_FAIL;
-      }
-
-      D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-      HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
-      UNUSED_VAR(hResult);
-      assert(!FAILED(hResult));
-
-      // Get data
-      render::gfx::TPrimitiveData* pPrimitiveData = static_cast<render::gfx::TPrimitiveData*>(oMappedSubresource.pData);
-      assert(pPrimitiveData);
-
-      // Compute bounding box
-      const math::CMatrix4x4 mTransform = m_oTransform.GetMatrix();
-      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
-      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-
-      for (uint32_t uIndex = 0; uIndex < m_uVertices; ++uIndex)
-      {
-        // Get vertex pos
-        math::CVector3 v3VertexPos = mTransform * pPrimitiveData[uIndex].VertexPos;
-
-        // Calculate Min
-        v3Min.x = math::Min<float>(v3Min.x, v3VertexPos.x);
-        v3Min.y = math::Min<float>(v3Min.y, v3VertexPos.y);
-        v3Min.z = math::Min<float>(v3Min.z, v3VertexPos.z);
-
-        // Calculate Max
-        v3Max.x = math::Max<float>(v3Max.x, v3VertexPos.x);
-        v3Max.y = math::Max<float>(v3Max.y, v3VertexPos.y);
-        v3Max.z = math::Max<float>(v3Max.z, v3VertexPos.z);
-      }
-
-      // Apply min-max
-      m_oBoundingBox.SetMin(v3Min);
-      m_oBoundingBox.SetMax(v3Max);
+      // Create local AABB
+      collision::ComputeLocalAABB(_lstPrimitiveData, m_oLocalAABB);
 
       return S_OK;
+    }
+    // ------------------------------------
+    void CPrimitive::Clear()
+    {
+      global::dx::SafeRelease(m_pVertexBuffer);
+      global::dx::SafeRelease(m_pIndexBuffer);
     }
   }
 }

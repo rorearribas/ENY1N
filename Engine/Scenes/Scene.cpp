@@ -261,7 +261,8 @@ namespace scene
     assert(pPrimitive); // Sanity check
 #endif
 
-    // Set value
+    // Set values
+    pPrimitive->SetCullingEnabled(false); // @Note: Special case that we cannot use culling!
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
@@ -358,7 +359,7 @@ namespace scene
       bool bDrawPrimitive = true;
       if (pPrimitive->IsCullingEnabled()) // Check culling
       {
-        bDrawPrimitive = pCamera->IsOnFrustum(pPrimitive->GetBoundingBox());
+        bDrawPrimitive = pCamera->IsOnFrustum(pPrimitive->GetWorldBoudingBox());
       }
       if (bDrawPrimitive)
       {
@@ -387,7 +388,7 @@ namespace scene
       bool bDrawDebug = true;
       if (pDebug->IsCullingEnabled()) // Check culling
       {
-        bDrawDebug = pCamera->IsOnFrustum(pDebug->GetBoundingBox());
+        bDrawDebug = pCamera->IsOnFrustum(pDebug->GetWorldBoudingBox());
       }
       if (bDrawDebug)
       {
@@ -417,7 +418,7 @@ namespace scene
     {
       rData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
       rData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
-      rData.DirectionalLight.Direction = m_pDirectionalLight->GetDirection();
+      rData.DirectionalLight.Direction = m_pDirectionalLight->GetDir();
     }
 
     // Point lights
@@ -449,7 +450,7 @@ namespace scene
 
       // Set
       rData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
-      rData.SpotLights[uIndex].Direction = pSpotLight->GetDirection();
+      rData.SpotLights[uIndex].Direction = pSpotLight->GetDir();
       rData.SpotLights[uIndex].Color = pSpotLight->GetColor();
       rData.SpotLights[uIndex].Range = pSpotLight->GetRange();
       rData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();

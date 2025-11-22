@@ -24,7 +24,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oWorldAABB);
+        collision::ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -36,7 +36,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oWorldAABB);
+        collision::ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -48,7 +48,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oWorldAABB);
+        collision::ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -60,37 +60,8 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oWorldAABB);
+        collision::ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oTransform, m_oWorldAABB);
       }
-    }
-    // ------------------------------------
-    void CRenderInstance::ComputeWorldAABB(const collision::CBoundingBox& _rLocalAABB, collision::CBoundingBox& _rWorldAABB_)
-    {
-      math::CVector3 lstExtents[8];
-      _rLocalAABB.GetExtents(lstExtents);
-
-      // Compute world AABB
-      math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
-      math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-
-      for (uint32_t uIndex = 0; uIndex < 8; uIndex++)
-      {
-        // Calculate extent pos
-        math::CVector3 v3Extent = m_oTransform.GetMatrix() * lstExtents[uIndex];
-
-        // Calculate Min
-        v3Min.x = math::Min(v3Min.x, v3Extent.x);
-        v3Min.y = math::Min(v3Min.y, v3Extent.y);
-        v3Min.z = math::Min(v3Min.z, v3Extent.z);
-
-        // Calculate Max
-        v3Max.x = math::Max(v3Max.x, v3Extent.x);
-        v3Max.y = math::Max(v3Max.y, v3Extent.y);
-        v3Max.z = math::Max(v3Max.z, v3Extent.z);
-      }
-
-      // Set world bounding
-      _rWorldAABB_ = collision::CBoundingBox(v3Min, v3Max);
     }
   }
 }
