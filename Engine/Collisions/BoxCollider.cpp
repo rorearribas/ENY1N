@@ -28,19 +28,25 @@ namespace collision
   bool CBoxCollider::CheckCollision(const CCollider& _oCollider, THitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
+#ifdef _DEBUG
     assert(eColliderType != EColliderType::INVALID);
+#endif // DEBUG
     switch (eColliderType)
     {
       case EColliderType::BOX_COLLIDER:
       {
         const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
+#ifdef _DEBUG
         assert(&oBoxCollider);
+#endif // DEBUG
         return IsOBB() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckAABBCollision(&oBoxCollider, _oHitEvent_);
       }
       case EColliderType::SPHERE_COLLIDER:
       {
         const CSphereCollider& oSphereCollider = static_cast<const CSphereCollider&>(_oCollider);
+#ifdef _DEBUG
         assert(&oSphereCollider);
+#endif // DEBUG
         return IsOBB() ? CheckOBBSphereCollision(&oSphereCollider, _oHitEvent_) : CheckSphereCollision(&oSphereCollider, _oHitEvent_);
       }
     }

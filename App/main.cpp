@@ -205,9 +205,9 @@ int main()
           game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
           pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-100.0f, 100.0f)));
 
-          const std::string& sModel = GenerateString(vAvailableModels);
+          //const std::string& sModel = GenerateString(vAvailableModels);
           game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-          pModelTest->LoadModel(sModel.c_str());
+          pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
           pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
         }
       }

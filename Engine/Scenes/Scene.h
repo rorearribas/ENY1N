@@ -1,10 +1,9 @@
 #pragma once
-#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+
 #include "Engine/Render/RenderTypes.h"
+#include "Engine/Render/Lights/LightManager.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
-#include "Engine/Render/Lights/SpotLight.h"
-#include "Engine/Render/Lights/PointLight.h"
 #include "Engine/Utils/Plane.h"
 
 #include "Libs/Utils/FixedPool.h"
@@ -19,19 +18,9 @@ namespace scene
   class CScene
   {
   private:
-    //@Note: if you change this values you will also need to change the array size in hlsl
-    static constexpr uint32_t s_uMaxSpotLights = 100u;
-    static constexpr uint32_t s_uMaxPointLights = 100u;
-
-    typedef CConstantBuffer<SGlobalLightingData<s_uMaxPointLights, s_uMaxSpotLights>> TLightingBuffer;
-    typedef utils::CFixedPool<render::lights::CPointLight, s_uMaxPointLights> TPointLightsList;
-    typedef utils::CFixedPool<render::lights::CSpotLight, s_uMaxSpotLights> TSpotLightsList;
-
-  private:
     // Models
     static constexpr uint32_t s_uMaxModels = 500u;
     typedef utils::CUniquePtrList<render::gfx::CModel, s_uMaxModels> TModels;
-    typedef CConstantBuffer<SHandleInstancing> TInstancingBuffer;
 
     // Primitives
     static constexpr uint32_t s_uMaxPrimitives = 500u;
@@ -42,7 +31,7 @@ namespace scene
     typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugPrimitives> TDebugItems;
 
   public:
-    CScene(uint32_t _uIndex);
+    CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex) {}
     ~CScene();
 
     // Handle scene
@@ -72,32 +61,27 @@ namespace scene
 
   private:
     friend class render::CRender;
+    void Clear();
 
     // Draw calls
     void DrawModels(const render::CCamera* _pCamera);
     void DrawPrimitives();
+    void ApplyLighting();
     void DrawDebug();
-    void UpdateLightning();
-
-    void Clear();
 
   private:
     bool m_bEnabled = false;
     uint32_t m_uSceneIdx = 0;
 
   private:
-    // Graphics
+    // Models
     TModels m_lstModels = TModels();
+
+    // Primitives
     TPrimitives m_lstPrimitives = TPrimitives();
     TDebugItems m_lstDebugItems = TDebugItems();
 
-    // Lights -> Lighting manager WIP
-    render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
-    TPointLightsList m_lstPointLights = TPointLightsList();
-    TSpotLightsList m_lstSpotLights = TSpotLightsList();
-
-    // Buffers
-    TLightingBuffer m_oLightingBuffer;
-    CConstantBuffer<SHandleInstancing> m_oInstancingBuffer;
+    // Lights
+    render::lights::CLightManager m_oLightManager;
   };
 }

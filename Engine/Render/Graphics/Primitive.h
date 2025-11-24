@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Render/RenderTypes.h"
 #include "Engine/Render/Graphics/Model.h"
-#include "Engine/Collisions/BoundingBox.h"
+#include "Engine/Collisions/AABB.h"
 
 #include "Libs/Math/Vector3.h"
 #include "Libs/Math/Matrix4x4.h"
@@ -25,8 +25,8 @@ namespace render
       void SetCullingEnabled(bool _bCull);
       inline const bool& IsCullingEnabled() const { return m_bCullingEnabled; }
 
-      inline const collision::CBoundingBox& GetWorldBoudingBox() const { return m_oWorldAABB; }
-      inline const collision::CBoundingBox& GetLocalBoundingBox() const { return m_oLocalAABB; }
+      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
+      inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
       inline const EPrimitiveType& GetPrimitiveType() const { return m_ePrimitiveType; }
 
       void SetColor(const math::CVector3& _v3Color);
@@ -60,8 +60,8 @@ namespace render
       EPrimitiveType m_ePrimitiveType = EPrimitiveType::INVALID;
 
       math::CTransform m_oTransform = math::CTransform();
-      collision::CBoundingBox m_oWorldAABB = collision::CBoundingBox();
-      collision::CBoundingBox m_oLocalAABB = collision::CBoundingBox();
+      collision::CAABB m_oWorldAABB = collision::CAABB();
+      collision::CAABB m_oLocalAABB = collision::CAABB();
 
       math::CVector3 m_v3Color = math::CVector3::One;
       bool m_bCullingEnabled = true;

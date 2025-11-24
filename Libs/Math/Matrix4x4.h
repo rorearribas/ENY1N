@@ -1,6 +1,4 @@
 #pragma once
-#include <array>
-#include <cstring>
 #include "Vector3.h"
 
 namespace math

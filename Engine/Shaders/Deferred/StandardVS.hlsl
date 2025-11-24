@@ -13,9 +13,9 @@ cbuffer ConstantTransforms : register(b0)
   float2 Padding0;
 };
 
-cbuffer HandleInstancing : register(b1)
+cbuffer InstanceMode : register(b1)
 {
-  bool IsInstantiated;
+  bool IsInstanceMode;
   float3 Padding1;
 }
 
@@ -44,7 +44,7 @@ PS_INPUT VSMain(VS_INPUT input)
 {
   PS_INPUT output;
 
-  matrix modelMatrix = IsInstantiated ? input.instanceMatrix : Model;
+  matrix modelMatrix = IsInstanceMode ? input.instanceMatrix : Model;
   float4 worldPosition = mul(modelMatrix, float4(input.position, 1.0));
 
   output.position = mul(ViewProjection, worldPosition);

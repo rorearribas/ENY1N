@@ -111,7 +111,7 @@
     <ClInclude Include="Collisions\CapsuleCollider.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Collisions\BoundingBox.h">
+    <ClInclude Include="Collisions\AABB.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderTarget.h">
@@ -124,6 +124,9 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\Deferred\StandardVS.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\ConstantBuffer\BufferTypes.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -218,7 +221,7 @@
     <ClCompile Include="Collisions\CapsuleCollider.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Collisions\BoundingBox.cpp">
+    <ClCompile Include="Collisions\AABB.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\RenderTarget.cpp">

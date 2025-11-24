@@ -1,9 +1,10 @@
 #pragma once
-#include "Libs/Math/Vector3.h"
 #include "Engine/Render/RenderTypes.h"
-#include "Texture2D.h"
+#include "Engine/Render/Resources/Texture2D.h"
+
+#include "Libs/Math/Vector3.h"
 #include <string>
-#include <map>
+#include <array>
 
 namespace render
 {
@@ -11,16 +12,18 @@ namespace render
   {
     class CMaterial
     {
-    public:
-      typedef std::unordered_map<ETextureType, texture::TSharedTexture> TMapTextures;
+    private:
+      static constexpr uint32_t s_uTextureCount = static_cast<uint32_t>(ETextureType::COUNT);
+      typedef std::array<texture::TSharedTexture, s_uTextureCount> TTextures;
 
     public:
-      CMaterial(const std::string& _sMaterialId) : m_sMaterialID(_sMaterialId) {}
+      CMaterial() = default;
+      CMaterial(const std::string& _sMaterialId) : m_sID(_sMaterialId) {}
       ~CMaterial();
 
       void SetTexture(texture::TSharedTexture _pTexture, ETextureType _eType);
-      texture::TSharedTexture const GetTexture(ETextureType _eType);
-      inline const std::string& GetMaterialId() const { return m_sMaterialID; }
+      texture::TSharedTexture GetTexture(ETextureType _eType) const;
+      inline const std::string& GetID() const { return m_sID; }
 
       inline void SetDiffuseColor(math::CVector3 _vDiffuseColor) { m_v3DiffuseColor = _vDiffuseColor; }
       inline const math::CVector3& GetDiffuseColor() const { return m_v3DiffuseColor; }
@@ -46,7 +49,7 @@ namespace render
 
     private:
       // ID
-      std::string m_sMaterialID = std::string();
+      std::string m_sID = std::string();
 
       // Properties
       math::CVector3 m_v3DiffuseColor = math::CVector3::Zero;
@@ -61,7 +64,7 @@ namespace render
       float m_fShininess = 1.0f;
 
       // Textures
-      TMapTextures m_dctTextures = TMapTextures();
+      TTextures m_lstTextures = TTextures();
     };
   }
 }

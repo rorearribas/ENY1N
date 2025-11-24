@@ -1,7 +1,5 @@
 #pragma once
 #include "Engine/Render/Resources/Material.h"
-#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-
 #include "Libs/Math/Vector3.h"
 #include "Libs/Math/Vector2.h"
 #include "Libs/Math/Transform.h"
@@ -16,35 +14,30 @@ namespace render
     class CMesh
     {
     public:
-      typedef std::vector<uint32_t> TIndicesList;
-
-    public:
+      CMesh() = default;
       CMesh(const std::string& _sMeshName) : m_sMeshID(_sMeshName) {}
       ~CMesh();
 
       void Draw(uint32_t _uInstanceCount = 0);
-      HRESULT CreateBuffer(TIndicesList& _lstIndices);
+      HRESULT CreateBuffer(const std::vector<uint32_t>& _lstIndices);
 
-      inline std::shared_ptr<render::mat::CMaterial> GetMaterial() const { return m_pMaterial; }
-      inline void SetMaterial(std::shared_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = _pMaterial; }
-
-      inline const uint32_t& GetIndexCount() const { return static_cast<uint32_t>(m_lstIndices.size()); }
-      inline const std::string& GetMeshID() const { return m_sMeshID; }
+      inline render::mat::CMaterial* GetMaterial() const { return m_pMaterial.get(); }
+      inline void SetMaterial(std::unique_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }
+      inline const std::string& GetID() const { return m_sMeshID; }
 
     private:
-      void ClearBuffers();
+      void ClearBuffer();
       void ClearMaterial();
 
-      // Info
-      std::string m_sMeshID = std::string();
-
-      // Materials
-      std::shared_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
-      TIndicesList m_lstIndices = TIndicesList();
-
-      // Buffer
-      CConstantBuffer<STexturesData> m_oConstantBuffer;
+    private:
+      // Mesh
       ID3D11Buffer* m_pIndexBuffer = nullptr;
+      uint32_t m_uIndices = 0;
+
+    private:
+      // Data
+      std::string m_sMeshID = std::string();
+      std::unique_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
     };
   }
 }

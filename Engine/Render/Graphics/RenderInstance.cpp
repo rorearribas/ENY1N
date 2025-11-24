@@ -10,7 +10,9 @@ namespace render
     : m_pParent(_pParent)
     , m_uInstanceID(_uId)
     {
+#ifdef _DEBUG
       assert(_uId != render::instance::s_uInvalidID);
+#endif // DEBUG
     }
     // ------------------------------------
     void CRenderInstance::SetCullingEnabled(bool _bCull)
@@ -24,7 +26,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        collision::ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oTransform, m_oWorldAABB);
+        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -36,7 +38,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        collision::ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oTransform, m_oWorldAABB);
+        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -48,7 +50,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        collision::ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oTransform, m_oWorldAABB);
+        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
       }
     }
     // ------------------------------------
@@ -60,7 +62,7 @@ namespace render
       // Update bounding box
       if (m_bCullEnabled)
       {
-        collision::ComputeWorldAABB(m_pParent->GetLocalBoundingBox(), m_oTransform, m_oWorldAABB);
+        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
       }
     }
   }

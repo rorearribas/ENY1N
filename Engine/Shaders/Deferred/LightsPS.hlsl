@@ -48,20 +48,22 @@ struct Spotlight
   float Padding3;
 };
 
+// Transforms
 cbuffer ConstantTransforms : register(b0)
 {
   // Transforms
   matrix Model;
   matrix ViewProjection;
   matrix InvViewProjection;
+
   // Projection CFG
   float FarPlane;
   float NearPlane;
   float2 Padding0;
 };
 
-// Constant buffer global lightning
-cbuffer GlobalLightingData : register(b1)
+// Lighting
+cbuffer CLightingData : register(b1)
 {
   // Lights
   DirectionalLight directionalLight;

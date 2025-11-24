@@ -56,7 +56,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
   }
 
   // Materials
-  std::vector<std::shared_ptr<render::mat::CMaterial>> lstMaterials;
+  std::vector<std::unique_ptr<render::mat::CMaterial>> lstMaterials;
   lstMaterials.reserve(pScene->mNumMaterials);
 
   for (uint32_t uI = 0; uI < pScene->mNumMaterials; uI++)
@@ -65,7 +65,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
     aiMaterial* pLoadedMaterial = pScene->mMaterials[uI];
 
     // Create new material
-    auto* pMaterial = new render::mat::CMaterial(pLoadedMaterial->GetName().C_Str());
+    auto pMaterial = std::make_unique<render::mat::CMaterial>(pLoadedMaterial->GetName().C_Str());
 
     // Set material values
     {
@@ -193,7 +193,9 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
   for (uint32_t uI = 0; uI < pScene->mNumMeshes; uI++)
   {
     aiMesh* pSceneMesh = pScene->mMeshes[uI];
+#ifdef _DEBUG
     assert(pSceneMesh);
+#endif // DEBUG
 
     // Create internal mesh
     std::shared_ptr pMesh = std::make_shared<render::gfx::CMesh>(pSceneMesh->mName.C_Str());
@@ -219,7 +221,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
         }
         else
         {
-          WARNING_LOG("Normals are not defined correctly in: " + pMesh->GetMeshID());
+          WARNING_LOG("Normals are not defined correctly in: " + pMesh->GetID());
         }
 
         // Texture coords
@@ -248,12 +250,14 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
     // Index buffer
     HRESULT hResult = pMesh->CreateBuffer(lstIndices);
     UNUSED_VAR(hResult);
+#ifdef _DEBUG
     assert(!FAILED(hResult));
+#endif // DEBUG
 
     // Add material
     if (pSceneMesh->mMaterialIndex >= 0 && pSceneMesh->mMaterialIndex < (int)lstMaterials.size())
     {
-      pMesh->SetMaterial(lstMaterials[pSceneMesh->mMaterialIndex]);
+      pMesh->SetMaterial(std::move(lstMaterials[pSceneMesh->mMaterialIndex]));
     }
 
     rModelData.Meshes.emplace_back(pMesh);
@@ -270,20 +274,22 @@ unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, in
   return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture2D<>::s_uChannels);
 }
 // ------------------------------------
-void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, render::ETextureType _eType,
+void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& pMaterial, render::ETextureType _eType,
   const std::filesystem::path& _oBasePath, const std::string& _sTextureID)
 {
-  std::filesystem::path oTargetPath = _oBasePath / std::filesystem::path(_sTextureID);
-  if (oTargetPath.has_filename() && std::filesystem::exists(oTargetPath))
+  std::filesystem::path sPath = _oBasePath / std::filesystem::path(_sTextureID);
+  if (sPath.has_filename() && std::filesystem::exists(sPath))
   {
     LOG("Loading texture...");
     using namespace render::texture;
-    std::string sTextureID = oTargetPath.filename().stem().string();
+    std::string sTextureID = sPath.filename().stem().string();
 
     int iWidth = 0, iHeight = 0, iChannels = 0;
-    unsigned char* pBuffer = LoadImage(oTargetPath.string().c_str(), iWidth, iHeight, iChannels);
+    unsigned char* pBuffer = LoadImage(sPath.string().c_str(), iWidth, iHeight, iChannels);
+#ifdef _DEBUG
     assert(pBuffer);
-    SUCCESS_LOG("Texture loaded! -> " << oTargetPath.filename());
+#endif // DEBUG
+    SUCCESS_LOG("Texture loaded! -> " << sPath.filename());
 
     // Create texture
     auto pTexture = std::make_shared<render::texture::CTexture2D<render::EViewType::SHADER_RESOURCE>>();
@@ -301,7 +307,9 @@ void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, rende
 
     // Create texture
     HRESULT hResult = pTexture->CreateTexture(pBuffer, oTextureDesc, iChannels);
+#ifdef _DEBUG
     assert(!FAILED(hResult));
+#endif // DEBUG
 
     // Set shader resource cfg
     D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
@@ -311,8 +319,11 @@ void CResourceManager::RegisterTexture(render::mat::CMaterial*& pMaterial, rende
 
     // Create shader resource view
     hResult = pTexture->CreateView(oShaderResourceViewDesc);
+#ifdef _DEBUG
     assert(!FAILED(hResult));
+#endif // DEBUG
 
+    // Free image
     stbi_image_free(pBuffer);
   }
 }

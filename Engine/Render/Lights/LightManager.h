@@ -1,6 +1,10 @@
 #pragma once
+#include "Engine/Render/ConstantBuffer/BufferTypes.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-#include <array>
+#include "Libs/Utils/Singleton.h"
+#include "Libs/Utils/FixedPool.h"
+#include "PointLight.h"
+#include "SpotLight.h"
 
 namespace render
 {
@@ -8,53 +12,44 @@ namespace render
   {
     // Forward declaration
     class CLight;
-    class CSpotLight;
-    class CPointLight;
     class CDirectionalLight;
 
-    // WIP -> Posiblemente en un futuro se utilice para hacer una gestion más global
-    class CLightsManager
+    class CLightManager
     {
     private:
-      static constexpr uint32_t s_uMaxSpotLights = 100;
-      static constexpr uint32_t s_uMaxPointLights = 100;
+      static constexpr uint32_t s_uMaxSpotLights = 100u;
+      static constexpr uint32_t s_uMaxPointLights = 100u;
+
+      typedef CConstantBuffer<TGlobalLighting<s_uMaxPointLights, s_uMaxSpotLights>> TLightingBuffer;
+      typedef utils::CFixedPool<render::lights::CPointLight, s_uMaxPointLights> TPointLights;
+      typedef utils::CFixedPool<render::lights::CSpotLight, s_uMaxSpotLights> TSpotLights;
 
     public:
-      typedef std::array<render::lights::CPointLight*, s_uMaxPointLights> TPointLightsList;
-      typedef std::array<render::lights::CSpotLight*, s_uMaxSpotLights> TSpotLightsList;
+      CLightManager();
+      ~CLightManager();
 
-    public:
-      CLightsManager();
-      ~CLightsManager();
+      // Set light
+      void Apply();
 
-      void Update();
+      // Handle lights
+      render::lights::CDirectionalLight* const CreateDirectionalLight();
+      render::lights::CPointLight* const CreatePointLight();
+      render::lights::CSpotLight* const CreateSpotLight();
 
       // Destruction
-      void DestroyLight(render::lights::CLight*& pLight_);
-
-      // Creation methods
-      render::lights::CDirectionalLight* CreateDirectionalLight();
-      render::lights::CPointLight* CreatePointLight();
-      render::lights::CSpotLight* CreateSpotLight();
+      bool DestroyLight(render::lights::CLight*& pLight_);
 
     private:
       void Clean();
-      void DestroyPointLight(render::lights::CLight*& pLight_);
-      void DestroySpotLight(render::lights::CLight*& pLight_);
 
-      // Directional light
+    private:
+      // Lights
       render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
+      TPointLights m_lstPointLights = TPointLights();
+      TSpotLights m_lstSpotLights = TSpotLights();
 
-      // Point lights
-      TPointLightsList m_lstPointLights = {};
-      uint32_t m_uRegisteredPointLights = 0;
-
-      // Spot lights
-      TSpotLightsList m_lstSpotLights = {};
-      uint32_t m_uRegisteredSpotLights = 0;
-
-      // Global lightning buffer
-      CConstantBuffer<SGlobalLightingData<s_uMaxPointLights, s_uMaxSpotLights>> m_oLightningBuffer;
+      // Global lighting buffer
+      TLightingBuffer m_oLightingBuffer;
     };
   }
 }

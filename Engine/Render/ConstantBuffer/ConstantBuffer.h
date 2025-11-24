@@ -1,109 +1,7 @@
 #pragma once
-#include <d3d11.h>
 #include "Libs/Math/Matrix4x4.h"
 #include "Engine/Global/GlobalResources.h"
-
-static constexpr uint32_t s_uAlign = 16;
-/* Reference table
-| HLSL Type       | Size (bytes)   | Equivalent
-|-----------------|----------------|------------------------
-| bool            | 1              | bool
-| int             | 4              | int
-| uint            | 4              | unsigned int
-| float           | 4              | float
-| float2          | 8              | math::CVector2
-| float3          | 12             | math::CVector3
-| float4          | 16             | math::CVector4
-| float3x3        | 48             | math::CVector3x3
-| float4x4        | 64             | math::CMatrix4x4
-| matrix NxM      | N×16 bytes     |
-*/
-
-// Matrix
-struct __declspec(align(s_uAlign)) SConstantTransforms
-{
-  // Transforms
-  math::CMatrix4x4 Model = math::CMatrix4x4::Identity;
-  math::CMatrix4x4 ViewProjection = math::CMatrix4x4::Identity;
-  math::CMatrix4x4 InvViewProjection = math::CMatrix4x4::Identity;
-  // Projection CFG
-  float FarPlane = 10000.0f;
-  float NearPlane = 0.01f;
-  float Padding[2];
-};
-
-// Handle instancing
-struct __declspec(align(s_uAlign)) SHandleInstancing
-{
-  bool IsInstantiated = false;
-  float Padding[3];
-};
-
-// Textures data
-struct __declspec(align(s_uAlign)) STexturesData
-{
-  int HasDiffuse;
-  int HasNormal;
-  int HasSpecular;
-  int Padding;
-};
-
-// Directional lights
-struct __declspec(align(s_uAlign)) SDirectionaLight
-{
-  // 12 + 4 Bytes
-  math::CVector3 Direction;
-  float Padding0;
-  // 12 + 4 bytes
-  math::CVector3 Color;
-  float Intensity;
-};
-// Point lights
-struct __declspec(align(s_uAlign)) SPointLight
-{
-  // 12 + 4 Bytes
-  math::CVector3 Position;
-  float Padding0;
-  // 12 + 4 Bytes
-  math::CVector3 Color;
-  float Padding1;
-  // 12 + 4 Bytes
-  float Range;
-  float Intensity;
-  // 12 + 4 Bytes
-  float Padding[2];
-};
-// Spot lights
-struct __declspec(align(s_uAlign)) SSpotLight
-{
-  // 12 + 4 Bytes
-  math::CVector3 Position;
-  float Padding0;
-  // 12 + 4 Bytes
-  math::CVector3 Direction;
-  float Padding1;
-  // 12 + 4 Bytes
-  math::CVector3 Color;
-  float Padding2;
-  // 4 + 4 + 8 Bytes
-  float Range;
-  float Intensity;
-  float Padding3[2];
-};
-
-template<size_t MAX_POINT_LIGHTS, size_t MAX_SPOT_LIGHTS>
-struct __declspec(align(s_uAlign)) SGlobalLightingData
-{
-  // Lights [144 Bytes]
-  SDirectionaLight DirectionalLight;
-  SPointLight PointLights[MAX_POINT_LIGHTS];
-  SSpotLight SpotLights[MAX_SPOT_LIGHTS];
-
-  // Handle lights [16 Bytes]
-  int RegisteredPointLights;
-  int RegisteredSpotLights;
-  float Padding[2];
-};
+#include "Engine/Render/RenderTypes.h"
 
 template<class T>
 class CConstantBuffer
@@ -130,23 +28,11 @@ public:
     return _pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
   }
 
-  inline bool WriteBuffer()
-  {
-    D3D11_MAPPED_SUBRESOURCE oMappedSubresource;
-    HRESULT hResult = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
-    if (FAILED(hResult))
-    {
-      return false;
-    }
-
-    // Copy memory into buffer
-    memcpy(oMappedSubresource.pData, &m_oData, sizeof(T));
-    m_pDeviceContext->Unmap(m_pBuffer, 0);
-    return true;
-  }
-  inline void Clear() { global::dx::SafeRelease(m_pBuffer); }
+  void Bind(uint32_t _uSlot, render::EShaderType _eShaderType);
+  bool WriteBuffer();
 
   inline ID3D11Buffer* GetBuffer() const { return m_pBuffer; }
+  inline void Clear() { global::dx::SafeRelease(m_pBuffer); }
   inline T& GetData() { return m_oData; }
 
 private:
@@ -154,3 +40,33 @@ private:
   ID3D11DeviceContext* m_pDeviceContext = nullptr;
   T m_oData = T();
 };
+
+template<class T>
+void CConstantBuffer<T>::Bind(uint32_t _uSlot, render::EShaderType _eShaderType)
+{
+  switch (_eShaderType)
+  {
+    case render::EShaderType::E_VERTEX:   global::dx::s_pDeviceContext->VSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+    case render::EShaderType::E_HULL:     global::dx::s_pDeviceContext->HSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+    case render::EShaderType::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+    case render::EShaderType::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+    case render::EShaderType::E_PIXEL:    global::dx::s_pDeviceContext->PSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+    case render::EShaderType::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+  }
+}
+
+template<class T>
+bool CConstantBuffer<T>::WriteBuffer()
+{
+  D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+  HRESULT hResult = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
+  if (FAILED(hResult))
+  {
+    return false;
+  }
+
+  // Copy memory into buffer
+  memcpy(oMappedSubresource.pData, &m_oData, sizeof(T));
+  m_pDeviceContext->Unmap(m_pBuffer, 0);
+  return true;
+}

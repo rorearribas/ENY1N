@@ -25,7 +25,9 @@ namespace render
       // Create from custom data
       HRESULT hResult = CreateBuffer(_oData.PrimitiveData, _oData.Indices);
       UNUSED_VAR(hResult);
+#ifdef _DEBUG
       assert(!FAILED(hResult));
+#endif // DEBUG
 
       // Set values
       m_eRenderMode = _eRenderMode;
@@ -37,7 +39,9 @@ namespace render
       // Create buffer from presets
       HRESULT hResult = CreatePrimitive(_ePrimitiveType, _eRenderMode);
       UNUSED_VAR(hResult);
+#ifdef _DEBUG
       assert(!FAILED(hResult));
+#endif // DEBUG
 
       // Set values
       m_eRenderMode = _eRenderMode;
@@ -136,11 +140,15 @@ namespace render
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
       HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &oMappedSubresource);
       UNUSED_VAR(hResult);
+#ifdef _DEBUG
       assert(!FAILED(hResult));
+#endif // DEBUG
 
       // Get data
       render::gfx::TPrimitiveData* pPrimitiveData = static_cast<render::gfx::TPrimitiveData*>(oMappedSubresource.pData);
+#ifdef _DEBUG
       assert(pPrimitiveData);
+#endif // DEBUG
 
       // Update color
       for (uint32_t uIndex = 0; uIndex < m_uVertices; ++uIndex)

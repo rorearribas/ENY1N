@@ -1,8 +1,8 @@
 #pragma once
 #include "Engine/Render/Graphics/Mesh.h"
 #include "Engine/Render/Graphics/RenderInstance.h"
-#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-#include "Engine/Collisions/BoundingBox.h"
+#include "Engine/Render/ConstantBuffer/BufferTypes.h"
+#include "Engine/Collisions/AABB.h"
 
 #include "Libs/Utils/FixedPool.h"
 #include "Libs/Math/Transform.h"
@@ -29,13 +29,16 @@ namespace render
       ~CModel();
 
       void Draw();
-      void DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint32_t _uSize);
+      void DrawInstances(const std::vector<uint32_t>& _lstDrawableInstances);
+
+      CRenderInstance* CreateInstance();
+      bool RemoveInstance(uint32_t _uInstanceID);
+
+      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
+      inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
 
       void SetCullingEnabled(bool _bCull);
       inline const bool& IsCullingEnabled() const { return m_bCullEnabled; }
-
-      inline const collision::CBoundingBox& GetWorldBoudingBox() const { return m_oWorldAABB; }
-      inline const collision::CBoundingBox& GetLocalBoundingBox() const { return m_oLocalAABB; }
 
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool& IsVisible() const { return m_bVisible; }
@@ -46,9 +49,6 @@ namespace render
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
       void SetScale(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
-
-      CRenderInstance* CreateInstance();
-      bool RemoveInstance(uint32_t _uInstanceID);
 
       inline TInstances& GetInstances() { return m_lstInstances; }
       inline const TInstances& GetInstances() const { return m_lstInstances; }
@@ -72,8 +72,8 @@ namespace render
 
     private:
       math::CTransform m_oTransform = math::CTransform();
-      collision::CBoundingBox m_oLocalAABB = collision::CBoundingBox();
-      collision::CBoundingBox m_oWorldAABB = collision::CBoundingBox();
+      collision::CAABB m_oLocalAABB = collision::CAABB();
+      collision::CAABB m_oWorldAABB = collision::CAABB();
 
       char m_sAssetPath[128];
       bool m_bCullEnabled = true;

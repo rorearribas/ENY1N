@@ -48,7 +48,9 @@ namespace render
         std::unique_ptr<BYTE[]> pData(new BYTE[uSize]);
         if (GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, pData.get(), &uSize, sizeof(RAWINPUTHEADER)) != uSize)
         {
+#ifdef _DEBUG
           assert(false && "Failed to retrieve RAWINPUT data.");
+#endif // DEBUG
           break;
         }
 
@@ -116,7 +118,9 @@ namespace render
     HINSTANCE hInstance = GetModuleHandle(nullptr);
     m_hWnd = internal_window::CreateWinMain(hInstance, _uWidth, _uHeight);
     global::window::s_oHwnd = m_hWnd; // Set instance!
+#ifdef _DEBUG
     assert(m_hWnd);
+#endif // DEBUG
   }
   // ------------------------------------
   void CRenderWindow::SetEnabled(bool _bEnabled) const

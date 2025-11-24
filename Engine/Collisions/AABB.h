@@ -6,12 +6,12 @@
 
 namespace collision
 {
-  class CBoundingBox
+  class CAABB
   {
   public:
-    CBoundingBox() : m_v3Min(math::CVector3::Zero), m_v3Max(math::CVector3::Zero) {}
-    CBoundingBox(const math::CVector3& _v3Min, const math::CVector3& _v3Max) : m_v3Min(_v3Min), m_v3Max(_v3Max) {}
-    ~CBoundingBox() {}
+    CAABB() : m_v3Min(math::CVector3::Zero), m_v3Max(math::CVector3::Zero) {}
+    CAABB(const math::CVector3& _v3Min, const math::CVector3& _v3Max) : m_v3Min(_v3Min), m_v3Max(_v3Max) {}
+    ~CAABB() {}
 
     inline void SetMin(const math::CVector3& _v3Min) { m_v3Min = _v3Min; }
     inline const math::CVector3& GetMin() const { return m_v3Min; }
@@ -32,7 +32,7 @@ namespace collision
 
   // Global
   template<typename T>
-  inline void ComputeLocalAABB(const std::vector<T>& _lstVertexData, collision::CBoundingBox& _rLocalAABB_)
+  inline void ComputeLocalAABB(const std::vector<T>& _lstVertexData, collision::CAABB& _rLocalAABB_)
   {
     if (_lstVertexData.empty())
     {
@@ -60,6 +60,6 @@ namespace collision
     _rLocalAABB_.SetMin(v3Min);
     _rLocalAABB_.SetMax(v3Max);
   }
-  void ComputeWorldAABB(const collision::CBoundingBox& _rLocalAABB, const math::CTransform& _mTransform, collision::CBoundingBox& _rWorldAABB_);
+  void ComputeWorldAABB(const collision::CAABB& _rLocalAABB, const math::CTransform& _mTransform, collision::CAABB& _rWorldAABB_);
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Engine/Collisions/BoundingBox.h"
+#include "Engine/Collisions/AABB.h"
 #include "Libs/Math/Transform.h"
 #include "Libs/Math/Vector3.h"
 
@@ -21,7 +21,7 @@ namespace render
       ~CRenderInstance() {}
 
       inline const uint32_t GetInstanceID() const { return m_uInstanceID; }
-      inline const collision::CBoundingBox& GetWorldBoundingBox() const { return m_oWorldAABB; }
+      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
 
       void SetCullingEnabled(bool _bCull);
       inline const bool& IsCullingEnabled() const { return m_bCullEnabled; }
@@ -45,7 +45,7 @@ namespace render
       uint32_t m_uInstanceID = render::instance::s_uInvalidID;
 
     private:
-      collision::CBoundingBox m_oWorldAABB = collision::CBoundingBox();
+      collision::CAABB m_oWorldAABB = collision::CAABB();
       math::CTransform m_oTransform = math::CTransform();
 
       bool m_bCullEnabled = true;

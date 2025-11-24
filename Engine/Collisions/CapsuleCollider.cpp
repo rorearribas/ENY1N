@@ -17,25 +17,33 @@ namespace collision
   bool CCapsuleCollider::CheckCollision(const CCollider& _oCollider, THitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();
+#ifdef _DEBUG
     assert(eColliderType != EColliderType::INVALID);
+#endif // DEBUG
     switch (eColliderType)
     {
     case EColliderType::CAPSULE_COLLIDER:
     {
       const CCapsuleCollider& oCapsuleCollider = static_cast<const CCapsuleCollider&>(_oCollider);
+#ifdef _DEBUG
       assert(&oCapsuleCollider);
+#endif // DEBUG
       return CheckCapsuleCollision(&oCapsuleCollider, _oHitEvent_);
     }
     case EColliderType::BOX_COLLIDER:
     {
       const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
+#ifdef _DEBUG
       assert(&oBoxCollider);
+#endif // DEBUG
       return oBoxCollider.IsOBB() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckBoxCollision(&oBoxCollider, _oHitEvent_);
     }
     case EColliderType::SPHERE_COLLIDER:
     {
       const CSphereCollider& oCapsuleCollider = static_cast<const CSphereCollider&>(_oCollider);
+#ifdef _DEBUG
       assert(&oCapsuleCollider);
+#endif // DEBUG
       return CheckSphereCollision(&oCapsuleCollider, _oHitEvent_);
     }
     }

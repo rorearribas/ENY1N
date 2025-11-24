@@ -17,7 +17,9 @@ namespace render
     {
       HRESULT hResult = InitModel(_rModelData);
       UNUSED_VAR(hResult);
+#ifdef _DEBUG
       assert(!FAILED(hResult));
+#endif // DEBUG
     }
     // ------------------------------------
     CModel::~CModel()
@@ -53,7 +55,7 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
     }
     // ------------------------------------
-    void CModel::DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint32_t _uSize)
+    void CModel::DrawInstances(const std::vector<uint32_t>& _lstDrawableInstances)
     {
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
       HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
@@ -64,8 +66,9 @@ namespace render
       }
 
       // Set values
+      uint32_t uCount = static_cast<uint32_t>(_lstDrawableInstances.size());
       TInstanceData* pInstanceData = static_cast<TInstanceData*>(oMappedSubresource.pData);
-      for (uint32_t uIndex = 0; uIndex < _uSize; ++uIndex)
+      for (uint32_t uIndex = 0; uIndex < uCount; ++uIndex)
       {
         uint32_t uTargetID = _lstDrawableInstances[uIndex];
         if (render::gfx::CRenderInstance* pInstance = m_lstInstances[uTargetID])
@@ -92,16 +95,38 @@ namespace render
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
       pEngine->GetRender()->SetModelMatrix(m_oTransform.GetMatrix());
 
-      // Draw instancing
+      // Draw instancing meshes
       for (std::shared_ptr<CMesh>& rMesh : m_lstMeshes)
       {
-        rMesh->Draw(_uSize);
+        rMesh->Draw(uCount);
       }
 
       // Unbind buffers
       ID3D11Buffer* pRemoveBuffers[uBuffersCount] = { nullptr, nullptr };
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pRemoveBuffers, lstStrides, lstOffsets);
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
+    }
+    // ------------------------------------
+    CRenderInstance* CModel::CreateInstance()
+    {
+      if (!AllowInstancing())
+      {
+        WARNING_LOG("You have reached maximum instances in this model!");
+        return nullptr;
+      }
+
+      // Create instance
+      uint32_t uInstanceID = m_lstInstances.GetSize();
+      return m_lstInstances.Create(this, uInstanceID);
+    }
+    // ------------------------------------
+    bool CModel::RemoveInstance(uint32_t _uID)
+    {
+      if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uID])
+      {
+        return m_lstInstances.Remove(pInstance);
+      }
+      return false;
     }
     // ------------------------------------
     void CModel::SetCullingEnabled(bool _bCull)
@@ -153,28 +178,6 @@ namespace render
       {
         collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
-    }
-    // ------------------------------------
-    CRenderInstance* CModel::CreateInstance()
-    {
-      if (!AllowInstancing())
-      {
-        WARNING_LOG("You have reached maximum instances in this model!");
-        return nullptr;
-      }
-
-      // Create instance
-      uint32_t uInstanceID = m_lstInstances.GetSize();
-      return m_lstInstances.Create(this, uInstanceID);
-    }
-    // ------------------------------------
-    bool CModel::RemoveInstance(uint32_t _uID)
-    {
-      if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uID])
-      {
-        return m_lstInstances.Remove(pInstance);
-      }
-      return false;
     }
     // ------------------------------------
     HRESULT CModel::InitModel(TModelData& _rModelData)

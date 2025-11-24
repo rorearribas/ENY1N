@@ -13,25 +13,24 @@ namespace render
       ClearTextures();
     }
     // ------------------------------------
-    texture::TSharedTexture const CMaterial::GetTexture(ETextureType _eType)
+    texture::TSharedTexture CMaterial::GetTexture(ETextureType _eType) const
     {
-      TMapTextures::iterator it = m_dctTextures.find(_eType);
-      return it != m_dctTextures.end() ? it->second : nullptr;
+      return m_lstTextures[static_cast<uint32_t>(_eType)];
     }
     // ------------------------------------
     void CMaterial::SetTexture(texture::TSharedTexture _pTexture, ETextureType _eType)
     {
-      m_dctTextures[_eType] = _pTexture;
+      m_lstTextures[static_cast<uint32_t>(_eType)] = _pTexture;
     }
     // ------------------------------------
     void CMaterial::ClearTextures()
     {
-      auto it = m_dctTextures.begin();
-      for (; it != m_dctTextures.end(); ++it)
+      uint32_t uIndex = 0;
+      while (uIndex != s_uTextureCount)
       {
-        it->second.reset();
+        m_lstTextures[uIndex].reset();
+        uIndex++;
       }
-      m_dctTextures.clear();
     }
   }
 }

@@ -21,7 +21,10 @@ namespace render
 
     inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
     inline void SetCamera(const render::CCamera* _pCamera) { m_pCamera = _pCamera; }
+
+    void SetTexturesInfo(bool _bDiffuse, bool _bNormal, bool _bSpecular);
     void SetModelMatrix(const math::CMatrix4x4& _mModel);
+    void SetInstancingMode(bool _bEnabled);
 
     inline void ShowRenderWindow(bool _bStatus) { m_pRenderWindow->SetEnabled(_bStatus); }
     void SetFillMode(D3D11_FILL_MODE _eFillMode);
@@ -33,17 +36,20 @@ namespace render
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);
 
     HRESULT Init(uint32_t _uX, uint32_t _uY);
+    HRESULT SetupDeferredShading(uint32_t _uX, uint32_t _uY);
+    HRESULT InitConstantBuffers();
+
+  private:
     HRESULT CreateDevice(uint32_t _uX, uint32_t _uY);
     HRESULT InitBasicPipeline(uint32_t _uX, uint32_t _uY);
 
     HRESULT CreateDepthStencilView(uint32_t _uX, uint32_t _uY);
-    HRESULT SetupDeferredShading(uint32_t _uX, uint32_t _uY);
     HRESULT CreateBackBuffer();
 
-  private:
     HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC& _oRasterizerState);
     HRESULT CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _oBlendState);
 
+  private:
     void ConfigureViewport(uint32_t _uX, uint32_t _uY);
     void SetScissorRect(uint32_t _uX, uint32_t _uY);
     bool InitImGui();

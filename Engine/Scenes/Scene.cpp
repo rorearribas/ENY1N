@@ -16,13 +16,6 @@
 
 namespace scene
 {
-  CScene::CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex)
-  {
-    HRESULT hResult = m_oLightingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
-    assert(!FAILED(hResult));
-    hResult = m_oInstancingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
-    assert(!FAILED(hResult));
-  }
   // ------------------------------------
   CScene::~CScene()
   {
@@ -88,62 +81,22 @@ namespace scene
   // ------------------------------------
   render::lights::CDirectionalLight* const CScene::CreateDirectionalLight()
   {
-    if (m_pDirectionalLight)
-    {
-      WARNING_LOG("There is a directional light in the current scene!");
-      return m_pDirectionalLight;
-    }
-    m_pDirectionalLight = new render::lights::CDirectionalLight();
-    return m_pDirectionalLight;
+    return m_oLightManager.CreateDirectionalLight();
   }
   // ------------------------------------
   render::lights::CPointLight* const CScene::CreatePointLight()
   {
-    if (m_lstPointLights.GetSize() >= s_uMaxPointLights)
-    {
-      WARNING_LOG("You have reached maximum point lights in the current scene!");
-      return nullptr;
-    }
-    return m_lstPointLights.Create();
+    return m_oLightManager.CreatePointLight();
   }
   // ------------------------------------
   render::lights::CSpotLight* const CScene::CreateSpotLight()
   {
-    if (m_lstSpotLights.GetSize() >= s_uMaxSpotLights)
-    {
-      WARNING_LOG("You have reached maximum spot lights in the current scene!");
-      return nullptr;
-    }
-    return m_lstSpotLights.Create();
+    return m_oLightManager.CreateSpotLight();
   }
   // ------------------------------------
   bool CScene::DestroyLight(render::lights::CLight*& _pLight_)
   {
-    bool bOk = false;
-    switch (_pLight_->GetLightType())
-    {
-      case render::ELightType::DIRECTIONAL_LIGHT:
-      {
-        bOk = global::ReleaseObject(m_pDirectionalLight);
-      }
-      break;
-      case render::ELightType::POINT_LIGHT:
-      {
-        render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(_pLight_);
-        bOk = m_lstPointLights.Remove(pPointLight);
-      }
-      break;
-      case render::ELightType::SPOT_LIGHT:
-      {
-        render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(_pLight_);
-        bOk = m_lstSpotLights.Remove(pSpotLight);
-      }
-      break;
-      default:
-      break;
-    }
-    _pLight_ = nullptr; // Set as nullptr
-    return bOk;
+    return m_oLightManager.DestroyLight(_pLight_);
   }
   // ------------------------------------
   void CScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
@@ -268,10 +221,6 @@ namespace scene
   // ------------------------------------
   void CScene::DrawModels(const render::CCamera* _pCamera)
   {
-    // I must change this!!!
-    ID3D11Buffer* pConstantBuffer = m_oInstancingBuffer.GetBuffer();
-    global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pConstantBuffer);
-
     // Draw
     for (uint32_t uIndex = 0; uIndex < m_lstModels.GetMaxSize(); uIndex++)
     {
@@ -287,7 +236,7 @@ namespace scene
         bool bDrawModel = true;
         if (pModel->IsCullingEnabled()) // Check culling
         {
-          bDrawModel = _pCamera->IsOnFrustum(pModel->GetWorldBoudingBox());
+          bDrawModel = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
         }
         if (bDrawModel)
         {
@@ -296,13 +245,11 @@ namespace scene
       }
 
       // Handle instances
-      uint32_t uSize = 0;
-      render::gfx::TDrawableInstances lstDrawableInstances = render::gfx::TDrawableInstances();
-
+      std::vector<uint32_t> lstDrawableInstances;
       render::gfx::TInstances& lstInstances = pModel->GetInstances();
-      for (uint32_t uInstance = 0; uInstance < lstInstances.GetMaxSize(); uInstance++)
+      for (uint32_t uI = 0; uI < lstInstances.GetMaxSize(); uI++)
       {
-        render::gfx::CRenderInstance* pInstance = lstInstances[uInstance];
+        render::gfx::CRenderInstance* pInstance = lstInstances[uI];
         if (!pInstance || !pInstance->IsVisible())
         {
           continue;
@@ -311,34 +258,26 @@ namespace scene
         bool bDrawInstance = true;
         if (pInstance->IsCullingEnabled()) // Check culling
         {
-          bDrawInstance = _pCamera->IsOnFrustum(pInstance->GetWorldBoundingBox());
+          bDrawInstance = _pCamera->IsOnFrustum(pInstance->GetWorldAABB());
         }
         if (bDrawInstance)
         {
-          lstDrawableInstances[uSize++] = pInstance->GetInstanceID();
+          lstDrawableInstances.emplace_back(pInstance->GetInstanceID());
         }
       }
 
-      if (uSize > 0)
+      if (lstDrawableInstances.size() > 0)
       {
-        // Set instance mode!
-        m_oInstancingBuffer.GetData().IsInstantiated = true;
-        bool bOk = m_oInstancingBuffer.WriteBuffer();
-        assert(bOk);
-
+        engine::CEngine* pEngine = engine::CEngine::GetInstance();
+        render::CRender* pRender = pEngine->GetRender();
+        // Push mode
+        pRender->SetInstancingMode(true);
         // Draw instances
-        pModel->DrawInstances(lstDrawableInstances, uSize);
-
-        // Set default state
-        m_oInstancingBuffer.GetData().IsInstantiated = false;
-        bOk = m_oInstancingBuffer.WriteBuffer();
-        assert(bOk);
+        pModel->DrawInstances(lstDrawableInstances);
+        // Disabled mode
+        pRender->SetInstancingMode(false);
       }
     }
-
-    // Set invalid constant buffer
-    ID3D11Buffer* pInvalidBuffer = nullptr;
-    global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 1, &pInvalidBuffer);
   }
   // ------------------------------------
   void CScene::DrawPrimitives()
@@ -359,13 +298,18 @@ namespace scene
       bool bDrawPrimitive = true;
       if (pPrimitive->IsCullingEnabled()) // Check culling
       {
-        bDrawPrimitive = pCamera->IsOnFrustum(pPrimitive->GetWorldBoudingBox());
+        bDrawPrimitive = pCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
       }
       if (bDrawPrimitive)
       {
         pPrimitive->Draw();
       }
     }
+  }
+  // ------------------------------------
+  void CScene::ApplyLighting()
+  {
+    m_oLightManager.Apply();
   }
   // ------------------------------------
   void CScene::DrawDebug()
@@ -388,7 +332,7 @@ namespace scene
       bool bDrawDebug = true;
       if (pDebug->IsCullingEnabled()) // Check culling
       {
-        bDrawDebug = pCamera->IsOnFrustum(pDebug->GetWorldBoudingBox());
+        bDrawDebug = pCamera->IsOnFrustum(pDebug->GetWorldAABB());
       }
       if (bDrawDebug)
       {
@@ -403,85 +347,10 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::UpdateLightning()
-  {
-    // Update buffer
-    auto& rData = m_oLightingBuffer.GetData();
-
-    // Reset value
-    rData.DirectionalLight.Intensity = 0.0f;
-    rData.DirectionalLight.Color = render::lights::CDirectionalLight::s_vDefaultDirectionalColor;
-    rData.DirectionalLight.Direction = render::lights::CDirectionalLight::s_vDefaultDirection;
-
-    // Apply direction
-    if (m_pDirectionalLight)
-    {
-      rData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
-      rData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
-      rData.DirectionalLight.Direction = m_pDirectionalLight->GetDir();
-    }
-
-    // Point lights
-    for (uint32_t uIndex = 0; uIndex < m_lstPointLights.GetSize(); uIndex++)
-    {
-      render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex];
-      if (!pPointLight)
-      {
-        continue;
-      }
-
-      // Set
-      rData.PointLights[uIndex].Position = pPointLight->GetPosition();
-      rData.PointLights[uIndex].Color = pPointLight->GetColor();
-      rData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
-      rData.PointLights[uIndex].Range = pPointLight->GetRange();
-    }
-    // Set the number of registered point lights
-    rData.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetSize());
-
-    // Spot lights
-    for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetSize(); uIndex++)
-    {
-      render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex];
-      if (!pSpotLight)
-      {
-        continue;
-      }
-
-      // Set
-      rData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
-      rData.SpotLights[uIndex].Direction = pSpotLight->GetDir();
-      rData.SpotLights[uIndex].Color = pSpotLight->GetColor();
-      rData.SpotLights[uIndex].Range = pSpotLight->GetRange();
-      rData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
-    }
-    // Set the number of registered spot lights
-    rData.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetSize());
-
-    // Write buffer
-    bool bOk = m_oLightingBuffer.WriteBuffer();
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk); // Sanity check
-#endif
-
-    // Apply constant buffer
-    ID3D11Buffer* pConstantBuffer = m_oLightingBuffer.GetBuffer();
-    global::dx::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
-  }
-  // ------------------------------------
   void CScene::Clear()
   {
     // Models + primitives
     m_lstPrimitives.Clear();
     m_lstModels.Clear();
-
-    // Lighting
-    global::ReleaseObject(m_pDirectionalLight);
-    m_lstPointLights.Clear();
-    m_lstSpotLights.Clear();
-
-    // Constant buffer
-    m_oLightingBuffer.Clear();
   }
 }

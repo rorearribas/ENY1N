@@ -1,6 +1,6 @@
 #pragma once
-#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-#include "Engine/Collisions/BoundingBox.h"
+#include "Engine/Render/ConstantBuffer/BufferTypes.h"
+#include "Engine/Collisions/AABB.h"
 #include "Engine/Utils/Plane.h"
 
 #include "Libs/Math/Matrix4x4.h"
@@ -25,7 +25,7 @@ namespace render
     ~CCamera() {}
 
     void Update(float _fDeltaTime);
-    bool IsOnFrustum(const collision::CBoundingBox& _oBoundingBox) const;
+    bool IsOnFrustum(const collision::CAABB& _oBoundingBox) const;
 
     const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
     const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjection; }

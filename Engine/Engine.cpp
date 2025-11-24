@@ -20,7 +20,9 @@ namespace engine
   // ------------------------------------
   void CEngine::Init(uint32_t _uWidth, uint32_t _uHeight)
   {
+#ifdef _DEBUG
     assert(!m_bInitialized);
+#endif // DEBUG
     LOG("Initializing engine...");
 
     // Create camera
@@ -62,7 +64,9 @@ namespace engine
   // ------------------------------------
   bool CEngine::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
   {
+#ifdef _DEBUG
     assert(_pPrimitive_);
+#endif // DEBUG
     return m_pSceneManager->DestroyPrimitive(_pPrimitive_);
   }
   // ------------------------------------
@@ -73,7 +77,9 @@ namespace engine
   // ------------------------------------
   bool CEngine::DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_, uint32_t _uSceneIndex)
   {
+#ifdef _DEBUG
     assert(_wpModel_.IsValid());
+#endif // DEBUG
     return m_pSceneManager->DestroyModel(_wpModel_, _uSceneIndex);
   }
   // ------------------------------------
@@ -94,7 +100,9 @@ namespace engine
   // ------------------------------------
   bool CEngine::DestroyLight(render::lights::CLight*& _pLight_)
   {
+#ifdef _DEBUG
     assert(_pLight_);
+#endif // DEBUG
     return m_pSceneManager->DestroyLight(_pLight_);
   }
   // ------------------------------------

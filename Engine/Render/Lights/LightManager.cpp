@@ -12,174 +12,137 @@ namespace render
   namespace lights
   {
     // ------------------------------------
-    CLightsManager::CLightsManager()
+    CLightManager::CLightManager()
     {
-      HRESULT hResult = m_oLightningBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
+      HRESULT hResult = m_oLightingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
       UNUSED_VAR(hResult);
+#ifdef _DEBUG
       assert(!FAILED(hResult));
+#endif // DEBUG
     }
     // ------------------------------------
-    CLightsManager::~CLightsManager()
+    CLightManager::~CLightManager()
     {
       Clean();
     }
     // ------------------------------------
-    void CLightsManager::Update()
+    void CLightManager::Apply()
     {
       // Get data
-      auto& oGlobalLightningData = m_oLightningBuffer.GetData();
+      auto& rLightingBuffer = m_oLightingBuffer.GetData();
 
       // Update directional light
       if (m_pDirectionalLight)
       {
-        oGlobalLightningData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
-        oGlobalLightningData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
-        oGlobalLightningData.DirectionalLight.Direction = m_pDirectionalLight->GetDir();
+        rLightingBuffer.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
+        rLightingBuffer.DirectionalLight.Color = m_pDirectionalLight->GetColor();
+        rLightingBuffer.DirectionalLight.Direction = m_pDirectionalLight->GetDir();
       }
 
       // Update point lights
-      for (uint32_t uIndex = 0; uIndex < m_uRegisteredPointLights; uIndex++)
+      for (uint32_t uIndex = 0; uIndex < m_lstPointLights.GetMaxSize(); uIndex++)
       {
-        render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex];
-        oGlobalLightningData.PointLights[uIndex].Position = pPointLight->GetPosition();
-        oGlobalLightningData.PointLights[uIndex].Color = pPointLight->GetColor();
-        oGlobalLightningData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
-        oGlobalLightningData.PointLights[uIndex].Range = pPointLight->GetRange();
+        if (render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex])
+        {
+          rLightingBuffer.PointLights[uIndex].Position = pPointLight->GetPosition();
+          rLightingBuffer.PointLights[uIndex].Color = pPointLight->GetColor();
+          rLightingBuffer.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
+          rLightingBuffer.PointLights[uIndex].Range = pPointLight->GetRange();
+        }
       }
       // Set the number of registered point lights
-      oGlobalLightningData.RegisteredPointLights = static_cast<int>(m_uRegisteredPointLights);
+      rLightingBuffer.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetSize());
 
       // Update spot lights
-      for (uint32_t uIndex = 0; uIndex < m_uRegisteredSpotLights; uIndex++)
+      for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetMaxSize(); uIndex++)
       {
-        render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex];
-        oGlobalLightningData.SpotLights[uIndex].Position = pSpotLight->GetPosition();
-        oGlobalLightningData.SpotLights[uIndex].Direction = pSpotLight->GetDir();
-        oGlobalLightningData.SpotLights[uIndex].Color = pSpotLight->GetColor();
-        oGlobalLightningData.SpotLights[uIndex].Range = pSpotLight->GetRange();
-        oGlobalLightningData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
+        if (render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex])
+        {
+          rLightingBuffer.SpotLights[uIndex].Position = pSpotLight->GetPosition();
+          rLightingBuffer.SpotLights[uIndex].Direction = pSpotLight->GetDir();
+          rLightingBuffer.SpotLights[uIndex].Color = pSpotLight->GetColor();
+          rLightingBuffer.SpotLights[uIndex].Range = pSpotLight->GetRange();
+          rLightingBuffer.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
+        }
       }
       // Set the number of registered spot lights
-      oGlobalLightningData.RegisteredSpotLights = static_cast<int>(m_uRegisteredSpotLights);
+      rLightingBuffer.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetSize());
 
       // Write buffer
-      bool bOk = m_oLightningBuffer.WriteBuffer();
+      bool bOk = m_oLightingBuffer.WriteBuffer();
       UNUSED_VAR(bOk);
       assert(bOk);
 
-      // Push buffer
-      ID3D11Buffer* pConstantBuffer = m_oLightningBuffer.GetBuffer();
-      global::dx::s_pDeviceContext->PSSetConstantBuffers(1, 1, &pConstantBuffer);
+      // Bind buffer
+      m_oLightingBuffer.Bind(1, render::EShaderType::E_PIXEL);
     }
     // ------------------------------------
-    void CLightsManager::DestroyLight(render::lights::CLight*& _pLight_)
-    {
-      switch (_pLight_->GetLightType())
-      {
-      case render::ELightType::DIRECTIONAL_LIGHT:
-      {
-        global::ReleaseObject(m_pDirectionalLight);
-        _pLight_ = nullptr;
-      }
-      break;
-      case render::ELightType::POINT_LIGHT:
-      {
-        DestroyPointLight(_pLight_);
-      }
-      break;
-      case render::ELightType::SPOT_LIGHT:
-      {
-        DestroySpotLight(_pLight_);
-      }
-      break;
-      default:
-        break;
-      }
-    }
-    // ------------------------------------
-    render::lights::CDirectionalLight* CLightsManager::CreateDirectionalLight()
+    render::lights::CDirectionalLight* const CLightManager::CreateDirectionalLight()
     {
       if (m_pDirectionalLight)
       {
-        WARNING_LOG("There is a directional light in the current scene!" );
+        WARNING_LOG("There is a directional light in the current scene!");
         return m_pDirectionalLight;
       }
       m_pDirectionalLight = new render::lights::CDirectionalLight();
       return m_pDirectionalLight;
     }
     // ------------------------------------
-    render::lights::CPointLight* CLightsManager::CreatePointLight()
+    render::lights::CPointLight* const CLightManager::CreatePointLight()
     {
-      if (m_uRegisteredPointLights >= s_uMaxSpotLights)
+      if (m_lstPointLights.GetSize() >= s_uMaxPointLights)
       {
-        WARNING_LOG("You have reached maximum point lights in the current scene");
+        WARNING_LOG("You have reached maximum point lights in the current scene!");
         return nullptr;
       }
-      render::lights::CPointLight*& pPointLight = m_lstPointLights[m_uRegisteredPointLights++];
-      pPointLight = new render::lights::CPointLight();
-      return pPointLight;
+      return m_lstPointLights.Create();
     }
     // ------------------------------------
-    render::lights::CSpotLight* CLightsManager::CreateSpotLight()
+    render::lights::CSpotLight* const CLightManager::CreateSpotLight()
     {
-      if (m_uRegisteredSpotLights >= s_uMaxSpotLights)
+      if (m_lstSpotLights.GetSize() >= s_uMaxSpotLights)
       {
-        WARNING_LOG("You have reached maximum spot lights in the current scene");
+        WARNING_LOG("You have reached maximum spot lights in the current scene!");
         return nullptr;
       }
-      render::lights::CSpotLight*& pSpotLight = m_lstSpotLights[m_uRegisteredSpotLights++];
-      pSpotLight = new render::lights::CSpotLight();
-      return pSpotLight;
+      return m_lstSpotLights.Create();
     }
     // ------------------------------------
-    void CLightsManager::Clean()
+    bool CLightManager::DestroyLight(render::lights::CLight*& _pLight_)
     {
-      // Destroy directional light
+      bool bOk = false;
+      switch (_pLight_->GetLightType())
+      {
+      case render::ELightType::DIRECTIONAL_LIGHT:
+      {
+        bOk = global::ReleaseObject(m_pDirectionalLight);
+      }
+      break;
+      case render::ELightType::POINT_LIGHT:
+      {
+        render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(_pLight_);
+        bOk = m_lstPointLights.Remove(pPointLight);
+      }
+      break;
+      case render::ELightType::SPOT_LIGHT:
+      {
+        render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(_pLight_);
+        bOk = m_lstSpotLights.Remove(pSpotLight);
+      }
+      break;
+      default:
+        break;
+      }
+      _pLight_ = nullptr; // Set as nullptr
+      return bOk;
+    }
+    // ------------------------------------
+    void CLightManager::Clean()
+    {
+      // Destroy lights
       global::ReleaseObject(m_pDirectionalLight);
-
-      // Destroy point lights
-      std::for_each(m_lstPointLights.begin(), m_lstPointLights.end(), [](render::lights::CPointLight*& _pLight)
-      {
-        global::ReleaseObject(_pLight);
-      });
-      m_uRegisteredPointLights = 0;
-
-      // Destroy spot lights
-      std::for_each(m_lstSpotLights.begin(), m_lstSpotLights.end(), [](render::lights::CSpotLight*& _pLight)
-      {
-        global::ReleaseObject(_pLight);
-      });
-      m_uRegisteredSpotLights = 0;
-    }
-    // ------------------------------------
-    void CLightsManager::DestroyPointLight(render::lights::CLight*& pLight_)
-    {
-      auto it = std::find(m_lstPointLights.begin(), m_lstPointLights.end(), pLight_);
-      if (it != m_lstPointLights.end())
-      {
-        global::ReleaseObject(*it);
-        m_uRegisteredPointLights--;
-
-        auto oReorderFunc = std::remove_if(m_lstPointLights.begin(), m_lstPointLights.end(),
-        [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
-        std::fill(oReorderFunc, m_lstPointLights.end(), nullptr); // Set nullptr
-      }
-      pLight_ = nullptr;
-    }
-    // ------------------------------------
-    void CLightsManager::DestroySpotLight(render::lights::CLight*& pLight_)
-    {
-      auto it = std::find(m_lstSpotLights.begin(), m_lstSpotLights.end(), pLight_);
-      if (it != m_lstSpotLights.end())
-      {
-        global::ReleaseObject(*it);
-        m_uRegisteredSpotLights--;
-
-        auto oReorderFunc = std::remove_if(m_lstSpotLights.begin(), m_lstSpotLights.end(),
-        [](render::lights::CLight* _pPtr) { return _pPtr == nullptr; }); // Reorder fixed list
-        std::fill(oReorderFunc, m_lstSpotLights.end(), nullptr); // Set nullptr
-      }
-      pLight_ = nullptr;
+      m_lstPointLights.Clear();
+      m_lstSpotLights.Clear();
     }
   }
 }

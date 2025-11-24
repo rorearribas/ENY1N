@@ -153,8 +153,9 @@
   <ItemGroup>
     <ClInclude Include="Collisions\CapsuleCollider.h" />
     <ClInclude Include="Collisions\CollisionManager.h" />
-    <ClInclude Include="Collisions\BoundingBox.h" />
+    <ClInclude Include="Collisions\AABB.h" />
     <ClInclude Include="Managers\MemoryTracker.h" />
+    <ClInclude Include="Render\ConstantBuffer\BufferTypes.h" />
     <ClInclude Include="Render\Graphics\RenderInstance.h" />
     <ClInclude Include="Physics\PhysicsManager.h" />
     <ClInclude Include="Collisions\Collider.h" />
@@ -193,7 +194,7 @@
     <ClCompile Include="Render\Graphics\RenderInstance.cpp" />
     <ClCompile Include="Collisions\CapsuleCollider.cpp" />
     <ClCompile Include="Collisions\CollisionManager.cpp" />
-    <ClCompile Include="Collisions\BoundingBox.cpp" />
+    <ClCompile Include="Collisions\AABB.cpp" />
     <ClCompile Include="Managers\MemoryTracker.cpp" />
     <ClCompile Include="Physics\PhysicsManager.cpp" />
     <ClCompile Include="Render\RenderTarget.cpp" />

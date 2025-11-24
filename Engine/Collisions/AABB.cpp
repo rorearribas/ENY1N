@@ -1,10 +1,10 @@
-#include "BoundingBox.h"
+#include "AABB.h"
 #include "Engine/Engine.h"
 
 namespace collision
 {
   // ------------------------------------
-  void CBoundingBox::GetExtents(math::CVector3 lstExtents[8]) const
+  void CAABB::GetExtents(math::CVector3 lstExtents[8]) const
   {
     lstExtents[0] = m_v3Min;
     {
@@ -18,14 +18,14 @@ namespace collision
     lstExtents[7] = m_v3Max;
   }
   // ------------------------------------
-  void CBoundingBox::DrawDebug(math::CVector3 _v3Color) const
+  void CAABB::DrawDebug(math::CVector3 _v3Color) const
   {
     // Draw cube
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     pEngine->DrawCube(GetCenter(), GetSize(), math::CVector3::Zero, _v3Color, render::ERenderMode::WIREFRAME);
   }
   // ------------------------------------
-  void ComputeWorldAABB(const CBoundingBox& _rLocalAABB, const math::CTransform& _mTransform, CBoundingBox& _rWorldAABB_)
+  void ComputeWorldAABB(const CAABB& _rLocalAABB, const math::CTransform& _mTransform, CAABB& _rWorldAABB_)
   {
     const int iExtentsCount = 8;
     math::CVector3 lstExtents[iExtentsCount];

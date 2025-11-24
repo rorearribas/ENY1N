@@ -34,7 +34,9 @@ namespace input
     // Register raw input
     bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
     UNUSED_VAR(bOk);
+#ifdef _DEBUG
     assert(bOk);
+#endif // DEBUG
 
     // Bind delegate
     global::delegates::s_oUpdateMouseDelegate.Bind(&CMouse::OnUpdateMouse, this);
@@ -104,7 +106,9 @@ namespace input
     // Register keyboard input
     bool bOk = RegisterRawInputDevices(&oRawInputDevice, 1, sizeof(oRawInputDevice));
     UNUSED_VAR(bOk);
+#ifdef _DEBUG
     assert(bOk);
+#endif // DEBUG
 
     // Register all keys
     RegisterKeys();

@@ -29,7 +29,9 @@ namespace render
       // Remove shader
       bool bOk(false);
       bOk = global::dx::SafeRelease(m_pInternalPtr);
+#ifdef _DEBUG
       assert(bOk);
+#endif // DEBUG
     }
 
     template<EShaderType T>
@@ -37,17 +39,19 @@ namespace render
     {
       // Get device ctx
       ID3D11DeviceContext* pDeviceCtx = global::dx::s_pDeviceContext;
+#ifdef _DEBUG
       assert(pDeviceCtx);
+#endif // DEBUG
       // Attach shader
       switch (T)
       {
-      case render::EShaderType::E_VERTEX:   { pDeviceCtx->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(m_pInternalPtr),   nullptr, 0); } break;
-      case render::EShaderType::E_HULL:     { pDeviceCtx->HSSetShader(reinterpret_cast<ID3D11HullShader*>(m_pInternalPtr),     nullptr, 0); } break;
-      case render::EShaderType::E_DOMAIN:   { pDeviceCtx->DSSetShader(reinterpret_cast<ID3D11DomainShader*>(m_pInternalPtr),   nullptr, 0); } break;
-      case render::EShaderType::E_GEOMETRY: { pDeviceCtx->GSSetShader(reinterpret_cast<ID3D11GeometryShader*>(m_pInternalPtr), nullptr, 0); } break;
-      case render::EShaderType::E_PIXEL:    { pDeviceCtx->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(m_pInternalPtr),    nullptr, 0); } break;
-      case render::EShaderType::E_COMPUTE:  { pDeviceCtx->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(m_pInternalPtr),  nullptr, 0); } break;
-      default: break;
+        case render::EShaderType::E_VERTEX:   { pDeviceCtx->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(m_pInternalPtr),   nullptr, 0); } break;
+        case render::EShaderType::E_HULL:     { pDeviceCtx->HSSetShader(reinterpret_cast<ID3D11HullShader*>(m_pInternalPtr),     nullptr, 0); } break;
+        case render::EShaderType::E_DOMAIN:   { pDeviceCtx->DSSetShader(reinterpret_cast<ID3D11DomainShader*>(m_pInternalPtr),   nullptr, 0); } break;
+        case render::EShaderType::E_GEOMETRY: { pDeviceCtx->GSSetShader(reinterpret_cast<ID3D11GeometryShader*>(m_pInternalPtr), nullptr, 0); } break;
+        case render::EShaderType::E_PIXEL:    { pDeviceCtx->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(m_pInternalPtr),    nullptr, 0); } break;
+        case render::EShaderType::E_COMPUTE:  { pDeviceCtx->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(m_pInternalPtr),  nullptr, 0); } break;
+        default: break;
       }
     }
 
@@ -56,17 +60,19 @@ namespace render
     {
       // Get device ctx
       ID3D11DeviceContext* pDeviceCtx = global::dx::s_pDeviceContext;
+#ifdef _DEBUG
       assert(pDeviceCtx);
+#endif // DEBUG
       // Detach shader
       switch (T)
       {
-      case render::EShaderType::E_VERTEX:   { pDeviceCtx->VSSetShader(nullptr, nullptr, 0); } break;
-      case render::EShaderType::E_HULL:     { pDeviceCtx->HSSetShader(nullptr, nullptr, 0); } break;
-      case render::EShaderType::E_DOMAIN:   { pDeviceCtx->DSSetShader(nullptr, nullptr, 0); } break;
-      case render::EShaderType::E_GEOMETRY: { pDeviceCtx->GSSetShader(nullptr, nullptr, 0); } break;
-      case render::EShaderType::E_PIXEL:    { pDeviceCtx->PSSetShader(nullptr, nullptr, 0); } break;
-      case render::EShaderType::E_COMPUTE:  { pDeviceCtx->CSSetShader(nullptr, nullptr, 0); } break;
-      default: break;
+        case render::EShaderType::E_VERTEX:   { pDeviceCtx->VSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShaderType::E_HULL:     { pDeviceCtx->HSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShaderType::E_DOMAIN:   { pDeviceCtx->DSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShaderType::E_GEOMETRY: { pDeviceCtx->GSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShaderType::E_PIXEL:    { pDeviceCtx->PSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShaderType::E_COMPUTE:  { pDeviceCtx->CSSetShader(nullptr, nullptr, 0); } break;
+        default: break;
       }
     }
 
@@ -74,8 +80,9 @@ namespace render
     CShader<T>::CShader(const unsigned char* _pBuffer, size_t _tSize)
     {
       ID3D11Device* _pDevice = global::dx::s_pDevice;
+#ifdef _DEBUG
       assert(_pDevice);
-
+#endif // DEBUG
       HRESULT hResult = S_OK;
       switch (T)
       {
