@@ -21,7 +21,7 @@ static constexpr uint32_t s_uAlign = 16;
 */
 
 // Matrix
-struct __declspec(align(s_uAlign)) TTransformsData
+struct __declspec(align(s_uAlign)) TTransforms
 {
   // Transforms
   math::CMatrix4x4 Model = math::CMatrix4x4::Identity;
@@ -35,7 +35,7 @@ struct __declspec(align(s_uAlign)) TTransformsData
 };
 
 // Textures data
-struct __declspec(align(s_uAlign)) TTexturesData
+struct __declspec(align(s_uAlign)) TTextureInfo
 {
   int HasDiffuse;
   int HasNormal;
@@ -44,7 +44,7 @@ struct __declspec(align(s_uAlign)) TTexturesData
 };
 
 // Instancing mode
-struct __declspec(align(s_uAlign)) TInstanceMode
+struct __declspec(align(s_uAlign)) TInstancingMode
 {
   bool IsInstanceMode = false;
   float Padding[3];

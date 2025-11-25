@@ -13,7 +13,6 @@ namespace render
     class CMaterial
     {
     private:
-      static constexpr uint32_t s_uTextureCount = static_cast<uint32_t>(ETextureType::COUNT);
       typedef std::array<texture::TSharedTexture, s_uTextureCount> TTextures;
 
     public:
@@ -21,8 +20,8 @@ namespace render
       CMaterial(const std::string& _sMaterialId) : m_sID(_sMaterialId) {}
       ~CMaterial();
 
-      void SetTexture(texture::TSharedTexture _pTexture, ETextureType _eType);
-      texture::TSharedTexture GetTexture(ETextureType _eType) const;
+      void SetTexture(texture::TSharedTexture _pTexture, ETexture _eType);
+      texture::TSharedTexture GetTexture(ETexture _eType) const;
       inline const std::string& GetID() const { return m_sID; }
 
       inline void SetDiffuseColor(math::CVector3 _vDiffuseColor) { m_v3DiffuseColor = _vDiffuseColor; }

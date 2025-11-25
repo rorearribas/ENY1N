@@ -6,17 +6,12 @@
 template<class T>
 class CConstantBuffer
 {
-private:
-  CConstantBuffer(const CConstantBuffer<T>& rhs);
-
 public:
   CConstantBuffer() {}
   ~CConstantBuffer() { Clear(); }
 
-  HRESULT Init(ID3D11Device* _pDevice, ID3D11DeviceContext* _pDeviceContext)
+  inline HRESULT Init()
   {
-    m_pDeviceContext = _pDeviceContext;
-
     D3D11_BUFFER_DESC oBufferDesc = D3D11_BUFFER_DESC();
     oBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
     oBufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -25,48 +20,52 @@ public:
     oBufferDesc.StructureByteStride = 0;
     oBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(T) + 15) & ~15);
 
-    return _pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
+    return global::dx::s_pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
   }
 
-  void Bind(uint32_t _uSlot, render::EShaderType _eShaderType);
-  bool WriteBuffer();
+  inline void Clear()
+  {
+    global::dx::SafeRelease(m_pBuffer);
+  }
+
+  template<render::EShader _Type>
+  void Bind()
+  {
+    switch (_Type)
+    {
+      case render::EShader::E_VERTEX:   global::dx::s_pDeviceContext->VSSetConstantBuffers(m_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_HULL:     global::dx::s_pDeviceContext->HSSetConstantBuffers(m_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetConstantBuffers(m_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetConstantBuffers(m_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_PIXEL:    global::dx::s_pDeviceContext->PSSetConstantBuffers(m_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetConstantBuffers(m_uSlot, 1, &m_pBuffer); break;
+    }
+  }
+  inline bool WriteBuffer()
+  {
+    D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+    HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
+    if (FAILED(hResult))
+    {
+      return false;
+    }
+
+    // Copy memory into buffer
+    memcpy(oMappedSubresource.pData, &m_oData, sizeof(T));
+    global::dx::s_pDeviceContext->Unmap(m_pBuffer, 0);
+    return true;
+  }
+
+  inline void SetSlot(uint32_t _uSlot) { m_uSlot = _uSlot; }
+  inline const uint32_t GetSlot() const { return m_uSlot; }
 
   inline ID3D11Buffer* GetBuffer() const { return m_pBuffer; }
-  inline void Clear() { global::dx::SafeRelease(m_pBuffer); }
   inline T& GetData() { return m_oData; }
 
 private:
-  ID3D11Buffer* m_pBuffer = nullptr;
-  ID3D11DeviceContext* m_pDeviceContext = nullptr;
   T m_oData = T();
+
+private:
+  ID3D11Buffer* m_pBuffer = nullptr;
+  uint32_t m_uSlot = 0;
 };
-
-template<class T>
-void CConstantBuffer<T>::Bind(uint32_t _uSlot, render::EShaderType _eShaderType)
-{
-  switch (_eShaderType)
-  {
-    case render::EShaderType::E_VERTEX:   global::dx::s_pDeviceContext->VSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-    case render::EShaderType::E_HULL:     global::dx::s_pDeviceContext->HSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-    case render::EShaderType::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-    case render::EShaderType::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-    case render::EShaderType::E_PIXEL:    global::dx::s_pDeviceContext->PSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-    case render::EShaderType::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-  }
-}
-
-template<class T>
-bool CConstantBuffer<T>::WriteBuffer()
-{
-  D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-  HRESULT hResult = m_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
-  if (FAILED(hResult))
-  {
-    return false;
-  }
-
-  // Copy memory into buffer
-  memcpy(oMappedSubresource.pData, &m_oData, sizeof(T));
-  m_pDeviceContext->Unmap(m_pBuffer, 0);
-  return true;
-}

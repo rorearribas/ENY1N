@@ -9,7 +9,7 @@ namespace render
     class CPointLight : public CLight
     {
     public:
-      CPointLight() : CLight(ELightType::POINT_LIGHT) {}
+      CPointLight() : CLight(ELight::POINT_LIGHT) {}
       virtual ~CPointLight() {}
 
       // Range

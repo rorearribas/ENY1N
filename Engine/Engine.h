@@ -35,7 +35,7 @@ namespace engine
     inline render::CCamera* GetCamera() const { return m_pCamera; }
 
     // Handle graphics
-    render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
+    render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
     bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
 
     utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);

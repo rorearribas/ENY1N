@@ -54,7 +54,7 @@ namespace render
   };
 
   // Shader types
-  enum class EShaderType : uint32_t
+  enum class EShader : uint32_t
   {
     E_VERTEX,
     E_HULL,
@@ -65,7 +65,7 @@ namespace render
   };
 
   // View types
-  enum class EViewType : uint32_t
+  enum class EView : uint32_t
   {
     DEPTH_STENCIL,
     RENDER_TARGET,
@@ -75,7 +75,7 @@ namespace render
   };
 
   // Textures types
-  enum class ETextureType : uint32_t
+  enum class ETexture : uint32_t
   {
     DIFFUSE,
     SPECULAR,
@@ -96,9 +96,10 @@ namespace render
     AMBIENT_OCCLUSSION,
     COUNT
   };
+  static constexpr uint32_t s_uTextureCount((uint32_t)(ETexture::COUNT));
 
   // Light types
-  enum class ELightType : uint32_t
+  enum class ELight : uint32_t
   {
     DIRECTIONAL_LIGHT,
     POINT_LIGHT,
@@ -107,7 +108,7 @@ namespace render
   };
 
   // Primitive types
-  enum class EPrimitiveType : uint32_t
+  enum class EPrimitive : uint32_t
   {
     E2D_SQUARE,
     E2D_CIRCLE,

@@ -64,7 +64,7 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode)
+  void CModelComponent::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
   {
     // Flush
     Clean();

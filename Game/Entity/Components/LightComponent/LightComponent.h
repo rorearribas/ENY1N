@@ -11,12 +11,12 @@ namespace game
   class CLightComponent : public CComponent
   {
   public:
-    CLightComponent(CEntity* _pOwner, render::ELightType _eLightType);
+    CLightComponent(CEntity* _pOwner, render::ELight _eLightType);
     virtual ~CLightComponent();
 
     inline render::lights::CLight* GetLight() const { return m_pLight; }
-    void SetLightType(render::ELightType _eLightType);
-    render::ELightType GetLightType() const;
+    void SetLightType(render::ELight _eLightType);
+    render::ELight GetLightType() const;
 
     void SetPosition(const math::CVector3& _v3Position);
     math::CVector3 GetPosition() const;
@@ -30,7 +30,7 @@ namespace game
 
   private:
     void Clean();
-    void CreateLight(render::ELightType _eLightType);
+    void CreateLight(render::ELight _eLightType);
 
   private:
     render::lights::CLight* m_pLight = nullptr;

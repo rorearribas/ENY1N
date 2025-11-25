@@ -31,10 +31,10 @@ namespace render
 
       // Set values
       m_eRenderMode = _eRenderMode;
-      m_ePrimitiveType = EPrimitiveType::CUSTOM;
+      m_ePrimitiveType = EPrimitive::CUSTOM;
     }
     // ------------------------------------
-    CPrimitive::CPrimitive(EPrimitiveType _ePrimitiveType, ERenderMode _eRenderMode)
+    CPrimitive::CPrimitive(EPrimitive _ePrimitiveType, ERenderMode _eRenderMode)
     {
       // Create buffer from presets
       HRESULT hResult = CreatePrimitive(_ePrimitiveType, _eRenderMode);
@@ -163,12 +163,12 @@ namespace render
       m_v3Color = _v3Color;
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode)
+    HRESULT CPrimitive::CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode)
     {
       switch (_ePrimitiveType)
       {
         // 2D Implementation
-        case EPrimitiveType::E2D_SQUARE:
+        case EPrimitive::E2D_SQUARE:
         {
           // Create 2D Square
           return CreateBuffer
@@ -177,14 +177,14 @@ namespace render
             _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oSquareIndices : CPrimitiveUtils::s_oSquareWireframeIndices
           );
         }
-        case EPrimitiveType::E2D_CIRCLE:
+        case EPrimitive::E2D_CIRCLE:
         { 
           // Create 2D Circle
           TCustomPrimitive oPrimitiveData = CPrimitiveUtils::Create2DCircle(s_fStandardRadius, s_iSubvH, s_iSubvV, _eRenderMode);
           return CreateBuffer(oPrimitiveData.PrimitiveData, oPrimitiveData.Indices);
         }
         break;
-        case EPrimitiveType::E2D_TRIANGLE:
+        case EPrimitive::E2D_TRIANGLE:
         {
           // Create 2D Triangle
           return CreateBuffer
@@ -195,7 +195,7 @@ namespace render
         }
         break;
         // 3D Implementation
-        case EPrimitiveType::E3D_PLANE:
+        case EPrimitive::E3D_PLANE:
         {
           // Create 3D Plane
           return CreateBuffer
@@ -204,7 +204,7 @@ namespace render
             _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oPlaneIndices : CPrimitiveUtils::s_oWireframePlaneIndices
           );
         }
-        case EPrimitiveType::E3D_CUBE:
+        case EPrimitive::E3D_CUBE:
         {
           // Create 3D Cube
           return CreateBuffer
@@ -213,7 +213,7 @@ namespace render
             _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::s_oCubeIndices : CPrimitiveUtils::s_oWireframeCubeIndices
           );
         }
-        case EPrimitiveType::E3D_SPHERE:
+        case EPrimitive::E3D_SPHERE:
         {
           // Create sphere
           std::vector<render::gfx::TPrimitiveData> lstPrimitiveData = std::vector<render::gfx::TPrimitiveData>();
@@ -224,7 +224,7 @@ namespace render
           // Create buffer
           return CreateBuffer(lstPrimitiveData, lstIndices);
         }
-        case EPrimitiveType::E3D_CAPSULE:
+        case EPrimitive::E3D_CAPSULE:
         {
           // Create capsule
           TCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCapsule

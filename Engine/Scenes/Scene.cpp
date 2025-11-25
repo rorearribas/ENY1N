@@ -22,7 +22,7 @@ namespace scene
     Clear();
   }
   // ------------------------------------
-  render::gfx::CPrimitive* const CScene::CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode)
+  render::gfx::CPrimitive* const CScene::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
   {
     if (m_lstPrimitives.GetSize() >= m_lstPrimitives.GetMaxSize())
     {
@@ -134,7 +134,7 @@ namespace scene
 
     // Create cube
     using namespace render::gfx;
-    CPrimitive* pPrimitive = m_lstDebugItems.Create(render::EPrimitiveType::E3D_CUBE, _eRenderMode);
+    CPrimitive* pPrimitive = m_lstDebugItems.Create(render::EPrimitive::E3D_CUBE, _eRenderMode);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -280,12 +280,8 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::DrawPrimitives()
+  void CScene::DrawPrimitives(const render::CCamera* _pCamera)
   {
-    // Check frustum
-    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    render::CCamera* pCamera = pEngine->GetCamera();
-
     // Draw primitives
     for (uint32_t uIndex = 0; uIndex < m_lstPrimitives.GetSize(); uIndex++)
     {
@@ -298,25 +294,13 @@ namespace scene
       bool bDrawPrimitive = true;
       if (pPrimitive->IsCullingEnabled()) // Check culling
       {
-        bDrawPrimitive = pCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
+        bDrawPrimitive = _pCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
       }
       if (bDrawPrimitive)
       {
         pPrimitive->Draw();
       }
     }
-  }
-  // ------------------------------------
-  void CScene::ApplyLighting()
-  {
-    m_oLightManager.Apply();
-  }
-  // ------------------------------------
-  void CScene::DrawDebug()
-  {
-    // Check frustum
-    engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    render::CCamera* pCamera = pEngine->GetCamera();
 
     // Draw debug primitives
     uint32_t uTempSize = m_lstDebugItems.GetSize();
@@ -332,7 +316,7 @@ namespace scene
       bool bDrawDebug = true;
       if (pDebug->IsCullingEnabled()) // Check culling
       {
-        bDrawDebug = pCamera->IsOnFrustum(pDebug->GetWorldAABB());
+        bDrawDebug = _pCamera->IsOnFrustum(pDebug->GetWorldAABB());
       }
       if (bDrawDebug)
       {
@@ -345,6 +329,11 @@ namespace scene
     {
       m_lstDebugItems.Clear();
     }
+  }
+  // ------------------------------------
+  void CScene::ApplyLighting()
+  {
+    m_oLightManager.Apply();
   }
   // ------------------------------------
   void CScene::Clear()

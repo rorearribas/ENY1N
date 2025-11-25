@@ -5,6 +5,7 @@
 #include "Engine/Scenes/Scene.h"
 #include "Libs/Utils/Singleton.h"
 #include "Engine/Render/Render.h"
+#include "Engine/Render/RenderTypes.h"
 
 namespace scene
 {
@@ -24,7 +25,7 @@ namespace scene
     inline const TSceneList& GetScenes() { return m_lstScenes; }
 
     // Handle graphics
-    render::gfx::CPrimitive* const CreatePrimitive(const render::EPrimitiveType&, render::ERenderMode, uint32_t _uSceneIndex = 0);
+    render::gfx::CPrimitive* const CreatePrimitive(const render::EPrimitive&, render::ERenderMode, uint32_t _uSceneIndex = 0);
     bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
 
     utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char*, uint32_t _uSceneIndex = 0);

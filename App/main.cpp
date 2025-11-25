@@ -85,7 +85,7 @@ int main()
 
   // Create directional light
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
-  pDirectionalLight->RegisterComponent<game::CLightComponent>(render::ELightType::DIRECTIONAL_LIGHT);
+  pDirectionalLight->RegisterComponent<game::CLightComponent>(render::ELight::DIRECTIONAL_LIGHT);
 
   std::vector<std::string> vAvailableModels = 
   {
@@ -116,7 +116,7 @@ int main()
   // Create plane
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
-  pPlaneModel->CreatePrimitive(render::EPrimitiveType::E3D_PLANE, render::ERenderMode::SOLID);
+  pPlaneModel->CreatePrimitive(render::EPrimitive::E3D_PLANE, render::ERenderMode::SOLID);
   pPlaneModel->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 1.0f, 200.0f));
 
@@ -126,7 +126,7 @@ int main()
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
     pBoxTest->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::EPrimitiveType::E3D_CUBE, render::ERenderMode::SOLID);
+    pModelCompTest->CreatePrimitive(render::EPrimitive::E3D_CUBE, render::ERenderMode::SOLID);
     pModelCompTest->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
     pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
   }
@@ -218,13 +218,13 @@ int main()
       {
         // Create point light
         game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
-        pPointLight->RegisterComponent<game::CLightComponent>(render::ELightType::POINT_LIGHT);
+        pPointLight->RegisterComponent<game::CLightComponent>(render::ELight::POINT_LIGHT);
       }
       if (ImGui::Button("Create spot light"))
       {
         // Create spot light
         game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot Light");
-        pSpotLight->RegisterComponent<game::CLightComponent>(render::ELightType::SPOT_LIGHT);
+        pSpotLight->RegisterComponent<game::CLightComponent>(render::ELight::SPOT_LIGHT);
       }
       ImGui::End();
 

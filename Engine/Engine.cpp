@@ -57,7 +57,7 @@ namespace engine
     m_pRender->Draw(m_pSceneManager->GetCurrentScene());
   }
   // ------------------------------------
-  render::gfx::CPrimitive* const CEngine::CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
+  render::gfx::CPrimitive* const CEngine::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreatePrimitive(_eType, _eRenderMode, _uSceneIndex);
   }

@@ -81,13 +81,13 @@ namespace render
       ID3D11SamplerState* pLinearSampler = nullptr;
 
       // Constant buffers
-      CConstantBuffer<TTransformsData> rTransformsDataBuffer;
-      CConstantBuffer<TTexturesData> rTexturesDataBuffer;
-      CConstantBuffer<TInstanceMode> rInstanceModeBuffer;
+      CConstantBuffer<TTransforms> tTransformsBuffer;
+      CConstantBuffer<TTextureInfo> tTexturesInfoBuffer;
+      CConstantBuffer<TInstancingMode> tInstancingModeBuffer;
 
       // Depth
-      texture::CTexture2D<EViewType::DEPTH_STENCIL>* pDepthStencil = nullptr;
-      texture::CTexture2D<EViewType::SHADER_RESOURCE>* pDepthTexture = nullptr;
+      texture::CTexture2D<EView::DEPTH_STENCIL>* pDepthStencil = nullptr;
+      texture::CTexture2D<EView::SHADER_RESOURCE>* pDepthTexture = nullptr;
 
       // Stencils
       ID3D11DepthStencilState* pZPrepassStencilState = nullptr;
@@ -96,11 +96,11 @@ namespace render
 
       // Rasterizer
       ID3D11RasterizerState* pRasterizer = nullptr;
-      D3D11_RASTERIZER_DESC rRasterizerCfg = D3D11_RASTERIZER_DESC();
+      D3D11_RASTERIZER_DESC tRasterizerCfg = D3D11_RASTERIZER_DESC();
 
       // Blend
       ID3D11BlendState* pBlendState = nullptr;
-      D3D11_RENDER_TARGET_BLEND_DESC rBlendStateCfg = D3D11_RENDER_TARGET_BLEND_DESC();
+      D3D11_RENDER_TARGET_BLEND_DESC tBlendStateCfg = D3D11_RENDER_TARGET_BLEND_DESC();
 
       // Layouts
       ID3D11InputLayout* pStandardLayout = nullptr;
@@ -110,14 +110,14 @@ namespace render
       ID3DUserDefinedAnnotation* pUserMarker = nullptr;
 
       // Forward
-      shader::CShader<EShaderType::E_VERTEX>* pSimpleVS = nullptr;
-      shader::CShader<EShaderType::E_PIXEL>*  pSimplePS = nullptr;
+      shader::CShader<EShader::E_VERTEX>* pSimpleVS = nullptr;
+      shader::CShader<EShader::E_PIXEL>*  pSimplePS = nullptr;
 
       // Deferred
-      shader::CShader<EShaderType::E_VERTEX>* pStandardVS = nullptr;
-      shader::CShader<EShaderType::E_VERTEX>* pDrawTriangle = nullptr;
-      shader::CShader<EShaderType::E_PIXEL>*  pGBufferDeferred = nullptr;
-      shader::CShader<EShaderType::E_PIXEL>*  pDeferredLights = nullptr;
+      shader::CShader<EShader::E_VERTEX>* pStandardVS = nullptr;
+      shader::CShader<EShader::E_VERTEX>* pDrawTriangle = nullptr;
+      shader::CShader<EShader::E_PIXEL>*  pGBufferDeferred = nullptr;
+      shader::CShader<EShader::E_PIXEL>*  pDeferredLights = nullptr;
     };
 
     static TRenderPipeline s_oPipeline;
@@ -148,9 +148,9 @@ namespace render
     ImGui::DestroyContext();
 
     // Clear constant buffer
-    internal::s_oPipeline.rTransformsDataBuffer.Clear();
-    internal::s_oPipeline.rTexturesDataBuffer.Clear();
-    internal::s_oPipeline.rInstanceModeBuffer.Clear();
+    internal::s_oPipeline.tTransformsBuffer.Clear();
+    internal::s_oPipeline.tTexturesInfoBuffer.Clear();
+    internal::s_oPipeline.tInstancingModeBuffer.Clear();
 
     // Release depth
     global::ReleaseObject(internal::s_oPipeline.pDepthStencil);
@@ -220,14 +220,14 @@ namespace render
     }
 
     // Forward shaders
-    internal::s_oPipeline.pSimpleVS = new shader::CShader<EShaderType::E_VERTEX>(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
-    internal::s_oPipeline.pSimplePS = new shader::CShader<EShaderType::E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
+    internal::s_oPipeline.pSimpleVS = new shader::CShader<EShader::E_VERTEX>(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
+    internal::s_oPipeline.pSimplePS = new shader::CShader<EShader::E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
 
     // Deferred shaders
-    internal::s_oPipeline.pStandardVS = new shader::CShader<EShaderType::E_VERTEX>(g_StandardVS, ARRAYSIZE(g_StandardVS));
-    internal::s_oPipeline.pDrawTriangle = new shader::CShader<EShaderType::E_VERTEX>(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
-    internal::s_oPipeline.pGBufferDeferred = new shader::CShader<EShaderType::E_PIXEL>(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
-    internal::s_oPipeline.pDeferredLights = new shader::CShader<EShaderType::E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
+    internal::s_oPipeline.pStandardVS = new shader::CShader<EShader::E_VERTEX>(g_StandardVS, ARRAYSIZE(g_StandardVS));
+    internal::s_oPipeline.pDrawTriangle = new shader::CShader<EShader::E_VERTEX>(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
+    internal::s_oPipeline.pGBufferDeferred = new shader::CShader<EShader::E_PIXEL>(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
+    internal::s_oPipeline.pDeferredLights = new shader::CShader<EShader::E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
 
     // Create standard layout
     hResult = global::dx::s_pDevice->CreateInputLayout
@@ -279,19 +279,33 @@ namespace render
   HRESULT CRender::InitConstantBuffers()
   {
     // Transforms buffer
-    HRESULT hResult = internal::s_oPipeline.rTransformsDataBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
-    if (FAILED(hResult))
     {
-      return hResult;
+      HRESULT hResult = internal::s_oPipeline.tTransformsBuffer.Init();
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+      internal::s_oPipeline.tTransformsBuffer.SetSlot(0); // hlsl
     }
     // Textures info buffer
-    hResult = internal::s_oPipeline.rTexturesDataBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
-    if (FAILED(hResult))
     {
-      return hResult;
+      HRESULT hResult = internal::s_oPipeline.tTexturesInfoBuffer.Init();
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+      internal::s_oPipeline.tTexturesInfoBuffer.SetSlot(0); // hlsl
     }
     // Instancing buffer
-    return internal::s_oPipeline.rInstanceModeBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
+    {
+      HRESULT hResult = internal::s_oPipeline.tInstancingModeBuffer.Init();
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+      internal::s_oPipeline.tInstancingModeBuffer.SetSlot(1); // hlsl
+    }
+    return S_OK;
   }
   // ------------------------------------
   HRESULT CRender::InitBasicPipeline(uint32_t _uX, uint32_t _uY)
@@ -321,35 +335,35 @@ namespace render
     }
 
     // Set standard rasterizer config
-    internal::s_oPipeline.rRasterizerCfg.FillMode = D3D11_FILL_SOLID;
-    internal::s_oPipeline.rRasterizerCfg.CullMode = D3D11_CULL_BACK;
-    internal::s_oPipeline.rRasterizerCfg.FrontCounterClockwise = false;
-    internal::s_oPipeline.rRasterizerCfg.DepthBias = 0; // decals -> (10)
-    internal::s_oPipeline.rRasterizerCfg.DepthBiasClamp = 0.0f;
-    internal::s_oPipeline.rRasterizerCfg.SlopeScaledDepthBias = 0.0f; // decals -> (1.5f)
-    internal::s_oPipeline.rRasterizerCfg.DepthClipEnable = true;
-    internal::s_oPipeline.rRasterizerCfg.ScissorEnable = true;
-    internal::s_oPipeline.rRasterizerCfg.MultisampleEnable = false;
-    internal::s_oPipeline.rRasterizerCfg.AntialiasedLineEnable = false;
+    internal::s_oPipeline.tRasterizerCfg.FillMode = D3D11_FILL_SOLID;
+    internal::s_oPipeline.tRasterizerCfg.CullMode = D3D11_CULL_BACK;
+    internal::s_oPipeline.tRasterizerCfg.FrontCounterClockwise = false;
+    internal::s_oPipeline.tRasterizerCfg.DepthBias = 0; // decals -> (10)
+    internal::s_oPipeline.tRasterizerCfg.DepthBiasClamp = 0.0f;
+    internal::s_oPipeline.tRasterizerCfg.SlopeScaledDepthBias = 0.0f; // decals -> (1.5f)
+    internal::s_oPipeline.tRasterizerCfg.DepthClipEnable = true;
+    internal::s_oPipeline.tRasterizerCfg.ScissorEnable = true;
+    internal::s_oPipeline.tRasterizerCfg.MultisampleEnable = false;
+    internal::s_oPipeline.tRasterizerCfg.AntialiasedLineEnable = false;
 
     // Create rasterizer
-    hResult = CreateRasterizerState(internal::s_oPipeline.rRasterizerCfg);
+    hResult = CreateRasterizerState(internal::s_oPipeline.tRasterizerCfg);
     if (FAILED(hResult))
     {
       return hResult;
     }
 
     // Set standard blend state config
-    internal::s_oPipeline.rBlendStateCfg.BlendEnable = false;
-    internal::s_oPipeline.rBlendStateCfg.SrcBlend = D3D11_BLEND_ONE;
-    internal::s_oPipeline.rBlendStateCfg.DestBlend = D3D11_BLEND_BLEND_FACTOR;
-    internal::s_oPipeline.rBlendStateCfg.BlendOp = D3D11_BLEND_OP_ADD;
-    internal::s_oPipeline.rBlendStateCfg.SrcBlendAlpha = D3D11_BLEND_ONE;
-    internal::s_oPipeline.rBlendStateCfg.DestBlendAlpha = D3D11_BLEND_ZERO;
-    internal::s_oPipeline.rBlendStateCfg.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    internal::s_oPipeline.rBlendStateCfg.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
+    internal::s_oPipeline.tBlendStateCfg.BlendEnable = false;
+    internal::s_oPipeline.tBlendStateCfg.SrcBlend = D3D11_BLEND_ONE;
+    internal::s_oPipeline.tBlendStateCfg.DestBlend = D3D11_BLEND_BLEND_FACTOR;
+    internal::s_oPipeline.tBlendStateCfg.BlendOp = D3D11_BLEND_OP_ADD;
+    internal::s_oPipeline.tBlendStateCfg.SrcBlendAlpha = D3D11_BLEND_ONE;
+    internal::s_oPipeline.tBlendStateCfg.DestBlendAlpha = D3D11_BLEND_ZERO;
+    internal::s_oPipeline.tBlendStateCfg.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    internal::s_oPipeline.tBlendStateCfg.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
 
-    hResult = CreateBlendState(internal::s_oPipeline.rBlendStateCfg);
+    hResult = CreateBlendState(internal::s_oPipeline.tBlendStateCfg);
     if (FAILED(hResult))
     {
       return hResult;
@@ -471,7 +485,7 @@ namespace render
     global::ReleaseObject(internal::s_oPipeline.pDepthStencil);
 
     // Create depth stencil texture
-    internal::s_oPipeline.pDepthStencil = new texture::CTexture2D<EViewType::DEPTH_STENCIL>();
+    internal::s_oPipeline.pDepthStencil = new texture::CTexture2D<EView::DEPTH_STENCIL>();
 
     // Set desc
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -500,7 +514,7 @@ namespace render
 #endif // DEBUG
 
     // Create depth texture
-    internal::s_oPipeline.pDepthTexture = new texture::CTexture2D<EViewType::SHADER_RESOURCE>();
+    internal::s_oPipeline.pDepthTexture = new texture::CTexture2D<EView::SHADER_RESOURCE>();
 
     // Set texture config
     oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // Texture shader
@@ -679,7 +693,7 @@ namespace render
       if (m_pCamera)
       {
         // Calculate projection and invert projection
-        TTransformsData& rTransform = internal::s_oPipeline.rTransformsDataBuffer.GetData();
+        TTransforms& rTransform = internal::s_oPipeline.tTransformsBuffer.GetData();
         math::CMatrix4x4 mViewProjection = m_pCamera->GetViewProjection();
         rTransform.ViewProjection = mViewProjection;
         rTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
@@ -688,13 +702,13 @@ namespace render
         rTransform.NearPlane = m_pCamera->GetNear();
 
         // Write
-        bool bOk = internal::s_oPipeline.rTransformsDataBuffer.WriteBuffer();
+        bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer();
         UNUSED_VAR(bOk);
 #ifdef _DEBUG
         assert(bOk);
 #endif
         // Bind buffer
-        internal::s_oPipeline.rTransformsDataBuffer.Bind(0, render::EShaderType::E_VERTEX);
+        internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>();
       }
 
       // Push invalid RT
@@ -709,6 +723,8 @@ namespace render
       internal::s_oPipeline.pSimplePS->DetachShader();
       // Attach simple vertex shader
       internal::s_oPipeline.pStandardVS->AttachShader();
+      // Set constant buffer (instancing info)
+      internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
 
       // Draw z-prepass
       _pScene->DrawModels(m_pCamera);
@@ -742,16 +758,12 @@ namespace render
       internal::s_oPipeline.pGBufferDeferred->AttachShader();
 
       // Set constant buffer (texture info)
-      internal::s_oPipeline.rTexturesDataBuffer.Bind(0, render::EShaderType::E_PIXEL);
+      internal::s_oPipeline.tTexturesInfoBuffer.Bind<render::EShader::E_PIXEL>();
       // Set constant buffer (instancing info)
-      internal::s_oPipeline.rInstanceModeBuffer.Bind(1, render::EShaderType::E_VERTEX);
+      internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
 
       // Draw models (i should separate this into 2 stages: models and instances)
       _pScene->DrawModels(m_pCamera);
-
-      // Remove constant buffers (we should change this!)
-      global::dx::s_pDeviceContext->PSSetConstantBuffers(0, 0, nullptr);
-      global::dx::s_pDeviceContext->VSSetConstantBuffers(1, 0, nullptr);
 
       // Remove render targets
       ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };
@@ -762,7 +774,7 @@ namespace render
       internal::s_oPipeline.pDeferredLights->AttachShader();
 
       // Set transform constant
-      internal::s_oPipeline.rTransformsDataBuffer.Bind(0, render::EShaderType::E_PIXEL);
+      internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>();
 
       // Apply lighting
       _pScene->ApplyLighting();
@@ -806,9 +818,7 @@ namespace render
       internal::s_oPipeline.pSimplePS->AttachShader();
 
       // Draw primitives
-      _pScene->DrawPrimitives();
-      // Draw debug
-      _pScene->DrawDebug();
+      _pScene->DrawPrimitives(m_pCamera);
     }
     EndMarker();
 
@@ -832,11 +842,11 @@ namespace render
   void CRender::SetTexturesInfo(bool _bDiffuse, bool _bNormal, bool _bSpecular)
   {
     // Set instancing mode
-    TTexturesData& rTexturesData = internal::s_oPipeline.rTexturesDataBuffer.GetData();
+    TTextureInfo& rTexturesData = internal::s_oPipeline.tTexturesInfoBuffer.GetData();
     rTexturesData.HasDiffuse = static_cast<int>(_bDiffuse);
     rTexturesData.HasNormal = static_cast<int>(_bNormal);
     rTexturesData.HasSpecular = static_cast<int>(_bSpecular);
-    bool bOk = internal::s_oPipeline.rTexturesDataBuffer.WriteBuffer();
+    bool bOk = internal::s_oPipeline.tTexturesInfoBuffer.WriteBuffer();
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk);
@@ -846,21 +856,21 @@ namespace render
   void CRender::SetModelMatrix(const math::CMatrix4x4& _mModel)
   {
     // Set model matrix
-    TTransformsData& rTransform = internal::s_oPipeline.rTransformsDataBuffer.GetData();
+    TTransforms& rTransform = internal::s_oPipeline.tTransformsBuffer.GetData();
     rTransform.Model = _mModel;
-    bool bOk = internal::s_oPipeline.rTransformsDataBuffer.WriteBuffer();
+    bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer();
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk);
 #endif // DEBUG
   }
   // ------------------------------------
-  void CRender::SetInstancingMode(bool _bMode)
+  void CRender::SetInstancingMode(bool _bEnabled)
   {
     // Set instancing mode
-    TInstanceMode& rData = internal::s_oPipeline.rInstanceModeBuffer.GetData();
-    rData.IsInstanceMode = _bMode;
-    bool bOk = internal::s_oPipeline.rInstanceModeBuffer.WriteBuffer();
+    TInstancingMode& rData = internal::s_oPipeline.tInstancingModeBuffer.GetData();
+    rData.IsInstanceMode = static_cast<int>(_bEnabled);
+    bool bOk = internal::s_oPipeline.tInstancingModeBuffer.WriteBuffer();
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk);
@@ -870,8 +880,8 @@ namespace render
   void CRender::SetFillMode(D3D11_FILL_MODE _eFillMode)
   {
     // Update rasterizer
-    internal::s_oPipeline.rRasterizerCfg.FillMode = _eFillMode;
-    CreateRasterizerState(internal::s_oPipeline.rRasterizerCfg);
+    internal::s_oPipeline.tRasterizerCfg.FillMode = _eFillMode;
+    CreateRasterizerState(internal::s_oPipeline.tRasterizerCfg);
   }
   // ------------------------------------
   void CRender::BeginMarker(const wchar_t* _sMarker) const

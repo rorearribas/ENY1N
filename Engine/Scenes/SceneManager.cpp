@@ -17,7 +17,7 @@ namespace scene
   // ------------------------------------
   render::gfx::CPrimitive* const CSceneManager::CreatePrimitive
   (
-    const render::EPrimitiveType& _ePrimitiveType,
+    const render::EPrimitive& _ePrimitiveType,
     render::ERenderMode _eRenderMode,
     uint32_t _uSceneIndex
   )

@@ -17,7 +17,7 @@ namespace render
     {
     public:
       CPrimitive(TCustomPrimitive& _oData, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
-      CPrimitive(EPrimitiveType _eType, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
+      CPrimitive(EPrimitive _eType, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
       ~CPrimitive();
 
       void Draw();
@@ -27,7 +27,7 @@ namespace render
 
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
-      inline const EPrimitiveType& GetPrimitiveType() const { return m_ePrimitiveType; }
+      inline const EPrimitive& GetPrimitiveType() const { return m_ePrimitiveType; }
 
       void SetColor(const math::CVector3& _v3Color);
       inline const math::CVector3& GetColor() const { return m_v3Color; }
@@ -45,7 +45,7 @@ namespace render
       inline const bool& IsVisible() const { return m_bVisible; }
 
     private:
-      HRESULT CreatePrimitive(EPrimitiveType _ePrimitiveType, render::ERenderMode _eRenderMode);
+      HRESULT CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode);
       HRESULT CreateBuffer(const std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData, const std::vector<uint32_t>& _lstIndices);
       void Clear();
 
@@ -57,7 +57,7 @@ namespace render
     private:
       // Data
       ERenderMode m_eRenderMode = ERenderMode::SOLID;
-      EPrimitiveType m_ePrimitiveType = EPrimitiveType::INVALID;
+      EPrimitive m_ePrimitiveType = EPrimitive::INVALID;
 
       math::CTransform m_oTransform = math::CTransform();
       collision::CAABB m_oWorldAABB = collision::CAABB();

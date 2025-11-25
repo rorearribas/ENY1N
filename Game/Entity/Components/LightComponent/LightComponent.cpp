@@ -11,7 +11,7 @@
 namespace game
 {
   // ------------------------------------
-  CLightComponent::CLightComponent(CEntity* _pOwner, render::ELightType _eLightType) : CComponent(_pOwner)
+  CLightComponent::CLightComponent(CEntity* _pOwner, render::ELight _eLightType) : CComponent(_pOwner)
   {
     CreateLight(_eLightType);
   }
@@ -21,7 +21,7 @@ namespace game
     Clean();
   }
   // ------------------------------------
-  void CLightComponent::CreateLight(render::ELightType _eLightType)
+  void CLightComponent::CreateLight(render::ELight _eLightType)
   {
     // Clean
     Clean();
@@ -33,13 +33,13 @@ namespace game
 
     switch (_eLightType)
     {
-    case render::ELightType::DIRECTIONAL_LIGHT:
+    case render::ELight::DIRECTIONAL_LIGHT:
       m_pLight = pEngine->CreateDirectionalLight();
       break;
-    case render::ELightType::POINT_LIGHT:
+    case render::ELight::POINT_LIGHT:
       m_pLight = pEngine->CreatePointLight();
       break;
-    case render::ELightType::SPOT_LIGHT:
+    case render::ELight::SPOT_LIGHT:
       m_pLight = pEngine->CreateSpotLight();
       break;
     default:
@@ -47,14 +47,14 @@ namespace game
     }
   }
   // ------------------------------------
-  void CLightComponent::SetLightType(render::ELightType _eLightType)
+  void CLightComponent::SetLightType(render::ELight _eLightType)
   {
     CreateLight(_eLightType);
   }
   // ------------------------------------
-  render::ELightType CLightComponent::GetLightType() const
+  render::ELight CLightComponent::GetLightType() const
   {
-    return m_pLight ? m_pLight->GetLightType() : render::ELightType::INVALID;
+    return m_pLight ? m_pLight->GetLightType() : render::ELight::INVALID;
   }
   // ------------------------------------
   void CLightComponent::DrawDebug()
@@ -66,7 +66,7 @@ namespace game
 
     switch (m_pLight->GetLightType())
     {
-    case render::ELightType::DIRECTIONAL_LIGHT:
+    case render::ELight::DIRECTIONAL_LIGHT:
     {
       render::lights::CDirectionalLight* pDirectional = static_cast<render::lights::CDirectionalLight*>(m_pLight);
       float color[3] = { pDirectional->GetColor().x, pDirectional->GetColor().y, pDirectional->GetColor().z };
@@ -88,7 +88,7 @@ namespace game
       pDirectional->SetIntensity(fIntensity);
     }
     break;
-    case render::ELightType::POINT_LIGHT:
+    case render::ELight::POINT_LIGHT:
     {
       render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(m_pLight);
       float lstColor[3] = { pPointLight->GetColor().x, pPointLight->GetColor().y, pPointLight->GetColor().z };
@@ -109,7 +109,7 @@ namespace game
       engine::CEngine::GetInstance()->DrawSphere(pPointLight->GetPosition(), fRange, 12, 12, v3Color, render::ERenderMode::WIREFRAME);
     }
     break;
-    case render::ELightType::SPOT_LIGHT:
+    case render::ELight::SPOT_LIGHT:
     {
       render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight);
       float lstColor[3] = { pSpotLight->GetColor().x, pSpotLight->GetColor().y, pSpotLight->GetColor().z };

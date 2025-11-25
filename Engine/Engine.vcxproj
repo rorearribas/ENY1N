@@ -221,7 +221,6 @@
     <ClCompile Include="Scenes\SceneManager.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Render\Resources\Texture2D.cpp" />
-    <ClCompile Include="Shaders\Shader.cpp" />
     <ClCompile Include="Render\Lights\SpotLight.cpp" />
     <ClCompile Include="Collisions\SphereCollider.cpp" />
   </ItemGroup>

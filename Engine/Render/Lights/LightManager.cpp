@@ -14,7 +14,7 @@ namespace render
     // ------------------------------------
     CLightManager::CLightManager()
     {
-      HRESULT hResult = m_oLightingBuffer.Init(global::dx::s_pDevice, global::dx::s_pDeviceContext);
+      HRESULT hResult = m_oLightingBuffer.Init();
       UNUSED_VAR(hResult);
 #ifdef _DEBUG
       assert(!FAILED(hResult));
@@ -74,7 +74,8 @@ namespace render
       assert(bOk);
 
       // Bind buffer
-      m_oLightingBuffer.Bind(1, render::EShaderType::E_PIXEL);
+      m_oLightingBuffer.SetSlot(1);
+      m_oLightingBuffer.Bind<render::EShader::E_PIXEL>();
     }
     // ------------------------------------
     render::lights::CDirectionalLight* const CLightManager::CreateDirectionalLight()
@@ -113,18 +114,18 @@ namespace render
       bool bOk = false;
       switch (_pLight_->GetLightType())
       {
-      case render::ELightType::DIRECTIONAL_LIGHT:
+      case render::ELight::DIRECTIONAL_LIGHT:
       {
         bOk = global::ReleaseObject(m_pDirectionalLight);
       }
       break;
-      case render::ELightType::POINT_LIGHT:
+      case render::ELight::POINT_LIGHT:
       {
         render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(_pLight_);
         bOk = m_lstPointLights.Remove(pPointLight);
       }
       break;
-      case render::ELightType::SPOT_LIGHT:
+      case render::ELight::SPOT_LIGHT:
       {
         render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(_pLight_);
         bOk = m_lstSpotLights.Remove(pSpotLight);

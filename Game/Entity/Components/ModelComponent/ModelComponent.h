@@ -19,7 +19,7 @@ namespace game
     virtual ~CModelComponent();
 
     void LoadModel(const char* _sModelPath);
-    void CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode);
+    void CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
 
     void SetCullingEnabled(bool _bCull);
     void SetRenderMode(render::ERenderMode _eRenderMode);

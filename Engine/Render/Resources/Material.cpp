@@ -13,12 +13,12 @@ namespace render
       ClearTextures();
     }
     // ------------------------------------
-    texture::TSharedTexture CMaterial::GetTexture(ETextureType _eType) const
+    texture::TSharedTexture CMaterial::GetTexture(ETexture _eType) const
     {
       return m_lstTextures[static_cast<uint32_t>(_eType)];
     }
     // ------------------------------------
-    void CMaterial::SetTexture(texture::TSharedTexture _pTexture, ETextureType _eType)
+    void CMaterial::SetTexture(texture::TSharedTexture _pTexture, ETexture _eType)
     {
       m_lstTextures[static_cast<uint32_t>(_eType)] = _pTexture;
     }

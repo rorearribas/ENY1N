@@ -11,7 +11,7 @@ namespace render
       static math::CVector3 s_vDefaultDirection;
 
     public:
-      CSpotLight() : CLight(ELightType::SPOT_LIGHT) { SetDir(s_vDefaultDirection); }
+      CSpotLight() : CLight(ELight::SPOT_LIGHT) { SetDir(s_vDefaultDirection); }
       virtual ~CSpotLight() {}
 
       // Range

@@ -27,7 +27,7 @@ namespace render
     void CleanRT();
 
   private:
-    texture::CTexture2D<render::EViewType::RENDER_TARGET>* m_pRTTexture = nullptr;
+    texture::CTexture2D<render::EView::RENDER_TARGET>* m_pRTTexture = nullptr;
     ID3D11ShaderResourceView* m_pSRV = nullptr;
   };
 }

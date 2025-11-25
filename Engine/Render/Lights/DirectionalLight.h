@@ -13,7 +13,7 @@ namespace render
       static math::CVector3 s_vDefaultDirection;
 
     public:
-      CDirectionalLight() : CLight(ELightType::DIRECTIONAL_LIGHT) { SetDir(s_vDefaultDirection); }
+      CDirectionalLight() : CLight(ELight::DIRECTIONAL_LIGHT) { SetDir(s_vDefaultDirection); }
       virtual ~CDirectionalLight() {}
 
       // Color

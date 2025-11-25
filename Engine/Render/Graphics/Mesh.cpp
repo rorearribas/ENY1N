@@ -18,9 +18,9 @@ namespace render
     void CMesh::Draw(uint32_t _uInstanceCount)
     {
       // Get textures
-      texture::TSharedTexture pDiffuse = m_pMaterial ? m_pMaterial->GetTexture(render::ETextureType::DIFFUSE) : nullptr;
-      texture::TSharedTexture pNormal = m_pMaterial ? m_pMaterial->GetTexture(render::ETextureType::NORMAL) : nullptr;
-      texture::TSharedTexture pSpecular = m_pMaterial ? m_pMaterial->GetTexture(render::ETextureType::SPECULAR) : nullptr;
+      texture::TSharedTexture pDiffuse = m_pMaterial ? m_pMaterial->GetTexture(render::ETexture::DIFFUSE) : nullptr;
+      texture::TSharedTexture pNormal = m_pMaterial ? m_pMaterial->GetTexture(render::ETexture::NORMAL) : nullptr;
+      texture::TSharedTexture pSpecular = m_pMaterial ? m_pMaterial->GetTexture(render::ETexture::SPECULAR) : nullptr;
 
       // Texture list
       ID3D11ShaderResourceView* lstTextures[3] =

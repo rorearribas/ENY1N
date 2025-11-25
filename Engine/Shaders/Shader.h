@@ -8,7 +8,7 @@ namespace render
 {
   namespace shader
   {
-    template<EShaderType T>
+    template<EShader T>
     class CShader
     {
     public:
@@ -23,7 +23,7 @@ namespace render
       ID3D11DeviceChild* m_pInternalPtr = nullptr;
     };
 
-    template<EShaderType T>
+    template<EShader T>
     void CShader<T>::ReleaseShader()
     {
       // Remove shader
@@ -34,7 +34,7 @@ namespace render
 #endif // DEBUG
     }
 
-    template<EShaderType T>
+    template<EShader T>
     void CShader<T>::AttachShader()
     {
       // Get device ctx
@@ -45,17 +45,17 @@ namespace render
       // Attach shader
       switch (T)
       {
-        case render::EShaderType::E_VERTEX:   { pDeviceCtx->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(m_pInternalPtr),   nullptr, 0); } break;
-        case render::EShaderType::E_HULL:     { pDeviceCtx->HSSetShader(reinterpret_cast<ID3D11HullShader*>(m_pInternalPtr),     nullptr, 0); } break;
-        case render::EShaderType::E_DOMAIN:   { pDeviceCtx->DSSetShader(reinterpret_cast<ID3D11DomainShader*>(m_pInternalPtr),   nullptr, 0); } break;
-        case render::EShaderType::E_GEOMETRY: { pDeviceCtx->GSSetShader(reinterpret_cast<ID3D11GeometryShader*>(m_pInternalPtr), nullptr, 0); } break;
-        case render::EShaderType::E_PIXEL:    { pDeviceCtx->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(m_pInternalPtr),    nullptr, 0); } break;
-        case render::EShaderType::E_COMPUTE:  { pDeviceCtx->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(m_pInternalPtr),  nullptr, 0); } break;
+        case render::EShader::E_VERTEX:   { pDeviceCtx->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(m_pInternalPtr),   nullptr, 0); } break;
+        case render::EShader::E_HULL:     { pDeviceCtx->HSSetShader(reinterpret_cast<ID3D11HullShader*>(m_pInternalPtr),     nullptr, 0); } break;
+        case render::EShader::E_DOMAIN:   { pDeviceCtx->DSSetShader(reinterpret_cast<ID3D11DomainShader*>(m_pInternalPtr),   nullptr, 0); } break;
+        case render::EShader::E_GEOMETRY: { pDeviceCtx->GSSetShader(reinterpret_cast<ID3D11GeometryShader*>(m_pInternalPtr), nullptr, 0); } break;
+        case render::EShader::E_PIXEL:    { pDeviceCtx->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(m_pInternalPtr),    nullptr, 0); } break;
+        case render::EShader::E_COMPUTE:  { pDeviceCtx->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(m_pInternalPtr),  nullptr, 0); } break;
         default: break;
       }
     }
 
-    template<EShaderType T>
+    template<EShader T>
     void CShader<T>::DetachShader()
     {
       // Get device ctx
@@ -66,17 +66,17 @@ namespace render
       // Detach shader
       switch (T)
       {
-        case render::EShaderType::E_VERTEX:   { pDeviceCtx->VSSetShader(nullptr, nullptr, 0); } break;
-        case render::EShaderType::E_HULL:     { pDeviceCtx->HSSetShader(nullptr, nullptr, 0); } break;
-        case render::EShaderType::E_DOMAIN:   { pDeviceCtx->DSSetShader(nullptr, nullptr, 0); } break;
-        case render::EShaderType::E_GEOMETRY: { pDeviceCtx->GSSetShader(nullptr, nullptr, 0); } break;
-        case render::EShaderType::E_PIXEL:    { pDeviceCtx->PSSetShader(nullptr, nullptr, 0); } break;
-        case render::EShaderType::E_COMPUTE:  { pDeviceCtx->CSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShader::E_VERTEX:   { pDeviceCtx->VSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShader::E_HULL:     { pDeviceCtx->HSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShader::E_DOMAIN:   { pDeviceCtx->DSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShader::E_GEOMETRY: { pDeviceCtx->GSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShader::E_PIXEL:    { pDeviceCtx->PSSetShader(nullptr, nullptr, 0); } break;
+        case render::EShader::E_COMPUTE:  { pDeviceCtx->CSSetShader(nullptr, nullptr, 0); } break;
         default: break;
       }
     }
 
-    template<EShaderType T>
+    template<EShader T>
     CShader<T>::CShader(const unsigned char* _pBuffer, size_t _tSize)
     {
       ID3D11Device* _pDevice = global::dx::s_pDevice;
@@ -86,37 +86,37 @@ namespace render
       HRESULT hResult = S_OK;
       switch (T)
       {
-        case render::EShaderType::E_VERTEX:
+        case render::EShader::E_VERTEX:
         {
           ID3D11VertexShader** pShader = reinterpret_cast<ID3D11VertexShader**>(&m_pInternalPtr);
           hResult = _pDevice->CreateVertexShader(_pBuffer, _tSize, nullptr, pShader);
         }
         break;
-        case render::EShaderType::E_HULL:
+        case render::EShader::E_HULL:
         {
           ID3D11HullShader** pShader = reinterpret_cast<ID3D11HullShader**>(&m_pInternalPtr);
           hResult = _pDevice->CreateHullShader(_pBuffer, _tSize, nullptr, pShader);
         }
         break;
-        case render::EShaderType::E_DOMAIN:
+        case render::EShader::E_DOMAIN:
         {
           ID3D11DomainShader** pShader = reinterpret_cast<ID3D11DomainShader**>(&m_pInternalPtr);
           hResult = _pDevice->CreateDomainShader(_pBuffer, _tSize, nullptr, pShader);
         }
         break;
-        case render::EShaderType::E_GEOMETRY:
+        case render::EShader::E_GEOMETRY:
         {
           ID3D11GeometryShader** pShader = reinterpret_cast<ID3D11GeometryShader**>(&m_pInternalPtr);
           hResult = _pDevice->CreateGeometryShader(_pBuffer, _tSize, nullptr, pShader);
         }
         break;
-        case render::EShaderType::E_PIXEL:
+        case render::EShader::E_PIXEL:
         {
           ID3D11PixelShader** pShader = reinterpret_cast<ID3D11PixelShader**>(&m_pInternalPtr);
           hResult = _pDevice->CreatePixelShader(_pBuffer, _tSize, nullptr, pShader);
         }
         break;
-        case render::EShaderType::E_COMPUTE:
+        case render::EShader::E_COMPUTE:
         {
           ID3D11ComputeShader** pShader = reinterpret_cast<ID3D11ComputeShader**>(&m_pInternalPtr);
           hResult = _pDevice->CreateComputeShader(_pBuffer, _tSize, nullptr, pShader);

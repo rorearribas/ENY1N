@@ -40,7 +40,7 @@ namespace scene
     inline const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
     // Handle graphics
-    render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitiveType _eType, render::ERenderMode _eRenderMode);
+    render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
     bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
 
     utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char* _sModelPath);
@@ -65,9 +65,8 @@ namespace scene
 
     // Draw calls
     void DrawModels(const render::CCamera* _pCamera);
-    void DrawPrimitives();
+    void DrawPrimitives(const render::CCamera* _pCamera);
     void ApplyLighting();
-    void DrawDebug();
 
   private:
     bool m_bEnabled = false;

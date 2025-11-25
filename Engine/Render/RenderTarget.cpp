@@ -16,7 +16,7 @@ namespace render
     CleanRT();
 
     // Create texture
-    m_pRTTexture = new texture::CTexture2D<render::EViewType::RENDER_TARGET>();
+    m_pRTTexture = new texture::CTexture2D<render::EView::RENDER_TARGET>();
 
     // Set texture config
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
