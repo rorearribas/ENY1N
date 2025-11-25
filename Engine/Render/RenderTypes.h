@@ -74,9 +74,10 @@ namespace render
     UNKNOWN
   };
 
-  // Textures types
+  // Textures (Assimp)
   enum class ETexture : uint32_t
   {
+    NONE,
     DIFFUSE,
     SPECULAR,
     AMBIENT,

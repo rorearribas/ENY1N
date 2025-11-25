@@ -56,23 +56,23 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
   }
 
   // Materials
+  uint32_t uNumMateriales = pScene->mNumMaterials;
   std::vector<std::unique_ptr<render::mat::CMaterial>> lstMaterials;
-  lstMaterials.reserve(pScene->mNumMaterials);
+  lstMaterials.reserve(uNumMateriales);
 
-  for (uint32_t uI = 0; uI < pScene->mNumMaterials; uI++)
+  for (uint32_t uMat = 0; uMat < uNumMateriales; uMat++)
   {
     // Get material
-    aiMaterial* pLoadedMaterial = pScene->mMaterials[uI];
-
+    aiMaterial* pAssimpMat = pScene->mMaterials[uMat];
     // Create new material
-    auto pMaterial = std::make_unique<render::mat::CMaterial>(pLoadedMaterial->GetName().C_Str());
+    auto pMaterial = std::make_unique<render::mat::CMaterial>(pAssimpMat->GetName().C_Str());
 
     // Set material values
     {
       math::CVector3 v3Diffuse, v3Ambient, v3Specular;
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_DIFFUSE, reinterpret_cast<aiColor3D&>(v3Diffuse));
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_AMBIENT, reinterpret_cast<aiColor3D&>(v3Ambient));
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_SPECULAR, reinterpret_cast<aiColor3D&>(v3Specular));
+      pAssimpMat->Get(AI_MATKEY_COLOR_DIFFUSE, reinterpret_cast<aiColor3D&>(v3Diffuse));
+      pAssimpMat->Get(AI_MATKEY_COLOR_AMBIENT, reinterpret_cast<aiColor3D&>(v3Ambient));
+      pAssimpMat->Get(AI_MATKEY_COLOR_SPECULAR, reinterpret_cast<aiColor3D&>(v3Specular));
 
       // Set
       pMaterial->SetDiffuseColor(v3Diffuse);
@@ -80,9 +80,9 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
       pMaterial->SetSpecularColor(v3Specular);
 
       math::CVector3 v3Emissive, v3Transparent, v3Reflective;
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_EMISSIVE, reinterpret_cast<aiColor3D&>(v3Emissive));
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_TRANSPARENT, reinterpret_cast<aiColor3D&>(v3Transparent));
-      pLoadedMaterial->Get(AI_MATKEY_COLOR_REFLECTIVE, reinterpret_cast<aiColor3D&>(v3Reflective));
+      pAssimpMat->Get(AI_MATKEY_COLOR_EMISSIVE, reinterpret_cast<aiColor3D&>(v3Emissive));
+      pAssimpMat->Get(AI_MATKEY_COLOR_TRANSPARENT, reinterpret_cast<aiColor3D&>(v3Transparent));
+      pAssimpMat->Get(AI_MATKEY_COLOR_REFLECTIVE, reinterpret_cast<aiColor3D&>(v3Reflective));
 
       // Set
       pMaterial->SetEmissiveColor(v3Emissive);
@@ -90,97 +90,24 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
       pMaterial->SetReflectiveColor(v3Reflective);
 
       float fOpacity = 0.0f, fTransparent = 0.0f;
-      pLoadedMaterial->Get(AI_MATKEY_OPACITY, fOpacity);
-      pLoadedMaterial->Get(AI_MATKEY_SHININESS, fTransparent);
+      pAssimpMat->Get(AI_MATKEY_OPACITY, fOpacity);
+      pAssimpMat->Get(AI_MATKEY_SHININESS, fTransparent);
 
+      // Set
       pMaterial->SetOpacity(fOpacity);
       pMaterial->SetShininess(fTransparent);
     }
 
-    // Diffuse
-    aiString sPath;
-    using namespace std::filesystem;
-
-
-
-    if (pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &sPath) == aiReturn_SUCCESS)
+    // Load textures @Note: We only allow one texture per stage!
+    using fs = std::filesystem::path;
+    for (uint32_t uI = 0; uI < render::s_uTextureCount; uI++)
     {
-      RegisterTexture(pMaterial, render::ETexture::DIFFUSE, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Specular
-    if (pLoadedMaterial->GetTexture(aiTextureType_SPECULAR, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::SPECULAR, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Ambient
-    if (pLoadedMaterial->GetTexture(aiTextureType_AMBIENT, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::AMBIENT, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Emissive
-    if (pLoadedMaterial->GetTexture(aiTextureType_EMISSIVE, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::EMISSIVE, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Height
-    if (pLoadedMaterial->GetTexture(aiTextureType_HEIGHT, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::HEIGHT, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Normals
-    if (pLoadedMaterial->GetTexture(aiTextureType_NORMALS, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::NORMAL, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Shininess
-    if (pLoadedMaterial->GetTexture(aiTextureType_SHININESS, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::SHININESS, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Displacement
-    if (pLoadedMaterial->GetTexture(aiTextureType_DISPLACEMENT, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::DISPLACEMENT, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Light map
-    if (pLoadedMaterial->GetTexture(aiTextureType_LIGHTMAP, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::LIGHTMAP, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Reflection
-    if (pLoadedMaterial->GetTexture(aiTextureType_REFLECTION, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::REFLECTION, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Base color
-    if (pLoadedMaterial->GetTexture(aiTextureType_BASE_COLOR, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::BASE_COLOR, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Normal camera
-    if (pLoadedMaterial->GetTexture(aiTextureType_NORMAL_CAMERA, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::NORMAL_CAMERA, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Emission color
-    if (pLoadedMaterial->GetTexture(aiTextureType_EMISSION_COLOR, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::EMISSION_COLOR, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Metalness
-    if (pLoadedMaterial->GetTexture(aiTextureType_METALNESS, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::METALNESS, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Diffuse roughness
-    if (pLoadedMaterial->GetTexture(aiTextureType_DIFFUSE_ROUGHNESS, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::DIFFUSE_ROUGHNESS, path(_sPath).parent_path(), sPath.C_Str());
-    }
-    // Ambient occlusion
-    if (pLoadedMaterial->GetTexture(aiTextureType_AMBIENT_OCCLUSION, 0, &sPath) == aiReturn_SUCCESS)
-    {
-      RegisterTexture(pMaterial, render::ETexture::AMBIENT_OCCLUSSION, path(_sPath).parent_path(), sPath.C_Str());
+      aiString sPath;
+      aiTextureType eTextureType = (aiTextureType)(uI);
+      if (pAssimpMat->GetTexture(eTextureType, 0, &sPath) == aiReturn_SUCCESS)
+      {
+        RegisterTexture(pMaterial, (render::ETexture)(uI), fs(_sPath).parent_path(), sPath.C_Str());
+      }
     }
 
     // Add material
@@ -277,10 +204,16 @@ unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, in
   return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture2D<>::s_uChannels);
 }
 // ------------------------------------
-void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& pMaterial, render::ETexture _eType,
-  const std::filesystem::path& _oBasePath, const std::string& _sTextureID)
+void CResourceManager::RegisterTexture
+(
+  std::unique_ptr<render::mat::CMaterial>& pMaterial,
+  render::ETexture _eType,
+  const std::filesystem::path& _oBasePath,
+  const std::string& _sTextureID
+)
 {
-  std::filesystem::path sPath = _oBasePath / std::filesystem::path(_sTextureID);
+  using fs = std::filesystem::path;
+  fs sPath = _oBasePath / fs(_sTextureID);
   if (sPath.has_filename() && std::filesystem::exists(sPath))
   {
     LOG("Loading texture...");
