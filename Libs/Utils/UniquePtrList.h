@@ -52,7 +52,9 @@ namespace utils
       {
         TInternalData& pData = m_lstInternalData[uI];
         if (!pData.uPtr)
+        {
           continue;
+        }
 
         // Create ptr 
         pData.uPtr = std::make_unique<_Type>(std::forward<Args>(args)...);

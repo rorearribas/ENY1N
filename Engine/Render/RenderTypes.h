@@ -10,6 +10,7 @@ namespace render
     //------------------------------------------------
     //-------------------MODELS-----------------------
     //------------------------------------------------
+    typedef std::vector<uint32_t> TIndices;
     struct TVertexData
     {
       math::CVector3 VertexPos = math::CVector3::Zero;
@@ -19,12 +20,11 @@ namespace render
       inline bool operator==(const TVertexData& _other) const { return VertexPos == _other.VertexPos && Normal == _other.Normal && TexCoord == _other.TexCoord; }
       inline bool operator!=(const TVertexData& _other) const { return !(*this == _other); }
     };
-
     //------------------------------------------------
     //------------------INSTANCING--------------------
     //------------------------------------------------
-    static constexpr uint32_t s_uMaxModelInstances = 10000u;
-    typedef std::array<uint32_t, s_uMaxModelInstances> TDrawableInstances;
+    static constexpr uint16_t s_uMaxInstancesPerModel = 10000u;
+    typedef std::array<uint16_t, s_uMaxInstancesPerModel> TDrawableInstances;
     struct TInstanceData
     {
       math::CMatrix4x4 Transform = math::CMatrix4x4::Identity;
@@ -38,11 +38,10 @@ namespace render
       math::CVector3 VertexPos = math::CVector3::Zero;
       math::CVector3 Color = math::CVector3::Zero;
     };
-
     struct TCustomPrimitive
     {
       std::vector<render::gfx::TPrimitiveData> PrimitiveData;
-      std::vector<uint32_t> Indices;
+      TIndices Indices;
     };
   }
 

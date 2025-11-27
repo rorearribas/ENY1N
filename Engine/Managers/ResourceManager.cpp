@@ -1,4 +1,4 @@
-#include "ResourceManager.h"
+﻿#include "ResourceManager.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include <iostream>
 #include <cassert>
@@ -62,10 +62,10 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
 
   for (uint32_t uMat = 0; uMat < uNumMateriales; uMat++)
   {
-    // Get material
+    // Get assimp material
     aiMaterial* pAssimpMat = pScene->mMaterials[uMat];
     // Create new material
-    auto pMaterial = std::make_unique<render::mat::CMaterial>(pAssimpMat->GetName().C_Str());
+    auto pMaterial = std::make_unique<render::mat::CMaterial>();
 
     // Set material values
     {
@@ -127,10 +127,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
     assert(pSceneMesh);
 #endif // DEBUG
 
-    // Create internal mesh
-    std::shared_ptr pMesh = std::make_shared<render::gfx::CMesh>(pSceneMesh->mName.C_Str());
     std::vector<uint32_t> lstIndices;
-
     for (uint32_t uJ = 0; uJ < pSceneMesh->mNumFaces; uJ++)
     {
       const aiFace& oFace = pSceneMesh->mFaces[uJ];
@@ -151,7 +148,8 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
         }
         else
         {
-          WARNING_LOG("Normals are not defined correctly in: " + pMesh->GetID());
+          std::string sMesh = std::string(pSceneMesh->mName.C_Str());
+          WARNING_LOG("Normals are not defined correctly in: " + sMesh);
         }
 
         // Texture coords
@@ -177,11 +175,10 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
       }
     }
 
-    // Index buffer
-    HRESULT hResult = pMesh->CreateBuffer(lstIndices);
-    UNUSED_VAR(hResult);
+    // Create mesh
+    std::unique_ptr pMesh = std::make_unique<render::gfx::CMesh>(lstIndices);
 #ifdef _DEBUG
-    assert(!FAILED(hResult));
+    assert(pMesh);
 #endif // DEBUG
 
     // Add material
@@ -190,7 +187,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
       pMesh->SetMaterial(std::move(lstMaterials[pSceneMesh->mMaterialIndex]));
     }
 
-    rModelData.Meshes.emplace_back(pMesh);
+    rModelData.Meshes.emplace_back(std::move(pMesh));
   }
 
   SUCCESS_LOG("Loaded model data! -> " << _sPath);
@@ -218,7 +215,15 @@ void CResourceManager::RegisterTexture
   {
     LOG("Loading texture...");
     using namespace render::texture;
-    std::string sTextureID = sPath.filename().stem().string();
+    std::string sTexture = sPath.filename().stem().string();
+
+    auto it = m_lstCachedTextures.find(sTexture);
+    if (it != m_lstCachedTextures.end())
+    {
+      pMaterial->SetTexture(it->second, _eType);
+      SUCCESS_LOG("Texture preloaded! -> " << sPath.filename());
+      return;
+    }
 
     int iWidth = 0, iHeight = 0, iChannels = 0;
     unsigned char* pBuffer = LoadImage(sPath.string().c_str(), iWidth, iHeight, iChannels);
@@ -228,7 +233,8 @@ void CResourceManager::RegisterTexture
     SUCCESS_LOG("Texture loaded! -> " << sPath.filename());
 
     // Create texture
-    auto pTexture = std::make_shared<render::texture::CTexture2D<render::EView::SHADER_RESOURCE>>();
+    m_lstCachedTextures.emplace(sTexture, std::make_shared<TShaderResource2D>());
+    render::texture::TSharedTexture pTexture = m_lstCachedTextures.at(sTexture);
     pMaterial->SetTexture(pTexture, _eType);
 
     // Set texture config

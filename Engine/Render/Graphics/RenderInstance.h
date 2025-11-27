@@ -9,7 +9,7 @@ namespace render
 {
   namespace instance
   {
-    static constexpr uint32_t s_uInvalidID = 0xFFFFFFFFu;
+    static constexpr uint16_t s_uInvalidID = 0xFFFFu;
   }
 
   namespace gfx
@@ -17,10 +17,10 @@ namespace render
     class CRenderInstance
     {
     public:
-      CRenderInstance(const render::gfx::CModel* _pParent, uint32_t _uId);
+      CRenderInstance(const render::gfx::CModel* _pParent, uint16_t _uId);
       ~CRenderInstance() {}
 
-      inline const uint32_t GetInstanceID() const { return m_uInstanceID; }
+      inline const uint16_t GetInstanceID() const { return m_uInstanceID; }
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
 
       void SetCullingEnabled(bool _bCull);
@@ -42,7 +42,7 @@ namespace render
 
     private:
       const render::gfx::CModel* m_pParent = nullptr;
-      uint32_t m_uInstanceID = render::instance::s_uInvalidID;
+      uint16_t m_uInstanceID = render::instance::s_uInvalidID;
 
     private:
       collision::CAABB m_oWorldAABB = collision::CAABB();

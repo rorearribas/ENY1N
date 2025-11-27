@@ -6,7 +6,7 @@ namespace render
 {
   namespace gfx
   {
-    CRenderInstance::CRenderInstance(const render::gfx::CModel* _pParent, uint32_t _uId) 
+    CRenderInstance::CRenderInstance(const render::gfx::CModel* _pParent, uint16_t _uId)
     : m_pParent(_pParent)
     , m_uInstanceID(_uId)
     {

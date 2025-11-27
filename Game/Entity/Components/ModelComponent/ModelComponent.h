@@ -46,7 +46,7 @@ namespace game
 
     // Model
     utils::CWeakPtr<render::gfx::CModel> m_wpModel;
-    uint32_t m_uInstanceID = render::instance::s_uInvalidID;
+    uint16_t m_uInstanceID = render::instance::s_uInvalidID;
   };
 }
 

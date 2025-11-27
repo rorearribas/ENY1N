@@ -11,15 +11,15 @@ namespace render
 {
   namespace gfx
   {
-    typedef std::vector<std::shared_ptr<render::gfx::CMesh>> TMeshes;
-    typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxModelInstances> TInstances;
+    typedef std::vector<std::unique_ptr<render::gfx::CMesh>> TMeshes;
+    typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstancesPerModel> TInstances;
 
     class CModel
     {
     public:
       struct TModelData
       {
-        std::vector<std::shared_ptr<render::gfx::CMesh>> Meshes;
+        std::vector<std::unique_ptr<render::gfx::CMesh>> Meshes;
         std::vector<render::gfx::TVertexData> Vertices;
         char AssetPath[128];
       };
@@ -29,10 +29,10 @@ namespace render
       ~CModel();
 
       void Draw();
-      void DrawInstances(const std::vector<uint32_t>& _lstDrawableInstances);
+      void DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
 
       CRenderInstance* CreateInstance();
-      bool RemoveInstance(uint32_t _uInstanceID);
+      bool RemoveInstance(uint16_t _uInstanceID);
 
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
@@ -65,17 +65,18 @@ namespace render
       // Buffers
       ID3D11Buffer* m_pVertexBuffer = nullptr;
       ID3D11Buffer* m_pInstanceBuffer = nullptr;
+      char m_sAssetPath[128];
 
     private:
+      // Model
       TMeshes m_lstMeshes = TMeshes();
       TInstances m_lstInstances = TInstances();
 
-    private:
+      // Transforms
       math::CTransform m_oTransform = math::CTransform();
       collision::CAABB m_oLocalAABB = collision::CAABB();
       collision::CAABB m_oWorldAABB = collision::CAABB();
 
-      char m_sAssetPath[128];
       bool m_bCullEnabled = true;
       bool m_bVisible = true;
     };

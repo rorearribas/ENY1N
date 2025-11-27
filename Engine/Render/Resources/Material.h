@@ -13,16 +13,14 @@ namespace render
     class CMaterial
     {
     private:
-      typedef std::array<texture::TSharedTexture, s_uTextureCount> TTextures;
+      typedef std::array<render::texture::TSharedTexture, s_uTextureCount> TTextures;
 
     public:
       CMaterial() = default;
-      CMaterial(const std::string& _sMaterialId) : m_sID(_sMaterialId) {}
       ~CMaterial();
 
-      void SetTexture(texture::TSharedTexture _pTexture, ETexture _eType);
-      texture::TSharedTexture GetTexture(ETexture _eType) const;
-      inline const std::string& GetID() const { return m_sID; }
+      void SetTexture(render::texture::TSharedTexture _pTexture, ETexture _eType);
+      render::texture::TSharedTexture GetTexture(ETexture _eType) const;
 
       inline void SetDiffuseColor(math::CVector3 _vDiffuseColor) { m_v3DiffuseColor = _vDiffuseColor; }
       inline const math::CVector3& GetDiffuseColor() const { return m_v3DiffuseColor; }
@@ -47,9 +45,6 @@ namespace render
       void ClearTextures();
 
     private:
-      // ID
-      std::string m_sID = std::string();
-
       // Properties
       math::CVector3 m_v3DiffuseColor = math::CVector3::Zero;
       math::CVector3 m_v3SpecularColor = math::CVector3::Zero;

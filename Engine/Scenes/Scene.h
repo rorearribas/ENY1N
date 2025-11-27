@@ -18,9 +18,18 @@ namespace scene
   class CScene
   {
   private:
+    struct TCachedModel
+    {
+      bool Visible = false;
+      render::gfx::TDrawableInstances DrawableInstances;
+      uint16_t InstanceCount = 0;
+    };
+
+  private:
     // Models
     static constexpr uint32_t s_uMaxModels = 500u;
     typedef utils::CUniquePtrList<render::gfx::CModel, s_uMaxModels> TModels;
+    typedef std::array<TCachedModel, s_uMaxModels> TCachedModels;
 
     // Primitives
     static constexpr uint32_t s_uMaxPrimitives = 500u;
@@ -63,10 +72,13 @@ namespace scene
     friend class render::CRender;
     void Clear();
 
-    // Draw calls
-    void DrawModels(const render::CCamera* _pCamera);
-    void DrawPrimitives(const render::CCamera* _pCamera);
+    // Handle scene
+    void CacheModels(const render::CCamera* _pCamera);
     void ApplyLighting();
+
+    // Draw calls
+    void DrawModels();
+    void DrawPrimitives(const render::CCamera* _pCamera);
 
   private:
     bool m_bEnabled = false;
@@ -75,6 +87,7 @@ namespace scene
   private:
     // Models
     TModels m_lstModels = TModels();
+    TCachedModels m_lstCachedModels = TCachedModels();
 
     // Primitives
     TPrimitives m_lstPrimitives = TPrimitives();

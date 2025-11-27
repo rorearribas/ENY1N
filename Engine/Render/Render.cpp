@@ -726,8 +726,10 @@ namespace render
       // Set constant buffer (instancing info)
       internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
 
+      // Cache models
+      _pScene->CacheModels(m_pCamera);
       // Draw z-prepass
-      _pScene->DrawModels(m_pCamera);
+      _pScene->DrawModels();
 
       // Copy depth texture!
       ID3D11Texture2D* pTexture = internal::s_oPipeline.pDepthStencil->GetData();
@@ -763,7 +765,7 @@ namespace render
       internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
 
       // Draw models (i should separate this into 2 stages: models and instances)
-      _pScene->DrawModels(m_pCamera);
+      _pScene->DrawModels();
 
       // Remove render targets
       ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };

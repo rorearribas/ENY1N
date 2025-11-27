@@ -14,30 +14,28 @@ namespace render
     class CMesh
     {
     public:
-      CMesh() = default;
-      CMesh(const std::string& _sMeshName) : m_sMeshID(_sMeshName) {}
+      CMesh(const TIndices& _lstIndices);
       ~CMesh();
 
       void Draw(uint32_t _uInstanceCount = 0);
-      HRESULT CreateBuffer(const std::vector<uint32_t>& _lstIndices);
 
-      inline render::mat::CMaterial* GetMaterial() const { return m_pMaterial.get(); }
+      inline render::mat::CMaterial& GetMaterial() const { return *m_pMaterial; }
       inline void SetMaterial(std::unique_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }
-      inline const std::string& GetID() const { return m_sMeshID; }
+
+      inline ID3D11Buffer* GetBuffer() const { return m_pIndexBuffer; }
+      inline const uint32_t GetIndexCount() const { return m_uIndexCount; }
 
     private:
+      HRESULT CreateBuffer(const TIndices& _lstIndices);
       void ClearBuffer();
       void ClearMaterial();
 
     private:
       // Mesh
       ID3D11Buffer* m_pIndexBuffer = nullptr;
-      uint32_t m_uIndices = 0;
 
-    private:
-      // Data
-      std::string m_sMeshID = std::string();
       std::unique_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
+      uint32_t m_uIndexCount = 0;
     };
   }
 }

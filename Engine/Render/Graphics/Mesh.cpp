@@ -9,6 +9,15 @@ namespace render
   namespace gfx
   {
     // ------------------------------------
+    CMesh::CMesh(const TIndices& _lstIndices)
+    {
+      HRESULT hResult = CreateBuffer(_lstIndices);
+      UNUSED_VAR(hResult);
+#ifdef _DEBUG
+      assert(!FAILED(hResult));
+#endif // DEBUG
+    }
+    // ------------------------------------
     CMesh::~CMesh()
     {
       ClearBuffer();
@@ -41,17 +50,17 @@ namespace render
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
       // Draw mesh
-      (_uInstanceCount > 0) ? global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndices, _uInstanceCount, 0, 0, 0) : 
-      global::dx::s_pDeviceContext->DrawIndexed(m_uIndices, 0, 0);
+      (_uInstanceCount > 0) ? global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndexCount, _uInstanceCount, 0, 0, 0) : 
+      global::dx::s_pDeviceContext->DrawIndexed(m_uIndexCount, 0, 0);
     }
     // ------------------------------------
-    HRESULT CMesh::CreateBuffer(const std::vector<uint32_t>& _lstIndices)
+    HRESULT CMesh::CreateBuffer(const TIndices& _lstIndices)
     {
       // Clean mesh
       ClearBuffer();
 
       // Get count
-      m_uIndices = static_cast<uint32_t>(_lstIndices.size());
+      m_uIndexCount = static_cast<uint32_t>(_lstIndices.size());
 
       // Config index buffer
       D3D11_BUFFER_DESC oIndexBufferDesc = D3D11_BUFFER_DESC();

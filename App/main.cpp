@@ -89,9 +89,9 @@ int main()
 
   std::vector<std::string> vAvailableModels = 
   {
-    "models/house/fbx/cottage_fbx.fbx"/*,
+    "models/house/fbx/cottage_fbx.fbx",
     "models/wolf/Wolf.fbx",
-    "models/plant/Low-Poly Plant_.fbx"*/
+    "models/plant/Low-Poly Plant_.fbx"
   };
 
   for (uint32_t uIndex = 0; uIndex < 50; uIndex++)

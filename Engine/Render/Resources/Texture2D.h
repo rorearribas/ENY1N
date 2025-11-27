@@ -225,7 +225,13 @@ namespace render
     }
 
     // Typedefs
-    typedef std::shared_ptr<texture::CTexture2D<render::EView::SHADER_RESOURCE>> TSharedTexture;
+    typedef texture::CTexture2D<render::EView::DEPTH_STENCIL> TDepthStencil2D;
+    typedef texture::CTexture2D<render::EView::RENDER_TARGET> TRenderTarget2D;
+    typedef texture::CTexture2D<render::EView::SHADER_RESOURCE> TShaderResource2D;
+    typedef texture::CTexture2D<render::EView::UNORDERED_ACCESS> TUnorderedAccess2D;
+
+    // Shared
+    typedef std::shared_ptr<TShaderResource2D> TSharedTexture;
   }
 }
 

@@ -219,7 +219,7 @@ namespace scene
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawModels(const render::CCamera* _pCamera)
+  void CScene::CacheModels(const render::CCamera* _pCamera)
   {
     // Draw
     for (uint32_t uIndex = 0; uIndex < m_lstModels.GetMaxSize(); uIndex++)
@@ -230,7 +230,8 @@ namespace scene
         continue;
       }
 
-      // Draw model
+      // Handle model
+      TCachedModel& rCachedModel = m_lstCachedModels[uIndex];
       if (pModel->IsVisible())
       {
         bool bDrawModel = true;
@@ -238,14 +239,13 @@ namespace scene
         {
           bDrawModel = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
         }
-        if (bDrawModel)
-        {
-          pModel->Draw();
-        }
+        rCachedModel.Visible = bDrawModel;
       }
 
       // Handle instances
-      std::vector<uint32_t> lstDrawableInstances;
+      rCachedModel.InstanceCount = 0;
+      render::gfx::TDrawableInstances& lstDrawableInstances = rCachedModel.DrawableInstances;
+
       render::gfx::TInstances& lstInstances = pModel->GetInstances();
       for (uint32_t uI = 0; uI < lstInstances.GetMaxSize(); uI++)
       {
@@ -262,18 +262,48 @@ namespace scene
         }
         if (bDrawInstance)
         {
-          lstDrawableInstances.emplace_back(pInstance->GetInstanceID());
+          lstDrawableInstances[rCachedModel.InstanceCount++] = pInstance->GetInstanceID();
         }
       }
+    }
+  }
+  // ------------------------------------
+  void CScene::ApplyLighting()
+  {
+    m_oLightManager.Apply();
+  }
+  // ------------------------------------
+  void CScene::DrawModels()
+  {
+    // Draw
+    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetMaxSize(); uIndex++)
+    {
+      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uIndex];
+      if (!pModel.IsValid())
+      {
+        continue;
+      }
 
-      if (lstDrawableInstances.size() > 0)
+      // Handle model
+      const TCachedModel& rCachedModel = m_lstCachedModels[uIndex];
+      if (rCachedModel.Visible)
+      {
+        pModel->Draw();
+      }
+
+      // Handle instances
+      if (rCachedModel.InstanceCount > 0)
       {
         engine::CEngine* pEngine = engine::CEngine::GetInstance();
         render::CRender* pRender = pEngine->GetRender();
         // Push mode
         pRender->SetInstancingMode(true);
         // Draw instances
-        pModel->DrawInstances(lstDrawableInstances);
+        pModel->DrawInstances
+        (
+          rCachedModel.DrawableInstances,
+          rCachedModel.InstanceCount
+        );
         // Disabled mode
         pRender->SetInstancingMode(false);
       }
@@ -329,11 +359,6 @@ namespace scene
     {
       m_lstDebugItems.Clear();
     }
-  }
-  // ------------------------------------
-  void CScene::ApplyLighting()
-  {
-    m_oLightManager.Apply();
   }
   // ------------------------------------
   void CScene::Clear()

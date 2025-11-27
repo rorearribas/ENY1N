@@ -15,8 +15,16 @@ public:
   [[nodiscard]] std::unique_ptr<render::gfx::CModel> LoadModel(const char* _sPath);
 
 private:
-  void RegisterTexture(std::unique_ptr<render::mat::CMaterial>& pMaterial, render::ETexture _eType,
-    const std::filesystem::path& _oBasePath, const std::string& _sTextureID);
+  void RegisterTexture
+  (
+    std::unique_ptr<render::mat::CMaterial>& pMaterial,
+    render::ETexture _eType,
+    const std::filesystem::path& _oBasePath,
+    const std::string& _sTextureID
+  );
+
+private:
+  std::unordered_map<std::string, render::texture::TSharedTexture> m_lstCachedTextures;
 };
 
 

@@ -44,7 +44,7 @@ namespace render
       pEngine->GetRender()->SetModelMatrix(m_oTransform.GetMatrix());
 
       // Draw meshes
-      for (std::shared_ptr<CMesh>& rMesh : m_lstMeshes)
+      for (std::unique_ptr<CMesh>& rMesh : m_lstMeshes)
       {
         rMesh->Draw();
       }
@@ -55,7 +55,7 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
     }
     // ------------------------------------
-    void CModel::DrawInstances(const std::vector<uint32_t>& _lstDrawableInstances)
+    void CModel::DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount)
     {
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
       HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
@@ -66,12 +66,11 @@ namespace render
       }
 
       // Set values
-      uint32_t uCount = static_cast<uint32_t>(_lstDrawableInstances.size());
       TInstanceData* pInstanceData = static_cast<TInstanceData*>(oMappedSubresource.pData);
-      for (uint32_t uIndex = 0; uIndex < uCount; ++uIndex)
+      for (uint16_t uIndex = 0; uIndex < _uInstanceCount; ++uIndex)
       {
-        uint32_t uTargetID = _lstDrawableInstances[uIndex];
-        if (render::gfx::CRenderInstance* pInstance = m_lstInstances[uTargetID])
+        uint16_t uID = _lstDrawableInstances[uIndex];
+        if (render::gfx::CRenderInstance* pInstance = m_lstInstances[uID])
         {
           pInstanceData[uIndex].Transform = pInstance->GetMatrix();
         }
@@ -96,9 +95,9 @@ namespace render
       pEngine->GetRender()->SetModelMatrix(m_oTransform.GetMatrix());
 
       // Draw instancing meshes
-      for (std::shared_ptr<CMesh>& rMesh : m_lstMeshes)
+      for (std::unique_ptr<CMesh>& rMesh : m_lstMeshes)
       {
-        rMesh->Draw(uCount);
+        rMesh->Draw(_uInstanceCount);
       }
 
       // Unbind buffers
@@ -116,11 +115,11 @@ namespace render
       }
 
       // Create instance
-      uint32_t uInstanceID = m_lstInstances.GetSize();
+      uint16_t uInstanceID = static_cast<uint16_t>(m_lstInstances.GetSize());
       return m_lstInstances.Create(this, uInstanceID);
     }
     // ------------------------------------
-    bool CModel::RemoveInstance(uint32_t _uID)
+    bool CModel::RemoveInstance(uint16_t _uID)
     {
       if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uID])
       {
@@ -210,12 +209,12 @@ namespace render
       }
 
       // We create here the instance buffer
-      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TInstanceData) * s_uMaxModelInstances));
+      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TInstanceData) * s_uMaxInstancesPerModel));
       rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
       rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-      oSubresourceData.pSysMem = new TInstanceData[s_uMaxModelInstances];
+      oSubresourceData.pSysMem = new TInstanceData[s_uMaxInstancesPerModel];
       hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &oSubresourceData, &m_pInstanceBuffer);
       if (FAILED(hResult))
       {
