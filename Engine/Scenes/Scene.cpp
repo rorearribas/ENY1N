@@ -232,20 +232,19 @@ namespace scene
 
       // Handle model
       TCachedModel& rCachedModel = m_lstCachedModels[uIndex];
-      if (pModel->IsVisible())
+      rCachedModel.Visible = pModel->IsVisible();
+      if (rCachedModel.Visible)
       {
-        bool bDrawModel = true;
+        bool bOnFrustum = true;
         if (pModel->IsCullingEnabled()) // Check culling
         {
-          bDrawModel = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
+          bOnFrustum = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
         }
-        rCachedModel.Visible = bDrawModel;
+        rCachedModel.Visible = bOnFrustum;
       }
 
       // Handle instances
       rCachedModel.InstanceCount = 0;
-      render::gfx::TDrawableInstances& lstDrawableInstances = rCachedModel.DrawableInstances;
-
       render::gfx::TInstances& lstInstances = pModel->GetInstances();
       for (uint32_t uI = 0; uI < lstInstances.GetMaxSize(); uI++)
       {
@@ -255,14 +254,14 @@ namespace scene
           continue;
         }
 
-        bool bDrawInstance = true;
+        bool bOnFrustum = true;
         if (pInstance->IsCullingEnabled()) // Check culling
         {
-          bDrawInstance = _pCamera->IsOnFrustum(pInstance->GetWorldAABB());
+          bOnFrustum = _pCamera->IsOnFrustum(pInstance->GetWorldAABB());
         }
-        if (bDrawInstance)
+        if (bOnFrustum)
         {
-          lstDrawableInstances[rCachedModel.InstanceCount++] = pInstance->GetInstanceID();
+          rCachedModel.DrawableInstances[rCachedModel.InstanceCount++] = pInstance->GetInstanceID();
         }
       }
     }
@@ -333,29 +332,29 @@ namespace scene
     }
 
     // Draw debug primitives
-    uint32_t uTempSize = m_lstDebugItems.GetSize();
-    for (uint32_t uIndex = 0; uIndex < uTempSize; uIndex++)
+    size_t tDebugCount = m_lstDebugItems.GetSize();
+    for (uint32_t uIndex = 0; uIndex < tDebugCount; uIndex++)
     {
-      render::gfx::CPrimitive* pDebug = m_lstDebugItems[uIndex];
-      if (!pDebug->IsVisible())
+      render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugItems[uIndex];
+      if (!pDebugPrimitive->IsVisible())
       {
         // This is strange because normally nobody wants to hide a debugging object - just in case!
         continue;
       }
 
       bool bDrawDebug = true;
-      if (pDebug->IsCullingEnabled()) // Check culling
+      if (pDebugPrimitive->IsCullingEnabled()) // Check culling
       {
-        bDrawDebug = _pCamera->IsOnFrustum(pDebug->GetWorldAABB());
+        bDrawDebug = _pCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
       }
       if (bDrawDebug)
       {
-        pDebug->Draw();
+        pDebugPrimitive->Draw();
       }
     }
 
     // Clean after draw
-    if (uTempSize > 0)
+    if (tDebugCount > 0)
     {
       m_lstDebugItems.Clear();
     }

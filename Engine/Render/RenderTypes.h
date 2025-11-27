@@ -23,13 +23,12 @@ namespace render
     //------------------------------------------------
     //------------------INSTANCING--------------------
     //------------------------------------------------
-    static constexpr uint16_t s_uMaxInstancesPerModel = 10000u;
+    static constexpr uint16_t s_uMaxInstancesPerModel = 128u;
     typedef std::array<uint16_t, s_uMaxInstancesPerModel> TDrawableInstances;
     struct TInstanceData
     {
       math::CMatrix4x4 Transform = math::CMatrix4x4::Identity;
     };
-
     //------------------------------------------------
     //------------------PRIMITIVES--------------------
     //------------------------------------------------
