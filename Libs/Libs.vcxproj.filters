@@ -99,6 +99,18 @@
     <ClInclude Include="Utils\UniquePtrList.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Serialization\Xml\pugixml\pugiconfig.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization\Xml\pugixml\pugixml.hpp">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization\Xml\XmlDocument.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization\Xml\XmlNode.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Math\Vector3.cpp">
@@ -153,6 +165,15 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Memory\Allocator.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialization\Xml\pugixml\pugixml.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialization\Xml\XmlDocument.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialization\Xml\XmlNode.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

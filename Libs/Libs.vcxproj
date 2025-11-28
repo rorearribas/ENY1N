@@ -149,6 +149,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Memory\Allocator.h" />
+    <ClInclude Include="Serialization\Xml\pugixml\pugiconfig.hpp" />
+    <ClInclude Include="Serialization\Xml\pugixml\pugixml.hpp" />
     <ClInclude Include="Utils\CircularPool.h" />
     <ClInclude Include="Utils\FixedList.h" />
     <ClInclude Include="ImGui\GraphEditor.h" />
@@ -176,6 +178,8 @@
     <ClInclude Include="Utils\FixedPool.h" />
     <ClInclude Include="Utils\UniquePtrList.h" />
     <ClInclude Include="Utils\Singleton.h" />
+    <ClInclude Include="Serialization\Xml\XmlDocument.h" />
+    <ClInclude Include="Serialization\Xml\XmlNode.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Memory\Allocator.cpp" />
@@ -184,6 +188,7 @@
     <ClCompile Include="ImGui\ImGradient.cpp" />
     <ClCompile Include="ImGui\ImGuizmo.cpp" />
     <ClCompile Include="ImGui\ImSequencer.cpp" />
+    <ClCompile Include="Serialization\Xml\pugixml\pugixml.cpp" />
     <ClCompile Include="Time\TimeManager.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
     <ClCompile Include="ImGui\imgui_demo.cpp" />
@@ -196,6 +201,8 @@
     <ClCompile Include="Math\Vector3.cpp" />
     <ClCompile Include="Math\Matrix4x4.cpp" />
     <ClCompile Include="Math\Transform.cpp" />
+    <ClCompile Include="Serialization\Xml\XmlDocument.cpp" />
+    <ClCompile Include="Serialization\Xml\XmlNode.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
