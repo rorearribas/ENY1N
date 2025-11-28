@@ -25,9 +25,9 @@ namespace engine
 
     void Init(uint32_t _uWidth, uint32_t _uHeight);
 
+    // Render pipeline
     void PrepareFrame();
     void Draw();
-    void Flush();
 
     // Getters
     inline scene::CSceneManager* GetSceneManager() const { return m_pSceneManager; }
