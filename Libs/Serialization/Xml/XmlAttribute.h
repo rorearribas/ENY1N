@@ -13,7 +13,6 @@ namespace serialization
     ~CXmlAttribute() {}
 
 
-
   private:
     pugi::xml_attribute m_oXmlAttribute;
   };
