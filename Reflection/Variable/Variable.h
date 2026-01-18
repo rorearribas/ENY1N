@@ -1,23 +1,24 @@
 #pragma once
+
 namespace reflection
 {
   class CVariable
   {
   public:
     // Constructor
-    template<typename _Type = void>
-    explicit CVariable(_Type* _pProperty, const char* _sVarName)
-      : m_pPtr(_pProperty), m_sVariableName(_sVarName) {
-    }
-    // Get value from real ptr
-    template<typename _Type = void>
-    const _Type* TryGetValue() const { return (_Type*)(m_pPtr); }
-    // Get property name
-    const char* GetVariableName() const { return m_sVariableName; }
-    // Get property type
+    explicit CVariable(uint32_t _uOffset, const char* _sVarName) : 
+    m_uOffset(_uOffset), m_sVar(_sVarName) {}
+
+    // Get var name
+    const char* GetVarName() const { return m_sVar; }
+
+    // Try get value
+    template<typename T, typename Object>
+    inline T* TryGetValue(Object* _rObject) const { return (T*)((char*)(_rObject) + m_uOffset); }
+
   private:
-    const char* m_sVariableName = nullptr;
-    void* m_pPtr = nullptr;
+    const char* m_sVar = nullptr;
+    uint32_t m_uOffset = 0;
   };
 }
 

@@ -254,7 +254,7 @@ namespace render
       float fDiff = fHalfHeight - _fRadius;
 
       // Semi sphere lambda
-      auto oComputeSemiSphereLamb = [&](bool _bInverse = false)
+      auto oCalcSemiSphereFunc = [&](bool _bInverse = false)
       {
         for (int uX = 0; uX <= _iSubvH; ++uX)
         {
@@ -281,7 +281,7 @@ namespace render
       };
 
       // Generate indices lambda in wireframe mode
-      auto oGenerateWireIndicesFunc = [&](int _iStacks, int _iSlices, int _iStartIdx)
+      auto oCalcWireIndicesFunc = [&](int _iStacks, int _iSlices, int _iStartIdx)
       {
         for (int uX = 0; uX < _iStacks; ++uX)
         {
@@ -301,7 +301,7 @@ namespace render
       };
 
       // Generate indices lambda in lit mode
-      auto oGenerateIndicesFunc = [&](int _iStacks, int _iSlices, int _iStartIdx, bool _bInverseCCW = false)
+      auto oCalcIndicesFunc = [&](int _iStacks, int _iSlices, int _iStartIdx, bool _bInverseCCW = false)
       {
         for (int uX = 0; uX < _iStacks; ++uX)
         {
@@ -323,14 +323,14 @@ namespace render
 
       // Top semi-sphere
       int iCacheStartIdx = static_cast<int>(oCustomPrimitive.PrimitiveData.size());
-      oComputeSemiSphereLamb();
+      oCalcSemiSphereFunc();
       for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.PrimitiveData.size()); ++iIdx)
       {
         oCustomPrimitive.PrimitiveData[iIdx].VertexPos.y += (fDiff >= 0 ? fDiff : 0.0f);
       }
       // Compute top semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx) :
-        oGenerateWireIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx);
+      _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx) :
+        oCalcWireIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx);
 
       // Body
       if (fDiff >= 0.0f)
@@ -352,21 +352,21 @@ namespace render
           }
         }
         // Compute body indices
-        _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx, true) :
-          oGenerateWireIndicesFunc(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx);
+        _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx, true) :
+          oCalcWireIndicesFunc(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx);
       }
 
       // Bottom semi-sphere
       iCacheStartIdx = static_cast<int>(oCustomPrimitive.PrimitiveData.size());
-      oComputeSemiSphereLamb(true);
+      oCalcSemiSphereFunc(true);
       for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.PrimitiveData.size()); ++iIdx)
       {
         oCustomPrimitive.PrimitiveData[iIdx].VertexPos.y -= (fDiff >= 0 ? fDiff : 0.0f);
       }
 
       // Compute bottom semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oGenerateIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx, true) :
-        oGenerateWireIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx);
+      _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx, true) :
+        oCalcWireIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx);
 
       return oCustomPrimitive;
     }
@@ -381,7 +381,7 @@ namespace render
 
       // Invert indices
       const math::CVector3& v3Normal = _oPlane.GetNormal();
-      if (v3Normal.Dot(s_oPlaneNormal) < 0.0f)
+      if (v3Normal.Dot(s_oPlaneNormal) < math::s_fEpsilon3)
       {
         size_t iSize = _eRenderMode == render::ERenderMode::SOLID ? 3 : 2;
         for (size_t i = 0; i < s_oPlaneIndices.size(); i += iSize)

@@ -1,25 +1,29 @@
 #pragma once
-#include "Reflection/Base/Class.h"
+#include "Reflection/Base/Type.h"
 #include "Reflection/Variable/Variable.h"
 #include "Reflection/Function/Function.h"
 
 #define DECLARE_CLASS_IN_REFLECTION \
-struct CStaticClass : public reflection::CClass \
+struct CStaticType : public reflection::CType \
 { \
-  CStaticClass(); \
+  CStaticType(); \
 }; \
 public: \
- const reflection::CClass* GetClass() { return &m_oStaticClass; } \
+ static const reflection::CType* GetStaticType() { return &m_oStaticType; } \
 private: \
-CStaticClass m_oStaticClass; \
+static CStaticType m_oStaticType; \
 
 #define IMPLEMENT_CLASS_BEGIN(CLASS) \
-CLASS::CStaticClass::CStaticClass() : reflection::CClass(this, #CLASS) { \
-CLASS* pType = (CLASS*)(m_pPtr); 
+CLASS::CStaticType CLASS::m_oStaticType;\
+CLASS::CStaticType::CStaticType() : reflection::CType(this, #CLASS) { \
+CLASS* pType = reinterpret_cast<CLASS*>(m_pPtr); 
 
 #define ADD_VARIABLE(VAR) \
-reflection::CVariable* pVariable = new reflection::CVariable(&pType->VAR, #VAR); \
-RegisterVariable(pVariable);
+{ \
+using Class = std::remove_reference_t<decltype(*pType)>; \
+reflection::CVariable* pVariable = new reflection::CVariable(offsetof(Class, VAR), #VAR); \
+RegisterVariable(pVariable); \
+} \
 
 #define ADD_FUNCTION(FUNCTION, BASE, OUTPUT, ...) \
 reflection::CFunction<OUTPUT(BASE::*)(__VA_ARGS__)> Register_##FUNCTION(pType, #FUNCTION); \

@@ -28,7 +28,10 @@
 
 #include "Libs/ImGui/imgui.h"
 #include "Libs/Math/Math.h"
+
 #include "Reflection/TypeManager.h"
+#include "Reflection/ReflectionMacros.h"
+#include "Reflection/Base/TypeResolver.h"
 
 static std::random_device rd;
 std::mt19937 s_oGenerator(rd());
@@ -87,7 +90,7 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::ELight::DIRECTIONAL_LIGHT);
 
-  std::vector<std::string> vAvailableModels = 
+  std::vector<std::string> vAvailableModels =
   {
     "models/house/fbx/cottage_fbx.fbx",
     "models/wolf/Wolf.fbx",
@@ -97,7 +100,7 @@ int main()
   for (uint32_t uIndex = 0; uIndex < 50; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f),GenerateFloat(10.0f, 100.0f), GenerateFloat(-10.0f, 10.0f)));
+    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-10.0f, 10.0f)));
 
     //const std::string& sModel = /*GenerateString(vAvailableModels*/);
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
@@ -112,12 +115,12 @@ int main()
   //pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
   //pModelEnt2->SetRotation(math::CVector3(90.0f, 180.0f, 0.0f));
   //pModelEnt2->SetScale(math::CVector3(0.01f, 0.01f, 0.01f));
-  
+
   // Create plane
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::EPrimitive::E3D_PLANE, render::ERenderMode::SOLID);
-  pPlaneModel->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
+  pPlaneModel->SetColor(math::CVector3(0.2f, 0.5f, 0.2f));
   pPlaneEntity->SetScale(math::CVector3(200.0f, 1.0f, 200.0f));
 
   // Create 3 box
@@ -157,6 +160,26 @@ int main()
       float fOffset = math::Clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
       m_fFixedDeltaAccumulator += fOffset;
 
+      if (bThrowRay)
+      {
+        // Draw line
+        math::CVector3 v3Pos = math::CVector3(0.0f, 10.0f, 0.0f);
+        const float fMaxDistance(100);
+
+        physics::CRay oRay(v3Pos, math::CVector3::Forward);
+        oRay.DrawRay(fMaxDistance, math::CVector3::Right);
+
+        // Throw ray
+        std::vector<collision::THitEvent> lstHits;
+        if (pCollManager->RaycastAll(oRay, fMaxDistance, lstHits))
+        {
+          for (auto& HitEvent : lstHits)
+          {
+            pEngine->DrawSphere(HitEvent.ImpactPoint, 0.05f, 8, 8, math::CVector3::Up, render::ERenderMode::WIREFRAME);
+          }
+        }
+      }
+
       // Update
       while (m_fFixedDeltaAccumulator >= fFixedDelta)
       {
@@ -166,28 +189,6 @@ int main()
         pPhysicsManager->Update(fFixedDelta);
         pCollManager->Update(fFixedDelta);
         pGameManager->Update(fFixedDelta);
-
-        if (bThrowRay)
-        {
-          // Draw line
-          math::CVector3 v3Pos = math::CVector3(0.0f, 10.0f, 0.0f);
-          math::CVector3 v3End = v3Pos + (math::CVector3::Forward * 100.0f);
-          pEngine->DrawLine(v3Pos, v3End, math::CVector3::Right);
-
-          const float fMaxDistance(100);
-          physics::CRay oRay(v3Pos, math::CVector3::Forward);
-          oRay.DrawRay(fMaxDistance, math::CVector3::Right);
-
-          // Throw ray
-          std::vector<collision::THitEvent> lstHits;
-          if (pCollManager->RaycastAll(oRay, fMaxDistance, lstHits))
-          {
-            for (auto& HitEvent : lstHits)
-            {
-              pEngine->DrawSphere(HitEvent.ImpactPoint, 0.05f, 8, 8, math::CVector3::Up, render::ERenderMode::WIREFRAME);
-            }
-          }
-        }
 
         pInputManager->Flush();
         m_fFixedDeltaAccumulator -= fFixedDelta;

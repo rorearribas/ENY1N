@@ -1,30 +1,29 @@
 #pragma once
-#include <array>
 #include "Libs/Utils/Singleton.h"
-#include "Libs/Utils/FixedPool.h"
+#include <array>
 
-namespace reflection { class CClass; }
+namespace reflection { class CType; }
 namespace reflection
 {
-  class CTypeManager : public utils::CSingleton<CTypeManager>
+  class CTypeManager : public utils::CSingleton<CTypeManager, true>
   {
   private:
     static constexpr int s_iMaxTypes = 1000;
-    typedef std::array<CClass*, s_iMaxTypes> TTypes;
+    typedef std::array<reflection::CType*, s_iMaxTypes> TTypes;
 
   public:
     CTypeManager() {}
-    ~CTypeManager() { ClearAllTypes(); }
+    ~CTypeManager() { ClearTypes(); }
 
-    void RegisterClass(CClass*);
-    CClass* const FindClass(const char* _sType);
+    void RegisterType(CType* _pType);
+    CType* const FindType(const char* _sType);
 
   private:
-    void ClearAllTypes();
+    void ClearTypes();
 
   private:
     TTypes m_lstTypes = TTypes();
-    int m_iRegisteredTypes = 0;
+    uint32_t m_uRegisteredTypes = 0;
   };
 }
 

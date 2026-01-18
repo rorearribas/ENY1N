@@ -1,25 +1,25 @@
 #include "TypeManager.h"
-#include "Reflection/Base/Class.h"
+#include "Reflection/Base/Type.h"
 
 namespace reflection
 {
-  void CTypeManager::RegisterClass(CClass* _pType)
+  void CTypeManager::RegisterType(CType* _pType)
   {
-    if (m_iRegisteredTypes == m_lstTypes.max_size())
+    if (m_uRegisteredTypes == m_lstTypes.max_size())
     {
       std::cout << "Increase the size!" << std::endl;
       return;
     }
-    m_lstTypes[m_iRegisteredTypes] = _pType;
-    m_iRegisteredTypes++;
+    m_lstTypes[m_uRegisteredTypes] = _pType;
+    m_uRegisteredTypes++;
   }
   // ------------------------------------
-  CClass* const CTypeManager::FindClass(const char* _sTypeName)
+  CType* const CTypeManager::FindType(const char* _sTypeName)
   {
     for (unsigned int uIndex = 0; uIndex < m_lstTypes.size(); uIndex++)
     {
-      CClass* const pType = m_lstTypes[uIndex];
-      if (pType && pType->GetClassId() == _sTypeName)
+      CType* pType = m_lstTypes[uIndex];
+      if (pType->GetTypeName() == _sTypeName)
       {
         return pType;
       }
@@ -27,8 +27,13 @@ namespace reflection
     return nullptr;
   }
   // ------------------------------------
-  void CTypeManager::ClearAllTypes()
+  void CTypeManager::ClearTypes()
   {
-    std::fill(std::begin(m_lstTypes), std::end(m_lstTypes), nullptr);
+    uint32_t uIndex = 0;
+    {
+      m_lstTypes[uIndex] = nullptr;
+      uIndex++;
+    }
+    m_uRegisteredTypes = 0;
   }
 }

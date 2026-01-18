@@ -81,14 +81,17 @@ namespace render
   {
     const math::CVector3& v3Center = _oBoundingBox.GetCenter();
     const math::CVector3& v3HalfExtents = _oBoundingBox.GetHalfSize();
+
     for (uint32_t uIndex = 0; uIndex < s_uFrustumPlanes; ++uIndex)
     {
       const math::CPlane& rPlane = m_oPlanes[uIndex];
       const math::CVector3& v3Normal = rPlane.GetNormal();
+
       // Get each component!
       const float fX = std::abs(v3Normal.x);
       const float fY = std::abs(v3Normal.y);
       const float fZ = std::abs(v3Normal.z);
+
       // Compute test
       const float fDistance = rPlane.DistanceToPoint(v3Center);
       const float fRadius = (v3HalfExtents.x * fX) + (v3HalfExtents.y * fY) + (v3HalfExtents.z * fZ);
@@ -97,6 +100,7 @@ namespace render
         return false;
       }
     }
+
     return true;
   }
   // ------------------------------------

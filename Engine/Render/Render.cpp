@@ -697,6 +697,7 @@ namespace render
         math::CMatrix4x4 mViewProjection = m_pCamera->GetViewProjection();
         rTransform.ViewProjection = mViewProjection;
         rTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
+
         // Set near + far
         rTransform.FarPlane = m_pCamera->GetFar();
         rTransform.NearPlane = m_pCamera->GetNear();

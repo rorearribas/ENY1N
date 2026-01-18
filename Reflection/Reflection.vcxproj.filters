@@ -5,7 +5,7 @@
       <Filter>Compile</Filter>
     </ClCompile>
     <ClCompile Include="Variable\Variable.cpp" />
-    <ClCompile Include="Base\Class.cpp" />
+    <ClCompile Include="Base\Type.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Function\Function.h">
@@ -16,7 +16,8 @@
     </ClInclude>
     <ClInclude Include="ReflectionMacros.h" />
     <ClInclude Include="Variable\Variable.h" />
-    <ClInclude Include="Base\Class.h" />
+    <ClInclude Include="Base\Type.h" />
+    <ClInclude Include="Base\TypeResolver.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Compile">

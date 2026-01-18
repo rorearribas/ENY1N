@@ -60,11 +60,11 @@ namespace scene
 
     // Create instance
     if (wpModel.IsValid() && wpModel->CreateInstance())
-    {      
+    {
       LOG("Created Instance! -> " << _sModelPath);
     }
     else
-    { 
+    {
       // Load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
       std::unique_ptr<render::gfx::CModel> pLoadedModel = pResourceManager->LoadModel(_sModelPath);
@@ -109,10 +109,11 @@ namespace scene
     }
 
     // Fill primitive data
-    auto oPrimitiveData = render::gfx::CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
+    using namespace render::gfx;
+    TCustomPrimitive rData = render::gfx::CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
 
     // Create temporal item + set pos
-    render::gfx::CPrimitive* pPrimitive = m_lstDebugItems.Create(oPrimitiveData, _eRenderMode);
+    render::gfx::CPrimitive* pPrimitive = m_lstDebugItems.Create(rData, _eRenderMode);
 
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
@@ -156,15 +157,15 @@ namespace scene
 
     // Fill primitive data
     using namespace render::gfx;
-    TCustomPrimitive oPrimitiveData = TCustomPrimitive();
-    CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, oPrimitiveData.PrimitiveData);
+    TCustomPrimitive rData = TCustomPrimitive();
+    CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, rData.PrimitiveData);
 
     // Fill indices
-    oPrimitiveData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ? CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
+    rData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ? CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
       CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
 
     // Create temporal item + set pos
-    CPrimitive* pSpherePrimitive = m_lstDebugItems.Create(oPrimitiveData, _eRenderMode);
+    CPrimitive* pSpherePrimitive = m_lstDebugItems.Create(rData, _eRenderMode);
 #ifdef _DEBUG
     assert(pSpherePrimitive); // Sanity check
 #endif
@@ -183,10 +184,11 @@ namespace scene
     }
 
     // Create plane
-    auto oData = render::gfx::CPrimitiveUtils::CreatePlane(_oPlane, _eRenderMode);
+    using namespace render::gfx;
+    TCustomPrimitive rData = render::gfx::CPrimitiveUtils::CreatePlane(_oPlane, _eRenderMode);
 
     // Create primitive
-    render::gfx::CPrimitive* pPlanePrimitive = m_lstDebugItems.Create(oData, _eRenderMode);
+    CPrimitive* pPlanePrimitive = m_lstDebugItems.Create(rData, _eRenderMode);
 #ifdef _DEBUG
     assert(pPlanePrimitive); // Sanity check
 #endif
@@ -207,15 +209,15 @@ namespace scene
 
     // Create data
     using namespace render::gfx;
-    TCustomPrimitive oData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
+    TCustomPrimitive rData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
     // Create temporal item
-    CPrimitive* pPrimitive = m_lstDebugItems.Create(oData, render::ERenderMode::WIREFRAME);
+    CPrimitive* pPrimitive = m_lstDebugItems.Create(rData, render::ERenderMode::WIREFRAME);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
 
     // Set values
-    pPrimitive->SetCullingEnabled(false); // @Note: Special case that we cannot use culling!
+    pPrimitive->SetPosition(math::CVector3::Zero);
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------

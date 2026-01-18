@@ -181,87 +181,140 @@ namespace math
     );
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::Invert(const math::CMatrix4x4& _mMatrix)
+  math::CMatrix4x4 CMatrix4x4::Invert(const math::CMatrix4x4& _m)
   {
-    math::CMatrix4x4 mCurrent(_mMatrix);
-    math::CMatrix4x4 mInvert = math::CMatrix4x4::Identity;
-
-    // Forward elimination
-    for (uint32_t i = 0; i < 3; i++)
+    // Calculate cofactors
+    const float* fMatrix = _m;
+    float fInvert[16];
     {
-      // Step 1: Choose a pivot (largest value in the column)
-      uint32_t pivot = i;
-      float pivotSize = std::fabs(mCurrent.m[i * 4 + i]); // column i, row i
+      fInvert[0] = fMatrix[5] * fMatrix[10] * fMatrix[15] -
+      fMatrix[5] * fMatrix[11] * fMatrix[14] -
+      fMatrix[9] * fMatrix[6] * fMatrix[15] +
+      fMatrix[9] * fMatrix[7] * fMatrix[14] +
+      fMatrix[13] * fMatrix[6] * fMatrix[11] -
+      fMatrix[13] * fMatrix[7] * fMatrix[10];
 
-      for (uint32_t row = i + 1; row < 4; row++)
-      {
-        float tmp = std::fabs(mCurrent.m[i * 4 + row]); // column i, row
-        if (tmp > pivotSize)
-        {
-          pivot = row;
-          pivotSize = tmp;
-        }
-      }
+      fInvert[4] = -fMatrix[4] * fMatrix[10] * fMatrix[15] +
+      fMatrix[4] * fMatrix[11] * fMatrix[14] +
+      fMatrix[8] * fMatrix[6] * fMatrix[15] -
+      fMatrix[8] * fMatrix[7] * fMatrix[14] -
+      fMatrix[12] * fMatrix[6] * fMatrix[11] +
+      fMatrix[12] * fMatrix[7] * fMatrix[10];
 
-      if (pivotSize == 0.0f)
-        return math::CMatrix4x4(); // Singular matrix, no inverse
+      fInvert[8] = fMatrix[4] * fMatrix[9] * fMatrix[15] -
+      fMatrix[4] * fMatrix[11] * fMatrix[13] -
+      fMatrix[8] * fMatrix[5] * fMatrix[15] +
+      fMatrix[8] * fMatrix[7] * fMatrix[13] +
+      fMatrix[12] * fMatrix[5] * fMatrix[11] -
+      fMatrix[12] * fMatrix[7] * fMatrix[9];
 
-    // Step 1b: Swap rows
-      if (pivot != i)
-      {
-        for (uint32_t col = 0; col < 4; col++)
-        {
-          std::swap(mCurrent.m[col * 4 + i], mCurrent.m[col * 4 + pivot]);
-          std::swap(mInvert.m[col * 4 + i], mInvert.m[col * 4 + pivot]);
-        }
-      }
+      fInvert[12] = -fMatrix[4] * fMatrix[9] * fMatrix[14] +
+      fMatrix[4] * fMatrix[10] * fMatrix[13] +
+      fMatrix[8] * fMatrix[5] * fMatrix[14] -
+      fMatrix[8] * fMatrix[6] * fMatrix[13] -
+      fMatrix[12] * fMatrix[5] * fMatrix[10] +
+      fMatrix[12] * fMatrix[6] * fMatrix[9];
 
-      // Step 2: Eliminate entries below the pivot
-      for (uint32_t row = i + 1; row < 4; row++)
-      {
-        float f = mCurrent.m[i * 4 + row] / mCurrent.m[i * 4 + i];
-        for (uint32_t col = 0; col < 4; col++)
-        {
-          mCurrent.m[col * 4 + row] -= f * mCurrent.m[col * 4 + i];
-          mInvert.m[col * 4 + row] -= f * mInvert.m[col * 4 + i];
-        }
-        mCurrent.m[i * 4 + row] = 0.0f; // Correct for numerical round-off
-      }
+      fInvert[1] = -fMatrix[1] * fMatrix[10] * fMatrix[15] +
+      fMatrix[1] * fMatrix[11] * fMatrix[14] +
+      fMatrix[9] * fMatrix[2] * fMatrix[15] -
+      fMatrix[9] * fMatrix[3] * fMatrix[14] -
+      fMatrix[13] * fMatrix[2] * fMatrix[11] +
+      fMatrix[13] * fMatrix[3] * fMatrix[10];
+
+      fInvert[5] = fMatrix[0] * fMatrix[10] * fMatrix[15] -
+      fMatrix[0] * fMatrix[11] * fMatrix[14] -
+      fMatrix[8] * fMatrix[2] * fMatrix[15] +
+      fMatrix[8] * fMatrix[3] * fMatrix[14] +
+      fMatrix[12] * fMatrix[2] * fMatrix[11] -
+      fMatrix[12] * fMatrix[3] * fMatrix[10];
+
+      fInvert[9] = -fMatrix[0] * fMatrix[9] * fMatrix[15] +
+      fMatrix[0] * fMatrix[11] * fMatrix[13] +
+      fMatrix[8] * fMatrix[1] * fMatrix[15] -
+      fMatrix[8] * fMatrix[3] * fMatrix[13] -
+      fMatrix[12] * fMatrix[1] * fMatrix[11] +
+      fMatrix[12] * fMatrix[3] * fMatrix[9];
+
+      fInvert[13] = fMatrix[0] * fMatrix[9] * fMatrix[14] -
+      fMatrix[0] * fMatrix[10] * fMatrix[13] -
+      fMatrix[8] * fMatrix[1] * fMatrix[14] +
+      fMatrix[8] * fMatrix[2] * fMatrix[13] +
+      fMatrix[12] * fMatrix[1] * fMatrix[10] -
+      fMatrix[12] * fMatrix[2] * fMatrix[9];
+
+      fInvert[2] = fMatrix[1] * fMatrix[6] * fMatrix[15] -
+      fMatrix[1] * fMatrix[7] * fMatrix[14] -
+      fMatrix[5] * fMatrix[2] * fMatrix[15] +
+      fMatrix[5] * fMatrix[3] * fMatrix[14] +
+      fMatrix[13] * fMatrix[2] * fMatrix[7] -
+      fMatrix[13] * fMatrix[3] * fMatrix[6];
+
+      fInvert[6] = -fMatrix[0] * fMatrix[6] * fMatrix[15] +
+      fMatrix[0] * fMatrix[7] * fMatrix[14] +
+      fMatrix[4] * fMatrix[2] * fMatrix[15] -
+      fMatrix[4] * fMatrix[3] * fMatrix[14] -
+      fMatrix[12] * fMatrix[2] * fMatrix[7] +
+      fMatrix[12] * fMatrix[3] * fMatrix[6];
+
+      fInvert[10] = fMatrix[0] * fMatrix[5] * fMatrix[15] -
+      fMatrix[0] * fMatrix[7] * fMatrix[13] -
+      fMatrix[4] * fMatrix[1] * fMatrix[15] +
+      fMatrix[4] * fMatrix[3] * fMatrix[13] +
+      fMatrix[12] * fMatrix[1] * fMatrix[7] -
+      fMatrix[12] * fMatrix[3] * fMatrix[5];
+
+      fInvert[14] = -fMatrix[0] * fMatrix[5] * fMatrix[14] +
+      fMatrix[0] * fMatrix[6] * fMatrix[13] +
+      fMatrix[4] * fMatrix[1] * fMatrix[14] -
+      fMatrix[4] * fMatrix[2] * fMatrix[13] -
+      fMatrix[12] * fMatrix[1] * fMatrix[6] +
+      fMatrix[12] * fMatrix[2] * fMatrix[5];
+
+      fInvert[3] = -fMatrix[1] * fMatrix[6] * fMatrix[11] +
+      fMatrix[1] * fMatrix[7] * fMatrix[10] +
+      fMatrix[5] * fMatrix[2] * fMatrix[11] -
+      fMatrix[5] * fMatrix[3] * fMatrix[10] -
+      fMatrix[9] * fMatrix[2] * fMatrix[7] +
+      fMatrix[9] * fMatrix[3] * fMatrix[6];
+
+      fInvert[7] = fMatrix[0] * fMatrix[6] * fMatrix[11] -
+      fMatrix[0] * fMatrix[7] * fMatrix[10] -
+      fMatrix[4] * fMatrix[2] * fMatrix[11] +
+      fMatrix[4] * fMatrix[3] * fMatrix[10] +
+      fMatrix[8] * fMatrix[2] * fMatrix[7] -
+      fMatrix[8] * fMatrix[3] * fMatrix[6];
+
+      fInvert[11] = -fMatrix[0] * fMatrix[5] * fMatrix[11] +
+      fMatrix[0] * fMatrix[7] * fMatrix[9] +
+      fMatrix[4] * fMatrix[1] * fMatrix[11] -
+      fMatrix[4] * fMatrix[3] * fMatrix[9] -
+      fMatrix[8] * fMatrix[1] * fMatrix[7] +
+      fMatrix[8] * fMatrix[3] * fMatrix[5];
+
+      fInvert[15] = fMatrix[0] * fMatrix[5] * fMatrix[10] -
+      fMatrix[0] * fMatrix[6] * fMatrix[9] -
+      fMatrix[4] * fMatrix[1] * fMatrix[10] +
+      fMatrix[4] * fMatrix[2] * fMatrix[9] +
+      fMatrix[8] * fMatrix[1] * fMatrix[6] -
+      fMatrix[8] * fMatrix[2] * fMatrix[5];
     }
 
-    // Step 3: Normalize the diagonal to 1
-    for (uint32_t i = 0; i < 4; i++)
+    // Calculate determinant
+    float fDet = fMatrix[0] * fInvert[0] + fMatrix[1] * fInvert[4] + fMatrix[2] * fInvert[8] + fMatrix[3] * fInvert[12];
+    if (fDet < s_fEpsilon3)
     {
-      float divisor = mCurrent.m[i * 4 + i];
-      for (uint32_t col = 0; col < 4; col++)
-      {
-        mCurrent.m[col * 4 + i] /= divisor;
-        mInvert.m[col * 4 + i] /= divisor;
-      }
-      mCurrent.m[i * 4 + i] = 1.0f;
+      return CMatrix4x4::Identity;
     }
+    fDet = (1.0f / fDet);
 
-    // Step 4: Eliminate entries above the pivot
-    for (int i = 3; i >= 0; i--)
+    CMatrix4x4 mInvert = CMatrix4x4::Identity;
+    for (uint32_t uI = 0; uI < (s_iColumnSize * s_iRowSize); uI++)
     {
-      for (int row = i - 1; row >= 0; row--)
-      {
-        float f = mCurrent.m[i * 4 + row];
-        for (uint32_t col = 0; col < 4; col++)
-        {
-          mCurrent.m[col * 4 + row] -= f * mCurrent.m[col * 4 + i];
-          mInvert.m[col * 4 + row] -= f * mInvert.m[col * 4 + i];
-        }
-        mCurrent.m[i * 4 + row] = 0.0f; // Correct for numerical round-off
-      }
+      mInvert[uI] = fInvert[uI] * fDet;
     }
 
     return mInvert;
-  }
-  // ------------------------------------
-  void CMatrix4x4::Invert()
-  {
-    *this = Invert(*this);
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)
