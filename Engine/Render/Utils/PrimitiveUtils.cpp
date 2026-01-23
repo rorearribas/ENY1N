@@ -398,7 +398,7 @@ namespace render
         // Rotate 180 degrees
         if (fDot < 0.0f)
         {
-          mRot = math::CMatrix4x4::Rotation(math::CVector3(0.0f, -180.0f, 0.0f));
+          mRot = math::CMatrix4x4::CreateRotation(math::CVector3(0.0f, -180.0f, 0.0f));
         }
       }
       else

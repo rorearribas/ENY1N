@@ -21,9 +21,9 @@ namespace render
   void CCamera::Update(float _fDeltaTime)
   {
     // Keyboard movement
-    math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
-    math::CVector3 v3Forward = mRotMatrix * math::CVector3::Forward;
-    math::CVector3 v3Right = mRotMatrix * math::CVector3::Right;
+    math::CMatrix4x4 nRot = math::CMatrix4x4::CreateRotation(m_v3Rot);
+    math::CVector3 v3Forward = nRot * math::CVector3::Forward;
+    math::CVector3 v3Right = nRot * math::CVector3::Right;
 
     // Show cursor
     input::CInputManager* pInputManager = input::CInputManager::GetInstance();
@@ -181,14 +181,14 @@ namespace render
       m_v3Rot.x = math::Clamp(m_v3Rot.x, -internal_camera::s_fMaxPitch, internal_camera::s_fMaxPitch);
 
       // Create rotation matrix
-      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(m_v3Rot);
+      math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(m_v3Rot);
 
       // Calculate dir
-      m_v3Dir = mRotMatrix * math::CVector3::Forward;
+      m_v3Dir = mRot * math::CVector3::Forward;
       v3TargetPos = m_v3Pos + m_v3Dir;
 
       // Calculate up direction
-      v3Up = mRotMatrix * math::CVector3::Up;
+      v3Up = mRot * math::CVector3::Up;
     }
 
     // Set view matrix

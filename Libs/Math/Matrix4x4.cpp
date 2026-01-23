@@ -78,6 +78,21 @@ namespace math
     return mOrtographic;
   }
   // ------------------------------------
+  math::CVector3 CMatrix4x4::GetAxisX() const
+  {
+    return math::CVector3::Normalize(math::CVector3(m[0], m[1], m[2]));;
+  }
+  // ------------------------------------
+  math::CVector3 CMatrix4x4::GetAxisY() const
+  {
+    return math::CVector3::Normalize(math::CVector3(m[4], m[5], m[6]));
+  }
+  // ------------------------------------
+  math::CVector3 CMatrix4x4::GetAxisZ() const
+  {
+    return math::CVector3::Normalize(math::CVector3(m[8], m[9], m[10]));
+  }
+  // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _v3Pos, const CVector3& _v3Target, const CVector3& _v3Up)
   {
     // Get dir
@@ -317,17 +332,22 @@ namespace math
     return mInvert;
   }
   // ------------------------------------
+  void CMatrix4x4::Invert()
+  {
+    *this = Invert(*this);
+  }
+  // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)
   {
-    CMatrix4x4 mTranspose = CMatrix4x4::Identity;
+    CMatrix4x4 mResult = CMatrix4x4::Identity;
     for (int iRow = 0; iRow < s_iRowSize; ++iRow)
     {
       for (int iColumn = 0; iColumn < s_iColumnSize; ++iColumn)
       {
-        mTranspose.m[iColumn * 4 + iRow] = _mMatrix.m[iRow * 4 + iColumn];
+        mResult.m[iColumn * 4 + iRow] = _mMatrix.m[iRow * 4 + iColumn];
       }
     }
-    return mTranspose;
+    return mResult;
   }
   // ------------------------------------
   void CMatrix4x4::Transpose()
@@ -335,7 +355,7 @@ namespace math
     *this = Transpose(*this);
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::Translate(const CVector3& _v3Translate)
+  math::CMatrix4x4 CMatrix4x4::CreateTranslation(const CVector3& _v3Translate)
   {
     // Create translate matrix
     CMatrix4x4 mTranslate = CMatrix4x4::Identity;
@@ -358,7 +378,7 @@ namespace math
     return math::CVector3(m[12], m[13], m[14]);
   }
   // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::Scale(const CVector3& _v3Scale)
+  math::CMatrix4x4 CMatrix4x4::CreateScale(const CVector3& _v3Scale)
   {
     CMatrix4x4 mScale = CMatrix4x4::Identity;
     mScale.m[0] = _v3Scale.x;
@@ -369,64 +389,67 @@ namespace math
   // ------------------------------------
   math::CVector3 CMatrix4x4::GetScale() const
   {
-    math::CVector3 v3Scale;
+    math::CVector3 v3Scale = math::CVector3::Zero;
     v3Scale.x = sqrtf(m[0] * m[0] + m[1] * m[1] + m[2] * m[2]);
     v3Scale.y = sqrtf(m[4] * m[4] + m[5] * m[5] + m[6] * m[6]);
     v3Scale.z = sqrtf(m[8] * m[8] + m[9] * m[9] + m[10] * m[10]);
     return v3Scale;
   }
   // ------------------------------------
-  const bool CMatrix4x4::HasScaleUniform() const
+  math::CMatrix4x4 CMatrix4x4::CreateRotation(const CVector3& _v3Rot)
   {
-    math::CVector3 v3Scale = GetScale();
-    return fabs(v3Scale.x - v3Scale.y) < math::s_fEpsilon5 && fabs(v3Scale.x - v3Scale.z) < math::s_fEpsilon5;
-  }
-  // ------------------------------------
-  math::CMatrix4x4 CMatrix4x4::Rotation(const CVector3& _v3Rot)
-  {
-    float fPitch = math::Deg2Radians(_v3Rot.x);
-    float fYaw = math::Deg2Radians(_v3Rot.y);
-    float fRoll = math::Deg2Radians(_v3Rot.z);
+    float fPitch = math::Deg2Radians(_v3Rot.x); // X
+    float fYaw = math::Deg2Radians(_v3Rot.y);   // Y
+    float fRoll = math::Deg2Radians(_v3Rot.z);  // Z
 
     // Pitch (X)
     CMatrix4x4 mPitch = CMatrix4x4::Identity;
-    mPitch.m[5] = cos(fPitch);
-    mPitch.m[6] = sin(fPitch);
-    mPitch.m[9] = -sin(fPitch);
-    mPitch.m[10] = cos(fPitch);
+    mPitch.m[5] = cosf(fPitch);
+    mPitch.m[6] = sinf(fPitch);
+    mPitch.m[9] = -sinf(fPitch);
+    mPitch.m[10] = cosf(fPitch);
 
-    // Roll (Y)
-    CMatrix4x4 mRoll = CMatrix4x4::Identity;
-    mRoll.m[0] = cos(fRoll);
-    mRoll.m[1] = sin(fRoll);
-    mRoll.m[4] = -sin(fRoll);
-    mRoll.m[5] = cos(fRoll);
-
-    // Yaw (Z)
+    // Yaw (Y)
     CMatrix4x4 mYaw = CMatrix4x4::Identity;
-    mYaw.m[0] = cos(fYaw);
-    mYaw.m[2] = -sin(fYaw);
-    mYaw.m[8] = sin(fYaw);
-    mYaw.m[10] = cos(fYaw);
+    mYaw.m[0] = cosf(fYaw);
+    mYaw.m[2] = -sinf(fYaw);
+    mYaw.m[8] = sinf(fYaw);
+    mYaw.m[10] = cosf(fYaw);
+
+    // Roll (Z)
+    CMatrix4x4 mRoll = CMatrix4x4::Identity;
+    mRoll.m[0] = cosf(fRoll);
+    mRoll.m[1] = sinf(fRoll);
+    mRoll.m[4] = -sinf(fRoll);
+    mRoll.m[5] = cosf(fRoll);
 
     return mYaw * mPitch * mRoll;
   }
   // ------------------------------------
   math::CVector3 CMatrix4x4::GetRotation() const
   {
-    math::CVector3 v3Rot = math::CVector3::Zero;
-    // Get axis with uniform scale
-    math::CVector3 xAxis = math::CVector3(m[0], m[1], m[2]);
-    math::CVector3 yAxis = math::CVector3(m[4], m[5], m[6]);
-    math::CVector3 zAxis = math::CVector3(m[8], m[9], m[10]);
-    // Normalize
-    xAxis.Normalize();
-    yAxis.Normalize();
-    zAxis.Normalize();
-    // Calculate rot
-    v3Rot.x = math::Rad2Degrees(atan2f(-zAxis.y, zAxis.z)); // pitch
-    v3Rot.y = math::Rad2Degrees(atan2f(zAxis.x, sqrtf(zAxis.y * zAxis.y + zAxis.z * zAxis.z))); // roll
-    v3Rot.z = math::Rad2Degrees(atan2f(-yAxis.x, xAxis.x)); // yaw
-    return v3Rot;
+    math::CVector3 v3Rotation = math::CVector3::Zero;
+
+    // Get axis
+    math::CVector3 xAxis = math::CVector3::Normalize(math::CVector3(m[0], m[1], m[2]));
+    math::CVector3 yAxis = math::CVector3::Normalize(math::CVector3(m[4], m[5], m[6]));
+    math::CVector3 zAxis = math::CVector3::Normalize(math::CVector3(m[8], m[9], m[10]));
+
+    // Get pitch
+    float fPitch = asinf(-zAxis.y);
+    if (cosf(fPitch) > math::s_fEpsilon5)
+    {
+      v3Rotation.x = math::Rad2Degrees(fPitch);
+      v3Rotation.y = math::Rad2Degrees(atan2f(zAxis.x, zAxis.z));
+      v3Rotation.z = math::Rad2Degrees(atan2f(xAxis.y, yAxis.y));
+    }
+    else // Gimbal Lock
+    {
+      v3Rotation.x = math::Rad2Degrees(fPitch);
+      v3Rotation.y = math::Rad2Degrees(atan2f(-yAxis.x, xAxis.x));
+      v3Rotation.z = 0.0f;
+    }
+
+    return v3Rotation;
   }
 }

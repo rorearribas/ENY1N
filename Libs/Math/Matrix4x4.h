@@ -53,6 +53,10 @@ namespace math
     inline float operator[] (int _iPos) const { return m[_iPos]; }
     inline float& operator[] (int _iPos) { return m[_iPos]; }
 
+    math::CVector3 GetAxisX() const;
+    math::CVector3 GetAxisY() const;
+    math::CVector3 GetAxisZ() const;
+
     static CMatrix4x4 LookAt(const CVector3& _v3Pos, const CVector3& _vTarget, const CVector3& _vUp);
     static CMatrix4x4 RotationAxis(const CVector3& _v3Axis, float _fAngle);
     static CMatrix4x4 AlignMatrix(const CVector3& _v3Current, const CVector3& _v3Target);
@@ -65,15 +69,14 @@ namespace math
     static CMatrix4x4 CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar);
     static CMatrix4x4 CreateOrtographicMatrix(float _fWidth, float _fHeight, float _fNear, float _fFar);
 
-    static CMatrix4x4 Translate(const CVector3& _v3Translate);
+    static CMatrix4x4 CreateTranslation(const CVector3& _v3Translate);
     void SetTranslate(const CVector3& _v3Translate);
     math::CVector3 GetTranslate() const;
 
-    static CMatrix4x4 Scale(const CVector3& _v3Scale);
+    static CMatrix4x4 CreateScale(const CVector3& _v3Scale);
     math::CVector3 GetScale() const;
-    const bool HasScaleUniform() const;
 
-    static CMatrix4x4 Rotation(const CVector3& _v3Rot);
+    static CMatrix4x4 CreateRotation(const CVector3& _v3Rot);
     math::CVector3 GetRotation() const;
   };
 }

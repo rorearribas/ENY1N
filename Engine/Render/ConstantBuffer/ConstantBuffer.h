@@ -43,15 +43,15 @@ public:
   }
   inline bool WriteBuffer()
   {
-    D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-    HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
+    D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+    HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
     if (FAILED(hResult))
     {
       return false;
     }
 
     // Copy memory into buffer
-    memcpy(oMappedSubresource.pData, &m_oData, sizeof(T));
+    memcpy(rMappedSubresource.pData, &m_oData, sizeof(T));
     global::dx::s_pDeviceContext->Unmap(m_pBuffer, 0);
     return true;
   }

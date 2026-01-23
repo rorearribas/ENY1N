@@ -77,7 +77,7 @@ namespace game
       ImGui::InputFloat("Intensity", &fIntensity);
 
       // Create rotation matrix
-      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(pEntity->GetRotation());
+      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::CreateRotation(pEntity->GetRotation());
       math::CVector3 v3Dir = mRotMatrix * math::CVector3::Forward;
 
       float dir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
@@ -119,7 +119,7 @@ namespace game
       ImGui::Text("SPOT LIGHT");
 
       // Create rotation matrix
-      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::Rotation(pEntity->GetRotation());
+      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::CreateRotation(pEntity->GetRotation());
       math::CVector3 v3Dir = mRotMatrix * math::CVector3::Forward;
       float dir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
       ImGui::InputFloat3("Direction", dir);

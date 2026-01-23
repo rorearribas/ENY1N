@@ -308,7 +308,7 @@ namespace collision
   void CBoxCollider::ComputeExtents()
   {
     // Calculate matrix
-    math::CMatrix4x4 mRot = math::CMatrix4x4::Rotation(GetRotation());
+    math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(GetRotation());
 
     // Calculate extents
     const math::CVector3& v3Center = GetCenter();

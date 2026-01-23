@@ -20,7 +20,7 @@ namespace math
 
     // Update transform
     math::CVector3 v3Translate = m_mTransform.GetTranslate();
-    m_mTransform = CMatrix4x4::Rotation(v3Angle) * CMatrix4x4::Scale(m_mTransform.GetScale());
+    m_mTransform = CMatrix4x4::CreateRotation(v3Angle) * CMatrix4x4::CreateScale(m_mTransform.GetScale());
     m_mTransform.SetTranslate(v3Translate);
   }
   // ------------------------------------
@@ -28,7 +28,7 @@ namespace math
   {
     // Update scale
     math::CVector3 v3Translate = m_mTransform.GetTranslate();
-    m_mTransform = CMatrix4x4::Rotation(m_mTransform.GetRotation()) * CMatrix4x4::Scale(_v3Scale);
+    m_mTransform = CMatrix4x4::CreateRotation(m_mTransform.GetRotation()) * CMatrix4x4::CreateScale(_v3Scale);
     m_mTransform.SetTranslate(v3Translate);
   }
 }

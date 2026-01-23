@@ -53,7 +53,7 @@ namespace collision
   void CCapsuleCollider::RecalculateCollider()
   {
     // Calculate axis directors
-    math::CMatrix4x4 mRot = math::CMatrix4x4::Rotation(GetRotation());
+    math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(GetRotation());
     math::CVector3 v3TargetAxis = mRot * m_v3OrientedAxis;
 
     // Set segment points
