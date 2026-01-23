@@ -112,9 +112,9 @@ namespace engine
     m_pSceneManager->DrawCapsule(_v3Pos, _v3Rot, _v3Color, _fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
   }
   // ------------------------------------
-  void CEngine::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CEngine::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    m_pSceneManager->DrawCube(_v3Pos, _v3Size, _v3Rot, _v3Color, _eRenderMode);
+    m_pSceneManager->DrawCube(_v3Pos, _v3Rot, _v3Size, _v3Color, _eRenderMode);
   }
   // ------------------------------------
   void CEngine::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)

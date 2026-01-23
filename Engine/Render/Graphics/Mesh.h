@@ -31,11 +31,13 @@ namespace render
       void ClearMaterial();
 
     private:
-      // Mesh
+      // Buffer
       ID3D11Buffer* m_pIndexBuffer = nullptr;
-
-      std::unique_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
       uint32_t m_uIndexCount = 0;
+
+    private:
+      std::unique_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
+
     };
   }
 }

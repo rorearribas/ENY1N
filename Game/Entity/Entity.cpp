@@ -70,9 +70,9 @@ namespace game
     const render::CCamera* pCamera = pEngine->GetCamera();
 
     // Get matrix
-    float fTranslation[3] = { m_oTransform.GetTranslation().x, m_oTransform.GetTranslation().y, m_oTransform.GetTranslation().z };
-    float fRotation[3] = { m_oTransform.GetRotation().x, m_oTransform.GetRotation().y, m_oTransform.GetRotation().z };
-    float fScale[3] = { m_oTransform.GetScale().x, m_oTransform.GetScale().y, m_oTransform.GetScale().z };
+    float fTranslation[3] = { m_oTransform.GetPos().x, m_oTransform.GetPos().y, m_oTransform.GetPos().z };
+    float fRotation[3] = { m_oTransform.GetRot().x, m_oTransform.GetRot().y, m_oTransform.GetRot().z };
+    float fScale[3] = { m_oTransform.GetScl().x, m_oTransform.GetScl().y, m_oTransform.GetScl().z };
 
     // Set rect
     ImGuiIO& io = ImGui::GetIO();
@@ -91,17 +91,17 @@ namespace game
       {
         case ImGuizmo::TRANSLATE:
         {
-          SetPosition(mMatrix.GetTranslate());
+          SetPos(mMatrix.GetTranslate());
         }
         break;
         case ImGuizmo::ROTATE:
         {
-          SetRotation(mMatrix.GetRotation());
+          SetRot(mMatrix.GetRotation());
         }
         break;
         case ImGuizmo::SCALE:
         {
-          SetScale(mMatrix.GetScale());
+          SetScl(mMatrix.GetScale());
         }
         break;
       }
@@ -118,17 +118,17 @@ namespace game
     if (!ImGuizmo::IsUsing())
     {
       // Update the entity
-      if (!GetPosition().Equal(v3Pos))
+      if (!GetPos().Equal(v3Pos))
       {
-        SetPosition(v3Pos);
+        SetPos(v3Pos);
       }
-      if (!GetRotation().Equal(v3Rot))
+      if (!GetRot().Equal(v3Rot))
       {
-        SetRotation(v3Rot);
+        SetRot(v3Rot);
       }
-      if (!GetScale().Equal(v3Scale))
+      if (!GetScl().Equal(v3Scale))
       {
-        SetScale(v3Scale);
+        SetScl(v3Scale);
       }
     }
 
@@ -145,23 +145,23 @@ namespace game
     ImGui::End();
   }
   // ------------------------------------
-  void CEntity::SetPosition(const math::CVector3& _v3Position)
+  void CEntity::SetPos(const math::CVector3& _v3Pos)
   {
-    m_oTransform.SetPosition(_v3Position);
+    m_oTransform.SetPos(_v3Pos);
 
     // Notify to components
     for (game::CComponent* pComponent : m_lstComponents)
     {
       if (pComponent)
       {
-        pComponent->OnPositionChanged(_v3Position);
+        pComponent->OnPositionChanged(_v3Pos);
       }
     }
   }
   // ------------------------------------
-  void CEntity::SetRotation(const math::CVector3& _v3Rot)
+  void CEntity::SetRot(const math::CVector3& _v3Rot)
   {
-    m_oTransform.SetRotation(_v3Rot);
+    m_oTransform.SetRot(_v3Rot);
 
     // Notify to components
     for (game::CComponent* pComponent : m_lstComponents)
@@ -173,16 +173,16 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::SetScale(const math::CVector3& _v3Scale)
+  void CEntity::SetScl(const math::CVector3& _v3Scl)
   {
-    m_oTransform.SetScale(_v3Scale);
+    m_oTransform.SetScl(_v3Scl);
 
     // Notify to components
     for (game::CComponent* pComponent : m_lstComponents)
     {
       if (pComponent)
       {
-        pComponent->OnScaleChanged(_v3Scale);
+        pComponent->OnScaleChanged(_v3Scl);
       }
     }
   }

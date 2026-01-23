@@ -55,12 +55,12 @@ namespace collision
     inline void SetCollisionMask(const ECollisionMask& _eCollisionMask) { m_eCollisionMask = _eCollisionMask; }
     inline const collision::ECollisionMask& GetCollisionMask() const { return m_eCollisionMask; }
 
-    inline math::CVector3 GetPosition() const { return m_oTransform.GetTranslation(); }
-    inline void SetPosition(const math::CVector3& _v3Pos) { m_oTransform.SetPosition(_v3Pos); }
-    inline math::CVector3 GetRotation() const { return m_oTransform.GetRotation(); }
-    inline void SetRotation(const math::CVector3& _v3Rot) { m_oTransform.SetRotation(_v3Rot); }
-    inline math::CVector3 GetScale() const { return m_oTransform.GetScale(); }
-    inline void SetScale(const math::CVector3& _v3Scale) { m_oTransform.SetScale(_v3Scale); }
+    inline math::CVector3 GetPos() const { return m_oTransform.GetPos(); }
+    inline void SetPos(const math::CVector3& _v3Pos) { m_oTransform.SetPos(_v3Pos); }
+    inline math::CVector3 GetRot() const { return m_oTransform.GetRot(); }
+    inline void SetRot(const math::CVector3& _v3Rot) { m_oTransform.SetRot(_v3Rot); }
+    inline math::CVector3 GetScl() const { return m_oTransform.GetScl(); }
+    inline void SetScl(const math::CVector3& _v3Scale) { m_oTransform.SetScl(_v3Scale); }
 
     // Bind
     inline void SetOnCollisionEnter(const TOnCollisionEvent& _oDelegate) { m_oOnCollisionEnter = _oDelegate; }

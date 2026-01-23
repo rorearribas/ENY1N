@@ -22,7 +22,7 @@ namespace collision
   {
     // Draw cube
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    pEngine->DrawCube(GetCenter(), GetSize(), math::CVector3::Zero, _v3Color, render::ERenderMode::WIREFRAME);
+    pEngine->DrawCube(GetCenter(), math::CVector3::Zero, GetSize(), _v3Color, render::ERenderMode::WIREFRAME);
   }
   // ------------------------------------
   void ComputeWorldAABB(const CAABB& _rLocalAABB, const math::CTransform& _mTransform, CAABB& _rWorldAABB_)

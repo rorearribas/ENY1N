@@ -20,25 +20,23 @@ namespace render
       CRenderInstance(const render::gfx::CModel* _pParent, uint16_t _uId);
       ~CRenderInstance() {}
 
-      inline const uint16_t GetInstanceID() const { return m_uInstanceID; }
-      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
+      void SetPos(const math::CVector3& _v3Pos);
+      inline const math::CVector3& GetPos() const { return m_oTransform.GetPos(); }
+      void SetRot(const math::CVector3& _v3Rot);
+      inline const math::CVector3& GetRot() const { return m_oTransform.GetRot(); }
+      void SetScl(const math::CVector3& _v3Scl);
+      inline const math::CVector3& GetScl() const { return m_oTransform.GetScl(); }
 
       void SetCullingEnabled(bool _bCull);
       inline const bool& IsCullingEnabled() const { return m_bCullEnabled; }
 
-      inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
-      inline const bool& IsVisible() const { return m_bVisible; }
-
-      inline void SetTransform(const math::CTransform& _oTransform) { m_oTransform = _oTransform; }
       inline const math::CTransform& GetTransform() const { return m_oTransform; }
       inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
+      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
 
-      void SetPosition(const math::CVector3& _v3Position);
-      inline const math::CVector3& GetPosition() const { return m_oTransform.GetTranslation(); }
-      void SetRotation(const math::CVector3& _v3Rot);
-      inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-      void SetScale(const math::CVector3& _v3Scale);
-      inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+      inline const uint16_t GetInstanceID() const { return m_uInstanceID; }
+      inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
+      inline const bool& IsVisible() const { return m_bVisible; }
 
     private:
       const render::gfx::CModel* m_pParent = nullptr;

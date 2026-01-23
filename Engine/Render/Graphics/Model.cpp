@@ -143,10 +143,10 @@ namespace render
       }
     }
     // ------------------------------------
-    void CModel::SetPosition(const math::CVector3& _v3Pos)
+    void CModel::SetPos(const math::CVector3& _v3Pos)
     {
       // Set pos
-      m_oTransform.SetPosition(_v3Pos);
+      m_oTransform.SetPos(_v3Pos);
 
       // Update bounding box
       if (m_bCullEnabled)
@@ -155,10 +155,10 @@ namespace render
       }
     }
     // ------------------------------------
-    void CModel::SetRotation(const math::CVector3& _v3Rot)
+    void CModel::SetRot(const math::CVector3& _v3Rot)
     {
       // Set rot
-      m_oTransform.SetRotation(_v3Rot);
+      m_oTransform.SetRot(_v3Rot);
 
       // Update bounding box
       if (m_bCullEnabled)
@@ -167,10 +167,10 @@ namespace render
       }
     }
     // ------------------------------------
-    void CModel::SetScale(const math::CVector3& _v3Scl)
+    void CModel::SetScl(const math::CVector3& _v3Scl)
     {
       // Set scale
-      m_oTransform.SetScale(_v3Scl);
+      m_oTransform.SetScl(_v3Scl);
 
       // Update bounding box
       if (m_bCullEnabled)

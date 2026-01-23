@@ -77,7 +77,7 @@ namespace game
       ImGui::InputFloat("Intensity", &fIntensity);
 
       // Create rotation matrix
-      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::CreateRotation(pEntity->GetRotation());
+      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::CreateRotation(pEntity->GetRot());
       math::CVector3 v3Dir = mRotMatrix * math::CVector3::Forward;
 
       float dir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
@@ -119,7 +119,7 @@ namespace game
       ImGui::Text("SPOT LIGHT");
 
       // Create rotation matrix
-      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::CreateRotation(pEntity->GetRotation());
+      math::CMatrix4x4 mRotMatrix = math::CMatrix4x4::CreateRotation(pEntity->GetRot());
       math::CVector3 v3Dir = mRotMatrix * math::CVector3::Forward;
       float dir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
       ImGui::InputFloat3("Direction", dir);
@@ -138,7 +138,7 @@ namespace game
       pSpotLight->SetIntensity(fIntensity);
 
       // Draw debug
-      engine::CEngine::GetInstance()->DrawCube(pSpotLight->GetPosition(), math::CVector3::One, math::CVector3::Zero, v3Color, render::ERenderMode::WIREFRAME);
+      engine::CEngine::GetInstance()->DrawCube(pSpotLight->GetPosition(), math::CVector3::Zero, math::CVector3::One, v3Color, render::ERenderMode::WIREFRAME);
       engine::CEngine::GetInstance()->DrawLine(pSpotLight->GetPosition(), pSpotLight->GetPosition() + (v3Dir * fRange), v3Color);
     }
     break;

@@ -23,7 +23,7 @@ namespace game
     // Get owner
     CEntity* pOwner = GetOwner();
 
-    // Create collider usin coll manager
+    // Create collider using coll manager
     collision::CCollisionManager* pCollisionManager = collision::CCollisionManager::GetInstance();
     if (pCollisionManager)
     {
@@ -39,8 +39,8 @@ namespace game
       m_pCollider->SetOnCollisionExit(collision::CCollider::TOnCollisionEvent(&CEntity::OnCollisionExit, pOwner));
 
       // Force to update
-      m_pCollider->SetPosition(pOwner->GetPosition());
-      m_pCollider->SetRotation(pOwner->GetRotation());
+      m_pCollider->SetPos(pOwner->GetPos());
+      m_pCollider->SetRot(pOwner->GetRot());
       m_pCollider->RecalculateCollider();
     }
   }
@@ -55,36 +55,36 @@ namespace game
     return m_pCollider ? m_pCollider->GetCollisionMask() : collision::ECollisionMask::INVALID;
   }
   // ------------------------------------
-  void CCollisionComponent::SetPosition(const math::CVector3& _v3Pos)
+  void CCollisionComponent::SetPos(const math::CVector3& _v3Pos)
   {
-    m_pCollider->SetPosition(_v3Pos);
+    m_pCollider->SetPos(_v3Pos);
     m_pCollider->RecalculateCollider();
   }
   // ------------------------------------
-  math::CVector3 CCollisionComponent::GetPosition() const
+  math::CVector3 CCollisionComponent::GetPos() const
   {
-    return m_pCollider->GetPosition();
+    return m_pCollider->GetPos();
   }
   // ------------------------------------
-  void CCollisionComponent::SetRotation(const math::CVector3& _v3Rot)
+  void CCollisionComponent::SetRot(const math::CVector3& _v3Rot)
   {
-    m_pCollider->SetRotation(_v3Rot);
+    m_pCollider->SetRot(_v3Rot);
     m_pCollider->RecalculateCollider();
   }
   // ------------------------------------
   math::CVector3 CCollisionComponent::GetRotation() const
   {
-    return m_pCollider->GetRotation();
+    return m_pCollider->GetRot();
   }
   // ------------------------------------
   void CCollisionComponent::OnPositionChanged(const math::CVector3& _v3Pos)
   {
-    SetPosition(_v3Pos);
+    SetPos(_v3Pos);
   }
   // ------------------------------------
   void CCollisionComponent::OnRotationChanged(const math::CVector3& _v3Rot)
   {
-    SetRotation(_v3Rot);
+    SetRot(_v3Rot);
   }
   // ------------------------------------
   void CCollisionComponent::Clean()

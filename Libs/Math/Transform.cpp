@@ -4,31 +4,31 @@
 namespace math
 {
   // ------------------------------------
-  void CTransform::SetPosition(const math::CVector3& _v3Pos)
+  void CTransform::SetPos(const math::CVector3& _v3Pos)
   {
     // Set pos
-    m_mTransform.SetTranslate(_v3Pos);
+    m_mMatrix.SetTranslate(_v3Pos);
   }
   // ------------------------------------
-  void CTransform::SetRotation(const math::CVector3& _v3Rotation)
+  void CTransform::SetRot(const math::CVector3& _v3Rot)
   {
     // Calculate valid angle!
-    math::CVector3 v3Angle = _v3Rotation;
-    v3Angle.x = CalculateEulerAngle(_v3Rotation.x);
-    v3Angle.y = CalculateEulerAngle(_v3Rotation.y);
-    v3Angle.z = CalculateEulerAngle(_v3Rotation.z);
+    math::CVector3 v3Angle = _v3Rot;
+    v3Angle.x = CalculateEulerAngle(_v3Rot.x);
+    v3Angle.y = CalculateEulerAngle(_v3Rot.y);
+    v3Angle.z = CalculateEulerAngle(_v3Rot.z);
 
     // Update transform
-    math::CVector3 v3Translate = m_mTransform.GetTranslate();
-    m_mTransform = CMatrix4x4::CreateRotation(v3Angle) * CMatrix4x4::CreateScale(m_mTransform.GetScale());
-    m_mTransform.SetTranslate(v3Translate);
+    math::CVector3 v3Translate = m_mMatrix.GetTranslate();
+    m_mMatrix = CMatrix4x4::CreateRotation(v3Angle) * CMatrix4x4::CreateScale(m_mMatrix.GetScale());
+    m_mMatrix.SetTranslate(v3Translate);
   }
   // ------------------------------------
-  void CTransform::SetScale(const math::CVector3& _v3Scale)
+  void CTransform::SetScl(const math::CVector3& _v3Scl)
   {
     // Update scale
-    math::CVector3 v3Translate = m_mTransform.GetTranslate();
-    m_mTransform = CMatrix4x4::CreateRotation(m_mTransform.GetRotation()) * CMatrix4x4::CreateScale(_v3Scale);
-    m_mTransform.SetTranslate(v3Translate);
+    math::CVector3 v3Translate = m_mMatrix.GetTranslate();
+    m_mMatrix = CMatrix4x4::CreateRotation(m_mMatrix.GetRotation()) * CMatrix4x4::CreateScale(_v3Scl);
+    m_mMatrix.SetTranslate(v3Translate);
   }
 }

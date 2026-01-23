@@ -100,34 +100,34 @@ int main()
   for (uint32_t uIndex = 0; uIndex < 50; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-10.0f, 10.0f)));
+    pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-10.0f, 10.0f)));
 
     //const std::string& sModel = /*GenerateString(vAvailableModels*/);
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
-    pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+    pModelEnt->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
   }
 
   // OBJ test
-  //game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Model");
-  //pModelEnt2->SetPosition(math::CVector3(0.0f, 5.0f, 0.0f));
-  //game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
-  //pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
-  //pModelEnt2->SetRotation(math::CVector3(90.0f, 180.0f, 0.0f));
-  //pModelEnt2->SetScale(math::CVector3(0.01f, 0.01f, 0.01f));
+  game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Airplane");
+  pModelEnt2->SetPos(math::CVector3(0.0f, 5.0f, 0.0f));
+  game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
+  pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
+  pModelEnt2->SetRot(math::CVector3(80.756f, -165.377f, 20.861f));
+  pModelEnt2->SetScl(math::CVector3(0.01f, 0.01f, 0.01f));
 
   // Create plane
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
   game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
   pPlaneModel->CreatePrimitive(render::EPrimitive::E3D_PLANE, render::ERenderMode::SOLID);
   pPlaneModel->SetColor(math::CVector3(0.2f, 0.5f, 0.2f));
-  pPlaneEntity->SetScale(math::CVector3(200.0f, 1.0f, 200.0f));
+  pPlaneEntity->SetScl(math::CVector3(200.0f, 1.0f, 200.0f));
 
   // Create 3 box
   for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
   {
     game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    pBoxTest->SetPosition(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-10.0f, 10.0f)));
+    pBoxTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(render::EPrimitive::E3D_CUBE, render::ERenderMode::SOLID);
     pModelCompTest->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
@@ -140,6 +140,10 @@ int main()
 
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };
+
+  // Test
+  math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(pModelTest2->GetRotation());
+  math::CVector3 v3Dir = mRot * math::CVector3::Up;
 
   while (WM_QUIT != oMsg.message)
   {
@@ -204,12 +208,12 @@ int main()
         for (uint32_t uIndex = 0; uIndex < 500; uIndex++)
         {
           game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-          pModelEnt->SetPosition(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-100.0f, 100.0f)));
+          pModelEnt->SetPos(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-100.0f, 100.0f)));
 
           //const std::string& sModel = GenerateString(vAvailableModels);
           game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
           pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
-          pModelEnt->SetRotation(math::CVector3(90.0f, 0.0f, 0.0f));
+          pModelEnt->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
         }
       }
       ImGui::End();

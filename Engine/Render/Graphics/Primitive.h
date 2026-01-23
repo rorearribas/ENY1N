@@ -31,12 +31,12 @@ namespace render
 
       void SetColor(const math::CVector3& _v3Color);
       inline const math::CVector3& GetColor() const { return m_v3Color; }
-      void SetPosition(const math::CVector3& _v3Pos);
-      inline const math::CVector3& GetPosition() const { return m_oTransform.GetTranslation(); }
-      void SetRotation(const math::CVector3& _v3Rot);
-      inline const math::CVector3& GetRotation() const { return m_oTransform.GetRotation(); }
-      void SetScale(const math::CVector3& _v3Scl);
-      inline const math::CVector3& GetScale() const { return m_oTransform.GetScale(); }
+      void SetPos(const math::CVector3& _v3Pos);
+      inline const math::CVector3& GetPos() const { return m_oTransform.GetPos(); }
+      void SetRot(const math::CVector3& _v3Rot);
+      inline const math::CVector3& GetRot() const { return m_oTransform.GetRot(); }
+      void SetScl(const math::CVector3& _v3Scl);
+      inline const math::CVector3& GetScl() const { return m_oTransform.GetScl(); }
 
       void SetRenderMode(ERenderMode _eRenderMode);
       inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }

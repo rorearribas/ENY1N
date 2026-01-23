@@ -22,9 +22,9 @@ namespace game
     void SetCollisionMask(collision::ECollisionMask _eCollisionMask);
     collision::ECollisionMask GetCollisionMask() const;
 
-    void SetPosition(const math::CVector3& _v3Position);
-    math::CVector3 GetPosition() const;
-    void SetRotation(const math::CVector3& _v3Rotation);
+    void SetPos(const math::CVector3& _v3Position);
+    math::CVector3 GetPos() const;
+    void SetRot(const math::CVector3& _v3Rotation);
     math::CVector3 GetRotation() const;
 
     inline void SetDebugMode(bool _bEnabled) { m_bDebugMode = _bEnabled; }

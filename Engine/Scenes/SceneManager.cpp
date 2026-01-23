@@ -109,11 +109,11 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CSceneManager::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawCube(_v3Pos, _v3Size, _v3Rot, _v3Color, _eRenderMode);
+      m_pCurrentScene->DrawCube(_v3Pos, _v3Rot, _v3Size, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------

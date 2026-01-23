@@ -15,6 +15,42 @@ namespace render
 #endif // DEBUG
     }
     // ------------------------------------
+    void CRenderInstance::SetPos(const math::CVector3& _v3Pos)
+    {
+      // Set pos
+      m_oTransform.SetPos(_v3Pos);
+
+      // Update bounding box
+      if (m_bCullEnabled)
+      {
+        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
+      }
+    }
+    // ------------------------------------
+    void CRenderInstance::SetRot(const math::CVector3& _v3Rot)
+    {
+      // Set rot
+      m_oTransform.SetRot(_v3Rot);
+
+      // Update bounding box
+      if (m_bCullEnabled)
+      {
+        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
+      }
+    }
+    // ------------------------------------
+    void CRenderInstance::SetScl(const math::CVector3& _v3Scl)
+    {
+      // Set scale
+      m_oTransform.SetScl(_v3Scl);
+
+      // Update bounding box
+      if (m_bCullEnabled)
+      {
+        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
+      }
+    }
+    // ------------------------------------
     void CRenderInstance::SetCullingEnabled(bool _bCull)
     {
       // Set state
@@ -22,42 +58,6 @@ namespace render
       {
         m_bCullEnabled = _bCull;
       }
-
-      // Update bounding box
-      if (m_bCullEnabled)
-      {
-        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
-      }
-    }
-    // ------------------------------------
-    void CRenderInstance::SetPosition(const math::CVector3& _v3Pos)
-    {
-      // Set pos
-      m_oTransform.SetPosition(_v3Pos);
-
-      // Update bounding box
-      if (m_bCullEnabled)
-      {
-        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
-      }
-    }
-    // ------------------------------------
-    void CRenderInstance::SetRotation(const math::CVector3& _v3Rot)
-    {
-      // Set rot
-      m_oTransform.SetRotation(_v3Rot);
-
-      // Update bounding box
-      if (m_bCullEnabled)
-      {
-        collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
-      }
-    }
-    // ------------------------------------
-    void CRenderInstance::SetScale(const math::CVector3& _v3Scl)
-    {
-      // Set scale
-      m_oTransform.SetScale(_v3Scl);
 
       // Update bounding box
       if (m_bCullEnabled)

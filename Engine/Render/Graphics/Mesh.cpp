@@ -63,17 +63,17 @@ namespace render
       m_uIndexCount = static_cast<uint32_t>(_lstIndices.size());
 
       // Config index buffer
-      D3D11_BUFFER_DESC oIndexBufferDesc = D3D11_BUFFER_DESC();
-      oIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-      oIndexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(uint32_t) * _lstIndices.size()));
-      oIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-      oIndexBufferDesc.CPUAccessFlags = 0;
+      D3D11_BUFFER_DESC rBufferDesc = D3D11_BUFFER_DESC();
+      rBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+      rBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(uint32_t) * _lstIndices.size()));
+      rBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+      rBufferDesc.CPUAccessFlags = 0;
 
       D3D11_SUBRESOURCE_DATA rSubresource = D3D11_SUBRESOURCE_DATA();
       rSubresource.pSysMem = _lstIndices.data();
 
       // Create index buffer
-      return global::dx::s_pDevice->CreateBuffer(&oIndexBufferDesc, &rSubresource, &m_pIndexBuffer);
+      return global::dx::s_pDevice->CreateBuffer(&rBufferDesc, &rSubresource, &m_pIndexBuffer);
     }
     // ------------------------------------
     void CMesh::ClearBuffer()

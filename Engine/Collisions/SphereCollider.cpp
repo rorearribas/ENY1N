@@ -59,7 +59,7 @@ namespace collision
   void CSphereCollider::RecalculateCollider()
   {
     // Set world center
-    m_v3Center = GetPosition();
+    m_v3Center = GetPos();
   }
   // ------------------------------------
   bool CSphereCollider::CheckSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const
@@ -160,7 +160,7 @@ namespace collision
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     pEngine->DrawSphere
     (
-      GetPosition(),
+      GetPos(),
       GetRadius(),
       internal_sphere_collider::s_iMaxSubvH,
       internal_sphere_collider::s_iMaxSubvV,

@@ -25,11 +25,11 @@ namespace game
     void SetRenderMode(render::ERenderMode _eRenderMode);
     void SetColor(const math::CVector3& _v3Color);
 
-    void SetPosition(const math::CVector3& _v3Position);
+    void SetPos(const math::CVector3& _v3Position);
     math::CVector3 GetPosition() const;
     void SetRotation(const math::CVector3& _v3Rot);
     math::CVector3 GetRotation() const;
-    void SetScale(const math::CVector3& _v3Scl);
+    void SetScl(const math::CVector3& _v3Scl);
     math::CVector3 GetScale() const;
 
   protected:

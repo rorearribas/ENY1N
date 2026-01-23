@@ -57,7 +57,7 @@ namespace collision
   {
     const math::CVector3& v3RayOrigin = _oRay.GetOrigin();
     const math::CVector3& v3RayDir = _oRay.GetDir();
-    math::CVector3 v3Delta = v3RayOrigin - GetPosition();
+    math::CVector3 v3Delta = v3RayOrigin - GetPos();
 
     const std::vector<math::CVector3> lstAxis = GetAxisDirectors();
     math::CVector3 v3HalfSize = (m_v3Max - m_v3Min) * 0.5f;
@@ -308,7 +308,7 @@ namespace collision
   void CBoxCollider::ComputeExtents()
   {
     // Calculate matrix
-    math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(GetRotation());
+    math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(GetRot());
 
     // Calculate extents
     const math::CVector3& v3Center = GetCenter();
@@ -333,15 +333,15 @@ namespace collision
   void CBoxCollider::ComputeMinMax()
   {
     math::CVector3 v3HalfSize = m_v3Size * 0.5f;
-    m_v3Min = GetPosition() - v3HalfSize;
-    m_v3Max = GetPosition() + v3HalfSize;
+    m_v3Min = GetPos() - v3HalfSize;
+    m_v3Max = GetPos() + v3HalfSize;
   }
   // ------------------------------------
   void CBoxCollider::DrawDebug()
   {
     // Draw cube
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    pEngine->DrawCube(GetPosition(), GetSize(), GetRotation(), math::CVector3::One, render::ERenderMode::WIREFRAME);
+    pEngine->DrawCube(GetPos(), GetRot(), GetSize(), math::CVector3::One, render::ERenderMode::WIREFRAME);
 
     // Draw extents
     float fMagnitude = m_v3Size.Magnitude();

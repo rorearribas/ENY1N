@@ -51,16 +51,16 @@ namespace game
       m_uInstanceID = rInstances.last()->GetInstanceID();
 
       // Update transform
-      rInstances[m_uInstanceID]->SetPosition(GetPosition());
-      rInstances[m_uInstanceID]->SetRotation(GetRotation());
-      rInstances[m_uInstanceID]->SetScale(GetScale());
+      rInstances[m_uInstanceID]->SetPos(GetPosition());
+      rInstances[m_uInstanceID]->SetRot(GetRotation());
+      rInstances[m_uInstanceID]->SetScl(GetScale());
     }
     else
     {
       // Update transform
-      m_wpModel->SetPosition(GetPosition());
-      m_wpModel->SetRotation(GetRotation());
-      m_wpModel->SetScale(GetScale());
+      m_wpModel->SetPos(GetPosition());
+      m_wpModel->SetRot(GetRotation());
+      m_wpModel->SetScl(GetScale());
     }
   }
   // ------------------------------------
@@ -80,8 +80,8 @@ namespace game
     CEntity* pOwner = GetOwner();
     if (pOwner)
     {
-      m_pPrimitive->SetPosition(pOwner->GetPosition());
-      m_pPrimitive->SetRotation(pOwner->GetRotation());
+      m_pPrimitive->SetPos(pOwner->GetPos());
+      m_pPrimitive->SetRot(pOwner->GetRot());
     }
   }
   // ------------------------------------
@@ -121,7 +121,7 @@ namespace game
   // ------------------------------------
   void CModelComponent::OnPositionChanged(const math::CVector3& _v3Pos)
   {
-    SetPosition(_v3Pos);
+    SetPos(_v3Pos);
   }
   // ------------------------------------
   void CModelComponent::OnRotationChanged(const math::CVector3& _v3Rot)
@@ -131,77 +131,77 @@ namespace game
   // ------------------------------------
   void CModelComponent::OnScaleChanged(const math::CVector3& _v3Scale)
   {
-    SetScale(_v3Scale);
+    SetScl(_v3Scale);
   }
   // ------------------------------------
-  void CModelComponent::SetPosition(const math::CVector3& _v3Pos)
+  void CModelComponent::SetPos(const math::CVector3& _v3Pos)
   {
     if (m_pPrimitive)
     {
-      m_pPrimitive->SetPosition(_v3Pos);
+      m_pPrimitive->SetPos(_v3Pos);
     }
     bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
     if (m_wpModel.IsValid() && !bIsInstance)
     {
-      m_wpModel->SetPosition(_v3Pos);
+      m_wpModel->SetPos(_v3Pos);
     }
     if (m_wpModel.IsValid() && bIsInstance)
     {
       render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      rInstances[m_uInstanceID]->SetPosition(_v3Pos);
+      rInstances[m_uInstanceID]->SetPos(_v3Pos);
     }
   }
   // ------------------------------------
   math::CVector3 CModelComponent::GetPosition() const
   {
-    return m_pOwner->GetPosition();
+    return m_pOwner->GetPos();
   }
   // ------------------------------------
   void CModelComponent::SetRotation(const math::CVector3& _v3Rot)
   {
     if (m_pPrimitive)
     {
-      m_pPrimitive->SetRotation(_v3Rot);
+      m_pPrimitive->SetRot(_v3Rot);
       return;
     }
 
     bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
     if (m_wpModel.IsValid() && !bIsInstance)
     {
-      m_wpModel->SetRotation(_v3Rot);
+      m_wpModel->SetRot(_v3Rot);
     }
     if (m_wpModel.IsValid() && bIsInstance)
     {
       render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      rInstances[m_uInstanceID]->SetRotation(_v3Rot);
+      rInstances[m_uInstanceID]->SetRot(_v3Rot);
     }
   }
   // ------------------------------------
   math::CVector3 CModelComponent::GetRotation() const
   {
-    return m_pOwner->GetRotation();
+    return m_pOwner->GetRot();
   }
   // ------------------------------------
-  void CModelComponent::SetScale(const math::CVector3& _v3Scl)
+  void CModelComponent::SetScl(const math::CVector3& _v3Scl)
   {
     if (m_pPrimitive)
     {
-      m_pPrimitive->SetScale(_v3Scl);
+      m_pPrimitive->SetScl(_v3Scl);
     }
     bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
     if (m_wpModel.IsValid() && !bIsInstance)
     {
-      m_wpModel->SetScale(_v3Scl);
+      m_wpModel->SetScl(_v3Scl);
     }
     if (m_wpModel.IsValid() && bIsInstance)
     {
       render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      rInstances[m_uInstanceID]->SetScale(_v3Scl);
+      rInstances[m_uInstanceID]->SetScl(_v3Scl);
     }
   }
   // ------------------------------------
   math::CVector3 CModelComponent::GetScale() const
   {
-    return m_pOwner->GetScale();
+    return m_pOwner->GetScl();
   }
 }

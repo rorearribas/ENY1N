@@ -53,7 +53,7 @@ namespace collision
   void CCapsuleCollider::RecalculateCollider()
   {
     // Calculate axis directors
-    math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(GetRotation());
+    math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(GetRot());
     math::CVector3 v3TargetAxis = mRot * m_v3OrientedAxis;
 
     // Set segment points
@@ -82,7 +82,7 @@ namespace collision
   {
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     const math::CVector3& v3CurrentPos = GetWorldPos(); // Get center
-    const math::CVector3& v3CurrentRot = GetRotation(); // Get rotation
+    const math::CVector3& v3CurrentRot = GetRot(); // Get rotation
 
     pEngine->DrawSphere(m_v3EndSegmentPoint, 0.05f, 8, 8, math::CVector3::Forward, render::ERenderMode::WIREFRAME);
     pEngine->DrawSphere(m_v3StartSegmentPoint, 0.05f, 8, 8, math::CVector3::Right, render::ERenderMode::WIREFRAME);

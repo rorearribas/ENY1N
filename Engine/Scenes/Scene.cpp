@@ -120,12 +120,12 @@ namespace scene
 #endif
 
     // Set values
-    pPrimitive->SetPosition(_v3Pos);
-    pPrimitive->SetRotation(_v3Rot);
+    pPrimitive->SetPos(_v3Pos);
+    pPrimitive->SetRot(_v3Rot);
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Size, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
     {
@@ -141,9 +141,9 @@ namespace scene
 #endif
 
     // Set values
-    pPrimitive->SetPosition(_v3Pos);
-    pPrimitive->SetRotation(_v3Rot);
-    pPrimitive->SetScale(_v3Size);
+    pPrimitive->SetPos(_v3Pos);
+    pPrimitive->SetRot(_v3Rot);
+    pPrimitive->SetScl(_v3Size);
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
@@ -171,7 +171,7 @@ namespace scene
 #endif
 
     // Set values
-    pSpherePrimitive->SetPosition(_v3Pos);
+    pSpherePrimitive->SetPos(_v3Pos);
     pSpherePrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
@@ -194,8 +194,8 @@ namespace scene
 #endif
 
     // Set values
-    pPlanePrimitive->SetPosition(_oPlane.GetPos());
-    pPlanePrimitive->SetScale(_v3Size);
+    pPlanePrimitive->SetPos(_oPlane.GetPos());
+    pPlanePrimitive->SetScl(_v3Size);
     pPlanePrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
@@ -217,7 +217,7 @@ namespace scene
 #endif
 
     // Set values
-    pPrimitive->SetPosition(math::CVector3::Zero);
+    pPrimitive->SetPos(math::CVector3::Zero);
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------

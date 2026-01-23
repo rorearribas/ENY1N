@@ -51,8 +51,8 @@ namespace game
       math::CVector3 v3Offset = _oHitEvent.Normal * _oHitEvent.Depth;
       if (!v3Offset.Equal(math::CVector3::Zero, math::s_fEpsilon5))
       {
-        math::CVector3 vNewPosition = pOwner->GetPosition() + v3Offset;
-        pOwner->SetPosition(vNewPosition);
+        math::CVector3 vNewPosition = pOwner->GetPos() + v3Offset;
+        pOwner->SetPos(vNewPosition);
       }
     }
   }
@@ -86,8 +86,8 @@ namespace game
       math::CVector3 v3Offset = _oHitEvent.Normal * _oHitEvent.Depth;
       if (!v3Offset.Equal(math::CVector3::Zero, math::s_fEpsilon5))
       {
-        math::CVector3 vNewPosition = pOwner->GetPosition() + v3Offset;
-        pOwner->SetPosition(vNewPosition);
+        math::CVector3 vNewPosition = pOwner->GetPos() + v3Offset;
+        pOwner->SetPos(vNewPosition);
       }
     }
 
@@ -105,8 +105,8 @@ namespace game
     CEntity* pOwner = GetOwner();
     if (pOwner)
     {
-      math::CVector3 vNewPosition = pOwner->GetPosition() + _v3Velocity;
-      pOwner->SetPosition(vNewPosition);
+      math::CVector3 vNewPosition = pOwner->GetPos() + _v3Velocity;
+      pOwner->SetPos(vNewPosition);
     }
   }
   // ------------------------------------
@@ -115,8 +115,8 @@ namespace game
     CEntity* pOwner = GetOwner();
     if (pOwner)
     {
-      math::CVector3 vNewRot = pOwner->GetRotation() + _v3Rot;
-      pOwner->SetRotation(vNewRot);
+      math::CVector3 vNewRot = pOwner->GetRot() + _v3Rot;
+      pOwner->SetRot(vNewRot);
     }
   }
   // ------------------------------------
