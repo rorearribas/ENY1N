@@ -199,125 +199,124 @@ namespace math
   math::CMatrix4x4 CMatrix4x4::Invert(const math::CMatrix4x4& _m)
   {
     // Calculate cofactors
-    const float* fMatrix = _m;
     float fInvert[16];
     {
-      fInvert[0] = fMatrix[5] * fMatrix[10] * fMatrix[15] -
-      fMatrix[5] * fMatrix[11] * fMatrix[14] -
-      fMatrix[9] * fMatrix[6] * fMatrix[15] +
-      fMatrix[9] * fMatrix[7] * fMatrix[14] +
-      fMatrix[13] * fMatrix[6] * fMatrix[11] -
-      fMatrix[13] * fMatrix[7] * fMatrix[10];
+      fInvert[0] = _m[5] * _m[10] * _m[15] -
+      _m[5] * _m[11] * _m[14] -
+      _m[9] * _m[6] * _m[15] +
+      _m[9] * _m[7] * _m[14] +
+      _m[13] * _m[6] * _m[11] -
+      _m[13] * _m[7] * _m[10];
 
-      fInvert[4] = -fMatrix[4] * fMatrix[10] * fMatrix[15] +
-      fMatrix[4] * fMatrix[11] * fMatrix[14] +
-      fMatrix[8] * fMatrix[6] * fMatrix[15] -
-      fMatrix[8] * fMatrix[7] * fMatrix[14] -
-      fMatrix[12] * fMatrix[6] * fMatrix[11] +
-      fMatrix[12] * fMatrix[7] * fMatrix[10];
+      fInvert[4] = -_m[4] * _m[10] * _m[15] +
+      _m[4] * _m[11] * _m[14] +
+      _m[8] * _m[6] * _m[15] -
+      _m[8] * _m[7] * _m[14] -
+      _m[12] * _m[6] * _m[11] +
+      _m[12] * _m[7] * _m[10];
 
-      fInvert[8] = fMatrix[4] * fMatrix[9] * fMatrix[15] -
-      fMatrix[4] * fMatrix[11] * fMatrix[13] -
-      fMatrix[8] * fMatrix[5] * fMatrix[15] +
-      fMatrix[8] * fMatrix[7] * fMatrix[13] +
-      fMatrix[12] * fMatrix[5] * fMatrix[11] -
-      fMatrix[12] * fMatrix[7] * fMatrix[9];
+      fInvert[8] = _m[4] * _m[9] * _m[15] -
+      _m[4] * _m[11] * _m[13] -
+      _m[8] * _m[5] * _m[15] +
+      _m[8] * _m[7] * _m[13] +
+      _m[12] * _m[5] * _m[11] -
+      _m[12] * _m[7] * _m[9];
 
-      fInvert[12] = -fMatrix[4] * fMatrix[9] * fMatrix[14] +
-      fMatrix[4] * fMatrix[10] * fMatrix[13] +
-      fMatrix[8] * fMatrix[5] * fMatrix[14] -
-      fMatrix[8] * fMatrix[6] * fMatrix[13] -
-      fMatrix[12] * fMatrix[5] * fMatrix[10] +
-      fMatrix[12] * fMatrix[6] * fMatrix[9];
+      fInvert[12] = -_m[4] * _m[9] * _m[14] +
+      _m[4] * _m[10] * _m[13] +
+      _m[8] * _m[5] * _m[14] -
+      _m[8] * _m[6] * _m[13] -
+      _m[12] * _m[5] * _m[10] +
+      _m[12] * _m[6] * _m[9];
 
-      fInvert[1] = -fMatrix[1] * fMatrix[10] * fMatrix[15] +
-      fMatrix[1] * fMatrix[11] * fMatrix[14] +
-      fMatrix[9] * fMatrix[2] * fMatrix[15] -
-      fMatrix[9] * fMatrix[3] * fMatrix[14] -
-      fMatrix[13] * fMatrix[2] * fMatrix[11] +
-      fMatrix[13] * fMatrix[3] * fMatrix[10];
+      fInvert[1] = -_m[1] * _m[10] * _m[15] +
+      _m[1] * _m[11] * _m[14] +
+      _m[9] * _m[2] * _m[15] -
+      _m[9] * _m[3] * _m[14] -
+      _m[13] * _m[2] * _m[11] +
+      _m[13] * _m[3] * _m[10];
 
-      fInvert[5] = fMatrix[0] * fMatrix[10] * fMatrix[15] -
-      fMatrix[0] * fMatrix[11] * fMatrix[14] -
-      fMatrix[8] * fMatrix[2] * fMatrix[15] +
-      fMatrix[8] * fMatrix[3] * fMatrix[14] +
-      fMatrix[12] * fMatrix[2] * fMatrix[11] -
-      fMatrix[12] * fMatrix[3] * fMatrix[10];
+      fInvert[5] = _m[0] * _m[10] * _m[15] -
+      _m[0] * _m[11] * _m[14] -
+      _m[8] * _m[2] * _m[15] +
+      _m[8] * _m[3] * _m[14] +
+      _m[12] * _m[2] * _m[11] -
+      _m[12] * _m[3] * _m[10];
 
-      fInvert[9] = -fMatrix[0] * fMatrix[9] * fMatrix[15] +
-      fMatrix[0] * fMatrix[11] * fMatrix[13] +
-      fMatrix[8] * fMatrix[1] * fMatrix[15] -
-      fMatrix[8] * fMatrix[3] * fMatrix[13] -
-      fMatrix[12] * fMatrix[1] * fMatrix[11] +
-      fMatrix[12] * fMatrix[3] * fMatrix[9];
+      fInvert[9] = -_m[0] * _m[9] * _m[15] +
+      _m[0] * _m[11] * _m[13] +
+      _m[8] * _m[1] * _m[15] -
+      _m[8] * _m[3] * _m[13] -
+      _m[12] * _m[1] * _m[11] +
+      _m[12] * _m[3] * _m[9];
 
-      fInvert[13] = fMatrix[0] * fMatrix[9] * fMatrix[14] -
-      fMatrix[0] * fMatrix[10] * fMatrix[13] -
-      fMatrix[8] * fMatrix[1] * fMatrix[14] +
-      fMatrix[8] * fMatrix[2] * fMatrix[13] +
-      fMatrix[12] * fMatrix[1] * fMatrix[10] -
-      fMatrix[12] * fMatrix[2] * fMatrix[9];
+      fInvert[13] = _m[0] * _m[9] * _m[14] -
+      _m[0] * _m[10] * _m[13] -
+      _m[8] * _m[1] * _m[14] +
+      _m[8] * _m[2] * _m[13] +
+      _m[12] * _m[1] * _m[10] -
+      _m[12] * _m[2] * _m[9];
 
-      fInvert[2] = fMatrix[1] * fMatrix[6] * fMatrix[15] -
-      fMatrix[1] * fMatrix[7] * fMatrix[14] -
-      fMatrix[5] * fMatrix[2] * fMatrix[15] +
-      fMatrix[5] * fMatrix[3] * fMatrix[14] +
-      fMatrix[13] * fMatrix[2] * fMatrix[7] -
-      fMatrix[13] * fMatrix[3] * fMatrix[6];
+      fInvert[2] = _m[1] * _m[6] * _m[15] -
+      _m[1] * _m[7] * _m[14] -
+      _m[5] * _m[2] * _m[15] +
+      _m[5] * _m[3] * _m[14] +
+      _m[13] * _m[2] * _m[7] -
+      _m[13] * _m[3] * _m[6];
 
-      fInvert[6] = -fMatrix[0] * fMatrix[6] * fMatrix[15] +
-      fMatrix[0] * fMatrix[7] * fMatrix[14] +
-      fMatrix[4] * fMatrix[2] * fMatrix[15] -
-      fMatrix[4] * fMatrix[3] * fMatrix[14] -
-      fMatrix[12] * fMatrix[2] * fMatrix[7] +
-      fMatrix[12] * fMatrix[3] * fMatrix[6];
+      fInvert[6] = -_m[0] * _m[6] * _m[15] +
+      _m[0] * _m[7] * _m[14] +
+      _m[4] * _m[2] * _m[15] -
+      _m[4] * _m[3] * _m[14] -
+      _m[12] * _m[2] * _m[7] +
+      _m[12] * _m[3] * _m[6];
 
-      fInvert[10] = fMatrix[0] * fMatrix[5] * fMatrix[15] -
-      fMatrix[0] * fMatrix[7] * fMatrix[13] -
-      fMatrix[4] * fMatrix[1] * fMatrix[15] +
-      fMatrix[4] * fMatrix[3] * fMatrix[13] +
-      fMatrix[12] * fMatrix[1] * fMatrix[7] -
-      fMatrix[12] * fMatrix[3] * fMatrix[5];
+      fInvert[10] = _m[0] * _m[5] * _m[15] -
+      _m[0] * _m[7] * _m[13] -
+      _m[4] * _m[1] * _m[15] +
+      _m[4] * _m[3] * _m[13] +
+      _m[12] * _m[1] * _m[7] -
+      _m[12] * _m[3] * _m[5];
 
-      fInvert[14] = -fMatrix[0] * fMatrix[5] * fMatrix[14] +
-      fMatrix[0] * fMatrix[6] * fMatrix[13] +
-      fMatrix[4] * fMatrix[1] * fMatrix[14] -
-      fMatrix[4] * fMatrix[2] * fMatrix[13] -
-      fMatrix[12] * fMatrix[1] * fMatrix[6] +
-      fMatrix[12] * fMatrix[2] * fMatrix[5];
+      fInvert[14] = -_m[0] * _m[5] * _m[14] +
+      _m[0] * _m[6] * _m[13] +
+      _m[4] * _m[1] * _m[14] -
+      _m[4] * _m[2] * _m[13] -
+      _m[12] * _m[1] * _m[6] +
+      _m[12] * _m[2] * _m[5];
 
-      fInvert[3] = -fMatrix[1] * fMatrix[6] * fMatrix[11] +
-      fMatrix[1] * fMatrix[7] * fMatrix[10] +
-      fMatrix[5] * fMatrix[2] * fMatrix[11] -
-      fMatrix[5] * fMatrix[3] * fMatrix[10] -
-      fMatrix[9] * fMatrix[2] * fMatrix[7] +
-      fMatrix[9] * fMatrix[3] * fMatrix[6];
+      fInvert[3] = -_m[1] * _m[6] * _m[11] +
+      _m[1] * _m[7] * _m[10] +
+      _m[5] * _m[2] * _m[11] -
+      _m[5] * _m[3] * _m[10] -
+      _m[9] * _m[2] * _m[7] +
+      _m[9] * _m[3] * _m[6];
 
-      fInvert[7] = fMatrix[0] * fMatrix[6] * fMatrix[11] -
-      fMatrix[0] * fMatrix[7] * fMatrix[10] -
-      fMatrix[4] * fMatrix[2] * fMatrix[11] +
-      fMatrix[4] * fMatrix[3] * fMatrix[10] +
-      fMatrix[8] * fMatrix[2] * fMatrix[7] -
-      fMatrix[8] * fMatrix[3] * fMatrix[6];
+      fInvert[7] = _m[0] * _m[6] * _m[11] -
+      _m[0] * _m[7] * _m[10] -
+      _m[4] * _m[2] * _m[11] +
+      _m[4] * _m[3] * _m[10] +
+      _m[8] * _m[2] * _m[7] -
+      _m[8] * _m[3] * _m[6];
 
-      fInvert[11] = -fMatrix[0] * fMatrix[5] * fMatrix[11] +
-      fMatrix[0] * fMatrix[7] * fMatrix[9] +
-      fMatrix[4] * fMatrix[1] * fMatrix[11] -
-      fMatrix[4] * fMatrix[3] * fMatrix[9] -
-      fMatrix[8] * fMatrix[1] * fMatrix[7] +
-      fMatrix[8] * fMatrix[3] * fMatrix[5];
+      fInvert[11] = -_m[0] * _m[5] * _m[11] +
+      _m[0] * _m[7] * _m[9] +
+      _m[4] * _m[1] * _m[11] -
+      _m[4] * _m[3] * _m[9] -
+      _m[8] * _m[1] * _m[7] +
+      _m[8] * _m[3] * _m[5];
 
-      fInvert[15] = fMatrix[0] * fMatrix[5] * fMatrix[10] -
-      fMatrix[0] * fMatrix[6] * fMatrix[9] -
-      fMatrix[4] * fMatrix[1] * fMatrix[10] +
-      fMatrix[4] * fMatrix[2] * fMatrix[9] +
-      fMatrix[8] * fMatrix[1] * fMatrix[6] -
-      fMatrix[8] * fMatrix[2] * fMatrix[5];
+      fInvert[15] = _m[0] * _m[5] * _m[10] -
+      _m[0] * _m[6] * _m[9] -
+      _m[4] * _m[1] * _m[10] +
+      _m[4] * _m[2] * _m[9] +
+      _m[8] * _m[1] * _m[6] -
+      _m[8] * _m[2] * _m[5];
     }
 
     // Calculate determinant
-    float fDet = fMatrix[0] * fInvert[0] + fMatrix[1] * fInvert[4] + fMatrix[2] * fInvert[8] + fMatrix[3] * fInvert[12];
-    if (fDet < s_fEpsilon3)
+    float fDet = _m[0] * fInvert[0] + _m[1] * fInvert[4] + _m[2] * fInvert[8] + _m[3] * fInvert[12];
+    if (fabsf(fDet) < math::s_fEpsilon7)
     {
       return CMatrix4x4::Identity;
     }
