@@ -76,7 +76,7 @@ namespace render
     math::CVector3 m_v3Rot = math::CVector3::Zero;
 
     float m_fCamVelocity = 1.0f;
-    float m_fMovementVelocity = 25.0f;
+    float m_fMovementVelocity = 50.0f;
 
     float m_fFov = 45.0f;
     float m_fZoomScale = 0.01f;

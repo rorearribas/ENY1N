@@ -106,21 +106,6 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
     }
     // ------------------------------------
-    void CModel::SetCullEnabled(bool _bCull)
-    {
-      // Set state
-      if (m_bCullEnabled != _bCull)
-      {
-        m_bCullEnabled = _bCull;
-      }
-
-      // Update bounding box
-      if (m_bCullEnabled)
-      {
-        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
-      }
-    }
-    // ------------------------------------
     void CModel::SetPos(const math::CVector3& _v3Pos)
     {
       // Set pos
@@ -149,6 +134,21 @@ namespace render
     {
       // Set scale
       m_oTransform.SetScl(_v3Scl);
+
+      // Update bounding box
+      if (m_bCullEnabled)
+      {
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
+      }
+    }
+    // ------------------------------------
+    void CModel::SetCullEnabled(bool _bCull)
+    {
+      // Set state
+      if (m_bCullEnabled != _bCull)
+      {
+        m_bCullEnabled = _bCull;
+      }
 
       // Update bounding box
       if (m_bCullEnabled)

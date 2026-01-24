@@ -109,12 +109,12 @@ int main()
   }
 
   // OBJ test
-  game::CEntity* pModelEnt2 = pGameManager->CreateEntity("Airplane");
-  pModelEnt2->SetPos(math::CVector3(0.0f, 5.0f, 0.0f));
-  game::CModelComponent* pModelTest2 = pModelEnt2->RegisterComponent<game::CModelComponent>();
+  game::CEntity* pAirplane = pGameManager->CreateEntity("Airplane");
+  pAirplane->SetPos(math::CVector3(0.0f, 5.0f, 0.0f));
+  game::CModelComponent* pModelTest2 = pAirplane->RegisterComponent<game::CModelComponent>();
   pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
-  pModelEnt2->SetRot(math::CVector3(80.756f, -165.377f, 20.861f));
-  pModelEnt2->SetScl(math::CVector3(0.01f, 0.01f, 0.01f));
+  pAirplane->SetRot(math::CVector3(80.756f, -165.377f, 20.861f));
+  pAirplane->SetScl(math::CVector3(0.01f, 0.01f, 0.01f));
 
   // Create plane
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
@@ -138,12 +138,13 @@ int main()
   render::CCamera* const pCamera = pEngine->GetCamera();
   pRender->ShowRenderWindow(true);
 
+  //// Test
+  //math::CVector3 v3Dir = math::CMatrix4x4::CreateRotation(pAirplane->GetRot()) * math::CVector3::Up;
+  //math::CVector3 v3Offset = (v3Dir * 10.0f * fFixedDelta);
+  //pAirplane->SetPos(pAirplane->GetPos() + v3Offset);
+
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };
-
-  // Test
-  math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(pModelTest2->GetRotation());
-  math::CVector3 v3Dir = mRot * math::CVector3::Up;
 
   while (WM_QUIT != oMsg.message)
   {

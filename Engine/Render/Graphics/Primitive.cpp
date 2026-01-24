@@ -74,6 +74,42 @@ namespace render
       global::dx::s_pDeviceContext->DrawIndexed(m_uIndices, 0, 0);
     }
     // ------------------------------------
+    void CPrimitive::SetPos(const math::CVector3& _v3Pos)
+    {
+      // Set pos
+      m_oTransform.SetPos(_v3Pos);
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
+      }
+    }
+    // ------------------------------------
+    void CPrimitive::SetRot(const math::CVector3& _v3Rot)
+    {
+      // Set rot
+      m_oTransform.SetRot(_v3Rot);
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
+      }
+    }
+    // ------------------------------------
+    void CPrimitive::SetScl(const math::CVector3& _v3Scl)
+    {
+      // Set scale
+      m_oTransform.SetScl(_v3Scl);
+
+      // Update bounding box
+      if (m_bCullingEnabled)
+      {
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
+      }
+    }
+    // ------------------------------------
     void CPrimitive::SetCullEnabled(bool _bCull)
     {
       // Set state
@@ -125,42 +161,6 @@ namespace render
 
       // Save color
       m_v3Color = _v3Color;
-    }
-    // ------------------------------------
-    void CPrimitive::SetPos(const math::CVector3& _v3Pos)
-    {
-      // Set pos
-      m_oTransform.SetPos(_v3Pos);
-
-      // Update bounding box
-      if (m_bCullingEnabled)
-      {
-        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
-      }
-    }
-    // ------------------------------------
-    void CPrimitive::SetRot(const math::CVector3& _v3Rot)
-    {
-      // Set rot
-      m_oTransform.SetRot(_v3Rot);
-
-      // Update bounding box
-      if (m_bCullingEnabled)
-      {
-        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
-      }
-    }
-    // ------------------------------------
-    void CPrimitive::SetScl(const math::CVector3& _v3Scl)
-    {
-      // Set scale
-      m_oTransform.SetScl(_v3Scl);
-
-      // Update bounding box
-      if (m_bCullingEnabled)
-      {
-        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
-      }
     }
     // ------------------------------------
     HRESULT CPrimitive::CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode)

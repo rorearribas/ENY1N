@@ -31,18 +31,18 @@ namespace render
       void Draw();
       void DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
 
-      void SetCullEnabled(bool _bCull);
-      inline const bool IsCullEnabled() const { return m_bCullEnabled; }
-
-      inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
-      inline const bool IsVisible() const { return m_bVisible; }
-
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPos(); }
       void SetRot(const math::CVector3& _v3Rot);
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRot(); }
       void SetScl(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScl() const { return m_oTransform.GetScl(); }
+
+      void SetCullEnabled(bool _bCull);
+      inline const bool IsCullEnabled() const { return m_bCullEnabled; }
+
+      inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
+      inline const bool IsVisible() const { return m_bVisible; }
 
       CRenderInstance* CreateInstance();
       bool RemoveInstance(uint16_t _uInstanceID);
