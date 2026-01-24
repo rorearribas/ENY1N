@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Global/GlobalResources.h"
+#include "Libs/Macros/GlobalMacros.h"
 #include <mutex>
 
 namespace utils
@@ -12,7 +12,7 @@ namespace utils
     static T* GetInstance();
 
     static void DestroySingleton();
-    static bool HasSingleton() { return m_pInstance; }
+    inline static bool HasSingleton() { return m_pInstance; }
 
   protected:
     CSingleton() {}
@@ -26,27 +26,31 @@ namespace utils
   };
 
   template <typename T, bool Lazy>
-  T* utils::CSingleton<T, Lazy>::GetInstance()
+  T* CSingleton<T, Lazy>::GetInstance()
   {
-    return Lazy ? CreateSingleton() : m_pInstance;
+    return (Lazy && !m_pInstance) ? CreateSingleton() : m_pInstance;
   }
 
   template <typename T, bool Lazy>
-  T* utils::CSingleton<T, Lazy>::CreateSingleton()
+  T* CSingleton<T, Lazy>::CreateSingleton()
   {
     std::lock_guard<std::mutex> lock(m_mutex);
     if (!m_pInstance)
     {
       m_pInstance = new T();
-      //LOG("Singleton created! -> " << typeid(T).name());
+      SUCCESS_LOG("Singleton created! -> " << typeid(T).name());
     }
     return m_pInstance;
   }
 
   template <typename T, bool Lazy>
-  void utils::CSingleton<T, Lazy>::DestroySingleton()
+  void CSingleton<T, Lazy>::DestroySingleton()
   {
     std::lock_guard<std::mutex> lock(m_mutex);
-    global::ReleaseObject(m_pInstance);
+    if (m_pInstance)
+    {
+      delete m_pInstance;
+      m_pInstance = nullptr;
+    }
   }
 }

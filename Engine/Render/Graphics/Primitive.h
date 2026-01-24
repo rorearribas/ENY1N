@@ -22,12 +22,14 @@ namespace render
 
       void Draw();
 
-      void SetCullingEnabled(bool _bCull);
-      inline const bool& IsCullingEnabled() const { return m_bCullingEnabled; }
+      void SetCullEnabled(bool _bCull);
+      inline const bool IsCullEnabled() const { return m_bCullingEnabled; }
 
-      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
-      inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
-      inline const EPrimitive& GetPrimitiveType() const { return m_ePrimitiveType; }
+      inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
+      inline const bool IsVisible() const { return m_bVisible; }
+
+      void SetRenderMode(ERenderMode _eRenderMode);
+      inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
 
       void SetColor(const math::CVector3& _v3Color);
       inline const math::CVector3& GetColor() const { return m_v3Color; }
@@ -38,11 +40,9 @@ namespace render
       void SetScl(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScl() const { return m_oTransform.GetScl(); }
 
-      void SetRenderMode(ERenderMode _eRenderMode);
-      inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
-
-      inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
-      inline const bool& IsVisible() const { return m_bVisible; }
+      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
+      inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
+      inline const EPrimitive& GetPrimitiveType() const { return m_ePrimitiveType; }
 
     private:
       HRESULT CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode);

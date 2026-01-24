@@ -31,17 +31,11 @@ namespace render
       void Draw();
       void DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
 
-      CRenderInstance* CreateInstance();
-      bool RemoveInstance(uint16_t _uInstanceID);
-
-      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
-      inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
-
-      void SetCullingEnabled(bool _bCull);
-      inline const bool& IsCullingEnabled() const { return m_bCullEnabled; }
+      void SetCullEnabled(bool _bCull);
+      inline const bool IsCullEnabled() const { return m_bCullEnabled; }
 
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
-      inline const bool& IsVisible() const { return m_bVisible; }
+      inline const bool IsVisible() const { return m_bVisible; }
 
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPos(); }
@@ -50,8 +44,14 @@ namespace render
       void SetScl(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScl() const { return m_oTransform.GetScl(); }
 
+      CRenderInstance* CreateInstance();
+      bool RemoveInstance(uint16_t _uInstanceID);
+
       inline TInstances& GetInstances() { return m_lstInstances; }
       inline const TInstances& GetInstances() const { return m_lstInstances; }
+
+      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
+      inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
 
       inline std::string GetAssetPath() const { return std::string(m_sAssetPath); }
       inline const bool AllowInstancing() const { return m_lstInstances.GetSize() < m_lstInstances.GetMaxSize(); }

@@ -40,7 +40,12 @@ namespace utils
   {
     for (size_t tIndex = 0; tIndex < m_tRegisteredItems; ++tIndex)
     {
-      global::ReleaseObject(m_lstFixed[tIndex]);
+      T*& pValue = m_lstFixed[tIndex];
+      if (pValue)
+      {
+        delete pValue;
+        pValue = nullptr;
+      }
     }
     m_tRegisteredItems = 0;
   }

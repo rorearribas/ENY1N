@@ -89,12 +89,12 @@ namespace game
   {
     if (m_pPrimitive)
     {
-      m_pPrimitive->SetCullingEnabled(_bCull);
+      m_pPrimitive->SetCullEnabled(_bCull);
     }
     bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
     if (m_wpModel.IsValid() && !bIsInstance)
     {
-      m_wpModel->SetCullingEnabled(_bCull);
+      m_wpModel->SetCullEnabled(_bCull);
     }
     if (m_wpModel.IsValid() && bIsInstance)
     {

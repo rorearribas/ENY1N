@@ -106,29 +106,7 @@ namespace render
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
     }
     // ------------------------------------
-    CRenderInstance* CModel::CreateInstance()
-    {
-      if (!AllowInstancing())
-      {
-        WARNING_LOG("You have reached maximum instances in this model!");
-        return nullptr;
-      }
-
-      // Create instance
-      uint16_t uInstanceID = static_cast<uint16_t>(m_lstInstances.GetSize());
-      return m_lstInstances.Create(this, uInstanceID);
-    }
-    // ------------------------------------
-    bool CModel::RemoveInstance(uint16_t _uID)
-    {
-      if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uID])
-      {
-        return m_lstInstances.Remove(pInstance);
-      }
-      return false;
-    }
-    // ------------------------------------
-    void CModel::SetCullingEnabled(bool _bCull)
+    void CModel::SetCullEnabled(bool _bCull)
     {
       // Set state
       if (m_bCullEnabled != _bCull)
@@ -177,6 +155,28 @@ namespace render
       {
         collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
+    }
+    // ------------------------------------
+    CRenderInstance* CModel::CreateInstance()
+    {
+      if (!AllowInstancing())
+      {
+        WARNING_LOG("You have reached maximum instances in this model!");
+        return nullptr;
+      }
+
+      // Create instance
+      uint16_t uInstanceID = static_cast<uint16_t>(m_lstInstances.GetSize());
+      return m_lstInstances.Create(this, uInstanceID);
+    }
+    // ------------------------------------
+    bool CModel::RemoveInstance(uint16_t _uID)
+    {
+      if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uID])
+      {
+        return m_lstInstances.Remove(pInstance);
+      }
+      return false;
     }
     // ------------------------------------
     HRESULT CModel::InitModel(TModelData& _rModelData)

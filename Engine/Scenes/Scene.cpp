@@ -238,7 +238,7 @@ namespace scene
       if (rCachedModel.Visible)
       {
         bool bOnFrustum = true;
-        if (pModel->IsCullingEnabled()) // Check culling
+        if (pModel->IsCullEnabled()) // Check culling
         {
           bOnFrustum = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
         }
@@ -323,7 +323,7 @@ namespace scene
       }
 
       bool bDrawPrimitive = true;
-      if (pPrimitive->IsCullingEnabled()) // Check culling
+      if (pPrimitive->IsCullEnabled()) // Check culling
       {
         bDrawPrimitive = _pCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
       }
@@ -338,14 +338,9 @@ namespace scene
     for (uint32_t uIndex = 0; uIndex < tDebugCount; uIndex++)
     {
       render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugItems[uIndex];
-      if (!pDebugPrimitive->IsVisible())
-      {
-        // This is strange because normally nobody wants to hide a debugging object - just in case!
-        continue;
-      }
 
       bool bDrawDebug = true;
-      if (pDebugPrimitive->IsCullingEnabled()) // Check culling
+      if (pDebugPrimitive->IsCullEnabled()) // Check culling
       {
         bDrawDebug = _pCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
       }

@@ -66,7 +66,7 @@ int main()
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);
-  pEngine->GetCamera()->SetPosition(math::CVector3(0.0f, 5.0f, -10.0f));
+  pEngine->GetCamera()->SetPos(math::CVector3(0.0f, 5.0f, -10.0f));
 
   global::mem::s_oMemoryTracker.PrintStats();
 

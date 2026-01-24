@@ -31,11 +31,11 @@ namespace render
     const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjection; }
     math::CMatrix4x4 GetViewProjection() const { return m_mProjection * m_mViewMatrix; }
 
-    inline const math::CVector3& GetCameraDir() const { return m_v3Dir; }
-    inline void SetPosition(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; UpdateViewMatrix(GetProjectionMode()); }
-    const math::CVector3& GetPosition() const { return m_v3Pos; }
-    inline void SetRotation(const math::CVector3& _v3Rot) { m_v3Rot = _v3Rot; UpdateViewMatrix(GetProjectionMode()); }
-    inline const math::CVector3& GetRotation() const { return m_v3Rot; }
+    inline const math::CVector3& GetDir() const { return m_v3Dir; }
+    inline void SetPos(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; UpdateViewMatrix(GetProjectionMode()); }
+    const math::CVector3& GetPos() const { return m_v3Pos; }
+    inline void SetRot(const math::CVector3& _v3Rot) { m_v3Rot = _v3Rot; UpdateViewMatrix(GetProjectionMode()); }
+    inline const math::CVector3& GetRot() const { return m_v3Rot; }
 
     inline void SetMovementVel(float _fVelocity) { m_fMovementVelocity = _fVelocity; }
     inline float GetMovementVel() const { return m_fMovementVelocity; }
@@ -67,6 +67,7 @@ namespace render
 
     void ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos);
 
+  private:
     math::CMatrix4x4 m_mViewMatrix = math::CMatrix4x4::Identity;
     math::CMatrix4x4 m_mProjection = math::CMatrix4x4::Identity;
 

@@ -136,7 +136,7 @@ namespace render
       fYaw += static_cast<float>(math::s_fPI);
     }
 
-    SetRotation(math::CVector3(fPitch, fYaw, 0.0f));
+    SetRot(math::CVector3(fPitch, fYaw, 0.0f));
   }
   // ------------------------------------
   void CCamera::AddDisplacement(const math::CVector3& _v3Delta)
@@ -198,17 +198,17 @@ namespace render
   void CCamera::DrawDebug()
   {
     ImGui::Begin("CAMERA");
-    const math::CVector3& v3Position = GetPosition();
+    const math::CVector3& v3Position = GetPos();
     float camera_pos[3] = { v3Position.x, v3Position.y, v3Position.z };
     ImGui::InputFloat3("Position", camera_pos);
-    SetPosition(math::CVector3(camera_pos[0], camera_pos[1], camera_pos[2]));
+    SetPos(math::CVector3(camera_pos[0], camera_pos[1], camera_pos[2]));
 
-    const math::CVector3& v3Rot = GetRotation();
+    const math::CVector3& v3Rot = GetRot();
     float camera_rot[3] = { v3Rot.x, v3Rot.y, v3Rot.z };
     ImGui::InputFloat3("Rotation", camera_rot);
-    SetRotation(math::CVector3(camera_rot[0], camera_rot[1], camera_rot[2]));
+    SetRot(math::CVector3(camera_rot[0], camera_rot[1], camera_rot[2]));
 
-    const math::CVector3& v3Dir = GetCameraDir();
+    const math::CVector3& v3Dir = GetDir();
     float camera_dir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
     ImGui::InputFloat3("Direction", camera_dir);
 
