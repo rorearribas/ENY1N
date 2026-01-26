@@ -10,9 +10,9 @@ namespace render
     // ------------------------------------
     void CLight::SetDir(const math::CVector3& _v3Dir)
     {
-      m_v3Direction.x = math::Clamp(_v3Dir.x, -s_fMaxValue, s_fMaxValue);
-      m_v3Direction.y = math::Clamp(_v3Dir.y, -s_fMaxValue, s_fMaxValue);
-      m_v3Direction.z = math::Clamp(_v3Dir.z, -s_fMaxValue, s_fMaxValue);
+      m_v3Dir.x = math::Clamp(_v3Dir.x, -s_fMaxValue, s_fMaxValue);
+      m_v3Dir.y = math::Clamp(_v3Dir.y, -s_fMaxValue, s_fMaxValue);
+      m_v3Dir.z = math::Clamp(_v3Dir.z, -s_fMaxValue, s_fMaxValue);
     }
     // ------------------------------------
     void CLight::SetColor(const math::CVector3& _v3Color)

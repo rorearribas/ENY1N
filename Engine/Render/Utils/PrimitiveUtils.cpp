@@ -14,6 +14,15 @@ namespace render
       { math::CVector3(-0.5f, -0.5f,  0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
     };
 
+    // Square primitive
+    const std::vector<render::gfx::TPrimitiveData> CPrimitiveUtils::s_oSquarePrimitive = 
+    {
+      { math::CVector3(-0.5f, -0.5f, 0.5f),  math::CVector3(0.0f, 0.0f,  1.0f) },
+      { math::CVector3(-0.5f, 0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
+      { math::CVector3(0.5f,  0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
+      { math::CVector3(0.5f, -0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) }
+    };
+
     // Cube Primitive
     const std::vector<render::gfx::TPrimitiveData> CPrimitiveUtils::s_oCubePrimitive =
     {
@@ -143,234 +152,66 @@ namespace render
     };
 
     // ------------------------------------
-    gfx::TCustomPrimitive CPrimitiveUtils::Create2DCircle
-    (
-      float /*_fStandardRadius*/,
-      int /*_iSubvH*/,
-      int /*_iSubvV*/,
-      render::ERenderMode /*_eRenderMode*/
-    )
-    {
-      return gfx::TCustomPrimitive();
-    }
-
-    // ------------------------------------
-    void CPrimitiveUtils::CreateSphere
-    (
-      float _fRadius, int _iStacks, int _iSlices,
-      std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData_
-    )
-    {
-      // Clear
-      _lstPrimitiveData_.clear();
-
-      // Generate vertex data
-      for (int uX = 0; uX <= _iStacks; ++uX)
-      {
-        float fPhi = static_cast<float>(uX) / static_cast<float>(_iStacks) * static_cast<float>(math::s_fPI);
-        for (int uJ = 0; uJ <= _iSlices; ++uJ)
-        {
-          // Conversion
-          float fTheta = static_cast<float>(uJ) / static_cast<float>(_iSlices) * static_cast<float>(math::s_fPI * 2.0f);
-          float fX = _fRadius * sinf(fPhi) * cosf(fTheta);
-          float fY = _fRadius * cosf(fPhi);
-          float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
-
-          // Add vertex
-          render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
-          math::CVector3 v3VertexPos(fX, fY, fZ);
-
-          rPrimitiveData.VertexPos = v3VertexPos;
-          _lstPrimitiveData_.emplace_back(rPrimitiveData);
-        }
-      }
-    }
-
-    // Generate sphere indices
-    std::vector<uint32_t> CPrimitiveUtils::GetSphereIndices(int _iStacks, int _iSlices)
-    {
-      std::vector<uint32_t> lstIndices = {};
-      for (int i = 0; i < _iStacks; ++i)
-      {
-        for (int j = 0; j < _iSlices; ++j)
-        {
-          int iFirst = (i * (_iSlices + 1)) + j;
-          int iSecond = iFirst + _iSlices + 1;
-
-          lstIndices.emplace_back(iFirst);
-          lstIndices.emplace_back(iSecond);
-          lstIndices.emplace_back(iFirst + 1);
-
-          lstIndices.emplace_back(iSecond);
-          lstIndices.emplace_back(iSecond + 1);
-          lstIndices.emplace_back(iFirst + 1);
-        }
-      }
-      return lstIndices;
-    }
-
-    // ------------------------------------
-    std::vector<uint32_t> CPrimitiveUtils::GetWireframeSphereIndices(int _iStacks, int _iSlices)
-    {
-      std::vector<uint32_t> lstWireframeIndices = {};
-      for (int iI = 0; iI < _iStacks; ++iI)
-      {
-        for (int iJ = 0; iJ < _iSlices; ++iJ)
-        {
-          int iCurrent = (iI * (_iSlices + 1)) + iJ;
-          int iNext = iCurrent + 1;
-          int iAbove = iCurrent + _iSlices + 1;
-
-          if (iJ < _iSlices)
-          {
-            lstWireframeIndices.emplace_back(iCurrent);
-            lstWireframeIndices.emplace_back(iNext);
-          }
-          if (iI < _iStacks)
-          {
-            lstWireframeIndices.emplace_back(iCurrent);
-            lstWireframeIndices.emplace_back(iAbove);
-          }
-        }
-      }
-      return lstWireframeIndices;
-    }
-
-    // ------------------------------------
-    gfx::TCustomPrimitive CPrimitiveUtils::CreateCapsule
+    gfx::TCustomPrimitive CPrimitiveUtils::CreateCircle
     (
       float _fRadius,
-      float _fHeight,
-      int _iSubvH,
-      int _iSubvV,
+      uint32_t _uSegments,
       render::ERenderMode _eRenderMode
     )
     {
-      // Create primitve
-      gfx::TCustomPrimitive oCustomPrimitive = gfx::TCustomPrimitive();
+      // Create primitive
+      gfx::TCustomPrimitive rCustomData = gfx::TCustomPrimitive();
 
-      // Calculate values
-      float fHalfHeight = _fHeight * 0.5f;
-      float fDiff = fHalfHeight - _fRadius;
-
-      // Semi sphere lambda
-      auto oCalcSemiSphereFunc = [&](bool _bInverse = false)
+      if (_eRenderMode == ERenderMode::SOLID)
       {
-        for (int uX = 0; uX <= _iSubvH; ++uX)
-        {
-          float fPhi = static_cast<float>(uX) / static_cast<float>(_iSubvH) * static_cast<float>(math::s_fHalfPI);
-          for (int uJ = 0; uJ <= _iSubvV; ++uJ)
-          {
-            // Conversion
-            float fTheta = (static_cast<float>(uJ) / static_cast<float>(_iSubvV)) * (static_cast<float>(math::s_fPI * 2.0f));
-            float fX = _fRadius * sinf(fPhi) * cosf(fTheta);
-            float fY = _fRadius * cosf(fPhi);
-            float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
-
-            if (_bInverse)
-            {
-              fY = -fY;
-            }
-
-            // Add vertex
-            render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
-            rPrimitiveData.VertexPos = math::CVector3(fX, fY, fZ);
-            oCustomPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
-          }
-        }
-      };
-
-      // Generate indices lambda in wireframe mode
-      auto oCalcWireIndicesFunc = [&](int _iStacks, int _iSlices, int _iStartIdx)
-      {
-        for (int uX = 0; uX < _iStacks; ++uX)
-        {
-          for (int uJ = 0; uJ < _iSlices; ++uJ)
-          {
-            int iCurrent = _iStartIdx + (uX * (_iSlices + 1)) + uJ;
-            int iNext = iCurrent + 1;
-            int iAbove = iCurrent + (_iSlices + 1);
-
-            oCustomPrimitive.Indices.emplace_back(iCurrent);
-            oCustomPrimitive.Indices.emplace_back(iNext);
-
-            oCustomPrimitive.Indices.emplace_back(iCurrent);
-            oCustomPrimitive.Indices.emplace_back(iAbove);
-          }
-        }
-      };
-
-      // Generate indices lambda in lit mode
-      auto oCalcIndicesFunc = [&](int _iStacks, int _iSlices, int _iStartIdx, bool _bInverseCCW = false)
-      {
-        for (int uX = 0; uX < _iStacks; ++uX)
-        {
-          for (int uJ = 0; uJ < _iSlices; ++uJ)
-          {
-            int iFirst = _iStartIdx + (uX * (_iSlices + 1)) + uJ;
-            int iSecond = iFirst + _iSlices + 1;
-
-            oCustomPrimitive.Indices.emplace_back(iFirst);
-            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? iSecond : (iFirst + 1));
-            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? (iFirst + 1) : iSecond);
-
-            oCustomPrimitive.Indices.emplace_back(iSecond);
-            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? (iSecond + 1) : (iFirst + 1));
-            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? (iFirst + 1) : (iSecond + 1));
-          }
-        }
-      };
-
-      // Top semi-sphere
-      int iCacheStartIdx = static_cast<int>(oCustomPrimitive.PrimitiveData.size());
-      oCalcSemiSphereFunc();
-      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.PrimitiveData.size()); ++iIdx)
-      {
-        oCustomPrimitive.PrimitiveData[iIdx].VertexPos.y += (fDiff >= 0 ? fDiff : 0.0f);
-      }
-      // Compute top semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx) :
-        oCalcWireIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx);
-
-      // Body
-      if (fDiff >= 0.0f)
-      {
-        const int s_iMaxBodySubdv = _eRenderMode == render::ERenderMode::SOLID ? _iSubvH : 1;
-        iCacheStartIdx = static_cast<int>(oCustomPrimitive.PrimitiveData.size());
-        for (int iX = 0; iX <= s_iMaxBodySubdv; ++iX)
-        {
-          float fY = math::Lerp(-fHalfHeight + _fRadius, fHalfHeight - _fRadius, static_cast<float>(iX) / s_iMaxBodySubdv);
-          for (int iJ = 0; iJ <= _iSubvV; ++iJ)
-          {
-            float fTheta = (static_cast<float>(iJ) / _iSubvV) * (static_cast<float>(math::s_fPI * 2.0f));
-            float fX = _fRadius * cosf(fTheta);
-            float fZ = _fRadius * sinf(fTheta);
-
-            render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
-            rPrimitiveData.VertexPos = math::CVector3(fX, fY, fZ);
-            oCustomPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
-          }
-        }
-        // Compute body indices
-        _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx, true) :
-          oCalcWireIndicesFunc(s_iMaxBodySubdv, _iSubvV, iCacheStartIdx);
+        // Middle vertex
+        render::gfx::TPrimitiveData rPrimitiveData;
+        rPrimitiveData.VertexPos = math::CVector3(0.0f, 0.0f, 0.0f);
+        rCustomData.PrimitiveData.emplace_back(rPrimitiveData);
       }
 
-      // Bottom semi-sphere
-      iCacheStartIdx = static_cast<int>(oCustomPrimitive.PrimitiveData.size());
-      oCalcSemiSphereFunc(true);
-      for (int iIdx = iCacheStartIdx; iIdx < static_cast<int>(oCustomPrimitive.PrimitiveData.size()); ++iIdx)
+      for (uint32_t uX = 0; uX <= _uSegments; ++uX)
       {
-        oCustomPrimitive.PrimitiveData[iIdx].VertexPos.y -= (fDiff >= 0 ? fDiff : 0.0f);
+        float fTheta = static_cast<float>(uX) / static_cast<float>(_uSegments) * (-math::s_fPI * 2.0f);
+        float fX = _fRadius * cosf(fTheta);
+        float fY = _fRadius * sinf(fTheta);
+
+        render::gfx::TPrimitiveData rPrimitiveData;
+        rPrimitiveData.VertexPos = math::CVector3(fX, fY, 0.0f);
+        rCustomData.PrimitiveData.emplace_back(rPrimitiveData);
       }
 
-      // Compute bottom semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx, true) :
-        oCalcWireIndicesFunc(_iSubvH, _iSubvV, iCacheStartIdx);
+      switch (_eRenderMode)
+      {
+        case render::ERenderMode::SOLID: rCustomData.Indices = GetCircleIndices(_uSegments); break;
+        case render::ERenderMode::WIREFRAME: rCustomData.Indices = GetWireframeCircleIndices(_uSegments); break;
+        default: break;
+      }
 
-      return oCustomPrimitive;
+      return rCustomData;
     }
 
+    // ------------------------------------
+    gfx::TCustomPrimitive CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest)
+    {
+      // Create primitive
+      gfx::TCustomPrimitive oPrimitive = gfx::TCustomPrimitive();
+
+      // Fill data 
+      render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
+      rPrimitiveData.VertexPos = _v3Origin;
+
+      uint32_t uIndex = 0;
+      oPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
+      oPrimitive.Indices.emplace_back(uIndex++);
+
+      // Fill data 
+      rPrimitiveData.VertexPos = _v3Dest;
+      oPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
+      oPrimitive.Indices.emplace_back(uIndex);
+
+      return oPrimitive;
+    }
     // ------------------------------------
     gfx::TCustomPrimitive CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode)
     {
@@ -418,25 +259,243 @@ namespace render
     }
 
     // ------------------------------------
-    gfx::TCustomPrimitive CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest)
+    gfx::TCustomPrimitive CPrimitiveUtils::CreateCapsule
+    (
+      float _fRadius,
+      float _fHeight,
+      uint32_t _uSubvH,
+      uint32_t _uSubvV,
+      render::ERenderMode _eRenderMode
+    )
     {
-      // Create primitive
-      gfx::TCustomPrimitive oPrimitive = gfx::TCustomPrimitive();
+      // Create primitve
+      gfx::TCustomPrimitive oCustomPrimitive = gfx::TCustomPrimitive();
 
-      // Fill data 
-      render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
-      rPrimitiveData.VertexPos = _v3Origin;
+      // Calculate values
+      float fHalfHeight = _fHeight * 0.5f;
+      float fDiff = fHalfHeight - _fRadius;
 
-      uint32_t uIndex = 0;
-      oPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
-      oPrimitive.Indices.emplace_back(uIndex++);
+      // Semi sphere lambda
+      auto oCalcSemiSphereFunc = [&](bool _bInverse = false)
+      {
+        for (uint32_t uX = 0; uX <= _uSubvH; ++uX)
+        {
+          float fPhi = static_cast<float>(uX) / static_cast<float>(_uSubvH) * static_cast<float>(math::s_fHalfPI);
+          for (uint32_t uJ = 0; uJ <= _uSubvV; ++uJ)
+          {
+            // Conversion
+            float fTheta = (static_cast<float>(uJ) / static_cast<float>(_uSubvV)) * (static_cast<float>(math::s_fPI * 2.0f));
+            float fX = _fRadius * sinf(fPhi) * cosf(fTheta);
+            float fY = _fRadius * cosf(fPhi);
+            float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
 
-      // Fill data 
-      rPrimitiveData.VertexPos = _v3Dest;
-      oPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
-      oPrimitive.Indices.emplace_back(uIndex);
+            if (_bInverse)
+            {
+              fY = -fY;
+            }
 
-      return oPrimitive;
+            // Add vertex
+            render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
+            rPrimitiveData.VertexPos = math::CVector3(fX, fY, fZ);
+            oCustomPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
+          }
+        }
+      };
+
+      // Generate indices lambda in wireframe mode
+      auto oCalcWireIndicesFunc = [&](uint32_t _uStacks, uint32_t _uSlices, int _iBeginIdx)
+      {
+        for (uint32_t uX = 0; uX < _uStacks; ++uX)
+        {
+          for (uint32_t uJ = 0; uJ < _uSlices; ++uJ)
+          {
+            uint32_t uCurrent = _iBeginIdx + (uX * (_uSlices + 1)) + uJ;
+            uint32_t uNext = uCurrent + 1;
+            uint32_t uAbove = uCurrent + (_uSlices + 1);
+
+            oCustomPrimitive.Indices.emplace_back(uCurrent);
+            oCustomPrimitive.Indices.emplace_back(uNext);
+
+            oCustomPrimitive.Indices.emplace_back(uCurrent);
+            oCustomPrimitive.Indices.emplace_back(uAbove);
+          }
+        }
+      };
+
+      // Generate indices lambda in lit mode
+      auto oCalcIndicesFunc = [&](uint32_t _uStacks, uint32_t _uSlices, uint32_t _uBeginIdx, bool _bInverseCCW = false)
+      {
+        for (uint32_t uX = 0; uX < _uStacks; ++uX)
+        {
+          for (uint32_t uJ = 0; uJ < _uSlices; ++uJ)
+          {
+            uint32_t uFirst = _uBeginIdx + (uX * (_uSlices + 1)) + uJ;
+            uint32_t uSecond = uFirst + _uSlices + 1;
+
+            oCustomPrimitive.Indices.emplace_back(uFirst);
+            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? uSecond : (uFirst + 1));
+            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? (uFirst + 1) : uSecond);
+
+            oCustomPrimitive.Indices.emplace_back(uSecond);
+            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? (uSecond + 1) : (uFirst + 1));
+            oCustomPrimitive.Indices.emplace_back(_bInverseCCW ? (uFirst + 1) : (uSecond + 1));
+          }
+        }
+      };
+
+      // Top semi-sphere
+      uint32_t uBeginIdx = static_cast<uint32_t>(oCustomPrimitive.PrimitiveData.size());
+      oCalcSemiSphereFunc();
+      for (uint32_t uIdx = uBeginIdx; uIdx < static_cast<uint32_t>(oCustomPrimitive.PrimitiveData.size()); ++uIdx)
+      {
+        oCustomPrimitive.PrimitiveData[uIdx].VertexPos.y += (fDiff >= 0 ? fDiff : 0.0f);
+      }
+      // Compute top semi-sphere indices
+      _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(_uSubvH, _uSubvV, uBeginIdx) :
+        oCalcWireIndicesFunc(_uSubvH, _uSubvV, uBeginIdx);
+
+      // Body
+      if (fDiff >= 0.0f)
+      {
+        const uint32_t s_uMaxSubdv = _eRenderMode == render::ERenderMode::SOLID ? _uSubvH : 1;
+        uBeginIdx = static_cast<uint32_t>(oCustomPrimitive.PrimitiveData.size());
+        for (uint32_t uX = 0; uX <= s_uMaxSubdv; ++uX)
+        {
+          float fY = math::Lerp((-fHalfHeight + _fRadius), (fHalfHeight - _fRadius), static_cast<float>(uX) / s_uMaxSubdv);
+          for (uint32_t uJ = 0; uJ <= _uSubvV; ++uJ)
+          {
+            float fTheta = (static_cast<float>(uJ) / _uSubvV) * (static_cast<float>(math::s_fPI * 2.0f));
+            float fX = _fRadius * cosf(fTheta);
+            float fZ = _fRadius * sinf(fTheta);
+
+            render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
+            rPrimitiveData.VertexPos = math::CVector3(fX, fY, fZ);
+            oCustomPrimitive.PrimitiveData.emplace_back(rPrimitiveData);
+          }
+        }
+        // Compute body indices
+        _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(s_uMaxSubdv, _uSubvV, uBeginIdx, true) :
+          oCalcWireIndicesFunc(s_uMaxSubdv, _uSubvV, uBeginIdx);
+      }
+
+      // Bottom semi-sphere
+      uBeginIdx = static_cast<int>(oCustomPrimitive.PrimitiveData.size());
+      oCalcSemiSphereFunc(true);
+      for (int iIdx = uBeginIdx; iIdx < static_cast<int>(oCustomPrimitive.PrimitiveData.size()); ++iIdx)
+      {
+        oCustomPrimitive.PrimitiveData[iIdx].VertexPos.y -= (fDiff >= 0 ? fDiff : 0.0f);
+      }
+
+      // Compute bottom semi-sphere indices
+      _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(_uSubvH, _uSubvV, uBeginIdx, true) :
+        oCalcWireIndicesFunc(_uSubvH, _uSubvV, uBeginIdx);
+
+      return oCustomPrimitive;
+    }
+
+    // ------------------------------------
+    void CPrimitiveUtils::CreateSphere
+    (
+      float _fRadius, uint32_t _uStacks, uint32_t _uSlices,
+      std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData_
+    )
+    {
+      // Clear
+      _lstPrimitiveData_.clear();
+
+      // Generate vertex data
+      for (uint32_t uX = 0; uX <= _uStacks; ++uX)
+      {
+        float fPhi = static_cast<float>(uX) / static_cast<float>(_uStacks) * static_cast<float>(math::s_fPI);
+        for (uint32_t uJ = 0; uJ <= _uSlices; ++uJ)
+        {
+          // Conversion
+          float fTheta = static_cast<float>(uJ) / static_cast<float>(_uSlices) * static_cast<float>(math::s_fPI * 2.0f);
+          float fX = _fRadius * sinf(fPhi) * cosf(fTheta);
+          float fY = _fRadius * cosf(fPhi);
+          float fZ = _fRadius * sinf(fPhi) * sinf(fTheta);
+
+          // Add vertex
+          render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
+          rPrimitiveData.VertexPos = math::CVector3(fX, fY, fZ);
+          _lstPrimitiveData_.emplace_back(rPrimitiveData);
+        }
+      }
+    }
+
+    // ------------------------------------
+    std::vector<uint32_t> CPrimitiveUtils::GetSphereIndices(uint32_t _uStacks, uint32_t _uSlices)
+    {
+      std::vector<uint32_t> lstIndices = std::vector<uint32_t>();
+      for (uint32_t uI = 0; uI < _uStacks; ++uI)
+      {
+        for (uint32_t uJ = 0; uJ < _uSlices; ++uJ)
+        {
+          uint32_t uFirst = (uI * (_uSlices + 1)) + uJ;
+          uint32_t uSecond = uFirst + _uSlices + 1;
+
+          lstIndices.emplace_back(uFirst);
+          lstIndices.emplace_back(uSecond);
+          lstIndices.emplace_back(uFirst + 1);
+
+          lstIndices.emplace_back(uSecond);
+          lstIndices.emplace_back(uSecond + 1);
+          lstIndices.emplace_back(uFirst + 1);
+        }
+      }
+      return lstIndices;
+    }
+
+    // ------------------------------------
+    std::vector<uint32_t> CPrimitiveUtils::GetWireframeSphereIndices(uint32_t _uStacks, uint32_t _uSlices)
+    {
+      std::vector<uint32_t> lstWireframeIndices = std::vector<uint32_t>();
+      for (uint32_t uI = 0; uI < _uStacks; ++uI)
+      {
+        for (uint32_t uJ = 0; uJ < _uSlices; ++uJ)
+        {
+          uint32_t uCurrent = (uI * (_uSlices + 1)) + uJ;
+          uint32_t uNext = uCurrent + 1;
+          uint32_t uAbove = uCurrent + _uSlices + 1;
+
+          if (uJ < _uSlices)
+          {
+            lstWireframeIndices.emplace_back(uCurrent);
+            lstWireframeIndices.emplace_back(uNext);
+          }
+          if (uI < _uStacks)
+          {
+            lstWireframeIndices.emplace_back(uCurrent);
+            lstWireframeIndices.emplace_back(uAbove);
+          }
+        }
+      }
+      return lstWireframeIndices;
+    }
+
+    // ------------------------------------
+    std::vector<uint32_t> CPrimitiveUtils::GetCircleIndices(uint32_t _uSegments)
+    {
+      std::vector<uint32_t> lstIndices = std::vector<uint32_t>();
+      for (uint32_t uX = 1; uX <= _uSegments; ++uX)
+      {
+        lstIndices.push_back(0);
+        lstIndices.push_back(uX);
+        lstIndices.push_back(uX + 1);
+      }
+      return lstIndices;
+    }
+
+    // ------------------------------------
+    std::vector<uint32_t> CPrimitiveUtils::GetWireframeCircleIndices(uint32_t _uSegments)
+    {
+      std::vector<uint32_t> lstIndices = std::vector<uint32_t>();
+      for (uint32_t uX = 0; uX < _uSegments; ++uX)
+      {
+        lstIndices.push_back(uX);
+        lstIndices.push_back(uX + 1);
+      }
+      return lstIndices;
     }
   }
 }

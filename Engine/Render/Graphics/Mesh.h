@@ -37,7 +37,6 @@ namespace render
 
     private:
       std::unique_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
-
     };
   }
 }

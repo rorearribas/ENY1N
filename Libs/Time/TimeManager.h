@@ -8,37 +8,30 @@ namespace chrono
   class CTimeManager : public utils::CSingleton<CTimeManager>
   {
   public:
-    CTimeManager(int _iMaxFPS = 60);
+    CTimeManager(int32_t _iTargetFramerate = 60);
     ~CTimeManager() {}
 
     void BeginFrame();
     void EndFrame();
-    bool IsStopped() const;
 
-    float GetFixedDelta() const;
+    inline int32_t GetTargetFramerate() const { return m_iTargetFramerate; }
+    void SetTargetFramerate(int32_t _iFramerate);
+
+    inline float GetDeltaTime() const { return m_fDeltaTime; }
+    inline float GetFixedDelta() const { return m_fFixedDelta; }
     float GetMaxFixedDelta() const;
-    float GetDeltaTime() const;
-
-    void SetMaxFPS(int _iMaxFPS);
-    int GetMaxFPS() const { return m_iMaxFPS; }
-
-    void Reset();
-    void Start();
-    void Stop();
 
   private:
-    int m_iMaxFPS = 60;
-    bool m_bStopped = false;
-
+    int32_t m_iTargetFramerate = 60;
     float m_fFixedDelta = 1.0f / 60.0f;
     float m_fDeltaTime = 0.0f;
 
+  private:
     __int64 m_llBaseTime;
     __int64 m_llPausedTime;
     __int64 m_llStopTime;
     __int64 m_llTargetTick;
 
-    LARGE_INTEGER m_llTicksPerFrame;
     LARGE_INTEGER m_llPrevTime;
     LARGE_INTEGER m_llCurrentTickCount;
 

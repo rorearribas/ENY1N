@@ -109,13 +109,13 @@ namespace render
   // Primitive types
   enum class EPrimitive : uint32_t
   {
-    E2D_SQUARE,
-    E2D_CIRCLE,
-    E2D_TRIANGLE,
-    E3D_PLANE,
     E3D_CUBE,
     E3D_SPHERE,
     E3D_CAPSULE,
+    E3D_PLANE,
+    E2D_SQUARE,
+    E2D_CIRCLE,
+    E2D_TRIANGLE,
     CUSTOM,
     INVALID
   };

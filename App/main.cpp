@@ -72,7 +72,7 @@ int main()
 
   // Time manager
   chrono::CTimeManager* pTimeManager = chrono::CTimeManager::CreateSingleton();
-  pTimeManager->SetMaxFPS(144);
+  pTimeManager->SetTargetFramerate(144);
 
   // Create resource manager
   CResourceManager::CreateSingleton();
@@ -137,11 +137,6 @@ int main()
   render::CRender* const pRender = pEngine->GetRender();
   render::CCamera* const pCamera = pEngine->GetCamera();
   pRender->ShowRenderWindow(true);
-
-  //// Test
-  //math::CVector3 v3Dir = math::CMatrix4x4::CreateRotation(pAirplane->GetRot()) * math::CVector3::Up;
-  //math::CVector3 v3Offset = (v3Dir * 10.0f * fFixedDelta);
-  //pAirplane->SetPos(pAirplane->GetPos() + v3Offset);
 
   float m_fFixedDeltaAccumulator = 0.0f;
   MSG oMsg = { 0 };

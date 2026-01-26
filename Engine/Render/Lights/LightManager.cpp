@@ -44,7 +44,7 @@ namespace render
       {
         if (render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex])
         {
-          rLightingBuffer.PointLights[uIndex].Position = pPointLight->GetPosition();
+          rLightingBuffer.PointLights[uIndex].Position = pPointLight->GetPos();
           rLightingBuffer.PointLights[uIndex].Color = pPointLight->GetColor();
           rLightingBuffer.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
           rLightingBuffer.PointLights[uIndex].Range = pPointLight->GetRange();
@@ -58,7 +58,7 @@ namespace render
       {
         if (render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex])
         {
-          rLightingBuffer.SpotLights[uIndex].Position = pSpotLight->GetPosition();
+          rLightingBuffer.SpotLights[uIndex].Position = pSpotLight->GetPos();
           rLightingBuffer.SpotLights[uIndex].Direction = pSpotLight->GetDir();
           rLightingBuffer.SpotLights[uIndex].Color = pSpotLight->GetColor();
           rLightingBuffer.SpotLights[uIndex].Range = pSpotLight->GetRange();

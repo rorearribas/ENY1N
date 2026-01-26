@@ -257,7 +257,7 @@ namespace scene
         }
 
         bool bOnFrustum = true;
-        if (pInstance->IsCullingEnabled()) // Check culling
+        if (pInstance->IsCullEnabled()) // Check culling
         {
           bOnFrustum = _pCamera->IsOnFrustum(pInstance->GetWorldAABB());
         }

@@ -95,7 +95,7 @@ namespace game
         pPointLight->SetIntensity(fIntensity);
 
         // Draw debug
-        engine::CEngine::GetInstance()->DrawSphere(pPointLight->GetPosition(), fRange, 12, 12, v3Color, render::ERenderMode::WIREFRAME);
+        engine::CEngine::GetInstance()->DrawSphere(pPointLight->GetPos(), fRange, 12, 12, v3Color, render::ERenderMode::WIREFRAME);
       }
       break;
       case render::ELight::SPOT_LIGHT:
@@ -127,8 +127,8 @@ namespace game
         pSpotLight->SetIntensity(fIntensity);
 
         // Draw debug
-        engine::CEngine::GetInstance()->DrawCube(pSpotLight->GetPosition(), math::CVector3::Zero, math::CVector3::One, v3Color, render::ERenderMode::WIREFRAME);
-        engine::CEngine::GetInstance()->DrawLine(pSpotLight->GetPosition(), pSpotLight->GetPosition() + (v3Dir * fRange), v3Color);
+        engine::CEngine::GetInstance()->DrawCube(pSpotLight->GetPos(), math::CVector3::Zero, math::CVector3::One, v3Color, render::ERenderMode::WIREFRAME);
+        engine::CEngine::GetInstance()->DrawLine(pSpotLight->GetPos(), pSpotLight->GetPos() + (v3Dir * fRange), v3Color);
       }
       break;
     default:
@@ -154,13 +154,13 @@ namespace game
   {
     if (m_pLight)
     {
-      m_pLight->SetPosition(_v3Position);
+      m_pLight->SetPos(_v3Position);
     }
   }
   // ------------------------------------
   math::CVector3 CLightComponent::GetPosition() const
   {
-    return m_pLight->GetPosition();
+    return m_pLight->GetPos();
   }
   // ------------------------------------
   void CLightComponent::SetDirection(const math::CVector3& _v3Dir)

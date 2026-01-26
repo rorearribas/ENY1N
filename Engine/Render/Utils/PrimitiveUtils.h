@@ -12,6 +12,7 @@ namespace render
     public:
       // Primitive data
       static const std::vector<render::gfx::TPrimitiveData> s_oTrianglePrimitive;
+      static const std::vector<render::gfx::TPrimitiveData> s_oSquarePrimitive;
       static const std::vector<render::gfx::TPrimitiveData> s_oCubePrimitive;
       static const std::vector<render::gfx::TPrimitiveData> s_oPlanePrimitive;
 
@@ -32,7 +33,7 @@ namespace render
       static const std::vector<uint32_t> s_oWireframePlaneIndices;
 
       // 2D Circle
-      static gfx::TCustomPrimitive Create2DCircle(float _fRadius, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
+      static gfx::TCustomPrimitive CreateCircle(float _fRadius, uint32_t _uSegments, render::ERenderMode _eRenderMode);
 
       // 3D Line
       static gfx::TCustomPrimitive CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest);
@@ -41,12 +42,16 @@ namespace render
       static gfx::TCustomPrimitive CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode);
 
       // 3D Capsule
-      static gfx::TCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, int _iStacks, int _iSlices, render::ERenderMode _eRenderMode);
+      static gfx::TCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, uint32_t _uStacks, uint32_t _iulices, render::ERenderMode _eRenderMode);
 
       // 3D Sphere
-      static void CreateSphere(float _fRadius, int _iStacks, int _iSlices, std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData_);
-      static std::vector<uint32_t> GetSphereIndices(int _iStacks, int _iSlices);
-      static std::vector<uint32_t> GetWireframeSphereIndices(int _iStacks, int _iSlices);
+      static void CreateSphere(float _fRadius, uint32_t _iStacks, uint32_t _uSlices, std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData_);
+
+      static std::vector<uint32_t> GetSphereIndices(uint32_t _uSegments, uint32_t _uSlices);
+      static std::vector<uint32_t> GetWireframeSphereIndices(uint32_t _uStacks, uint32_t _uSlices);
+
+      static std::vector<uint32_t> GetCircleIndices(uint32_t _uSegments);
+      static std::vector<uint32_t> GetWireframeCircleIndices(uint32_t _uSegments);
     };
 
   }

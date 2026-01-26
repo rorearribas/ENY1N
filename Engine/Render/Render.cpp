@@ -765,7 +765,7 @@ namespace render
       // Set constant buffer (instancing info)
       internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
 
-      // Draw models (i should separate this into 2 stages: models and instances)
+      // Draw models
       _pScene->DrawModels();
 
       // Remove render targets
