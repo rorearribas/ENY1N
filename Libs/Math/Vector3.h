@@ -41,8 +41,8 @@ namespace math
     inline CVector3 operator-() const { return CVector3(-x, -y, -z); }
     inline CVector3 operator+() const { return CVector3(+x, +y, +z); }
 
-    inline bool operator<(const CVector3& _other) const { return this->Dot(*this) < _other.Dot(_other); }
-    bool operator!=(const CVector3& other) const { return !(*this == other); }
+    inline bool operator<(const CVector3& _v3) const { return this->Dot(*this) < _v3.Dot(_v3); }
+    bool operator!=(const CVector3& _v3) const { return !(*this == _v3); }
     bool operator==(const CVector3& _v3) const;
 
     float operator[] (uint32_t _uIndex) const;

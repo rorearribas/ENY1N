@@ -41,13 +41,10 @@ namespace math
     inline CVector2 operator-() const { return CVector2(-x, -y); }
     inline CVector2 operator+() const { return CVector2(+x, +y); }
 
-    inline bool operator<(const CVector2& _other) const { return x < _other.x&& y < _other.y; }
-    inline bool operator==(const CVector2& _v2) const
-    {
-      constexpr float EPSILON = 1e-5f;
-      return std::fabs(x - _v2.x) < EPSILON && std::fabs(y - _v2.y) < EPSILON;
-    }
-    bool operator!=(const CVector2& other) const { return !(*this == other); }
+    inline bool operator>(const CVector2& _v2) const { return x > _v2.x && y >_v2.y; }
+    inline bool operator<(const CVector2& _v2) const { return x < _v2.x && y < _v2.y; }
+    bool operator==(const CVector2& _v2) const;
+    bool operator!=(const CVector2& _v2) const { return !(*this == _v2); }
 
     float DotProduct(const CVector2& _v2) const;
     static float DotProduct(const CVector2& _vA, const CVector2& _vB);

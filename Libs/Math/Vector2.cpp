@@ -1,12 +1,13 @@
 #include "Vector2.h"
-#include <cmath>
 #include "Math.h"
 
 namespace math
 {
+  // Static values
   math::CVector2 CVector2::Zero(0.0f, 0.0f);
   math::CVector2 CVector2::Right(1.0f, 0.0f);
   math::CVector2 CVector2::Up(0.0f, 1.0f);
+
   // ------------------------------------
   float CVector2::DotProduct(const CVector2& _v2) const
   {
@@ -53,6 +54,11 @@ namespace math
     math::CVector2 v2Normalized = _v2;
     v2Normalized.Normalize();
     return v2Normalized;
+  }
+  // ------------------------------------
+  bool CVector2::operator==(const CVector2& _v2) const
+  {
+    return std::fabs(x - _v2.x) < math::s_fEpsilon5 && std::fabs(y - _v2.y) < math::s_fEpsilon5;
   }
 }
 

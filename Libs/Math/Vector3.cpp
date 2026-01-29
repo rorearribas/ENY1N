@@ -29,7 +29,7 @@ namespace math
   // ------------------------------------
   math::CVector3 CVector3::Normalize(const CVector3& _v3)
   {
-    CVector3 v3Normalized = _v3;
+    math::CVector3 v3Normalized = _v3;
     v3Normalized.Normalize();
     return v3Normalized;
   }
@@ -73,7 +73,7 @@ namespace math
   // ------------------------------------
   float CVector3::Distance(const CVector3& _v3Dest, const CVector3& _v3Origin)
   {
-    math::CVector3 v3Substract = _v3Dest - _v3Origin;
+    math::CVector3 v3Substract = (_v3Dest - _v3Origin);
     return v3Substract.Magnitude();
   }
   // ------------------------------------
@@ -84,7 +84,7 @@ namespace math
   // ------------------------------------
   float CVector3::SqrDist(const CVector3& _v3Dest, const CVector3& _v3Origin)
   {
-    math::CVector3 v3Substract = _v3Dest - _v3Origin;
+    math::CVector3 v3Substract = (_v3Dest - _v3Origin);
     return v3Substract.GetSqrDist();
   }
   // ------------------------------------
