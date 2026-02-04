@@ -30,7 +30,7 @@ namespace engine
 
     // Create render
     m_pRender = new render::CRender(_uWidth, _uHeight);
-    m_pRender->SetCamera(m_pCamera);
+    m_pRender->SetRenderCamera(m_pCamera);
 
     // Create scene manager
     m_pSceneManager = new scene::CSceneManager();

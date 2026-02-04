@@ -7,6 +7,9 @@
 class CResourceManager : public utils::CSingleton<CResourceManager>
 {
 public:
+  static std::string s_sRelativeTexturesPath;
+
+public:
   CResourceManager() {}
   ~CResourceManager() {}
 
@@ -15,15 +18,7 @@ public:
   [[nodiscard]] std::unique_ptr<render::gfx::CModel> LoadModel(const char* _sPath);
 
 private:
-  void RegisterTexture
-  (
-    std::unique_ptr<render::mat::CMaterial>& pMaterial,
-    render::ETexture _eType,
-    const std::filesystem::path& _oBasePath,
-    const std::string& _sTextureID
-  );
-
-private:
+  void RegisterTexture(std::unique_ptr<render::mat::CMaterial>& _pMaterial_, render::ETexture _eType, const std::filesystem::path& _sPath);
   std::unordered_map<std::string, render::texture::TSharedTexture> m_lstCachedTextures;
 };
 

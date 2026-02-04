@@ -8,10 +8,7 @@ namespace render
     class CSpotLight : public CLight
     {
     public:
-      static math::CVector3 s_vDefaultDirection;
-
-    public:
-      CSpotLight() : CLight(ELight::SPOT_LIGHT) { SetDir(s_vDefaultDirection); }
+      CSpotLight();
       virtual ~CSpotLight() {}
 
       // Intensity

@@ -20,11 +20,21 @@ namespace render
       void SetColor(const math::CVector3& _v3Color);
       inline const math::CVector3& GetColor() const { return m_v3Color; }
 
+      // Shadows
+      void SetCastShadows(bool _bEnabled);
+      inline bool CastShadows() { return m_bCastShadows; }
+      void SetStaticShadows(bool _bEnabled);
+      inline bool StaticShadows() { return m_bStaticShadows; }
+
     private:
       // Properties
       math::CVector3 m_v3Pos = math::CVector3::Zero;
       math::CVector3 m_v3Dir = math::CVector3::Zero;
       math::CVector3 m_v3Color = math::CVector3::One;
+      
+      // Shadows
+      bool m_bCastShadows = false;
+      bool m_bStaticShadows = false;
 
       // Type
       ELight m_eLightType = ELight::INVALID;

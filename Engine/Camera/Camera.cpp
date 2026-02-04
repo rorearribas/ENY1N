@@ -20,11 +20,6 @@ namespace render
   // ------------------------------------
   void CCamera::Update(float _fDeltaTime)
   {
-    // Keyboard movement
-    math::CMatrix4x4 nRot = math::CMatrix4x4::CreateRotation(m_v3Rot);
-    math::CVector3 v3Forward = nRot * math::CVector3::Forward;
-    math::CVector3 v3Right = nRot * math::CVector3::Right;
-
     // Show cursor
     input::CInputManager* pInputManager = input::CInputManager::GetInstance();
     input::CMouse* pMouse = pInputManager->GetMouse();
@@ -35,6 +30,10 @@ namespace render
     // Movement + rotation
     if (bRightButtonPressed)
     {
+      math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(m_v3Rot);
+      math::CVector3 v3Forward = mRot * math::CVector3::Forward;
+      math::CVector3 v3Right = mRot * math::CVector3::Right;
+
       bool bPespectiveMode = GetProjectionMode() == EProjectionMode::PERSPECTIVE;
       math::CVector3 v3HorizontalDir = bPespectiveMode ? v3Forward : math::CVector3::Up;
 
@@ -59,22 +58,27 @@ namespace render
     {
       float fMouseDelta = pMouse->GetMouseWheelDelta();
       fMouseDelta = math::Clamp(fMouseDelta, -internal_camera::s_fMaxWheelDelta, internal_camera::s_fMaxWheelDelta);
-      if (GetProjectionMode() == EProjectionMode::PERSPECTIVE)
+      if (GetProjectionMode() == EProjectionMode::ORTOGRAPHIC)
       {
-        AddDisplacement(fMouseDelta != 0 ? v3Forward * (fMouseDelta * m_fMovementVelocity) * _fDeltaTime : math::CVector3::Zero);
-      }
-      else
-      {
-        m_fZoomScale += fMouseDelta * _fDeltaTime;
-        m_fZoomScale = math::Clamp(m_fZoomScale, math::s_fEpsilon7, FLT_MAX);
+        ApplyOrtographicZoom(fMouseDelta, _fDeltaTime);
       }
     }
 
-    //@Note i should change this!!
-    UpdateProjectionMatrix(GetProjectionMode());
+    // Update
+    if (m_bHasBeenUpdated)
+    {
+      // Update view matrix
+      UpdateViewMatrix(m_eProjectionMode);
 
-    // Update frustum
-    BuildFrustumPlanes();
+      // Update projection matrix
+      UpdateProjectionMatrix(GetProjectionMode());
+
+      // Update frustum
+      BuildFrustumPlanes();
+    }
+
+    // Restore state
+    m_bHasBeenUpdated = false;
   }
   // ------------------------------------
   bool CCamera::IsOnFrustum(const collision::CAABB& _oBoundingBox) const
@@ -104,6 +108,39 @@ namespace render
     return true;
   }
   // ------------------------------------
+  void CCamera::SetPos(const math::CVector3& _v3Pos)
+  {
+    m_v3Pos = _v3Pos;
+    m_bHasBeenUpdated = true;
+  }
+  // ------------------------------------
+  void CCamera::SetRot(const math::CVector3& _v3Rot)
+  {
+    m_v3Rot = _v3Rot;
+    m_bHasBeenUpdated = true;
+  }
+  // ------------------------------------
+  void CCamera::SetFov(float _fFov)
+  {
+    // Set value
+    m_fFov = _fFov;
+    m_bHasBeenUpdated = true;
+  }
+  // ------------------------------------
+  void CCamera::SetFar(float _fFar)
+  {
+    // Set value
+    m_fFar = _fFar;
+    m_bHasBeenUpdated = true;
+  }
+  // ------------------------------------
+  void CCamera::SetNear(float _fNear)
+  {
+    // Set value
+    m_fNear = _fNear;
+    m_bHasBeenUpdated = true;
+  }
+  // ------------------------------------
   void CCamera::SetProjectionMode(EProjectionMode _eProjectionMode)
   {
     // Reset values
@@ -111,14 +148,11 @@ namespace render
     m_v3Dir = math::CVector3::Forward;
     m_v3Pos.z = 0.0f;
 
-    // Update projection matrix
-    UpdateProjectionMatrix(_eProjectionMode);
-
-    // Update view matrix
-    UpdateViewMatrix(_eProjectionMode);
-
     // Set projection mode
     m_eProjectionMode = _eProjectionMode;
+
+    // Mark as updated
+    m_bHasBeenUpdated = true;
   }
   // ------------------------------------
   void CCamera::LookAt(const math::CVector3& _v3LookAt)
@@ -142,13 +176,21 @@ namespace render
   void CCamera::AddDisplacement(const math::CVector3& _v3Delta)
   {
     m_v3Pos += _v3Delta;
-    UpdateViewMatrix(m_eProjectionMode);
+    m_bHasBeenUpdated = true;
   }
   // ------------------------------------
   void CCamera::AddRotation(const math::CVector3& _v3DeltaRot)
   {
     m_v3Rot += _v3DeltaRot;
-    UpdateViewMatrix(m_eProjectionMode);
+    m_bHasBeenUpdated = true;
+  }
+  // ------------------------------------
+  void CCamera::ApplyOrtographicZoom(float fMouseDelta, float _fDeltaTime)
+  {
+    // Update projection matrix
+    m_fZoomScale += fMouseDelta * _fDeltaTime;
+    m_fZoomScale = math::Clamp(m_fZoomScale, math::s_fEpsilon7, FLT_MAX);
+    m_bHasBeenUpdated = true;
   }
   // ------------------------------------
   void CCamera::UpdateProjectionMatrix(EProjectionMode _eProjectionMode)
@@ -198,29 +240,50 @@ namespace render
   void CCamera::DrawDebug()
   {
     ImGui::Begin("CAMERA");
-    const math::CVector3& v3Position = GetPos();
-    float camera_pos[3] = { v3Position.x, v3Position.y, v3Position.z };
-    ImGui::InputFloat3("Position", camera_pos);
-    SetPos(math::CVector3(camera_pos[0], camera_pos[1], camera_pos[2]));
 
-    const math::CVector3& v3Rot = GetRot();
-    float camera_rot[3] = { v3Rot.x, v3Rot.y, v3Rot.z };
-    ImGui::InputFloat3("Rotation", camera_rot);
-    SetRot(math::CVector3(camera_rot[0], camera_rot[1], camera_rot[2]));
+    const math::CVector3& v3CurrentPos = GetPos();
+    float fPos[3] = { v3CurrentPos.x, v3CurrentPos.y, v3CurrentPos.z };
+    ImGui::InputFloat3("Position", fPos);
+    {
+      math::CVector3 v3TargetPos(fPos[0], fPos[1], fPos[2]);
+      if (v3TargetPos != v3CurrentPos)
+      {
+        SetPos(v3TargetPos);
+      }
+    }
 
-    const math::CVector3& v3Dir = GetDir();
-    float camera_dir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
-    ImGui::InputFloat3("Direction", camera_dir);
+    const math::CVector3& v3CurrentRot = GetRot();
+    float fRot[3] = { v3CurrentRot.x, v3CurrentRot.y, v3CurrentRot.z };
+    ImGui::InputFloat3("Rotation", fRot);
+    {
+      math::CVector3 v3TargetRot(fRot[0], fRot[1], fRot[2]);
+      if (v3TargetRot != v3CurrentRot)
+      {
+        SetRot(v3TargetRot);
+      }
+    }
+
+    const math::CVector3& v3CurrentDir = GetDir();
+    float fDir[3] = { v3CurrentDir.x, v3CurrentDir.y, v3CurrentDir.z };
+    ImGui::BeginDisabled();
+    ImGui::InputFloat3("Direction", fDir);
+    ImGui::EndDisabled();
 
     ImGui::Separator();
-    float fFov = GetFov();
-    ImGui::InputFloat("FOV", &fFov);
-    SetFov(fFov);
+    float fTargetFov = GetFov();
+    ImGui::InputFloat("FOV", &fTargetFov);
+    if (fTargetFov != GetFov())
+    {
+      SetFov(fTargetFov);
+    }
 
     ImGui::Separator();
-    float fVel = GetMovementVel();
-    ImGui::InputFloat("Velocity", &fVel);
-    SetMovementVel(fVel);
+    float fTargetVel = GetMovementVel();
+    ImGui::InputFloat("Velocity", &fTargetVel);
+    if (fTargetVel != GetMovementVel())
+    {
+      SetMovementVel(fTargetVel);
+    }
 
     if (ImGui::Button("Perspective Mode"))
     {
@@ -230,6 +293,7 @@ namespace render
     {
       SetProjectionMode(render::EProjectionMode::ORTOGRAPHIC);
     }
+
     ImGui::End();
   }
   // ------------------------------------

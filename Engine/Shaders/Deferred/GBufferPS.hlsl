@@ -6,12 +6,20 @@ Texture2D tNormal     : register(t1);
 Texture2D tSpecular   : register(t2);
 SamplerState tSampler : register(s0);
 
-cbuffer TexturesData : register(b0)
+cbuffer TMaterialData : register(b0)
+{
+  float3 DiffuseColor;
+  int Padding2;
+  float3 SpecularColor;
+  int Padding3;
+};
+
+cbuffer TexturesData : register(b1)
 {
   int HasDiffuse;
   int HasNormal;
   int HasSpecular;
-  int Padding2;
+  int Padding4;
 };
 
 struct GBuffer
@@ -31,11 +39,15 @@ GBuffer DeferredPSMain(PS_INPUT input)
   GBuffer gBuffer;
   {
     // Set diffuse
-    gBuffer.DiffuseRT = HasDiffuse ? tDiffuse.Sample(tSampler, input.uv) : float4(1.0f, 0.0f, 0.0f, 1.0f);
+    float4 fDiffuseColor = float4(DiffuseColor, 1.0f);
+    gBuffer.DiffuseRT = HasDiffuse ? tDiffuse.Sample(tSampler, input.uv) * fDiffuseColor : fDiffuseColor;
+
     // Set normal
     gBuffer.NormalRT = HasNormal ? float4(unpack_normal(tNormal.Sample(tSampler, input.uv).xyz), 1.0f) : float4(input.normal, 1.0f);
+
     // Set specular
-    gBuffer.SpecularRT = HasSpecular ? tSpecular.Sample(tSampler, input.uv) : float4(0.0f, 0.0f, 0.0f, 0.0f);
+    float4 fSpecularColor = float4(SpecularColor, 1.0f);
+    gBuffer.SpecularRT = HasSpecular ? tSpecular.Sample(tSampler, input.uv) * fSpecularColor : fSpecularColor;
   }
   return gBuffer;
 }

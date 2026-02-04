@@ -41,9 +41,9 @@ namespace scene
   {
     // Check preload model
     utils::CWeakPtr<render::gfx::CModel> wpModel;
-    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetSize(); uIndex++)
+    for (uint32_t uI = 0; uI < m_lstModels.GetSize(); uI++)
     {
-      utils::CWeakPtr<render::gfx::CModel> wpCurrentModel = m_lstModels[uIndex];
+      utils::CWeakPtr<render::gfx::CModel> wpCurrentModel = m_lstModels[uI];
       bool bPreloaded = wpCurrentModel->AllowInstancing() && (wpCurrentModel->GetAssetPath() == _sModelPath);
       if (bPreloaded)
       {
@@ -224,16 +224,16 @@ namespace scene
   void CScene::CacheModels(const render::CCamera* _pCamera)
   {
     // Draw
-    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetMaxSize(); uIndex++)
+    for (uint32_t uI = 0; uI < m_lstModels.GetMaxSize(); uI++)
     {
-      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uIndex];
+      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
       if (!pModel.IsValid())
       {
         continue;
       }
 
       // Handle model
-      TCachedModel& rCachedModel = m_lstCachedModels[uIndex];
+      TCachedModel& rCachedModel = m_lstCachedModels[uI];
       rCachedModel.Visible = pModel->IsVisible();
       if (rCachedModel.Visible)
       {
@@ -248,9 +248,9 @@ namespace scene
       // Handle instances
       rCachedModel.InstanceCount = 0;
       render::gfx::TInstances& lstInstances = pModel->GetInstances();
-      for (uint32_t uI = 0; uI < lstInstances.GetMaxSize(); uI++)
+      for (uint32_t uJ = 0; uJ < lstInstances.GetMaxSize(); uJ++)
       {
-        render::gfx::CRenderInstance* pInstance = lstInstances[uI];
+        render::gfx::CRenderInstance* pInstance = lstInstances[uJ];
         if (!pInstance || !pInstance->IsVisible())
         {
           continue;
@@ -277,16 +277,17 @@ namespace scene
   void CScene::DrawModels()
   {
     // Draw
-    for (uint32_t uIndex = 0; uIndex < m_lstModels.GetMaxSize(); uIndex++)
+    render::CRender* pRender = engine::CEngine::GetInstance()->GetRender();
+    for (uint32_t uI = 0; uI < m_lstModels.GetMaxSize(); uI++)
     {
-      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uIndex];
+      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
       if (!pModel.IsValid())
       {
         continue;
       }
 
       // Handle model
-      const TCachedModel& rCachedModel = m_lstCachedModels[uIndex];
+      const TCachedModel& rCachedModel = m_lstCachedModels[uI];
       if (rCachedModel.Visible)
       {
         pModel->Draw();
@@ -295,16 +296,10 @@ namespace scene
       // Handle instances
       if (rCachedModel.InstanceCount > 0)
       {
-        engine::CEngine* pEngine = engine::CEngine::GetInstance();
-        render::CRender* pRender = pEngine->GetRender();
         // Push mode
         pRender->SetInstancingMode(true);
         // Draw instances
-        pModel->DrawInstances
-        (
-          rCachedModel.DrawableInstances,
-          rCachedModel.InstanceCount
-        );
+        pModel->DrawInstances(rCachedModel.DrawableInstances, rCachedModel.InstanceCount);
         // Disabled mode
         pRender->SetInstancingMode(false);
       }
@@ -314,9 +309,9 @@ namespace scene
   void CScene::DrawPrimitives(const render::CCamera* _pCamera)
   {
     // Draw primitives
-    for (uint32_t uIndex = 0; uIndex < m_lstPrimitives.GetSize(); uIndex++)
+    for (uint32_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
     {
-      render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uIndex];
+      render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uI];
       if (!pPrimitive->IsVisible())
       {
         continue;

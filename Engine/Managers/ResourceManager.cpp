@@ -12,6 +12,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+std::string CResourceManager::s_sRelativeTexturesPath("/textures");
+
 // ------------------------------------
 char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
 {
@@ -47,8 +49,10 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
 
   // Read file
   LOG("Loading model -> " << _sPath);
-  int32_t iFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals | aiProcess_ImproveCacheLocality | aiProcess_OptimizeMeshes;
-  const aiScene* pScene = rImporter.ReadFile(_sPath, iFlags);
+
+  uint32_t uFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals 
+  | aiProcess_ImproveCacheLocality | aiProcess_OptimizeMeshes;
+  const aiScene* pScene = rImporter.ReadFile(_sPath, uFlags);
   if (!pScene)
   {
     ERROR_LOG("Error loading model! " << rImporter.GetErrorString());
@@ -100,13 +104,17 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
 
     // Load textures @Note: We only allow one texture per stage!
     using fs = std::filesystem::path;
+    fs sParent = fs(_sPath).parent_path();
+
     for (uint32_t uI = 0; uI < render::s_uTextureCount; uI++)
     {
       aiString sPath;
       aiTextureType eTextureType = (aiTextureType)(uI);
       if (pAssimpMat->GetTexture(eTextureType, 0, &sPath) == aiReturn_SUCCESS)
       {
-        RegisterTexture(pMaterial, (render::ETexture)(uI), fs(_sPath).parent_path(), sPath.C_Str());
+        std::string sFilename = fs(sPath.C_Str()).filename().string();
+        fs sTargetPath = sParent.string() + s_sRelativeTexturesPath + "//" + sFilename;
+        RegisterTexture(pMaterial, (render::ETexture)(uI), sTargetPath);
       }
     }
 
@@ -201,41 +209,34 @@ unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, in
   return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture2D<>::s_uChannels);
 }
 // ------------------------------------
-void CResourceManager::RegisterTexture
-(
-  std::unique_ptr<render::mat::CMaterial>& pMaterial,
-  render::ETexture _eType,
-  const std::filesystem::path& _oBasePath,
-  const std::string& _sTextureID
-)
+void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& _pMaterial_, render::ETexture _eType, const std::filesystem::path& _sPath)
 {
   using fs = std::filesystem::path;
-  fs sPath = _oBasePath / fs(_sTextureID);
-  if (sPath.has_filename() && std::filesystem::exists(sPath))
+  if (_sPath.has_filename() && std::filesystem::exists(_sPath))
   {
     LOG("Loading texture...");
     using namespace render::texture;
-    std::string sTexture = sPath.filename().stem().string();
+    std::string sTexture = _sPath.filename().stem().string();
 
     auto it = m_lstCachedTextures.find(sTexture);
     if (it != m_lstCachedTextures.end())
     {
-      pMaterial->SetTexture(it->second, _eType);
-      SUCCESS_LOG("Texture preloaded! -> " << sPath.filename());
+      _pMaterial_->SetTexture(it->second, _eType);
+      SUCCESS_LOG("Texture preloaded! -> " << _sPath.filename());
       return;
     }
 
     int iWidth = 0, iHeight = 0, iChannels = 0;
-    unsigned char* pBuffer = LoadImage(sPath.string().c_str(), iWidth, iHeight, iChannels);
+    unsigned char* pBuffer = LoadImage(_sPath.string().c_str(), iWidth, iHeight, iChannels);
 #ifdef _DEBUG
     assert(pBuffer);
 #endif // DEBUG
-    SUCCESS_LOG("Texture loaded! -> " << sPath.filename());
+    SUCCESS_LOG("Texture loaded! -> " << _sPath.filename());
 
     // Create texture
     m_lstCachedTextures.emplace(sTexture, std::make_shared<TShaderResource2D>());
     render::texture::TSharedTexture pTexture = m_lstCachedTextures.at(sTexture);
-    pMaterial->SetTexture(pTexture, _eType);
+    _pMaterial_->SetTexture(pTexture, _eType);
 
     // Set texture config
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();

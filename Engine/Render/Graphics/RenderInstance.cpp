@@ -51,7 +51,7 @@ namespace render
       }
     }
     // ------------------------------------
-    void CRenderInstance::SetCullingEnabled(bool _bCull)
+    void CRenderInstance::SetCullEnabled(bool _bCull)
     {
       // Set state
       if (m_bCullEnabled != _bCull)

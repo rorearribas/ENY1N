@@ -82,6 +82,7 @@ namespace render
 
       // Constant buffers
       CConstantBuffer<TTransforms> tTransformsBuffer;
+      CConstantBuffer<TMaterialInfo> tMaterialInfoBuffer;
       CConstantBuffer<TTextureInfo> tTexturesInfoBuffer;
       CConstantBuffer<TInstancingMode> tInstancingModeBuffer;
 
@@ -111,13 +112,13 @@ namespace render
 
       // Forward
       shader::CShader<EShader::E_VERTEX>* pSimpleVS = nullptr;
-      shader::CShader<EShader::E_PIXEL>*  pSimplePS = nullptr;
+      shader::CShader<EShader::E_PIXEL>* pSimplePS = nullptr;
 
       // Deferred
       shader::CShader<EShader::E_VERTEX>* pStandardVS = nullptr;
       shader::CShader<EShader::E_VERTEX>* pDrawTriangle = nullptr;
-      shader::CShader<EShader::E_PIXEL>*  pGBufferDeferred = nullptr;
-      shader::CShader<EShader::E_PIXEL>*  pDeferredLights = nullptr;
+      shader::CShader<EShader::E_PIXEL>* pGBufferDeferred = nullptr;
+      shader::CShader<EShader::E_PIXEL>* pDeferredLights = nullptr;
     };
 
     static TRenderPipeline s_oPipeline;
@@ -149,6 +150,7 @@ namespace render
 
     // Clear constant buffer
     internal::s_oPipeline.tTransformsBuffer.Clear();
+    internal::s_oPipeline.tMaterialInfoBuffer.Clear();
     internal::s_oPipeline.tTexturesInfoBuffer.Clear();
     internal::s_oPipeline.tInstancingModeBuffer.Clear();
 
@@ -232,9 +234,9 @@ namespace render
     // Create standard layout
     hResult = global::dx::s_pDevice->CreateInputLayout
     (
-      internal::s_tStandardLayout, 
+      internal::s_tStandardLayout,
       internal::s_iStandardLayoutSize,
-      g_StandardVS, 
+      g_StandardVS,
       sizeof(g_StandardVS),
       &internal::s_oPipeline.pStandardLayout
     );
@@ -287,6 +289,15 @@ namespace render
       }
       internal::s_oPipeline.tTransformsBuffer.SetSlot(0); // hlsl
     }
+    // Material info buffer
+    {
+      HRESULT hResult = internal::s_oPipeline.tMaterialInfoBuffer.Init();
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+      internal::s_oPipeline.tMaterialInfoBuffer.SetSlot(0); // hlsl
+    }
     // Textures info buffer
     {
       HRESULT hResult = internal::s_oPipeline.tTexturesInfoBuffer.Init();
@@ -294,7 +305,7 @@ namespace render
       {
         return hResult;
       }
-      internal::s_oPipeline.tTexturesInfoBuffer.SetSlot(0); // hlsl
+      internal::s_oPipeline.tTexturesInfoBuffer.SetSlot(1); // hlsl
     }
     // Instancing buffer
     {
@@ -644,6 +655,143 @@ namespace render
     return global::dx::s_pDevice->CreateBlendState(&oBlendDesc, &internal::s_oPipeline.pBlendState);
   }
   // ------------------------------------
+  void CRender::ComputeZPrepass(scene::CScene* _pScene)
+  {
+    // Calculate projection and invert projection
+    TTransforms& rTransform = internal::s_oPipeline.tTransformsBuffer.GetData();
+#ifdef _DEBUG
+    assert(m_pCamera);
+#endif
+    math::CMatrix4x4 mViewProjection = m_pCamera->GetViewProjection();
+    rTransform.ViewProjection = mViewProjection;
+    rTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
+
+    // Set near + far
+    rTransform.FarPlane = m_pCamera->GetFar();
+    rTransform.NearPlane = m_pCamera->GetNear();
+
+    // Write
+    bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer();
+    UNUSED_VAR(bOk);
+#ifdef _DEBUG
+    assert(bOk);
+#endif
+    // Bind buffer
+    internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>();
+
+    // Push invalid RT
+    ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.pDepthStencil->GetView();
+    global::dx::s_pDeviceContext->OMSetRenderTargets(0, nullptr, pDepthStencilView);
+    // Set input layout
+    global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pStandardLayout);
+    // Set depth stencil state for zprepass
+    global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pZPrepassStencilState, 1);
+
+    // Detach simple pixel shader
+    internal::s_oPipeline.pSimplePS->DetachShader();
+    // Attach simple vertex shader
+    internal::s_oPipeline.pStandardVS->AttachShader();
+    // Set constant buffer (instancing info)
+    internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
+
+    // Cache models
+    _pScene->CacheModels(m_pCamera);
+
+    // Draw z-prepass
+    _pScene->DrawModels();
+
+    // Copy depth texture!
+    ID3D11Texture2D* pTexture = internal::s_oPipeline.pDepthStencil->GetData();
+    internal::s_oPipeline.pDepthTexture->CopyTexture(pTexture);
+  }
+  // ------------------------------------
+  void CRender::DrawModels(scene::CScene* _pScene)
+  {
+    // Set GBuffer RTVs
+    static constexpr uint32_t uRenderTargets(3);
+    ID3D11RenderTargetView* lstGBufferRTV[uRenderTargets] =
+    {
+      *(internal::s_oPipeline.pDiffuseRT),
+      *(internal::s_oPipeline.pNormalRT),
+      *(internal::s_oPipeline.pSpecularRT)
+    };
+    // Set render targets
+    ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.pDepthStencil->GetView();
+    global::dx::s_pDeviceContext->OMSetRenderTargets(uRenderTargets, lstGBufferRTV, pDepthStencilView);
+    // Set depth stencil state
+    global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDeferredStencilState, 1);
+
+    // Set linear sampler(read textures)
+    global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oPipeline.pLinearSampler);
+    // Attach g-buffer(pixel shader)
+    internal::s_oPipeline.pGBufferDeferred->AttachShader();
+
+    // Set constant buffer (texture info + material info)
+    internal::s_oPipeline.tMaterialInfoBuffer.Bind<render::EShader::E_PIXEL>();
+    internal::s_oPipeline.tTexturesInfoBuffer.Bind<render::EShader::E_PIXEL>();
+
+    // Set constant buffer (instancing info)
+    internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
+
+    // Draw models
+    _pScene->DrawModels();
+
+    // Remove render targets
+    ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };
+    global::dx::s_pDeviceContext->OMSetRenderTargets(uRenderTargets, lstEmptyRTs, nullptr);
+  }
+  // ------------------------------------
+  void CRender::DrawPrimitives(scene::CScene* _pScene)
+  {
+    // Set input layout
+    global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pDebugLayout);
+    // Set depth stencil state
+    global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDebugStencilState, 1);
+
+    // Attach shaders
+    internal::s_oPipeline.pSimpleVS->AttachShader();
+    internal::s_oPipeline.pSimplePS->AttachShader();
+
+    // Draw primitives
+    _pScene->DrawPrimitives(m_pCamera);
+  }
+  // ------------------------------------
+  void CRender::DrawGBuffer()
+  {
+    // Attach triangle shader (vertex shader)
+    internal::s_oPipeline.pDrawTriangle->AttachShader();
+    // Attach calculate lights shader(pixel shader)
+    internal::s_oPipeline.pDeferredLights->AttachShader();
+
+    // Set transform constant
+    internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>();
+
+    static constexpr uint32_t uTexturesSize(4);
+    ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
+    {
+      internal::s_oPipeline.pDepthTexture->GetView(),
+      internal::s_oPipeline.pDiffuseRT->GetSRV(),
+      internal::s_oPipeline.pNormalRT->GetSRV(),
+      internal::s_oPipeline.pSpecularRT->GetSRV()
+    };
+    // Bind buffers
+    global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, &lstGBufferSRV[0]);
+
+    // Attach back buffer
+    ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.pDepthStencil->GetView();
+    global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oPipeline.pBackBuffer, pDepthStencilView);
+
+    // Draw triangle as fake quad!
+    global::dx::s_pDeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+    global::dx::s_pDeviceContext->IASetInputLayout(nullptr);
+    global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    global::dx::s_pDeviceContext->Draw(3, 0);
+
+    // Set invalid shaders
+    ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize] = { nullptr, nullptr, nullptr, nullptr };
+    global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, lstEmptyTextures);
+  }
+  // ------------------------------------
   void CRender::ConfigureViewport(uint32_t _uX, uint32_t _uY)
   {
     if (global::dx::s_pDeviceContext && m_pRenderWindow)
@@ -689,139 +837,27 @@ namespace render
   {
     BeginMarker(internal::s_sZPrepassMrk);
     {
-      // Set constant transform
-      if (m_pCamera)
-      {
-        // Calculate projection and invert projection
-        TTransforms& rTransform = internal::s_oPipeline.tTransformsBuffer.GetData();
-        math::CMatrix4x4 mViewProjection = m_pCamera->GetViewProjection();
-        rTransform.ViewProjection = mViewProjection;
-        rTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
-
-        // Set near + far
-        rTransform.FarPlane = m_pCamera->GetFar();
-        rTransform.NearPlane = m_pCamera->GetNear();
-
-        // Write
-        bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer();
-        UNUSED_VAR(bOk);
-#ifdef _DEBUG
-        assert(bOk);
-#endif
-        // Bind buffer
-        internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>();
-      }
-
-      // Push invalid RT
-      ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.pDepthStencil->GetView();
-      global::dx::s_pDeviceContext->OMSetRenderTargets(0, nullptr, pDepthStencilView);
-      // Set input layout
-      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pStandardLayout);
-      // Set depth stencil state for zprepass
-      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pZPrepassStencilState, 1);
-
-      // Detach simple pixel shader
-      internal::s_oPipeline.pSimplePS->DetachShader();
-      // Attach simple vertex shader
-      internal::s_oPipeline.pStandardVS->AttachShader();
-      // Set constant buffer (instancing info)
-      internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
-
-      // Cache models
-      _pScene->CacheModels(m_pCamera);
-      // Draw z-prepass
-      _pScene->DrawModels();
-
-      // Copy depth texture!
-      ID3D11Texture2D* pTexture = internal::s_oPipeline.pDepthStencil->GetData();
-      internal::s_oPipeline.pDepthTexture->CopyTexture(pTexture);
+      ComputeZPrepass(_pScene);
     }
     EndMarker();
 
     // Draw models
     BeginMarker(internal::s_sDrawModelsMrk);
     {
-      // Set GBuffer RTVs
-      static constexpr uint32_t uRenderTargets(3);
-      ID3D11RenderTargetView* lstGBufferRTV[uRenderTargets] =
-      {
-        *(internal::s_oPipeline.pDiffuseRT),
-        *(internal::s_oPipeline.pNormalRT),
-        *(internal::s_oPipeline.pSpecularRT)
-      };
-      // Set render targets
-      ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.pDepthStencil->GetView();
-      global::dx::s_pDeviceContext->OMSetRenderTargets(uRenderTargets, lstGBufferRTV, pDepthStencilView);
-      // Set depth stencil state
-      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDeferredStencilState, 1);
-
-      // Set linear sampler(read textures)
-      global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oPipeline.pLinearSampler);
-      // Attach g-buffer(pixel shader)
-      internal::s_oPipeline.pGBufferDeferred->AttachShader();
-
-      // Set constant buffer (texture info)
-      internal::s_oPipeline.tTexturesInfoBuffer.Bind<render::EShader::E_PIXEL>();
-      // Set constant buffer (instancing info)
-      internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
-
-      // Draw models
-      _pScene->DrawModels();
-
-      // Remove render targets
-      ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };
-      global::dx::s_pDeviceContext->OMSetRenderTargets(uRenderTargets, lstEmptyRTs, nullptr);
-      // Attach triangle shader (vertex shader)
-      internal::s_oPipeline.pDrawTriangle->AttachShader();
-      // Attach calculate lights shader(pixel shader)
-      internal::s_oPipeline.pDeferredLights->AttachShader();
-
-      // Set transform constant
-      internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>();
+      DrawModels(_pScene);
 
       // Apply lighting
       _pScene->ApplyLighting();
 
-      // GBuffer list
-      static constexpr uint32_t uTexturesSize(4);
-      ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
-      {
-        internal::s_oPipeline.pDepthTexture->GetView(),
-        internal::s_oPipeline.pDiffuseRT->GetSRV(),
-        internal::s_oPipeline.pNormalRT->GetSRV(),
-        internal::s_oPipeline.pSpecularRT->GetSRV()
-      };
-      // Bind buffers
-      global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, &lstGBufferSRV[0]);
-
-      // Attach back buffer
-      global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oPipeline.pBackBuffer, pDepthStencilView);
-      // Draw triangle as fake quad!
-      global::dx::s_pDeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-      global::dx::s_pDeviceContext->IASetInputLayout(nullptr);
-      global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-      global::dx::s_pDeviceContext->Draw(3, 0);
-
-      // Set invalid shaders
-      ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize] = { nullptr, nullptr, nullptr, nullptr };
-      global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, lstEmptyTextures);
+      // Draw GBuffer
+      DrawGBuffer();
     }
     EndMarker();
 
     // Draw primitives (forward rendering)
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
-      // Set input layout
-      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pDebugLayout);
-      // Set depth stencil state
-      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDebugStencilState, 1);
-
-      // Attach shaders
-      internal::s_oPipeline.pSimpleVS->AttachShader();
-      internal::s_oPipeline.pSimplePS->AttachShader();
-
-      // Draw primitives
-      _pScene->DrawPrimitives(m_pCamera);
+      DrawPrimitives(_pScene);
     }
     EndMarker();
 
@@ -842,18 +878,29 @@ namespace render
     internal::s_oPipeline.pSwapChain->Present(m_bVerticalSync, uFlags);
   }
   // ------------------------------------
-  void CRender::SetTexturesInfo(bool _bDiffuse, bool _bNormal, bool _bSpecular)
+  void CRender::SetMaterialInfo(const std::unique_ptr<render::mat::CMaterial>& _pMaterial)
   {
-    // Set instancing mode
-    TTextureInfo& rTexturesData = internal::s_oPipeline.tTexturesInfoBuffer.GetData();
-    rTexturesData.HasDiffuse = static_cast<int>(_bDiffuse);
-    rTexturesData.HasNormal = static_cast<int>(_bNormal);
-    rTexturesData.HasSpecular = static_cast<int>(_bSpecular);
-    bool bOk = internal::s_oPipeline.tTexturesInfoBuffer.WriteBuffer();
-    UNUSED_VAR(bOk);
+    if (_pMaterial)
+    {
+      // Set material data
+      TMaterialInfo& rMaterialInfo = internal::s_oPipeline.tMaterialInfoBuffer.GetData();
+      rMaterialInfo.DiffuseColor = _pMaterial->GetDiffuseColor();
+      rMaterialInfo.SpecularColor = _pMaterial->GetSpecularColor();
+      bool bOk = internal::s_oPipeline.tMaterialInfoBuffer.WriteBuffer();
 #ifdef _DEBUG
-    assert(bOk);
+      assert(bOk);
 #endif // DEBUG
+
+      // Set texture data
+      TTextureInfo& rTexturesData = internal::s_oPipeline.tTexturesInfoBuffer.GetData();
+      rTexturesData.HasDiffuse = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::DIFFUSE));
+      rTexturesData.HasNormal = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::NORMAL));
+      rTexturesData.HasSpecular = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::SPECULAR));
+      bOk = internal::s_oPipeline.tTexturesInfoBuffer.WriteBuffer();
+#ifdef _DEBUG
+      assert(bOk);
+#endif // DEBUG
+    }
   }
   // ------------------------------------
   void CRender::SetModelMatrix(const math::CMatrix4x4& _mModel)

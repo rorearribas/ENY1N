@@ -34,14 +34,15 @@ namespace render
 
       void SetCullEnabled(bool _bCull);
       inline const bool IsCullEnabled() const { return m_bCullingEnabled; }
+
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool IsVisible() const { return m_bVisible; }
 
-      void SetRenderMode(ERenderMode _eRenderMode);
-      inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
-
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
+
+      void SetRenderMode(ERenderMode _eRenderMode);
+      inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
       inline const EPrimitive& GetPrimitiveType() const { return m_ePrimitiveType; }
 
     private:

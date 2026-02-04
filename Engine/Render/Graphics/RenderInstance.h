@@ -27,7 +27,7 @@ namespace render
       void SetScl(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScl() const { return m_oTransform.GetScl(); }
 
-      void SetCullingEnabled(bool _bCull);
+      void SetCullEnabled(bool _bCull);
       inline const bool IsCullEnabled() const { return m_bCullEnabled; }
 
       inline const math::CTransform& GetTransform() const { return m_oTransform; }

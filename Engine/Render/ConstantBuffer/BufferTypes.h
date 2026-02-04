@@ -20,7 +20,7 @@ static constexpr uint32_t s_uAlign = 16;
 | matrix NxM      | N×16 bytes     |
 */
 
-// Matrix
+// Transforms [208 Bytes]
 struct __declspec(align(s_uAlign)) TTransforms
 {
   // Transforms
@@ -34,23 +34,35 @@ struct __declspec(align(s_uAlign)) TTransforms
   float Padding[2];
 };
 
-// Textures data
+// Material info [32 Bytes]
+struct __declspec(align(s_uAlign)) TMaterialInfo
+{
+  // 12 + 4 Bytes
+  math::CVector3 DiffuseColor;
+  float Padding0;
+  // 12 + 4 Bytes
+  math::CVector3 SpecularColor;
+  float Padding1;
+};
+
+// Textures data [16 Bytes]
 struct __declspec(align(s_uAlign)) TTextureInfo
 {
+  // 4 * 4 Bytes
   int HasDiffuse;
   int HasNormal;
   int HasSpecular;
   int Padding;
 };
 
-// Instancing mode
+// Instancing mode [16 Bytes]
 struct __declspec(align(s_uAlign)) TInstancingMode
 {
   bool IsInstanceMode = false;
   float Padding[3];
 };
 
-// Directional lights
+// Directional lights [32 Bytes]
 struct __declspec(align(s_uAlign)) TDirectionalLight
 {
   // 12 + 4 Bytes
@@ -60,7 +72,8 @@ struct __declspec(align(s_uAlign)) TDirectionalLight
   math::CVector3 Color;
   float Intensity;
 };
-// Point lights
+
+// Point lights [48 Bytes]
 struct __declspec(align(s_uAlign)) TPointLight
 {
   // 12 + 4 Bytes
@@ -69,13 +82,12 @@ struct __declspec(align(s_uAlign)) TPointLight
   // 12 + 4 Bytes
   math::CVector3 Color;
   float Padding1;
-  // 12 + 4 Bytes
+  // 4 + 4 + 8 Bytes
   float Range;
   float Intensity;
-  // 12 + 4 Bytes
   float Padding[2];
 };
-// Spot lights
+// Spot lights [64 Bytes]
 struct __declspec(align(s_uAlign)) TSpotLight
 {
   // 12 + 4 Bytes

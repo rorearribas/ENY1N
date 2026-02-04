@@ -99,7 +99,7 @@ namespace game
     if (m_wpModel.IsValid() && bIsInstance)
     {
       render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      rInstances[m_uInstanceID]->SetCullingEnabled(_bCull);
+      rInstances[m_uInstanceID]->SetCullEnabled(_bCull);
     }
   }
   // ------------------------------------

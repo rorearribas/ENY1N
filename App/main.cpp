@@ -66,7 +66,7 @@ int main()
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);
-  pEngine->GetCamera()->SetPos(math::CVector3(0.0f, 5.0f, -10.0f));
+  pEngine->GetCamera()->SetPos(math::CVector3(0.0f, 10.0f, -10.0f));
 
   global::mem::s_oMemoryTracker.PrintStats();
 
@@ -97,24 +97,25 @@ int main()
     "models/plant/Low-Poly Plant_.fbx"
   };
 
+  float fOffsetZ = 0.0f;
   for (uint32_t uIndex = 0; uIndex < 50; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-10.0f, 10.0f)));
-
+    pModelEnt->SetPos(math::CVector3(0.0f, 10.0f, fOffsetZ));
     //const std::string& sModel = /*GenerateString(vAvailableModels*/);
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-    pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
+    pModelTest->LoadModel("models/spaceship/spaceship.fbx");
     pModelEnt->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
+    fOffsetZ += 10;
   }
 
-  // OBJ test
-  game::CEntity* pAirplane = pGameManager->CreateEntity("Airplane");
-  pAirplane->SetPos(math::CVector3(0.0f, 5.0f, 0.0f));
-  game::CModelComponent* pModelTest2 = pAirplane->RegisterComponent<game::CModelComponent>();
-  pModelTest2->LoadModel("models/airplane/11805_airplane_v2_L2.obj");
-  pAirplane->SetRot(math::CVector3(80.756f, -165.377f, 20.861f));
-  pAirplane->SetScl(math::CVector3(0.01f, 0.01f, 0.01f));
+  // Manhattan test
+  game::CEntity* pManhattan = pGameManager->CreateEntity("City");
+  pManhattan->SetPos(math::CVector3(0.0f, 1.0f, 0.0f));
+  game::CModelComponent* pModelTest2 = pManhattan->RegisterComponent<game::CModelComponent>();
+  pModelTest2->LoadModel("models/manhattan/manhattan.fbx");
+  pManhattan->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
+  pManhattan->SetScl(math::CVector3(0.05f, 0.05f, 0.05f));
 
   // Create plane
   game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");

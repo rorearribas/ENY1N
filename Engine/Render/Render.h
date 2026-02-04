@@ -3,6 +3,7 @@
 #include "Engine/Camera/Camera.h"
 #include "Engine/Shaders/Shader.h"
 
+namespace render { namespace mat { class CMaterial; } }
 namespace scene { class CScene; }
 
 namespace render
@@ -20,17 +21,17 @@ namespace render
     void Draw(scene::CScene* _pScene);
 
     inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
-    inline void SetCamera(const render::CCamera* _pCamera) { m_pCamera = _pCamera; }
-
-    void SetTexturesInfo(bool _bDiffuse, bool _bNormal, bool _bSpecular);
-    void SetModelMatrix(const math::CMatrix4x4& _mModel);
-    void SetInstancingMode(bool _bEnabled);
+    inline void SetRenderCamera(render::CCamera* _pCamera) { m_pCamera = _pCamera; }
 
     inline void ShowRenderWindow(bool _bStatus) { m_pRenderWindow->SetEnabled(_bStatus); }
     void SetFillMode(D3D11_FILL_MODE _eFillMode);
 
     inline void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
     inline bool IsVSyncEnabled() const { return m_bVerticalSync; }
+
+    void SetMaterialInfo(const std::unique_ptr<render::mat::CMaterial>& _pMaterial);
+    void SetModelMatrix(const math::CMatrix4x4& _mModel);
+    void SetInstancingMode(bool _bEnabled);
 
   private:
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);
@@ -58,8 +59,15 @@ namespace render
     void EndMarker() const;
 
   private:
+    // Deferred
+    void ComputeZPrepass(scene::CScene* _pScene);
+    void DrawModels(scene::CScene* _pScene);
+    void DrawPrimitives(scene::CScene* _pScene);
+    void DrawGBuffer();
+
+  private:
     render::CRenderWindow* m_pRenderWindow = nullptr;
-    const render::CCamera* m_pCamera = nullptr;
+    render::CCamera* m_pCamera = nullptr;
     bool m_bVerticalSync = false;
   };
 }

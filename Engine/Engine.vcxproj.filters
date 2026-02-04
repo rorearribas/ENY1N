@@ -129,6 +129,12 @@
     <ClInclude Include="Render\ConstantBuffer\BufferTypes.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Graphics\Decal.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Graphics\ShadowMap.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -225,6 +231,12 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Graphics\RenderInstance.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Graphics\Decal.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Graphics\ShadowMap.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

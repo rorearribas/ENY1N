@@ -32,18 +32,18 @@ namespace render
     math::CMatrix4x4 GetViewProjection() const { return m_mProjection * m_mViewMatrix; }
 
     inline const math::CVector3& GetDir() const { return m_v3Dir; }
-    inline void SetPos(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; UpdateViewMatrix(GetProjectionMode()); }
+    void SetPos(const math::CVector3& _v3Pos);
     const math::CVector3& GetPos() const { return m_v3Pos; }
-    inline void SetRot(const math::CVector3& _v3Rot) { m_v3Rot = _v3Rot; UpdateViewMatrix(GetProjectionMode()); }
+    void SetRot(const math::CVector3& _v3Rot);
     inline const math::CVector3& GetRot() const { return m_v3Rot; }
 
     inline void SetMovementVel(float _fVelocity) { m_fMovementVelocity = _fVelocity; }
     inline float GetMovementVel() const { return m_fMovementVelocity; }
-    inline void SetFov(float _fFov) { m_fFov = _fFov; }
+    void SetFov(float _fFov);
     inline float GetFov() const { return m_fFov; }
-    inline void SetFar(float _fFar) { m_fFar = _fFar; }
+    void SetFar(float _fFar);
     inline float GetFar() const { return m_fFar; }
-    inline void SetNear(float _fNear) { m_fNear = _fNear; }
+    void SetNear(float _fNear);
     inline float GetNear() const { return m_fNear; }
 
     void SetProjectionMode(EProjectionMode _eProjectionMode);
@@ -60,6 +60,7 @@ namespace render
     void LookAt(const math::CVector3& _v3LookAtPos);
     void AddDisplacement(const math::CVector3& _v3Delta);
     void AddRotation(const math::CVector3& _v3Delta);
+    void ApplyOrtographicZoom(float fMouseDelta, float _fDeltaTime);
 
     void UpdateProjectionMatrix(EProjectionMode _eProjectionMode);
     void UpdateViewMatrix(EProjectionMode _eProjectionMode);
@@ -71,9 +72,9 @@ namespace render
     math::CMatrix4x4 m_mViewMatrix = math::CMatrix4x4::Identity;
     math::CMatrix4x4 m_mProjection = math::CMatrix4x4::Identity;
 
-    math::CVector3 m_v3Dir = math::CVector3::Zero;
     math::CVector3 m_v3Pos = math::CVector3::Zero;
     math::CVector3 m_v3Rot = math::CVector3::Zero;
+    math::CVector3 m_v3Dir = math::CVector3::Zero;
 
     float m_fCamVelocity = 1.0f;
     float m_fMovementVelocity = 50.0f;
@@ -87,6 +88,7 @@ namespace render
 
     math::CPlane m_oPlanes[s_uFrustumPlanes];
     EProjectionMode m_eProjectionMode = EProjectionMode::PERSPECTIVE;
+    bool m_bHasBeenUpdated = false;
   };
 }
 
