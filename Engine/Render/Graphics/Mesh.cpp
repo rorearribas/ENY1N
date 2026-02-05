@@ -28,20 +28,22 @@ namespace render
     {
       if (m_pMaterial)
       {
-        // Get textures
-        texture::TSharedTexture pDiffuse = m_pMaterial->GetTexture(render::ETexture::DIFFUSE);
-        texture::TSharedTexture pNormal = m_pMaterial->GetTexture(render::ETexture::NORMAL);
-        texture::TSharedTexture pSpecular = m_pMaterial->GetTexture(render::ETexture::SPECULAR);
+        // Set textures
+        const uint32_t uTexturesSize(3);
+        ID3D11ShaderResourceView* lstTextures[uTexturesSize];
 
-        // Texture list
-        ID3D11ShaderResourceView* lstTextures[3] =
-        {
-          pDiffuse ? pDiffuse->GetView() : nullptr,
-          pNormal ? pNormal->GetView() : nullptr,
-          pSpecular ? pSpecular->GetView() : nullptr,
-        };
+        // Diffuse
+        texture::TSharedTexture pDiffuse = m_pMaterial->GetTexture(render::ETexture::DIFFUSE);
+        lstTextures[0] = pDiffuse ? pDiffuse->GetView() : nullptr;
+        // Normal
+        texture::TSharedTexture pNormal = m_pMaterial->GetTexture(render::ETexture::NORMAL);
+        lstTextures[1] = pNormal ? pNormal->GetView() : nullptr;
+        // Specular
+        texture::TSharedTexture pSpecular = m_pMaterial->GetTexture(render::ETexture::SPECULAR);
+        lstTextures[2] = pSpecular ? pSpecular->GetView() : nullptr;
+
         // Bind shaders
-        global::dx::s_pDeviceContext->PSSetShaderResources(0, ARRAYSIZE(lstTextures), lstTextures);
+        global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, lstTextures);
 
         // Set material info
         engine::CEngine* pEngine = engine::CEngine::GetInstance();
@@ -53,8 +55,14 @@ namespace render
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
       // Draw mesh
-      (_uInstanceCount > 0) ? global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndexCount, _uInstanceCount, 0, 0, 0) : 
-      global::dx::s_pDeviceContext->DrawIndexed(m_uIndexCount, 0, 0);
+      if (_uInstanceCount > 0)
+      {
+        global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndexCount, _uInstanceCount, 0, 0, 0);
+      }
+      else
+      {
+        global::dx::s_pDeviceContext->DrawIndexed(m_uIndexCount, 0, 0);
+      }
     }
     // ------------------------------------
     HRESULT CMesh::CreateBuffer(const TIndices& _lstIndices)

@@ -48,11 +48,6 @@ namespace render
       {
         rMesh->Draw();
       }
-
-      // Unbind buffers
-      ID3D11Buffer* pRemoveBuffers[uBuffersCount] = { nullptr, nullptr };
-      global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pRemoveBuffers, lstStrides, lstOffsets);
-      global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
     }
     // ------------------------------------
     void CModel::DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount)
@@ -99,11 +94,6 @@ namespace render
       {
         rMesh->Draw(_uInstanceCount);
       }
-
-      // Unbind buffers
-      ID3D11Buffer* pRemoveBuffers[uBuffersCount] = { nullptr, nullptr };
-      global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pRemoveBuffers, lstStrides, lstOffsets);
-      global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_UNDEFINED);
     }
     // ------------------------------------
     void CModel::SetPos(const math::CVector3& _v3Pos)

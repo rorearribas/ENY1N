@@ -34,6 +34,13 @@ struct __declspec(align(s_uAlign)) TTransforms
   float Padding[2];
 };
 
+// Instancing mode [16 Bytes]
+struct __declspec(align(s_uAlign)) TInstancingMode
+{
+  bool IsInstanced = false;
+  float Padding[3];
+};
+
 // Material info [32 Bytes]
 struct __declspec(align(s_uAlign)) TMaterialInfo
 {
@@ -53,13 +60,6 @@ struct __declspec(align(s_uAlign)) TTextureInfo
   int HasNormal;
   int HasSpecular;
   int Padding;
-};
-
-// Instancing mode [16 Bytes]
-struct __declspec(align(s_uAlign)) TInstancingMode
-{
-  bool IsInstanceMode = false;
-  float Padding[3];
 };
 
 // Directional lights [32 Bytes]

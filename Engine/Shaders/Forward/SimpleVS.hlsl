@@ -13,21 +13,12 @@ cbuffer ConstantTransforms : register(b0)
   float2 Padding0;
 };
 
-cbuffer HandleInstancing : register(b1)
-{
-  bool IsInstantiated;
-  float3 Padding1;
-}
-
 // VS Input
 struct VS_INPUT
 {
   // Layout
   float3 position : VERTEXPOS;
   float3 color: COLOR;
-
-  // Instancing
-  float4x4 instanceMatrix : INSTANCE_TRANSFORM;
 };
 
 // PS Input
@@ -40,10 +31,9 @@ struct PS_INPUT
 PS_INPUT VSMain(VS_INPUT input)
 {
   PS_INPUT output;
-
-  matrix modelMatrix = IsInstantiated ? input.instanceMatrix : Model;
-  output.position = mul(ViewProjection, mul(modelMatrix, float4(input.position, 1.0)));
-  output.color = input.color;
-
+  {
+    output.position = mul(ViewProjection, mul(Model, float4(input.position, 1.0)));
+    output.color = input.color;
+  }
   return output;
 }

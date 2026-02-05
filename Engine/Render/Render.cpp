@@ -919,7 +919,7 @@ namespace render
   {
     // Set instancing mode
     TInstancingMode& rData = internal::s_oPipeline.tInstancingModeBuffer.GetData();
-    rData.IsInstanceMode = static_cast<int>(_bEnabled);
+    rData.IsInstanced = _bEnabled;
     bool bOk = internal::s_oPipeline.tInstancingModeBuffer.WriteBuffer();
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
