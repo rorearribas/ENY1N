@@ -209,7 +209,7 @@ int main()
 
           //const std::string& sModel = GenerateString(vAvailableModels);
           game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-          pModelTest->LoadModel("models/spaceship/fbx/spaceship.fbx");
+          pModelTest->LoadModel("models/spaceship/spaceship.fbx");
           pModelEnt->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
         }
       }

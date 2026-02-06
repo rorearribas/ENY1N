@@ -28,8 +28,9 @@ namespace render
       CModel(TModelData& _rModelData);
       ~CModel();
 
-      void Draw();
-      void DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
+      void Draw(uint16_t _uInstanceCount = 0);
+      void PushInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
+      void PushBuffers();
 
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPos(); }

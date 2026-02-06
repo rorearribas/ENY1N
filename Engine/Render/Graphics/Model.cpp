@@ -27,30 +27,16 @@ namespace render
       Clear();
     }
     // ------------------------------------
-    void CModel::Draw()
+    void CModel::Draw(uint16_t _uInstanceCount)
     {
-      // Set buffers
-      static const uint32_t uBuffersCount(2);
-      ID3D11Buffer* pBuffers[uBuffersCount] = { m_pVertexBuffer, m_pInstanceBuffer };
-
-      uint32_t lstStrides[uBuffersCount] = { sizeof(TVertexData), sizeof(TInstanceData) };
-      uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
-
-      global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
-      global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-      // Set model matrix
-      engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      pEngine->GetRender()->SetModelMatrix(m_oTransform.GetMatrix());
-
       // Draw meshes
       for (std::unique_ptr<CMesh>& rMesh : m_lstMeshes)
       {
-        rMesh->Draw();
+        rMesh->Draw(_uInstanceCount);
       }
     }
     // ------------------------------------
-    void CModel::DrawInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount)
+    void CModel::PushInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount)
     {
       D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
       HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
@@ -62,18 +48,21 @@ namespace render
 
       // Set values
       TInstanceData* pInstanceData = static_cast<TInstanceData*>(oMappedSubresource.pData);
-      for (uint16_t uIndex = 0; uIndex < _uInstanceCount; ++uIndex)
+      for (uint16_t uI = 0; uI < _uInstanceCount; ++uI)
       {
-        uint16_t uID = _lstDrawableInstances[uIndex];
-        if (render::gfx::CRenderInstance* pInstance = m_lstInstances[uID])
+        uint16_t uInstance = _lstDrawableInstances[uI];
+        if (render::gfx::CRenderInstance* pInstance = m_lstInstances[uInstance])
         {
-          pInstanceData[uIndex].Transform = pInstance->GetMatrix();
+          pInstanceData[uI].Transform = pInstance->GetMatrix();
         }
       }
 
       // Unmap
       global::dx::s_pDeviceContext->Unmap(m_pInstanceBuffer, 0);
-
+    }
+    // ------------------------------------
+    void CModel::PushBuffers()
+    {
       // Set buffers
       static const uint32_t uBuffersCount(2);
       ID3D11Buffer* pBuffers[uBuffersCount] = { m_pVertexBuffer, m_pInstanceBuffer };
@@ -81,21 +70,15 @@ namespace render
       uint32_t lstStrides[uBuffersCount] = { sizeof(TVertexData), sizeof(TInstanceData) };
       uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
 
-      // Bind buffers
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
       global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-      // Set this model matrix
+      // Apply model matrix
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      pEngine->GetRender()->SetModelMatrix(m_oTransform.GetMatrix());
-
-      // Draw instancing meshes
-      for (std::unique_ptr<CMesh>& rMesh : m_lstMeshes)
-      {
-        rMesh->Draw(_uInstanceCount);
-      }
+      render::CRender* pRender = pEngine->GetRender();
+      pRender->SetModelMatrix(m_oTransform.GetMatrix());
     }
-    // ------------------------------------
+// ------------------------------------
     void CModel::SetPos(const math::CVector3& _v3Pos)
     {
       // Set pos

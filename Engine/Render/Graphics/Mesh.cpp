@@ -45,7 +45,7 @@ namespace render
         // Bind shaders
         global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, lstTextures);
 
-        // Set material info
+        // Push material
         engine::CEngine* pEngine = engine::CEngine::GetInstance();
         render::CRender* pRender = pEngine->GetRender();
         pRender->SetMaterialInfo(m_pMaterial);
@@ -55,14 +55,8 @@ namespace render
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
       // Draw mesh
-      if (_uInstanceCount > 0)
-      {
-        global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndexCount, _uInstanceCount, 0, 0, 0);
-      }
-      else
-      {
-        global::dx::s_pDeviceContext->DrawIndexed(m_uIndexCount, 0, 0);
-      }
+      _uInstanceCount > 0 ? global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndexCount, _uInstanceCount, 0, 0, 0) :
+      global::dx::s_pDeviceContext->DrawIndexed(m_uIndexCount, 0, 0);
     }
     // ------------------------------------
     HRESULT CMesh::CreateBuffer(const TIndices& _lstIndices)

@@ -221,10 +221,12 @@ namespace scene
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::CacheModels(const render::CCamera* _pCamera)
+  void CScene::CacheModels(render::CCamera* _pCamera)
   {
-    // Draw
-    for (uint32_t uI = 0; uI < m_lstModels.GetMaxSize(); uI++)
+    // Reset value
+    m_uDrawableModels = 0;
+
+    for (uint16_t uI = 0; uI < m_lstModels.GetMaxSize(); uI++)
     {
       utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
       if (!pModel.IsValid())
@@ -233,7 +235,7 @@ namespace scene
       }
 
       // Handle model
-      TCachedModel& rCachedModel = m_lstCachedModels[uI];
+      TCachedModel& rCachedModel = m_lstCachedModels[m_uDrawableModels];
       rCachedModel.Visible = pModel->IsVisible();
       if (rCachedModel.Visible)
       {
@@ -266,28 +268,29 @@ namespace scene
           rCachedModel.DrawableInstances[rCachedModel.InstanceCount++] = pInstance->GetInstanceID();
         }
       }
+
+      // Register drawable model
+      if (rCachedModel.Visible || rCachedModel.InstanceCount > 0)
+      {
+        rCachedModel.Index = uI;
+        m_uDrawableModels++;
+      }
     }
   }
   // ------------------------------------
-  void CScene::ApplyLighting()
+  void CScene::DrawModels(render::CRender* _pRender)
   {
-    m_oLightManager.Apply();
-  }
-  // ------------------------------------
-  void CScene::DrawModels()
-  {
-    // Draw
-    render::CRender* pRender = engine::CEngine::GetInstance()->GetRender();
-    for (uint32_t uI = 0; uI < m_lstModels.GetMaxSize(); uI++)
+    // Draw models
+    for (uint16_t uI = 0; uI < m_uDrawableModels; uI++)
     {
-      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
-      if (!pModel.IsValid())
-      {
-        continue;
-      }
-
       // Handle model
       const TCachedModel& rCachedModel = m_lstCachedModels[uI];
+      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[rCachedModel.Index];
+
+      // Push buffers
+      pModel->PushBuffers();
+
+      // Handle model
       if (rCachedModel.Visible)
       {
         pModel->Draw();
@@ -297,16 +300,19 @@ namespace scene
       if (rCachedModel.InstanceCount > 0)
       {
         // Push mode
-        pRender->SetInstancingMode(true);
+        _pRender->SetInstancingMode(true);
+
         // Draw instances
-        pModel->DrawInstances(rCachedModel.DrawableInstances, rCachedModel.InstanceCount);
+        pModel->PushInstances(rCachedModel.DrawableInstances, rCachedModel.InstanceCount);
+        pModel->Draw(rCachedModel.InstanceCount);
+
         // Disabled mode
-        pRender->SetInstancingMode(false);
+        _pRender->SetInstancingMode(false);
       }
     }
   }
   // ------------------------------------
-  void CScene::DrawPrimitives(const render::CCamera* _pCamera)
+  void CScene::DrawPrimitives(render::CCamera* _pCamera)
   {
     // Draw primitives
     for (uint32_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
@@ -350,6 +356,11 @@ namespace scene
     {
       m_lstDebugItems.Clear();
     }
+  }
+  // ------------------------------------
+  void CScene::ApplyLighting()
+  {
+    m_oLightManager.Apply();
   }
   // ------------------------------------
   void CScene::Clear()

@@ -698,7 +698,7 @@ namespace render
     _pScene->CacheModels(m_pCamera);
 
     // Draw z-prepass
-    _pScene->DrawModels();
+    _pScene->DrawModels(this);
 
     // Copy depth texture!
     ID3D11Texture2D* pTexture = internal::s_oPipeline.pDepthStencil->GetData();
@@ -734,7 +734,7 @@ namespace render
     internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
 
     // Draw models
-    _pScene->DrawModels();
+    _pScene->DrawModels(this);
 
     // Remove render targets
     ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };

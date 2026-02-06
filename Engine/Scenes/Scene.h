@@ -21,6 +21,8 @@ namespace scene
     struct TCachedModel
     {
       bool Visible = false;
+      uint16_t Index = 0;
+
       render::gfx::TDrawableInstances DrawableInstances;
       uint16_t InstanceCount = 0;
     };
@@ -73,12 +75,12 @@ namespace scene
     void Clear();
 
     // Handle scene
-    void CacheModels(const render::CCamera* _pCamera);
-    void ApplyLighting();
+    void CacheModels(render::CCamera* _pCamera);
 
     // Draw calls
-    void DrawModels();
-    void DrawPrimitives(const render::CCamera* _pCamera);
+    void DrawModels(render::CRender* _pRender);
+    void DrawPrimitives(render::CCamera* _pCamera);
+    void ApplyLighting();
 
   private:
     bool m_bEnabled = false;
@@ -88,7 +90,7 @@ namespace scene
     // Models
     TModels m_lstModels = TModels();
     TCachedModels m_lstCachedModels = TCachedModels();
-    uint32_t m_uCachedSize = 0;
+    uint16_t m_uDrawableModels = 0;
 
     // Primitives
     TPrimitives m_lstPrimitives = TPrimitives();
