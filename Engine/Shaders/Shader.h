@@ -12,16 +12,62 @@ namespace render
     class CShader
     {
     public:
-      CShader(const unsigned char* _pBuffer, size_t _tSize);
+      CShader() {}
       ~CShader() { ReleaseShader(); }
+
+      HRESULT Init(const unsigned char* _pBuffer, size_t _tSize);
+      void ReleaseShader();
 
       void AttachShader();
       void DetachShader();
-      void ReleaseShader();
 
     private:
       ID3D11DeviceChild* m_pInternalPtr = nullptr;
     };
+
+    template<EShader T>
+    HRESULT render::shader::CShader<T>::Init(const unsigned char* _pBuffer, size_t _tSize)
+    {
+      ID3D11Device* pDevice = global::dx::s_pDevice;
+#ifdef _DEBUG
+      assert(pDevice);
+#endif // DEBUG
+      switch (T)
+      {
+        case render::EShader::E_VERTEX:
+        {
+          ID3D11VertexShader** pShader = reinterpret_cast<ID3D11VertexShader**>(&m_pInternalPtr);
+          return pDevice->CreateVertexShader(_pBuffer, _tSize, nullptr, pShader);
+        }
+        case render::EShader::E_HULL:
+        {
+          ID3D11HullShader** pShader = reinterpret_cast<ID3D11HullShader**>(&m_pInternalPtr);
+          return pDevice->CreateHullShader(_pBuffer, _tSize, nullptr, pShader);
+        }
+        case render::EShader::E_DOMAIN:
+        {
+          ID3D11DomainShader** pShader = reinterpret_cast<ID3D11DomainShader**>(&m_pInternalPtr);
+          return pDevice->CreateDomainShader(_pBuffer, _tSize, nullptr, pShader);
+        }
+        case render::EShader::E_GEOMETRY:
+        {
+          ID3D11GeometryShader** pShader = reinterpret_cast<ID3D11GeometryShader**>(&m_pInternalPtr);
+          return pDevice->CreateGeometryShader(_pBuffer, _tSize, nullptr, pShader);
+        }
+        case render::EShader::E_PIXEL:
+        {
+          ID3D11PixelShader** pShader = reinterpret_cast<ID3D11PixelShader**>(&m_pInternalPtr);
+          return pDevice->CreatePixelShader(_pBuffer, _tSize, nullptr, pShader);
+        }
+        case render::EShader::E_COMPUTE:
+        {
+          ID3D11ComputeShader** pShader = reinterpret_cast<ID3D11ComputeShader**>(&m_pInternalPtr);
+          return pDevice->CreateComputeShader(_pBuffer, _tSize, nullptr, pShader);
+        }
+      }
+
+      return E_FAIL;
+    }
 
     template<EShader T>
     void CShader<T>::ReleaseShader()
@@ -74,58 +120,6 @@ namespace render
         case render::EShader::E_COMPUTE:  { pDeviceCtx->CSSetShader(nullptr, nullptr, 0); } break;
         default: break;
       }
-    }
-
-    template<EShader T>
-    CShader<T>::CShader(const unsigned char* _pBuffer, size_t _tSize)
-    {
-      ID3D11Device* _pDevice = global::dx::s_pDevice;
-#ifdef _DEBUG
-      assert(_pDevice);
-#endif // DEBUG
-      HRESULT hResult = S_OK;
-      switch (T)
-      {
-        case render::EShader::E_VERTEX:
-        {
-          ID3D11VertexShader** pShader = reinterpret_cast<ID3D11VertexShader**>(&m_pInternalPtr);
-          hResult = _pDevice->CreateVertexShader(_pBuffer, _tSize, nullptr, pShader);
-        }
-        break;
-        case render::EShader::E_HULL:
-        {
-          ID3D11HullShader** pShader = reinterpret_cast<ID3D11HullShader**>(&m_pInternalPtr);
-          hResult = _pDevice->CreateHullShader(_pBuffer, _tSize, nullptr, pShader);
-        }
-        break;
-        case render::EShader::E_DOMAIN:
-        {
-          ID3D11DomainShader** pShader = reinterpret_cast<ID3D11DomainShader**>(&m_pInternalPtr);
-          hResult = _pDevice->CreateDomainShader(_pBuffer, _tSize, nullptr, pShader);
-        }
-        break;
-        case render::EShader::E_GEOMETRY:
-        {
-          ID3D11GeometryShader** pShader = reinterpret_cast<ID3D11GeometryShader**>(&m_pInternalPtr);
-          hResult = _pDevice->CreateGeometryShader(_pBuffer, _tSize, nullptr, pShader);
-        }
-        break;
-        case render::EShader::E_PIXEL:
-        {
-          ID3D11PixelShader** pShader = reinterpret_cast<ID3D11PixelShader**>(&m_pInternalPtr);
-          hResult = _pDevice->CreatePixelShader(_pBuffer, _tSize, nullptr, pShader);
-        }
-        break;
-        case render::EShader::E_COMPUTE:
-        {
-          ID3D11ComputeShader** pShader = reinterpret_cast<ID3D11ComputeShader**>(&m_pInternalPtr);
-          hResult = _pDevice->CreateComputeShader(_pBuffer, _tSize, nullptr, pShader);
-        }
-        break;
-      }
-#ifdef _DEBUG
-      assert(SUCCEEDED(hResult));
-#endif
     }
   }
 }

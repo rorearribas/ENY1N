@@ -205,70 +205,50 @@ namespace render
     HRESULT hResult = CreateDevice(_uX, _uY);
     if (FAILED(hResult))
     {
+      ERROR_LOG("Error creating device!");
+      return hResult;
+    }
+
+    // Setup basic pipeline
+    hResult = InitPipeline(_uX, _uY);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    hResult = SetupLayouts();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating layouts!");
+      return hResult;
+    }
+
+    // Init constant buffers
+    hResult = InitConstantBuffers();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating constant buffers!");
+      return hResult;
+    }
+
+    // Init shaders
+    hResult = InitShaders();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating shaders!");
       return hResult;
     }
 
     // Init ImGui
     if (!InitImGui())
     {
+      ERROR_LOG("Error initializing imgui!");
       return E_FAIL;
-    }
-
-    // Setup basic pipeline
-    hResult = InitBasicPipeline(_uX, _uY);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Forward shaders
-    internal::s_oPipeline.pSimpleVS = new shader::CShader<EShader::E_VERTEX>(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
-    internal::s_oPipeline.pSimplePS = new shader::CShader<EShader::E_PIXEL>(g_SimplePS, ARRAYSIZE(g_SimplePS));
-
-    // Deferred shaders
-    internal::s_oPipeline.pStandardVS = new shader::CShader<EShader::E_VERTEX>(g_StandardVS, ARRAYSIZE(g_StandardVS));
-    internal::s_oPipeline.pDrawTriangle = new shader::CShader<EShader::E_VERTEX>(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
-    internal::s_oPipeline.pGBufferDeferred = new shader::CShader<EShader::E_PIXEL>(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
-    internal::s_oPipeline.pDeferredLights = new shader::CShader<EShader::E_PIXEL>(g_LightsPS, ARRAYSIZE(g_LightsPS));
-
-    // Create standard layout
-    hResult = global::dx::s_pDevice->CreateInputLayout
-    (
-      internal::s_tStandardLayout,
-      internal::s_iStandardLayoutSize,
-      g_StandardVS,
-      sizeof(g_StandardVS),
-      &internal::s_oPipeline.pStandardLayout
-    );
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Create debug layout
-    hResult = global::dx::s_pDevice->CreateInputLayout
-    (
-      internal::s_tPrimitivesLayout,
-      internal::s_iDebugLayoutSize,
-      g_SimpleVS,
-      sizeof(g_SimpleVS),
-      &internal::s_oPipeline.pDebugLayout
-    );
-    if (FAILED(hResult))
-    {
-      return hResult;
     }
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CRender::OnWindowResizeEvent, this);
     global::delegates::s_lstOnWindowResizeDelegates.emplace_back(oResizeDelegate);
-
-    // Init constant buffers
-    hResult = InitConstantBuffers();
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
 
     // Get user def
     return global::dx::s_pDeviceContext->QueryInterface
@@ -276,6 +256,59 @@ namespace render
       __uuidof(ID3DUserDefinedAnnotation),
       reinterpret_cast<void**>(&internal::s_oPipeline.pUserMarker)
     );
+  }
+  // ------------------------------------
+  HRESULT CRender::InitShaders()
+  {
+    // Forward shaders
+    {
+      global::ReleaseObject(internal::s_oPipeline.pSimpleVS);
+      internal::s_oPipeline.pSimpleVS = new shader::CShader<EShader::E_VERTEX>();
+      HRESULT hResult = internal::s_oPipeline.pSimpleVS->Init(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+
+      global::ReleaseObject(internal::s_oPipeline.pSimplePS);
+      internal::s_oPipeline.pSimplePS = new shader::CShader<EShader::E_PIXEL>();
+      hResult = internal::s_oPipeline.pSimplePS->Init(g_SimplePS, ARRAYSIZE(g_SimplePS));
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+    }
+
+    // Deferred shaders
+    {
+      global::ReleaseObject(internal::s_oPipeline.pStandardVS);
+      internal::s_oPipeline.pStandardVS = new shader::CShader<EShader::E_VERTEX>();
+      HRESULT hResult = internal::s_oPipeline.pStandardVS->Init(g_StandardVS, ARRAYSIZE(g_StandardVS));
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+
+      global::ReleaseObject(internal::s_oPipeline.pDrawTriangle);
+      internal::s_oPipeline.pDrawTriangle = new shader::CShader<EShader::E_VERTEX>();
+      hResult = internal::s_oPipeline.pDrawTriangle->Init(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+
+      global::ReleaseObject(internal::s_oPipeline.pGBufferDeferred);
+      internal::s_oPipeline.pGBufferDeferred = new shader::CShader<EShader::E_PIXEL>();
+      hResult = internal::s_oPipeline.pGBufferDeferred->Init(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+
+      global::ReleaseObject(internal::s_oPipeline.pDeferredLights);
+      internal::s_oPipeline.pDeferredLights = new shader::CShader<EShader::E_PIXEL>();
+      return internal::s_oPipeline.pDeferredLights->Init(g_LightsPS, ARRAYSIZE(g_LightsPS));
+    }
   }
   // ------------------------------------
   HRESULT CRender::InitConstantBuffers()
@@ -319,13 +352,40 @@ namespace render
     return S_OK;
   }
   // ------------------------------------
-  HRESULT CRender::InitBasicPipeline(uint32_t _uX, uint32_t _uY)
+  HRESULT CRender::SetupLayouts()
+  {
+    // Create standard layout
+    HRESULT hResult = global::dx::s_pDevice->CreateInputLayout
+    (
+      internal::s_tStandardLayout,
+      internal::s_iStandardLayoutSize,
+      g_StandardVS,
+      sizeof(g_StandardVS),
+      &internal::s_oPipeline.pStandardLayout
+    );
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Create debug layout
+    return global::dx::s_pDevice->CreateInputLayout
+    (
+      internal::s_tPrimitivesLayout,
+      internal::s_iDebugLayoutSize,
+      g_SimpleVS,
+      sizeof(g_SimpleVS),
+      &internal::s_oPipeline.pDebugLayout
+    );
+  }
+  // ------------------------------------
+  HRESULT CRender::InitPipeline(uint32_t _uX, uint32_t _uY)
   {
     // Configure viewport
     ConfigureViewport(_uX, _uY);
 
-    // Create a new depth stencil
-    HRESULT hResult = CreateDepthStencilView(_uX, _uY);
+    // Setup depth stencils
+    HRESULT hResult = SetupDepthStencils(_uX, _uY);
     if (FAILED(hResult))
     {
       return hResult;
@@ -422,16 +482,16 @@ namespace render
   HRESULT CRender::CreateDevice(uint32_t _uX, uint32_t _uY)
   {
     // Create descriptor
-    DXGI_SWAP_CHAIN_DESC oSwapChainDescriptor = DXGI_SWAP_CHAIN_DESC();
-    oSwapChainDescriptor.BufferCount = 1;
-    oSwapChainDescriptor.BufferDesc.Width = _uX;
-    oSwapChainDescriptor.BufferDesc.Height = _uY;
-    oSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHwnd();
-    oSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    oSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    oSwapChainDescriptor.SampleDesc.Count = 1;
-    oSwapChainDescriptor.SampleDesc.Quality = 0;
-    oSwapChainDescriptor.Windowed = TRUE;
+    DXGI_SWAP_CHAIN_DESC rSwapChainDescriptor = DXGI_SWAP_CHAIN_DESC();
+    rSwapChainDescriptor.BufferCount = 1;
+    rSwapChainDescriptor.BufferDesc.Width = _uX;
+    rSwapChainDescriptor.BufferDesc.Height = _uY;
+    rSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHwnd();
+    rSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    rSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    rSwapChainDescriptor.SampleDesc.Count = 1;
+    rSwapChainDescriptor.SampleDesc.Quality = 0;
+    rSwapChainDescriptor.Windowed = TRUE;
 
     D3D_FEATURE_LEVEL lstFeatureLevels[] =
     {
@@ -448,7 +508,7 @@ namespace render
 
     // Create device and swap chain
     HRESULT hResult = D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, uFlags, lstFeatureLevels,
-      uNumFeatureLevels, D3D11_SDK_VERSION, &oSwapChainDescriptor, &internal::s_oPipeline.pSwapChain,
+      uNumFeatureLevels, D3D11_SDK_VERSION, &rSwapChainDescriptor, &internal::s_oPipeline.pSwapChain,
       &global::dx::s_pDevice, &oFeatureLevel, &global::dx::s_pDeviceContext);
 
     return hResult;
@@ -465,8 +525,8 @@ namespace render
     assert(!FAILED(hResult));
 #endif // DEBUG
 
-    // Init basic pipeline
-    hResult = InitBasicPipeline(_uX, _uY);
+    // Init pipeline
+    hResult = InitPipeline(_uX, _uY);
 #ifdef _DEBUG
     assert(!FAILED(hResult));
 #endif // DEBUG
@@ -490,103 +550,113 @@ namespace render
     return hResult;
   }
   // ------------------------------------
-  HRESULT CRender::CreateDepthStencilView(uint32_t _uX, uint32_t _uY)
+  HRESULT CRender::SetupDepthStencils(uint32_t _uX, uint32_t _uY)
   {
-    // Release resources
-    global::ReleaseObject(internal::s_oPipeline.pDepthStencil);
-
     // Create depth stencil texture
+    global::ReleaseObject(internal::s_oPipeline.pDepthStencil);
     internal::s_oPipeline.pDepthStencil = new texture::CTexture2D<EView::DEPTH_STENCIL>();
 
     // Set desc
-    D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
-    oTextureDesc.Width = _uX;
-    oTextureDesc.Height = _uY;
-    oTextureDesc.MipLevels = 1;
-    oTextureDesc.ArraySize = 1;
-    oTextureDesc.SampleDesc.Count = 1;
-    oTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS; // Format
-    oTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
+    D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
+    rTextureDesc.Width = _uX;
+    rTextureDesc.Height = _uY;
+    rTextureDesc.MipLevels = 1;
+    rTextureDesc.ArraySize = 1;
+    rTextureDesc.SampleDesc.Count = 1;
+    rTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS; // Format
+    rTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
 
-    HRESULT hResult = internal::s_oPipeline.pDepthStencil->CreateTexture(oTextureDesc);
-#ifdef _DEBUG
-    assert(!FAILED(hResult));
-#endif // DEBUG
+    HRESULT hResult = internal::s_oPipeline.pDepthStencil->CreateTexture(rTextureDesc);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating depth stencil texture!");
+      return hResult;
+    }
 
     // Set depth stencil view desc
-    D3D11_DEPTH_STENCIL_VIEW_DESC oDepthStencilViewDesc = D3D11_DEPTH_STENCIL_VIEW_DESC();
-    oDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-    oDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    D3D11_DEPTH_STENCIL_VIEW_DESC rDepthStencilViewDesc = D3D11_DEPTH_STENCIL_VIEW_DESC();
+    rDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    rDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
     // Create the depth stencil view
-    hResult = internal::s_oPipeline.pDepthStencil->CreateView(oDepthStencilViewDesc);
-#ifdef _DEBUG
-    assert(!FAILED(hResult));
-#endif // DEBUG
+    hResult = internal::s_oPipeline.pDepthStencil->CreateView(rDepthStencilViewDesc);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating stencil view!");
+      return hResult;
+    }
 
     // Create depth texture
+    global::ReleaseObject(internal::s_oPipeline.pDepthTexture);
     internal::s_oPipeline.pDepthTexture = new texture::CTexture2D<EView::SHADER_RESOURCE>();
 
     // Set texture config
-    oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // Texture shader
-    hResult = internal::s_oPipeline.pDepthTexture->CreateTexture(oTextureDesc);
+    rTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // Texture shader
+    hResult = internal::s_oPipeline.pDepthTexture->CreateTexture(rTextureDesc);
     if (FAILED(hResult))
     {
-      ERROR_LOG("Error creating texture!");
+      ERROR_LOG("Error creating depth texture!");
       return hResult;
     }
 
     // Creating view
-    D3D11_SHADER_RESOURCE_VIEW_DESC oSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
-    oSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
-    oSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    oSRVDesc.Texture2D.MipLevels = 1;
-    hResult = internal::s_oPipeline.pDepthTexture->CreateView(oSRVDesc);
-#ifdef _DEBUG
-    assert(!FAILED(hResult));
-#endif // DEBUG
+    D3D11_SHADER_RESOURCE_VIEW_DESC rSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
+    rSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    rSRVDesc.Texture2D.MipLevels = 1;
+    hResult = internal::s_oPipeline.pDepthTexture->CreateView(rSRVDesc);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating view!");
+      return hResult;
+    }
 
     // Create standard depth stencil state for zprepass
-    D3D11_DEPTH_STENCIL_DESC oDepthStencilDesc = D3D11_DEPTH_STENCIL_DESC();
-    oDepthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
-    oDepthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-    oDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    oDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-    oDepthStencilDesc.DepthEnable = true;
-    oDepthStencilDesc.StencilEnable = true;
+    D3D11_DEPTH_STENCIL_DESC rDepthStencilDesc = D3D11_DEPTH_STENCIL_DESC();
+    rDepthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+    rDepthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+    rDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    rDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    rDepthStencilDesc.DepthEnable = true;
+    rDepthStencilDesc.StencilEnable = false;
 
     // Front-face
-    oDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    oDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-    oDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    oDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    rDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    rDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+    rDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    rDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     // Back-face
-    oDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    oDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-    oDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    oDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    rDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    rDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+    rDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    rDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
     // Z-Prepass
     global::dx::SafeRelease(internal::s_oPipeline.pZPrepassStencilState);
-    hResult = global::dx::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &internal::s_oPipeline.pZPrepassStencilState);
-#ifdef _DEBUG
-    assert(!FAILED(hResult));
-#endif // DEBUG
+    hResult = global::dx::s_pDevice->CreateDepthStencilState(&rDepthStencilDesc, &internal::s_oPipeline.pZPrepassStencilState);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating zprepass stencil state!");
+      return hResult;
+    }
 
     // Deferred
-    oDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-    oDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
     global::dx::SafeRelease(internal::s_oPipeline.pDeferredStencilState);
-    hResult = global::dx::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &internal::s_oPipeline.pDeferredStencilState);
-#ifdef _DEBUG
-    assert(!FAILED(hResult));
-#endif // DEBUG
+    rDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+    rDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
+    hResult = global::dx::s_pDevice->CreateDepthStencilState(&rDepthStencilDesc, &internal::s_oPipeline.pDeferredStencilState);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating deferred stencil state!");
+      return hResult;
+    }
 
     // Primitives (debug)
-    oDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
     global::dx::SafeRelease(internal::s_oPipeline.pDebugStencilState);
-    return global::dx::s_pDevice->CreateDepthStencilState(&oDepthStencilDesc, &internal::s_oPipeline.pDebugStencilState);
+    rDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    rDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    return global::dx::s_pDevice->CreateDepthStencilState(&rDepthStencilDesc, &internal::s_oPipeline.pDebugStencilState);
   }
   // ------------------------------------
   HRESULT CRender::SetupDeferredShading(uint32_t _uX, uint32_t _uY)
@@ -616,24 +686,24 @@ namespace render
     }
 
     // Linear sampler
-    D3D11_SAMPLER_DESC oSamplerDesc = D3D11_SAMPLER_DESC();
-    oSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    oSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    oSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    oSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    oSamplerDesc.MipLODBias = 0.0f;
-    oSamplerDesc.MaxAnisotropy = 1u;
-    oSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    oSamplerDesc.BorderColor[0] = 0.0f;
-    oSamplerDesc.BorderColor[1] = 0.0f;
-    oSamplerDesc.BorderColor[2] = 0.0f;
-    oSamplerDesc.BorderColor[3] = 0.0f;
-    oSamplerDesc.MinLOD = 0.0f;
-    oSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+    D3D11_SAMPLER_DESC rSamplerDesc = D3D11_SAMPLER_DESC();
+    rSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    rSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    rSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    rSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    rSamplerDesc.MipLODBias = 0.0f;
+    rSamplerDesc.MaxAnisotropy = 1u;
+    rSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    rSamplerDesc.BorderColor[0] = 0.0f;
+    rSamplerDesc.BorderColor[1] = 0.0f;
+    rSamplerDesc.BorderColor[2] = 0.0f;
+    rSamplerDesc.BorderColor[3] = 0.0f;
+    rSamplerDesc.MinLOD = 0.0f;
+    rSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
     // Create sampler
     global::dx::SafeRelease(internal::s_oPipeline.pLinearSampler);
-    return global::dx::s_pDevice->CreateSamplerState(&oSamplerDesc, &internal::s_oPipeline.pLinearSampler);
+    return global::dx::s_pDevice->CreateSamplerState(&rSamplerDesc, &internal::s_oPipeline.pLinearSampler);
   }
   // ------------------------------------
   HRESULT CRender::CreateRasterizerState(const D3D11_RASTERIZER_DESC& _oRasterizerState)
@@ -796,13 +866,13 @@ namespace render
   {
     if (global::dx::s_pDeviceContext && m_pRenderWindow)
     {
-      D3D11_VIEWPORT oViewport = D3D11_VIEWPORT();
-      oViewport.Width = static_cast<float>(_uX);
-      oViewport.Height = static_cast<float>(_uY);
-      oViewport.MinDepth = internal::s_fMinDepth;
-      oViewport.MaxDepth = internal::s_fMaxDepth;
+      D3D11_VIEWPORT rViewport = D3D11_VIEWPORT();
+      rViewport.Width = static_cast<float>(_uX);
+      rViewport.Height = static_cast<float>(_uY);
+      rViewport.MinDepth = internal::s_fMinDepth;
+      rViewport.MaxDepth = internal::s_fMaxDepth;
 
-      global::dx::s_pDeviceContext->RSSetViewports(1, &oViewport);
+      global::dx::s_pDeviceContext->RSSetViewports(1, &rViewport);
     }
   }
   // ------------------------------------

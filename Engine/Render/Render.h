@@ -33,18 +33,22 @@ namespace render
     void SetModelMatrix(const math::CMatrix4x4& _mModel);
     void SetInstancingMode(bool _bEnabled);
 
-  private:
+  protected:
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);
 
+  private:
     HRESULT Init(uint32_t _uX, uint32_t _uY);
+
     HRESULT SetupDeferredShading(uint32_t _uX, uint32_t _uY);
     HRESULT InitConstantBuffers();
+    HRESULT SetupLayouts();
+    HRESULT InitShaders();
 
   private:
     HRESULT CreateDevice(uint32_t _uX, uint32_t _uY);
-    HRESULT InitBasicPipeline(uint32_t _uX, uint32_t _uY);
+    HRESULT InitPipeline(uint32_t _uX, uint32_t _uY);
 
-    HRESULT CreateDepthStencilView(uint32_t _uX, uint32_t _uY);
+    HRESULT SetupDepthStencils(uint32_t _uX, uint32_t _uY);
     HRESULT CreateBackBuffer();
 
     HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC& _oRasterizerState);
