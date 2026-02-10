@@ -56,11 +56,11 @@ namespace utils
           continue;
         }
 
-        // Create ptr 
+        // Create data 
         pData.uPtr = std::make_unique<_Type>(std::forward<Args>(args)...);
         pData.tGeneration++;
-
         m_tRegisteredItems++;
+
         return CWeakPtr<T>(pData.uPtr.get(), &pData.tGeneration, pData.tGeneration);
       }
 
@@ -87,8 +87,8 @@ namespace utils
         // Register data
         pData.uPtr = std::move(_pMem);
         pData.tGeneration++;
-
         m_tRegisteredItems++;
+
         return CWeakPtr<T>(pData.uPtr.get(), &pData.tGeneration, pData.tGeneration);
       }
 
@@ -147,18 +147,20 @@ namespace utils
       return false;
     }
 
+    bool bRemoved = false;
     for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
     {
       TInternalData& pData = m_lstInternalData[tIndex];
       if (pData.uPtr.get() == _pItem_.GetPtr())
       {
-        // Destroy data
         pData.uPtr.reset();
-        // Increase generation and decrease items
-        pData.tGeneration++, m_tRegisteredItems--;
-        return true;
+        pData.tGeneration++;
+        m_tRegisteredItems--;
+
+        bRemoved = true;
+        break;
       }
     }
-    return false;
+    return bRemoved;
   }
 }

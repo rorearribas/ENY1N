@@ -8,7 +8,7 @@ class CConstantBuffer
 {
 public:
   CConstantBuffer() {}
-  ~CConstantBuffer() { Clear(); }
+  ~CConstantBuffer() { Release(); }
 
   inline HRESULT Init()
   {
@@ -23,13 +23,13 @@ public:
     return global::dx::s_pDevice->CreateBuffer(&oBufferDesc, 0, &m_pBuffer);
   }
 
-  inline void Clear()
+  inline void Release()
   {
     global::dx::SafeRelease(m_pBuffer);
   }
 
   template<render::EShader _Type>
-  void Bind()
+  inline void Bind()
   {
     switch (_Type)
     {

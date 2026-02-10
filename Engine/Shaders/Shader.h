@@ -13,10 +13,13 @@ namespace render
     {
     public:
       CShader() {}
-      ~CShader() { ReleaseShader(); }
+      ~CShader() { Release(); }
+
+      CShader(const CShader&) = delete;
+      CShader& operator=(const CShader&) = delete;
 
       HRESULT Init(const unsigned char* _pBuffer, size_t _tSize);
-      void ReleaseShader();
+      void Release();
 
       void AttachShader();
       void DetachShader();
@@ -70,7 +73,7 @@ namespace render
     }
 
     template<EShader T>
-    void CShader<T>::ReleaseShader()
+    void CShader<T>::Release()
     {
       // Remove shader
       bool bOk(false);

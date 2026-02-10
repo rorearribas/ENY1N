@@ -13,10 +13,7 @@ namespace render
   HRESULT CRenderTarget::CreateRT(uint32_t _uWidth, uint32_t _uHeight, DXGI_FORMAT _eFormat)
   {
     // Flush
-    CleanRT();
-
-    // Create texture
-    m_pRTTexture = new texture::CTexture2D<render::EView::RENDER_TARGET>();
+    Release();
 
     // Set texture config
     D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -28,7 +25,7 @@ namespace render
     rTextureDesc.Format = _eFormat;
     rTextureDesc.BindFlags = internal_RT::s_uFlags;
 
-    HRESULT hResult = m_pRTTexture->CreateTexture(rTextureDesc);
+    HRESULT hResult = m_oTexture.CreateTexture(rTextureDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating texture!");
@@ -40,7 +37,7 @@ namespace render
     rRenderTargetDesc.Format = _eFormat;
     rRenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
     rRenderTargetDesc.Texture2D.MipSlice = 0;
-    hResult = m_pRTTexture->CreateView(rRenderTargetDesc);
+    hResult = m_oTexture.CreateView(rRenderTargetDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating target view!");
@@ -52,18 +49,18 @@ namespace render
     rSRVDesc.Format = _eFormat;
     rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     rSRVDesc.Texture2D.MipLevels = 1;
-    return global::dx::s_pDevice->CreateShaderResourceView(m_pRTTexture->GetData(), &rSRVDesc, &m_pSRV);
+    return global::dx::s_pDevice->CreateShaderResourceView(m_oTexture, &rSRVDesc, &m_pSRV);
   }
   // ------------------------------------
   void CRenderTarget::ClearRT(const float _v4ClearColor[4])
   {
-    global::dx::s_pDeviceContext->ClearRenderTargetView(GetRT(), _v4ClearColor);
+    global::dx::s_pDeviceContext->ClearRenderTargetView(*this, _v4ClearColor);
   }
   // ------------------------------------
-  void CRenderTarget::CleanRT()
+  void CRenderTarget::Release()
   {
-    global::ReleaseObject(m_pRTTexture);
     global::dx::SafeRelease(m_pSRV);
+    m_oTexture.Release();
   }
 }
 

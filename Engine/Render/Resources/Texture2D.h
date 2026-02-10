@@ -19,37 +19,61 @@ namespace render
 
     public:
       CTexture2D() = default;
-      ~CTexture2D() { Clear(); }
+      ~CTexture2D() { Release(); }
 
       void CopyTexture(ID3D11Texture2D* _pTexture);
       void AttachTexture(uint32_t _uSlot, EShader _eShaderType);
+      void Release();
 
       // Texture and sampler
-      HRESULT CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _oTextureCfg, uint32_t _uChannels = 4);
-      HRESULT CreateTexture(const D3D11_TEXTURE2D_DESC& _oTextureCfg);
-
-      inline ID3D11Texture2D* const GetData() { return m_pInternalTexture; }
-      inline void SetTexture(ID3D11Texture2D* _pTexture) { m_pInternalTexture = _pTexture; }
+      HRESULT CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _rTextureCfg, uint32_t _uChannels = 4);
+      HRESULT CreateTexture(const D3D11_TEXTURE2D_DESC& _rTextureCfg);
 
       // Create resource
       template<typename _T>
-      inline HRESULT CreateView(const _T& _oViewCfg)
+      inline HRESULT CreateView(const _T& _rViewCfg)
       {
         if constexpr (T == render::EView::DEPTH_STENCIL && std::is_same<_T, D3D11_DEPTH_STENCIL_VIEW_DESC>::value)
         {
-          return CreateDepthStencilView(_oViewCfg);
+          return CreateDepthStencilView(m_pInternalTexture, _rViewCfg);
         }
         else if constexpr (T == render::EView::RENDER_TARGET && std::is_same<_T, D3D11_RENDER_TARGET_VIEW_DESC>::value)
         {
-          return CreateRenderTargetView(_oViewCfg);
+          return CreateRenderTargetView(m_pInternalTexture, _rViewCfg);
         }
         else if constexpr (T == render::EView::SHADER_RESOURCE && std::is_same<_T, D3D11_SHADER_RESOURCE_VIEW_DESC>::value)
         {
-          return CreateShaderResourceView(_oViewCfg);
+          return CreateShaderResourceView(m_pInternalTexture, _rViewCfg);
         }
         else if constexpr (T == render::EView::UNORDERED_ACCESS && std::is_same<_T, D3D11_UNORDERED_ACCESS_VIEW_DESC>::value)
         {
-          return CreateUnorderedAccessView(_oViewCfg);
+          return CreateUnorderedAccessView(m_pInternalTexture, _rViewCfg);
+        }
+        else
+        {
+          return E_FAIL;
+        }
+      }
+
+      // Create resource from texture
+      template<typename _T>
+      inline HRESULT CreateViewFromTexture(ID3D11Texture2D* const _pTargetTexture, const _T& _rViewCfg)
+      {
+        if constexpr (T == render::EView::DEPTH_STENCIL && std::is_same<_T, D3D11_DEPTH_STENCIL_VIEW_DESC>::value)
+        {
+          return CreateDepthStencilView(_pTargetTexture, _rViewCfg);
+        }
+        else if constexpr (T == render::EView::RENDER_TARGET && std::is_same<_T, D3D11_RENDER_TARGET_VIEW_DESC>::value)
+        {
+          return CreateRenderTargetView(_pTargetTexture, _rViewCfg);
+        }
+        else if constexpr (T == render::EView::SHADER_RESOURCE && std::is_same<_T, D3D11_SHADER_RESOURCE_VIEW_DESC>::value)
+        {
+          return CreateShaderResourceView(_pTargetTexture, _rViewCfg);
+        }
+        else if constexpr (T == render::EView::UNORDERED_ACCESS && std::is_same<_T, D3D11_UNORDERED_ACCESS_VIEW_DESC>::value)
+        {
+          return CreateUnorderedAccessView(_pTargetTexture, _rViewCfg);
         }
         else
         {
@@ -83,20 +107,15 @@ namespace render
       }
 
       // Override operators
-      inline operator ID3D11Texture2D* () const { return *m_pInternalTexture; }
-      inline operator const ID3D11Texture2D* () const { return *m_pInternalTexture; }
+      inline operator ID3D11Texture2D* () const { return m_pInternalTexture; }
+      inline operator const ID3D11Texture2D* () const { return m_pInternalTexture; }
 
     private:
-      void Clear();
-
-      void ReleaseTexture();
-      void ReleaseView();
-
       // View creation
-      HRESULT CreateDepthStencilView(const D3D11_DEPTH_STENCIL_VIEW_DESC& _oViewDesc);
-      HRESULT CreateRenderTargetView(const D3D11_RENDER_TARGET_VIEW_DESC& _oViewDesc);
-      HRESULT CreateShaderResourceView(const D3D11_SHADER_RESOURCE_VIEW_DESC& _oViewDesc);
-      HRESULT CreateUnorderedAccessView(const D3D11_UNORDERED_ACCESS_VIEW_DESC& _oViewDesc);
+      HRESULT CreateDepthStencilView(ID3D11Texture2D* const _pTargetTexture, const D3D11_DEPTH_STENCIL_VIEW_DESC& _rViewDesc);
+      HRESULT CreateRenderTargetView(ID3D11Texture2D* const _pTargetTexture, const D3D11_RENDER_TARGET_VIEW_DESC& _rViewDesc);
+      HRESULT CreateShaderResourceView(ID3D11Texture2D* const _pTargetTexture, const D3D11_SHADER_RESOURCE_VIEW_DESC& _rViewDesc);
+      HRESULT CreateUnorderedAccessView(ID3D11Texture2D* const _pTargetTexture, const D3D11_UNORDERED_ACCESS_VIEW_DESC& _rViewDesc);
 
     private:
       ID3D11Texture2D* m_pInternalTexture = nullptr;
@@ -137,91 +156,79 @@ namespace render
     }
 
     template<render::EView T>
-    void texture::CTexture2D<T>::Clear()
-    {
-      ReleaseTexture();
-      ReleaseView();
-    }
-
-    template<render::EView T>
-    void render::texture::CTexture2D<T>::ReleaseTexture()
+    void render::texture::CTexture2D<T>::Release()
     {
       global::dx::SafeRelease(m_pInternalTexture);
-    }
-
-    template<render::EView T>
-    void render::texture::CTexture2D<T>::ReleaseView()
-    {
       global::dx::SafeRelease(m_pInternalView);
     }
 
     template<render::EView T>
-    HRESULT render::texture::CTexture2D<T>::CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _oTextureDesc, uint32_t _uChannels)
+    HRESULT render::texture::CTexture2D<T>::CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _rTextureDesc, uint32_t _uChannels)
     {
       // Clear
-      ReleaseTexture();
+      global::dx::SafeRelease(m_pInternalTexture);
 
       // Create texture using raw data!
-      D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
-      oSubresourceData.pSysMem = _pData;
-      oSubresourceData.SysMemPitch = _oTextureDesc.Width * _uChannels;
+      D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
+      rSubresourceData.pSysMem = _pData;
+      rSubresourceData.SysMemPitch = _rTextureDesc.Width * _uChannels;
 
       // Create texture
-      return global::dx::s_pDevice->CreateTexture2D(&_oTextureDesc, &oSubresourceData, &m_pInternalTexture);
+      return global::dx::s_pDevice->CreateTexture2D(&_rTextureDesc, &rSubresourceData, &m_pInternalTexture);
     }
 
     template<render::EView T>
-    HRESULT render::texture::CTexture2D<T>::CreateTexture(const D3D11_TEXTURE2D_DESC& _oTextureDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateTexture(const D3D11_TEXTURE2D_DESC& _rTextureDesc)
     {
       // Clear
-      ReleaseTexture();
+      global::dx::SafeRelease(m_pInternalTexture);
 
       // Create empty texture!
-      return global::dx::s_pDevice->CreateTexture2D(&_oTextureDesc, nullptr, &m_pInternalTexture);
+      return global::dx::s_pDevice->CreateTexture2D(&_rTextureDesc, nullptr, &m_pInternalTexture);
     }
 
     template<render::EView T>
-    HRESULT render::texture::CTexture2D<T>::CreateDepthStencilView(const D3D11_DEPTH_STENCIL_VIEW_DESC& _oViewDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateDepthStencilView(ID3D11Texture2D* const _pTargetTexture, const D3D11_DEPTH_STENCIL_VIEW_DESC& _rViewDesc)
     {
 #ifdef _DEBUG
       assert(T == EView::DEPTH_STENCIL);
 #endif // DEBUG
-      ReleaseView();
+      global::dx::SafeRelease(m_pInternalView);
       ID3D11DepthStencilView** pView = reinterpret_cast<ID3D11DepthStencilView**>(&m_pInternalView);
-      return global::dx::s_pDevice->CreateDepthStencilView(m_pInternalTexture, &_oViewDesc, pView);
+      return global::dx::s_pDevice->CreateDepthStencilView(_pTargetTexture, &_rViewDesc, pView);
     }
 
     template<render::EView T>
-    HRESULT render::texture::CTexture2D<T>::CreateRenderTargetView(const D3D11_RENDER_TARGET_VIEW_DESC& _oViewDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateRenderTargetView(ID3D11Texture2D* const _pTargetTexture, const D3D11_RENDER_TARGET_VIEW_DESC& _rViewDesc)
     {
 #ifdef _DEBUG
       assert(T == EView::RENDER_TARGET);
 #endif // DEBUG
-      ReleaseView();
+      global::dx::SafeRelease(m_pInternalView);
       ID3D11RenderTargetView** pView = reinterpret_cast<ID3D11RenderTargetView**>(&m_pInternalView);
-      return global::dx::s_pDevice->CreateRenderTargetView(m_pInternalTexture, &_oViewDesc, pView);
+      return global::dx::s_pDevice->CreateRenderTargetView(_pTargetTexture, &_rViewDesc, pView);
     }
 
     template<render::EView T>
-    HRESULT render::texture::CTexture2D<T>::CreateShaderResourceView(const D3D11_SHADER_RESOURCE_VIEW_DESC& _oViewDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateShaderResourceView(ID3D11Texture2D* const _pTargetTexture, const D3D11_SHADER_RESOURCE_VIEW_DESC& _rViewDesc)
     {
 #ifdef _DEBUG
       assert(T == EView::SHADER_RESOURCE);
 #endif // DEBUG
-      ReleaseView();
+      global::dx::SafeRelease(m_pInternalView);
       ID3D11ShaderResourceView** pView = reinterpret_cast<ID3D11ShaderResourceView**>(&m_pInternalView);
-      return global::dx::s_pDevice->CreateShaderResourceView(m_pInternalTexture, &_oViewDesc, pView);
+      return global::dx::s_pDevice->CreateShaderResourceView(_pTargetTexture, &_rViewDesc, pView);
     }
 
     template<render::EView T>
-    HRESULT render::texture::CTexture2D<T>::CreateUnorderedAccessView(const D3D11_UNORDERED_ACCESS_VIEW_DESC& _oDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateUnorderedAccessView(ID3D11Texture2D* const _pTargetTexture, const D3D11_UNORDERED_ACCESS_VIEW_DESC& _rViewDesc)
     {
 #ifdef _DEBUG
       assert(T == EView::UNORDERED_ACCESS);
 #endif // DEBUG
-      ReleaseView();
+      global::dx::SafeRelease(m_pInternalView);
       ID3D11UnorderedAccessView** pView = reinterpret_cast<ID3D11UnorderedAccessView**>(&m_pInternalView);
-      return global::dx::s_pDevice->CreateUnorderedAccessView(m_pInternalTexture, &_oDesc, pView);
+      return global::dx::s_pDevice->CreateUnorderedAccessView(_pTargetTexture, &_rViewDesc, pView);
     }
 
     // Typedefs

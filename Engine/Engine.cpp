@@ -37,8 +37,8 @@ namespace engine
     m_pSceneManager->SetSceneEnabled(0, true);
 
     // Set delegate
-    utils::CDelegate<void(uint32_t, uint32_t)> oResizeDelegate(&CEngine::OnWindowResizeEvent, this);
-    global::delegates::s_lstOnWindowResizeDelegates.push_back(oResizeDelegate);
+    utils::CDelegate<void(uint32_t, uint32_t)> rDelegate(&CEngine::OnWindowResizeEvent, this);
+    global::delegates::s_lstOnWindowResizeDelegates.push_back(rDelegate);
 
     // Marked as initialized
     m_bInitialized = true;
