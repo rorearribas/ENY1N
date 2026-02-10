@@ -21,8 +21,10 @@ namespace render
       CTexture2D() = default;
       ~CTexture2D() { Release(); }
 
-      void CopyTexture(ID3D11Texture2D* _pTexture);
-      void AttachTexture(uint32_t _uSlot, EShader _eShaderType);
+      void Attach(uint32_t _uSlot, EShader _eShaderType);
+      void Detach(uint32_t _uSlot, EShader _eShaderType);
+
+      void CopyTexture(ID3D11Texture2D* const _pTexture);
       void Release();
 
       // Texture and sampler
@@ -123,36 +125,56 @@ namespace render
     };
 
     template<render::EView T>
-    void render::texture::CTexture2D<T>::CopyTexture(ID3D11Texture2D* _pTexture)
-    {
-#ifdef _DEBUG
-      assert(m_pInternalTexture && _pTexture);
-#endif // DEBUG
-      global::dx::s_pDeviceContext->CopyResource(m_pInternalTexture, _pTexture);
-    }
-
-    template<render::EView T>
-    void render::texture::CTexture2D<T>::AttachTexture(uint32_t _uSlot, EShader _eShaderType)
+    void render::texture::CTexture2D<T>::Attach(uint32_t _uSlot, EShader _eShaderType)
     {
       if constexpr (T != render::EShader::SHADER_RESOURCE)
       {
         return;
       }
 
-      // Attach texture to current pipeline
-      ID3D11ShaderResourceView* pShaderResource = GetView();
-      if (pShaderResource)
+      // Attach slot
+      ID3D11ShaderResourceView* pShaderView = GetView();
+      if (pShaderView)
       {
         switch (_eShaderType)
         {
-          case render::EShader::E_VERTEX:   global::dx::s_pDeviceContext->VSSetShaderResources(_uSlot, 1, &pShaderResource); break;
-          case render::EShader::E_HULL:     global::dx::s_pDeviceContext->HSSetShaderResources(_uSlot, 1, &pShaderResource); break;
-          case render::EShader::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetShaderResources(_uSlot, 1, &pShaderResource); break;
-          case render::EShader::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetShaderResources(_uSlot, 1, &pShaderResource); break;
-          case render::EShader::E_PIXEL:    global::dx::s_pDeviceContext->PSSetShaderResources(_uSlot, 1, &pShaderResource); break;
-          case render::EShader::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetShaderResources(_uSlot, 1, &pShaderResource); break;
+          case render::EShader::E_VERTEX:   global::dx::s_pDeviceContext->VSSetShaderResources(_uSlot, 1, &pShaderView); break;
+          case render::EShader::E_HULL:     global::dx::s_pDeviceContext->HSSetShaderResources(_uSlot, 1, &pShaderView); break;
+          case render::EShader::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetShaderResources(_uSlot, 1, &pShaderView); break;
+          case render::EShader::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetShaderResources(_uSlot, 1, &pShaderView); break;
+          case render::EShader::E_PIXEL:    global::dx::s_pDeviceContext->PSSetShaderResources(_uSlot, 1, &pShaderView); break;
+          case render::EShader::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetShaderResources(_uSlot, 1, &pShaderView); break;
         }
       }
+    }
+
+    template<render::EView T>
+    void render::texture::CTexture2D<T>::Detach(uint32_t _uSlot, EShader _eShaderType)
+    {
+      if constexpr (T != render::EShader::SHADER_RESOURCE)
+      {
+        return;
+      }
+
+      // Detach slot
+      switch (_eShaderType)
+      {
+        case render::EShader::E_VERTEX:   global::dx::s_pDeviceContext->VSSetShaderResources(_uSlot, 1, nullptr); break;
+        case render::EShader::E_HULL:     global::dx::s_pDeviceContext->HSSetShaderResources(_uSlot, 1, nullptr); break;
+        case render::EShader::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetShaderResources(_uSlot, 1, nullptr); break;
+        case render::EShader::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetShaderResources(_uSlot, 1, nullptr); break;
+        case render::EShader::E_PIXEL:    global::dx::s_pDeviceContext->PSSetShaderResources(_uSlot, 1, nullptr); break;
+        case render::EShader::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetShaderResources(_uSlot, 1, nullptr); break;
+      }
+    }
+
+    template<render::EView T>
+    void render::texture::CTexture2D<T>::CopyTexture(ID3D11Texture2D* const _pTexture)
+    {
+#ifdef _DEBUG
+      assert(m_pInternalTexture && _pTexture);
+#endif // DEBUG
+      global::dx::s_pDeviceContext->CopyResource(m_pInternalTexture, _pTexture);
     }
 
     template<render::EView T>

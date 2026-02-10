@@ -21,8 +21,8 @@ namespace render
       HRESULT Init(const unsigned char* _pBuffer, size_t _tSize);
       void Release();
 
-      void AttachShader();
-      void DetachShader();
+      void Attach();
+      void Detach();
 
     private:
       ID3D11DeviceChild* m_pInternalPtr = nullptr;
@@ -84,7 +84,7 @@ namespace render
     }
 
     template<EShader T>
-    void CShader<T>::AttachShader()
+    void CShader<T>::Attach()
     {
       // Get device ctx
       ID3D11DeviceContext* pDeviceCtx = global::dx::s_pDeviceContext;
@@ -105,7 +105,7 @@ namespace render
     }
 
     template<EShader T>
-    void CShader<T>::DetachShader()
+    void CShader<T>::Detach()
     {
       // Get device ctx
       ID3D11DeviceContext* pDeviceCtx = global::dx::s_pDeviceContext;
