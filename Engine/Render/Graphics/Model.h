@@ -7,12 +7,14 @@
 #include "Libs/Utils/FixedPool.h"
 #include "Libs/Math/Transform.h"
 
+namespace render { class CRender; }
+
 namespace render
 {
   namespace gfx
   {
     typedef std::vector<std::unique_ptr<render::gfx::CMesh>> TMeshes;
-    typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstancesPerModel> TInstances;
+    typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstancesPerObject> TInstances;
 
     class CModel
     {
@@ -28,9 +30,8 @@ namespace render
       CModel(TModelData& _rModelData);
       ~CModel();
 
-      void Draw(uint16_t _uInstanceCount = 0);
-      void PushInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
-      void PushBuffers();
+      void Draw(render::CRender* _pRender, bool _bDrawModel, uint16_t _uInstanceCount);
+      void PushBuffers(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
 
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPos(); }
@@ -38,6 +39,9 @@ namespace render
       inline const math::CVector3& GetRotation() const { return m_oTransform.GetRot(); }
       void SetScl(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScl() const { return m_oTransform.GetScl(); }
+
+      inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
+      inline const math::CTransform& GetTransform() const { return m_oTransform; }
 
       void SetCullEnabled(bool _bCull);
       inline const bool IsCullEnabled() const { return m_bCullEnabled; }

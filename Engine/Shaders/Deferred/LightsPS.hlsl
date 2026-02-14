@@ -52,7 +52,6 @@ struct Spotlight
 cbuffer ConstantTransforms : register(b0)
 {
   // Transforms
-  matrix Model;
   matrix ViewProjection;
   matrix InvViewProjection;
 
@@ -100,9 +99,11 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
 {
   // Get pos + normal
   float3 v3Normal = normalize(gNormal.Sample(gSampleLinear, input.uv)).xyz;
+
   // Get diffuse color + specular
   float3 v3Diffuse = gDiffuse.Sample(gSampleLinear, input.uv).rgb;
   float3 v3Specular = gSpecular.Sample(gSampleLinear, input.uv).rgb;
+
   // Get world pos
   float fDepth = gDepth.Sample(gSampleLinear, input.uv).r;
   float3 v3WorldPos = GetPositionFromDepth(input.uv, fDepth, InvViewProjection);
@@ -129,6 +130,7 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
     float3 v3LightDir = normalize(pointLight.Position - v3WorldPos);
     float fDiffuse = max(dot(v3Normal, v3LightDir), 0.0f);
     float fFalloff = saturate(1.0f - fDist / pointLight.Range);
+
     // Add light
     v3TotalLight += pointLight.Color * pointLight.Intensity * fFalloff;
   }
@@ -157,5 +159,6 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
     // Add color
     v3TotalLight += spotlight.Color * spotlight.Intensity * fFalloff;
   }
+
   return float4(saturate(v3TotalLight * v3Diffuse), 1.0f);
 }

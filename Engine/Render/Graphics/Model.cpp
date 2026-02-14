@@ -27,56 +27,60 @@ namespace render
       Clear();
     }
     // ------------------------------------
-    void CModel::Draw(uint16_t _uInstanceCount)
+    void CModel::Draw(render::CRender* _pRender, bool _bDrawModel, uint16_t _uInstanceCount)
     {
+      // Set values
+      uint16_t uInstanceCount = _bDrawModel ? (_uInstanceCount + 1) : _uInstanceCount;
+      uint16_t uStartOffset = _bDrawModel ? 0 : 1;
+
       // Draw meshes
-      for (std::unique_ptr<CMesh>& rMesh : m_lstMeshes)
+      for (std::unique_ptr<CMesh>& pMesh : m_lstMeshes)
       {
-        rMesh->Draw(_uInstanceCount);
+        // Set material info (global buffer)
+        _pRender->PushMaterialInfo(pMesh->GetMaterial());
+
+        // Draw process
+        pMesh->Draw(uInstanceCount, uStartOffset);
       }
     }
     // ------------------------------------
-    void CModel::PushInstances(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount)
+    void CModel::PushBuffers(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount)
     {
-      D3D11_MAPPED_SUBRESOURCE oMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-      HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &oMappedSubresource);
+      D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+      HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
       if (FAILED(hResult))
       {
         ERROR_LOG("Error mapping buffer!");
         return;
       }
 
-      // Set values
-      TInstanceData* pInstanceData = static_cast<TInstanceData*>(oMappedSubresource.pData);
-      for (uint16_t uI = 0; uI < _uInstanceCount; ++uI)
+      // Mapped instance data
+      TInstanceData* pInstanceData = static_cast<TInstanceData*>(rMappedSubresource.pData);
+
+      // Set model matrix
+      uint16_t uInstance = 0;
+      pInstanceData[uInstance++].Transform = GetMatrix();
+
+      // Set instances
+      for (uint16_t uJ = 0; uJ < _uInstanceCount; ++uJ)
       {
-        uint16_t uInstance = _lstDrawableInstances[uI];
-        if (render::gfx::CRenderInstance* pInstance = m_lstInstances[uInstance])
-        {
-          pInstanceData[uI].Transform = pInstance->GetMatrix();
-        }
+        uint16_t uID = _lstDrawableInstances[uJ];
+        pInstanceData[uInstance++].Transform = m_lstInstances[uID]->GetMatrix();
       }
 
       // Unmap
       global::dx::s_pDeviceContext->Unmap(m_pInstanceBuffer, 0);
-    }
-    // ------------------------------------
-    void CModel::PushBuffers()
-    {
-      // Set buffers
+
+      // Set vertex buffers
       static const uint32_t uBuffersCount(2);
       ID3D11Buffer* pBuffers[uBuffersCount] = { m_pVertexBuffer, m_pInstanceBuffer };
 
-      uint32_t lstStrides[uBuffersCount] = { sizeof(TVertexData), sizeof(TInstanceData) };
+      uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(TInstanceData) };
       uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
-
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
-      global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-      // Apply model matrix
-      engine::CEngine* pEngine = engine::CEngine::GetInstance();
-      render::CRender* pRender = pEngine->GetRender();
-      pRender->SetModelMatrix(m_oTransform.GetMatrix());
+      // Set topology
+      global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     }
 // ------------------------------------
     void CModel::SetPos(const math::CVector3& _v3Pos)
@@ -173,22 +177,24 @@ namespace render
       rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-      D3D11_SUBRESOURCE_DATA oSubresourceData = D3D11_SUBRESOURCE_DATA();
-      oSubresourceData.pSysMem = _rModelData.Vertices.data();
-      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &oSubresourceData, &m_pVertexBuffer);
+      D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
+      rSubresourceData.pSysMem = _rModelData.Vertices.data();
+      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_pVertexBuffer);
       if (FAILED(hResult))
       {
         return hResult;
       }
 
-      // We create here the instance buffer
-      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TInstanceData) * s_uMaxInstancesPerModel));
+      // We create the instance buffer (we use an extra slot for the model)
+      uint16_t uInstances = (s_uMaxInstancesPerObject + 1);
+
+      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TInstanceData) * uInstances));
       rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
       rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-      oSubresourceData.pSysMem = new TInstanceData[s_uMaxInstancesPerModel];
-      hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &oSubresourceData, &m_pInstanceBuffer);
+      rSubresourceData.pSysMem = new TInstanceData[uInstances];
+      hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_pInstanceBuffer);
       if (FAILED(hResult))
       {
         return hResult;

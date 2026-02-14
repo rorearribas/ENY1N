@@ -9,17 +9,13 @@ SamplerState tSampler : register(s0);
 cbuffer TMaterialData : register(b0)
 {
   float3 DiffuseColor;
-  int Padding2;
-  float3 SpecularColor;
-  int Padding3;
-};
+  int HasDiffuseTexture;
 
-cbuffer TexturesData : register(b1)
-{
-  int HasDiffuse;
-  int HasNormal;
-  int HasSpecular;
-  int Padding4;
+  float3 SpecularColor;
+  int HasSpecularTexture;
+
+  int HasNormalTexture;
+  int Padding[3];
 };
 
 struct GBuffer
@@ -40,14 +36,14 @@ GBuffer DeferredPSMain(PS_INPUT input)
   {
     // Set diffuse
     float4 fDiffuseColor = float4(DiffuseColor, 1.0f);
-    gBuffer.DiffuseRT = HasDiffuse ? tDiffuse.Sample(tSampler, input.uv) * fDiffuseColor : fDiffuseColor;
-
-    // Set normal
-    gBuffer.NormalRT = HasNormal ? float4(unpack_normal(tNormal.Sample(tSampler, input.uv).xyz), 1.0f) : float4(input.normal, 1.0f);
+    gBuffer.DiffuseRT = HasDiffuseTexture ? tDiffuse.Sample(tSampler, input.uv) * fDiffuseColor : fDiffuseColor;
 
     // Set specular
     float4 fSpecularColor = float4(SpecularColor, 1.0f);
-    gBuffer.SpecularRT = HasSpecular ? tSpecular.Sample(tSampler, input.uv) * fSpecularColor : fSpecularColor;
+    gBuffer.SpecularRT = HasSpecularTexture ? tSpecular.Sample(tSampler, input.uv) * fSpecularColor : fSpecularColor;
+
+    // Set normal
+    gBuffer.NormalRT = HasNormalTexture ? float4(unpack_normal(tNormal.Sample(tSampler, input.uv).xyz), 1.0f) : float4(input.normal, 1.0f);
   }
   return gBuffer;
 }

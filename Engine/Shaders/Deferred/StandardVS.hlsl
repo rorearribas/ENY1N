@@ -3,7 +3,6 @@
 cbuffer ConstantTransforms : register(b0)
 {
   // Transforms
-  matrix Model;
   matrix ViewProjection;
   matrix InvViewProjection;
 
@@ -13,22 +12,16 @@ cbuffer ConstantTransforms : register(b0)
   float2 Padding0;
 };
 
-cbuffer ConstantInstancing : register(b1)
-{
-  bool IsInstanced;
-  float3 Padding1;
-}
-
 // VS Input
 struct VS_INPUT
 {
-  // Layout
+  // Vertex info
   float3 position : VERTEXPOS;
   float3 normal : NORMAL;
   float2 uv : UV;
 
   // Instancing
-  float4x4 instanceMatrix : INSTANCE_TRANSFORM;
+  float4x4 modelMatrix : INSTANCE_TRANSFORM;
 };
 
 // PS Input
@@ -44,13 +37,11 @@ PS_INPUT VSMain(VS_INPUT input)
 {
   PS_INPUT output;
   {
-    matrix modelMatrix = IsInstanced ? input.instanceMatrix : Model;
-    float4 worldPosition = mul(modelMatrix, float4(input.position, 1.0));
-
+    float4 worldPosition = mul(input.modelMatrix, float4(input.position, 1.0));
     output.position = mul(ViewProjection, worldPosition);
     output.worldpos = worldPosition.xyz;
 
-    float3x3 normalMatrix = transpose((float3x3)modelMatrix);
+    float3x3 normalMatrix = transpose((float3x3)input.modelMatrix);
     output.normal = normalize(mul(normalMatrix, input.normal));
     output.uv = input.uv;
   }

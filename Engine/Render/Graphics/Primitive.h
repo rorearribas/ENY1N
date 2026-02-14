@@ -20,7 +20,8 @@ namespace render
       CPrimitive(EPrimitive _eType, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
       ~CPrimitive();
 
-      void Draw();
+      void Draw(bool _bDrawPrimitive = true, uint16_t _uInstanceCount = 0);
+      void PushBuffers();
 
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPos() const { return m_oTransform.GetPos(); }
@@ -28,6 +29,9 @@ namespace render
       inline const math::CVector3& GetRot() const { return m_oTransform.GetRot(); }
       void SetScl(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScl() const { return m_oTransform.GetScl(); }
+
+      inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
+      inline const math::CTransform& GetTransform() const { return m_oTransform; }
 
       void SetColor(const math::CVector3& _v3Color);
       inline const math::CVector3& GetColor() const { return m_v3Color; }
@@ -41,11 +45,12 @@ namespace render
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
 
-      void SetRenderMode(ERenderMode _eRenderMode);
+      void SetRenderMode(render::ERenderMode _eRenderMode);
       inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
       inline const EPrimitive& GetPrimitiveType() const { return m_ePrimitiveType; }
 
     private:
+      D3D_PRIMITIVE_TOPOLOGY GetPrimitiveTopology(render::ERenderMode _eRenderMode);
       HRESULT CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode);
       HRESULT CreateBuffer(const std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData, const std::vector<uint32_t>& _lstIndices);
       void Clear();
@@ -53,9 +58,9 @@ namespace render
     private:
       // Buffers
       ID3D11Buffer* m_pVertexBuffer = nullptr;
+      ID3D11Buffer* m_pInstanceBuffer = nullptr;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
 
-    private:
       // Data
       ERenderMode m_eRenderMode = ERenderMode::SOLID;
       EPrimitive m_ePrimitiveType = EPrimitive::INVALID;

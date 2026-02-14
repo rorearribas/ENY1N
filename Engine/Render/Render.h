@@ -25,13 +25,10 @@ namespace render
 
     inline void ShowRenderWindow(bool _bStatus) { m_pRenderWindow->SetEnabled(_bStatus); }
     void SetFillMode(D3D11_FILL_MODE _eFillMode);
+    void PushMaterialInfo(const render::mat::CMaterial* _pMaterial);
 
     inline void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
     inline bool IsVSyncEnabled() const { return m_bVerticalSync; }
-
-    void SetMaterialInfo(const std::unique_ptr<render::mat::CMaterial>& _pMaterial);
-    void SetModelMatrix(const math::CMatrix4x4& _mModel);
-    void SetInstancingMode(bool _bEnabled);
 
   protected:
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);
@@ -64,7 +61,6 @@ namespace render
 
   private:
     // Deferred
-    void ComputeZPrepass(scene::CScene* _pScene);
     void DrawModels(scene::CScene* _pScene);
     void DrawPrimitives(scene::CScene* _pScene);
     void DrawGBuffer();

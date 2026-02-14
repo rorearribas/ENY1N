@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Render/ConstantBuffer/BufferTypes.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Engine/Render/Resources/Texture2D.h"
 #include "Libs/Utils/Singleton.h"
 #include "Libs/Utils/FixedPool.h"
 #include "PointLight.h"
@@ -17,19 +18,24 @@ namespace render
     class CLightManager
     {
     private:
-      static constexpr uint32_t s_uMaxSpotLights = 100u;
-      static constexpr uint32_t s_uMaxPointLights = 100u;
+      static constexpr uint16_t s_uMaxShadowMaps = 4u;
+      static constexpr uint16_t s_uMaxSpotLights = 100u;
+      static constexpr uint16_t s_uMaxPointLights = 100u;
 
-      typedef CConstantBuffer<TGlobalLighting<s_uMaxPointLights, s_uMaxSpotLights>> TLightingBuffer;
+      typedef utils::CFixedPool<texture::CTexture2D<EView::DEPTH_STENCIL>, s_uMaxShadowMaps> TShadowMaps;
       typedef utils::CFixedPool<render::lights::CPointLight, s_uMaxPointLights> TPointLights;
       typedef utils::CFixedPool<render::lights::CSpotLight, s_uMaxSpotLights> TSpotLights;
+
+    private:
+      typedef TGlobalLighting<s_uMaxPointLights, s_uMaxSpotLights> TLightingData;
+      typedef CConstantBuffer<TLightingData> TLightingBuffer;
 
     public:
       CLightManager();
       ~CLightManager();
 
-      // Set light
-      void Apply();
+      // push lights
+      void ApplyLighting();
 
       // Handle lights
       render::lights::CDirectionalLight* const CreateDirectionalLight();
@@ -50,6 +56,9 @@ namespace render
 
       // Global lighting buffer
       TLightingBuffer m_oLightingBuffer;
+
+      //texture::CTexture2D<EView::DEPTH_STENCIL> m_oShadowDepthMap;
+      //texture::CTexture2D<EView::SHADER_RESOURCE> m_oShadowMapTexture;
     };
   }
 }

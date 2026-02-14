@@ -175,7 +175,7 @@ namespace scene
     pSpherePrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CScene::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
     {
@@ -185,7 +185,7 @@ namespace scene
 
     // Create plane
     using namespace render::gfx;
-    TCustomPrimitive rData = render::gfx::CPrimitiveUtils::CreatePlane(_oPlane, _eRenderMode);
+    TCustomPrimitive rData = render::gfx::CPrimitiveUtils::CreatePlane(_rPlane, _eRenderMode);
 
     // Create primitive
     CPrimitive* pPlanePrimitive = m_lstDebugItems.Create(rData, _eRenderMode);
@@ -194,7 +194,7 @@ namespace scene
 #endif
 
     // Set values
-    pPlanePrimitive->SetPos(_oPlane.GetPos());
+    pPlanePrimitive->SetPos(_rPlane.GetPos());
     pPlanePrimitive->SetScl(_v3Size);
     pPlanePrimitive->SetColor(_v3Color);
   }
@@ -237,14 +237,11 @@ namespace scene
       // Handle model
       TCachedModel& rCachedModel = m_lstCachedModels[m_uDrawableModels];
       rCachedModel.Visible = pModel->IsVisible();
-      if (rCachedModel.Visible)
+
+      // Check culling
+      if (rCachedModel.Visible && pModel->IsCullEnabled())
       {
-        bool bOnFrustum = true;
-        if (pModel->IsCullEnabled()) // Check culling
-        {
-          bOnFrustum = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
-        }
-        rCachedModel.Visible = bOnFrustum;
+        rCachedModel.Visible = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
       }
 
       // Handle instances
@@ -288,27 +285,10 @@ namespace scene
       utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[rCachedModel.Index];
 
       // Push buffers
-      pModel->PushBuffers();
+      pModel->PushBuffers(rCachedModel.DrawableInstances, rCachedModel.InstanceCount);
 
-      // Handle model
-      if (rCachedModel.Visible)
-      {
-        pModel->Draw();
-      }
-
-      // Handle instances
-      if (rCachedModel.InstanceCount > 0)
-      {
-        // Push mode
-        _pRender->SetInstancingMode(true);
-
-        // Draw instances
-        pModel->PushInstances(rCachedModel.DrawableInstances, rCachedModel.InstanceCount);
-        pModel->Draw(rCachedModel.InstanceCount);
-
-        // Disabled mode
-        _pRender->SetInstancingMode(false);
-      }
+      // Draw
+      pModel->Draw(_pRender, rCachedModel.Visible, rCachedModel.InstanceCount);
     }
   }
   // ------------------------------------
@@ -330,6 +310,7 @@ namespace scene
       }
       if (bDrawPrimitive)
       {
+        pPrimitive->PushBuffers();
         pPrimitive->Draw();
       }
     }
@@ -347,6 +328,7 @@ namespace scene
       }
       if (bDrawDebug)
       {
+        pDebugPrimitive->PushBuffers();
         pDebugPrimitive->Draw();
       }
     }
@@ -360,7 +342,7 @@ namespace scene
   // ------------------------------------
   void CScene::ApplyLighting()
   {
-    m_oLightManager.Apply();
+    m_oLightManager.ApplyLighting();
   }
   // ------------------------------------
   void CScene::Clear()

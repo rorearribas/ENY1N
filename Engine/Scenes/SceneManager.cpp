@@ -125,11 +125,11 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CSceneManager::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene)
     {
-      m_pCurrentScene->DrawPlane(_oPlane, _v3Size, _v3Color, _eRenderMode);
+      m_pCurrentScene->DrawPlane(_rPlane, _v3Size, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------

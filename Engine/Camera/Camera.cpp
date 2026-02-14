@@ -197,18 +197,18 @@ namespace render
   {
     switch (_eProjectionMode)
     {
-    case EProjectionMode::PERSPECTIVE:
-    {
-      m_mProjection = math::CMatrix4x4::CreatePerspectiveMatrix(m_fFov, m_fAspectRatio, m_fNear, m_fFar);
-    }
-    break;
-    case EProjectionMode::ORTOGRAPHIC:
-    {
-      float fWidth = internal_camera::s_fOrtographicFactor / m_fZoomScale;
-      float fHeight = (internal_camera::s_fOrtographicFactor / m_fAspectRatio) / m_fZoomScale;
-      m_mProjection = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
-    }
-    break;
+      case EProjectionMode::PERSPECTIVE:
+      {
+        m_mProjection = math::CMatrix4x4::CreatePerspectiveMatrix(m_fFov, m_fAspectRatio, m_fNear, m_fFar);
+      }
+      break;
+      case EProjectionMode::ORTOGRAPHIC:
+      {
+        float fWidth = (internal_camera::s_fOrtographicFactor / m_fZoomScale);
+        float fHeight = (internal_camera::s_fOrtographicFactor / m_fAspectRatio) / m_fZoomScale;
+        m_mProjection = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
+      }
+      break;
     }
   }
   // ------------------------------------

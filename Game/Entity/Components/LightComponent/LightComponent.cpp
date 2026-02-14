@@ -127,7 +127,7 @@ namespace game
         pSpotLight->SetIntensity(fIntensity);
 
         // Draw debug
-        engine::CEngine::GetInstance()->DrawCube(pSpotLight->GetPos(), math::CVector3::Zero, math::CVector3::One, v3Color, render::ERenderMode::WIREFRAME);
+        engine::CEngine::GetInstance()->DrawCube(pSpotLight->GetPos(), pEntity->GetRot(), math::CVector3::One, v3Color, render::ERenderMode::WIREFRAME);
         engine::CEngine::GetInstance()->DrawLine(pSpotLight->GetPos(), pSpotLight->GetPos() + (v3Dir * fRange), v3Color);
       }
       break;

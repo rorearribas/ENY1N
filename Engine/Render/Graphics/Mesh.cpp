@@ -24,7 +24,7 @@ namespace render
       ClearMaterial();
     }
     // ------------------------------------
-    void CMesh::Draw(uint32_t _uInstanceCount)
+    void CMesh::Draw(uint32_t _uInstanceCount, uint32_t _uStartOffset)
     {
       if (m_pMaterial)
       {
@@ -44,19 +44,11 @@ namespace render
 
         // Bind shaders
         global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, lstTextures);
-
-        // Push material
-        engine::CEngine* pEngine = engine::CEngine::GetInstance();
-        render::CRender* pRender = pEngine->GetRender();
-        pRender->SetMaterialInfo(m_pMaterial);
       }
 
-      // Set index buffer
-      global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-
       // Draw mesh
-      _uInstanceCount > 0 ? global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndexCount, _uInstanceCount, 0, 0, 0) :
-      global::dx::s_pDeviceContext->DrawIndexed(m_uIndexCount, 0, 0);
+      global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+      global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndices, _uInstanceCount, 0, 0, _uStartOffset);
     }
     // ------------------------------------
     HRESULT CMesh::CreateBuffer(const TIndices& _lstIndices)
@@ -65,7 +57,7 @@ namespace render
       ClearBuffer();
 
       // Get count
-      m_uIndexCount = static_cast<uint32_t>(_lstIndices.size());
+      m_uIndices = static_cast<uint32_t>(_lstIndices.size());
 
       // Config index buffer
       D3D11_BUFFER_DESC rBufferDesc = D3D11_BUFFER_DESC();

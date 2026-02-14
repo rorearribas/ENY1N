@@ -24,7 +24,6 @@ static constexpr uint32_t s_uAlign = 16;
 struct __declspec(align(s_uAlign)) TTransforms
 {
   // Transforms
-  math::CMatrix4x4 Model = math::CMatrix4x4::Identity;
   math::CMatrix4x4 ViewProjection = math::CMatrix4x4::Identity;
   math::CMatrix4x4 InvViewProjection = math::CMatrix4x4::Identity;
 
@@ -34,32 +33,20 @@ struct __declspec(align(s_uAlign)) TTransforms
   float Padding[2];
 };
 
-// Instancing mode [16 Bytes]
-struct __declspec(align(s_uAlign)) TInstancingMode
-{
-  bool IsInstanced = false;
-  float Padding[3];
-};
-
-// Material info [32 Bytes]
+// Material info [48 Bytes]
 struct __declspec(align(s_uAlign)) TMaterialInfo
 {
   // 12 + 4 Bytes
   math::CVector3 DiffuseColor;
-  float Padding0;
+  int HasDiffuseTexture;
+
   // 12 + 4 Bytes
   math::CVector3 SpecularColor;
-  float Padding1;
-};
+  int HasSpecularTexture;
 
-// Textures data [16 Bytes]
-struct __declspec(align(s_uAlign)) TTextureInfo
-{
-  // 4 * 4 Bytes
-  int HasDiffuse;
-  int HasNormal;
-  int HasSpecular;
-  int Padding;
+  // 4 + 12 Bytes;
+  int HasNormalTexture;
+  int Padding[3];
 };
 
 // Directional lights [32 Bytes]

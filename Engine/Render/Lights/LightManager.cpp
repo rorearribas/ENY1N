@@ -26,17 +26,17 @@ namespace render
       Clean();
     }
     // ------------------------------------
-    void CLightManager::Apply()
+    void CLightManager::ApplyLighting()
     {
       // Get data
-      auto& rLightingBuffer = m_oLightingBuffer.GetData();
+      TLightingData rLightingData = TLightingData();
 
       // Update directional light
       if (m_pDirectionalLight)
       {
-        rLightingBuffer.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
-        rLightingBuffer.DirectionalLight.Color = m_pDirectionalLight->GetColor();
-        rLightingBuffer.DirectionalLight.Direction = m_pDirectionalLight->GetDir();
+        rLightingData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
+        rLightingData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
+        rLightingData.DirectionalLight.Direction = m_pDirectionalLight->GetDir();
       }
 
       // Update point lights
@@ -44,38 +44,38 @@ namespace render
       {
         if (render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex])
         {
-          rLightingBuffer.PointLights[uIndex].Position = pPointLight->GetPos();
-          rLightingBuffer.PointLights[uIndex].Color = pPointLight->GetColor();
-          rLightingBuffer.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
-          rLightingBuffer.PointLights[uIndex].Range = pPointLight->GetRange();
+          rLightingData.PointLights[uIndex].Position = pPointLight->GetPos();
+          rLightingData.PointLights[uIndex].Color = pPointLight->GetColor();
+          rLightingData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
+          rLightingData.PointLights[uIndex].Range = pPointLight->GetRange();
         }
       }
       // Set the number of registered point lights
-      rLightingBuffer.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetSize());
+      rLightingData.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetSize());
 
       // Update spot lights
       for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetMaxSize(); uIndex++)
       {
         if (render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex])
         {
-          rLightingBuffer.SpotLights[uIndex].Position = pSpotLight->GetPos();
-          rLightingBuffer.SpotLights[uIndex].Direction = pSpotLight->GetDir();
-          rLightingBuffer.SpotLights[uIndex].Color = pSpotLight->GetColor();
-          rLightingBuffer.SpotLights[uIndex].Range = pSpotLight->GetRange();
-          rLightingBuffer.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
+          rLightingData.SpotLights[uIndex].Position = pSpotLight->GetPos();
+          rLightingData.SpotLights[uIndex].Direction = pSpotLight->GetDir();
+          rLightingData.SpotLights[uIndex].Color = pSpotLight->GetColor();
+          rLightingData.SpotLights[uIndex].Range = pSpotLight->GetRange();
+          rLightingData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
         }
       }
       // Set the number of registered spot lights
-      rLightingBuffer.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetSize());
+      rLightingData.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetSize());
 
       // Write buffer
-      bool bOk = m_oLightingBuffer.WriteBuffer();
+      bool bOk = m_oLightingBuffer.WriteBuffer(rLightingData);
       UNUSED_VAR(bOk);
       assert(bOk);
 
       // Bind buffer
-      m_oLightingBuffer.SetSlot(1);
-      m_oLightingBuffer.Bind<render::EShader::E_PIXEL>();
+      const uint32_t uSlot(1);
+      m_oLightingBuffer.Bind<render::EShader::E_PIXEL>(uSlot);
     }
     // ------------------------------------
     render::lights::CDirectionalLight* const CLightManager::CreateDirectionalLight()
@@ -85,7 +85,11 @@ namespace render
         WARNING_LOG("There is a directional light in the current scene!");
         return m_pDirectionalLight;
       }
+
+      // Create directional light
       m_pDirectionalLight = new render::lights::CDirectionalLight();
+      m_pDirectionalLight->SetCastShadows(true);
+
       return m_pDirectionalLight;
     }
     // ------------------------------------

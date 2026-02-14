@@ -3,7 +3,6 @@
 cbuffer ConstantTransforms : register(b0)
 {
   // Transforms
-  matrix Model;
   matrix ViewProjection;
   matrix InvViewProjection;
 
@@ -19,6 +18,9 @@ struct VS_INPUT
   // Layout
   float3 position : VERTEXPOS;
   float3 color: COLOR;
+
+  // Matrix
+  float4x4 modelMatrix : INSTANCE_TRANSFORM;
 };
 
 // PS Input
@@ -32,7 +34,7 @@ PS_INPUT VSMain(VS_INPUT input)
 {
   PS_INPUT output;
   {
-    output.position = mul(ViewProjection, mul(Model, float4(input.position, 1.0)));
+    output.position = mul(ViewProjection, mul(input.modelMatrix, float4(input.position, 1.0)));
     output.color = input.color;
   }
   return output;

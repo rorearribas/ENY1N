@@ -122,9 +122,9 @@ namespace engine
     m_pSceneManager->DrawSphere(_v3Pos, _fRadius, _iSubvH, _iSubvV, _v3Color, _eRenderMode);
   }
   // ------------------------------------
-  void CEngine::DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CEngine::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    m_pSceneManager->DrawPlane(_oPlane, _v3Size, _v3Color, _eRenderMode);
+    m_pSceneManager->DrawPlane(_rPlane, _v3Size, _v3Color, _eRenderMode);
   }
   // ------------------------------------
   void CEngine::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)

@@ -30,8 +30,7 @@ namespace render
   namespace internal
   {
     static const wchar_t* s_sPrepareFrameMrk(L"Clear");
-    static const wchar_t* s_sZPrepassMrk(L"Z-Prepass");
-    static const wchar_t* s_sDrawModelsMrk(L"Models");
+    static const wchar_t* s_sDrawGBufferMrk(L"GBuffer");
     static const wchar_t* s_sDrawPrimitivesMrk(L"Primitives");
     static const wchar_t* s_sImGuiMarker(L"ImGui");
 
@@ -40,7 +39,7 @@ namespace render
     static const float s_fMaxDepth(1.0f);
 
     // Standard Input
-    static const int s_iStandardLayoutSize(7);
+    static constexpr int s_iStandardLayoutSize(7);
     static const D3D11_INPUT_ELEMENT_DESC s_tStandardLayout[s_iStandardLayoutSize] =
     {
       // Vertex layout
@@ -55,8 +54,8 @@ namespace render
     };
 
     // Debug input
-    static const int s_iDebugLayoutSize(6);
-    static const D3D11_INPUT_ELEMENT_DESC s_tPrimitivesLayout[s_iDebugLayoutSize] =
+    static constexpr int s_iPrimitiveLayoutSize(6);
+    static const D3D11_INPUT_ELEMENT_DESC s_tPrimitivesLayout[s_iPrimitiveLayoutSize] =
     {
       // Vertex layout
       { "VERTEXPOS",          0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 12
@@ -82,9 +81,10 @@ namespace render
 
       // Constant buffers
       CConstantBuffer<TTransforms> tTransformsBuffer;
+      static constexpr uint32_t uTransformSlot = 0;
+
       CConstantBuffer<TMaterialInfo> tMaterialInfoBuffer;
-      CConstantBuffer<TTextureInfo> tTexturesInfoBuffer;
-      CConstantBuffer<TInstancingMode> tInstancingModeBuffer;
+      static constexpr uint32_t uMaterialInfoSlot = 0;
 
       // Depth
       texture::CTexture2D<EView::DEPTH_STENCIL> rDepthStencil;
@@ -123,6 +123,7 @@ namespace render
     };
 
     static TRenderPipeline s_oPipeline;
+    static TTransforms s_oTransforms;
   }
   // ------------------------------------
   CRender::CRender(uint32_t _uX, uint32_t _uY)
@@ -152,8 +153,6 @@ namespace render
     // Clear constant buffer
     internal::s_oPipeline.tTransformsBuffer.Release();
     internal::s_oPipeline.tMaterialInfoBuffer.Release();
-    internal::s_oPipeline.tTexturesInfoBuffer.Release();
-    internal::s_oPipeline.tInstancingModeBuffer.Release();
 
     // Release depth textures
     internal::s_oPipeline.rDepthStencil.Release();
@@ -316,7 +315,6 @@ namespace render
       {
         return hResult;
       }
-      internal::s_oPipeline.tTransformsBuffer.SetSlot(0); // hlsl
     }
     // Material info buffer
     {
@@ -325,25 +323,6 @@ namespace render
       {
         return hResult;
       }
-      internal::s_oPipeline.tMaterialInfoBuffer.SetSlot(0); // hlsl
-    }
-    // Textures info buffer
-    {
-      HRESULT hResult = internal::s_oPipeline.tTexturesInfoBuffer.Init();
-      if (FAILED(hResult))
-      {
-        return hResult;
-      }
-      internal::s_oPipeline.tTexturesInfoBuffer.SetSlot(1); // hlsl
-    }
-    // Instancing buffer
-    {
-      HRESULT hResult = internal::s_oPipeline.tInstancingModeBuffer.Init();
-      if (FAILED(hResult))
-      {
-        return hResult;
-      }
-      internal::s_oPipeline.tInstancingModeBuffer.SetSlot(1); // hlsl
     }
     return S_OK;
   }
@@ -368,7 +347,7 @@ namespace render
     return global::dx::s_pDevice->CreateInputLayout
     (
       internal::s_tPrimitivesLayout,
-      internal::s_iDebugLayoutSize,
+      internal::s_iPrimitiveLayoutSize,
       g_SimpleVS,
       sizeof(g_SimpleVS),
       &internal::s_oPipeline.pDebugLayout
@@ -703,54 +682,39 @@ namespace render
     return global::dx::s_pDevice->CreateBlendState(&oBlendDesc, &internal::s_oPipeline.pBlendState);
   }
   // ------------------------------------
-  void CRender::ComputeZPrepass(scene::CScene* _pScene)
+  void CRender::DrawModels(scene::CScene* _pScene)
   {
     // Calculate projection and invert projection
-    TTransforms& rTransform = internal::s_oPipeline.tTransformsBuffer.GetData();
 #ifdef _DEBUG
     assert(m_pCamera);
 #endif
     math::CMatrix4x4 mViewProjection = m_pCamera->GetViewProjection();
-    rTransform.ViewProjection = mViewProjection;
-    rTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
+    internal::s_oTransforms.ViewProjection = mViewProjection;
+    internal::s_oTransforms.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
 
     // Set near + far
-    rTransform.FarPlane = m_pCamera->GetFar();
-    rTransform.NearPlane = m_pCamera->GetNear();
+    internal::s_oTransforms.FarPlane = m_pCamera->GetFar();
+    internal::s_oTransforms.NearPlane = m_pCamera->GetNear();
 
     // Write
-    bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer();
+    bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer(internal::s_oTransforms);
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk);
 #endif
-    // Bind buffer
-    internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>();
 
-    // Push invalid RT
-    ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.rDepthStencil.GetView();
-    global::dx::s_pDeviceContext->OMSetRenderTargets(0, nullptr, pDepthStencilView);
-    // Set input layout
+    // Bind buffer
+    internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>(internal::s_oPipeline.uTransformSlot);
     global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pStandardLayout);
-    // Set depth stencil state for zprepass
-    global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pZPrepassStencilState, 1);
 
     // Detach simple pixel shader
     internal::s_oPipeline.rForwardPS.Detach();
-    // Attach simple vertex shader
+    // Attach deferred vertex shader
     internal::s_oPipeline.rDeferredVS.Attach();
-    // Set constant buffer (instancing info)
-    internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
 
     // Cache models
     _pScene->CacheModels(m_pCamera);
 
-    // Draw z-prepass
-    _pScene->DrawModels(this);
-  }
-  // ------------------------------------
-  void CRender::DrawModels(scene::CScene* _pScene)
-  {
     // Set GBuffer RTVs
     static constexpr uint32_t uRenderTargets(3);
     ID3D11RenderTargetView* lstGBufferRTV[uRenderTargets] =
@@ -759,23 +723,19 @@ namespace render
       internal::s_oPipeline.rNormalRT,
       internal::s_oPipeline.rSpecularRT
     };
+
     // Set render targets
     ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.rDepthStencil.GetView();
     global::dx::s_pDeviceContext->OMSetRenderTargets(uRenderTargets, lstGBufferRTV, pDepthStencilView);
     // Set depth stencil state
-    global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDeferredStencilState, 1);
+    global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pZPrepassStencilState, 1);
 
     // Set linear sampler(read textures)
     global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oPipeline.pLinearSampler);
     // Attach g-buffer(pixel shader)
     internal::s_oPipeline.rDeferredGBuffer.Attach();
-
-    // Set constant buffer (texture info + material info)
-    internal::s_oPipeline.tMaterialInfoBuffer.Bind<render::EShader::E_PIXEL>();
-    internal::s_oPipeline.tTexturesInfoBuffer.Bind<render::EShader::E_PIXEL>();
-
-    // Set constant buffer (instancing info)
-    internal::s_oPipeline.tInstancingModeBuffer.Bind<render::EShader::E_VERTEX>();
+    // Set constant buffer (texture info)
+    internal::s_oPipeline.tMaterialInfoBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uMaterialInfoSlot);
 
     // Draw models
     _pScene->DrawModels(this);
@@ -808,7 +768,7 @@ namespace render
     internal::s_oPipeline.rDeferredLights.Attach();
 
     // Set transform constant
-    internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>();
+    internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uTransformSlot);
 
     static constexpr uint32_t uTexturesSize(4);
     ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
@@ -881,15 +841,10 @@ namespace render
   // ------------------------------------
   void CRender::Draw(scene::CScene* _pScene)
   {
-    BeginMarker(internal::s_sZPrepassMrk);
-    {
-      ComputeZPrepass(_pScene);
-    }
-    EndMarker();
-
     // Draw models
-    BeginMarker(internal::s_sDrawModelsMrk);
+    BeginMarker(internal::s_sDrawGBufferMrk);
     {
+      // Draw models
       DrawModels(_pScene);
 
       // Apply lighting
@@ -924,53 +879,26 @@ namespace render
     internal::s_oPipeline.pSwapChain->Present(m_bVerticalSync, uFlags);
   }
   // ------------------------------------
-  void CRender::SetMaterialInfo(const std::unique_ptr<render::mat::CMaterial>& _pMaterial)
+  void CRender::PushMaterialInfo(const render::mat::CMaterial* _pMaterial)
   {
     if (_pMaterial)
     {
       // Set material data
-      TMaterialInfo& rMaterialInfo = internal::s_oPipeline.tMaterialInfoBuffer.GetData();
+      TMaterialInfo rMaterialInfo = TMaterialInfo();
+
       rMaterialInfo.DiffuseColor = _pMaterial->GetDiffuseColor();
       rMaterialInfo.SpecularColor = _pMaterial->GetSpecularColor();
-      bool bOk = internal::s_oPipeline.tMaterialInfoBuffer.WriteBuffer();
-#ifdef _DEBUG
-      assert(bOk);
-#endif // DEBUG
 
-      // Set texture data
-      TTextureInfo& rTexturesData = internal::s_oPipeline.tTexturesInfoBuffer.GetData();
-      rTexturesData.HasDiffuse = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::DIFFUSE));
-      rTexturesData.HasNormal = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::NORMAL));
-      rTexturesData.HasSpecular = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::SPECULAR));
-      bOk = internal::s_oPipeline.tTexturesInfoBuffer.WriteBuffer();
+      rMaterialInfo.HasDiffuseTexture = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::DIFFUSE));
+      rMaterialInfo.HasNormalTexture = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::NORMAL));
+      rMaterialInfo.HasSpecularTexture = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::SPECULAR));
+
+      bool bOk = internal::s_oPipeline.tMaterialInfoBuffer.WriteBuffer(rMaterialInfo);
+      UNUSED_VAR(bOk);
 #ifdef _DEBUG
       assert(bOk);
 #endif // DEBUG
     }
-  }
-  // ------------------------------------
-  void CRender::SetModelMatrix(const math::CMatrix4x4& _mModel)
-  {
-    // Set model matrix
-    TTransforms& rTransform = internal::s_oPipeline.tTransformsBuffer.GetData();
-    rTransform.Model = _mModel;
-    bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer();
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk);
-#endif // DEBUG
-  }
-  // ------------------------------------
-  void CRender::SetInstancingMode(bool _bEnabled)
-  {
-    // Set instancing mode
-    TInstancingMode& rData = internal::s_oPipeline.tInstancingModeBuffer.GetData();
-    rData.IsInstanced = _bEnabled;
-    bool bOk = internal::s_oPipeline.tInstancingModeBuffer.WriteBuffer();
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk);
-#endif // DEBUG
   }
   // ------------------------------------
   void CRender::SetFillMode(D3D11_FILL_MODE _eFillMode)
