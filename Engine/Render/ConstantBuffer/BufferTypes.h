@@ -49,6 +49,12 @@ struct __declspec(align(s_uAlign)) TMaterialInfo
   int Padding[3];
 };
 
+// TLightView [16 Bytes]
+struct __declspec(align(s_uAlign)) TLightView
+{
+  math::CMatrix4x4 LightViewProjection = math::CMatrix4x4::Identity;
+};
+
 // Directional lights [32 Bytes]
 struct __declspec(align(s_uAlign)) TDirectionalLight
 {

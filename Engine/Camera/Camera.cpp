@@ -42,15 +42,12 @@ namespace render
       if (pInputManager->IsKeyPressed('D') && bRightButtonPressed) { AddDisplacement(v3Right * m_fMovementVelocity * _fDeltaTime); }
       if (pInputManager->IsKeyPressed('A') && bRightButtonPressed) { AddDisplacement(-v3Right * m_fMovementVelocity * _fDeltaTime); }
 
-      if (bPespectiveMode)
-      {
-        // Rotation
-        float xValue = pMouse->GetMouseDelta().x * m_fCamVelocity;
-        float yValue = pMouse->GetMouseDelta().y * m_fCamVelocity;
+      // Rotation
+      float xValue = pMouse->GetMouseDelta().x * m_fCamVelocity;
+      float yValue = pMouse->GetMouseDelta().y * m_fCamVelocity;
 
-        // Apply rotation
-        AddRotation(math::CVector3(math::Rad2Degrees(yValue), math::Rad2Degrees(xValue), 0.0f));
-      }
+      // Apply rotation
+      AddRotation(math::CVector3(math::Rad2Degrees(yValue), math::Rad2Degrees(xValue), 0.0f));
     }
 
     // Wheel 
@@ -58,7 +55,7 @@ namespace render
     {
       float fMouseDelta = pMouse->GetMouseWheelDelta();
       fMouseDelta = math::Clamp(fMouseDelta, -internal_camera::s_fMaxWheelDelta, internal_camera::s_fMaxWheelDelta);
-      if (GetProjectionMode() == EProjectionMode::ORTOGRAPHIC)
+      if (fMouseDelta != 0.0f && GetProjectionMode() == EProjectionMode::ORTOGRAPHIC)
       {
         ApplyOrtographicZoom(fMouseDelta, _fDeltaTime);
       }
@@ -67,11 +64,11 @@ namespace render
     // Update
     if (m_bHasBeenUpdated)
     {
-      // Update view matrix
-      UpdateViewMatrix(m_eProjectionMode);
-
       // Update projection matrix
       UpdateProjectionMatrix(GetProjectionMode());
+
+      // Update view matrix
+      UpdateViewMatrix();
 
       // Update frustum
       BuildFrustumPlanes();
@@ -83,6 +80,12 @@ namespace render
   // ------------------------------------
   bool CCamera::IsOnFrustum(const collision::CAABB& _oBoundingBox) const
   {
+    if (GetProjectionMode() == EProjectionMode::ORTOGRAPHIC)
+    {
+      // Not implemented yet!
+      return true; 
+    }
+
     const math::CVector3& v3Center = _oBoundingBox.GetCenter();
     const math::CVector3& v3HalfExtents = _oBoundingBox.GetHalfSize();
 
@@ -204,34 +207,28 @@ namespace render
       break;
       case EProjectionMode::ORTOGRAPHIC:
       {
-        float fWidth = (internal_camera::s_fOrtographicFactor / m_fZoomScale);
-        float fHeight = (internal_camera::s_fOrtographicFactor / m_fAspectRatio) / m_fZoomScale;
+        float fWidth = (internal_camera::s_fOrtographicFactor * m_fAspectRatio) / m_fZoomScale;
+        float fHeight = (internal_camera::s_fOrtographicFactor / m_fZoomScale);
         m_mProjection = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_fNear, m_fFar);
       }
       break;
     }
   }
   // ------------------------------------
-  void CCamera::UpdateViewMatrix(EProjectionMode _eProjectionMode)
+  void CCamera::UpdateViewMatrix()
   {
-    math::CVector3 v3Up = render::CRender::s_v3WorldUp; // Default World Up
-    math::CVector3 v3TargetPos = m_v3Pos + m_v3Dir; // Default Offset
+    // Clamp pitch value
+    m_v3Rot.x = math::Clamp(m_v3Rot.x, -internal_camera::s_fMaxPitch, internal_camera::s_fMaxPitch);
 
-    if (_eProjectionMode == EProjectionMode::PERSPECTIVE)
-    {
-      // Clamp pitch value
-      m_v3Rot.x = math::Clamp(m_v3Rot.x, -internal_camera::s_fMaxPitch, internal_camera::s_fMaxPitch);
+    // Create rotation matrix
+    math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(m_v3Rot);
 
-      // Create rotation matrix
-      math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(m_v3Rot);
+    // Calculate dir
+    m_v3Dir = mRot * math::CVector3::Forward;
+    math::CVector3 v3TargetPos = m_v3Pos + m_v3Dir;
 
-      // Calculate dir
-      m_v3Dir = mRot * math::CVector3::Forward;
-      v3TargetPos = m_v3Pos + m_v3Dir;
-
-      // Calculate up direction
-      v3Up = mRot * math::CVector3::Up;
-    }
+    // Calculate up direction
+    math::CVector3 v3Up = mRot * render::CRender::s_v3WorldUp;
 
     // Set view matrix
     m_mViewMatrix = math::CMatrix4x4::LookAt(m_v3Pos, v3TargetPos, v3Up);

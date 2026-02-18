@@ -17,14 +17,21 @@ namespace render
 
     class CLightManager
     {
-    private:
-      static constexpr uint16_t s_uMaxShadowMaps = 4u;
+    public:
+      struct TShadowMap
+      {
+        texture::TDepthStencil ShadowDepth;
+        texture::TShaderResource ShadowTexture;
+      };
+
+    public:
+      static constexpr uint16_t s_uMaxShadowMaps = 4u; // Testing
       static constexpr uint16_t s_uMaxSpotLights = 100u;
       static constexpr uint16_t s_uMaxPointLights = 100u;
 
-      typedef utils::CFixedPool<texture::CTexture2D<EView::DEPTH_STENCIL>, s_uMaxShadowMaps> TShadowMaps;
       typedef utils::CFixedPool<render::lights::CPointLight, s_uMaxPointLights> TPointLights;
       typedef utils::CFixedPool<render::lights::CSpotLight, s_uMaxSpotLights> TSpotLights;
+      typedef utils::CFixedPool<TShadowMap, s_uMaxShadowMaps> TShadowMaps;
 
     private:
       typedef TGlobalLighting<s_uMaxPointLights, s_uMaxSpotLights> TLightingData;
@@ -34,8 +41,13 @@ namespace render
       CLightManager();
       ~CLightManager();
 
-      // push lights
+      // Push lights
       void ApplyLighting();
+      void ComputeShadows();
+
+      // Shadow maps
+      const TShadowMaps& GetShadowMaps() { return m_lstShadowMaps; }
+      render::lights::CDirectionalLight* const GetDirectionalLight() { return m_pDirectionalLight; }
 
       // Handle lights
       render::lights::CDirectionalLight* const CreateDirectionalLight();
@@ -56,9 +68,7 @@ namespace render
 
       // Global lighting buffer
       TLightingBuffer m_oLightingBuffer;
-
-      //texture::CTexture2D<EView::DEPTH_STENCIL> m_oShadowDepthMap;
-      //texture::CTexture2D<EView::SHADER_RESOURCE> m_oShadowMapTexture;
+      TShadowMaps m_lstShadowMaps;
     };
   }
 }

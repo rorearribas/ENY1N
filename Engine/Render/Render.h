@@ -52,7 +52,7 @@ namespace render
     HRESULT CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _rBlendState);
 
   private:
-    void ConfigureViewport(uint32_t _uX, uint32_t _uY);
+    void SetViewport(uint32_t _uX, uint32_t _uY);
     void SetScissorRect(uint32_t _uX, uint32_t _uY);
     bool InitImGui();
 

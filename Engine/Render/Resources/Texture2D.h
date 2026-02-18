@@ -24,7 +24,8 @@ namespace render
       void Attach(uint32_t _uSlot, EShader _eShaderType);
       void Detach(uint32_t _uSlot, EShader _eShaderType);
 
-      void CopyTexture(ID3D11Texture2D* const _pTexture);
+      void GetTextureSize(uint32_t& _uWidth_, uint32_t& _uHeight_) const;
+      void CopyTexture(ID3D11Texture2D* const _pTexture) const;
       void Release();
 
       // Texture and sampler
@@ -122,7 +123,33 @@ namespace render
     private:
       ID3D11Texture2D* m_pInternalTexture = nullptr;
       ID3D11View* m_pInternalView = nullptr;
+
+      uint32_t m_uWidth = 0;
+      uint32_t m_uHeight = 0;
     };
+
+    template<render::EView T>
+    void render::texture::CTexture2D<T>::GetTextureSize(uint32_t& _uWidth_, uint32_t& _uHeight_) const
+    {
+      _uWidth_ = m_uWidth;
+      _uHeight_ = m_uHeight;
+    }
+
+    template<render::EView T>
+    void render::texture::CTexture2D<T>::CopyTexture(ID3D11Texture2D* const _pTexture) const
+    {
+#ifdef _DEBUG
+      assert(m_pInternalTexture && _pTexture);
+#endif // DEBUG
+      global::dx::s_pDeviceContext->CopyResource(m_pInternalTexture, _pTexture);
+    }
+
+    template<render::EView T>
+    void render::texture::CTexture2D<T>::Release()
+    {
+      global::dx::SafeRelease(m_pInternalTexture);
+      global::dx::SafeRelease(m_pInternalView);
+    }
 
     template<render::EView T>
     void render::texture::CTexture2D<T>::Attach(uint32_t _uSlot, EShader _eShaderType)
@@ -169,22 +196,6 @@ namespace render
     }
 
     template<render::EView T>
-    void render::texture::CTexture2D<T>::CopyTexture(ID3D11Texture2D* const _pTexture)
-    {
-#ifdef _DEBUG
-      assert(m_pInternalTexture && _pTexture);
-#endif // DEBUG
-      global::dx::s_pDeviceContext->CopyResource(m_pInternalTexture, _pTexture);
-    }
-
-    template<render::EView T>
-    void render::texture::CTexture2D<T>::Release()
-    {
-      global::dx::SafeRelease(m_pInternalTexture);
-      global::dx::SafeRelease(m_pInternalView);
-    }
-
-    template<render::EView T>
     HRESULT render::texture::CTexture2D<T>::CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _rTextureDesc, uint32_t _uChannels)
     {
       // Clear
@@ -195,6 +206,10 @@ namespace render
       rSubresourceData.pSysMem = _pData;
       rSubresourceData.SysMemPitch = _rTextureDesc.Width * _uChannels;
 
+      // Set size
+      m_uWidth = _rTextureDesc.Width;
+      m_uHeight = _rTextureDesc.Height;
+
       // Create texture
       return global::dx::s_pDevice->CreateTexture2D(&_rTextureDesc, &rSubresourceData, &m_pInternalTexture);
     }
@@ -204,6 +219,10 @@ namespace render
     {
       // Clear
       global::dx::SafeRelease(m_pInternalTexture);
+
+      // Set size
+      m_uWidth = _rTextureDesc.Width;
+      m_uHeight = _rTextureDesc.Height;
 
       // Create empty texture!
       return global::dx::s_pDevice->CreateTexture2D(&_rTextureDesc, nullptr, &m_pInternalTexture);
@@ -254,13 +273,13 @@ namespace render
     }
 
     // Typedefs
-    typedef texture::CTexture2D<render::EView::DEPTH_STENCIL> TDepthStencil2D;
-    typedef texture::CTexture2D<render::EView::RENDER_TARGET> TRenderTarget2D;
-    typedef texture::CTexture2D<render::EView::SHADER_RESOURCE> TShaderResource2D;
-    typedef texture::CTexture2D<render::EView::UNORDERED_ACCESS> TUnorderedAccess2D;
+    typedef texture::CTexture2D<render::EView::DEPTH_STENCIL> TDepthStencil;
+    typedef texture::CTexture2D<render::EView::RENDER_TARGET> TRenderTarget;
+    typedef texture::CTexture2D<render::EView::SHADER_RESOURCE> TShaderResource;
+    typedef texture::CTexture2D<render::EView::UNORDERED_ACCESS> TUnorderedAccess;
 
     // Shared
-    typedef std::shared_ptr<TShaderResource2D> TSharedTexture;
+    typedef std::shared_ptr<TShaderResource> TSharedTexture;
   }
 }
 

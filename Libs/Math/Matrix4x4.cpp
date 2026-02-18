@@ -68,12 +68,12 @@ namespace math
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::CreateOrtographicMatrix(float _fWidth, float _fHeight, float _fNear, float _fFar)
   {
-    // DirectX style
+    // DirectX left-handed style
     CMatrix4x4 mOrtographic = CMatrix4x4::Identity;
     mOrtographic.m[0] = 2.0f / _fWidth;
     mOrtographic.m[5] = 2.0f / _fHeight;
-    mOrtographic.m[10] = 1.0f / (_fNear - _fFar);
-    mOrtographic.m[14] = -_fNear / (_fNear - _fFar);
+    mOrtographic.m[10] = 1.0f / (_fFar - _fNear);
+    mOrtographic.m[14] = -_fNear / (_fFar - _fNear);
     mOrtographic.m[15] = 1.0f;
     return mOrtographic;
   }
@@ -96,11 +96,18 @@ namespace math
   math::CMatrix4x4 CMatrix4x4::LookAt(const CVector3& _v3Pos, const CVector3& _v3Target, const CVector3& _v3Up)
   {
     // Get dir
-    CVector3 v3Forward = math::CVector3::Normalize(_v3Target - _v3Pos);
+    CVector3 v3Dir = math::CVector3::Normalize(_v3Target - _v3Pos);
+
     // Right
-    CVector3 v3Right = math::CVector3::Normalize(_v3Up.Cross(v3Forward));
+    CVector3 v3Right = math::CVector3::Normalize(_v3Up.Cross(v3Dir));
+    if (v3Right.Magnitude() <= math::s_fEpsilon7)
+    {
+      // Set alternative direction
+      v3Right = _v3Up.Cross(math::CVector3::Forward); 
+    }
+
     // Up
-    CVector3 v3Up = math::CVector3::Normalize(v3Forward.Cross(v3Right));
+    CVector3 v3Up = math::CVector3::Normalize(v3Dir.Cross(v3Right));
 
     // Compose matrix
     CMatrix4x4 mLookAt = CMatrix4x4::Identity;
@@ -115,14 +122,14 @@ namespace math
     mLookAt.m[9] = v3Up.z;
     mLookAt.m[7] = 0.0f;
 
-    mLookAt.m[2] = v3Forward.x;
-    mLookAt.m[6] = v3Forward.y;
-    mLookAt.m[10] = v3Forward.z;
+    mLookAt.m[2] = v3Dir.x;
+    mLookAt.m[6] = v3Dir.y;
+    mLookAt.m[10] = v3Dir.z;
     mLookAt.m[11] = 0.0f;
 
     mLookAt.m[12] = -v3Right.Dot(_v3Pos);
     mLookAt.m[13] = -v3Up.Dot(_v3Pos);
-    mLookAt.m[14] = -v3Forward.Dot(_v3Pos);
+    mLookAt.m[14] = -v3Dir.Dot(_v3Pos);
     mLookAt.m[15] = 1.0f;
 
     return mLookAt;

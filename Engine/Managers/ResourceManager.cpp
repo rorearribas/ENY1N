@@ -234,7 +234,7 @@ void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& 
     SUCCESS_LOG("Texture loaded! -> " << _sPath.filename());
 
     // Create texture
-    m_lstCachedTextures.emplace(sTexture, std::make_shared<TShaderResource2D>());
+    m_lstCachedTextures.emplace(sTexture, std::make_shared<TShaderResource>());
     render::texture::TSharedTexture pTexture = m_lstCachedTextures.at(sTexture);
     _pMaterial_->SetTexture(pTexture, _eType);
 

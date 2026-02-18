@@ -58,7 +58,7 @@ namespace scene
     bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _pModel_);
 
     // Handle lights
-    const render::lights::CLightManager* const GetLightManager() { return &m_oLightManager; }
+    render::lights::CLightManager* const GetLightManager() { return &m_oLightManager; }
     render::lights::CDirectionalLight* const CreateDirectionalLight();
     render::lights::CPointLight* const CreatePointLight();
     render::lights::CSpotLight* const CreateSpotLight();

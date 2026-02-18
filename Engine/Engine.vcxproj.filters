@@ -247,5 +247,6 @@
     <FxCompile Include="Shaders\Forward\SimplePS.hlsl" />
     <FxCompile Include="Shaders\Deferred\DrawTriangleVS.hlsl" />
     <FxCompile Include="Shaders\Deferred\StandardVS.hlsl" />
+    <FxCompile Include="Shaders\Deferred\ShadowsVS.hlsl" />
   </ItemGroup>
 </Project>

@@ -63,7 +63,7 @@ namespace render
     void ApplyOrtographicZoom(float fMouseDelta, float _fDeltaTime);
 
     void UpdateProjectionMatrix(EProjectionMode _eProjectionMode);
-    void UpdateViewMatrix(EProjectionMode _eProjectionMode);
+    void UpdateViewMatrix();
     void BuildFrustumPlanes();
 
     void ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos);
