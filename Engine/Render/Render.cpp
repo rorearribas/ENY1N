@@ -79,6 +79,8 @@ namespace render
 
       // Deferred shading
       ID3D11SamplerState* pLinearSampler = nullptr;
+      ID3D11SamplerState* pShadowSampler = nullptr;
+
       render::CRenderTarget rDiffuseRT;
       render::CRenderTarget rNormalRT;
       render::CRenderTarget rSpecularRT;
@@ -194,6 +196,7 @@ namespace render
 
     // Release rasterizer, blending..
     global::dx::SafeRelease(internal::s_oPipeline.pLinearSampler);
+    global::dx::SafeRelease(internal::s_oPipeline.pShadowSampler);
     global::dx::SafeRelease(internal::s_oPipeline.pRasterizer);
     global::dx::SafeRelease(internal::s_oPipeline.pBlendState);
     global::dx::SafeRelease(internal::s_oPipeline.pUserMarker);
@@ -391,8 +394,8 @@ namespace render
     }
 
     // Set standard rasterizer config
-    internal::s_oPipeline.rRasterizerCfg.FillMode = D3D11_FILL_SOLID;
-    internal::s_oPipeline.rRasterizerCfg.CullMode = D3D11_CULL_BACK;
+    internal::s_oPipeline.rRasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+    internal::s_oPipeline.rRasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
     internal::s_oPipeline.rRasterizerCfg.FrontCounterClockwise = false;
     internal::s_oPipeline.rRasterizerCfg.DepthBias = 10; // decals -> (10)
     internal::s_oPipeline.rRasterizerCfg.DepthBiasClamp = 0.0f;
@@ -658,9 +661,9 @@ namespace render
     rSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
     rSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
     rSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    rSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     rSamplerDesc.MipLODBias = 0.0f;
     rSamplerDesc.MaxAnisotropy = 1u;
-    rSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     rSamplerDesc.BorderColor[0] = 0.0f;
     rSamplerDesc.BorderColor[1] = 0.0f;
     rSamplerDesc.BorderColor[2] = 0.0f;
@@ -668,9 +671,33 @@ namespace render
     rSamplerDesc.MinLOD = 0.0f;
     rSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-    // Create sampler
+    // Create simple sampler
     global::dx::SafeRelease(internal::s_oPipeline.pLinearSampler);
-    return global::dx::s_pDevice->CreateSamplerState(&rSamplerDesc, &internal::s_oPipeline.pLinearSampler);
+    hResult = global::dx::s_pDevice->CreateSamplerState(&rSamplerDesc, &internal::s_oPipeline.pLinearSampler);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Shadow sampler
+    D3D11_SAMPLER_DESC rShadowSampler = D3D11_SAMPLER_DESC();
+    rShadowSampler.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+    rShadowSampler.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    rShadowSampler.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    rShadowSampler.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    rShadowSampler.ComparisonFunc = D3D11_COMPARISON_LESS;
+    rShadowSampler.MipLODBias = 0.0f;
+    rShadowSampler.MaxAnisotropy = 1u;
+    rShadowSampler.BorderColor[0] = 1.0f;
+    rShadowSampler.BorderColor[1] = 1.0f;
+    rShadowSampler.BorderColor[2] = 1.0f;
+    rShadowSampler.BorderColor[3] = 1.0f;
+    rShadowSampler.MinLOD = 0.0f;
+    rShadowSampler.MaxLOD = D3D11_FLOAT32_MAX;
+
+    // Create sampler
+    global::dx::SafeRelease(internal::s_oPipeline.pShadowSampler);
+    return global::dx::s_pDevice->CreateSamplerState(&rShadowSampler, &internal::s_oPipeline.pShadowSampler);
   }
   // ------------------------------------
   HRESULT CRender::CreateRasterizerState(const D3D11_RASTERIZER_DESC& _rRasterizerState)
@@ -751,7 +778,7 @@ namespace render
     _pScene->DrawPrimitives(m_pCamera);
   }
   // ------------------------------------
-  void CRender::DrawGBuffer()
+  void CRender::ComputeGBuffer(scene::CScene* _pScene)
   {
     // Attach triangle shader (vertex shader)
     internal::s_oPipeline.rDrawTriangleVS.Attach();
@@ -761,18 +788,26 @@ namespace render
     // Set transform constant
     internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uTransformSlot);
 
-    static constexpr uint32_t uTexturesSize(4);
+    render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
+    const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
+    const lights::CLightManager::TShadowMap& rShadowMap = *lstShadowMaps[0];
+    const texture::TShaderResource& rShadowTexture = rShadowMap.ShadowTexture;
+    // Sampler testing 
+    global::dx::s_pDeviceContext->PSSetSamplers(1, 1, &internal::s_oPipeline.pShadowSampler);
+
+    static constexpr uint32_t uTexturesSize(5);
     ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
     {
       internal::s_oPipeline.rDepthTexture.GetView(),
       internal::s_oPipeline.rDiffuseRT.GetView(),
       internal::s_oPipeline.rNormalRT.GetView(),
-      internal::s_oPipeline.rSpecularRT.GetView()
+      internal::s_oPipeline.rSpecularRT.GetView(),
+      rShadowTexture.GetView() // Shadow Testing
     };
 
     // Bind buffers
-    global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, &lstGBufferSRV[0]);
     global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oPipeline.pBackBuffer, nullptr);
+    global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, &lstGBufferSRV[0]);
 
     // Draw triangle as fake quad!
     global::dx::s_pDeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
@@ -871,7 +906,11 @@ namespace render
         const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
         if (lstShadowMaps.GetSize() > 0)
         {
-          BeginMarker(internal::s_sZPrepassMrk);
+          // Set rasterizer
+          D3D11_CULL_MODE rLastCullMode = internal::s_oPipeline.rRasterizerCfg.CullMode;
+          internal::s_oPipeline.rRasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+          CreateRasterizerState(internal::s_oPipeline.rRasterizerCfg);
+          global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pRasterizer);
           {
             // Clear depth stencil view
             const lights::CLightManager::TShadowMap& rShadowMap = *lstShadowMaps[0];
@@ -890,16 +929,17 @@ namespace render
 
             // Create view matrix from directional light
             math::CVector3 v3SceneCenter = m_pCamera->GetPos() + (m_pCamera->GetDir() * 25.0f); // Max distance
-            math::CVector3 v3ShadowPos = v3SceneCenter - (pLightManager->GetDirectionalLight()->GetDir() * 50.0f);
+            math::CVector3 v3ShadowPos = v3SceneCenter - (pLightManager->GetDirectionalLight()->GetDir() * 200.0f);
             math::CMatrix4x4 mViewMatrix = math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp);
 
             TLightView rLightView = TLightView();
             rLightView.LightViewProjection = mOrthographic * mViewMatrix;
 
+            // Write buffer
             bOk = internal::s_oPipeline.tLightViewBuffer.WriteBuffer(rLightView);
 #ifdef _DEBUG
             assert(bOk);
-#endif // DEBU
+#endif // DEBUG
             internal::s_oPipeline.tLightViewBuffer.Bind<render::EShader::E_VERTEX>(internal::s_oPipeline.uTransformSlot);
 
             // Set render target
@@ -915,11 +955,21 @@ namespace render
             // Draw models only in zprepass for the light perspective
             _pScene->DrawModels(this);
 
+            // HACK TESTING SHADOW MAPPING
+            internal::s_oTransforms.LightViewProjection = rLightView.LightViewProjection;
+            bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer(internal::s_oTransforms);
+            UNUSED_VAR(bOk);
+#ifdef _DEBUG
+            assert(bOk);
+#endif
             uint32_t uRenderWidth = m_pRenderWindow->GetWidth();
             uint32_t uRenderHeight = m_pRenderWindow->GetHeight();
             SetViewport(uRenderWidth, uRenderHeight);
           }
-          EndMarker();
+          // Restore rasterizer
+          internal::s_oPipeline.rRasterizerCfg.CullMode = rLastCullMode;
+          CreateRasterizerState(internal::s_oPipeline.rRasterizerCfg);
+          global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pRasterizer);
         }
       }
       EndMarker();
@@ -927,8 +977,8 @@ namespace render
       // Compute lighting
       pLightManager->ApplyLighting();
 
-      // Draw GBuffer
-      DrawGBuffer();
+      // Compute GBuffer
+      ComputeGBuffer(_pScene);
     }
     EndMarker();
 

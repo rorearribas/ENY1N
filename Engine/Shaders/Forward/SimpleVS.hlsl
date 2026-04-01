@@ -5,6 +5,7 @@ cbuffer ConstantTransforms : register(b0)
   // Transforms
   matrix ViewProjection;
   matrix InvViewProjection;
+  matrix DummyProjection;
 
   // Projection CFG
   float FarPlane;

@@ -1,7 +1,7 @@
 #include "StandardVS.hlsl"
 
 // Shadows vertex shader - ENY1N
-cbuffer ConstantTransforms : register(b0)
+cbuffer ShadowTransforms : register(b0)
 {
   matrix LightViewProjection;
 }

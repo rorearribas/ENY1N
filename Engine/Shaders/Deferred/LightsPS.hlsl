@@ -54,6 +54,7 @@ cbuffer ConstantTransforms : register(b0)
   // Transforms
   matrix ViewProjection;
   matrix InvViewProjection;
+  matrix LightViewProjection;
 
   // Projection CFG
   float FarPlane;
@@ -89,11 +90,17 @@ float3 GetPositionFromDepth(in float2 uv, in float z, in float4x4 InvVP)
 }
 
 // GBuffer data
-Texture2D gDepth    : register(t0);
-Texture2D gDiffuse  : register(t1);
-Texture2D gNormal   : register(t2);
-Texture2D gSpecular : register(t3);
+Texture2D gDepth      : register(t0);
+Texture2D gDiffuse    : register(t1);
+Texture2D gNormal     : register(t2);
+Texture2D gSpecular   : register(t3);
+
+// Shadow map - Test
+Texture2D gShadowMap  : register(t4);
+
+// Sampler
 SamplerState gSampleLinear : register(s0);
+SamplerState gSampleShadows : register(s1);
 
 float4 PSMain(VS_OUTPUT input) : SV_TARGET
 {
@@ -108,13 +115,29 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   float fDepth = gDepth.Sample(gSampleLinear, input.uv).r;
   float3 v3WorldPos = GetPositionFromDepth(input.uv, fDepth, InvViewProjection);
 
+  // Get light pos
+  float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
+  float3 projCoords = posLightSpace.xyz / posLightSpace.w;
+  float2 shadowUV = projCoords.xy * 0.5f + 0.5f;
+  shadowUV.y = 1.0f - shadowUV.y;
+
   // Add ambient light
-  float3 v3TotalLight = 0.1f * float3(1.0f, 1.0f, 1.0f);
+  float3 v3TotalLight = 0.1f * v3Specular * float3(1.0f, 1.0f, 1.0f);
 
   // Directional light
   float3 v3LightDir = normalize(directionalLight.Direction);
+
+  // Compare!
+  float fShadowFactor = 1.0f;
+  float fDepthShadowMap = gShadowMap.Sample(gSampleShadows, shadowUV).r;
+  float fBias = max(0.05 * (1.0 - dot(v3Normal, v3LightDir)), 0.005);
+  if (projCoords.z > fDepthShadowMap + 0.005f) // Bias
+  {
+    fShadowFactor = 0.0f; // Shadow!
+  }
+
   float fDot = max(dot(v3Normal, -v3LightDir), 0.0f);
-  v3TotalLight += directionalLight.Color * directionalLight.Intensity * fDot;
+  v3TotalLight += (directionalLight.Color * directionalLight.Intensity * fDot) * fShadowFactor;
 
   // Point Lights
   for (int i = 0; i < RegisteredLights.x; i++)

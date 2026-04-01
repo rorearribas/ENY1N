@@ -63,7 +63,7 @@ namespace render
     // Deferred
     void DrawModels(scene::CScene* _pScene);
     void DrawPrimitives(scene::CScene* _pScene);
-    void DrawGBuffer();
+    void ComputeGBuffer(scene::CScene* _pScene);
 
   private:
     render::CRenderWindow* m_pRenderWindow = nullptr;

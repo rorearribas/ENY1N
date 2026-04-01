@@ -26,6 +26,7 @@ struct __declspec(align(s_uAlign)) TTransforms
   // Transforms
   math::CMatrix4x4 ViewProjection = math::CMatrix4x4::Identity;
   math::CMatrix4x4 InvViewProjection = math::CMatrix4x4::Identity;
+  math::CMatrix4x4 LightViewProjection = math::CMatrix4x4::Identity; // Testing
 
   // Projection CFG
   float FarPlane = 10000.0f;
