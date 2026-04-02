@@ -48,7 +48,7 @@ namespace render
     HRESULT SetupDepthStencils(uint32_t _uX, uint32_t _uY);
     HRESULT CreateBackBuffer();
 
-    HRESULT CreateRasterizerState(const D3D11_RASTERIZER_DESC& _rRasterizerState);
+    HRESULT CreateRasterizerState(ID3D11RasterizerState*& _pRasterizer_, const D3D11_RASTERIZER_DESC& _rRasterizerCfg);
     HRESULT CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _rBlendState);
 
   private:

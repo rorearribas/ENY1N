@@ -105,7 +105,8 @@ namespace render
       ID3D11DepthStencilState* pDebugStencilState = nullptr;
 
       // Rasterizer
-      ID3D11RasterizerState* pRasterizer = nullptr;
+      ID3D11RasterizerState* pDeferredRasterizer = nullptr;
+      ID3D11RasterizerState* pShadowsRasterizer = nullptr;
       D3D11_RASTERIZER_DESC rRasterizerCfg = D3D11_RASTERIZER_DESC();
 
       // Blend
@@ -197,7 +198,8 @@ namespace render
     // Release rasterizer, blending..
     global::dx::SafeRelease(internal::s_oPipeline.pLinearSampler);
     global::dx::SafeRelease(internal::s_oPipeline.pShadowSampler);
-    global::dx::SafeRelease(internal::s_oPipeline.pRasterizer);
+    global::dx::SafeRelease(internal::s_oPipeline.pDeferredRasterizer);
+    global::dx::SafeRelease(internal::s_oPipeline.pShadowsRasterizer);
     global::dx::SafeRelease(internal::s_oPipeline.pBlendState);
     global::dx::SafeRelease(internal::s_oPipeline.pUserMarker);
 
@@ -397,20 +399,38 @@ namespace render
     internal::s_oPipeline.rRasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
     internal::s_oPipeline.rRasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
     internal::s_oPipeline.rRasterizerCfg.FrontCounterClockwise = false;
-    internal::s_oPipeline.rRasterizerCfg.DepthBias = 10; // decals -> (10)
+    internal::s_oPipeline.rRasterizerCfg.DepthBias = 0;
     internal::s_oPipeline.rRasterizerCfg.DepthBiasClamp = 0.0f;
-    internal::s_oPipeline.rRasterizerCfg.SlopeScaledDepthBias = 0.0f; // decals -> (1.5f)
+    internal::s_oPipeline.rRasterizerCfg.SlopeScaledDepthBias = 0.0f;
     internal::s_oPipeline.rRasterizerCfg.DepthClipEnable = true;
     internal::s_oPipeline.rRasterizerCfg.ScissorEnable = true;
     internal::s_oPipeline.rRasterizerCfg.MultisampleEnable = false;
     internal::s_oPipeline.rRasterizerCfg.AntialiasedLineEnable = false;
 
     // Create rasterizer
-    hResult = CreateRasterizerState(internal::s_oPipeline.rRasterizerCfg);
+    hResult = CreateRasterizerState(internal::s_oPipeline.pDeferredRasterizer, internal::s_oPipeline.rRasterizerCfg);
     if (FAILED(hResult))
     {
       return hResult;
     }
+
+	// Set standard rasterizer config
+    D3D11_RASTERIZER_DESC rShadowRasterizer = D3D11_RASTERIZER_DESC();
+    rShadowRasterizer.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+	rShadowRasterizer.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+	rShadowRasterizer.DepthBias = 100;
+	rShadowRasterizer.DepthBiasClamp = 0.0f;
+	rShadowRasterizer.SlopeScaledDepthBias = 1.5f;
+	rShadowRasterizer.DepthClipEnable = true;
+	rShadowRasterizer.ScissorEnable = false;
+	rShadowRasterizer.MultisampleEnable = false;
+
+	// Create rasterizer
+	hResult = CreateRasterizerState(internal::s_oPipeline.pShadowsRasterizer, rShadowRasterizer);
+	if (FAILED(hResult))
+	{
+		return hResult;
+	}
 
     // Set standard blend state config
     internal::s_oPipeline.rBlendStateCfg.BlendEnable = false;
@@ -685,7 +705,7 @@ namespace render
     rShadowSampler.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
     rShadowSampler.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
     rShadowSampler.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-    rShadowSampler.ComparisonFunc = D3D11_COMPARISON_LESS;
+    rShadowSampler.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     rShadowSampler.MipLODBias = 0.0f;
     rShadowSampler.MaxAnisotropy = 1u;
     rShadowSampler.BorderColor[0] = 1.0f;
@@ -695,16 +715,16 @@ namespace render
     rShadowSampler.MinLOD = 0.0f;
     rShadowSampler.MaxLOD = D3D11_FLOAT32_MAX;
 
-    // Create sampler
+    // Create shadow sampler
     global::dx::SafeRelease(internal::s_oPipeline.pShadowSampler);
     return global::dx::s_pDevice->CreateSamplerState(&rShadowSampler, &internal::s_oPipeline.pShadowSampler);
   }
   // ------------------------------------
-  HRESULT CRender::CreateRasterizerState(const D3D11_RASTERIZER_DESC& _rRasterizerState)
+  HRESULT CRender::CreateRasterizerState(ID3D11RasterizerState*& _pRasterizer_, const D3D11_RASTERIZER_DESC& _rRasterizerCfg)
   {
     // Create rasterizer state
-    global::dx::SafeRelease(internal::s_oPipeline.pRasterizer);
-    return global::dx::s_pDevice->CreateRasterizerState(&_rRasterizerState, &internal::s_oPipeline.pRasterizer);
+    global::dx::SafeRelease(_pRasterizer_);
+    return global::dx::s_pDevice->CreateRasterizerState(&_rRasterizerCfg, &_pRasterizer_);
   }
   // ------------------------------------
   HRESULT CRender::CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _rBlendState)
@@ -788,11 +808,11 @@ namespace render
     // Set transform constant
     internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uTransformSlot);
 
+    // Shadow mapping testing
     render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
     const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
     const lights::CLightManager::TShadowMap& rShadowMap = *lstShadowMaps[0];
     const texture::TShaderResource& rShadowTexture = rShadowMap.ShadowTexture;
-    // Sampler testing 
     global::dx::s_pDeviceContext->PSSetSamplers(1, 1, &internal::s_oPipeline.pShadowSampler);
 
     static constexpr uint32_t uTexturesSize(5);
@@ -906,11 +926,8 @@ namespace render
         const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
         if (lstShadowMaps.GetSize() > 0)
         {
-          // Set rasterizer
-          D3D11_CULL_MODE rLastCullMode = internal::s_oPipeline.rRasterizerCfg.CullMode;
-          internal::s_oPipeline.rRasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
-          CreateRasterizerState(internal::s_oPipeline.rRasterizerCfg);
-          global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pRasterizer);
+          // Set custom rasterizer for shadow mapping
+          global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pShadowsRasterizer);
           {
             // Clear depth stencil view
             const lights::CLightManager::TShadowMap& rShadowMap = *lstShadowMaps[0];
@@ -928,8 +945,8 @@ namespace render
             math::CMatrix4x4 mOrthographic = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_pCamera->GetNear(), m_pCamera->GetFar());
 
             // Create view matrix from directional light
-            math::CVector3 v3SceneCenter = m_pCamera->GetPos() + (m_pCamera->GetDir() * 25.0f); // Max distance
-            math::CVector3 v3ShadowPos = v3SceneCenter - (pLightManager->GetDirectionalLight()->GetDir() * 200.0f);
+            math::CVector3 v3SceneCenter = m_pCamera->GetPos() + (m_pCamera->GetDir() * 50.0f); // Max distance
+            math::CVector3 v3ShadowPos = v3SceneCenter + (pLightManager->GetDirectionalLight()->GetDir() * 100.0f);
             math::CMatrix4x4 mViewMatrix = math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp);
 
             TLightView rLightView = TLightView();
@@ -952,7 +969,7 @@ namespace render
             // Detach pixel shader for models
             internal::s_oPipeline.rDeferredGBuffer.Detach();
 
-            // Draw models only in zprepass for the light perspective
+            // Draw models only in z-prepass for the light perspective
             _pScene->DrawModels(this);
 
             // HACK TESTING SHADOW MAPPING
@@ -967,9 +984,7 @@ namespace render
             SetViewport(uRenderWidth, uRenderHeight);
           }
           // Restore rasterizer
-          internal::s_oPipeline.rRasterizerCfg.CullMode = rLastCullMode;
-          CreateRasterizerState(internal::s_oPipeline.rRasterizerCfg);
-          global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pRasterizer);
+          global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pDeferredRasterizer);
         }
       }
       EndMarker();
@@ -991,7 +1006,7 @@ namespace render
 
     // Update resources
     global::dx::s_pDeviceContext->OMSetBlendState(internal::s_oPipeline.pBlendState, nullptr, 0xFFFFFFFF);
-    global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pRasterizer);
+    global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pDeferredRasterizer);
 
     // Render ImGui
     BeginMarker(internal::s_sImGuiMarker);
@@ -1032,7 +1047,7 @@ namespace render
   {
     // Update rasterizer
     internal::s_oPipeline.rRasterizerCfg.FillMode = _eFillMode;
-    CreateRasterizerState(internal::s_oPipeline.rRasterizerCfg);
+    CreateRasterizerState(internal::s_oPipeline.pDeferredRasterizer, internal::s_oPipeline.rRasterizerCfg);
   }
   // ------------------------------------
   void CRender::BeginMarker(const wchar_t* _sMarker) const

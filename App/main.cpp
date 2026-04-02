@@ -72,7 +72,7 @@ int main()
 
   // Time manager
   chrono::CTimeManager* pTimeManager = chrono::CTimeManager::CreateSingleton();
-  pTimeManager->SetTargetFramerate(144);
+  pTimeManager->SetTargetFramerate(30);
 
   // Create resource manager
   CResourceManager::CreateSingleton();
@@ -90,50 +90,39 @@ int main()
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   pDirectionalLight->RegisterComponent<game::CLightComponent>(render::ELight::DIRECTIONAL_LIGHT);
 
-  std::vector<std::string> vAvailableModels =
-  {
-    "models/house/fbx/cottage_fbx.fbx",
-    "models/wolf/Wolf.fbx",
-    "models/plant/Low-Poly Plant_.fbx"
-  };
+  game::CEntity* pSpotLight = pGameManager->CreateEntity("SpotLight");
+  game::CLightComponent* pLightComp = pSpotLight->RegisterComponent<game::CLightComponent>(render::ELight::POINT_LIGHT);
+  static_cast<render::lights::CPointLight*>(pLightComp->GetLight())->SetRange(100.0f);
 
   float fOffsetZ = 0.0f;
-  for (uint32_t uIndex = 0; uIndex < 50; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
     pModelEnt->SetPos(math::CVector3(0.0f, 10.0f, fOffsetZ));
-    //const std::string& sModel = /*GenerateString(vAvailableModels*/);
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/spaceship.fbx");
     pModelEnt->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
     fOffsetZ += 10;
   }
 
-  // Manhattan test
-  game::CEntity* pManhattan = pGameManager->CreateEntity("City");
-  pManhattan->SetPos(math::CVector3(0.0f, 1.0f, 0.0f));
-  game::CModelComponent* pModelTest2 = pManhattan->RegisterComponent<game::CModelComponent>();
+  // Floor test
+  game::CEntity* pFloor = pGameManager->CreateEntity("Floor");
+  pFloor->SetPos(math::CVector3(0.0f, 1.0f, 0.0f));
+  game::CModelComponent* pModelTest2 = pFloor->RegisterComponent<game::CModelComponent>();
   pModelTest2->LoadModel("models/manhattan/manhattan.fbx");
-  pManhattan->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
-  pManhattan->SetScl(math::CVector3(0.05f, 0.05f, 0.05f));
-
-  // Create plane
-  game::CEntity* pPlaneEntity = pGameManager->CreateEntity("Plane");
-  game::CModelComponent* pPlaneModel = pPlaneEntity->RegisterComponent<game::CModelComponent>();
-  pPlaneModel->CreatePrimitive(render::EPrimitive::E3D_PLANE, render::ERenderMode::SOLID);
-  pPlaneModel->SetColor(math::CVector3(0.2f, 0.5f, 0.2f));
-  pPlaneEntity->SetScl(math::CVector3(200.0f, 1.0f, 200.0f));
+  pFloor->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
+  pFloor->SetScl(math::CVector3(0.1f, 0.1f, 0.1f));
 
   // Create 3 box
-  for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
-  {
-    game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-    pBoxTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-10.0f, 10.0f)));
-    game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-    pModelCompTest->CreatePrimitive(render::EPrimitive::E3D_CUBE, render::ERenderMode::SOLID);
-    pModelCompTest->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-  }
+  //for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
+  //{
+  //  game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
+  //  pBoxTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-10.0f, 10.0f)));
+  //  game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
+  //  pModelCompTest->CreatePrimitive(render::EPrimitive::E3D_CUBE, render::ERenderMode::SOLID);
+  //  pModelCompTest->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
+  //  pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
+  //}
 
   render::CRender* const pRender = pEngine->GetRender();
   render::CCamera* const pCamera = pEngine->GetCamera();
@@ -219,14 +208,14 @@ int main()
       if (ImGui::Button("Create point light"))
       {
         // Create point light
-        game::CEntity* pPointLight = pGameManager->CreateEntity("Point Light");
-        pPointLight->RegisterComponent<game::CLightComponent>(render::ELight::POINT_LIGHT);
+        game::CEntity* pTemp = pGameManager->CreateEntity("Point Light");
+        pTemp->RegisterComponent<game::CLightComponent>(render::ELight::POINT_LIGHT);
       }
       if (ImGui::Button("Create spot light"))
       {
         // Create spot light
-        game::CEntity* pSpotLight = pGameManager->CreateEntity("Spot Light");
-        pSpotLight->RegisterComponent<game::CLightComponent>(render::ELight::SPOT_LIGHT);
+        game::CEntity* pTemp = pGameManager->CreateEntity("Spot Light");
+        pTemp->RegisterComponent<game::CLightComponent>(render::ELight::SPOT_LIGHT);
       }
       ImGui::End();
 

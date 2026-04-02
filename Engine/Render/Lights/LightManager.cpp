@@ -102,8 +102,8 @@ namespace render
       TShadowMap& rShadowMap = *m_lstShadowMaps.Create();
 
       D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
-      rTextureDesc.Width = 1024;
-      rTextureDesc.Height = 1024;
+      rTextureDesc.Width = 2048;
+      rTextureDesc.Height = 2048;
       rTextureDesc.MipLevels = 1;
       rTextureDesc.ArraySize = 1;
       rTextureDesc.SampleDesc.Count = 1;

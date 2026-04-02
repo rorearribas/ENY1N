@@ -109,29 +109,29 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
 
   // Get diffuse color + specular
   float3 v3Diffuse = gDiffuse.Sample(gSampleLinear, input.uv).rgb;
-  float3 v3Specular = gSpecular.Sample(gSampleLinear, input.uv).rgb;
+  //float3 v3Specular = gSpecular.Sample(gSampleLinear, input.uv).rgb;
 
   // Get world pos
   float fDepth = gDepth.Sample(gSampleLinear, input.uv).r;
   float3 v3WorldPos = GetPositionFromDepth(input.uv, fDepth, InvViewProjection);
 
+  // Add ambient light
+  float3 v3TotalLight = 0.15f * /*v3Specular **/ float3(1.0f, 1.0f, 1.0f);
+
   // Get light pos
   float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
-  float3 projCoords = posLightSpace.xyz / posLightSpace.w;
-  float2 shadowUV = projCoords.xy * 0.5f + 0.5f;
-  shadowUV.y = 1.0f - shadowUV.y;
-
-  // Add ambient light
-  float3 v3TotalLight = 0.1f * v3Specular * float3(1.0f, 1.0f, 1.0f);
+  float3 v3ProjCoords = posLightSpace.xyz / posLightSpace.w;
+  float2 v2ShadowUV = v3ProjCoords.xy * 0.5f + 0.5f;
+  v2ShadowUV.y = 1.0f - v2ShadowUV.y;
 
   // Directional light
   float3 v3LightDir = normalize(directionalLight.Direction);
 
   // Compare!
   float fShadowFactor = 1.0f;
-  float fDepthShadowMap = gShadowMap.Sample(gSampleShadows, shadowUV).r;
-  float fBias = max(0.05 * (1.0 - dot(v3Normal, v3LightDir)), 0.005);
-  if (projCoords.z > fDepthShadowMap + 0.005f) // Bias
+  float fDepthShadowMap = gShadowMap.Sample(gSampleShadows, v2ShadowUV).r;
+  //float bias = max(0.05f * (1.0 - dot(v3Normal, v3LightDir)), 0.005f);
+  if (v3ProjCoords.z > fDepthShadowMap /*+ 0.0005f)*/) // Bias
   {
     fShadowFactor = 0.0f; // Shadow!
   }
