@@ -414,23 +414,23 @@ namespace render
       return hResult;
     }
 
-	// Set standard rasterizer config
+    // Set standard rasterizer config
     D3D11_RASTERIZER_DESC rShadowRasterizer = D3D11_RASTERIZER_DESC();
     rShadowRasterizer.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-	rShadowRasterizer.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
-	rShadowRasterizer.DepthBias = 100;
-	rShadowRasterizer.DepthBiasClamp = 0.0f;
-	rShadowRasterizer.SlopeScaledDepthBias = 1.5f;
-	rShadowRasterizer.DepthClipEnable = true;
-	rShadowRasterizer.ScissorEnable = false;
-	rShadowRasterizer.MultisampleEnable = false;
+    rShadowRasterizer.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+    rShadowRasterizer.DepthBias = 100;
+    rShadowRasterizer.DepthBiasClamp = 0.0f;
+    rShadowRasterizer.SlopeScaledDepthBias = 1.5f;
+    rShadowRasterizer.DepthClipEnable = true;
+    rShadowRasterizer.ScissorEnable = false;
+    rShadowRasterizer.MultisampleEnable = false;
 
-	// Create rasterizer
-	hResult = CreateRasterizerState(internal::s_oPipeline.pShadowsRasterizer, rShadowRasterizer);
-	if (FAILED(hResult))
-	{
-		return hResult;
-	}
+    // Create rasterizer
+    hResult = CreateRasterizerState(internal::s_oPipeline.pShadowsRasterizer, rShadowRasterizer);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
 
     // Set standard blend state config
     internal::s_oPipeline.rBlendStateCfg.BlendEnable = false;
@@ -682,12 +682,12 @@ namespace render
     rSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
     rSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
     rSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    rSamplerDesc.MipLODBias = 0.0f;
-    rSamplerDesc.MaxAnisotropy = 1u;
     rSamplerDesc.BorderColor[0] = 0.0f;
     rSamplerDesc.BorderColor[1] = 0.0f;
     rSamplerDesc.BorderColor[2] = 0.0f;
     rSamplerDesc.BorderColor[3] = 0.0f;
+    rSamplerDesc.MaxAnisotropy = 16u;
+    rSamplerDesc.MipLODBias = 0.0f;
     rSamplerDesc.MinLOD = 0.0f;
     rSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
@@ -705,15 +705,14 @@ namespace render
     rShadowSampler.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
     rShadowSampler.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
     rShadowSampler.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-    rShadowSampler.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    rShadowSampler.MipLODBias = 0.0f;
-    rShadowSampler.MaxAnisotropy = 1u;
+    rShadowSampler.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
     rShadowSampler.BorderColor[0] = 1.0f;
     rShadowSampler.BorderColor[1] = 1.0f;
     rShadowSampler.BorderColor[2] = 1.0f;
     rShadowSampler.BorderColor[3] = 1.0f;
+    rShadowSampler.MaxAnisotropy = 1u;
     rShadowSampler.MinLOD = 0.0f;
-    rShadowSampler.MaxLOD = D3D11_FLOAT32_MAX;
+    rShadowSampler.MaxLOD = 0.0f;
 
     // Create shadow sampler
     global::dx::SafeRelease(internal::s_oPipeline.pShadowSampler);

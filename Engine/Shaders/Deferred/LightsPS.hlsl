@@ -99,20 +99,20 @@ Texture2D gSpecular   : register(t3);
 Texture2D gShadowMap  : register(t4);
 
 // Sampler
-SamplerState gSampleLinear : register(s0);
-SamplerState gSampleShadows : register(s1);
+SamplerState gSamplerLinear : register(s0);
+SamplerComparisonState gSamplerShadows : register(s1);
 
 float4 PSMain(VS_OUTPUT input) : SV_TARGET
 {
   // Get pos + normal
-  float3 v3Normal = normalize(gNormal.Sample(gSampleLinear, input.uv)).xyz;
+  float3 v3Normal = normalize(gNormal.Sample(gSamplerLinear, input.uv)).xyz;
 
   // Get diffuse color + specular
-  float3 v3Diffuse = gDiffuse.Sample(gSampleLinear, input.uv).rgb;
+  float3 v3Diffuse = gDiffuse.Sample(gSamplerLinear, input.uv).rgb;
   //float3 v3Specular = gSpecular.Sample(gSampleLinear, input.uv).rgb;
 
   // Get world pos
-  float fDepth = gDepth.Sample(gSampleLinear, input.uv).r;
+  float fDepth = gDepth.Sample(gSamplerLinear, input.uv).r;
   float3 v3WorldPos = GetPositionFromDepth(input.uv, fDepth, InvViewProjection);
 
   // Add ambient light
@@ -124,17 +124,9 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   float2 v2ShadowUV = v3ProjCoords.xy * 0.5f + 0.5f;
   v2ShadowUV.y = 1.0f - v2ShadowUV.y;
 
-  // Directional light
+  // Calculate shadows (directional light)
   float3 v3LightDir = normalize(directionalLight.Direction);
-
-  // Compare!
-  float fShadowFactor = 1.0f;
-  float fDepthShadowMap = gShadowMap.Sample(gSampleShadows, v2ShadowUV).r;
-  //float bias = max(0.05f * (1.0 - dot(v3Normal, v3LightDir)), 0.005f);
-  if (v3ProjCoords.z > fDepthShadowMap /*+ 0.0005f)*/) // Bias
-  {
-    fShadowFactor = 0.0f; // Shadow!
-  }
+  float fShadowFactor = gShadowMap.SampleCmpLevelZero(gSamplerShadows, v2ShadowUV, v3ProjCoords.z);
 
   float fDot = max(dot(v3Normal, -v3LightDir), 0.0f);
   v3TotalLight += (directionalLight.Color * directionalLight.Intensity * fDot) * fShadowFactor;

@@ -72,7 +72,7 @@ int main()
 
   // Time manager
   chrono::CTimeManager* pTimeManager = chrono::CTimeManager::CreateSingleton();
-  pTimeManager->SetTargetFramerate(30);
+  pTimeManager->SetTargetFramerate(144);
 
   // Create resource manager
   CResourceManager::CreateSingleton();
