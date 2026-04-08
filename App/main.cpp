@@ -93,6 +93,7 @@ int main()
   game::CEntity* pSpotLight = pGameManager->CreateEntity("SpotLight");
   game::CLightComponent* pLightComp = pSpotLight->RegisterComponent<game::CLightComponent>(render::ELight::POINT_LIGHT);
   static_cast<render::lights::CPointLight*>(pLightComp->GetLight())->SetRange(100.0f);
+  static_cast<render::lights::CPointLight*>(pLightComp->GetLight())->SetIntensity(0.5f);
 
   float fOffsetZ = 0.0f;
   for (uint32_t uIndex = 0; uIndex < 1; uIndex++)

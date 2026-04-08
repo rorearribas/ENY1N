@@ -75,59 +75,102 @@ cbuffer CLightingData : register(b1)
   float2 Padding1;
 };
 
-float GetLinearDepth(float _fNear, float _fFar, float _zDepth)
+float get_linear_depth(float near, float far, float depth)
 {
-  return (2.0f * _fNear) / (_fFar + _fNear - _zDepth * (_fFar - _fNear));
+  return (2.0f * near) / (far + near - depth * (far - near));
 }
 
-float3 GetPositionFromDepth(in float2 uv, in float z, in float4x4 InvVP)
+float3 get_pos_from_depth(in float2 uv, in float z, in float4x4 InvVP)
 {
   float x = uv.x * 2.0f - 1.0f;
   float y = (1.0 - uv.y) * 2.0f - 1.0f;
-  float4 position_s = float4(x, y, z, 1.0f);
-  float4 position_v = mul(InvVP, position_s);
+  float4 position_v = mul(InvVP, float4(x, y, z, 1.0f));
   return position_v.xyz / position_v.w;
 }
 
+float2 texture_size(Texture2D tex)
+{
+  uint width, height;
+  tex.GetDimensions(width, height);
+  return float2(width, height);
+}
+
+float2 texel_scale(Texture2D tex)
+{
+  return 1.0f / texture_size(tex);
+}
+
+float3 offset_lookup(Texture2D tex, SamplerComparisonState sampl, float2 uv, float2 texel_size, float2 offset, float current_depth)
+{
+  return tex.SampleCmpLevelZero(sampl, uv + offset * texel_size, current_depth);
+}
+
+float2 get_uvs_from_light_space(float4 posLightSpace)
+{
+  float3 proj_coords = posLightSpace.xyz / posLightSpace.w;
+  float2 shadow_uv = proj_coords.xy * 0.5f + 0.5f;
+  return float2(shadow_uv.x, 1.0f - shadow_uv.y);
+}
+
+float ComputeShadowMapping(Texture2D tex, SamplerComparisonState sampl, float2 shadows_uv, float current_depth, uint samples)
+{
+  float2 texelScale = texel_scale(tex);
+
+  float fSum = 0.0f;
+  for (float y = -1.5; y <= 1.5; y += 1.0)
+  {
+    for (float x = -1.5; x <= 1.5; x += 1.0)
+    {
+      fSum += offset_lookup(tex, sampl, shadows_uv, texelScale, float2(x, y), current_depth);
+    }
+  }
+  return fSum / samples;
+}
+
 // GBuffer data
-Texture2D gDepth      : register(t0);
-Texture2D gDiffuse    : register(t1);
-Texture2D gNormal     : register(t2);
-Texture2D gSpecular   : register(t3);
+Texture2D texture_depth      : register(t0);
+Texture2D texture_diffuse    : register(t1);
+Texture2D texture_normal     : register(t2);
+Texture2D texture_specular   : register(t3);
 
 // Shadow map - Test
-Texture2D gShadowMap  : register(t4);
+Texture2D texture_shadowmap  : register(t4);
 
 // Sampler
-SamplerState gSamplerLinear : register(s0);
-SamplerComparisonState gSamplerShadows : register(s1);
+SamplerState sampler_default : register(s0);
+SamplerComparisonState sampler_shadows : register(s1);
 
 float4 PSMain(VS_OUTPUT input) : SV_TARGET
 {
   // Get pos + normal
-  float3 v3Normal = normalize(gNormal.Sample(gSamplerLinear, input.uv)).xyz;
+  float3 v3Normal = normalize(texture_normal.Sample(sampler_default, input.uv)).xyz;
 
   // Get diffuse color + specular
-  float3 v3Diffuse = gDiffuse.Sample(gSamplerLinear, input.uv).rgb;
-  //float3 v3Specular = gSpecular.Sample(gSampleLinear, input.uv).rgb;
+  float3 v3Diffuse = texture_diffuse.Sample(sampler_default, input.uv).rgb;
+  float3 v3Specular = texture_specular.Sample(sampler_default, input.uv).rgb;
 
   // Get world pos
-  float fDepth = gDepth.Sample(gSamplerLinear, input.uv).r;
-  float3 v3WorldPos = GetPositionFromDepth(input.uv, fDepth, InvViewProjection);
+  float fDepth = texture_depth.Sample(sampler_default, input.uv).r;
+  float3 v3WorldPos = get_pos_from_depth(input.uv, fDepth, InvViewProjection);
 
   // Add ambient light
-  float3 v3TotalLight = 0.15f * /*v3Specular **/ float3(1.0f, 1.0f, 1.0f);
-
-  // Get light pos
-  float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
-  float3 v3ProjCoords = posLightSpace.xyz / posLightSpace.w;
-  float2 v2ShadowUV = v3ProjCoords.xy * 0.5f + 0.5f;
-  v2ShadowUV.y = 1.0f - v2ShadowUV.y;
+  float3 v3TotalLight = float3(1.0f, 1.0f, 1.0f) * 0.2f;
 
   // Calculate shadows (directional light)
-  float3 v3LightDir = normalize(directionalLight.Direction);
-  float fShadowFactor = gShadowMap.SampleCmpLevelZero(gSamplerShadows, v2ShadowUV, v3ProjCoords.z);
+  float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
+  float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
 
+  const uint max_samples = 16;
+  float fShadowFactor = ComputeShadowMapping
+  (
+    texture_shadowmap, 
+    sampler_shadows, 
+    get_uvs_from_light_space(posLightSpace), 
+    current_shadow_depth,
+    max_samples
+  );
+
+  float3 v3LightDir = normalize(directionalLight.Direction);
   float fDot = max(dot(v3Normal, -v3LightDir), 0.0f);
   v3TotalLight += (directionalLight.Color * directionalLight.Intensity * fDot) * fShadowFactor;
 
