@@ -34,9 +34,10 @@ namespace render
       // Update directional light
       if (m_pDirectionalLight)
       {
-        rLightingData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
-        rLightingData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
         rLightingData.DirectionalLight.Direction = m_pDirectionalLight->GetDir();
+        rLightingData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
+        rLightingData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
+        rLightingData.DirectionalLight.CastShadows = m_pDirectionalLight->CastShadows();
       }
 
       // Update point lights
@@ -45,9 +46,9 @@ namespace render
         if (render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex])
         {
           rLightingData.PointLights[uIndex].Position = pPointLight->GetPos();
+          rLightingData.PointLights[uIndex].Range = pPointLight->GetRange();
           rLightingData.PointLights[uIndex].Color = pPointLight->GetColor();
           rLightingData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
-          rLightingData.PointLights[uIndex].Range = pPointLight->GetRange();
         }
       }
       // Set the number of registered point lights
@@ -60,8 +61,8 @@ namespace render
         {
           rLightingData.SpotLights[uIndex].Position = pSpotLight->GetPos();
           rLightingData.SpotLights[uIndex].Direction = pSpotLight->GetDir();
-          rLightingData.SpotLights[uIndex].Color = pSpotLight->GetColor();
           rLightingData.SpotLights[uIndex].Range = pSpotLight->GetRange();
+          rLightingData.SpotLights[uIndex].Color = pSpotLight->GetColor();
           rLightingData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
         }
       }

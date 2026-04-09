@@ -26,7 +26,7 @@ struct __declspec(align(s_uAlign)) TTransforms
   // Transforms
   math::CMatrix4x4 ViewProjection = math::CMatrix4x4::Identity;
   math::CMatrix4x4 InvViewProjection = math::CMatrix4x4::Identity;
-  math::CMatrix4x4 LightViewProjection = math::CMatrix4x4::Identity; // Testing
+  math::CMatrix4x4 LightViewProjection = math::CMatrix4x4::Identity;
 
   // Projection CFG
   float FarPlane = 10000.0f;
@@ -61,42 +61,39 @@ struct __declspec(align(s_uAlign)) TDirectionalLight
 {
   // 12 + 4 Bytes
   math::CVector3 Direction;
-  float Padding0;
+  float Intensity;
+
   // 12 + 4 bytes
   math::CVector3 Color;
-  float Intensity;
+  int CastShadows;
 };
 
-// Point lights [48 Bytes]
+// Point lights [32 Bytes]
 struct __declspec(align(s_uAlign)) TPointLight
 {
   // 12 + 4 Bytes
   math::CVector3 Position;
-  float Padding0;
+  float Range;
+
   // 12 + 4 Bytes
   math::CVector3 Color;
-  float Padding1;
-  // 4 + 4 + 8 Bytes
-  float Range;
   float Intensity;
-  float Padding[2];
 };
-// Spot lights [64 Bytes]
+
+// Spot lights [48 Bytes]
 struct __declspec(align(s_uAlign)) TSpotLight
 {
   // 12 + 4 Bytes
   math::CVector3 Position;
   float Padding0;
+
   // 12 + 4 Bytes
   math::CVector3 Direction;
-  float Padding1;
+  float Range;
+
   // 12 + 4 Bytes
   math::CVector3 Color;
-  float Padding2;
-  // 4 + 4 + 8 Bytes
-  float Range;
   float Intensity;
-  float Padding3[2];
 };
 
 template<size_t MAX_POINT_LIGHTS, size_t MAX_SPOT_LIGHTS>

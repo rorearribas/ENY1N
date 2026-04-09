@@ -5,27 +5,22 @@ struct DirectionalLight
 {
   // 12 + 4 bytes = 16 bytes
   float3 Direction;
-  float Padding0;
+  float Intensity;
 
   // 12 + 4 bytes = 16 bytes
   float3 Color;
-  float Intensity;
+  int CastShadows;
 };
 
 struct PointLight
 {
   // 12 + 4 bytes = 16 bytes
   float3 Position;
-  float Padding0;
+  float Range;
 
   // 12 + 4 bytes = 16 bytes
   float3 Color;
-  float Padding1;
-
-  // 4 + 4 + 8 bytes = 16 bytes
-  float Range;
   float Intensity;
-  float2 Padding;
 };
 
 struct Spotlight
@@ -36,16 +31,11 @@ struct Spotlight
 
   // 12 + 4 bytes = 16 bytes
   float3 Direction;
-  float Padding1;
+  float Range;
 
   // 12 + 4 bytes = 16 bytes
   float3 Color;
-  float Padding2;
-
-  // 4 + 4 + 8 = 16 bytes
-  float Range;
   float Intensity;
-  float Padding3;
 };
 
 // Transforms
@@ -156,19 +146,23 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   // Add ambient light
   float3 v3TotalLight = float3(1.0f, 1.0f, 1.0f) * 0.2f;
 
-  // Calculate shadows (directional light)
-  float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
-  float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
+  float fShadowFactor = 1.0f;
+  if (directionalLight.CastShadows)
+  {
+    // Calculate shadows
+    const uint max_samples = 16;
+    float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
+    float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
 
-  const uint max_samples = 16;
-  float fShadowFactor = ComputeShadowMapping
-  (
-    texture_shadowmap, 
-    sampler_shadows, 
-    get_uvs_from_light_space(posLightSpace), 
-    current_shadow_depth,
-    max_samples
-  );
+    fShadowFactor = ComputeShadowMapping
+    (
+      texture_shadowmap, 
+      sampler_shadows, 
+      get_uvs_from_light_space(posLightSpace), 
+      current_shadow_depth,
+      max_samples
+    );
+  }
 
   float3 v3LightDir = normalize(directionalLight.Direction);
   float fDot = max(dot(v3Normal, -v3LightDir), 0.0f);

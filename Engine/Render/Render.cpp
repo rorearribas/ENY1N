@@ -808,11 +808,17 @@ namespace render
     internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uTransformSlot);
 
     // Shadow mapping testing
+    ID3D11ShaderResourceView* pShadowTexture = nullptr;
     render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
     const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
-    const lights::CLightManager::TShadowMap& rShadowMap = *lstShadowMaps[0];
-    const texture::TShaderResource& rShadowTexture = rShadowMap.ShadowTexture;
-    global::dx::s_pDeviceContext->PSSetSamplers(1, 1, &internal::s_oPipeline.pShadowSampler);
+
+    render::lights::CDirectionalLight* pDirectionalLight = pLightManager->GetDirectionalLight();
+    bool bCastShadows = pDirectionalLight && pDirectionalLight->CastShadows();
+    if (bCastShadows && lstShadowMaps.GetSize() > 0)
+    {
+      pShadowTexture = lstShadowMaps[0]->ShadowTexture.GetView();
+      global::dx::s_pDeviceContext->PSSetSamplers(1, 1, &internal::s_oPipeline.pShadowSampler);
+    }
 
     static constexpr uint32_t uTexturesSize(5);
     ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
@@ -821,7 +827,7 @@ namespace render
       internal::s_oPipeline.rDiffuseRT.GetView(),
       internal::s_oPipeline.rNormalRT.GetView(),
       internal::s_oPipeline.rSpecularRT.GetView(),
-      rShadowTexture.GetView() // Shadow Testing
+      pShadowTexture
     };
 
     // Bind buffers
@@ -920,10 +926,14 @@ namespace render
 
       // Compute lighting
       render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
+
       BeginMarker(internal::s_sComputeShadowsMrk);
       {
         const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
-        if (lstShadowMaps.GetSize() > 0)
+        render::lights::CDirectionalLight* pDirectionalLight = pLightManager->GetDirectionalLight();
+
+        bool bCastShadows = pDirectionalLight && pDirectionalLight->CastShadows();
+        if (bCastShadows && lstShadowMaps.GetSize() > 0)
         {
           // Set custom rasterizer for shadow mapping
           global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pShadowsRasterizer);
@@ -968,7 +978,7 @@ namespace render
             // Detach pixel shader for models
             internal::s_oPipeline.rDeferredGBuffer.Detach();
 
-            // Draw models only in z-prepass for the light perspective
+            // Draw models only in z-prepass pass from the light view
             _pScene->DrawModels(this);
 
             // HACK TESTING SHADOW MAPPING

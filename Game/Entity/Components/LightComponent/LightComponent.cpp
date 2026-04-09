@@ -60,21 +60,24 @@ namespace game
         render::lights::CDirectionalLight* pDirectional = static_cast<render::lights::CDirectionalLight*>(m_pLight);
         float fColor[3] = { pDirectional->GetColor().x, pDirectional->GetColor().y, pDirectional->GetColor().z };
         float fIntensity = pDirectional->GetIntensity();
+        bool bCastShadows = pDirectional->CastShadows();
 
         ImGui::Text("DIRECTIONAL LIGHT");
         ImGui::InputFloat3("Color", fColor);
-        ImGui::InputFloat("Intensity", &fIntensity);
 
-        // Create rotation matrix
+        // Direction
         math::CMatrix4x4 mRot = math::CMatrix4x4::CreateRotation(pEntity->GetRot());
         math::CVector3 v3Dir = mRot * math::CVector3::Forward;
-
         float fDir[3] = { v3Dir.x, v3Dir.y, v3Dir.z };
         ImGui::InputFloat3("Direction", fDir);
         pDirectional->SetDir(math::CVector3(fDir[0], fDir[1], fDir[2]));
 
+        ImGui::InputFloat("Intensity", &fIntensity);
+        ImGui::Checkbox("Cast Shadows", &bCastShadows);
+
         pDirectional->SetColor(math::CVector3(fColor[0], fColor[1], fColor[2]));
         pDirectional->SetIntensity(fIntensity);
+        pDirectional->SetCastShadows(bCastShadows);
       }
       break;
       case render::ELight::POINT_LIGHT:

@@ -25,7 +25,7 @@ namespace render
       };
 
     public:
-      static constexpr uint16_t s_uMaxShadowMaps = 4u; // Testing
+      static constexpr uint16_t s_uMaxShadowMaps = 4u;
       static constexpr uint16_t s_uMaxSpotLights = 100u;
       static constexpr uint16_t s_uMaxPointLights = 100u;
 
