@@ -2,8 +2,8 @@
 #include "Engine/Engine.h"
 #include "Engine/Utils/Plane.h"
 #include "Engine/Render/Render.h"
-#include "Engine/Render/Lights/Light.h"
-#include "Engine/Render/Lights/DirectionalLight.h"
+#include "Engine/Render/Lighting/Light.h"
+#include "Engine/Render/Lighting/DirectionalLight.h"
 #include "Engine/Render/Utils/PrimitiveUtils.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Engine/Global/GlobalResources.h"
@@ -226,7 +226,7 @@ namespace scene
     // Reset value
     m_uDrawableModels = 0;
 
-    for (uint16_t uI = 0; uI < m_lstModels.GetMaxSize(); uI++)
+    for (uint16_t uI = 0; uI < m_lstModels.GetSize(); uI++)
     {
       utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
       if (!pModel.IsValid())

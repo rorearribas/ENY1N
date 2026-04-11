@@ -6,7 +6,7 @@ namespace render
 {
   namespace lights
   {
-    class CDirectionalLight : public CLight
+    class CDirectionalLight final : public CLight
     {
     public:
       CDirectionalLight();

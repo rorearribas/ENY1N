@@ -3,26 +3,34 @@
 #include "Engine/Render/Graphics/Model.h"
 #include "Engine/Utils/Plane.h"
 #include "Engine/Scenes/Scene.h"
-#include "Libs/Utils/Singleton.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Render/RenderTypes.h"
+
+#include "Libs/Utils/FixedList.h"
+#include "Libs/Utils/Singleton.h"
 
 namespace scene
 {
   class CSceneManager
   {
   public:
+    static const uint32_t s_uMaxCameras = 2u;
+    typedef std::array<render::CCamera*, s_uMaxCameras> TCameraList;
+
     static int constexpr s_iMaxScenes = 1;
     typedef std::array<CScene*, s_iMaxScenes> TSceneList;
 
   public:
-    CSceneManager() { CreateScenes(); }
-    ~CSceneManager() { DestroyAllScenes(); }
+    CSceneManager() { Setup(); }
+    ~CSceneManager() { Clear(); }
 
     // Handle scene
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
     inline scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
+
     inline const TSceneList& GetScenes() { return m_lstScenes; }
+    inline render::CCamera* const GetRenderCamera() { return m_lstCameraList.front(); }
+    inline render::CCamera* const GetShadowCamera() { return m_lstCameraList.back(); }
 
     // Handle graphics
     render::gfx::CPrimitive* const CreatePrimitive(const render::EPrimitive&, render::ERenderMode, uint32_t _uSceneIndex = 0);
@@ -45,11 +53,14 @@ namespace scene
     void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
 
   private:
-    void CreateScenes();
-    void DestroyAllScenes();
+    void Setup();
+    void Clear();
 
   private:
     TSceneList m_lstScenes = TSceneList();
+    TCameraList m_lstCameraList = TCameraList();
+
+  private:
     mutable scene::CScene* m_pCurrentScene = nullptr;
   };
 }

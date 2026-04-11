@@ -5,7 +5,7 @@ namespace render
 {
   namespace lights
   {
-    class CSpotLight : public CLight
+    class CSpotLight final : public CLight
     {
     public:
       CSpotLight();

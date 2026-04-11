@@ -27,13 +27,16 @@ namespace render
     void Update(float _fDeltaTime);
     bool IsOnFrustum(const collision::CAABB& _oBoundingBox) const;
 
-    const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
-    const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjection; }
-    math::CMatrix4x4 GetViewProjection() const { return m_mProjection * m_mViewMatrix; }
+    inline void SetViewMatrix(const math::CMatrix4x4& _mView) { m_mViewMatrix = _mView; }
+    inline const math::CMatrix4x4& GetViewMatrix() const { return m_mViewMatrix; }
+    inline void SetProjectionMatrix(const math::CMatrix4x4& _mProjection) { m_mProjection = _mProjection; }
+    inline const math::CMatrix4x4& GetProjectionMatrix() const { return m_mProjection; }
+    inline math::CMatrix4x4 GetViewProjection() const { return m_mProjection * m_mViewMatrix; }
 
+    inline void SetDir(const math::CVector3& _v3Dir) { m_v3Dir = _v3Dir; }
     inline const math::CVector3& GetDir() const { return m_v3Dir; }
     void SetPos(const math::CVector3& _v3Pos);
-    const math::CVector3& GetPos() const { return m_v3Pos; }
+    inline const math::CVector3& GetPos() const { return m_v3Pos; }
     void SetRot(const math::CVector3& _v3Rot);
     inline const math::CVector3& GetRot() const { return m_v3Rot; }
 
@@ -54,6 +57,7 @@ namespace render
     inline void SetAspectRatio(float _fAspectRatio) { m_fAspectRatio = _fAspectRatio; }
     inline float GetAspectRatio() const { return m_fAspectRatio; }
 
+    void BuildFrustumPlanes();
     void DrawDebug();
 
   private:
@@ -64,7 +68,6 @@ namespace render
 
     void UpdateProjectionMatrix(EProjectionMode _eProjectionMode);
     void UpdateViewMatrix();
-    void BuildFrustumPlanes();
 
     void ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos);
 

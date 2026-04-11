@@ -113,7 +113,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)Third-Party\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Third-Party\assimp\include;$(ProjectDir)Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -137,7 +137,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>$(ProjectDir)Third-Party\assimp\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Third-Party\assimp\include;$(ProjectDir)Shaders;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
     </ClCompile>
     <Link>
@@ -167,19 +167,19 @@
     <ClInclude Include="Utils\Plane.h" />
     <ClInclude Include="Utils\Ray.h" />
     <ClInclude Include="Render\Utils\PrimitiveUtils.h" />
-    <ClInclude Include="Render\Lights\LightManager.h" />
+    <ClInclude Include="Render\Lighting\LightManager.h" />
     <ClInclude Include="Physics\Rigidbody.h" />
     <ClInclude Include="Render\Graphics\Mesh.h" />
-    <ClInclude Include="Render\Lights\Light.h" />
+    <ClInclude Include="Render\Lighting\Light.h" />
     <ClInclude Include="Render\Resources\Material.h" />
     <ClInclude Include="Render\Graphics\Model.h" />
     <ClInclude Include="Collisions\BoxCollider.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="Camera\Camera.h" />
-    <ClInclude Include="Render\Lights\DirectionalLight.h" />
+    <ClInclude Include="Render\Lighting\DirectionalLight.h" />
     <ClInclude Include="Global\GlobalResources.h" />
     <ClInclude Include="Managers\InputManager.h" />
-    <ClInclude Include="Render\Lights\PointLight.h" />
+    <ClInclude Include="Render\Lighting\PointLight.h" />
     <ClInclude Include="Render\ConstantBuffer\ConstantBuffer.h" />
     <ClInclude Include="Render\Graphics\Primitive.h" />
     <ClInclude Include="Render\Render.h" />
@@ -189,7 +189,7 @@
     <ClInclude Include="Scenes\Scene.h" />
     <ClInclude Include="Render\Resources\Texture2D.h" />
     <ClInclude Include="Shaders\Shader.h" />
-    <ClInclude Include="Render\Lights\SpotLight.h" />
+    <ClInclude Include="Render\Lighting\SpotLight.h" />
     <ClInclude Include="Collisions\SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
@@ -205,18 +205,18 @@
     <ClCompile Include="Utils\Plane.cpp" />
     <ClCompile Include="Utils\Ray.cpp" />
     <ClCompile Include="Render\Utils\PrimitiveUtils.cpp" />
-    <ClCompile Include="Render\Lights\LightManager.cpp" />
+    <ClCompile Include="Render\Lighting\LightManager.cpp" />
     <ClCompile Include="Render\Graphics\Mesh.cpp" />
-    <ClCompile Include="Render\Lights\Light.cpp" />
+    <ClCompile Include="Render\Lighting\Light.cpp" />
     <ClCompile Include="Render\Resources\Material.cpp" />
     <ClCompile Include="Render\Graphics\Model.cpp" />
     <ClCompile Include="Collisions\BoxCollider.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="Camera\Camera.cpp" />
-    <ClCompile Include="Render\Lights\DirectionalLight.cpp" />
+    <ClCompile Include="Render\Lighting\DirectionalLight.cpp" />
     <ClCompile Include="Global\GlobalResources.cpp" />
     <ClCompile Include="Managers\InputManager.cpp" />
-    <ClCompile Include="Render\Lights\PointLight.cpp" />
+    <ClCompile Include="Render\Lighting\PointLight.cpp" />
     <ClCompile Include="Render\Graphics\Primitive.cpp" />
     <ClCompile Include="Render\Render.cpp" />
     <ClCompile Include="Render\Window\RenderWindow.cpp" />
@@ -225,7 +225,7 @@
     <ClCompile Include="Scenes\SceneManager.cpp" />
     <ClCompile Include="Scenes\Scene.cpp" />
     <ClCompile Include="Render\Resources\Texture2D.cpp" />
-    <ClCompile Include="Render\Lights\SpotLight.cpp" />
+    <ClCompile Include="Render\Lighting\SpotLight.cpp" />
     <ClCompile Include="Collisions\SphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -278,6 +278,8 @@
       </ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ObjectFileOutput>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Shaders</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Shaders</AdditionalIncludeDirectories>
     </FxCompile>
     <FxCompile Include="Shaders\Deferred\ShadowsVS.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -345,6 +347,9 @@
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ObjectFileOutput>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\global.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

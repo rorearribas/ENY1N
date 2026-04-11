@@ -1,7 +1,7 @@
 #pragma once
 #include "Game/Entity/Components/Component.h"
+#include "Engine/Render/Lighting/Light.h"
 #include "Engine/Render/RenderTypes.h"
-#include "Engine/Render/Lights/Light.h"
 #include "Libs/Math/Vector3.h"
 
 namespace game { class CEntity; }

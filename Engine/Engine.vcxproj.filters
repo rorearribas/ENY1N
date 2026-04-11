@@ -45,10 +45,10 @@
     <ClInclude Include="Render\ConstantBuffer\ConstantBuffer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Lights\PointLight.h">
+    <ClInclude Include="Render\Lighting\PointLight.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Lights\DirectionalLight.h">
+    <ClInclude Include="Render\Lighting\DirectionalLight.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Collisions\BoxCollider.h">
@@ -69,16 +69,16 @@
     <ClInclude Include="Render\Graphics\Mesh.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Lights\Light.h">
+    <ClInclude Include="Render\Lighting\Light.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Shaders\Shader.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Lights\SpotLight.h">
+    <ClInclude Include="Render\Lighting\SpotLight.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Lights\LightManager.h">
+    <ClInclude Include="Render\Lighting\LightManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Collisions\SphereCollider.h">
@@ -164,10 +164,10 @@
     <ClCompile Include="Managers\InputManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Lights\PointLight.cpp">
+    <ClCompile Include="Render\Lighting\PointLight.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Lights\DirectionalLight.cpp">
+    <ClCompile Include="Render\Lighting\DirectionalLight.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Collisions\BoxCollider.cpp">
@@ -188,13 +188,13 @@
     <ClCompile Include="Render\Graphics\Mesh.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Lights\Light.cpp">
+    <ClCompile Include="Render\Lighting\Light.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Lights\SpotLight.cpp">
+    <ClCompile Include="Render\Lighting\SpotLight.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Lights\LightManager.cpp">
+    <ClCompile Include="Render\Lighting\LightManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Collisions\SphereCollider.cpp">
@@ -248,5 +248,8 @@
     <FxCompile Include="Shaders\Deferred\DrawTriangleVS.hlsl" />
     <FxCompile Include="Shaders\Deferred\StandardVS.hlsl" />
     <FxCompile Include="Shaders\Deferred\ShadowsVS.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Shaders\global.hlsli" />
   </ItemGroup>
 </Project>

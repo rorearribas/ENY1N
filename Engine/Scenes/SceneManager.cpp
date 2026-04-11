@@ -141,21 +141,31 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CSceneManager::CreateScenes()
+  void CSceneManager::Setup()
   {
     int iCurrentIdx = 0;
-    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [&](scene::CScene*& _pScene)
+    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [&](scene::CScene*& _pScene_)
     {
-      _pScene = new scene::CScene(iCurrentIdx++);
-      _pScene->SetEnabled(false);
+      _pScene_ = new scene::CScene(iCurrentIdx++);
+      _pScene_->SetEnabled(false);
+    });
+
+    std::for_each(m_lstCameraList.begin(), m_lstCameraList.end(), [&](render::CCamera*& _pCamera)
+    {
+      _pCamera = new render::CCamera();
     });
   }
   // ------------------------------------
-  void CSceneManager::DestroyAllScenes()
+  void CSceneManager::Clear()
   {
-    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [](CScene*& _pScene)
+    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [](CScene*& _pScene_)
     {
-      global::ReleaseObject(_pScene);
+      global::ReleaseObject(_pScene_);
+    });
+
+    std::for_each(m_lstCameraList.begin(), m_lstCameraList.end(), [](render::CCamera*& _pCamera)
+    {
+      global::ReleaseObject(_pCamera);
     });
   }
 }

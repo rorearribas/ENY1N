@@ -1,5 +1,4 @@
 #include "SpotLight.h"
-#include "Libs/Math/Math.h"
 
 namespace render
 {

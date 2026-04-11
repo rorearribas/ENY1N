@@ -44,8 +44,12 @@ char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
 // ------------------------------------
 std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sPath)
 {
-  // Importer
+  // Create importer instance
   Assimp::Importer rImporter;
+
+  // Set config
+  rImporter.SetPropertyInteger(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0);
+  rImporter.SetPropertyInteger(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1);
 
   // Read file
   LOG("Loading model -> " << _sPath);
@@ -126,6 +130,10 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
   render::gfx::CModel::TModelData rModelData = render::gfx::CModel::TModelData();
   memcpy(rModelData.AssetPath, _sPath, 128); // Set path
 
+  // Rotation
+  aiMatrix4x4t<ai_real> mRotX;
+  aiMatrix4x4::RotationX(ai_real(math::s_fHalfPI), mRotX);
+
   // Load meshes
   std::unordered_map<render::gfx::TVertexData, uint32_t> mVertexMap;
   for (uint32_t uI = 0; uI < pScene->mNumMeshes; uI++)
@@ -146,12 +154,14 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
 
         // Position
         aiVector3D v3Pos = pSceneMesh->mVertices[uPosIdx];
+        v3Pos = mRotX * v3Pos;
         rVertexData.VertexPos = math::CVector3(v3Pos.x, v3Pos.y, v3Pos.z);
 
         // Normal
         if (pSceneMesh->HasNormals())
         {
           aiVector3D v3Normal = pSceneMesh->mNormals[uPosIdx];
+          v3Normal = aiMatrix3x3(mRotX) * v3Normal;
           rVertexData.Normal = math::CVector3(v3Normal.x, v3Normal.y, v3Normal.z);
         }
         else

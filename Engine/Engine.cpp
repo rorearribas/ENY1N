@@ -14,7 +14,6 @@ namespace engine
   CEngine::~CEngine()
   {
     global::ReleaseObject(m_pSceneManager);
-    global::ReleaseObject(m_pCamera);
     global::ReleaseObject(m_pRender);
   }
   // ------------------------------------
@@ -25,16 +24,16 @@ namespace engine
 #endif // DEBUG
     LOG("Initializing engine...");
 
-    // Create camera
-    m_pCamera = new render::CCamera();
-
     // Create render
     m_pRender = new render::CRender(_uWidth, _uHeight);
-    m_pRender->SetRenderCamera(m_pCamera);
 
     // Create scene manager
     m_pSceneManager = new scene::CSceneManager();
     m_pSceneManager->SetSceneEnabled(0, true);
+
+    // Set cameras
+    m_pRender->SetRenderCamera(m_pSceneManager->GetRenderCamera());
+    m_pRender->SetShadowCamera(m_pSceneManager->GetShadowCamera());
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> rDelegate(&CEngine::OnWindowResizeEvent, this);
@@ -134,7 +133,7 @@ namespace engine
   // ------------------------------------
   void CEngine::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
   {
-    m_pCamera->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
+    GetCamera()->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
   }
   // ------------------------------------
 }

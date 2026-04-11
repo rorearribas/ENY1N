@@ -1,6 +1,4 @@
 #include "DirectionalLight.h"
-#include <cassert>
-#include "Libs/Macros/GlobalMacros.h"
 
 namespace render
 {

@@ -60,7 +60,7 @@ struct __declspec(align(s_uAlign)) TLightView
 struct __declspec(align(s_uAlign)) TDirectionalLight
 {
   // 12 + 4 Bytes
-  math::CVector3 Direction;
+  math::CVector3 Dir;
   float Intensity;
 
   // 12 + 4 bytes
@@ -72,7 +72,7 @@ struct __declspec(align(s_uAlign)) TDirectionalLight
 struct __declspec(align(s_uAlign)) TPointLight
 {
   // 12 + 4 Bytes
-  math::CVector3 Position;
+  math::CVector3 Pos;
   float Range;
 
   // 12 + 4 Bytes
@@ -84,11 +84,11 @@ struct __declspec(align(s_uAlign)) TPointLight
 struct __declspec(align(s_uAlign)) TSpotLight
 {
   // 12 + 4 Bytes
-  math::CVector3 Position;
+  math::CVector3 Pos;
   float Padding0;
 
   // 12 + 4 Bytes
-  math::CVector3 Direction;
+  math::CVector3 Dir;
   float Range;
 
   // 12 + 4 Bytes

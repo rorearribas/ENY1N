@@ -7,7 +7,7 @@
 #include "Libs/Macros/GlobalMacros.h"
 
 #include "Engine/Render/Graphics/Primitive.h"
-#include "Engine/Render/Lights/DirectionalLight.h"
+#include "Engine/Render/Lighting/DirectionalLight.h"
 #include "Engine/Scenes/SceneManager.h"
 
 #include "Libs/Time/TimeManager.h"
@@ -80,7 +80,7 @@ int main()
   // Game manager
   game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
   // Collisions manager
-  collision::CCollisionManager* pCollManager = collision::CCollisionManager::CreateSingleton();
+  collision::CCollisionManager* pCollisionManager = collision::CCollisionManager::CreateSingleton();
   // Physics manager
   physics::CPhysicsManager* pPhysicsManager = physics::CPhysicsManager::CreateSingleton();
   // Input manager
@@ -103,28 +103,40 @@ int main()
     pModelEnt->SetPos(math::CVector3(0.0f, 10.0f, fOffsetZ));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/spaceship.fbx");
-    pModelEnt->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
     fOffsetZ += 10;
   }
 
-  // Floor test
+  // Floor
   game::CEntity* pFloor = pGameManager->CreateEntity("Floor");
   pFloor->SetPos(math::CVector3(0.0f, 1.0f, 0.0f));
   game::CModelComponent* pModelTest2 = pFloor->RegisterComponent<game::CModelComponent>();
-  pModelTest2->LoadModel("models/manhattan/manhattan.fbx");
-  pFloor->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
-  pFloor->SetScl(math::CVector3(0.1f, 0.1f, 0.1f));
+  pModelTest2->LoadModel("models/floor/floor.fbx");
+  pFloor->SetScl(math::CVector3(50.0f, 50.0f, 50.0f));
 
-  // Create 3 box
-  //for (uint32_t uIndex = 0; uIndex < 3; uIndex++)
-  //{
-  //  game::CEntity* pBoxTest = pGameManager->CreateEntity("Box");
-  //  pBoxTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(1.0f, 2.0f), GenerateFloat(-10.0f, 10.0f)));
-  //  game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
-  //  pModelCompTest->CreatePrimitive(render::EPrimitive::E3D_CUBE, render::ERenderMode::SOLID);
-  //  pModelCompTest->SetColor(math::CVector3(0.5f, 0.5f, 0.5f));
-  //  pBoxTest->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-  //}
+  // Create primitives
+  const uint32_t uSize = 3;
+  render::EPrimitive ePrimitiveTypes[uSize] =
+  {
+    render::EPrimitive::E3D_CUBE,
+    render::EPrimitive::E3D_SPHERE,
+    render::EPrimitive::E3D_CAPSULE
+  };
+  collision::EColliderType eColliderTypes[uSize] =
+  {
+    collision::EColliderType::BOX_COLLIDER,
+    collision::EColliderType::SPHERE_COLLIDER,
+    collision::EColliderType::CAPSULE_COLLIDER
+  };
+
+  for (uint32_t uIndex = 0; uIndex < uSize; uIndex++)
+  {
+    game::CEntity* pBoxTest = pGameManager->CreateEntity("Primitive");
+    pBoxTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 10.0f), GenerateFloat(-10.0f, 10.0f)));
+    game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
+    pModelCompTest->CreatePrimitive(ePrimitiveTypes[uIndex], render::ERenderMode::SOLID);
+    pModelCompTest->SetColor(math::CVector3(0.75f, 0.0f, 0.0f));
+    pBoxTest->RegisterComponent<game::CCollisionComponent>(eColliderTypes[uIndex]);
+  }
 
   render::CRender* const pRender = pEngine->GetRender();
   render::CCamera* const pCamera = pEngine->GetCamera();
@@ -163,7 +175,7 @@ int main()
 
         // Throw ray
         std::vector<collision::THitEvent> lstHits;
-        if (pCollManager->RaycastAll(oRay, fMaxDistance, lstHits))
+        if (pCollisionManager->RaycastAll(oRay, fMaxDistance, lstHits))
         {
           for (auto& HitEvent : lstHits)
           {
@@ -179,7 +191,7 @@ int main()
         pCamera->DrawDebug();
 
         pPhysicsManager->Update(fFixedDelta);
-        pCollManager->Update(fFixedDelta);
+        pCollisionManager->Update(fFixedDelta);
         pGameManager->Update(fFixedDelta);
 
         pInputManager->Flush();
@@ -233,7 +245,7 @@ int main()
 
   // Destroy
   pGameManager->DestroySingleton();
-  pCollManager->DestroySingleton();
+  pCollisionManager->DestroySingleton();
   pTimeManager->DestroySingleton();
   pInputManager->DestroySingleton();
   pEngine->DestroySingleton();

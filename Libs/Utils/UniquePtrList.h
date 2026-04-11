@@ -43,15 +43,10 @@ namespace utils
     template<typename _Type = T, typename ...Args>
     inline CWeakPtr<T> Create(Args&&... args)
     {
-      if (m_tRegisteredItems >= MAX_ITEMS)
-      {
-        return CWeakPtr<T>();
-      }
-
       for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
       {
         TInternalData& pData = m_lstInternalData[tIndex];
-        if (!pData.uPtr)
+        if (pData.uPtr)
         {
           continue;
         }
@@ -71,11 +66,6 @@ namespace utils
     // Insert memory
     inline CWeakPtr<T> Insert(std::unique_ptr<T> _pMem)
     {
-      if (m_tRegisteredItems >= MAX_ITEMS)
-      {
-        return CWeakPtr<T>();
-      }
-
       for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
       {
         TInternalData& pData = m_lstInternalData[tIndex];
@@ -92,30 +82,33 @@ namespace utils
         return CWeakPtr<T>(pData.uPtr.get(), &pData.tGeneration, pData.tGeneration);
       }
 
-      // Return null weak ptr
+      // Return invalid ptr
       return CWeakPtr<T>();
     }
 
     inline CWeakPtr<T> operator[](size_t _tIndex)
     {
-      if (_tIndex > (m_tRegisteredItems - 1))
+      if (_tIndex > (MAX_ITEMS - 1))
       {
         return CWeakPtr<T>();
       }
       TInternalData& pData = m_lstInternalData[_tIndex];
-      return CWeakPtr<T>(pData.uPtr.get(), &pData.tGeneration, pData.tGeneration);
-    }
-    inline const CWeakPtr<T> operator[](size_t _tIndex) const
-    {
-      if (_tIndex > (m_tRegisteredItems - 1))
-      {
-        return CWeakPtr<T>();
-      }
-      TInternalData& pData = m_lstInternalData[_tIndex];
-      return CWeakPtr<T>(pData.uPtr.get(), &pData.tGeneration, pData.tGeneration);
+      T* pPtr = pData.uPtr.get();
+      return CWeakPtr<T>(pPtr, pPtr ? &pData.tGeneration : nullptr, pData.tGeneration);
     }
 
-    bool Remove(CWeakPtr<T>& _pItem_);
+    inline const CWeakPtr<T> operator[](size_t _tIndex) const
+    {
+      if (_tIndex > (MAX_ITEMS - 1))
+      {
+        return CWeakPtr<T>();
+      }
+      TInternalData& pData = m_lstInternalData[_tIndex];
+      T* pPtr = pData.uPtr.get();
+      return CWeakPtr<T>(pData.uPtr.get(), pPtr ? &pData.tGeneration : nullptr, pData.tGeneration);
+    }
+
+    bool Remove(const CWeakPtr<T>& _pItem_);
     void Clear();
 
     inline const size_t& GetSize() const { return m_tRegisteredItems; }
@@ -140,7 +133,7 @@ namespace utils
   }
 
   template<typename T, size_t MAX_ITEMS>
-  bool CUniquePtrList<T, MAX_ITEMS>::Remove(CWeakPtr<T>& _pItem_)
+  bool CUniquePtrList<T, MAX_ITEMS>::Remove(const CWeakPtr<T>& _pItem_)
   {
     if (!_pItem_.IsValid())
     {
@@ -153,9 +146,9 @@ namespace utils
       TInternalData& pData = m_lstInternalData[tIndex];
       if (pData.uPtr.get() == _pItem_.GetPtr())
       {
+        // Remove ptr
         pData.uPtr.reset();
         pData.tGeneration++;
-        m_tRegisteredItems--;
 
         bRemoved = true;
         break;

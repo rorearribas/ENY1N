@@ -1,8 +1,9 @@
 #include "Render.h"
 
+#include "Engine/Global/GlobalResources.h"
 #include "Engine/Render/ConstantBuffer/BufferTypes.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
-#include "Engine/Global/GlobalResources.h"
+#include "Engine/Render/Graphics/ShadowMap.h"
 #include "Engine/Scenes/Scene.h"
 #include "Engine/Render/RenderTarget.h"
 #include "RenderTypes.h"
@@ -17,7 +18,7 @@
 #include "Engine/Shaders/Deferred/GBufferPS.h"
 #include "Engine/Shaders/Deferred/DrawTriangleVS.h"
 #include "Engine/Shaders/Deferred/ShadowsVS.h"
-#include "Lights/DirectionalLight.h"
+#include "Lighting/DirectionalLight.h"
 
 // ImGui
 #include "Libs/Macros/GlobalMacros.h"
@@ -137,16 +138,16 @@ namespace render
     static TTransforms s_oTransforms;
   }
   // ------------------------------------
-  CRender::CRender(uint32_t _uX, uint32_t _uY)
+  CRender::CRender(uint32_t _uWidth, uint32_t _uHeight)
   {
     // Create render window
     LOG("Creating render window...");
-    m_pRenderWindow = new render::CRenderWindow(_uX, _uY);
+    m_pRenderWindow = new render::CRenderWindow(_uWidth, _uHeight);
     SUCCESS_LOG("The window has been created successfully!");
 
     // Init render
     LOG("Initializing render...");
-    HRESULT hResult = Init(_uX, _uY);
+    HRESULT hResult = Init(_uWidth, _uHeight);
     UNUSED_VAR(hResult);
 #ifdef _DEBUG
     assert(!FAILED(hResult));
@@ -369,20 +370,20 @@ namespace render
     );
   }
   // ------------------------------------
-  HRESULT CRender::InitPipeline(uint32_t _uX, uint32_t _uY)
+  HRESULT CRender::InitPipeline(uint32_t _uWidth, uint32_t _uHeight)
   {
     // Configure viewport
-    SetViewport(_uX, _uY);
+    SetViewport(_uWidth, _uHeight);
 
     // Setup depth stencils
-    HRESULT hResult = SetupDepthStencils(_uX, _uY);
+    HRESULT hResult = SetupDepthStencils(_uWidth, _uHeight);
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Setup deferred shading
-    hResult = SetupDeferredShading(_uX, _uY);
+    // Setup deferred rendering
+    hResult = SetupDeferredRendering(_uWidth, _uHeight);
     if (FAILED(hResult))
     {
       return hResult;
@@ -418,7 +419,7 @@ namespace render
     D3D11_RASTERIZER_DESC rShadowRasterizer = D3D11_RASTERIZER_DESC();
     rShadowRasterizer.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
     rShadowRasterizer.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
-    rShadowRasterizer.DepthBias = 100;
+    rShadowRasterizer.DepthBias = 1000;
     rShadowRasterizer.DepthBiasClamp = 0.0f;
     rShadowRasterizer.SlopeScaledDepthBias = 1.5f;
     rShadowRasterizer.DepthClipEnable = true;
@@ -449,19 +450,19 @@ namespace render
     }
 
     // Update scissor
-    SetScissorRect(_uX, _uY);
+    SetScissorRect(_uWidth, _uHeight);
 
     return hResult;
   }
   // ------------------------------------
-  void CRender::SetScissorRect(uint32_t _uX, uint32_t _uY)
+  void CRender::SetScissorRect(uint32_t _uWidth, uint32_t _uHeight)
   {
-    D3D11_RECT oRect = D3D11_RECT();
-    oRect.left = 0;
-    oRect.top = 0;
-    oRect.right = static_cast<LONG>(_uX);
-    oRect.bottom = static_cast<LONG>(_uY);
-    global::dx::s_pDeviceContext->RSSetScissorRects(1, &oRect);
+    D3D11_RECT rRect = D3D11_RECT();
+    rRect.left = 0;
+    rRect.top = 0;
+    rRect.right = static_cast<LONG>(_uWidth);
+    rRect.bottom = static_cast<LONG>(_uHeight);
+    global::dx::s_pDeviceContext->RSSetScissorRects(1, &rRect);
   }
   // ------------------------------------
   bool CRender::InitImGui()
@@ -487,13 +488,13 @@ namespace render
     return true;
   }
   // ------------------------------------
-  HRESULT CRender::CreateDevice(uint32_t _uX, uint32_t _uY)
+  HRESULT CRender::CreateDevice(uint32_t _uWidth, uint32_t _uHeight)
   {
     // Create descriptor
     DXGI_SWAP_CHAIN_DESC rSwapChainDescriptor = DXGI_SWAP_CHAIN_DESC();
     rSwapChainDescriptor.BufferCount = 1;
-    rSwapChainDescriptor.BufferDesc.Width = _uX;
-    rSwapChainDescriptor.BufferDesc.Height = _uY;
+    rSwapChainDescriptor.BufferDesc.Width = _uWidth;
+    rSwapChainDescriptor.BufferDesc.Height = _uHeight;
     rSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHwnd();
     rSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     rSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
@@ -520,19 +521,19 @@ namespace render
       &global::dx::s_pDevice, &oFeatureLevel, &global::dx::s_pDeviceContext);
   }
   // ------------------------------------
-  void CRender::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
+  void CRender::OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight)
   {
     // Remove current target view
     global::dx::SafeRelease(internal::s_oPipeline.pBackBuffer);
 
     // Resize buffers
-    HRESULT hResult = internal::s_oPipeline.pSwapChain->ResizeBuffers(0, _uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+    HRESULT hResult = internal::s_oPipeline.pSwapChain->ResizeBuffers(0, _uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 #ifdef _DEBUG
     assert(!FAILED(hResult));
 #endif // DEBUG
 
     // Init pipeline
-    hResult = InitPipeline(_uX, _uY);
+    hResult = InitPipeline(_uWidth, _uHeight);
 #ifdef _DEBUG
     assert(!FAILED(hResult));
 #endif // DEBUG
@@ -556,12 +557,12 @@ namespace render
     return hResult;
   }
   // ------------------------------------
-  HRESULT CRender::SetupDepthStencils(uint32_t _uX, uint32_t _uY)
+  HRESULT CRender::SetupDepthStencils(uint32_t _uWidth, uint32_t _uHeight)
   {
     // Create depth stencil texture
     D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
-    rTextureDesc.Width = _uX;
-    rTextureDesc.Height = _uY;
+    rTextureDesc.Width = _uWidth;
+    rTextureDesc.Height = _uHeight;
     rTextureDesc.MipLevels = 1;
     rTextureDesc.ArraySize = 1;
     rTextureDesc.SampleDesc.Count = 1;
@@ -652,24 +653,24 @@ namespace render
     return global::dx::s_pDevice->CreateDepthStencilState(&rDepthStencilDesc, &internal::s_oPipeline.pDebugStencilState);
   }
   // ------------------------------------
-  HRESULT CRender::SetupDeferredShading(uint32_t _uX, uint32_t _uY)
+  HRESULT CRender::SetupDeferredRendering(uint32_t _uWidth, uint32_t _uHeight)
   {
     internal::s_oPipeline.rDiffuseRT.Release();
-    HRESULT hResult = internal::s_oPipeline.rDiffuseRT.CreateRT(_uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM);
+    HRESULT hResult = internal::s_oPipeline.rDiffuseRT.CreateRT(_uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
     if (FAILED(hResult))
     {
       return hResult;
     }
 
     internal::s_oPipeline.rNormalRT.Release();
-    hResult = internal::s_oPipeline.rNormalRT.CreateRT(_uX, _uY, DXGI_FORMAT_R16G16B16A16_FLOAT);
+    hResult = internal::s_oPipeline.rNormalRT.CreateRT(_uWidth, _uHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
     if (FAILED(hResult))
     {
       return hResult;
     }
 
     internal::s_oPipeline.rSpecularRT.Release();
-    hResult = internal::s_oPipeline.rSpecularRT.CreateRT(_uX, _uY, DXGI_FORMAT_R8G8B8A8_UNORM);
+    hResult = internal::s_oPipeline.rSpecularRT.CreateRT(_uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
     if (FAILED(hResult))
     {
       return hResult;
@@ -794,7 +795,7 @@ namespace render
     internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>(internal::s_oPipeline.uTransformSlot);
 
     // Draw primitives
-    _pScene->DrawPrimitives(m_pCamera);
+    _pScene->DrawPrimitives(m_pRenderCamera);
   }
   // ------------------------------------
   void CRender::ComputeGBuffer(scene::CScene* _pScene)
@@ -807,7 +808,7 @@ namespace render
     // Set transform constant
     internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uTransformSlot);
 
-    // Shadow mapping testing
+    // Shadow mapping
     ID3D11ShaderResourceView* pShadowTexture = nullptr;
     render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
     const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
@@ -816,7 +817,7 @@ namespace render
     bool bCastShadows = pDirectionalLight && pDirectionalLight->CastShadows();
     if (bCastShadows && lstShadowMaps.GetSize() > 0)
     {
-      pShadowTexture = lstShadowMaps[0]->ShadowTexture.GetView();
+      pShadowTexture = lstShadowMaps[0]->GetShadowTexture().GetView();
       global::dx::s_pDeviceContext->PSSetSamplers(1, 1, &internal::s_oPipeline.pShadowSampler);
     }
 
@@ -849,7 +850,7 @@ namespace render
     global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oPipeline.pBackBuffer, pDepthStencilView);
   }
   // ------------------------------------
-  void CRender::SetViewport(uint32_t _uX, uint32_t _uY)
+  void CRender::SetViewport(uint32_t _uWidth, uint32_t _uHeight)
   {
     if (!global::dx::s_pDeviceContext || !m_pRenderWindow)
     {
@@ -858,12 +859,12 @@ namespace render
     }
 
     D3D11_VIEWPORT rViewport = D3D11_VIEWPORT();
-    {
-      rViewport.Width = static_cast<float>(_uX);
-      rViewport.Height = static_cast<float>(_uY);
-      rViewport.MinDepth = internal::s_fMinDepth;
-      rViewport.MaxDepth = internal::s_fMaxDepth;
-    }
+    rViewport.Width = static_cast<float>(_uWidth);
+    rViewport.Height = static_cast<float>(_uHeight);
+    rViewport.MinDepth = internal::s_fMinDepth;
+    rViewport.MaxDepth = internal::s_fMaxDepth;
+
+    // Apply viewport
     global::dx::s_pDeviceContext->RSSetViewports(1, &rViewport);
   }
   // ------------------------------------
@@ -898,15 +899,15 @@ namespace render
   {
     // Calculate projection and invert projection
 #ifdef _DEBUG
-    assert(m_pCamera);
+    assert(m_pRenderCamera);
 #endif
-    math::CMatrix4x4 mViewProjection = m_pCamera->GetViewProjection();
+    math::CMatrix4x4 mViewProjection = m_pRenderCamera->GetViewProjection();
     internal::s_oTransforms.ViewProjection = mViewProjection;
     internal::s_oTransforms.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
 
     // Set near + far
-    internal::s_oTransforms.FarPlane = m_pCamera->GetFar();
-    internal::s_oTransforms.NearPlane = m_pCamera->GetNear();
+    internal::s_oTransforms.FarPlane = m_pRenderCamera->GetFar();
+    internal::s_oTransforms.NearPlane = m_pRenderCamera->GetNear();
 
     // Write
     bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer(internal::s_oTransforms);
@@ -915,12 +916,12 @@ namespace render
     assert(bOk);
 #endif
 
-    // Cache models
-    _pScene->CacheModels(m_pCamera);
-
     // Draw models
     BeginMarker(internal::s_sDrawGBufferMrk);
     {
+      // Cache models
+      _pScene->CacheModels(m_pRenderCamera);
+
       // Draw models
       DrawModels(_pScene);
 
@@ -939,8 +940,8 @@ namespace render
           global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pShadowsRasterizer);
           {
             // Clear depth stencil view
-            const lights::CLightManager::TShadowMap& rShadowMap = *lstShadowMaps[0];
-            const texture::TDepthStencil& rShadowDepth = rShadowMap.ShadowDepth;
+            const render::gfx::CShadowMap* pShadowMap = lstShadowMaps[0];
+            const texture::TDepthStencil& rShadowDepth = pShadowMap->GetShadowDepth();
             global::dx::s_pDeviceContext->ClearDepthStencilView(rShadowDepth.GetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
             // Configure viewport
@@ -948,18 +949,29 @@ namespace render
             rShadowDepth.GetTextureSize(uWidth, uHeight);
             SetViewport(uWidth, uHeight);
 
-            // Create orthographic
+            // Create view matrix from directional light
+            math::CVector3 v3Directional = pLightManager->GetDirectionalLight()->GetDir();
+            math::CVector3 v3SceneCenter = m_pRenderCamera->GetPos() + (m_pRenderCamera->GetDir() * 50.0f); // Max distance
+            math::CVector3 v3ShadowPos = v3SceneCenter + (v3Directional * 100.0f); // Set pos
+
+            // Orthographic values ( testing )
             float fHeight = 100.0f;
             float fWidth = fHeight * static_cast<float>(uWidth / static_cast<float>(uHeight));
-            math::CMatrix4x4 mOrthographic = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, m_pCamera->GetNear(), m_pCamera->GetFar());
+            float fNear = m_pRenderCamera->GetNear();
+            float fFar = m_pRenderCamera->GetFar();
 
-            // Create view matrix from directional light
-            math::CVector3 v3SceneCenter = m_pCamera->GetPos() + (m_pCamera->GetDir() * 50.0f); // Max distance
-            math::CVector3 v3ShadowPos = v3SceneCenter + (pLightManager->GetDirectionalLight()->GetDir() * 100.0f);
-            math::CMatrix4x4 mViewMatrix = math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp);
+            // Configure shadow camera
+            m_pShadowCamera->SetProjectionMode(EProjectionMode::ORTOGRAPHIC);
+            m_pShadowCamera->SetProjectionMatrix(math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar));
+            m_pShadowCamera->SetViewMatrix(math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp));
+            m_pShadowCamera->SetPos(v3ShadowPos);
+            m_pShadowCamera->SetDir(v3Directional);
+            m_pShadowCamera->SetNear(fNear);
+            m_pShadowCamera->SetFar(fFar);
+            m_pShadowCamera->BuildFrustumPlanes();
 
             TLightView rLightView = TLightView();
-            rLightView.LightViewProjection = mOrthographic * mViewMatrix;
+            rLightView.LightViewProjection = m_pShadowCamera->GetViewProjection();
 
             // Write buffer
             bOk = internal::s_oPipeline.tLightViewBuffer.WriteBuffer(rLightView);
@@ -978,6 +990,9 @@ namespace render
             // Detach pixel shader for models
             internal::s_oPipeline.rDeferredGBuffer.Detach();
 
+            // Cache models
+            _pScene->CacheModels(m_pShadowCamera);
+
             // Draw models only in z-prepass pass from the light view
             _pScene->DrawModels(this);
 
@@ -987,7 +1002,7 @@ namespace render
             UNUSED_VAR(bOk);
 #ifdef _DEBUG
             assert(bOk);
-#endif
+#endif // DEBUG
             uint32_t uRenderWidth = m_pRenderWindow->GetWidth();
             uint32_t uRenderHeight = m_pRenderWindow->GetHeight();
             SetViewport(uRenderWidth, uRenderHeight);
@@ -1030,26 +1045,43 @@ namespace render
     internal::s_oPipeline.pSwapChain->Present(m_bVerticalSync, uFlags);
   }
   // ------------------------------------
-  void CRender::PushMaterialInfo(const render::mat::CMaterial* _pMaterial)
+  void CRender::PushMaterial(const render::mat::CMaterial* _pMaterial)
   {
-    if (_pMaterial)
+    if (!_pMaterial)
     {
-      // Set material data
-      TMaterialInfo rMaterialInfo = TMaterialInfo();
-
-      rMaterialInfo.DiffuseColor = _pMaterial->GetDiffuseColor();
-      rMaterialInfo.SpecularColor = _pMaterial->GetSpecularColor();
-
-      rMaterialInfo.HasDiffuseTexture = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::DIFFUSE));
-      rMaterialInfo.HasNormalTexture = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::NORMAL));
-      rMaterialInfo.HasSpecularTexture = static_cast<bool>(_pMaterial->GetTexture(render::ETexture::SPECULAR));
-
-      bool bOk = internal::s_oPipeline.tMaterialInfoBuffer.WriteBuffer(rMaterialInfo);
-      UNUSED_VAR(bOk);
-#ifdef _DEBUG
-      assert(bOk);
-#endif // DEBUG
+      return;
     }
+
+    // Set material info
+    TMaterialInfo rMaterialInfo = TMaterialInfo();
+    rMaterialInfo.DiffuseColor = _pMaterial->GetDiffuseColor();
+    rMaterialInfo.SpecularColor = _pMaterial->GetSpecularColor();
+
+    texture::TSharedTexture pDiffuse = _pMaterial->GetTexture(render::ETexture::DIFFUSE);
+    rMaterialInfo.HasDiffuseTexture = static_cast<bool>(pDiffuse);
+    texture::TSharedTexture pNormal = _pMaterial->GetTexture(render::ETexture::NORMAL);
+    rMaterialInfo.HasNormalTexture = static_cast<bool>(pNormal);
+    texture::TSharedTexture pSpecular = _pMaterial->GetTexture(render::ETexture::SPECULAR);
+    rMaterialInfo.HasSpecularTexture = static_cast<bool>(pSpecular);
+
+    // Write buffer
+    bool bOk = internal::s_oPipeline.tMaterialInfoBuffer.WriteBuffer(rMaterialInfo);
+    UNUSED_VAR(bOk);
+#ifdef _DEBUG
+    assert(bOk);
+#endif // DEBUG
+
+    // Set textures 
+    const uint32_t uTexturesSize(3);
+    ID3D11ShaderResourceView* lstTextures[uTexturesSize] =
+    {
+      rMaterialInfo.HasDiffuseTexture ? pDiffuse->GetView() : nullptr,
+      rMaterialInfo.HasNormalTexture ? pNormal->GetView() : nullptr,
+      rMaterialInfo.HasSpecularTexture ? pSpecular->GetView() : nullptr
+    };
+
+    // Bind shaders
+    global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, lstTextures);
   }
   // ------------------------------------
   void CRender::SetFillMode(D3D11_FILL_MODE _eFillMode)

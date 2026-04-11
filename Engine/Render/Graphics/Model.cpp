@@ -30,14 +30,14 @@ namespace render
     void CModel::Draw(render::CRender* _pRender, bool _bDrawModel, uint16_t _uInstanceCount)
     {
       // Set values
-      uint16_t uInstanceCount = _bDrawModel ? (_uInstanceCount + 1) : _uInstanceCount;
-      uint16_t uStartOffset = _bDrawModel ? 0 : 1;
+      uint16_t uInstanceCount = _bDrawModel ? ++_uInstanceCount : _uInstanceCount;
+      uint16_t uStartOffset = !_bDrawModel;
 
       // Draw meshes
       for (std::unique_ptr<CMesh>& pMesh : m_lstMeshes)
       {
-        // Set material info (global buffer)
-        _pRender->PushMaterialInfo(pMesh->GetMaterial());
+        // Push material (global buffer)
+        _pRender->PushMaterial(pMesh->GetMaterial());
 
         // Draw process
         pMesh->Draw(uInstanceCount, uStartOffset);

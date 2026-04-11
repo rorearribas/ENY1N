@@ -26,26 +26,6 @@ namespace render
     // ------------------------------------
     void CMesh::Draw(uint32_t _uInstanceCount, uint32_t _uStartOffset)
     {
-      if (m_pMaterial)
-      {
-        // Set textures
-        const uint32_t uTexturesSize(3);
-        ID3D11ShaderResourceView* lstTextures[uTexturesSize];
-
-        // Diffuse
-        texture::TSharedTexture pDiffuse = m_pMaterial->GetTexture(render::ETexture::DIFFUSE);
-        lstTextures[0] = pDiffuse ? pDiffuse->GetView() : nullptr;
-        // Normal
-        texture::TSharedTexture pNormal = m_pMaterial->GetTexture(render::ETexture::NORMAL);
-        lstTextures[1] = pNormal ? pNormal->GetView() : nullptr;
-        // Specular
-        texture::TSharedTexture pSpecular = m_pMaterial->GetTexture(render::ETexture::SPECULAR);
-        lstTextures[2] = pSpecular ? pSpecular->GetView() : nullptr;
-
-        // Bind shaders
-        global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, lstTextures);
-      }
-
       // Draw mesh
       global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
       global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndices, _uInstanceCount, 0, 0, _uStartOffset);

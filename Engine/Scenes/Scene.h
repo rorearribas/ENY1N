@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Engine/Render/RenderTypes.h"
-#include "Engine/Render/Lights/LightManager.h"
+#include "Engine/Render/Lighting/LightManager.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
 #include "Engine/Utils/Plane.h"

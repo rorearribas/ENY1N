@@ -1,10 +1,11 @@
 #include "DrawTriangleVS.hlsl"
+#include "global.hlsli"
 
-// PIXEL SHADER
+// Pixel Shader
 struct DirectionalLight
 {
   // 12 + 4 bytes = 16 bytes
-  float3 Direction;
+  float3 Dir;
   float Intensity;
 
   // 12 + 4 bytes = 16 bytes
@@ -15,7 +16,7 @@ struct DirectionalLight
 struct PointLight
 {
   // 12 + 4 bytes = 16 bytes
-  float3 Position;
+  float3 Pos;
   float Range;
 
   // 12 + 4 bytes = 16 bytes
@@ -26,11 +27,11 @@ struct PointLight
 struct Spotlight
 {
   // 12 + 4 bytes = 16 bytes
-  float3 Position;
+  float3 Pos;
   float Padding0;
 
   // 12 + 4 bytes = 16 bytes
-  float3 Direction;
+  float3 Dir;
   float Range;
 
   // 12 + 4 bytes = 16 bytes
@@ -65,68 +66,16 @@ cbuffer CLightingData : register(b1)
   float2 Padding1;
 };
 
-float get_linear_depth(float near, float far, float depth)
-{
-  return (2.0f * near) / (far + near - depth * (far - near));
-}
+// GBuffer
+Texture2D texture_depth    : register(t0);
+Texture2D texture_diffuse  : register(t1);
+Texture2D texture_normal   : register(t2);
+Texture2D texture_specular : register(t3);
 
-float3 get_pos_from_depth(in float2 uv, in float z, in float4x4 InvVP)
-{
-  float x = uv.x * 2.0f - 1.0f;
-  float y = (1.0 - uv.y) * 2.0f - 1.0f;
-  float4 position_v = mul(InvVP, float4(x, y, z, 1.0f));
-  return position_v.xyz / position_v.w;
-}
+// Shadow mapping
+Texture2D texture_shadowmap : register(t4);
 
-float2 texture_size(Texture2D tex)
-{
-  uint width, height;
-  tex.GetDimensions(width, height);
-  return float2(width, height);
-}
-
-float2 texel_scale(Texture2D tex)
-{
-  return 1.0f / texture_size(tex);
-}
-
-float3 offset_lookup(Texture2D tex, SamplerComparisonState sampl, float2 uv, float2 offset, float2 texel_size, float current_depth)
-{
-  return tex.SampleCmpLevelZero(sampl, uv + offset * texel_size, current_depth);
-}
-
-float2 get_uvs_from_light_space(float4 posLightSpace)
-{
-  float3 proj_coords = posLightSpace.xyz / posLightSpace.w;
-  float2 shadow_uv = proj_coords.xy * 0.5f + 0.5f;
-  return float2(shadow_uv.x, 1.0f - shadow_uv.y);
-}
-
-float compute_shadow_mapping(Texture2D tex, SamplerComparisonState sampl, float2 shadows_uv, float current_depth, uint samples)
-{
-  float2 texelScale = texel_scale(tex);
-
-  float fSum = 0.0f;
-  for (float y = -1.5; y <= 1.5; y += 1.0)
-  {
-    for (float x = -1.5; x <= 1.5; x += 1.0)
-    {
-      fSum += offset_lookup(tex, sampl, shadows_uv, texelScale, float2(x, y), current_depth);
-    }
-  }
-  return fSum / samples;
-}
-
-// GBuffer data
-Texture2D texture_depth      : register(t0);
-Texture2D texture_diffuse    : register(t1);
-Texture2D texture_normal     : register(t2);
-Texture2D texture_specular   : register(t3);
-
-// Shadow map
-Texture2D texture_shadowmap  : register(t4);
-
-// Sampler
+// Samplers
 SamplerState sampler_default : register(s0);
 SamplerComparisonState sampler_shadows : register(s1);
 
@@ -164,21 +113,21 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
     );
   }
 
-  float fDiffuseFactor = saturate(dot(-directionalLight.Direction, v3Normal));
+  float fDiffuseFactor = saturate(dot(directionalLight.Dir, v3Normal));
   v3TotalLight += (fDiffuseFactor * directionalLight.Color * directionalLight.Intensity) * fShadowFactor;
 
   // Point Lights
   for (int i = 0; i < RegisteredLights.x; i++)
   {
     PointLight pointLight = pointLights[i];
-    float fDist = distance(pointLight.Position, v3WorldPos);
+    float fDist = distance(pointLight.Pos, v3WorldPos);
     if (fDist > pointLight.Range)
     {
       continue;
     }
 
     // Calculate point light
-    float3 v3LightDir = normalize(pointLight.Position - v3WorldPos);
+    float3 v3LightDir = normalize(pointLight.Pos - v3WorldPos);
     float fDiffuse = saturate(dot(v3LightDir, v3Normal));
     float fFalloff = saturate(1.0f - fDist / pointLight.Range);
 
@@ -190,15 +139,15 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   for (int j = 0; j < RegisteredLights.y; j++)
   {
     Spotlight spotlight = spotLights[j];
-    float fDist = distance(spotlight.Position, v3WorldPos);
+    float fDist = distance(spotlight.Pos, v3WorldPos);
     if (fDist > spotlight.Range)
     {
       continue;
     }
 
     // Calculate spot light
-    float3 v3LightDir = normalize(spotlight.Position - v3WorldPos);
-    float3 v3SpotDir = normalize(spotlight.Direction);
+    float3 v3LightDir = normalize(spotlight.Pos - v3WorldPos);
+    float3 v3SpotDir = normalize(spotlight.Dir);
 
     float fSpotFactor = dot(-v3LightDir, v3SpotDir);
     float fInner = cos(radians(15.0f));

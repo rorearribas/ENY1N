@@ -1,11 +1,13 @@
 #pragma once
 #include "Engine/Render/ConstantBuffer/BufferTypes.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Engine/Render/Lighting/PointLight.h"
+#include "Engine/Render/Lighting/SpotLight.h"
+#include "Engine/Render/Graphics/ShadowMap.h"
 #include "Engine/Render/Resources/Texture2D.h"
+
 #include "Libs/Utils/Singleton.h"
 #include "Libs/Utils/FixedPool.h"
-#include "PointLight.h"
-#include "SpotLight.h"
 
 namespace render
 {
@@ -18,20 +20,13 @@ namespace render
     class CLightManager
     {
     public:
-      struct TShadowMap
-      {
-        texture::TDepthStencil ShadowDepth;
-        texture::TShaderResource ShadowTexture;
-      };
-
-    public:
       static constexpr uint16_t s_uMaxShadowMaps = 4u;
       static constexpr uint16_t s_uMaxSpotLights = 100u;
       static constexpr uint16_t s_uMaxPointLights = 100u;
 
       typedef utils::CFixedPool<render::lights::CPointLight, s_uMaxPointLights> TPointLights;
       typedef utils::CFixedPool<render::lights::CSpotLight, s_uMaxSpotLights> TSpotLights;
-      typedef utils::CFixedPool<TShadowMap, s_uMaxShadowMaps> TShadowMaps;
+      typedef utils::CFixedPool<render::gfx::CShadowMap, s_uMaxShadowMaps> TShadowMaps;
 
     private:
       typedef TGlobalLighting<s_uMaxPointLights, s_uMaxSpotLights> TLightingData;
@@ -42,8 +37,8 @@ namespace render
       ~CLightManager();
 
       // Push lights
-      void ApplyLighting();
       void ComputeShadows();
+      void ApplyLighting();
 
       // Shadow maps
       const TShadowMaps& GetShadowMaps() { return m_lstShadowMaps; }

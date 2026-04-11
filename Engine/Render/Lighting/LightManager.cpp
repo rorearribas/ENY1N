@@ -1,11 +1,6 @@
 #include "LightManager.h"
+#include "Engine/Render/Lighting/DirectionalLight.h"
 #include "Libs/Macros/GlobalMacros.h"
-#include "Engine/Render/Lights/PointLight.h"
-#include "Engine/Render/Lights/DirectionalLight.h"
-#include "Engine/Render/Lights/SpotLight.h"
-#include <algorithm>
-#include <iostream>
-#include <cassert>
 
 namespace render
 {
@@ -26,6 +21,14 @@ namespace render
       Clean();
     }
     // ------------------------------------
+    void CLightManager::ComputeShadows()
+    {
+      if (m_lstShadowMaps.IsEmpty())
+      {
+        return;
+      }
+    }
+    // ------------------------------------
     void CLightManager::ApplyLighting()
     {
       // Get data
@@ -34,7 +37,7 @@ namespace render
       // Update directional light
       if (m_pDirectionalLight)
       {
-        rLightingData.DirectionalLight.Direction = m_pDirectionalLight->GetDir();
+        rLightingData.DirectionalLight.Dir = m_pDirectionalLight->GetDir();
         rLightingData.DirectionalLight.Color = m_pDirectionalLight->GetColor();
         rLightingData.DirectionalLight.Intensity = m_pDirectionalLight->GetIntensity();
         rLightingData.DirectionalLight.CastShadows = m_pDirectionalLight->CastShadows();
@@ -45,7 +48,7 @@ namespace render
       {
         if (render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex])
         {
-          rLightingData.PointLights[uIndex].Position = pPointLight->GetPos();
+          rLightingData.PointLights[uIndex].Pos = pPointLight->GetPos();
           rLightingData.PointLights[uIndex].Range = pPointLight->GetRange();
           rLightingData.PointLights[uIndex].Color = pPointLight->GetColor();
           rLightingData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
@@ -59,8 +62,8 @@ namespace render
       {
         if (render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex])
         {
-          rLightingData.SpotLights[uIndex].Position = pSpotLight->GetPos();
-          rLightingData.SpotLights[uIndex].Direction = pSpotLight->GetDir();
+          rLightingData.SpotLights[uIndex].Pos = pSpotLight->GetPos();
+          rLightingData.SpotLights[uIndex].Dir = pSpotLight->GetDir();
           rLightingData.SpotLights[uIndex].Range = pSpotLight->GetRange();
           rLightingData.SpotLights[uIndex].Color = pSpotLight->GetColor();
           rLightingData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
@@ -79,14 +82,6 @@ namespace render
       m_oLightingBuffer.Bind<render::EShader::E_PIXEL>(uSlot);
     }
     // ------------------------------------
-    void CLightManager::ComputeShadows()
-    {
-      if (m_lstShadowMaps.GetSize() == 0)
-      {
-        return;
-      }
-    }
-    // ------------------------------------
     render::lights::CDirectionalLight* const CLightManager::CreateDirectionalLight()
     {
       if (m_pDirectionalLight)
@@ -99,44 +94,9 @@ namespace render
       m_pDirectionalLight = new render::lights::CDirectionalLight();
       m_pDirectionalLight->SetCastShadows(true);
 
-      // Create depth stencil texture
-      TShadowMap& rShadowMap = *m_lstShadowMaps.Create();
-
-      D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
-      rTextureDesc.Width = 2048;
-      rTextureDesc.Height = 2048;
-      rTextureDesc.MipLevels = 1;
-      rTextureDesc.ArraySize = 1;
-      rTextureDesc.SampleDesc.Count = 1;
-      rTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS; // Format
-      rTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
-
-      texture::TDepthStencil& rShadowDepth = rShadowMap.ShadowDepth;
-      HRESULT hResult = rShadowDepth.CreateTexture(rTextureDesc);
-      if (FAILED(hResult))
-      {
-        ERROR_LOG("Error creating depth stencil texture!");
-      }
-
-      // Set depth stencil view desc
-      D3D11_DEPTH_STENCIL_VIEW_DESC rDepthStencilViewDesc = D3D11_DEPTH_STENCIL_VIEW_DESC();
-      rDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-      rDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-
-      // Create the depth stencil view
-      hResult = rShadowDepth.CreateView(rDepthStencilViewDesc);
-      if (FAILED(hResult))
-      {
-        ERROR_LOG("Error creating stencil view!");
-      }
-
-      // Creating view from texture
-      D3D11_SHADER_RESOURCE_VIEW_DESC rSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
-      rSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
-      rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-      rSRVDesc.Texture2D.MipLevels = 1;
-      texture::TShaderResource& rShadowTexture = rShadowMap.ShadowTexture;
-      rShadowTexture.CreateViewFromTexture(rShadowDepth, rSRVDesc);
+      // Create shadow map
+      render::gfx::CShadowMap* pShadowMap = m_lstShadowMaps.Create();
+      pShadowMap->Setup(2048, 2048);
 
       return m_pDirectionalLight;
     }

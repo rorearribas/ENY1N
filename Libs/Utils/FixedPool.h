@@ -67,6 +67,7 @@ namespace utils
     inline T* last() { return reinterpret_cast<T*>(&m_lstPool[m_tRegisteredItems > 0 ? (m_tRegisteredItems - 1) : 0]); }
     inline const T* last() const { return reinterpret_cast<const T*>(&m_lstPool[m_tRegisteredItems > 0 ? (m_tRegisteredItems - 1) : 0]); }
 
+    inline const bool IsEmpty() const { return m_tRegisteredItems == 0; }
     inline const size_t GetSize() const { return m_tRegisteredItems; }
     inline const size_t GetMaxSize() const { return MAX_ITEMS; }
 

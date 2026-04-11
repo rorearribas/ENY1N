@@ -2,11 +2,11 @@
 #include "Engine/Render/RenderTypes.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Scenes/SceneManager.h"
+
 #include "Libs/Utils/Singleton.h"
+#include "Libs/Utils/FixedList.h"
 
 namespace render { class CRender; }
-namespace render { class CCamera; }
-
 namespace render { namespace gfx { class CModel; } }
 namespace render { namespace gfx { class CPrimitive; } }
 
@@ -31,8 +31,8 @@ namespace engine
 
     // Getters
     inline scene::CSceneManager* GetSceneManager() const { return m_pSceneManager; }
+    inline render::CCamera* GetCamera() const { return m_pSceneManager->GetRenderCamera(); }
     inline render::CRender* GetRender() const { return m_pRender; }
-    inline render::CCamera* GetCamera() const { return m_pCamera; }
 
     // Handle graphics
     render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
@@ -56,12 +56,10 @@ namespace engine
 
   private:
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);
+    bool m_bInitialized = false;
 
     scene::CSceneManager* m_pSceneManager = nullptr;
     render::CRender* m_pRender = nullptr;
-    render::CCamera* m_pCamera = nullptr;
-
-    bool m_bInitialized = false;
   };
 }
 

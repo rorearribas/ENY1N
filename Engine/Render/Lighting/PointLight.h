@@ -1,12 +1,11 @@
 #pragma once
 #include "Light.h"
-#include "Libs/Math/Vector3.h"
 
 namespace render
 {
   namespace lights
   {
-    class CPointLight : public CLight
+    class CPointLight final : public CLight
     {
     public:
       CPointLight() : CLight(ELight::POINT_LIGHT) {}

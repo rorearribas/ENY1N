@@ -1,12 +1,12 @@
 #include "LightComponent.h"
-#include "Engine/Engine.h"
 #include "Game/Entity/Entity.h"
-#include "Engine/Render/Lights/PointLight.h"
-#include "Engine/Render/Lights/SpotLight.h"
-#include "Engine/Render/Lights/DirectionalLight.h"
-#include <cassert>
+
+#include "Engine/Engine.h"
+#include "Engine/Render/Lighting/PointLight.h"
+#include "Engine/Render/Lighting/SpotLight.h"
+#include "Engine/Render/Lighting/DirectionalLight.h"
+
 #include "Libs/ImGui/imgui.h"
-#include "Libs/Math/Math.h"
 
 namespace game
 {
