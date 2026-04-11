@@ -90,7 +90,7 @@ float2 texel_scale(Texture2D tex)
   return 1.0f / texture_size(tex);
 }
 
-float3 offset_lookup(Texture2D tex, SamplerComparisonState sampl, float2 uv, float2 texel_size, float2 offset, float current_depth)
+float3 offset_lookup(Texture2D tex, SamplerComparisonState sampl, float2 uv, float2 offset, float2 texel_size, float current_depth)
 {
   return tex.SampleCmpLevelZero(sampl, uv + offset * texel_size, current_depth);
 }
@@ -102,7 +102,7 @@ float2 get_uvs_from_light_space(float4 posLightSpace)
   return float2(shadow_uv.x, 1.0f - shadow_uv.y);
 }
 
-float ComputeShadowMapping(Texture2D tex, SamplerComparisonState sampl, float2 shadows_uv, float current_depth, uint samples)
+float compute_shadow_mapping(Texture2D tex, SamplerComparisonState sampl, float2 shadows_uv, float current_depth, uint samples)
 {
   float2 texelScale = texel_scale(tex);
 
@@ -123,7 +123,7 @@ Texture2D texture_diffuse    : register(t1);
 Texture2D texture_normal     : register(t2);
 Texture2D texture_specular   : register(t3);
 
-// Shadow map - Test
+// Shadow map
 Texture2D texture_shadowmap  : register(t4);
 
 // Sampler
@@ -154,7 +154,7 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
     float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
     float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
 
-    fShadowFactor = ComputeShadowMapping
+    fShadowFactor = compute_shadow_mapping
     (
       texture_shadowmap, 
       sampler_shadows, 
@@ -164,9 +164,8 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
     );
   }
 
-  float3 v3LightDir = normalize(directionalLight.Direction);
-  float fDot = max(dot(v3Normal, -v3LightDir), 0.0f);
-  v3TotalLight += (directionalLight.Color * directionalLight.Intensity * fDot) * fShadowFactor;
+  float fDiffuseFactor = saturate(dot(-directionalLight.Direction, v3Normal));
+  v3TotalLight += (fDiffuseFactor * directionalLight.Color * directionalLight.Intensity) * fShadowFactor;
 
   // Point Lights
   for (int i = 0; i < RegisteredLights.x; i++)
@@ -180,7 +179,7 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
 
     // Calculate point light
     float3 v3LightDir = normalize(pointLight.Position - v3WorldPos);
-    float fDiffuse = max(dot(v3Normal, v3LightDir), 0.0f);
+    float fDiffuse = saturate(dot(v3LightDir, v3Normal));
     float fFalloff = saturate(1.0f - fDist / pointLight.Range);
 
     // Add light
