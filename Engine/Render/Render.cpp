@@ -475,7 +475,7 @@ namespace render
     {
       return false;
     }
-    if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHwnd()))
+    if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHandle()))
     {
       return false;
     }
@@ -495,7 +495,7 @@ namespace render
     rSwapChainDescriptor.BufferCount = 1;
     rSwapChainDescriptor.BufferDesc.Width = _uWidth;
     rSwapChainDescriptor.BufferDesc.Height = _uHeight;
-    rSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHwnd();
+    rSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHandle();
     rSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     rSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     rSwapChainDescriptor.SampleDesc.Count = 1;
@@ -945,29 +945,41 @@ namespace render
             global::dx::s_pDeviceContext->ClearDepthStencilView(rShadowDepth.GetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
             // Configure viewport
-            uint32_t uWidth, uHeight;
+            uint32_t uWidth = 0, uHeight = 0;
             rShadowDepth.GetTextureSize(uWidth, uHeight);
             SetViewport(uWidth, uHeight);
 
             // Create view matrix from directional light
-            math::CVector3 v3Directional = pLightManager->GetDirectionalLight()->GetDir();
-            math::CVector3 v3SceneCenter = m_pRenderCamera->GetPos() + (m_pRenderCamera->GetDir() * 50.0f); // Max distance
-            math::CVector3 v3ShadowPos = v3SceneCenter + (v3Directional * 100.0f); // Set pos
+            const float fMaxDistance = 50.0f;
+            math::CVector3 v3Dir = pLightManager->GetDirectionalLight()->GetDir();
+            math::CVector3 v3SceneCenter = m_pRenderCamera->GetPos() + (m_pRenderCamera->GetDir() * fMaxDistance); // Max distance
+            math::CVector3 v3ShadowPos = v3SceneCenter + (v3Dir * (fMaxDistance * 2.0f)); // Get shadow pos
+            math::CVector3 v3ShadowCameraPos = v3SceneCenter + (-v3Dir * (fMaxDistance * 2.0f)); // Get shadow camera pos
 
             // Orthographic values ( testing )
             float fHeight = 100.0f;
-            float fWidth = fHeight * static_cast<float>(uWidth / static_cast<float>(uHeight));
+            float fAspectRatio = static_cast<float>(uWidth / static_cast<float>(uHeight));
+            float fWidth = fHeight * fAspectRatio;
             float fNear = m_pRenderCamera->GetNear();
             float fFar = m_pRenderCamera->GetFar();
 
+            math::CMatrix4x4 mOrthographicProj = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar);
+            math::CMatrix4x4 mView = math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp);
+
             // Configure shadow camera
             m_pShadowCamera->SetProjectionMode(EProjectionMode::ORTOGRAPHIC);
-            m_pShadowCamera->SetProjectionMatrix(math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar));
-            m_pShadowCamera->SetViewMatrix(math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp));
-            m_pShadowCamera->SetPos(v3ShadowPos);
-            m_pShadowCamera->SetDir(v3Directional);
+            m_pShadowCamera->SetOrthographicSize(fHeight);
+            m_pShadowCamera->SetProjectionMatrix(mOrthographicProj);
+            m_pShadowCamera->SetViewMatrix(mView);
+
+            m_pShadowCamera->SetPos(v3ShadowCameraPos);
+            m_pShadowCamera->SetDir(v3Dir);
+            m_pShadowCamera->SetAspectRatio(fAspectRatio);
+
             m_pShadowCamera->SetNear(fNear);
             m_pShadowCamera->SetFar(fFar);
+
+            // Build frustum planes
             m_pShadowCamera->BuildFrustumPlanes();
 
             TLightView rLightView = TLightView();
@@ -1003,8 +1015,8 @@ namespace render
 #ifdef _DEBUG
             assert(bOk);
 #endif // DEBUG
-            uint32_t uRenderWidth = m_pRenderWindow->GetWidth();
-            uint32_t uRenderHeight = m_pRenderWindow->GetHeight();
+            uint32_t uRenderWidth = 0, uRenderHeight = 0;
+            m_pRenderWindow->GetWindowSize(uRenderWidth, uRenderHeight);
             SetViewport(uRenderWidth, uRenderHeight);
           }
           // Restore rasterizer

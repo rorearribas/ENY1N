@@ -1,8 +1,9 @@
 ﻿#include "Camera.h"
-#include "Engine/Global/GlobalResources.h"
-#include "Libs/ImGui/imgui.h"
 #include "Engine/Engine.h"
+#include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/InputManager.h"
+
+#include "Libs/ImGui/imgui.h"
 #include "Libs/Math/Math.h"
 #include "Libs/Macros/GlobalMacros.h"
 
@@ -80,12 +81,6 @@ namespace render
   // ------------------------------------
   bool CCamera::IsOnFrustum(const collision::CAABB& _oBoundingBox) const
   {
-    if (GetProjectionMode() == EProjectionMode::ORTOGRAPHIC)
-    {
-      // Not implemented yet!
-      return true; 
-    }
-
     const math::CVector3& v3Center = _oBoundingBox.GetCenter();
     const math::CVector3& v3HalfExtents = _oBoundingBox.GetHalfSize();
 
@@ -160,7 +155,7 @@ namespace render
   // ------------------------------------
   void CCamera::LookAt(const math::CVector3& _v3LookAt)
   {
-    if (_v3LookAt == m_v3Pos)
+    if (_v3LookAt == m_v3Rot)
     {
       return;
     }
@@ -296,31 +291,89 @@ namespace render
   // ------------------------------------
   void CCamera::BuildFrustumPlanes()
   {
-    // Get tangent
-    float fFovRadians = math::Deg2Radians(m_fFov);
-    float fTan = tanf(fFovRadians / 2.0f);
+    if (m_eProjectionMode == EProjectionMode::PERSPECTIVE)
+    {
+      // Get tangent
+      float fFovRadians = math::Deg2Radians(m_fFov);
+      float fTan = tanf(fFovRadians / 2.0f);
 
-    // Get half height and width
-    float fHalfVSide = fTan * m_fFar;
-    float fHalfHSide = fHalfVSide * m_fAspectRatio;
-    const math::CVector3 v3NearDir = m_v3Dir * m_fNear;
-    const math::CVector3 v3FarDir = m_v3Dir * m_fFar;
+      // Get half height and width
+      float fHalfVSide = fTan * m_fFar;
+      float fHalfHSide = fHalfVSide * m_fAspectRatio;
+      const math::CVector3 v3NearDir = m_v3Dir * m_fNear;
+      const math::CVector3 v3FarDir = m_v3Dir * m_fFar;
 
-    // Get axis
-    math::CVector3 v3Right = math::CVector3::Normalize(math::CVector3::Cross(math::CVector3::Up, m_v3Dir));
-    math::CVector3 v3Up = math::CVector3::Normalize(math::CVector3::Cross(m_v3Dir, v3Right));
+      // Get axis
+      math::CVector3 v3Right = math::CVector3::Normalize(math::CVector3::Cross(math::CVector3::Up, m_v3Dir));
+      math::CVector3 v3Up = math::CVector3::Normalize(math::CVector3::Cross(m_v3Dir, v3Right));
 
-    math::CVector3 v3FarRight = v3FarDir + (v3Right * fHalfHSide);
-    math::CVector3 v3FarLeft = v3FarDir - (v3Right * fHalfHSide);
-    math::CVector3 v3FarTop = v3FarDir + (v3Up * fHalfVSide);
-    math::CVector3 v3FarBottom = v3FarDir - (v3Up * fHalfVSide);
+      math::CVector3 v3FarRight = v3FarDir + (v3Right * fHalfHSide);
+      math::CVector3 v3FarLeft = v3FarDir - (v3Right * fHalfHSide);
+      math::CVector3 v3FarTop = v3FarDir + (v3Up * fHalfVSide);
+      math::CVector3 v3FarBottom = v3FarDir - (v3Up * fHalfVSide);
 
-    m_oPlanes[0].Set(m_v3Pos + v3NearDir, m_v3Dir); // Near
-    m_oPlanes[1].Set(m_v3Pos + v3FarDir, -m_v3Dir); // Far
-    m_oPlanes[2].Set(m_v3Pos, math::CVector3::Cross(v3FarRight, v3Up)); // Right
-    m_oPlanes[3].Set(m_v3Pos, math::CVector3::Cross(v3Up, v3FarLeft)); // Left
-    m_oPlanes[4].Set(m_v3Pos, math::CVector3::Cross(v3Right, v3FarTop));  // Top
-    m_oPlanes[5].Set(m_v3Pos, math::CVector3::Cross(v3FarBottom, v3Right)); // Bottom
+      m_oPlanes[0].Set(m_v3Pos + v3NearDir, m_v3Dir); // Near
+      m_oPlanes[1].Set(m_v3Pos + v3FarDir, -m_v3Dir); // Far
+      m_oPlanes[2].Set(m_v3Pos, math::CVector3::Cross(v3FarRight, v3Up)); // Right
+      m_oPlanes[3].Set(m_v3Pos, math::CVector3::Cross(v3Up, v3FarLeft)); // Left
+      m_oPlanes[4].Set(m_v3Pos, math::CVector3::Cross(v3Right, v3FarTop));  // Top
+      m_oPlanes[5].Set(m_v3Pos, math::CVector3::Cross(v3FarBottom, v3Right)); // Bottom
+    }
+    else // Orthographic
+    {
+      // Get half size
+      float fHalfVSide = m_fOrtographicSize;
+      float fHalfHSide = fHalfVSide * m_fAspectRatio;
+
+      // Get axis
+      const math::CVector3 v3NearDir = m_v3Dir * m_fNear;
+      const math::CVector3 v3FarDir = m_v3Dir * m_fFar;
+
+      math::CVector3 v3Right = math::CVector3::Normalize(math::CVector3::Cross(math::CVector3::Up, m_v3Dir));
+      math::CVector3 v3Up = math::CVector3::Normalize(math::CVector3::Cross(m_v3Dir, v3Right));
+      math::CVector3 vRightOffset = v3Right * fHalfHSide;
+      math::CVector3 vUpOffset = v3Up * fHalfVSide;
+
+      m_oPlanes[0].Set(m_v3Pos + v3NearDir, m_v3Dir); // Near
+      m_oPlanes[1].Set(m_v3Pos + v3FarDir, -m_v3Dir); // Far
+      m_oPlanes[2].Set(m_v3Pos + vRightOffset, -v3Right); // Right
+      m_oPlanes[3].Set(m_v3Pos - vRightOffset, v3Right); // Left
+      m_oPlanes[4].Set(m_v3Pos + vUpOffset, -v3Up); // Top
+      m_oPlanes[5].Set(m_v3Pos - vUpOffset, v3Up); // Bottom
+
+#if false
+      // Near
+      engine::CEngine* pEngine = engine::CEngine::GetInstance();
+      math::CVector3 nearTopLeft = m_v3Pos + v3NearDir + vUpOffset - vRightOffset;
+      math::CVector3 nearTopRight = m_v3Pos + v3NearDir + vUpOffset + vRightOffset;
+      math::CVector3 nearBottomLeft = m_v3Pos + v3NearDir - vUpOffset - vRightOffset;
+      math::CVector3 nearBottomRight = m_v3Pos + v3NearDir - vUpOffset + vRightOffset;
+
+      // Far
+      math::CVector3 farTopLeft = m_v3Pos + v3FarDir + vUpOffset - vRightOffset;
+      math::CVector3 farTopRight = m_v3Pos + v3FarDir + vUpOffset + vRightOffset;
+      math::CVector3 farBottomLeft = m_v3Pos + v3FarDir - vUpOffset - vRightOffset;
+      math::CVector3 farBottomRight = m_v3Pos + v3FarDir - vUpOffset + vRightOffset;
+
+      // Near rectangle
+      pEngine->DrawLine(nearTopLeft, nearTopRight, math::CVector3::Right);
+      pEngine->DrawLine(nearTopRight, nearBottomRight, math::CVector3::Right);
+      pEngine->DrawLine(nearBottomRight, nearBottomLeft, math::CVector3::Right);
+      pEngine->DrawLine(nearBottomLeft, nearTopLeft, math::CVector3::Right);
+
+      // Far rectangle
+      pEngine->DrawLine(farTopLeft, farTopRight, math::CVector3::Right);
+      pEngine->DrawLine(farTopRight, farBottomRight, math::CVector3::Right);
+      pEngine->DrawLine(farBottomRight, farBottomLeft, math::CVector3::Right);
+      pEngine->DrawLine(farBottomLeft, farTopLeft, math::CVector3::Right);
+
+      // Connections
+      pEngine->DrawLine(nearTopLeft, farTopLeft, math::CVector3::Right);
+      pEngine->DrawLine(nearTopRight, farTopRight, math::CVector3::Right);
+      pEngine->DrawLine(nearBottomLeft, farBottomLeft, math::CVector3::Right);
+      pEngine->DrawLine(nearBottomRight, farBottomRight, math::CVector3::Right);
+#endif // TEST
+    }
   }
   // ------------------------------------
   void CCamera::ShowCursor(bool _bMousePressed, const math::CVector2& _vMousePos)
@@ -334,7 +387,7 @@ namespace render
     {
       int iLastX = static_cast<int>(internal_camera::s_v2LastPosition.x);
       int iLastY = static_cast<int>(internal_camera::s_v2LastPosition.y);
-      SetCursorPos(iLastX, iLastY);
+      ::SetCursorPos(iLastX, iLastY);
       internal_camera::s_bWasRightButtonPressed = false;
     }
 

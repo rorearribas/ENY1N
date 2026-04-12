@@ -56,6 +56,8 @@ namespace render
     inline float GetCamVelocity() const { return m_fCamVelocity; }
     inline void SetAspectRatio(float _fAspectRatio) { m_fAspectRatio = _fAspectRatio; }
     inline float GetAspectRatio() const { return m_fAspectRatio; }
+    inline void SetOrthographicSize(float _fOrthographic) { m_fOrtographicSize = _fOrthographic; }
+    inline float GetOrthographicSize() const { return m_fOrtographicSize; }
 
     void BuildFrustumPlanes();
     void DrawDebug();
@@ -88,6 +90,7 @@ namespace render
     float m_fFar = 10000.0f;
     float m_fNear = 0.01f;
     float m_fAspectRatio = 1.77778f;
+    float m_fOrtographicSize = 100.0f;
 
     math::CPlane m_oPlanes[s_uFrustumPlanes];
     EProjectionMode m_eProjectionMode = EProjectionMode::PERSPECTIVE;

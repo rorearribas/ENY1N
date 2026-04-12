@@ -1,7 +1,6 @@
 #include "RenderWindow.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/InputManager.h"
-#include <windows.h>
 #include <cassert>
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND _hWnd, UINT _uMsg, WPARAM _wParam, LPARAM _lParam);
@@ -116,30 +115,30 @@ namespace render
   CRenderWindow::CRenderWindow(uint32_t _uWidth, uint32_t _uHeight)
   {
     HINSTANCE hInstance = GetModuleHandle(nullptr);
-    m_hWnd = internal_window::CreateWinMain(hInstance, _uWidth, _uHeight);
-    global::window::s_oHwnd = m_hWnd; // Set instance!
+    m_hWinHandle = internal_window::CreateWinMain(hInstance, _uWidth, _uHeight);
+    global::window::s_oHwnd = m_hWinHandle; // Set instance!
 #ifdef _DEBUG
-    assert(m_hWnd);
+    assert(m_hWinHandle);
 #endif // DEBUG
   }
   // ------------------------------------
   void CRenderWindow::SetEnabled(bool _bEnabled) const
   {
-    ShowWindow(m_hWnd, _bEnabled);
+    ShowWindow(m_hWinHandle, _bEnabled);
   }
   // ------------------------------------
-  const uint32_t CRenderWindow::GetWidth() const
+  void CRenderWindow::GetWindowSize(uint32_t& _uWidth, uint32_t& _uHeight)
   {
-    RECT oClientRect;
-    GetClientRect(m_hWnd, &oClientRect);
-    return static_cast<uint32_t>(oClientRect.right - oClientRect.left);
-  }
-  // ------------------------------------
-  const uint32_t CRenderWindow::GetHeight() const
-  {
-    RECT oClientRect;
-    GetClientRect(m_hWnd, &oClientRect);
-    return static_cast<uint32_t>(oClientRect.bottom - oClientRect.top);
+#ifdef _DEBUG
+    assert(m_hWinHandle);
+#endif // DEBUG
+    if (m_hWinHandle)
+    {
+      RECT rClientRect = RECT();
+      GetClientRect(m_hWinHandle, &rClientRect);
+      _uWidth = static_cast<uint32_t>(rClientRect.right - rClientRect.left);
+      _uHeight = static_cast<uint32_t>(rClientRect.bottom - rClientRect.top);
+    }
   }
   // ------------------------------------
 

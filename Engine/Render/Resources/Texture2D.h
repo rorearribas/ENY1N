@@ -123,16 +123,19 @@ namespace render
     private:
       ID3D11Texture2D* m_pInternalTexture = nullptr;
       ID3D11View* m_pInternalView = nullptr;
-
-      uint32_t m_uWidth = 0;
-      uint32_t m_uHeight = 0;
     };
 
     template<render::EView T>
     void render::texture::CTexture2D<T>::GetTextureSize(uint32_t& _uWidth_, uint32_t& _uHeight_) const
     {
-      _uWidth_ = m_uWidth;
-      _uHeight_ = m_uHeight;
+      if (m_pInternalTexture)
+      {
+        D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
+        m_pInternalTexture->GetDesc(&rTextureDesc);
+
+        _uWidth_ = rTextureDesc.Width;
+        _uHeight_ = rTextureDesc.Height;
+      }
     }
 
     template<render::EView T>
@@ -206,10 +209,6 @@ namespace render
       rSubresourceData.pSysMem = _pData;
       rSubresourceData.SysMemPitch = _rTextureDesc.Width * _uChannels;
 
-      // Set size
-      m_uWidth = _rTextureDesc.Width;
-      m_uHeight = _rTextureDesc.Height;
-
       // Create texture
       return global::dx::s_pDevice->CreateTexture2D(&_rTextureDesc, &rSubresourceData, &m_pInternalTexture);
     }
@@ -219,10 +218,6 @@ namespace render
     {
       // Clear
       global::dx::SafeRelease(m_pInternalTexture);
-
-      // Set size
-      m_uWidth = _rTextureDesc.Width;
-      m_uHeight = _rTextureDesc.Height;
 
       // Create empty texture!
       return global::dx::s_pDevice->CreateTexture2D(&_rTextureDesc, nullptr, &m_pInternalTexture);
