@@ -48,8 +48,8 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
   Assimp::Importer rImporter;
 
   // Set config
-  rImporter.SetPropertyInteger(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, 0);
-  rImporter.SetPropertyInteger(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1);
+  rImporter.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
+  rImporter.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.0f);
 
   // Read file
   LOG("Loading model -> " << _sPath);

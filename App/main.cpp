@@ -97,7 +97,7 @@ int main()
   static_cast<render::lights::CPointLight*>(pLightComp->GetLight())->SetColor(math::CVector3(0.0f, 1.0f, 0.0f));
 
   float fOffsetZ = 0.0f;
-  for (uint32_t uIndex = 0; uIndex < 1; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 5; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
     pModelEnt->SetPos(math::CVector3(0.0f, 10.0f, fOffsetZ));
@@ -108,7 +108,7 @@ int main()
 
   // Floor
   game::CEntity* pFloor = pGameManager->CreateEntity("Floor");
-  pFloor->SetPos(math::CVector3(0.0f, 1.0f, 0.0f));
+  pFloor->SetPos(math::CVector3(0.0f, 0.0f, 0.0f));
   game::CModelComponent* pModelTest2 = pFloor->RegisterComponent<game::CModelComponent>();
   pModelTest2->LoadModel("models/floor/floor.fbx");
   pFloor->SetScl(math::CVector3(50.0f, 50.0f, 50.0f));

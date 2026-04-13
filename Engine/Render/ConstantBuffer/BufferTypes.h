@@ -20,18 +20,12 @@ static constexpr uint32_t s_uAlign = 16;
 | matrix NxM      | N×16 bytes     |
 */
 
-// Transforms [208 Bytes]
+// Transforms [128 Bytes]
 struct __declspec(align(s_uAlign)) TTransforms
 {
   // Transforms
   math::CMatrix4x4 ViewProjection = math::CMatrix4x4::Identity;
   math::CMatrix4x4 InvViewProjection = math::CMatrix4x4::Identity;
-  math::CMatrix4x4 LightViewProjection = math::CMatrix4x4::Identity;
-
-  // Projection CFG
-  float FarPlane = 10000.0f;
-  float NearPlane = 0.01f;
-  float Padding[2];
 };
 
 // Material info [48 Bytes]
@@ -48,12 +42,6 @@ struct __declspec(align(s_uAlign)) TMaterialInfo
   // 4 + 12 Bytes;
   int HasNormalTexture;
   int Padding[3];
-};
-
-// TLightView [16 Bytes]
-struct __declspec(align(s_uAlign)) TLightView
-{
-  math::CMatrix4x4 LightViewProjection = math::CMatrix4x4::Identity;
 };
 
 // Directional lights [32 Bytes]
@@ -108,4 +96,10 @@ struct __declspec(align(s_uAlign)) TGlobalLighting
   int RegisteredPointLights;
   int RegisteredSpotLights;
   float Padding[2];
+};
+
+// TLightView [16 Bytes]
+struct __declspec(align(s_uAlign)) TLightView
+{
+  math::CMatrix4x4 LightViewProjection = math::CMatrix4x4::Identity;
 };

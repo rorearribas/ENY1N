@@ -17,19 +17,28 @@ namespace game
   // ------------------------------------
   void CModelComponent::Clean()
   {
+    // Flush primitive
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     if (m_pPrimitive)
     {
       pEngine->DestroyPrimitive(m_pPrimitive);
     }
+
+    // Handle model and instances
     bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
-    if (m_wpModel.IsValid() && !bIsInstance)
-    {
-      pEngine->DestroyModel(m_wpModel);
-    }
     if (m_wpModel.IsValid() && bIsInstance)
     {
       m_wpModel->RemoveInstance(m_uInstanceID);
+    }
+    else if (m_wpModel.IsValid() && !bIsInstance)
+    {
+      m_wpModel->SetVisible(false);
+    }
+
+    // Remove model
+    if (m_wpModel.IsValid() && m_wpModel->GetInstances().IsEmpty())
+    {
+      pEngine->DestroyModel(m_wpModel);
     }
   }
   // ------------------------------------

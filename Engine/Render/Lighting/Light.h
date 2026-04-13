@@ -22,9 +22,9 @@ namespace render
 
       // Shadows
       void SetCastShadows(bool _bEnabled);
-      inline bool CastShadows() { return m_bCastShadows; }
+      inline bool CastShadows() const { return m_bCastShadows; }
       void SetStaticShadows(bool _bEnabled);
-      inline bool StaticShadows() { return m_bStaticShadows; }
+      inline bool StaticShadows() const { return m_bStaticShadows; }
 
     private:
       // Properties

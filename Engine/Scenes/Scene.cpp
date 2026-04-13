@@ -295,10 +295,10 @@ namespace scene
   void CScene::DrawPrimitives(render::CCamera* _pCamera)
   {
     // Draw primitives
-    for (uint32_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
+    for (uint32_t uI = 0; uI < m_lstPrimitives.GetMaxSize(); uI++)
     {
       render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uI];
-      if (!pPrimitive->IsVisible())
+      if (!pPrimitive || !pPrimitive->IsVisible())
       {
         continue;
       }

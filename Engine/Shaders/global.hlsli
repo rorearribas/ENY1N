@@ -2,6 +2,11 @@
 //////////// GLOBAL FUNCTIONS ////////////////
 //////////////////////////////////////////////
 
+float3 unpack_normal(float3 _v3Normal)
+{
+  return _v3Normal * 2.0f - 1.0f;
+}
+
 float get_linear_depth(float near, float far, float depth)
 {
   return (2.0f * near) / (far + near - depth * (far - near));

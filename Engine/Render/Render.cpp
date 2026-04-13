@@ -91,7 +91,7 @@ namespace render
       static constexpr uint32_t uTransformSlot = 0;
 
       CConstantBuffer<TLightView> tLightViewBuffer;
-      static constexpr uint32_t uLightViewSlot = 0;
+      static constexpr uint32_t uLightViewSlot = 2;
 
       CConstantBuffer<TMaterialInfo> tMaterialInfoBuffer;
       static constexpr uint32_t uMaterialInfoSlot = 0;
@@ -812,13 +812,14 @@ namespace render
     ID3D11ShaderResourceView* pShadowTexture = nullptr;
     render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
     const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
+    const render::lights::CDirectionalLight* pDirLight = pLightManager->GetDirectionalLight();
 
-    render::lights::CDirectionalLight* pDirectionalLight = pLightManager->GetDirectionalLight();
-    bool bCastShadows = pDirectionalLight && pDirectionalLight->CastShadows();
+    bool bCastShadows = pDirLight && pDirLight->CastShadows();
     if (bCastShadows && lstShadowMaps.GetSize() > 0)
     {
       pShadowTexture = lstShadowMaps[0]->GetShadowTexture().GetView();
       global::dx::s_pDeviceContext->PSSetSamplers(1, 1, &internal::s_oPipeline.pShadowSampler);
+      internal::s_oPipeline.tLightViewBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uLightViewSlot);
     }
 
     static constexpr uint32_t uTexturesSize(5);
@@ -905,10 +906,6 @@ namespace render
     internal::s_oTransforms.ViewProjection = mViewProjection;
     internal::s_oTransforms.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
 
-    // Set near + far
-    internal::s_oTransforms.FarPlane = m_pRenderCamera->GetFar();
-    internal::s_oTransforms.NearPlane = m_pRenderCamera->GetNear();
-
     // Write
     bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer(internal::s_oTransforms);
     UNUSED_VAR(bOk);
@@ -966,6 +963,9 @@ namespace render
             math::CMatrix4x4 mOrthographicProj = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar);
             math::CMatrix4x4 mView = math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp);
 
+#ifdef _DEBUG
+            assert(m_pShadowCamera);
+#endif
             // Configure shadow camera
             m_pShadowCamera->SetProjectionMode(EProjectionMode::ORTOGRAPHIC);
             m_pShadowCamera->SetOrthographicSize(fHeight);
@@ -1008,13 +1008,6 @@ namespace render
             // Draw models only in z-prepass pass from the light view
             _pScene->DrawModels(this);
 
-            // HACK TESTING SHADOW MAPPING
-            internal::s_oTransforms.LightViewProjection = rLightView.LightViewProjection;
-            bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer(internal::s_oTransforms);
-            UNUSED_VAR(bOk);
-#ifdef _DEBUG
-            assert(bOk);
-#endif // DEBUG
             uint32_t uRenderWidth = 0, uRenderHeight = 0;
             m_pRenderWindow->GetWindowSize(uRenderWidth, uRenderHeight);
             SetViewport(uRenderWidth, uRenderHeight);

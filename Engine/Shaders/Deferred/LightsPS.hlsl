@@ -40,24 +40,18 @@ struct Spotlight
 };
 
 // Transforms
-cbuffer ConstantTransforms : register(b0)
+cbuffer cbTransforms : register(b0)
 {
   // Transforms
   matrix ViewProjection;
   matrix InvViewProjection;
-  matrix LightViewProjection;
-
-  // Projection CFG
-  float FarPlane;
-  float NearPlane;
-  float2 Padding0;
 };
 
-// Lighting
-cbuffer CLightingData : register(b1)
+// Global Lighting
+cbuffer cbGlobalLighting : register(b1)
 {
   // Lights
-  DirectionalLight directionalLight;
+  DirectionalLight dirLight;
   PointLight pointLights[100];
   Spotlight spotLights[100];
 
@@ -65,6 +59,12 @@ cbuffer CLightingData : register(b1)
   int2 RegisteredLights;
   float2 Padding1;
 };
+
+// Lighting - Shadows
+cbuffer cbLightingView : register(b2)
+{
+  matrix LightViewProjection;
+}
 
 // GBuffer
 Texture2D texture_depth    : register(t0);
@@ -96,7 +96,7 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   float3 v3TotalLight = float3(1.0f, 1.0f, 1.0f) * 0.2f;
 
   float fShadowFactor = 1.0f;
-  if (directionalLight.CastShadows)
+  if (dirLight.CastShadows)
   {
     // Calculate shadows
     const uint max_samples = 16;
@@ -113,8 +113,8 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
     );
   }
 
-  float fDiffuseFactor = saturate(dot(directionalLight.Dir, v3Normal));
-  v3TotalLight += (fDiffuseFactor * directionalLight.Color * directionalLight.Intensity) * fShadowFactor;
+  float fDiffuseFactor = saturate(dot(dirLight.Dir, v3Normal));
+  v3TotalLight += (fDiffuseFactor * dirLight.Color * dirLight.Intensity) * fShadowFactor;
 
   // Point Lights
   for (int i = 0; i < RegisteredLights.x; i++)

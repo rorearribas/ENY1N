@@ -1,12 +1,7 @@
 #include "StandardVS.hlsl"
+#include "global.hlsli"
 
-// Buffers
-Texture2D tDiffuse    : register(t0);
-Texture2D tNormal     : register(t1);
-Texture2D tSpecular   : register(t2);
-SamplerState tSampler : register(s0);
-
-cbuffer TMaterialData : register(b0)
+cbuffer cbMaterialData : register(b0)
 {
   float3 DiffuseColor;
   int HasDiffuseTexture;
@@ -25,10 +20,11 @@ struct GBuffer
   float4 SpecularRT : SV_Target2;
 };
 
-float3 unpack_normal(float3 _v3Normal)
-{
-  return _v3Normal * 2.0f - 1.0f;
-}
+// Textures
+Texture2D texture_diffuse    : register(t0);
+Texture2D texture_normal     : register(t1);
+Texture2D texture_specular   : register(t2);
+SamplerState sampler_default : register(s0);
 
 GBuffer DeferredPSMain(PS_INPUT input)
 {
@@ -36,14 +32,14 @@ GBuffer DeferredPSMain(PS_INPUT input)
   {
     // Set diffuse
     float4 fDiffuseColor = float4(DiffuseColor, 1.0f);
-    gBuffer.DiffuseRT = HasDiffuseTexture ? tDiffuse.Sample(tSampler, input.uv) * fDiffuseColor : fDiffuseColor;
+    gBuffer.DiffuseRT = HasDiffuseTexture ? texture_diffuse.Sample(sampler_default, input.uv) * fDiffuseColor : fDiffuseColor;
 
     // Set specular
     float4 fSpecularColor = float4(SpecularColor, 1.0f);
-    gBuffer.SpecularRT = HasSpecularTexture ? tSpecular.Sample(tSampler, input.uv) * fSpecularColor : fSpecularColor;
+    gBuffer.SpecularRT = HasSpecularTexture ? texture_specular.Sample(sampler_default, input.uv) * fSpecularColor : fSpecularColor;
 
     // Set normal
-    gBuffer.NormalRT = HasNormalTexture ? float4(unpack_normal(tNormal.Sample(tSampler, input.uv).xyz), 1.0f) : float4(input.normal, 1.0f);
+    gBuffer.NormalRT = HasNormalTexture ? float4(unpack_normal(texture_normal.Sample(sampler_default, input.uv).xyz), 1.0f) : float4(input.normal, 1.0f);
   }
   return gBuffer;
 }

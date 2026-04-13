@@ -1,16 +1,10 @@
 // Standard vertex shader - ENY1N
 
-cbuffer ConstantTransforms : register(b0)
+cbuffer cbTransforms : register(b0)
 {
   // Transforms
   matrix ViewProjection;
   matrix InvViewProjection;
-  matrix DummyProjection;
-
-  // Projection CFG
-  float FarPlane;
-  float NearPlane;
-  float2 Padding0;
 };
 
 // VS Input
