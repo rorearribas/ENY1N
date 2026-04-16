@@ -12,7 +12,7 @@ namespace collision
   void CCollisionManager::Update(float /*_fDeltaTime*/)
   {
     // Check collisions
-    for (uint32_t uI = 0; uI < m_lstColliders.GetCurrentSize(); ++uI)
+    for (uint32_t uI = 0; uI < m_lstColliders.GetMaxSize(); ++uI)
     {
       // Get current collider
       collision::CCollider* pCollider = m_lstColliders[uI];
@@ -107,7 +107,7 @@ namespace collision
   {
     bool bHit = false;
     float fClosestDistance = _fMaxDistance;
-    for (uint32_t uI = 0; uI < m_lstColliders.GetCurrentSize(); ++uI)
+    for (uint32_t uI = 0; uI < m_lstColliders.GetMaxSize(); ++uI)
     {
       collision::CCollider* pCollider = m_lstColliders[uI];
       const collision::ECollisionMask& eCollMask = pCollider->GetCollisionMask();
@@ -132,7 +132,7 @@ namespace collision
   bool CCollisionManager::RaycastAll(const physics::CRay& _oRaycast, float _fMaxDistance, std::vector<THitEvent>& _lstOutHits_, ECollisionMask _eMask)
   {
     _lstOutHits_.clear();
-    for (uint32_t uI = 0; uI < m_lstColliders.GetCurrentSize(); ++uI)
+    for (uint32_t uI = 0; uI < m_lstColliders.GetMaxSize(); ++uI)
     {
       collision::CCollider* pCollider = m_lstColliders[uI];
       if ((pCollider->GetCollisionMask() & _eMask) == 0)

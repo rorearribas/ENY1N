@@ -44,7 +44,7 @@ namespace render
       }
 
       // Update point lights
-      for (uint32_t uIndex = 0; uIndex < m_lstPointLights.GetMaxSize(); uIndex++)
+      for (uint32_t uIndex = 0; uIndex < m_lstPointLights.GetSize(); uIndex++)
       {
         if (render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex])
         {
@@ -58,7 +58,7 @@ namespace render
       rLightingData.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetSize());
 
       // Update spot lights
-      for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetMaxSize(); uIndex++)
+      for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetSize(); uIndex++)
       {
         if (render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex])
         {
@@ -86,7 +86,7 @@ namespace render
     {
       if (m_pDirectionalLight)
       {
-        WARNING_LOG("There is a directional light in the current scene!");
+        WARNING_LOG("There is a directional light!");
         return m_pDirectionalLight;
       }
 

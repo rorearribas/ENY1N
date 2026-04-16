@@ -20,7 +20,7 @@ namespace game
 
     ImGui::Begin("Entity Selector");
     // Show the list of entities
-    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetMaxSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetSize(); ++uIndex)
     {
       CEntity* pEntity = m_lstEntitiesList[uIndex];
       if (pEntity)
@@ -49,7 +49,7 @@ namespace game
     lstDeleteActors.clear();
 #endif
     // Update
-    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetMaxSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetSize(); ++uIndex)
     {
       CEntity* pEntity = m_lstEntitiesList[uIndex];
       if (pEntity)
@@ -105,7 +105,7 @@ namespace game
   bool CGameManager::DestroyEntity(const char* _sEntityName)
   {
     CEntity* pEntity = nullptr;
-    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetMaxSize(); ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetSize(); ++uIndex)
     {
       pEntity = m_lstEntitiesList[uIndex];
       if (pEntity && pEntity->GetName() == _sEntityName)

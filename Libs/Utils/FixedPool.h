@@ -6,6 +6,7 @@
 #include <new>
 #include <iostream>
 #include <type_traits>
+#include <array>
 
 namespace utils
 {
@@ -16,7 +17,7 @@ namespace utils
     CFixedPool() : m_tRegisteredItems(0) { Init(); }
     ~CFixedPool() { Clear(); }
 
-    template<typename ...Args>
+    template<typename ItemType = T, typename ...Args>
     inline T* Create(Args&&... args)
     {
       if (m_tRegisteredItems >= MAX_ITEMS)
@@ -29,13 +30,11 @@ namespace utils
 
       for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
       {
-        if (!m_lstAssignedBlocks.test(tIndex))
+        if (m_lstAssignedItems[tIndex] == -1)
         {
           void* pMem = static_cast<void*>(&m_lstPool[tIndex]);
-          T* pItem = new (pMem) T(std::forward<Args>(args)...);
-
-          m_lstAssignedBlocks.set(tIndex);
-          ++m_tRegisteredItems;
+          ItemType* pItem = new (pMem) ItemType(std::forward<Args>(args)...);
+          m_lstAssignedItems[m_tRegisteredItems++] = tIndex;
           return pItem;
         }
       }
@@ -45,14 +44,14 @@ namespace utils
 
     inline T* operator[](size_t _tIndex)
     {
-      bool bAssignedBlock = (_tIndex < MAX_ITEMS && m_lstAssignedBlocks.test(_tIndex));
-      return bAssignedBlock ? reinterpret_cast<T*>(&m_lstPool[_tIndex]) : nullptr;
+      bool bAssignedBlock = (_tIndex < MAX_ITEMS && m_lstAssignedItems[_tIndex] >= 0);
+      return bAssignedBlock ? reinterpret_cast<T*>(&m_lstPool[m_lstAssignedItems[_tIndex]]) : nullptr;
     }
 
     inline const T* operator[](size_t _tIndex) const
     {
-      bool bAssignedBlock = (_tIndex < MAX_ITEMS && m_lstAssignedBlocks.test(_tIndex));
-      return bAssignedBlock ? reinterpret_cast<const T*>(&m_lstPool[_tIndex]) : nullptr;
+      bool bAssignedBlock = (_tIndex < MAX_ITEMS && (m_lstAssignedItems[_tIndex] >= 0));
+      return bAssignedBlock ? reinterpret_cast<const T*>(&m_lstPool[m_lstAssignedItems[_tIndex]]) : nullptr;
     }
 
     bool Remove(T*& _pItem_);
@@ -74,31 +73,34 @@ namespace utils
   private:
     void Init()
     {
-      m_lstAssignedBlocks.reset();
+      for (size_t i = 0; i < MAX_ITEMS; i++)
+      {
+        m_lstAssignedItems[i] = -1;
+      }
     }
 
   private:
     std::aligned_storage_t<sizeof(T), alignof(std::max_align_t)> m_lstPool[MAX_ITEMS];
-    std::bitset<MAX_ITEMS> m_lstAssignedBlocks;
-    size_t m_tRegisteredItems;
+    std::array<__int64, MAX_ITEMS> m_lstAssignedItems = std::array<__int64, MAX_ITEMS>();
+    size_t m_tRegisteredItems = 0;
   };
 
   template<typename T, size_t MAX_ITEMS>
   bool CFixedPool<T, MAX_ITEMS>::Remove(T*& _pItem_)
   {
-    for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
+    for (size_t tIndex = 0; tIndex < m_tRegisteredItems; ++tIndex)
     {
-      if (m_lstAssignedBlocks.test(tIndex))
+      size_t tValidIdx = m_lstAssignedItems[tIndex];
+      T* pItem = reinterpret_cast<T*>(&m_lstPool[tValidIdx]);
+      if (pItem == _pItem_)
       {
-        T* pItem = reinterpret_cast<T*>(&m_lstPool[tIndex]);
-        if (pItem == _pItem_)
-        {
-          pItem->~T();
-          m_lstAssignedBlocks.reset(tIndex);
-          _pItem_ = nullptr;
-          --m_tRegisteredItems;
-          return true;
-        }
+        pItem->~T();
+        m_lstAssignedItems[tIndex] = -1;
+        _pItem_ = nullptr;
+
+        std::swap(m_lstAssignedItems[tIndex], m_lstAssignedItems[m_tRegisteredItems - 1]);
+        --m_tRegisteredItems;
+        return true;
       }
     }
     return false;
@@ -107,14 +109,12 @@ namespace utils
   template<typename T, size_t MAX_ITEMS>
   void CFixedPool<T, MAX_ITEMS>::Clear()
   {
-    for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
+    for (size_t tIndex = 0; tIndex < m_tRegisteredItems; ++tIndex)
     {
-      if (m_lstAssignedBlocks.test(tIndex))
-      {
-        T* pItem = reinterpret_cast<T*>(&m_lstPool[tIndex]);
-        pItem->~T();
-        m_lstAssignedBlocks.reset(tIndex);
-      }
+      size_t tValidIdx = m_lstAssignedItems[tIndex];
+      T* pItem = reinterpret_cast<T*>(&m_lstPool[tValidIdx]);
+      pItem->~T();
+      m_lstAssignedItems[tIndex] = -1;
     }
     m_tRegisteredItems = 0;
   }

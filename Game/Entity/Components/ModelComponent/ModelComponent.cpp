@@ -25,12 +25,12 @@ namespace game
     }
 
     // Handle model and instances
-    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
-    if (m_wpModel.IsValid() && bIsInstance)
+    if (m_pRenderInstance)
     {
-      m_wpModel->RemoveInstance(m_uInstanceID);
+      m_wpModel->RemoveInstance(m_pRenderInstance->GetInstanceID());
+      m_pRenderInstance = nullptr;
     }
-    else if (m_wpModel.IsValid() && !bIsInstance)
+    else if (m_wpModel.IsValid())
     {
       m_wpModel->SetVisible(false);
     }
@@ -57,12 +57,12 @@ namespace game
     {
       // Set instance ID
       render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      m_uInstanceID = rInstances.last()->GetInstanceID();
+      m_pRenderInstance = rInstances.last();
 
       // Update transform
-      rInstances[m_uInstanceID]->SetPos(GetPosition());
-      rInstances[m_uInstanceID]->SetRot(GetRotation());
-      rInstances[m_uInstanceID]->SetScl(GetScale());
+      m_pRenderInstance->SetPos(GetPosition());
+      m_pRenderInstance->SetRot(GetRotation());
+      m_pRenderInstance->SetScl(GetScale());
     }
     else
     {
@@ -100,15 +100,14 @@ namespace game
     {
       m_pPrimitive->SetCullEnabled(_bCull);
     }
-    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
-    if (m_wpModel.IsValid() && !bIsInstance)
+
+    if (m_wpModel.IsValid() && !m_pRenderInstance)
     {
       m_wpModel->SetCullEnabled(_bCull);
     }
-    if (m_wpModel.IsValid() && bIsInstance)
+    else if (m_pRenderInstance)
     {
-      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      rInstances[m_uInstanceID]->SetCullEnabled(_bCull);
+      m_pRenderInstance->SetCullEnabled(_bCull);
     }
   }
   // ------------------------------------
@@ -149,15 +148,14 @@ namespace game
     {
       m_pPrimitive->SetPos(_v3Pos);
     }
-    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
-    if (m_wpModel.IsValid() && !bIsInstance)
+
+    if (m_wpModel.IsValid() && !m_pRenderInstance)
     {
       m_wpModel->SetPos(_v3Pos);
     }
-    if (m_wpModel.IsValid() && bIsInstance)
+    else if (m_pRenderInstance)
     {
-      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      rInstances[m_uInstanceID]->SetPos(_v3Pos);
+      m_pRenderInstance->SetPos(_v3Pos);
     }
   }
   // ------------------------------------
@@ -174,15 +172,13 @@ namespace game
       return;
     }
 
-    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
-    if (m_wpModel.IsValid() && !bIsInstance)
+    if (m_wpModel.IsValid() && !m_pRenderInstance)
     {
       m_wpModel->SetRot(_v3Rot);
     }
-    if (m_wpModel.IsValid() && bIsInstance)
+    else if (m_pRenderInstance)
     {
-      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      rInstances[m_uInstanceID]->SetRot(_v3Rot);
+      m_pRenderInstance->SetRot(_v3Rot);
     }
   }
   // ------------------------------------
@@ -197,15 +193,14 @@ namespace game
     {
       m_pPrimitive->SetScl(_v3Scl);
     }
-    bool bIsInstance = m_uInstanceID != render::instance::s_uInvalidID;
-    if (m_wpModel.IsValid() && !bIsInstance)
+
+    if (m_wpModel.IsValid() && !m_pRenderInstance)
     {
       m_wpModel->SetScl(_v3Scl);
     }
-    if (m_wpModel.IsValid() && bIsInstance)
+    else if (m_pRenderInstance)
     {
-      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      rInstances[m_uInstanceID]->SetScl(_v3Scl);
+      m_pRenderInstance->SetScl(_v3Scl);
     }
   }
   // ------------------------------------

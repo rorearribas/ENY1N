@@ -10,7 +10,7 @@ namespace collision
 {
   namespace internal_box_collider
   {
-    static const float s_fDebugRadius = 0.025f;
+    static const float s_fDebugRadius = 0.01f;
   }
   // ------------------------------------
   CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(collision::EColliderType::BOX_COLLIDER, _pOwner),
@@ -348,7 +348,7 @@ namespace collision
     for (size_t tIndex = 0; tIndex < m_v3Extents.size(); tIndex++)
     {
       math::CVector3 v3Pos = m_v3Extents[tIndex];
-      pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::Right, render::ERenderMode::WIREFRAME);
+      pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::One, render::ERenderMode::WIREFRAME);
     }
   }
 }

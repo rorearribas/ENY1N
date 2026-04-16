@@ -109,9 +109,11 @@ int main()
   // Floor
   game::CEntity* pFloor = pGameManager->CreateEntity("Floor");
   pFloor->SetPos(math::CVector3(0.0f, 0.0f, 0.0f));
-  game::CModelComponent* pModelTest2 = pFloor->RegisterComponent<game::CModelComponent>();
-  pModelTest2->LoadModel("models/floor/floor.fbx");
+  game::CModelComponent* pFloorModelComp = pFloor->RegisterComponent<game::CModelComponent>();
+  pFloorModelComp->LoadModel("models/floor/floor.fbx");
   pFloor->SetScl(math::CVector3(50.0f, 50.0f, 50.0f));
+  game::CCollisionComponent* CollComp = pFloor->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
+  static_cast<collision::CBoxCollider*>(CollComp->GetCollider())->SetSize(math::CVector3(100.0f, 0.0f, 100.0f));
 
   // Create primitives
   const uint32_t uSize = 3;
@@ -130,12 +132,13 @@ int main()
 
   for (uint32_t uIndex = 0; uIndex < uSize; uIndex++)
   {
-    game::CEntity* pBoxTest = pGameManager->CreateEntity("Primitive");
-    pBoxTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 10.0f), GenerateFloat(-10.0f, 10.0f)));
-    game::CModelComponent* pModelCompTest = pBoxTest->RegisterComponent<game::CModelComponent>();
+    game::CEntity* pPrimitiveTest = pGameManager->CreateEntity("Primitive");
+    pPrimitiveTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 10.0f), GenerateFloat(-10.0f, 10.0f)));
+    game::CModelComponent* pModelCompTest = pPrimitiveTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(ePrimitiveTypes[uIndex], render::ERenderMode::SOLID);
     pModelCompTest->SetColor(math::CVector3(0.75f, 0.0f, 0.0f));
-    pBoxTest->RegisterComponent<game::CCollisionComponent>(eColliderTypes[uIndex]);
+    pPrimitiveTest->RegisterComponent<game::CCollisionComponent>(eColliderTypes[uIndex]);
+    pPrimitiveTest->RegisterComponent<game::CRigidbodyComponent>();
   }
 
   render::CRender* const pRender = pEngine->GetRender();

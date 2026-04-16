@@ -34,6 +34,7 @@ namespace render
       inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
 
+      inline void SetInstanceID(const uint16_t& _uIndex) { m_uInstanceID = _uIndex; }
       inline const uint16_t GetInstanceID() const { return m_uInstanceID; }
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool& IsVisible() const { return m_bVisible; }

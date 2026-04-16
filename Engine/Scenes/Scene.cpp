@@ -247,7 +247,7 @@ namespace scene
       // Handle instances
       rCachedModel.InstanceCount = 0;
       render::gfx::TInstances& lstInstances = pModel->GetInstances();
-      for (uint32_t uJ = 0; uJ < lstInstances.GetMaxSize(); uJ++)
+      for (uint32_t uJ = 0; uJ < lstInstances.GetSize(); uJ++)
       {
         render::gfx::CRenderInstance* pInstance = lstInstances[uJ];
         if (!pInstance || !pInstance->IsVisible())
@@ -295,7 +295,7 @@ namespace scene
   void CScene::DrawPrimitives(render::CCamera* _pCamera)
   {
     // Draw primitives
-    for (uint32_t uI = 0; uI < m_lstPrimitives.GetMaxSize(); uI++)
+    for (uint32_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
     {
       render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uI];
       if (!pPrimitive || !pPrimitive->IsVisible())

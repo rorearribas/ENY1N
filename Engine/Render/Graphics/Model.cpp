@@ -149,11 +149,22 @@ namespace render
     // ------------------------------------
     bool CModel::RemoveInstance(uint16_t _uID)
     {
+      bool bOk = false;
       if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uID])
       {
-        return m_lstInstances.Remove(pInstance);
+        bOk = m_lstInstances.Remove(pInstance);
       }
-      return false;
+#ifdef _DEBUG
+assert(bOk);
+#endif
+      // Sort ids
+      uint16_t uSize = static_cast<uint16_t>(m_lstInstances.GetSize());
+      for (uint16_t uIndex = 0; uIndex < uSize; uIndex++)
+      {
+        render::gfx::CRenderInstance* pInstance = m_lstInstances[uIndex];
+        pInstance->SetInstanceID(uIndex);
+      }
+      return bOk;
     }
     // ------------------------------------
     HRESULT CModel::InitModel(TModelData& _rModelData)
@@ -199,6 +210,10 @@ namespace render
       {
         return hResult;
       }
+
+      // Critical HACK
+      delete[] static_cast<const TInstanceData*>(rSubresourceData.pSysMem);
+      rSubresourceData.pSysMem = nullptr;
 
       // Calculate local AABB
       collision::ComputeLocalAABB(_rModelData.Vertices, m_oLocalAABB);

@@ -319,6 +319,9 @@ namespace render
         return hResult;
       }
 
+      // Critical HACK
+      delete[] static_cast<const TInstanceData*>(rSubresourceData.pSysMem);
+
       // Config index buffer
       D3D11_BUFFER_DESC rIndexBufferDesc = D3D11_BUFFER_DESC();
       rIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -346,6 +349,7 @@ namespace render
     void CPrimitive::Clear()
     {
       global::dx::SafeRelease(m_pVertexBuffer);
+      global::dx::SafeRelease(m_pInstanceBuffer);
       global::dx::SafeRelease(m_pIndexBuffer);
     }
   }
