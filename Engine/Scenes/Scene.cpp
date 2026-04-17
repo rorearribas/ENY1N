@@ -298,7 +298,7 @@ namespace scene
     for (uint32_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
     {
       render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uI];
-      if (!pPrimitive || !pPrimitive->IsVisible())
+      if (!pPrimitive->IsVisible())
       {
         continue;
       }
@@ -316,8 +316,7 @@ namespace scene
     }
 
     // Draw debug primitives
-    size_t tDebugCount = m_lstDebugItems.GetSize();
-    for (uint32_t uIndex = 0; uIndex < tDebugCount; uIndex++)
+    for (uint32_t uIndex = 0; uIndex < m_lstDebugItems.GetSize(); uIndex++)
     {
       render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugItems[uIndex];
 
@@ -334,10 +333,7 @@ namespace scene
     }
 
     // Clean after draw
-    if (tDebugCount > 0)
-    {
-      m_lstDebugItems.Clear();
-    }
+    m_lstDebugItems.Clear();
   }
   // ------------------------------------
   void CScene::ApplyLighting()

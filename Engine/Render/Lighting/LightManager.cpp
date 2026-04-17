@@ -9,7 +9,7 @@ namespace render
     // ------------------------------------
     CLightManager::CLightManager()
     {
-      HRESULT hResult = m_oLightingBuffer.Init();
+      HRESULT hResult = Setup();
       UNUSED_VAR(hResult);
 #ifdef _DEBUG
       assert(!FAILED(hResult));
@@ -19,6 +19,21 @@ namespace render
     CLightManager::~CLightManager()
     {
       Clean();
+    }
+    // ------------------------------------
+    HRESULT CLightManager::Setup()
+    {
+      // Init constant buffer
+      HRESULT hResult = m_oLightingBuffer.Init();
+      if (FAILED(hResult))
+      {
+        return hResult;
+      }
+
+
+
+
+      return hResult;
     }
     // ------------------------------------
     void CLightManager::ComputeShadows()

@@ -23,25 +23,30 @@ namespace render
     //------------------------------------------------
     //------------------INSTANCING--------------------
     //------------------------------------------------
-    static constexpr uint16_t s_uMaxInstancesPerObject = 128u;
-    typedef std::array<uint16_t, s_uMaxInstancesPerObject> TDrawableInstances;
-    struct TInstanceData
+    static constexpr uint16_t s_uMaxInstances = 128u;
+    static constexpr uint16_t s_uMaxDrawableInstances = s_uMaxInstances - 1;
+    typedef std::array<uint16_t, s_uMaxDrawableInstances> TDrawableInstances;
+    struct TModelInstanceData
     {
       math::CMatrix4x4 Transform = math::CMatrix4x4::Identity;
-    };
+    } static s_tModelInstanceData[s_uMaxInstances];
     //------------------------------------------------
     //------------------PRIMITIVES--------------------
     //------------------------------------------------
     struct TPrimitiveData
     {
       math::CVector3 VertexPos = math::CVector3::Zero;
-      math::CVector3 Color = math::CVector3::Zero;
     };
     struct TCustomPrimitive
     {
       std::vector<render::gfx::TPrimitiveData> PrimitiveData;
       TIndices Indices;
     };
+    struct TPrimitiveInstanceData
+    {
+      math::CMatrix4x4 Transform = math::CMatrix4x4::Identity;
+      math::CVector3 Color = math::CVector3::Zero;
+    } static s_tPrimitiveInstanceData[s_uMaxInstances];
   }
 
   // Render modes

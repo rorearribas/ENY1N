@@ -29,16 +29,16 @@ namespace scene
 
   private:
     // Models
-    static constexpr uint16_t s_uMaxModels = 512u;
+    static constexpr uint16_t s_uMaxModels = 128u;
     typedef utils::CUniquePtrList<render::gfx::CModel, s_uMaxModels> TModels;
     typedef std::array<TCachedModel, s_uMaxModels> TCachedModels;
 
     // Primitives
-    static constexpr uint16_t s_uMaxPrimitives = 128u;
+    static constexpr uint16_t s_uMaxPrimitives = 256u;
     typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxPrimitives> TPrimitives;
 
     // Debug primitives
-    static constexpr uint16_t s_uMaxDebugPrimitives = 256u;
+    static constexpr uint16_t s_uMaxDebugPrimitives = 1024u;
     typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugPrimitives> TDebugItems;
 
   public:

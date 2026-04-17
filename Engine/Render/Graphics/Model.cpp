@@ -55,7 +55,7 @@ namespace render
       }
 
       // Mapped instance data
-      TInstanceData* pInstanceData = static_cast<TInstanceData*>(rMappedSubresource.pData);
+      TModelInstanceData* pInstanceData = static_cast<TModelInstanceData*>(rMappedSubresource.pData);
 
       // Set model matrix
       uint16_t uInstance = 0;
@@ -75,7 +75,7 @@ namespace render
       static const uint32_t uBuffersCount(2);
       ID3D11Buffer* pBuffers[uBuffersCount] = { m_pVertexBuffer, m_pInstanceBuffer };
 
-      uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(TInstanceData) };
+      uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(TModelInstanceData) };
       uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
 
@@ -196,24 +196,18 @@ assert(bOk);
         return hResult;
       }
 
-      // We create the instance buffer (we use an extra slot for the model)
-      uint16_t uInstances = (s_uMaxInstancesPerObject + 1);
-
-      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TInstanceData) * uInstances));
+      // We create the instance buffer
+      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TModelInstanceData) * render::gfx::s_uMaxInstances));
       rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
       rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-      rSubresourceData.pSysMem = new TInstanceData[uInstances];
+      rSubresourceData.pSysMem = render::gfx::s_tModelInstanceData; // Global buffer
       hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_pInstanceBuffer);
       if (FAILED(hResult))
       {
         return hResult;
       }
-
-      // Critical HACK
-      delete[] static_cast<const TInstanceData*>(rSubresourceData.pSysMem);
-      rSubresourceData.pSysMem = nullptr;
 
       // Calculate local AABB
       collision::ComputeLocalAABB(_rModelData.Vertices, m_oLocalAABB);

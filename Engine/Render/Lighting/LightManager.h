@@ -54,6 +54,7 @@ namespace render
 
     private:
       void Clean();
+      HRESULT Setup();
 
     private:
       // Lights

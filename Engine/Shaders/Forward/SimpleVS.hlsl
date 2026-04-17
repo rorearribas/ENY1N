@@ -12,10 +12,10 @@ struct VS_INPUT
 {
   // Layout
   float3 position : VERTEXPOS;
-  float3 color: COLOR;
 
-  // Matrix
+  // Instancing
   float4x4 modelMatrix : INSTANCE_TRANSFORM;
+  float3 color : COLOR;
 };
 
 // PS Input

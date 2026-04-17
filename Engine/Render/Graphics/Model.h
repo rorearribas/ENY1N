@@ -14,7 +14,7 @@ namespace render
   namespace gfx
   {
     typedef std::vector<std::unique_ptr<render::gfx::CMesh>> TMeshes;
-    typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxInstancesPerObject> TInstances;
+    typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxDrawableInstances> TInstances;
 
     class CModel
     {

@@ -1,10 +1,11 @@
 #include "ModelComponent.h"
 
 #include "Engine/Engine.h"
+#include "Game/Entity/Entity.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
 
-#include "Game/Entity/Entity.h"
+#include "Libs/ImGui/imgui.h"
 #include <cassert>
 
 namespace game
@@ -207,5 +208,23 @@ namespace game
   math::CVector3 CModelComponent::GetScale() const
   {
     return m_pOwner->GetScl();
+  }
+  // ------------------------------------
+  void CModelComponent::DrawDebug()
+  {
+    ImGui::Spacing();
+
+    CEntity* pEntity = GetOwner();
+    std::string sOwnerName = pEntity->GetName();
+
+    if (m_pPrimitive)
+    {
+      ImGui::Text("PRIMITIVE");
+      const math::CVector3& v3Color = m_pPrimitive->GetColor();
+      float fColor[3] = { v3Color.x, v3Color.y, v3Color.z };
+      ImGui::InputFloat3("Color", fColor);
+      ImGui::Separator();
+      m_pPrimitive->SetColor(math::CVector3(fColor[0], fColor[1], fColor[2]));
+    } 
   }
 }

@@ -9,68 +9,68 @@ namespace render
     // Triangle Primitive
     const std::vector<render::gfx::TPrimitiveData> CPrimitiveUtils::s_oTrianglePrimitive =
     {
-      { math::CVector3(0.0f, 0.5f, 0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
-      { math::CVector3(0.5f, -0.5f,  0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
-      { math::CVector3(-0.5f, -0.5f,  0.0f), math::CVector3(0.0f, 0.0f, 1.0f) },
+      { math::CVector3(0.0f, 0.5f, 0.0f),    },
+      { math::CVector3(0.5f, -0.5f,  0.0f),  },
+      { math::CVector3(-0.5f, -0.5f,  0.0f), },
     };
 
     // Square primitive
     const std::vector<render::gfx::TPrimitiveData> CPrimitiveUtils::s_oSquarePrimitive = 
     {
-      { math::CVector3(-0.5f, -0.5f, 0.5f),  math::CVector3(0.0f, 0.0f,  1.0f) },
-      { math::CVector3(-0.5f, 0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
-      { math::CVector3(0.5f,  0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
-      { math::CVector3(0.5f, -0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) }
+      { math::CVector3(-0.5f, -0.5f, 0.5f) },
+      { math::CVector3(-0.5f, 0.5f, 0.5f)  },
+      { math::CVector3(0.5f,  0.5f, 0.5f)  },
+      { math::CVector3(0.5f, -0.5f, 0.5f)  }
     };
 
     // Cube Primitive
     const std::vector<render::gfx::TPrimitiveData> CPrimitiveUtils::s_oCubePrimitive =
     {
       // FRONT
-      { math::CVector3(-0.5f, -0.5f, 0.5f),  math::CVector3(0.0f, 0.0f,  1.0f) },
-      { math::CVector3(-0.5f, 0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
-      { math::CVector3(0.5f,  0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
-      { math::CVector3(0.5f, -0.5f, 0.5f),   math::CVector3(0.0f, 0.0f,  1.0f) },
+      { math::CVector3(-0.5f, -0.5f, 0.5f),  },
+      { math::CVector3(-0.5f, 0.5f, 0.5f),   },
+      { math::CVector3(0.5f,  0.5f, 0.5f),   },
+      { math::CVector3(0.5f, -0.5f, 0.5f),   },
 
       // BACK
-      { math::CVector3(0.5f, -0.5f,  -0.5f), math::CVector3(0.0f, 0.0f, -1.0f) },
-      { math::CVector3(0.5f,  0.5f,  -0.5f), math::CVector3(0.0f, 0.0f, -1.0f) },
-      { math::CVector3(-0.5f, 0.5f, -0.5f),  math::CVector3(0.0f, 0.0f, -1.0f) },
-      { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(0.0f, 0.0f, -1.0f) },
+      { math::CVector3(0.5f, -0.5f,  -0.5f), },
+      { math::CVector3(0.5f,  0.5f,  -0.5f), },
+      { math::CVector3(-0.5f, 0.5f, -0.5f),  },
+      { math::CVector3(-0.5f, -0.5f, -0.5f), },
 
       // LEFT
-      { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(-1.0f, 0.0f, 0.0f) },
-      { math::CVector3(-0.5f, 0.5f, -0.5f),  math::CVector3(-1.0f, 0.0f, 0.0f) },
-      { math::CVector3(-0.5f, 0.5f, 0.5f),   math::CVector3(-1.0f, 0.0f, 0.0f) },
-      { math::CVector3(-0.5f, -0.5f, 0.5f),  math::CVector3(-1.0f, 0.0f, 0.0f) },
+      { math::CVector3(-0.5f, -0.5f, -0.5f), },
+      { math::CVector3(-0.5f, 0.5f, -0.5f),  },
+      { math::CVector3(-0.5f, 0.5f, 0.5f),   },
+      { math::CVector3(-0.5f, -0.5f, 0.5f),  },
 
       // RIGHT
-      { math::CVector3(0.5f, -0.5f,  0.5f),  math::CVector3(1.0f, 0.0f, 0.0f)  },
-      { math::CVector3(0.5f,  0.5f,  0.5f),  math::CVector3(1.0f, 0.0f, 0.0f)  },
-      { math::CVector3(0.5f,  0.5f, -0.5f),  math::CVector3(1.0f, 0.0f, 0.0f)  },
-      { math::CVector3(0.5f, -0.5f, -0.5f),  math::CVector3(1.0f, 0.0f, 0.0f)  },
+      { math::CVector3(0.5f, -0.5f,  0.5f),  },
+      { math::CVector3(0.5f,  0.5f,  0.5f),  },
+      { math::CVector3(0.5f,  0.5f, -0.5f),  },
+      { math::CVector3(0.5f, -0.5f, -0.5f),  },
 
       // UP
-      { math::CVector3(-0.5f, 0.5f,  0.5f),  math::CVector3(0.0f, 1.0f, 0.0f)  },
-      { math::CVector3(-0.5f, 0.5f, -0.5f),  math::CVector3(0.0f, 1.0f, 0.0f)  },
-      { math::CVector3(0.5f,  0.5f, -0.5f),  math::CVector3(0.0f, 1.0f, 0.0f)  },
-      { math::CVector3(0.5f,  0.5f,  0.5f),  math::CVector3(0.0f, 1.0f, 0.0f)  },
+      { math::CVector3(-0.5f, 0.5f,  0.5f),  },
+      { math::CVector3(-0.5f, 0.5f, -0.5f),  },
+      { math::CVector3(0.5f,  0.5f, -0.5f),  },
+      { math::CVector3(0.5f,  0.5f,  0.5f),  },
 
       // BOTTOM
-      { math::CVector3(-0.5f, -0.5f, -0.5f), math::CVector3(0.0f, -1.0f, 0.0f) },
-      { math::CVector3(-0.5f, -0.5f, 0.5f),  math::CVector3(0.0f, -1.0f, 0.0f) },
-      { math::CVector3(0.5f, -0.5f, 0.5f),   math::CVector3(0.0f, -1.0f, 0.0f) },
-      { math::CVector3(0.5f, -0.5f, -0.5f),  math::CVector3(0.0f, -1.0f, 0.0f) },
+      { math::CVector3(-0.5f, -0.5f, -0.5f), },
+      { math::CVector3(-0.5f, -0.5f, 0.5f),  },
+      { math::CVector3(0.5f, -0.5f, 0.5f),   },
+      { math::CVector3(0.5f, -0.5f, -0.5f),  },
     };
 
     // Plane Primitive
     static const math::CVector3 s_oPlaneNormal(0.0f, 1.0f, 0.0f);
     const std::vector<render::gfx::TPrimitiveData> CPrimitiveUtils::s_oPlanePrimitive =
     {
-      { math::CVector3(-0.5f, 0.0f, -0.5f),  s_oPlaneNormal },  // Bottom-left
-      { math::CVector3(-0.5f, 0.0f,  0.5f),  s_oPlaneNormal },  // Top-left
-      { math::CVector3(0.5f,  0.0f,  0.5f),  s_oPlaneNormal },  // Top-right
-      { math::CVector3(0.5f,  0.0f, -0.5f),  s_oPlaneNormal }   // Bottom-right
+      { math::CVector3(-0.5f, 0.0f, -0.5f) }, // Bottom-left
+      { math::CVector3(-0.5f, 0.0f,  0.5f) }, // Top-left
+      { math::CVector3(0.5f,  0.0f,  0.5f) }, // Top-right
+      { math::CVector3(0.5f,  0.0f, -0.5f) }  // Bottom-right
     };
 
     // 2D Square Indices

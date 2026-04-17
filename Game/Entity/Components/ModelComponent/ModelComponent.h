@@ -21,9 +21,9 @@ namespace game
     void LoadModel(const char* _sModelPath);
     void CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
 
-    void SetCullingEnabled(bool _bCull);
     void SetRenderMode(render::ERenderMode _eRenderMode);
     void SetColor(const math::CVector3& _v3Color);
+    void SetCullingEnabled(bool _bCull);
 
     void SetPos(const math::CVector3& _v3Position);
     math::CVector3 GetPosition() const;
@@ -31,6 +31,8 @@ namespace game
     math::CVector3 GetRotation() const;
     void SetScl(const math::CVector3& _v3Scl);
     math::CVector3 GetScale() const;
+
+    virtual void DrawDebug() override;
 
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;

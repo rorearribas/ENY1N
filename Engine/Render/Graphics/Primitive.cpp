@@ -77,11 +77,12 @@ namespace render
       }
 
       // Mapped instance data
-      TInstanceData* pInstanceData = static_cast<TInstanceData*>(rMappedSubresource.pData);
+      TPrimitiveInstanceData* pInstanceData = static_cast<TPrimitiveInstanceData*>(rMappedSubresource.pData);
 
-      // Check draw model
+      // Apply primitive data
       uint16_t uIndex = 0;
-      pInstanceData[uIndex++].Transform = GetMatrix();
+      pInstanceData[uIndex].Transform = GetMatrix();
+      pInstanceData[uIndex].Color = GetColor();
 
       // Unmap
       global::dx::s_pDeviceContext->Unmap(m_pInstanceBuffer, 0);
@@ -90,12 +91,12 @@ namespace render
       static const uint32_t uBuffersCount(2);
       ID3D11Buffer* pBuffers[uBuffersCount] = { m_pVertexBuffer, m_pInstanceBuffer };
 
-      uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TPrimitiveData), sizeof(TInstanceData) };
+      uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TPrimitiveData), sizeof(TPrimitiveInstanceData) };
       uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
       global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
 
       // Set topology
-      global::dx::s_pDeviceContext->IASetPrimitiveTopology(GetPrimitiveTopology(m_eRenderMode));
+      global::dx::s_pDeviceContext->IASetPrimitiveTopology(GetTopology(m_eRenderMode));
     }
     // ------------------------------------
     void CPrimitive::SetPos(const math::CVector3& _v3Pos)
@@ -104,7 +105,7 @@ namespace render
       m_oTransform.SetPos(_v3Pos);
 
       // Update bounding box
-      if (m_bCullingEnabled)
+      if (m_bCullEnabled)
       {
         collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
@@ -116,7 +117,7 @@ namespace render
       m_oTransform.SetRot(_v3Rot);
 
       // Update bounding box
-      if (m_bCullingEnabled)
+      if (m_bCullEnabled)
       {
         collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
@@ -128,7 +129,7 @@ namespace render
       m_oTransform.SetScl(_v3Scl);
 
       // Update bounding box
-      if (m_bCullingEnabled)
+      if (m_bCullEnabled)
       {
         collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
@@ -137,13 +138,13 @@ namespace render
     void CPrimitive::SetCullEnabled(bool _bCull)
     {
       // Set state
-      if (m_bCullingEnabled != _bCull)
+      if (m_bCullEnabled != _bCull)
       {
-        m_bCullingEnabled = _bCull;
+        m_bCullEnabled = _bCull;
       }
 
       // Update bounding box
-      if (m_bCullingEnabled)
+      if (m_bCullEnabled)
       {
         collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
       }
@@ -158,43 +159,11 @@ namespace render
       }
     }
     // ------------------------------------
-    void CPrimitive::SetColor(const math::CVector3& _v3Color)
+    void CPrimitive::Clear()
     {
-      // Map
-      D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-      HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pVertexBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &rMappedSubresource);
-      UNUSED_VAR(hResult);
-#ifdef _DEBUG
-      assert(!FAILED(hResult));
-#endif // DEBUG
-
-      // Get data
-      render::gfx::TPrimitiveData* pPrimitiveData = static_cast<render::gfx::TPrimitiveData*>(rMappedSubresource.pData);
-#ifdef _DEBUG
-      assert(pPrimitiveData);
-#endif // DEBUG
-
-      // Update color
-      for (uint32_t uIndex = 0; uIndex < m_uVertices; ++uIndex)
-      {
-        pPrimitiveData[uIndex].Color = _v3Color;
-      }
-
-      // Unmap
-      global::dx::s_pDeviceContext->Unmap(m_pVertexBuffer, 0);
-
-      // Save color
-      m_v3Color = _v3Color;
-    }
-    // ------------------------------------
-    D3D_PRIMITIVE_TOPOLOGY CPrimitive::GetPrimitiveTopology(render::ERenderMode _eRenderMode)
-    {
-      switch (_eRenderMode)
-      {
-        case render::ERenderMode::SOLID: return D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-        case render::ERenderMode::WIREFRAME: return D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-      }
-      return D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+      global::dx::SafeRelease(m_pVertexBuffer);
+      global::dx::SafeRelease(m_pInstanceBuffer);
+      global::dx::SafeRelease(m_pIndexBuffer);
     }
     // ------------------------------------
     HRESULT CPrimitive::CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode)
@@ -304,23 +273,18 @@ namespace render
         return hResult;
       }
 
-      // We create the instance buffer (we use an extra slot for the primitive)
-      const uint16_t uSize = (s_uMaxInstancesPerObject + 1);
-
-      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TInstanceData) * uSize));
+      // We create the instance buffer
+      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TPrimitiveInstanceData) * render::gfx::s_uMaxInstances));
       rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
       rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
-      rSubresourceData.pSysMem = new TInstanceData[uSize];
+      rSubresourceData.pSysMem = render::gfx::s_tPrimitiveInstanceData; // Global buffer
       hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_pInstanceBuffer);
       if (FAILED(hResult))
       {
         return hResult;
       }
-
-      // Critical HACK
-      delete[] static_cast<const TInstanceData*>(rSubresourceData.pSysMem);
 
       // Config index buffer
       D3D11_BUFFER_DESC rIndexBufferDesc = D3D11_BUFFER_DESC();
@@ -346,11 +310,14 @@ namespace render
       return S_OK;
     }
     // ------------------------------------
-    void CPrimitive::Clear()
+    D3D_PRIMITIVE_TOPOLOGY CPrimitive::GetTopology(render::ERenderMode _eRenderMode)
     {
-      global::dx::SafeRelease(m_pVertexBuffer);
-      global::dx::SafeRelease(m_pInstanceBuffer);
-      global::dx::SafeRelease(m_pIndexBuffer);
+      switch (_eRenderMode)
+      {
+      case render::ERenderMode::SOLID: return D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+      case render::ERenderMode::WIREFRAME: return D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINELIST;
+      }
+      return D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
     }
   }
 }

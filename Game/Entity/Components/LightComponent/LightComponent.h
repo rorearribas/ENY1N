@@ -14,19 +14,20 @@ namespace game
     CLightComponent(CEntity* _pOwner, render::ELight _eLightType);
     virtual ~CLightComponent();
 
+    inline void SetLightType(render::ELight _eLightType) { CreateLight(_eLightType); }
+    inline render::ELight GetLightType() const { return m_pLight->GetLightType(); }
+
+    inline void SetPos(const math::CVector3& _v3Position) { m_pLight->SetPos(_v3Position); }
+    inline math::CVector3 GetPos() const { return m_pLight->GetPos(); }
+    inline void SetDir(const math::CVector3& _v3Dir) { m_pLight->SetDir(_v3Dir); }
+    inline math::CVector3 GetDir() const { return m_pLight->GetDir(); }
+
     inline render::lights::CLight* GetLight() const { return m_pLight; }
-    void SetLightType(render::ELight _eLightType);
-    render::ELight GetLightType() const;
-
-    void SetPosition(const math::CVector3& _v3Position);
-    math::CVector3 GetPosition() const;
-    void SetDirection(const math::CVector3& _v3Rot);
-    math::CVector3 GetDirection() const;
-
     virtual void DrawDebug() override;
 
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;
+    virtual void OnRotationChanged(const math::CVector3& _v3Rot) override;
 
   private:
     void Clean();

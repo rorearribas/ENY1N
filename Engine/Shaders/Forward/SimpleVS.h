@@ -27,11 +27,11 @@
 // Name                 Index   Mask Register SysValue  Format   Used
 // -------------------- ----- ------ -------- -------- ------- ------
 // VERTEXPOS                0   xyz         0     NONE   float   xyz 
-// COLOR                    0   xyz         1     NONE   float   xyz 
-// INSTANCE_TRANSFORM       0   xyzw        2     NONE   float   xyzw
-// INSTANCE_TRANSFORM       1   xyzw        3     NONE   float   xyzw
-// INSTANCE_TRANSFORM       2   xyzw        4     NONE   float   xyzw
-// INSTANCE_TRANSFORM       3   xyzw        5     NONE   float   xyzw
+// INSTANCE_TRANSFORM       0   xyzw        1     NONE   float   xyzw
+// INSTANCE_TRANSFORM       1   xyzw        2     NONE   float   xyzw
+// INSTANCE_TRANSFORM       2   xyzw        3     NONE   float   xyzw
+// INSTANCE_TRANSFORM       3   xyzw        4     NONE   float   xyzw
+// COLOR                    0   xyz         5     NONE   float   xyz 
 //
 //
 // Output signature:
@@ -45,33 +45,33 @@ vs_5_0
 dcl_globalFlags refactoringAllowed
 dcl_constantbuffer CB0[4], immediateIndexed
 dcl_input v0.xyz
-dcl_input v1.xyz
+dcl_input v1.xyzw
 dcl_input v2.xyzw
 dcl_input v3.xyzw
 dcl_input v4.xyzw
-dcl_input v5.xyzw
+dcl_input v5.xyz
 dcl_output_siv o0.xyzw, position
 dcl_output o1.xyz
 dcl_temps 2
-mul r0.xyzw, v0.yyyy, v3.xyzw
-mad r0.xyzw, v2.xyzw, v0.xxxx, r0.xyzw
-mad r0.xyzw, v4.xyzw, v0.zzzz, r0.xyzw
-add r0.xyzw, r0.xyzw, v5.xyzw
+mul r0.xyzw, v0.yyyy, v2.xyzw
+mad r0.xyzw, v1.xyzw, v0.xxxx, r0.xyzw
+mad r0.xyzw, v3.xyzw, v0.zzzz, r0.xyzw
+add r0.xyzw, r0.xyzw, v4.xyzw
 mul r1.xyzw, r0.yyyy, cb0[1].xyzw
 mad r1.xyzw, cb0[0].xyzw, r0.xxxx, r1.xyzw
 mad r1.xyzw, cb0[2].xyzw, r0.zzzz, r1.xyzw
 mad o0.xyzw, cb0[3].xyzw, r0.wwww, r1.xyzw
-mov o1.xyz, v1.xyzx
+mov o1.xyz, v5.xyzx
 ret 
 // Approximately 10 instruction slots used
 #endif
 
 const BYTE g_SimpleVS[] =
 {
-     68,  88,  66,  67, 204, 119, 
-    156, 135, 122,  67,  36, 252, 
-    176,   1, 186, 228,  14, 199, 
-    178, 194,   1,   0,   0,   0, 
+     68,  88,  66,  67,  18, 142, 
+     16, 211, 250,  24, 148,  97, 
+      7,  75, 140, 162,  49,   9, 
+     61,  91,   1,   0,   0,   0, 
     252,   4,   0,   0,   5,   0, 
       0,   0,  52,   0,   0,   0, 
     136,   1,   0,   0,  76,   2, 
@@ -143,29 +143,29 @@ const BYTE g_SimpleVS[] =
     162,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       3,   0,   0,   0,   1,   0, 
-      0,   0,   7,   7,   0,   0, 
-    168,   0,   0,   0,   0,   0, 
+      0,   0,  15,  15,   0,   0, 
+    162,   0,   0,   0,   1,   0, 
       0,   0,   0,   0,   0,   0, 
       3,   0,   0,   0,   2,   0, 
       0,   0,  15,  15,   0,   0, 
-    168,   0,   0,   0,   1,   0, 
+    162,   0,   0,   0,   2,   0, 
       0,   0,   0,   0,   0,   0, 
       3,   0,   0,   0,   3,   0, 
       0,   0,  15,  15,   0,   0, 
-    168,   0,   0,   0,   2,   0, 
+    162,   0,   0,   0,   3,   0, 
       0,   0,   0,   0,   0,   0, 
       3,   0,   0,   0,   4,   0, 
       0,   0,  15,  15,   0,   0, 
-    168,   0,   0,   0,   3,   0, 
+    181,   0,   0,   0,   0,   0, 
       0,   0,   0,   0,   0,   0, 
       3,   0,   0,   0,   5,   0, 
-      0,   0,  15,  15,   0,   0, 
+      0,   0,   7,   7,   0,   0, 
      86,  69,  82,  84,  69,  88, 
-     80,  79,  83,   0,  67,  79, 
-     76,  79,  82,   0,  73,  78, 
+     80,  79,  83,   0,  73,  78, 
      83,  84,  65,  78,  67,  69, 
      95,  84,  82,  65,  78,  83, 
-     70,  79,  82,  77,   0, 171, 
+     70,  79,  82,  77,   0,  67, 
+     79,  76,  79,  82,   0, 171, 
      79,  83,  71,  78,  76,   0, 
       0,   0,   2,   0,   0,   0, 
       8,   0,   0,   0,  56,   0, 
@@ -188,7 +188,7 @@ const BYTE g_SimpleVS[] =
       0,   0,   4,   0,   0,   0, 
      95,   0,   0,   3, 114,  16, 
      16,   0,   0,   0,   0,   0, 
-     95,   0,   0,   3, 114,  16, 
+     95,   0,   0,   3, 242,  16, 
      16,   0,   1,   0,   0,   0, 
      95,   0,   0,   3, 242,  16, 
      16,   0,   2,   0,   0,   0, 
@@ -196,7 +196,7 @@ const BYTE g_SimpleVS[] =
      16,   0,   3,   0,   0,   0, 
      95,   0,   0,   3, 242,  16, 
      16,   0,   4,   0,   0,   0, 
-     95,   0,   0,   3, 242,  16, 
+     95,   0,   0,   3, 114,  16, 
      16,   0,   5,   0,   0,   0, 
     103,   0,   0,   4, 242,  32, 
      16,   0,   0,   0,   0,   0, 
@@ -208,23 +208,23 @@ const BYTE g_SimpleVS[] =
      16,   0,   0,   0,   0,   0, 
      86,  21,  16,   0,   0,   0, 
       0,   0,  70,  30,  16,   0, 
-      3,   0,   0,   0,  50,   0, 
+      2,   0,   0,   0,  50,   0, 
       0,   9, 242,   0,  16,   0, 
       0,   0,   0,   0,  70,  30, 
-     16,   0,   2,   0,   0,   0, 
+     16,   0,   1,   0,   0,   0, 
       6,  16,  16,   0,   0,   0, 
       0,   0,  70,  14,  16,   0, 
       0,   0,   0,   0,  50,   0, 
       0,   9, 242,   0,  16,   0, 
       0,   0,   0,   0,  70,  30, 
-     16,   0,   4,   0,   0,   0, 
+     16,   0,   3,   0,   0,   0, 
     166,  26,  16,   0,   0,   0, 
       0,   0,  70,  14,  16,   0, 
       0,   0,   0,   0,   0,   0, 
       0,   7, 242,   0,  16,   0, 
       0,   0,   0,   0,  70,  14, 
      16,   0,   0,   0,   0,   0, 
-     70,  30,  16,   0,   5,   0, 
+     70,  30,  16,   0,   4,   0, 
       0,   0,  56,   0,   0,   8, 
     242,   0,  16,   0,   1,   0, 
       0,   0,  86,   5,  16,   0, 
@@ -253,7 +253,7 @@ const BYTE g_SimpleVS[] =
       1,   0,   0,   0,  54,   0, 
       0,   5, 114,  32,  16,   0, 
       1,   0,   0,   0,  70,  18, 
-     16,   0,   1,   0,   0,   0, 
+     16,   0,   5,   0,   0,   0, 
      62,   0,   0,   1,  83,  84, 
      65,  84, 148,   0,   0,   0, 
      10,   0,   0,   0,   2,   0, 

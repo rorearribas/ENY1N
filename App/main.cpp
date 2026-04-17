@@ -136,7 +136,7 @@ int main()
     pPrimitiveTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 10.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelCompTest = pPrimitiveTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(ePrimitiveTypes[uIndex], render::ERenderMode::SOLID);
-    pModelCompTest->SetColor(math::CVector3(0.75f, 0.0f, 0.0f));
+    pModelCompTest->SetColor(math::CVector3(0.0f, 0.5f, 0.5f));
     pPrimitiveTest->RegisterComponent<game::CCollisionComponent>(eColliderTypes[uIndex]);
     pPrimitiveTest->RegisterComponent<game::CRigidbodyComponent>();
   }
