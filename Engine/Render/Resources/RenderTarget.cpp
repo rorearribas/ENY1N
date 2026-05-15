@@ -1,6 +1,5 @@
 #include "RenderTarget.h"
 #include "Engine/Global/GlobalResources.h"
-#include "Resources/Texture2D.h"
 #include <iostream>
 
 namespace render
@@ -10,7 +9,7 @@ namespace render
     static const uint32_t s_uFlags = D3D11_BIND_SHADER_RESOURCE | D3D11_BIND_RENDER_TARGET;
   }
   // ------------------------------------
-  HRESULT CRenderTarget::CreateRT(uint32_t _uWidth, uint32_t _uHeight, DXGI_FORMAT _eFormat)
+  HRESULT CRenderTarget::Init(uint32_t _uWidth, uint32_t _uHeight, DXGI_FORMAT _eFormat)
   {
     // Flush
     Release();
@@ -52,9 +51,12 @@ namespace render
     return global::dx::s_pDevice->CreateShaderResourceView(m_oRTTexture, &rSRVDesc, &m_pShaderView);
   }
   // ------------------------------------
-  void CRenderTarget::ClearRT(const float _v4ClearColor[4])
+  void CRenderTarget::SetClearColor(const float _v4ClearColor[4])
   {
-    global::dx::s_pDeviceContext->ClearRenderTargetView(*this, _v4ClearColor);
+    if (ID3D11RenderTargetView* pRenderTargetView = GetRenderTargetView())
+    {
+      global::dx::s_pDeviceContext->ClearRenderTargetView(pRenderTargetView, _v4ClearColor);
+    }
   }
   // ------------------------------------
   void CRenderTarget::Release()

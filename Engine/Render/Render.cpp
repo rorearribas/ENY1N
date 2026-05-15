@@ -4,8 +4,8 @@
 #include "Engine/Render/ConstantBuffer/BufferTypes.h"
 #include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
 #include "Engine/Render/Graphics/ShadowMap.h"
+#include "Engine/Render/Resources/RenderTarget.h"
 #include "Engine/Scenes/Scene.h"
-#include "Engine/Render/RenderTarget.h"
 #include "RenderTypes.h"
 
 // Debug
@@ -13,6 +13,8 @@
 #include "Engine/Shaders/Forward/SimplePS.h"
 
 // Deferred
+#include "Engine/Render/Renderers/DeferredRenderer.h"
+#include "Engine/Render/Renderers/LightingRenderer.h"
 #include "Engine/Shaders/Deferred/StandardVS.h"
 #include "Engine/Shaders/Deferred/LightsPS.h"
 #include "Engine/Shaders/Deferred/GBufferPS.h"
@@ -74,17 +76,13 @@ namespace render
 
     struct TRenderPipeline
     {
-      // Swap chain + RT
+      // Swap chain + back buffer
       IDXGISwapChain* pSwapChain = nullptr;
       ID3D11RenderTargetView* pBackBuffer = nullptr;
 
       // Deferred shading
       ID3D11SamplerState* pLinearSampler = nullptr;
       ID3D11SamplerState* pShadowSampler = nullptr;
-
-      render::CRenderTarget rDiffuseRT;
-      render::CRenderTarget rNormalRT;
-      render::CRenderTarget rSpecularRT;
 
       // Constant buffers
       CConstantBuffer<TTransforms> tTransformsBuffer;
@@ -136,6 +134,87 @@ namespace render
 
     static TRenderPipeline s_oPipeline;
     static TTransforms s_oTransforms;
+
+    class CRenderState
+    {
+    public:
+      void PushState();
+      void ClearStates();
+
+      inline void SetRenderTarget(ID3D11RenderTargetView* _pRenderTarget, uint8_t _uSlot)
+      {
+        bool bValidSlot = _uSlot < D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT;
+        if (bValidSlot && RenderTargets[_uSlot] != _pRenderTarget)
+        {
+          RenderTargets[_uSlot] = _pRenderTarget;
+          DirtyRTMask |= (1 << _uSlot);
+        }
+      }
+
+      inline void SetConstantBuffer(ID3D11Buffer* _pBuffer, EShader /*_eShaderType*/, uint8_t _uSlot)
+      {
+        if (_uSlot >= D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT)
+        {
+          return;
+        }
+        
+        if (ConstantBufferVS[_uSlot] != _pBuffer)
+        {
+          ConstantBufferVS[_uSlot] = _pBuffer;
+          DirtyCBVSMask |= (1 << _uSlot);
+        }
+      }
+
+    private:
+      ID3D11RenderTargetView* RenderTargets[D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT];
+      uint8_t DirtyRTMask = 0;
+
+      ID3D11Buffer* ConstantBufferVS[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
+      uint16_t DirtyCBVSMask = 0;
+
+      ID3D11Buffer* ConstantBufferPS[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
+      uint16_t DirtyCBPSMask = 0;
+
+      ID3D11ShaderResourceView* TextureSlots[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT];
+      bool DirtyTextureSlots = false;
+
+      ID3D11DepthStencilView* pDepthStencilView = nullptr;
+      bool DirtyDepthStencil = false;
+
+      ID3D11SamplerState* SamplerSlots[D3D11_COMMONSHADER_SAMPLER_SLOT_COUNT];
+      bool DirySamplerSlots = false;
+
+      ID3D11RasterizerState* RasterizerState = nullptr;
+      bool DirtyRasterizer = false;
+
+      ID3D11BlendState* BlendState = nullptr;
+      bool DirtyBlendState = false;
+
+      ID3D11InputLayout* InputLayout = nullptr;
+      bool DirtyInputLayout = false;
+    };
+
+    void CRenderState::PushState()
+    {
+      // Push render targets
+      if (DirtyRTMask != 0 || DirtyDepthStencil)
+      {
+        uint32_t uNumViews = 0;
+        for (int i = D3D11_SIMULTANEOUS_RENDER_TARGET_COUNT - 1; i >= 0; --i)
+        {
+          if (RenderTargets[i] != nullptr)
+          {
+            uNumViews = i + 1;
+            break;
+          }
+        }
+
+        global::dx::s_pDeviceContext->OMSetRenderTargets(uNumViews, RenderTargets, pDepthStencilView);
+
+        DirtyRTMask = 0;
+        DirtyDepthStencil = false;
+      }
+    }
   }
   // ------------------------------------
   CRender::CRender(uint32_t _uWidth, uint32_t _uHeight)
@@ -171,11 +250,6 @@ namespace render
     internal::s_oPipeline.rDepthStencil.Release();
     internal::s_oPipeline.rDepthTexture.Release();
 
-    // Release render targets
-    internal::s_oPipeline.rDiffuseRT.Release();
-    internal::s_oPipeline.rNormalRT.Release();
-    internal::s_oPipeline.rSpecularRT.Release();
-
     // Release shaders (forward)
     internal::s_oPipeline.rForwardVS.Release();
     internal::s_oPipeline.rForwardPS.Release();
@@ -209,8 +283,8 @@ namespace render
     global::dx::SafeRelease(internal::s_oPipeline.pBackBuffer);
 
     // Release device context then device
-    global::dx::SafeRelease(global::dx::s_pDeviceContext);
     global::dx::SafeRelease(global::dx::s_pDevice);
+    global::dx::SafeRelease(global::dx::s_pDeviceContext);
 
     // Release render window
     global::ReleaseObject(m_pRenderWindow);
@@ -223,6 +297,21 @@ namespace render
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating device!");
+      return hResult;
+    }
+
+    // Test global instance buffer
+    D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
+    rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::TModelInstanceData) * render::gfx::s_uMaxInstances));
+    rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
+    rSubresourceData.pSysMem = render::gfx::s_tModelInstanceData; // Global buffer
+    hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &global::dx::s_pInstanceBuffer);
+    if (FAILED(hResult))
+    {
       return hResult;
     }
 
@@ -655,22 +744,12 @@ namespace render
   // ------------------------------------
   HRESULT CRender::SetupDeferredRendering(uint32_t _uWidth, uint32_t _uHeight)
   {
-    internal::s_oPipeline.rDiffuseRT.Release();
-    HRESULT hResult = internal::s_oPipeline.rDiffuseRT.CreateRT(_uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
-    if (FAILED(hResult))
+    // Create renderer
+    if (!m_pDeferredRenderer)
     {
-      return hResult;
+      m_pDeferredRenderer = std::make_unique<CDeferredRenderer>();
     }
-
-    internal::s_oPipeline.rNormalRT.Release();
-    hResult = internal::s_oPipeline.rNormalRT.CreateRT(_uWidth, _uHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::s_oPipeline.rSpecularRT.Release();
-    hResult = internal::s_oPipeline.rSpecularRT.CreateRT(_uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
+    HRESULT hResult = m_pDeferredRenderer->Init(_uWidth, _uHeight);
     if (FAILED(hResult))
     {
       return hResult;
@@ -739,31 +818,35 @@ namespace render
     return global::dx::s_pDevice->CreateBlendState(&oBlendDesc, &internal::s_oPipeline.pBlendState);
   }
   // ------------------------------------
-  void CRender::DrawModels(scene::CScene* _pScene)
+  void CRender::DrawOpaqueModels(scene::CScene* _pScene)
   {
     // Bind buffer
     internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>(internal::s_oPipeline.uTransformSlot);
-    global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pStandardLayout);
+
+    ID3D11InputLayout* pCurrentLayout = nullptr;
+    global::dx::s_pDeviceContext->IAGetInputLayout(&pCurrentLayout);
+    if (pCurrentLayout != internal::s_oPipeline.pStandardLayout)
+    {
+      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pStandardLayout);
+    }
 
     // Detach simple pixel shader
     internal::s_oPipeline.rForwardPS.Detach();
     // Attach deferred vertex shader
     internal::s_oPipeline.rDeferredVS.Attach();
 
-    // Set GBuffer RTVs
-    static constexpr uint32_t uRenderTargets(3);
-    ID3D11RenderTargetView* lstGBufferRTV[uRenderTargets] =
-    {
-      internal::s_oPipeline.rDiffuseRT,
-      internal::s_oPipeline.rNormalRT,
-      internal::s_oPipeline.rSpecularRT
-    };
-
     // Set render targets
     ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.rDepthStencil.GetView();
-    global::dx::s_pDeviceContext->OMSetRenderTargets(uRenderTargets, lstGBufferRTV, pDepthStencilView);
+    m_pDeferredRenderer->AttachRenderTargets(pDepthStencilView);
+
     // Set depth stencil state
-    global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pZPrepassStencilState, 1);
+    ID3D11DepthStencilState* pCurrentStencil = nullptr;
+    uint32_t uCurrentRef = 0;
+    global::dx::s_pDeviceContext->OMGetDepthStencilState(&pCurrentStencil, &uCurrentRef);
+    if (pCurrentStencil != internal::s_oPipeline.pZPrepassStencilState)
+    {
+      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pZPrepassStencilState, 1);
+    }
 
     // Set linear sampler(read textures)
     global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oPipeline.pLinearSampler);
@@ -773,14 +856,86 @@ namespace render
     internal::s_oPipeline.tMaterialInfoBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uMaterialInfoSlot);
 
     // Draw models
-    _pScene->DrawModels(this);
+    DrawModels(_pScene);
 
-    // Remove render targets
-    ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };
-    global::dx::s_pDeviceContext->OMSetRenderTargets(uRenderTargets, lstEmptyRTs, nullptr);
+    // Detach render targets
+    m_pDeferredRenderer->DetachRenderTargets();
   }
   // ------------------------------------
-  void CRender::DrawPrimitives(scene::CScene* _pScene)
+  void CRender::DrawModels(scene::CScene* _pScene)
+  {
+    uint16_t uDrawableModels = 0;
+    const scene::TModels& lstModels = _pScene->GetModels();
+    const scene::TCachedModels& lstCacheModels = _pScene->GetCacheModels(uDrawableModels);
+    for (uint16_t uI = 0; uI < uDrawableModels; uI++)
+    {
+      // Handle model
+      const scene::TCachedModel& rCachedModel = lstCacheModels[uI];
+      const utils::CWeakPtr<render::gfx::CModel>& pModel = lstModels[rCachedModel.Index];
+
+      // Push buffers
+      D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+      HRESULT hResult = global::dx::s_pDeviceContext->Map(global::dx::s_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+      if (FAILED(hResult))
+      {
+        ERROR_LOG("Error mapping buffer!");
+        return;
+      }
+
+      // Mapped instance data
+      render::gfx::TModelInstanceData* pInstanceData = static_cast<render::gfx::TModelInstanceData*>(rMappedSubresource.pData);
+
+      // Set model matrix
+      uint16_t uInstance = 0;
+      pInstanceData[uInstance++].Transform = pModel->GetMatrix();
+
+      // Set instances
+      const gfx::TInstances& lstInstances = pModel->GetInstances();
+      for (uint16_t uJ = 0; uJ < rCachedModel.InstanceCount; ++uJ)
+      {
+        uint16_t uID = rCachedModel.DrawableInstances[uJ];
+        pInstanceData[uInstance++].Transform = lstInstances[uID]->GetMatrix();
+      }
+
+      // Unmap
+      global::dx::s_pDeviceContext->Unmap(global::dx::s_pInstanceBuffer, 0);
+
+      // Set vertex buffers
+      static const uint32_t uBuffersCount(2);
+      ID3D11Buffer* pBuffers[uBuffersCount] = { pModel->GetVertexBuffer(), global::dx::s_pInstanceBuffer };
+
+      uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
+      uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
+      global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
+
+      // Set topology
+      D3D_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+      global::dx::s_pDeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
+      if (eCurrentTopology != D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+      {
+        global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+      }
+
+      // Set values
+      uint16_t uInstanceCount = rCachedModel.InstanceCount;
+      uint16_t uTotalCount = rCachedModel.Visible ? ++uInstanceCount : uInstanceCount;
+      uint16_t uStartOffset = !rCachedModel.Visible;
+
+      // Draw meshes
+      const gfx::TMeshes& lstMeshes = pModel->GetMeshes();
+      for (const std::unique_ptr<render::gfx::CMesh>& pMesh : lstMeshes)
+      {
+        // Push material - constant buffer
+        PushMaterial(pMesh->GetMaterial());
+
+        // Draw mesh
+        global::dx::s_pDeviceContext->IASetIndexBuffer(pMesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+        global::dx::s_pDeviceContext->DrawIndexedInstanced(pMesh->GetIndexCount(), uTotalCount, 0, 0, uStartOffset);
+      }
+    }
+  }
+  // ------------------------------------
+  void CRender::DrawPrimitives(render::CCamera* _pRenderCamera, scene::CScene* _pScene)
   {
     // Set input layout
     global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pDebugLayout);
@@ -795,7 +950,100 @@ namespace render
     internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>(internal::s_oPipeline.uTransformSlot);
 
     // Draw primitives
-    _pScene->DrawPrimitives(m_pRenderCamera);
+    const scene::TPrimitives& lstPrimitives = _pScene->GetPrimitives();
+    for (uint32_t uI = 0; uI < lstPrimitives.GetSize(); uI++)
+    {
+      const render::gfx::CPrimitive* pPrimitive = lstPrimitives[uI];
+#ifdef _DEBUG
+      assert(pPrimitive);
+#endif // DEBUG
+
+      if (!pPrimitive->IsVisible())
+      {
+        continue;
+      }
+
+      bool bDrawPrimitive = true;
+      if (pPrimitive->IsCullEnabled()) // Check culling
+      {
+        bDrawPrimitive = _pRenderCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
+      }
+      if (bDrawPrimitive)
+      {
+        DrawPrimitive(pPrimitive);
+      }
+    }
+
+    // Draw debug primitives
+    const scene::TDebugItems& lstDebugItems = _pScene->GetDebugItems();
+    for (uint32_t uIndex = 0; uIndex < lstDebugItems.GetSize(); uIndex++)
+    {
+      const render::gfx::CPrimitive* pDebugPrimitive = lstDebugItems[uIndex];
+#ifdef _DEBUG
+assert(pDebugPrimitive);
+#endif // DEBUG
+
+      bool bDrawDebug = true;
+      if (pDebugPrimitive->IsCullEnabled()) // Check culling
+      {
+        bDrawDebug = _pRenderCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
+      }
+      if (bDrawDebug)
+      {
+        DrawPrimitive(pDebugPrimitive);
+      }
+    }
+
+    // Flush debug items
+    _pScene->FlushDebugItems();
+  }
+  // ------------------------------------
+  void CRender::DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive)
+  {
+    // Apply Buffers
+    D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+    HRESULT hResult = global::dx::s_pDeviceContext->Map(global::dx::s_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error mapping buffer!");
+      return;
+    }
+
+    // Mapped instance data
+    render::gfx::TPrimitiveInstanceData* pInstanceData = static_cast<render::gfx::TPrimitiveInstanceData*>(rMappedSubresource.pData);
+
+    // Apply primitive data
+    uint16_t uIndex = 0;
+    pInstanceData[uIndex].Transform = _pPrimitive->GetMatrix();
+    pInstanceData[uIndex].Color = _pPrimitive->GetColor();
+
+    // Unmap
+    global::dx::s_pDeviceContext->Unmap(global::dx::s_pInstanceBuffer, 0);
+
+    // Set vertex buffers
+    static const uint32_t uBuffersCount(2);
+    ID3D11Buffer* pBuffers[uBuffersCount] = { _pPrimitive->GetVertexBuffer(), global::dx::s_pInstanceBuffer };
+
+    uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TPrimitiveData), sizeof(render::gfx::TPrimitiveInstanceData) };
+    uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
+    global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
+
+    // Set topology
+    D3D11_PRIMITIVE_TOPOLOGY eTargetTopology = GetTopology(_pPrimitive->GetRenderMode());
+    D3D11_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+    global::dx::s_pDeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
+    if (eCurrentTopology != eTargetTopology)
+    {
+      global::dx::s_pDeviceContext->IASetPrimitiveTopology(eTargetTopology);
+    }
+
+    // Set values - currently we don't support having multiple instances drawing primitives
+    const uint16_t uInstanceCount = 1;
+    const uint16_t uStartOffset = 0;
+
+    // Draw primitive
+    global::dx::s_pDeviceContext->IASetIndexBuffer(_pPrimitive->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+    global::dx::s_pDeviceContext->DrawIndexedInstanced(_pPrimitive->GetIndices(), uInstanceCount, 0, 0, uStartOffset);
   }
   // ------------------------------------
   void CRender::ComputeGBuffer(scene::CScene* _pScene)
@@ -826,9 +1074,9 @@ namespace render
     ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
     {
       internal::s_oPipeline.rDepthTexture.GetView(),
-      internal::s_oPipeline.rDiffuseRT.GetView(),
-      internal::s_oPipeline.rNormalRT.GetView(),
-      internal::s_oPipeline.rSpecularRT.GetView(),
+      m_pDeferredRenderer->GetDiffuseRT()->GetRTView(),
+      m_pDeferredRenderer->GetNormalRT()->GetRTView(),
+      m_pDeferredRenderer->GetNormalRT()->GetRTView(),
       pShadowTexture
     };
 
@@ -878,9 +1126,7 @@ namespace render
       global::dx::s_pDeviceContext->ClearRenderTargetView(internal::s_oPipeline.pBackBuffer, internal::s_v4ClearColor);
 
       // Clear RTs
-      internal::s_oPipeline.rDiffuseRT.ClearRT(internal::s_v4ClearColor);
-      internal::s_oPipeline.rNormalRT.ClearRT(internal::s_v4ClearColor);
-      internal::s_oPipeline.rSpecularRT.ClearRT(internal::s_v4ClearColor);
+      m_pDeferredRenderer->ClearRenderTargets(internal::s_v4ClearColor);
 
       // Clear depth stencil view
       global::dx::s_pDeviceContext->ClearDepthStencilView(internal::s_oPipeline.rDepthStencil.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -920,7 +1166,7 @@ namespace render
       _pScene->CacheModels(m_pRenderCamera);
 
       // Draw models
-      DrawModels(_pScene);
+      DrawOpaqueModels(_pScene);
 
       // Compute lighting
       render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
@@ -1006,7 +1252,7 @@ namespace render
             _pScene->CacheModels(m_pShadowCamera);
 
             // Draw models only in z-prepass pass from the light view
-            _pScene->DrawModels(this);
+            DrawModels(_pScene);
 
             uint32_t uRenderWidth = 0, uRenderHeight = 0;
             m_pRenderWindow->GetWindowSize(uRenderWidth, uRenderHeight);
@@ -1029,7 +1275,7 @@ namespace render
     // Draw primitives (forward rendering)
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
-      DrawPrimitives(_pScene);
+      DrawPrimitives(m_pRenderCamera, _pScene);
     }
     EndMarker();
 
@@ -1094,6 +1340,20 @@ namespace render
     // Update rasterizer
     internal::s_oPipeline.rRasterizerCfg.FillMode = _eFillMode;
     CreateRasterizerState(internal::s_oPipeline.pDeferredRasterizer, internal::s_oPipeline.rRasterizerCfg);
+  }
+  // ------------------------------------
+  D3D_PRIMITIVE_TOPOLOGY CRender::GetTopology(render::ERenderMode _eRenderMode)
+  {
+    switch (_eRenderMode)
+    {
+      case render::ERenderMode::SOLID: { return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; }
+      case render::ERenderMode::WIREFRAME: { return D3D_PRIMITIVE_TOPOLOGY_LINELIST; }
+      case render::ERenderMode::INVALID:   
+      default: 
+      {
+        return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+      }
+    }
   }
   // ------------------------------------
   void CRender::BeginMarker(const wchar_t* _sMarker) const

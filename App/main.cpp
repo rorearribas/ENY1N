@@ -97,12 +97,12 @@ int main()
   static_cast<render::lights::CPointLight*>(pLightComp->GetLight())->SetColor(math::CVector3(0.0f, 1.0f, 0.0f));
 
   float fOffsetZ = 0.0f;
-  for (uint32_t uIndex = 0; uIndex < 5; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 5u; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPos(math::CVector3(0.0f, 10.0f, fOffsetZ));
+    pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-    pModelTest->LoadModel("models/spaceship/spaceship.fbx");
+    pModelTest->LoadModel("models/plant/Low-Poly Plant_.fbx");
     fOffsetZ += 10;
   }
 
@@ -233,6 +233,33 @@ int main()
         // Create spot light
         game::CEntity* pTemp = pGameManager->CreateEntity("Spot Light");
         pTemp->RegisterComponent<game::CLightComponent>(render::ELight::SPOT_LIGHT);
+      }
+      if(ImGui::Button("Create primitive"))
+      {
+        game::CEntity* pPrimitiveTest = pGameManager->CreateEntity("Primitive");
+        pPrimitiveTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 10.0f), GenerateFloat(-10.0f, 10.0f)));
+        game::CModelComponent* pModelCompTest = pPrimitiveTest->RegisterComponent<game::CModelComponent>();
+        pModelCompTest->CreatePrimitive(ePrimitiveTypes[0], render::ERenderMode::SOLID);
+        pModelCompTest->SetColor(math::CVector3(0.0f, 0.5f, 0.5f));
+        pPrimitiveTest->RegisterComponent<game::CCollisionComponent>(eColliderTypes[0]);
+        pPrimitiveTest->RegisterComponent<game::CRigidbodyComponent>();
+      }
+      ImGui::End();
+
+      // Display framerate
+      ImGuiWindowFlags iFlags =
+        ImGuiWindowFlags_NoDecoration |
+        ImGuiWindowFlags_AlwaysAutoResize |
+        ImGuiWindowFlags_NoSavedSettings |
+        ImGuiWindowFlags_NoFocusOnAppearing |
+        ImGuiWindowFlags_NoNav;
+
+      uint32_t uWidth, uHeight;
+      pRender->GetRenderWindow()->GetWindowSize(uWidth, uHeight);
+      ImGui::SetNextWindowPos(ImVec2(static_cast<float>(uWidth - 160.0f), 30.0f));
+      if (ImGui::Begin("Watermark", nullptr, iFlags)) 
+      {
+        ImGui::Text("ENY1N | FPS: %.1f", ImGui::GetIO().Framerate);
       }
       ImGui::End();
 

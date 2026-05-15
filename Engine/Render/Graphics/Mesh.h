@@ -19,13 +19,11 @@ namespace render
       CMesh(const TIndices& _lstIndices);
       ~CMesh();
 
-      void Draw(uint32_t _uInstanceCount, uint32_t _uStartOffset);
-
       inline render::mat::CMaterial* GetMaterial() const { return m_pMaterial.get(); }
       inline void SetMaterial(std::unique_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }
 
-      inline ID3D11Buffer* GetBuffer() const { return m_pIndexBuffer; }
-      inline const uint32_t GetIndexCount() const { return m_uIndices; }
+      inline ID3D11Buffer* GetIndexBuffer() const { return m_pIndexBuffer; }
+      inline uint32_t GetIndexCount() const { return m_uIndices; }
 
     private:
       HRESULT CreateBuffer(const TIndices& _lstIndices);

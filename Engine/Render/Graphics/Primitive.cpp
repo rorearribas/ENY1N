@@ -54,51 +54,6 @@ namespace render
       Clear();
     }
     // ------------------------------------
-    void CPrimitive::Draw(bool _bDrawPrimitive, uint16_t _uInstanceCount)
-    {
-      // Set values
-      uint16_t uInstanceCount = _bDrawPrimitive ? (_uInstanceCount + 1) : _uInstanceCount;
-      uint16_t uStartOffset = _bDrawPrimitive ? 0 : 1;
-
-      // Draw primitive
-      global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-      global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndices, uInstanceCount, 0, 0, uStartOffset);
-    }
-    // ------------------------------------
-    void CPrimitive::PushBuffers()
-    {
-      // Apply matrix 
-      D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-      HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
-      if (FAILED(hResult))
-      {
-        ERROR_LOG("Error mapping buffer!");
-        return;
-      }
-
-      // Mapped instance data
-      TPrimitiveInstanceData* pInstanceData = static_cast<TPrimitiveInstanceData*>(rMappedSubresource.pData);
-
-      // Apply primitive data
-      uint16_t uIndex = 0;
-      pInstanceData[uIndex].Transform = GetMatrix();
-      pInstanceData[uIndex].Color = GetColor();
-
-      // Unmap
-      global::dx::s_pDeviceContext->Unmap(m_pInstanceBuffer, 0);
-
-      // Set vertex buffers
-      static const uint32_t uBuffersCount(2);
-      ID3D11Buffer* pBuffers[uBuffersCount] = { m_pVertexBuffer, m_pInstanceBuffer };
-
-      uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TPrimitiveData), sizeof(TPrimitiveInstanceData) };
-      uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
-      global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
-
-      // Set topology
-      global::dx::s_pDeviceContext->IASetPrimitiveTopology(GetTopology(m_eRenderMode));
-    }
-    // ------------------------------------
     void CPrimitive::SetPos(const math::CVector3& _v3Pos)
     {
       // Set pos
@@ -162,7 +117,6 @@ namespace render
     void CPrimitive::Clear()
     {
       global::dx::SafeRelease(m_pVertexBuffer);
-      global::dx::SafeRelease(m_pInstanceBuffer);
       global::dx::SafeRelease(m_pIndexBuffer);
     }
     // ------------------------------------
@@ -273,19 +227,6 @@ namespace render
         return hResult;
       }
 
-      // We create the instance buffer
-      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TPrimitiveInstanceData) * render::gfx::s_uMaxInstances));
-      rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-      rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-      rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-      rSubresourceData.pSysMem = render::gfx::s_tPrimitiveInstanceData; // Global buffer
-      hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_pInstanceBuffer);
-      if (FAILED(hResult))
-      {
-        return hResult;
-      }
-
       // Config index buffer
       D3D11_BUFFER_DESC rIndexBufferDesc = D3D11_BUFFER_DESC();
       rIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -308,16 +249,6 @@ namespace render
       collision::ComputeLocalAABB(_lstPrimitiveData, m_oLocalAABB);
 
       return S_OK;
-    }
-    // ------------------------------------
-    D3D_PRIMITIVE_TOPOLOGY CPrimitive::GetTopology(render::ERenderMode _eRenderMode)
-    {
-      switch (_eRenderMode)
-      {
-      case render::ERenderMode::SOLID: return D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-      case render::ERenderMode::WIREFRAME: return D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_LINELIST;
-      }
-      return D3D_PRIMITIVE_TOPOLOGY::D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-    }
+    }    
   }
 }

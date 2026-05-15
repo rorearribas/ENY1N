@@ -15,32 +15,30 @@ namespace render { namespace lights { class CDirectionalLight; } }
 
 namespace scene
 {
+  struct TCachedModel
+  {
+    bool Visible = false;
+    uint16_t Index = 0;
+
+    render::gfx::TDrawableInstances DrawableInstances;
+    uint16_t InstanceCount = 0;
+  };
+
+  // Models
+  static constexpr uint16_t s_uMaxModels = 128u;
+  typedef utils::CUniquePtrList<render::gfx::CModel, s_uMaxModels> TModels;
+  typedef std::array<TCachedModel, s_uMaxModels> TCachedModels;
+
+  // Primitives
+  static constexpr uint16_t s_uMaxPrimitives = 256u;
+  typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxPrimitives> TPrimitives;
+
+  // Debug primitives
+  static constexpr uint16_t s_uMaxDebugPrimitives = 1024u;
+  typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugPrimitives> TDebugItems;
+
   class CScene
   {
-  private:
-    struct TCachedModel
-    {
-      bool Visible = false;
-      uint16_t Index = 0;
-
-      render::gfx::TDrawableInstances DrawableInstances;
-      uint16_t InstanceCount = 0;
-    };
-
-  private:
-    // Models
-    static constexpr uint16_t s_uMaxModels = 128u;
-    typedef utils::CUniquePtrList<render::gfx::CModel, s_uMaxModels> TModels;
-    typedef std::array<TCachedModel, s_uMaxModels> TCachedModels;
-
-    // Primitives
-    static constexpr uint16_t s_uMaxPrimitives = 256u;
-    typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxPrimitives> TPrimitives;
-
-    // Debug primitives
-    static constexpr uint16_t s_uMaxDebugPrimitives = 1024u;
-    typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugPrimitives> TDebugItems;
-
   public:
     CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex) {}
     ~CScene();
@@ -50,9 +48,16 @@ namespace scene
     inline const bool IsEnabled() const { return m_bEnabled; }
     inline const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
+    // Scene items
+    const TCachedModels& GetCacheModels(uint16_t& _uCount_) const;
+    inline const TModels& GetModels() const { return m_lstModels; }
+    inline const TPrimitives& GetPrimitives() const { return m_lstPrimitives; }
+    inline const TDebugItems& GetDebugItems() const { return m_lstDebugItems; }
+
     // Handle graphics
     render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
     bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
+    inline void FlushDebugItems() { m_lstDebugItems.Clear(); }
 
     utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char* _sModelPath);
     bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _pModel_);
@@ -77,10 +82,9 @@ namespace scene
 
     // Handle scene
     void CacheModels(render::CCamera* _pCamera);
+    void CachePrimitives(render::CCamera* _pCamera);
 
     // Draw calls
-    void DrawModels(render::CRender* _pRender);
-    void DrawPrimitives(render::CCamera* _pCamera);
     void ApplyLighting();
 
   private:

@@ -3,8 +3,13 @@
 #include "Engine/Camera/Camera.h"
 #include "Engine/Shaders/Shader.h"
 
+namespace render { namespace gfx { class CPrimitive; } }
 namespace render { namespace mat { class CMaterial; } }
 namespace scene { class CScene; }
+
+namespace render { class CDeferredRenderer; }
+namespace render { class CForwardRenderer; }
+namespace render { class CLightingRenderer; }
 
 namespace render
 {
@@ -52,6 +57,8 @@ namespace render
     HRESULT CreateRasterizerState(ID3D11RasterizerState*& _pRasterizer_, const D3D11_RASTERIZER_DESC& _rRasterizerCfg);
     HRESULT CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _rBlendState);
 
+    D3D_PRIMITIVE_TOPOLOGY GetTopology(render::ERenderMode _eRenderMode);
+
   private:
     void SetViewport(uint32_t _uWidth, uint32_t _uHeight);
     void SetScissorRect(uint32_t _uWidth, uint32_t _uHeight);
@@ -62,9 +69,12 @@ namespace render
 
   private:
     // Deferred
-    void DrawModels(scene::CScene* _pScene);
-    void DrawPrimitives(scene::CScene* _pScene);
+    void DrawOpaqueModels(scene::CScene* _pScene);
     void ComputeGBuffer(scene::CScene* _pScene);
+
+    void DrawModels(scene::CScene* _pScene); 
+    void DrawPrimitives(render::CCamera* _pRenderCamera, scene::CScene* _pScene);
+    void DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive);
 
   private:
     render::CRenderWindow* m_pRenderWindow = nullptr;
@@ -72,6 +82,10 @@ namespace render
 
     render::CCamera* m_pRenderCamera = nullptr;
     render::CCamera* m_pShadowCamera = nullptr;
+
+    std::unique_ptr<CDeferredRenderer> m_pDeferredRenderer = nullptr;
+    std::unique_ptr<CForwardRenderer> m_pForwardRenderer = nullptr;
+    std::unique_ptr<CLightingRenderer> m_pLightingRenderer = nullptr;
   };
 }
 

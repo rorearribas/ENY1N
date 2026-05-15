@@ -20,9 +20,6 @@ namespace render
       CPrimitive(EPrimitive _eType, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
       ~CPrimitive();
 
-      void Draw(bool _bDrawPrimitive = true, uint16_t _uInstanceCount = 0);
-      void PushBuffers();
-
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPos() const { return m_oTransform.GetPos(); }
       void SetRot(const math::CVector3& _v3Rot);
@@ -48,16 +45,20 @@ namespace render
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
 
+      inline ID3D11Buffer* GetVertexBuffer() const { return m_pVertexBuffer; }
+      inline ID3D11Buffer* GetIndexBuffer() const { return m_pIndexBuffer; }
+
+      inline const uint32_t& GetIndices() const { return m_uIndices; }
+      inline const uint32_t& GetVerticesCount() const { return m_uVertices; }
+
     private:
       void Clear();
       HRESULT CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode);
       HRESULT CreateBuffer(const std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData, const std::vector<uint32_t>& _lstIndices);
-      D3D_PRIMITIVE_TOPOLOGY GetTopology(render::ERenderMode _eRenderMode);
 
     private:
       // Buffers
       ID3D11Buffer* m_pVertexBuffer = nullptr;
-      ID3D11Buffer* m_pInstanceBuffer = nullptr;
       ID3D11Buffer* m_pIndexBuffer = nullptr;
 
       // Data

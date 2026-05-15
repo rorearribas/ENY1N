@@ -24,13 +24,6 @@ namespace render
       ClearMaterial();
     }
     // ------------------------------------
-    void CMesh::Draw(uint32_t _uInstanceCount, uint32_t _uStartOffset)
-    {
-      // Draw mesh
-      global::dx::s_pDeviceContext->IASetIndexBuffer(m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-      global::dx::s_pDeviceContext->DrawIndexedInstanced(m_uIndices, _uInstanceCount, 0, 0, _uStartOffset);
-    }
-    // ------------------------------------
     HRESULT CMesh::CreateBuffer(const TIndices& _lstIndices)
     {
       // Clean mesh

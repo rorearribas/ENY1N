@@ -22,6 +22,12 @@ namespace scene
     Clear();
   }
   // ------------------------------------
+  const TCachedModels& CScene::GetCacheModels(uint16_t& _uDrawableModels_) const
+  {
+    _uDrawableModels_ = m_uDrawableModels;
+    return m_lstCachedModels;
+  }
+  // ------------------------------------
   render::gfx::CPrimitive* const CScene::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
   {
     if (m_lstPrimitives.GetSize() >= m_lstPrimitives.GetMaxSize())
@@ -275,65 +281,9 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::DrawModels(render::CRender* _pRender)
+  void CScene::CachePrimitives(render::CCamera* _pCamera)
   {
-    // Draw models
-    for (uint16_t uI = 0; uI < m_uDrawableModels; uI++)
-    {
-      // Handle model
-      const TCachedModel& rCachedModel = m_lstCachedModels[uI];
-      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[rCachedModel.Index];
 
-      // Push buffers
-      pModel->PushBuffers(rCachedModel.DrawableInstances, rCachedModel.InstanceCount);
-
-      // Draw
-      pModel->Draw(_pRender, rCachedModel.Visible, rCachedModel.InstanceCount);
-    }
-  }
-  // ------------------------------------
-  void CScene::DrawPrimitives(render::CCamera* _pCamera)
-  {
-    // Draw primitives
-    for (uint32_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
-    {
-      render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uI];
-      if (!pPrimitive->IsVisible())
-      {
-        continue;
-      }
-
-      bool bDrawPrimitive = true;
-      if (pPrimitive->IsCullEnabled()) // Check culling
-      {
-        bDrawPrimitive = _pCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
-      }
-      if (bDrawPrimitive)
-      {
-        pPrimitive->PushBuffers();
-        pPrimitive->Draw();
-      }
-    }
-
-    // Draw debug primitives
-    for (uint32_t uIndex = 0; uIndex < m_lstDebugItems.GetSize(); uIndex++)
-    {
-      render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugItems[uIndex];
-
-      bool bDrawDebug = true;
-      if (pDebugPrimitive->IsCullEnabled()) // Check culling
-      {
-        bDrawDebug = _pCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
-      }
-      if (bDrawDebug)
-      {
-        pDebugPrimitive->PushBuffers();
-        pDebugPrimitive->Draw();
-      }
-    }
-
-    // Clean after draw
-    m_lstDebugItems.Clear();
   }
   // ------------------------------------
   void CScene::ApplyLighting()

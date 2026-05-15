@@ -30,9 +30,6 @@ namespace render
       CModel(TModelData& _rModelData);
       ~CModel();
 
-      void Draw(render::CRender* _pRender, bool _bDrawModel, uint16_t _uInstanceCount);
-      void PushBuffers(const TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
-
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPos(); }
       void SetRot(const math::CVector3& _v3Rot);
@@ -52,11 +49,13 @@ namespace render
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
 
-      CRenderInstance* CreateInstance();
-      bool RemoveInstance(uint16_t _uInstanceID);
-
+      inline ID3D11Buffer* GetVertexBuffer() const { return m_pVertexBuffer; }
+      inline const TMeshes& GetMeshes() const { return m_lstMeshes; }
       inline TInstances& GetInstances() { return m_lstInstances; }
       inline const TInstances& GetInstances() const { return m_lstInstances; }
+
+      CRenderInstance* CreateInstance();
+      bool RemoveInstance(uint16_t _uInstanceID);
 
       inline std::string GetAssetPath() const { return std::string(m_sAssetPath); }
       inline const bool AllowInstancing() const { return m_lstInstances.GetSize() < m_lstInstances.GetMaxSize(); }
@@ -69,7 +68,6 @@ namespace render
     private:
       // Buffers
       ID3D11Buffer* m_pVertexBuffer = nullptr;
-      ID3D11Buffer* m_pInstanceBuffer = nullptr;
       char m_sAssetPath[128];
 
     private:

@@ -17,7 +17,6 @@ namespace game
     static int iSelectedIdx = -1;
 #ifdef DEBUG_MODE
     static std::vector<std::string> lstDeleteActors = {};
-
     ImGui::Begin("Entity Selector");
     // Show the list of entities
     for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetSize(); ++uIndex)

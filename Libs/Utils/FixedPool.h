@@ -30,7 +30,7 @@ namespace utils
 
       for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
       {
-        if (m_lstAssignedItems[tIndex] == -1)
+        if (m_lstAssignedItems[tIndex] < 0)
         {
           void* pMem = static_cast<void*>(&m_lstPool[tIndex]);
           ItemType* pItem = new (pMem) ItemType(std::forward<Args>(args)...);
@@ -38,13 +38,12 @@ namespace utils
           return pItem;
         }
       }
-
       return nullptr;
     }
 
     inline T* operator[](size_t _tIndex)
     {
-      bool bAssignedBlock = (_tIndex < MAX_ITEMS && m_lstAssignedItems[_tIndex] >= 0);
+      bool bAssignedBlock = (_tIndex < MAX_ITEMS && (m_lstAssignedItems[_tIndex] >= 0));
       return bAssignedBlock ? reinterpret_cast<T*>(&m_lstPool[m_lstAssignedItems[_tIndex]]) : nullptr;
     }
 
@@ -53,9 +52,6 @@ namespace utils
       bool bAssignedBlock = (_tIndex < MAX_ITEMS && (m_lstAssignedItems[_tIndex] >= 0));
       return bAssignedBlock ? reinterpret_cast<const T*>(&m_lstPool[m_lstAssignedItems[_tIndex]]) : nullptr;
     }
-
-    bool Remove(T*& _pItem_);
-    void Clear();
 
     inline T* begin() { return reinterpret_cast<T*>(m_lstPool); }
     inline const T* begin() const { return reinterpret_cast<const T*>(m_lstPool); }
@@ -66,6 +62,9 @@ namespace utils
     inline T* last() { return reinterpret_cast<T*>(&m_lstPool[m_tRegisteredItems > 0 ? (m_tRegisteredItems - 1) : 0]); }
     inline const T* last() const { return reinterpret_cast<const T*>(&m_lstPool[m_tRegisteredItems > 0 ? (m_tRegisteredItems - 1) : 0]); }
 
+    bool Remove(T*& _pItem_);
+    void Clear();
+
     inline const bool IsEmpty() const { return m_tRegisteredItems == 0; }
     inline const size_t GetSize() const { return m_tRegisteredItems; }
     inline const size_t GetMaxSize() const { return MAX_ITEMS; }
@@ -73,10 +72,7 @@ namespace utils
   private:
     void Init()
     {
-      for (size_t i = 0; i < MAX_ITEMS; i++)
-      {
-        m_lstAssignedItems[i] = -1;
-      }
+      m_lstAssignedItems.fill(-1);
     }
 
   private:
@@ -95,8 +91,8 @@ namespace utils
       if (pItem == _pItem_)
       {
         pItem->~T();
-        m_lstAssignedItems[tIndex] = -1;
         _pItem_ = nullptr;
+        m_lstAssignedItems[tIndex] = -1;
 
         std::swap(m_lstAssignedItems[tIndex], m_lstAssignedItems[m_tRegisteredItems - 1]);
         --m_tRegisteredItems;

@@ -103,9 +103,9 @@ namespace utils
       {
         return CWeakPtr<T>();
       }
-      TInternalData& pData = m_lstInternalData[_tIndex];
+      const TInternalData& pData = m_lstInternalData[_tIndex];
       T* pPtr = pData.uPtr.get();
-      return CWeakPtr<T>(pData.uPtr.get(), pPtr ? &pData.tGeneration : nullptr, pData.tGeneration);
+      return CWeakPtr<T>(pPtr, pPtr ? const_cast<size_t*>(&pData.tGeneration) : nullptr, pData.tGeneration);
     }
 
     bool Remove(const CWeakPtr<T>& _pItem_);
