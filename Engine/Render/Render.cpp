@@ -13,14 +13,17 @@
 #include "Engine/Shaders/Forward/SimplePS.h"
 
 // Deferred
-#include "Engine/Render/Renderers/DeferredRenderer.h"
-#include "Engine/Render/Renderers/LightingRenderer.h"
 #include "Engine/Shaders/Deferred/StandardVS.h"
 #include "Engine/Shaders/Deferred/LightsPS.h"
 #include "Engine/Shaders/Deferred/GBufferPS.h"
 #include "Engine/Shaders/Deferred/DrawTriangleVS.h"
 #include "Engine/Shaders/Deferred/ShadowsVS.h"
 #include "Lighting/DirectionalLight.h"
+
+// Renderers
+#include "Engine/Render/Renderers/DeferredRenderer.h"
+#include "Engine/Render/Renderers/LightingRenderer.h"
+#include "Engine/Render/Renderers/ForwardRenderer.h"
 
 // ImGui
 #include "Libs/Macros/GlobalMacros.h"
@@ -313,6 +316,26 @@ namespace render
     if (FAILED(hResult))
     {
       return hResult;
+    }
+
+    // Test global primitive instance buffer
+    rVertexBufferDesc = D3D11_BUFFER_DESC();
+    rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::TPrimitiveInstanceData) * render::gfx::s_uMaxInstances));
+    rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    rSubresourceData = D3D11_SUBRESOURCE_DATA();
+    rSubresourceData.pSysMem = render::gfx::s_tPrimitiveInstanceData; // Global buffer
+    hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &global::dx::s_pPrimitiveInstanceBuffer);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    if (!m_pForwardRenderer)
+    {
+      m_pForwardRenderer = std::make_unique<CForwardRenderer>();
     }
 
     // Setup basic pipeline
@@ -864,10 +887,10 @@ namespace render
   // ------------------------------------
   void CRender::DrawModels(scene::CScene* _pScene)
   {
-    uint16_t uDrawableModels = 0;
+    uint16_t uDrawableCount = 0;
     const scene::TModels& lstModels = _pScene->GetModels();
-    const scene::TCachedModels& lstCacheModels = _pScene->GetCacheModels(uDrawableModels);
-    for (uint16_t uI = 0; uI < uDrawableModels; uI++)
+    const scene::TCachedModels& lstCacheModels = _pScene->GetCacheModels(uDrawableCount);
+    for (uint16_t uI = 0; uI < uDrawableCount; uI++)
     {
       // Handle model
       const scene::TCachedModel& rCachedModel = lstCacheModels[uI];
@@ -935,7 +958,7 @@ namespace render
     }
   }
   // ------------------------------------
-  void CRender::DrawPrimitives(render::CCamera* _pRenderCamera, scene::CScene* _pScene)
+  void CRender::DrawPrimitives(scene::CScene* _pScene)
   {
     // Set input layout
     global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pDebugLayout);
@@ -950,59 +973,31 @@ namespace render
     internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>(internal::s_oPipeline.uTransformSlot);
 
     // Draw primitives
+    uint16_t uDrawableCount = 0;
     const scene::TPrimitives& lstPrimitives = _pScene->GetPrimitives();
-    for (uint32_t uI = 0; uI < lstPrimitives.GetSize(); uI++)
+    const scene::TCachedPrimitives& lstCachedPrimitives = _pScene->GetCachedPrimitives(uDrawableCount);
+    for (uint16_t uI = 0; uI < uDrawableCount; uI++)
     {
-      const render::gfx::CPrimitive* pPrimitive = lstPrimitives[uI];
-#ifdef _DEBUG
-      assert(pPrimitive);
-#endif // DEBUG
-
-      if (!pPrimitive->IsVisible())
-      {
-        continue;
-      }
-
-      bool bDrawPrimitive = true;
-      if (pPrimitive->IsCullEnabled()) // Check culling
-      {
-        bDrawPrimitive = _pRenderCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
-      }
-      if (bDrawPrimitive)
-      {
-        DrawPrimitive(pPrimitive);
-      }
+      DrawPrimitive(lstPrimitives[lstCachedPrimitives[uI]]);
     }
 
     // Draw debug primitives
-    const scene::TDebugItems& lstDebugItems = _pScene->GetDebugItems();
-    for (uint32_t uIndex = 0; uIndex < lstDebugItems.GetSize(); uIndex++)
+    const scene::TDebugPrimitives& lstDebugPrimitives = _pScene->GetDebugPrimitives();
+    const scene::TCachedDebugPrimitives& lstCachedDebugPrimitives = _pScene->GetCachedDebugPrimitives(uDrawableCount);
+    for (uint16_t uI = 0; uI < uDrawableCount; uI++)
     {
-      const render::gfx::CPrimitive* pDebugPrimitive = lstDebugItems[uIndex];
-#ifdef _DEBUG
-assert(pDebugPrimitive);
-#endif // DEBUG
-
-      bool bDrawDebug = true;
-      if (pDebugPrimitive->IsCullEnabled()) // Check culling
-      {
-        bDrawDebug = _pRenderCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
-      }
-      if (bDrawDebug)
-      {
-        DrawPrimitive(pDebugPrimitive);
-      }
+      DrawPrimitive(lstDebugPrimitives[lstCachedDebugPrimitives[uI]]);
     }
 
-    // Flush debug items
-    _pScene->FlushDebugItems();
+    // Clear debug items
+    _pScene->ClearDebugItems();
   }
   // ------------------------------------
   void CRender::DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive)
   {
     // Apply Buffers
     D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-    HRESULT hResult = global::dx::s_pDeviceContext->Map(global::dx::s_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+    HRESULT hResult = global::dx::s_pDeviceContext->Map(global::dx::s_pPrimitiveInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error mapping buffer!");
@@ -1018,11 +1013,11 @@ assert(pDebugPrimitive);
     pInstanceData[uIndex].Color = _pPrimitive->GetColor();
 
     // Unmap
-    global::dx::s_pDeviceContext->Unmap(global::dx::s_pInstanceBuffer, 0);
+    global::dx::s_pDeviceContext->Unmap(global::dx::s_pPrimitiveInstanceBuffer, 0);
 
     // Set vertex buffers
     static const uint32_t uBuffersCount(2);
-    ID3D11Buffer* pBuffers[uBuffersCount] = { _pPrimitive->GetVertexBuffer(), global::dx::s_pInstanceBuffer };
+    ID3D11Buffer* pBuffers[uBuffersCount] = { _pPrimitive->GetVertexBuffer(), global::dx::s_pPrimitiveInstanceBuffer };
 
     uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TPrimitiveData), sizeof(render::gfx::TPrimitiveInstanceData) };
     uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
@@ -1275,7 +1270,14 @@ assert(pDebugPrimitive);
     // Draw primitives (forward rendering)
     BeginMarker(internal::s_sDrawPrimitivesMrk);
     {
-      DrawPrimitives(m_pRenderCamera, _pScene);
+      // Cache primitives
+      _pScene->CachePrimitives(m_pRenderCamera);
+
+      // Cache debug primitives
+      _pScene->CacheDebugPrimitives(m_pRenderCamera);
+
+      // Draw primitives
+      DrawPrimitives(_pScene);
     }
     EndMarker();
 

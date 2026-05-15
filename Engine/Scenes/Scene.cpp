@@ -22,10 +22,22 @@ namespace scene
     Clear();
   }
   // ------------------------------------
-  const TCachedModels& CScene::GetCacheModels(uint16_t& _uDrawableModels_) const
+  const TCachedModels& CScene::GetCacheModels(uint16_t& _uDrawableCount_) const
   {
-    _uDrawableModels_ = m_uDrawableModels;
+    _uDrawableCount_ = m_uDrawableModels;
     return m_lstCachedModels;
+  }
+  // ------------------------------------
+  const scene::TCachedPrimitives& CScene::GetCachedPrimitives(uint16_t& _uDrawableCount_) const
+  {
+    _uDrawableCount_ = m_uDrawablePrimitives;
+    return m_lstCachedPrimitives;
+  }
+  // ------------------------------------
+  const scene::TCachedDebugPrimitives& CScene::GetCachedDebugPrimitives(uint16_t& _uDrawableCount_) const
+  {
+    _uDrawableCount_ = m_uDrawableDebugPrimitives;
+    return m_lstCachedDebugPrimitives;
   }
   // ------------------------------------
   render::gfx::CPrimitive* const CScene::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
@@ -108,7 +120,7 @@ namespace scene
   void CScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
     float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
   {
-    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum temporal items in the current scene");
       return;
@@ -119,7 +131,7 @@ namespace scene
     TCustomPrimitive rData = render::gfx::CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
 
     // Create temporal item + set pos
-    render::gfx::CPrimitive* pPrimitive = m_lstDebugItems.Create(rData, _eRenderMode);
+    render::gfx::CPrimitive* pPrimitive = m_lstDebugPrimitives.Create(rData, _eRenderMode);
 
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
@@ -133,7 +145,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
@@ -141,7 +153,7 @@ namespace scene
 
     // Create cube
     using namespace render::gfx;
-    CPrimitive* pPrimitive = m_lstDebugItems.Create(render::EPrimitive::E3D_CUBE, _eRenderMode);
+    CPrimitive* pPrimitive = m_lstDebugPrimitives.Create(render::EPrimitive::E3D_CUBE, _eRenderMode);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -155,7 +167,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
@@ -171,7 +183,7 @@ namespace scene
       CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
 
     // Create temporal item + set pos
-    CPrimitive* pSpherePrimitive = m_lstDebugItems.Create(rData, _eRenderMode);
+    CPrimitive* pSpherePrimitive = m_lstDebugPrimitives.Create(rData, _eRenderMode);
 #ifdef _DEBUG
     assert(pSpherePrimitive); // Sanity check
 #endif
@@ -183,7 +195,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
@@ -194,7 +206,7 @@ namespace scene
     TCustomPrimitive rData = render::gfx::CPrimitiveUtils::CreatePlane(_rPlane, _eRenderMode);
 
     // Create primitive
-    CPrimitive* pPlanePrimitive = m_lstDebugItems.Create(rData, _eRenderMode);
+    CPrimitive* pPlanePrimitive = m_lstDebugPrimitives.Create(rData, _eRenderMode);
 #ifdef _DEBUG
     assert(pPlanePrimitive); // Sanity check
 #endif
@@ -207,7 +219,7 @@ namespace scene
   // ------------------------------------
   void CScene::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
-    if (m_lstDebugItems.GetSize() >= m_lstDebugItems.GetMaxSize())
+    if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum debug items in the current scene!");
       return;
@@ -217,7 +229,7 @@ namespace scene
     using namespace render::gfx;
     TCustomPrimitive rData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
     // Create temporal item
-    CPrimitive* pPrimitive = m_lstDebugItems.Create(rData, render::ERenderMode::WIREFRAME);
+    CPrimitive* pPrimitive = m_lstDebugPrimitives.Create(rData, render::ERenderMode::WIREFRAME);
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -283,7 +295,52 @@ namespace scene
   // ------------------------------------
   void CScene::CachePrimitives(render::CCamera* _pCamera)
   {
+    // Reset value
+    m_uDrawablePrimitives = 0;
 
+    for (uint16_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
+    {
+      // Handle debug primitive
+      const render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uI];
+      uint16_t& uCachedIdx = m_lstCachedPrimitives[m_uDrawablePrimitives];
+
+      bool bOnFrustum = true;
+      if (pPrimitive->IsCullEnabled()) // Check culling
+      {
+        bOnFrustum = _pCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
+      }
+
+      if (bOnFrustum)
+      {
+        uCachedIdx = uI;
+        m_uDrawablePrimitives++;
+      }
+    }
+  }
+  // ------------------------------------
+  void CScene::CacheDebugPrimitives(render::CCamera* _pCamera)
+  {
+    // Reset value
+    m_uDrawableDebugPrimitives = 0;
+
+    for (uint16_t uI = 0; uI < m_lstDebugPrimitives.GetSize(); uI++)
+    {
+      // Handle debug primitive
+      const render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugPrimitives[uI];
+      uint16_t& uCachedIdx = m_lstCachedDebugPrimitives[m_uDrawableDebugPrimitives];
+
+      bool bOnFrustum = true;
+      if (pDebugPrimitive->IsCullEnabled()) // Check culling
+      {
+        bOnFrustum = _pCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
+      }
+
+      if (bOnFrustum)
+      {
+        uCachedIdx = uI;
+        m_uDrawableDebugPrimitives++;
+      }
+    }
   }
   // ------------------------------------
   void CScene::ApplyLighting()

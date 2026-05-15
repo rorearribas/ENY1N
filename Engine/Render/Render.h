@@ -73,7 +73,7 @@ namespace render
     void ComputeGBuffer(scene::CScene* _pScene);
 
     void DrawModels(scene::CScene* _pScene); 
-    void DrawPrimitives(render::CCamera* _pRenderCamera, scene::CScene* _pScene);
+    void DrawPrimitives(scene::CScene* _pScene);
     void DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive);
 
   private:

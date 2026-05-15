@@ -24,6 +24,7 @@ namespace global
     extern ID3D11Device* s_pDevice;
     extern ID3D11DeviceContext* s_pDeviceContext;
     extern ID3D11Buffer* s_pInstanceBuffer;
+    extern ID3D11Buffer* s_pPrimitiveInstanceBuffer;
 
     // Release memory
     template<typename _ID3D11Resource>
