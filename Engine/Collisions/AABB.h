@@ -4,6 +4,8 @@
 #include "Libs/Math/Vector3.h"
 #include "Libs/Math/Transform.h"
 
+namespace render { namespace gfx { struct TVertexData; } }
+
 namespace collision
 {
   class CAABB
@@ -26,40 +28,13 @@ namespace collision
     void DrawDebug(math::CVector3 _v3Color = math::CVector3::Right) const;
 
   private:
-    math::CVector3 m_v3Min;
-    math::CVector3 m_v3Max;
+    math::CVector3 m_v3Min = math::CVector3::Zero;
+    math::CVector3 m_v3Max = math::CVector3::Zero;
   };
 
-  // Global
-  template<typename T>
-  inline void ComputeLocalAABB(const std::vector<T>& _lstVertexData, collision::CAABB& _rLocalAABB_)
-  {
-    if (_lstVertexData.empty())
-    {
-      return;
-    }
-
-    // Compute AABB
-    math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
-    math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
-
-    for (const auto& rVertexData : _lstVertexData)
-    {
-      // Calculate Min
-      v3Min.x = math::Min(v3Min.x, rVertexData.VertexPos.x);
-      v3Min.y = math::Min(v3Min.y, rVertexData.VertexPos.y);
-      v3Min.z = math::Min(v3Min.z, rVertexData.VertexPos.z);
-
-      // Calculate Max
-      v3Max.x = math::Max(v3Max.x, rVertexData.VertexPos.x);
-      v3Max.y = math::Max(v3Max.y, rVertexData.VertexPos.y);
-      v3Max.z = math::Max(v3Max.z, rVertexData.VertexPos.z);
-    }
-
-    // Set Local AABB
-    _rLocalAABB_.SetMin(v3Min);
-    _rLocalAABB_.SetMax(v3Max);
-  }
-  void ComputeWorldAABB(const collision::CAABB& _rLocalAABB, const math::CTransform& _mTransform, collision::CAABB& _rWorldAABB_);
+  // AABB
+  void ComputeLocalAABB(const std::vector<math::CVector3>& _lstVertices, collision::CAABB& _rLocalAABB_);
+  void ComputeLocalAABB(const std::vector<render::gfx::TVertexData>& _lstVertexData, collision::CAABB& _rLocalAABB_);
+  void ComputeWorldAABB(const collision::CAABB& _rLocalAABB, const math::CTransform& _rTransform, collision::CAABB& _rWorldAABB_);
 }
 

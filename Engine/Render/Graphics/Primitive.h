@@ -16,7 +16,7 @@ namespace render
     class CPrimitive
     {
     public:
-      CPrimitive(TCustomPrimitive& _oData, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
+      CPrimitive(TCustomPrimitive& _rData, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
       CPrimitive(EPrimitive _eType, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
       ~CPrimitive();
 
@@ -54,7 +54,7 @@ namespace render
     private:
       void Clear();
       HRESULT CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode);
-      HRESULT CreateBuffer(const std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData, const std::vector<uint32_t>& _lstIndices);
+      HRESULT CreateBuffer(const std::vector<math::CVector3>& _lstPrimitiveData, const std::vector<uint32_t>& _lstIndices);
 
     private:
       // Buffers

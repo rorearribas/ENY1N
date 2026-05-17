@@ -3,9 +3,10 @@
 #include "Engine/Camera/Camera.h"
 #include "Engine/Shaders/Shader.h"
 
+namespace render { namespace gfx { class CModel; } }
 namespace render { namespace gfx { class CPrimitive; } }
 namespace render { namespace mat { class CMaterial; } }
-namespace scene { class CScene; }
+namespace scene { class CRenderScene; }
 
 namespace render { class CDeferredRenderer; }
 namespace render { class CForwardRenderer; }
@@ -23,7 +24,7 @@ namespace render
     ~CRender();
 
     void PrepareFrame();
-    void Draw(scene::CScene* _pScene);
+    void Draw(scene::CRenderScene* _pScene);
 
     inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
     inline void SetRenderCamera(render::CCamera* _pCamera) { m_pRenderCamera = _pCamera; }
@@ -51,7 +52,7 @@ namespace render
     HRESULT CreateDevice(uint32_t _uWidth, uint32_t _uHeight);
     HRESULT InitPipeline(uint32_t _uWidth, uint32_t _uHeight);
 
-    HRESULT SetupDepthStencils(uint32_t _uWidth, uint32_t _uHeight);
+    HRESULT SetupDepthStencil(uint32_t _uWidth, uint32_t _uHeight);
     HRESULT CreateBackBuffer();
 
     HRESULT CreateRasterizerState(ID3D11RasterizerState*& _pRasterizer_, const D3D11_RASTERIZER_DESC& _rRasterizerCfg);
@@ -69,11 +70,13 @@ namespace render
 
   private:
     // Deferred
-    void DrawOpaqueModels(scene::CScene* _pScene);
-    void ComputeGBuffer(scene::CScene* _pScene);
+    void DrawOpaqueModels(scene::CRenderScene* _pScene);
+    void ComputeGBuffer(scene::CRenderScene* _pScene);
 
-    void DrawModels(scene::CScene* _pScene); 
-    void DrawPrimitives(scene::CScene* _pScene);
+    void DrawModels(scene::CRenderScene* _pScene); 
+    void DrawModel(const render::gfx::CModel* _pModel, bool _bVisible, render::gfx::TDrawableInstances _lstDrawableInstances, uint16_t _uInstanceCount);
+
+    void DrawPrimitives(scene::CRenderScene* _pScene);
     void DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive);
 
   private:

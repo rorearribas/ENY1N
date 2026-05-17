@@ -154,11 +154,13 @@
     <ClInclude Include="Collisions\CapsuleCollider.h" />
     <ClInclude Include="Collisions\CollisionManager.h" />
     <ClInclude Include="Collisions\AABB.h" />
+    <ClInclude Include="Render\Renderers\Renderer.h" />
+    <ClInclude Include="Render\Renderers\ForwardRenderer.h" />
     <ClInclude Include="Render\Renderers\LightingRenderer.h" />
     <ClInclude Include="Render\Renderers\DeferredRenderer.h" />
     <ClInclude Include="Render\Graphics\Decal.h" />
     <ClInclude Include="Managers\MemoryTracker.h" />
-    <ClInclude Include="Render\ConstantBuffer\BufferTypes.h" />
+    <ClInclude Include="Render\Buffers\BufferTypes.h" />
     <ClInclude Include="Render\Graphics\RenderInstance.h" />
     <ClInclude Include="Physics\PhysicsManager.h" />
     <ClInclude Include="Collisions\Collider.h" />
@@ -182,19 +184,20 @@
     <ClInclude Include="Global\GlobalResources.h" />
     <ClInclude Include="Managers\InputManager.h" />
     <ClInclude Include="Render\Lighting\PointLight.h" />
-    <ClInclude Include="Render\ConstantBuffer\ConstantBuffer.h" />
+    <ClInclude Include="Render\Buffers\ConstantBuffer.h" />
     <ClInclude Include="Render\Graphics\Primitive.h" />
     <ClInclude Include="Render\Render.h" />
     <ClInclude Include="Render\Window\RenderWindow.h" />
     <ClInclude Include="Managers\ResourceManager.h" />
     <ClInclude Include="Scenes\SceneManager.h" />
-    <ClInclude Include="Scenes\Scene.h" />
+    <ClInclude Include="Scenes\RenderScene.h" />
     <ClInclude Include="Render\Resources\Texture2D.h" />
     <ClInclude Include="Shaders\Shader.h" />
     <ClInclude Include="Render\Lighting\SpotLight.h" />
     <ClInclude Include="Collisions\SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Render\Renderers\ForwardRenderer.cpp" />
     <ClCompile Include="Render\Renderers\LightingRenderer.cpp" />
     <ClCompile Include="Render\Renderers\DeferredRenderer.cpp" />
     <ClCompile Include="Render\Graphics\ShadowMap.cpp" />
@@ -227,7 +230,7 @@
     <ClCompile Include="Managers\ResourceManager.cpp" />
     <ClCompile Include="Physics\Rigidbody.cpp" />
     <ClCompile Include="Scenes\SceneManager.cpp" />
-    <ClCompile Include="Scenes\Scene.cpp" />
+    <ClCompile Include="Scenes\RenderScene.cpp" />
     <ClCompile Include="Render\Resources\Texture2D.cpp" />
     <ClCompile Include="Render\Lighting\SpotLight.cpp" />
     <ClCompile Include="Collisions\SphereCollider.cpp" />

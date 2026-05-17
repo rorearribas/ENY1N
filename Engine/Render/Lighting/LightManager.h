@@ -1,6 +1,6 @@
 #pragma once
-#include "Engine/Render/ConstantBuffer/BufferTypes.h"
-#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Engine/Render/Buffers/BufferTypes.h"
+#include "Engine/Render/Buffers/ConstantBuffer.h"
 #include "Engine/Render/Lighting/PointLight.h"
 #include "Engine/Render/Lighting/SpotLight.h"
 #include "Engine/Render/Graphics/ShadowMap.h"

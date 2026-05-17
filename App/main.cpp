@@ -102,7 +102,7 @@ int main()
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
     pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-    pModelTest->LoadModel("models/plant/Low-Poly Plant_.fbx");
+    pModelTest->LoadModel("models/spaceship/spaceship.fbx");
     fOffsetZ += 10;
   }
 

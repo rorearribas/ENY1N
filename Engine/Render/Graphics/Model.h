@@ -1,7 +1,7 @@
 #pragma once
 #include "Engine/Render/Graphics/Mesh.h"
 #include "Engine/Render/Graphics/RenderInstance.h"
-#include "Engine/Render/ConstantBuffer/BufferTypes.h"
+#include "Engine/Render/Buffers/BufferTypes.h"
 #include "Engine/Collisions/AABB.h"
 
 #include "Libs/Utils/FixedPool.h"
@@ -16,16 +16,15 @@ namespace render
     typedef std::vector<std::unique_ptr<render::gfx::CMesh>> TMeshes;
     typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxDrawableInstances> TInstances;
 
+    struct TModelData
+    {
+      std::vector<std::unique_ptr<render::gfx::CMesh>> Meshes;
+      std::vector<render::gfx::TVertexData> VertexData;
+      char AssetPath[128];
+    };
+
     class CModel
     {
-    public:
-      struct TModelData
-      {
-        std::vector<std::unique_ptr<render::gfx::CMesh>> Meshes;
-        std::vector<render::gfx::TVertexData> Vertices;
-        char AssetPath[128];
-      };
-
     public:
       CModel(TModelData& _rModelData);
       ~CModel();
@@ -46,10 +45,13 @@ namespace render
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool IsVisible() const { return m_bVisible; }
 
+      inline const uint32_t& GetVertexOffset() const { return m_uVertexOffset; }
+      inline void SetVertexOffset(const uint32_t& _uVertexOffset) { m_uVertexOffset = _uVertexOffset; }
+
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
 
-      inline ID3D11Buffer* GetVertexBuffer() const { return m_pVertexBuffer; }
+      inline std::string GetAssetPath() const { return std::string(m_sAssetPath); }
       inline const TMeshes& GetMeshes() const { return m_lstMeshes; }
       inline TInstances& GetInstances() { return m_lstInstances; }
       inline const TInstances& GetInstances() const { return m_lstInstances; }
@@ -57,23 +59,16 @@ namespace render
       CRenderInstance* CreateInstance();
       bool RemoveInstance(uint16_t _uInstanceID);
 
-      inline std::string GetAssetPath() const { return std::string(m_sAssetPath); }
       inline const bool AllowInstancing() const { return m_lstInstances.GetSize() < m_lstInstances.GetMaxSize(); }
       inline const bool HasInstances() const { return GetInstances().GetSize() > 0; }
 
     private:
-      HRESULT InitModel(TModelData& _rModelData);
       void Clear();
 
     private:
-      // Buffers
-      ID3D11Buffer* m_pVertexBuffer = nullptr;
-      char m_sAssetPath[128];
-
-    private:
-      // Model
       TMeshes m_lstMeshes = TMeshes();
       TInstances m_lstInstances = TInstances();
+      char m_sAssetPath[128];
 
       // Transforms
       math::CTransform m_oTransform = math::CTransform();
@@ -82,6 +77,7 @@ namespace render
 
       bool m_bCullEnabled = true;
       bool m_bVisible = true;
+      uint32_t m_uVertexOffset = 0;
     };
   }
 }

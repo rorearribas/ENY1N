@@ -33,13 +33,9 @@ namespace render
     //------------------------------------------------
     //------------------PRIMITIVES--------------------
     //------------------------------------------------
-    struct TPrimitiveData
-    {
-      math::CVector3 VertexPos = math::CVector3::Zero;
-    };
     struct TCustomPrimitive
     {
-      std::vector<render::gfx::TPrimitiveData> PrimitiveData;
+      std::vector<math::CVector3> Vertices;
       TIndices Indices;
     };
     struct TPrimitiveInstanceData

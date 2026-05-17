@@ -30,7 +30,7 @@
     <ClInclude Include="Camera\Camera.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Scenes\Scene.h">
+    <ClInclude Include="Scenes\RenderScene.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Scenes\SceneManager.h">
@@ -42,7 +42,7 @@
     <ClInclude Include="Managers\InputManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\ConstantBuffer\ConstantBuffer.h">
+    <ClInclude Include="Render\Buffers\ConstantBuffer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\Lighting\PointLight.h">
@@ -114,9 +114,6 @@
     <ClInclude Include="Collisions\AABB.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\RenderTarget.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Render\RenderTypes.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -126,13 +123,28 @@
     <ClInclude Include="Shaders\Deferred\StandardVS.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\ConstantBuffer\BufferTypes.h">
+    <ClInclude Include="Render\Buffers\BufferTypes.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\Graphics\Decal.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\Graphics\ShadowMap.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Renderers\LightingRenderer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Renderers\DeferredRenderer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Resources\RenderTarget.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Renderers\ForwardRenderer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Renderers\Renderer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -152,7 +164,7 @@
     <ClCompile Include="Camera\Camera.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Scenes\Scene.cpp">
+    <ClCompile Include="Scenes\RenderScene.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Scenes\SceneManager.cpp">
@@ -227,9 +239,6 @@
     <ClCompile Include="Collisions\AABB.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\RenderTarget.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="Render\Graphics\RenderInstance.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
@@ -237,6 +246,18 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Graphics\ShadowMap.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Renderers\LightingRenderer.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Renderers\DeferredRenderer.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Resources\RenderTarget.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Renderers\ForwardRenderer.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

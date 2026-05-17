@@ -25,7 +25,65 @@ namespace collision
     pEngine->DrawCube(GetCenter(), math::CVector3::Zero, GetSize(), _v3Color, render::ERenderMode::WIREFRAME);
   }
   // ------------------------------------
-  void ComputeWorldAABB(const CAABB& _rLocalAABB, const math::CTransform& _mTransform, CAABB& _rWorldAABB_)
+  void ComputeLocalAABB(const std::vector<math::CVector3>& _lstVertices, CAABB& _rLocalAABB_)
+  {
+    if (_lstVertices.empty())
+    {
+      return;
+    }
+
+    // Compute AABB
+    math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
+    math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+    for (const math::CVector3& Vertex : _lstVertices)
+    {
+      // Calculate Min
+      v3Min.x = math::Min(v3Min.x, Vertex.x);
+      v3Min.y = math::Min(v3Min.y, Vertex.y);
+      v3Min.z = math::Min(v3Min.z, Vertex.z);
+
+      // Calculate Max
+      v3Max.x = math::Max(v3Max.x, Vertex.x);
+      v3Max.y = math::Max(v3Max.y, Vertex.y);
+      v3Max.z = math::Max(v3Max.z, Vertex.z);
+    }
+
+    // Set Local AABB
+    _rLocalAABB_.SetMin(v3Min);
+    _rLocalAABB_.SetMax(v3Max);
+  }
+  // ------------------------------------
+  void ComputeLocalAABB(const std::vector<render::gfx::TVertexData>& _lstVertexData, CAABB& _rLocalAABB_)
+  {
+    if (_lstVertexData.empty())
+    {
+      return;
+    }
+
+    // Compute AABB
+    math::CVector3 v3Min(FLT_MAX, FLT_MAX, FLT_MAX);
+    math::CVector3 v3Max(-FLT_MAX, -FLT_MAX, -FLT_MAX);
+
+    for (const auto& rVertexData : _lstVertexData)
+    {
+      // Calculate Min
+      v3Min.x = math::Min(v3Min.x, rVertexData.VertexPos.x);
+      v3Min.y = math::Min(v3Min.y, rVertexData.VertexPos.y);
+      v3Min.z = math::Min(v3Min.z, rVertexData.VertexPos.z);
+
+      // Calculate Max
+      v3Max.x = math::Max(v3Max.x, rVertexData.VertexPos.x);
+      v3Max.y = math::Max(v3Max.y, rVertexData.VertexPos.y);
+      v3Max.z = math::Max(v3Max.z, rVertexData.VertexPos.z);
+    }
+
+    // Set Local AABB
+    _rLocalAABB_.SetMin(v3Min);
+    _rLocalAABB_.SetMax(v3Max);
+  }
+  // ------------------------------------
+  void ComputeWorldAABB(const CAABB& _rLocalAABB, const math::CTransform& _rTransform, CAABB& _rWorldAABB_)
   {
     const int iExtentsCount = 8;
     math::CVector3 lstExtents[iExtentsCount];
@@ -38,7 +96,7 @@ namespace collision
     for (uint32_t uI = 0; uI < iExtentsCount; uI++)
     {
       // Calculate extent pos
-      math::CVector3 v3Extent = _mTransform.GetMatrix() * lstExtents[uI];
+      math::CVector3 v3Extent = _rTransform.GetMatrix() * lstExtents[uI];
 
       // Calculate Min
       v3Min.x = math::Min(v3Min.x, v3Extent.x);

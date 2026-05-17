@@ -42,10 +42,10 @@ char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
   return cBuffer;
 }
 // ------------------------------------
-std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sPath)
+render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)
 {
   // Create importer instance
-  Assimp::Importer rImporter;
+  Assimp::Importer rImporter = Assimp::Importer();
 
   // Set config
   rImporter.SetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, false);
@@ -60,7 +60,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
   if (!pScene)
   {
     ERROR_LOG("Error loading model! " << rImporter.GetErrorString());
-    return nullptr;
+    return render::gfx::TModelData();
   }
 
   // Materials
@@ -127,7 +127,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
   }
 
   // Create model data
-  render::gfx::CModel::TModelData rModelData = render::gfx::CModel::TModelData();
+  render::gfx::TModelData rModelData = render::gfx::TModelData();
   memcpy(rModelData.AssetPath, _sPath, 128); // Set path
 
   // Rotation
@@ -146,11 +146,11 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
     std::vector<uint32_t> lstIndices;
     for (uint32_t uJ = 0; uJ < pSceneMesh->mNumFaces; uJ++)
     {
-      const aiFace& oFace = pSceneMesh->mFaces[uJ];
-      for (uint32_t uK = 0; uK < oFace.mNumIndices; uK++)
+      const aiFace& rVertexFace = pSceneMesh->mFaces[uJ];
+      for (uint32_t uK = 0; uK < rVertexFace.mNumIndices; uK++)
       {
         render::gfx::TVertexData rVertexData = render::gfx::TVertexData();
-        uint32_t uPosIdx = oFace.mIndices[uK];
+        uint32_t uPosIdx = rVertexFace.mIndices[uK];
 
         // Position
         aiVector3D v3Pos = pSceneMesh->mVertices[uPosIdx];
@@ -187,7 +187,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
         {
           uint32_t uNewIdx = static_cast<uint32_t>(mVertexMap.size());
           mVertexMap[rVertexData] = uNewIdx;
-          rModelData.Vertices.emplace_back(std::move(rVertexData));
+          rModelData.VertexData.emplace_back(std::move(rVertexData));
           lstIndices.emplace_back(uNewIdx);
         }
       }
@@ -209,9 +209,7 @@ std::unique_ptr<render::gfx::CModel> CResourceManager::LoadModel(const char* _sP
   }
 
   SUCCESS_LOG("Loaded model data! -> " << _sPath);
-  std::unique_ptr<render::gfx::CModel> pModel = std::make_unique<render::gfx::CModel>(rModelData);
-  SUCCESS_LOG("Created model! -> " << _sPath);
-  return pModel;
+  return rModelData;
 }
 // ------------------------------------
 unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)

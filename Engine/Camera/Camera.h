@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Render/ConstantBuffer/BufferTypes.h"
+#include "Engine/Render/Buffers/BufferTypes.h"
 #include "Engine/Collisions/AABB.h"
 #include "Engine/Utils/Plane.h"
 

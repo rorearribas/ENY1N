@@ -1,11 +1,11 @@
 #include "Render.h"
 
 #include "Engine/Global/GlobalResources.h"
-#include "Engine/Render/ConstantBuffer/BufferTypes.h"
-#include "Engine/Render/ConstantBuffer/ConstantBuffer.h"
+#include "Engine/Render/Buffers/BufferTypes.h"
+#include "Engine/Render/Buffers/ConstantBuffer.h"
 #include "Engine/Render/Graphics/ShadowMap.h"
 #include "Engine/Render/Resources/RenderTarget.h"
-#include "Engine/Scenes/Scene.h"
+#include "Engine/Scenes/RenderScene.h"
 #include "RenderTypes.h"
 
 // Debug
@@ -30,6 +30,7 @@
 #include "Libs/ImGui/imgui_impl_win32.h"
 #include "Libs/ImGui/imgui_impl_dx11.h"
 #include "Libs/ImGui/ImGuizmo.h"
+#include <d3d11.h>
 
 namespace render
 {
@@ -80,63 +81,60 @@ namespace render
     struct TRenderPipeline
     {
       // Swap chain + back buffer
-      IDXGISwapChain* pSwapChain = nullptr;
-      ID3D11RenderTargetView* pBackBuffer = nullptr;
+      IDXGISwapChain* SwapChain = nullptr;
+      ID3D11RenderTargetView* BackBuffer = nullptr;
 
-      // Deferred shading
-      ID3D11SamplerState* pLinearSampler = nullptr;
-      ID3D11SamplerState* pShadowSampler = nullptr;
+      // Samplers
+      ID3D11SamplerState* LinearSampler = nullptr;
+      ID3D11SamplerState* ShadowSampler = nullptr;
 
-      // Constant buffers
-      CConstantBuffer<TTransforms> tTransformsBuffer;
-      static constexpr uint32_t uTransformSlot = 0;
+      // Instancing buffers
+      ID3D11Buffer* InstanceBuffer = nullptr;
+      ID3D11Buffer* PrimitiveInstanceBuffer = nullptr;
 
-      CConstantBuffer<TLightView> tLightViewBuffer;
-      static constexpr uint32_t uLightViewSlot = 2;
-
-      CConstantBuffer<TMaterialInfo> tMaterialInfoBuffer;
-      static constexpr uint32_t uMaterialInfoSlot = 0;
+      // Global constant buffers
+      CConstantBuffer<TCameraTransform> CameraTransformBuffer;
+      static constexpr uint32_t CameraTransformSlot = 0;
+      CConstantBuffer<TLightView> LightingViewBuffer;
+      static constexpr uint32_t LightingViewSlot = 2;
+      CConstantBuffer<TMaterialInfo> MaterialBuffer;
+      static constexpr uint32_t MaterialSlot = 0;
 
       // Depth
-      texture::TDepthStencil rDepthStencil;
-      texture::TShaderResource rDepthTexture;
-
-      // Stencils
-      ID3D11DepthStencilState* pZPrepassStencilState = nullptr;
-      ID3D11DepthStencilState* pDeferredStencilState = nullptr;
-      ID3D11DepthStencilState* pDebugStencilState = nullptr;
+      ID3D11DepthStencilState* DepthStencilState = nullptr;
+      texture::TDepthStencil DepthStencil;
+      texture::TShaderResource DepthTexture;
 
       // Rasterizer
-      ID3D11RasterizerState* pDeferredRasterizer = nullptr;
-      ID3D11RasterizerState* pShadowsRasterizer = nullptr;
-      D3D11_RASTERIZER_DESC rRasterizerCfg = D3D11_RASTERIZER_DESC();
+      ID3D11RasterizerState* DeferredRasterizer = nullptr;
+      ID3D11RasterizerState* ShadowsRasterizer = nullptr;
+      D3D11_RASTERIZER_DESC RasterizerCfg = D3D11_RASTERIZER_DESC();
 
       // Blend
-      ID3D11BlendState* pBlendState = nullptr;
-      D3D11_RENDER_TARGET_BLEND_DESC rBlendStateCfg = D3D11_RENDER_TARGET_BLEND_DESC();
+      ID3D11BlendState* BlendState = nullptr;
+      D3D11_RENDER_TARGET_BLEND_DESC BlendStateCfg = D3D11_RENDER_TARGET_BLEND_DESC();
 
       // Layouts
-      ID3D11InputLayout* pStandardLayout = nullptr;
-      ID3D11InputLayout* pDebugLayout = nullptr;
+      ID3D11InputLayout* StandardLayout = nullptr;
+      ID3D11InputLayout* DebugLayout = nullptr;
 
       // Debug
       ID3DUserDefinedAnnotation* pUserMarker = nullptr;
 
       // Forward
-      shader::CShader<EShader::E_VERTEX> rForwardVS;
-      shader::CShader<EShader::E_PIXEL> rForwardPS;
+      shader::CShader<EShader::E_VERTEX> ForwardVS;
+      shader::CShader<EShader::E_PIXEL> ForwardPS;
 
       // Deferred
-      shader::CShader<EShader::E_VERTEX> rDrawTriangleVS;
-      shader::CShader<EShader::E_VERTEX> rDeferredShadowsVS;
-      shader::CShader<EShader::E_VERTEX> rDeferredVS;
+      shader::CShader<EShader::E_VERTEX> DrawTriangleVS;
+      shader::CShader<EShader::E_VERTEX> DeferredShadowsVS;
+      shader::CShader<EShader::E_VERTEX> DeferredVS;
 
-      shader::CShader<EShader::E_PIXEL> rDeferredGBuffer;
-      shader::CShader<EShader::E_PIXEL> rDeferredLights;
+      shader::CShader<EShader::E_PIXEL> DeferredGBuffer;
+      shader::CShader<EShader::E_PIXEL> DeferredLights;
     };
 
-    static TRenderPipeline s_oPipeline;
-    static TTransforms s_oTransforms;
+    static TRenderPipeline Pipeline;
 
     class CRenderState
     {
@@ -160,7 +158,7 @@ namespace render
         {
           return;
         }
-        
+
         if (ConstantBufferVS[_uSlot] != _pBuffer)
         {
           ConstantBufferVS[_uSlot] = _pBuffer;
@@ -212,7 +210,7 @@ namespace render
           }
         }
 
-        global::dx::s_pDeviceContext->OMSetRenderTargets(uNumViews, RenderTargets, pDepthStencilView);
+        global::api::DeviceContext->OMSetRenderTargets(uNumViews, RenderTargets, pDepthStencilView);
 
         DirtyRTMask = 0;
         DirtyDepthStencil = false;
@@ -245,52 +243,317 @@ namespace render
     ImGui::DestroyContext();
 
     // Clear constant buffer
-    internal::s_oPipeline.tTransformsBuffer.Release();
-    internal::s_oPipeline.tLightViewBuffer.Release();
-    internal::s_oPipeline.tMaterialInfoBuffer.Release();
+    internal::Pipeline.CameraTransformBuffer.Release();
+    internal::Pipeline.LightingViewBuffer.Release();
+    internal::Pipeline.MaterialBuffer.Release();
 
     // Release depth textures
-    internal::s_oPipeline.rDepthStencil.Release();
-    internal::s_oPipeline.rDepthTexture.Release();
+    internal::Pipeline.DepthStencil.Release();
+    internal::Pipeline.DepthTexture.Release();
 
     // Release shaders (forward)
-    internal::s_oPipeline.rForwardVS.Release();
-    internal::s_oPipeline.rForwardPS.Release();
+    internal::Pipeline.ForwardVS.Release();
+    internal::Pipeline.ForwardPS.Release();
 
     // Release shaders (deferred)
-    internal::s_oPipeline.rDeferredVS.Release();
-    internal::s_oPipeline.rDrawTriangleVS.Release();
-    internal::s_oPipeline.rDeferredShadowsVS.Release();
-    internal::s_oPipeline.rDeferredGBuffer.Release();
-    internal::s_oPipeline.rDeferredLights.Release();
+    internal::Pipeline.DeferredVS.Release();
+    internal::Pipeline.DrawTriangleVS.Release();
+    internal::Pipeline.DeferredShadowsVS.Release();
+    internal::Pipeline.DeferredGBuffer.Release();
+    internal::Pipeline.DeferredLights.Release();
 
-    // Release stencils
-    global::dx::SafeRelease(internal::s_oPipeline.pZPrepassStencilState);
-    global::dx::SafeRelease(internal::s_oPipeline.pDeferredStencilState);
-    global::dx::SafeRelease(internal::s_oPipeline.pDebugStencilState);
-
-    // Release layouts
-    global::dx::SafeRelease(internal::s_oPipeline.pStandardLayout);
-    global::dx::SafeRelease(internal::s_oPipeline.pDebugLayout);
+    // Layout + states
+    global::api::SafeRelease(internal::Pipeline.DepthStencilState);
+    global::api::SafeRelease(internal::Pipeline.StandardLayout);
+    global::api::SafeRelease(internal::Pipeline.DebugLayout);
 
     // Release rasterizer, blending..
-    global::dx::SafeRelease(internal::s_oPipeline.pLinearSampler);
-    global::dx::SafeRelease(internal::s_oPipeline.pShadowSampler);
-    global::dx::SafeRelease(internal::s_oPipeline.pDeferredRasterizer);
-    global::dx::SafeRelease(internal::s_oPipeline.pShadowsRasterizer);
-    global::dx::SafeRelease(internal::s_oPipeline.pBlendState);
-    global::dx::SafeRelease(internal::s_oPipeline.pUserMarker);
+    global::api::SafeRelease(internal::Pipeline.LinearSampler);
+    global::api::SafeRelease(internal::Pipeline.ShadowSampler);
+    global::api::SafeRelease(internal::Pipeline.DeferredRasterizer);
+    global::api::SafeRelease(internal::Pipeline.ShadowsRasterizer);
+    global::api::SafeRelease(internal::Pipeline.BlendState);
+    global::api::SafeRelease(internal::Pipeline.pUserMarker);
+
+    global::api::SafeRelease(internal::Pipeline.InstanceBuffer);
+    global::api::SafeRelease(internal::Pipeline.PrimitiveInstanceBuffer);
 
     // Release swap chain
-    global::dx::SafeRelease(internal::s_oPipeline.pSwapChain);
-    global::dx::SafeRelease(internal::s_oPipeline.pBackBuffer);
+    global::api::SafeRelease(internal::Pipeline.SwapChain);
+    global::api::SafeRelease(internal::Pipeline.BackBuffer);
 
     // Release device context then device
-    global::dx::SafeRelease(global::dx::s_pDevice);
-    global::dx::SafeRelease(global::dx::s_pDeviceContext);
+    global::api::SafeRelease(global::api::Device);
+    global::api::SafeRelease(global::api::DeviceContext);
 
     // Release render window
     global::ReleaseObject(m_pRenderWindow);
+  }
+  // ------------------------------------
+  void CRender::PrepareFrame()
+  {
+    // Clear resources
+    BeginMarker(internal::s_sPrepareFrameMrk);
+    {
+      // Clear back buffer
+      global::api::DeviceContext->ClearRenderTargetView(internal::Pipeline.BackBuffer, internal::s_v4ClearColor);
+
+      // Clear RTs
+      m_pDeferredRenderer->ClearRenderTargets(internal::s_v4ClearColor);
+
+      // Clear depth stencil view
+      global::api::DeviceContext->ClearDepthStencilView(internal::Pipeline.DepthStencil.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+      // Prepare ImGu
+      ImGui_ImplDX11_NewFrame();
+      ImGui_ImplWin32_NewFrame();
+      ImGui::NewFrame();
+
+      // ImGuizmo
+      ImGuizmo::BeginFrame();
+    }
+    EndMarker();
+  }
+  // ------------------------------------
+  void CRender::Draw(scene::CRenderScene* _pScene)
+  {
+    // Set model vertex/index buffer
+    static const uint32_t uBuffersCount(2);
+    ID3D11Buffer* pBuffers[uBuffersCount] = { _pScene->GetModelsVB(), internal::Pipeline.InstanceBuffer };
+
+    uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
+    uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
+    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
+    global::api::DeviceContext->IASetIndexBuffer(_pScene->GetModelsIB(), DXGI_FORMAT_R32_UINT, 0);
+
+    // Calculate projection and invert projection
+#ifdef _DEBUG
+    assert(m_pRenderCamera);
+#endif
+    math::CMatrix4x4 mViewProjection = m_pRenderCamera->GetViewProjection();
+    TCameraTransform rTransforms = TCameraTransform();
+    rTransforms.ViewProjection = mViewProjection;
+    rTransforms.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
+    // Write
+    bool bOk = internal::Pipeline.CameraTransformBuffer.WriteBuffer(rTransforms);
+    UNUSED_VAR(bOk);
+#ifdef _DEBUG
+    assert(bOk);
+#endif
+
+    // Draw models
+    BeginMarker(internal::s_sDrawGBufferMrk);
+    {
+      // Cache models
+      _pScene->CacheModels(m_pRenderCamera);
+
+      // Draw models
+      DrawOpaqueModels(_pScene);
+
+      // Compute lighting
+      render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
+
+      BeginMarker(internal::s_sComputeShadowsMrk);
+      {
+        const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
+        render::lights::CDirectionalLight* pDirectionalLight = pLightManager->GetDirectionalLight();
+
+        bool bCastShadows = pDirectionalLight && pDirectionalLight->CastShadows();
+        if (bCastShadows && lstShadowMaps.GetSize() > 0)
+        {
+          // Set custom rasterizer for shadow mapping
+          global::api::DeviceContext->RSSetState(internal::Pipeline.ShadowsRasterizer);
+          {
+            // Clear depth stencil view
+            const render::gfx::CShadowMap* pShadowMap = lstShadowMaps[0];
+            const texture::TDepthStencil& rShadowDepth = pShadowMap->GetShadowDepth();
+            global::api::DeviceContext->ClearDepthStencilView(rShadowDepth.GetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+
+            // Configure viewport
+            uint32_t uWidth = 0, uHeight = 0;
+            rShadowDepth.GetTextureSize(uWidth, uHeight);
+            SetViewport(uWidth, uHeight);
+
+            // Create view matrix from directional light
+            const float fMaxDistance = 50.0f;
+            math::CVector3 v3Dir = pLightManager->GetDirectionalLight()->GetDir();
+            math::CVector3 v3SceneCenter = m_pRenderCamera->GetPos() + (m_pRenderCamera->GetDir() * fMaxDistance); // Max distance
+            math::CVector3 v3ShadowPos = v3SceneCenter + (v3Dir * (fMaxDistance * 2.0f)); // Get shadow pos
+            math::CVector3 v3ShadowCameraPos = v3SceneCenter + (-v3Dir * (fMaxDistance * 2.0f)); // Get shadow camera pos
+
+            // Orthographic values ( testing )
+            float fHeight = 100.0f;
+            float fAspectRatio = static_cast<float>(uWidth / static_cast<float>(uHeight));
+            float fWidth = fHeight * fAspectRatio;
+            float fNear = m_pRenderCamera->GetNear();
+            float fFar = m_pRenderCamera->GetFar();
+
+            math::CMatrix4x4 mOrthographicProj = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar);
+            math::CMatrix4x4 mView = math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp);
+
+#ifdef _DEBUG
+            assert(m_pShadowCamera);
+#endif
+            // Configure shadow camera
+            m_pShadowCamera->SetProjectionMode(EProjectionMode::ORTOGRAPHIC);
+            m_pShadowCamera->SetOrthographicSize(fHeight);
+            m_pShadowCamera->SetProjectionMatrix(mOrthographicProj);
+            m_pShadowCamera->SetViewMatrix(mView);
+
+            m_pShadowCamera->SetPos(v3ShadowCameraPos);
+            m_pShadowCamera->SetDir(v3Dir);
+            m_pShadowCamera->SetAspectRatio(fAspectRatio);
+
+            m_pShadowCamera->SetNear(fNear);
+            m_pShadowCamera->SetFar(fFar);
+
+            // Build frustum planes
+            m_pShadowCamera->BuildFrustumPlanes();
+
+            TLightView rLightView = TLightView();
+            rLightView.LightViewProjection = m_pShadowCamera->GetViewProjection();
+
+            // Write buffer
+            bOk = internal::Pipeline.LightingViewBuffer.WriteBuffer(rLightView);
+#ifdef _DEBUG
+            assert(bOk);
+#endif // DEBUG
+            internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
+
+            // Set render target
+            global::api::DeviceContext->OMSetRenderTargets(0, nullptr, rShadowDepth.GetView());
+
+            // Set depth stencil state
+            ID3D11DepthStencilState* pCurrentStencilState = nullptr;
+            uint32_t uCurrentRef = 0;
+            global::api::DeviceContext->OMGetDepthStencilState(&pCurrentStencilState, &uCurrentRef);
+            if (pCurrentStencilState != internal::Pipeline.DepthStencilState)
+            {
+              global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
+            }
+
+            // Attach vertex shader for shadows (vertex shader)
+            internal::Pipeline.DeferredShadowsVS.Attach();
+            // Detach pixel shader for models
+            internal::Pipeline.DeferredGBuffer.Detach();
+
+            // Cache models
+            _pScene->CacheModels(m_pShadowCamera);
+
+            // Draw models only in z-prepass pass from the light view
+            DrawModels(_pScene);
+
+            uint32_t uRenderWidth = 0, uRenderHeight = 0;
+            m_pRenderWindow->GetWindowSize(uRenderWidth, uRenderHeight);
+            SetViewport(uRenderWidth, uRenderHeight);
+          }
+          // Restore rasterizer
+          global::api::DeviceContext->RSSetState(internal::Pipeline.DeferredRasterizer);
+        }
+      }
+      EndMarker();
+
+      // Compute lighting
+      pLightManager->ApplyLighting();
+
+      // Compute GBuffer
+      ComputeGBuffer(_pScene);
+    }
+    EndMarker();
+
+    // Draw primitives (forward rendering)
+    BeginMarker(internal::s_sDrawPrimitivesMrk);
+    {
+      // Cache primitives
+      _pScene->CachePrimitives(m_pRenderCamera);
+
+      // Cache debug primitives
+      _pScene->CacheDebugPrimitives(m_pRenderCamera);
+
+      // Draw primitives
+      DrawPrimitives(_pScene);
+    }
+    EndMarker();
+
+    // Update resources
+    global::api::DeviceContext->OMSetBlendState(internal::Pipeline.BlendState, nullptr, 0xFFFFFFFF);
+    global::api::DeviceContext->RSSetState(internal::Pipeline.DeferredRasterizer);
+
+    // Render ImGui
+    BeginMarker(internal::s_sImGuiMarker);
+    {
+      ::ImGui::Render();
+      ::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+    }
+    EndMarker();
+
+    // Present
+    const uint32_t uFlags = 0;
+    internal::Pipeline.SwapChain->Present(m_bVerticalSync, uFlags);
+  }
+  // ------------------------------------
+  void CRender::SetFillMode(D3D11_FILL_MODE _eFillMode)
+  {
+    // Update rasterizer
+    internal::Pipeline.RasterizerCfg.FillMode = _eFillMode;
+    CreateRasterizerState(internal::Pipeline.DeferredRasterizer, internal::Pipeline.RasterizerCfg);
+  }
+  // ------------------------------------
+  void CRender::PushMaterial(const render::mat::CMaterial* _pMaterial)
+  {
+    if (!_pMaterial)
+    {
+      return;
+    }
+
+    // Set material info
+    TMaterialInfo rMaterialInfo = TMaterialInfo();
+    rMaterialInfo.DiffuseColor = _pMaterial->GetDiffuseColor();
+    rMaterialInfo.SpecularColor = _pMaterial->GetSpecularColor();
+
+    texture::TSharedTexture pDiffuse = _pMaterial->GetTexture(render::ETexture::DIFFUSE);
+    rMaterialInfo.HasDiffuseTexture = static_cast<bool>(pDiffuse);
+    texture::TSharedTexture pNormal = _pMaterial->GetTexture(render::ETexture::NORMAL);
+    rMaterialInfo.HasNormalTexture = static_cast<bool>(pNormal);
+    texture::TSharedTexture pSpecular = _pMaterial->GetTexture(render::ETexture::SPECULAR);
+    rMaterialInfo.HasSpecularTexture = static_cast<bool>(pSpecular);
+
+    // Write buffer
+    bool bOk = internal::Pipeline.MaterialBuffer.WriteBuffer(rMaterialInfo);
+    UNUSED_VAR(bOk);
+#ifdef _DEBUG
+    assert(bOk);
+#endif // DEBUG
+
+    // Set textures 
+    const uint32_t uTexturesSize(3);
+    ID3D11ShaderResourceView* lstTextures[uTexturesSize] =
+    {
+      rMaterialInfo.HasDiffuseTexture ? pDiffuse->GetView() : nullptr,
+      rMaterialInfo.HasNormalTexture ? pNormal->GetView() : nullptr,
+      rMaterialInfo.HasSpecularTexture ? pSpecular->GetView() : nullptr
+    };
+
+    // Bind shaders
+    global::api::DeviceContext->PSSetShaderResources(0, uTexturesSize, lstTextures);
+  }
+  // ------------------------------------
+  void CRender::OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight)
+  {
+    // Remove current target view
+    global::api::SafeRelease(internal::Pipeline.BackBuffer);
+
+    // Resize buffers
+    HRESULT hResult = internal::Pipeline.SwapChain->ResizeBuffers(0, _uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+#ifdef _DEBUG
+    assert(!FAILED(hResult));
+#endif // DEBUG
+
+    // Init pipeline
+    hResult = InitPipeline(_uWidth, _uHeight);
+#ifdef _DEBUG
+    assert(!FAILED(hResult));
+#endif // DEBUG
   }
   // ------------------------------------
   HRESULT CRender::Init(uint32_t _uX, uint32_t _uY)
@@ -312,7 +575,7 @@ namespace render
 
     D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
     rSubresourceData.pSysMem = render::gfx::s_tModelInstanceData; // Global buffer
-    hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &global::dx::s_pInstanceBuffer);
+    hResult = global::api::Device->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &internal::Pipeline.InstanceBuffer);
     if (FAILED(hResult))
     {
       return hResult;
@@ -327,7 +590,7 @@ namespace render
 
     rSubresourceData = D3D11_SUBRESOURCE_DATA();
     rSubresourceData.pSysMem = render::gfx::s_tPrimitiveInstanceData; // Global buffer
-    hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &global::dx::s_pPrimitiveInstanceBuffer);
+    hResult = global::api::Device->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &internal::Pipeline.PrimitiveInstanceBuffer);
     if (FAILED(hResult))
     {
       return hResult;
@@ -380,91 +643,98 @@ namespace render
     global::delegates::s_lstOnWindowResizeDelegates.emplace_back(rDelegate);
 
     // Get user def
-    return global::dx::s_pDeviceContext->QueryInterface
+    return global::api::DeviceContext->QueryInterface
     (
       __uuidof(ID3DUserDefinedAnnotation),
-      reinterpret_cast<void**>(&internal::s_oPipeline.pUserMarker)
+      reinterpret_cast<void**>(&internal::Pipeline.pUserMarker)
     );
   }
   // ------------------------------------
-  HRESULT CRender::InitShaders()
+  HRESULT CRender::SetupDeferredRendering(uint32_t _uWidth, uint32_t _uHeight)
   {
-    // Forward shaders
-    internal::s_oPipeline.rForwardVS.Release();
-    HRESULT hResult = internal::s_oPipeline.rForwardVS.Init(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
+    // Create renderer
+    if (!m_pDeferredRenderer)
+    {
+      m_pDeferredRenderer = std::make_unique<CDeferredRenderer>(this);
+    }
+    HRESULT hResult = m_pDeferredRenderer->Init(_uWidth, _uHeight);
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    internal::s_oPipeline.rForwardPS.Release();
-    hResult = internal::s_oPipeline.rForwardPS.Init(g_SimplePS, ARRAYSIZE(g_SimplePS));
+    // Linear sampler
+    D3D11_SAMPLER_DESC rSamplerDesc = D3D11_SAMPLER_DESC();
+    rSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    rSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    rSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    rSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    rSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    rSamplerDesc.BorderColor[0] = 0.0f;
+    rSamplerDesc.BorderColor[1] = 0.0f;
+    rSamplerDesc.BorderColor[2] = 0.0f;
+    rSamplerDesc.BorderColor[3] = 0.0f;
+    rSamplerDesc.MaxAnisotropy = 16u;
+    rSamplerDesc.MipLODBias = 0.0f;
+    rSamplerDesc.MinLOD = 0.0f;
+    rSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    // Create simple sampler
+    global::api::SafeRelease(internal::Pipeline.LinearSampler);
+    hResult = global::api::Device->CreateSamplerState(&rSamplerDesc, &internal::Pipeline.LinearSampler);
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Deferred shaders
-    internal::s_oPipeline.rDeferredVS.Release();
-    hResult = internal::s_oPipeline.rDeferredVS.Init(g_StandardVS, ARRAYSIZE(g_StandardVS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
+    // Shadow sampler
+    D3D11_SAMPLER_DESC rShadowSampler = D3D11_SAMPLER_DESC();
+    rShadowSampler.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+    rShadowSampler.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    rShadowSampler.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    rShadowSampler.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    rShadowSampler.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+    rShadowSampler.BorderColor[0] = 1.0f;
+    rShadowSampler.BorderColor[1] = 1.0f;
+    rShadowSampler.BorderColor[2] = 1.0f;
+    rShadowSampler.BorderColor[3] = 1.0f;
+    rShadowSampler.MaxAnisotropy = 1u;
+    rShadowSampler.MinLOD = 0.0f;
+    rShadowSampler.MaxLOD = 0.0f;
 
-    internal::s_oPipeline.rDeferredShadowsVS.Release();
-    hResult = internal::s_oPipeline.rDeferredShadowsVS.Init(g_ShadowsVS, ARRAYSIZE(g_ShadowsVS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::s_oPipeline.rDrawTriangleVS.Release();
-    hResult = internal::s_oPipeline.rDrawTriangleVS.Init(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::s_oPipeline.rDeferredGBuffer.Release();
-    hResult = internal::s_oPipeline.rDeferredGBuffer.Init(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::s_oPipeline.rDeferredLights.Release();
-    return internal::s_oPipeline.rDeferredLights.Init(g_LightsPS, ARRAYSIZE(g_LightsPS));
+    // Create shadow sampler
+    global::api::SafeRelease(internal::Pipeline.ShadowSampler);
+    return global::api::Device->CreateSamplerState(&rShadowSampler, &internal::Pipeline.ShadowSampler);
   }
   // ------------------------------------
   HRESULT CRender::InitConstantBuffers()
   {
     // Transforms buffer
-    HRESULT hResult = internal::s_oPipeline.tTransformsBuffer.Init();
+    HRESULT hResult = internal::Pipeline.CameraTransformBuffer.Init();
     if (FAILED(hResult))
     {
       return hResult;
     }
     // Light view buffer
-    hResult = internal::s_oPipeline.tLightViewBuffer.Init();
+    hResult = internal::Pipeline.LightingViewBuffer.Init();
     if (FAILED(hResult))
     {
       return hResult;
     }
     // Material info buffer
-    return internal::s_oPipeline.tMaterialInfoBuffer.Init();
+    return internal::Pipeline.MaterialBuffer.Init();
   }
   // ------------------------------------
   HRESULT CRender::SetupLayouts()
   {
     // Create standard layout
-    HRESULT hResult = global::dx::s_pDevice->CreateInputLayout
+    HRESULT hResult = global::api::Device->CreateInputLayout
     (
       internal::s_tStandardLayout,
       internal::s_iStandardLayoutSize,
       g_StandardVS,
       sizeof(g_StandardVS),
-      &internal::s_oPipeline.pStandardLayout
+      &internal::Pipeline.StandardLayout
     );
     if (FAILED(hResult))
     {
@@ -472,132 +742,64 @@ namespace render
     }
 
     // Create debug layout
-    return global::dx::s_pDevice->CreateInputLayout
+    return global::api::Device->CreateInputLayout
     (
       internal::s_tPrimitivesLayout,
       internal::s_iPrimitiveLayoutSize,
       g_SimpleVS,
       sizeof(g_SimpleVS),
-      &internal::s_oPipeline.pDebugLayout
+      &internal::Pipeline.DebugLayout
     );
   }
   // ------------------------------------
-  HRESULT CRender::InitPipeline(uint32_t _uWidth, uint32_t _uHeight)
+  HRESULT CRender::InitShaders()
   {
-    // Configure viewport
-    SetViewport(_uWidth, _uHeight);
-
-    // Setup depth stencils
-    HRESULT hResult = SetupDepthStencils(_uWidth, _uHeight);
+    // Forward shaders
+    internal::Pipeline.ForwardVS.Release();
+    HRESULT hResult = internal::Pipeline.ForwardVS.Init(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Setup deferred rendering
-    hResult = SetupDeferredRendering(_uWidth, _uHeight);
+    internal::Pipeline.ForwardPS.Release();
+    hResult = internal::Pipeline.ForwardPS.Init(g_SimplePS, ARRAYSIZE(g_SimplePS));
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Create back buffer
-    hResult = CreateBackBuffer();
+    // Deferred shaders
+    internal::Pipeline.DeferredVS.Release();
+    hResult = internal::Pipeline.DeferredVS.Init(g_StandardVS, ARRAYSIZE(g_StandardVS));
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Set standard rasterizer config
-    internal::s_oPipeline.rRasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-    internal::s_oPipeline.rRasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-    internal::s_oPipeline.rRasterizerCfg.FrontCounterClockwise = false;
-    internal::s_oPipeline.rRasterizerCfg.DepthBias = 0;
-    internal::s_oPipeline.rRasterizerCfg.DepthBiasClamp = 0.0f;
-    internal::s_oPipeline.rRasterizerCfg.SlopeScaledDepthBias = 0.0f;
-    internal::s_oPipeline.rRasterizerCfg.DepthClipEnable = true;
-    internal::s_oPipeline.rRasterizerCfg.ScissorEnable = true;
-    internal::s_oPipeline.rRasterizerCfg.MultisampleEnable = false;
-    internal::s_oPipeline.rRasterizerCfg.AntialiasedLineEnable = false;
-
-    // Create rasterizer
-    hResult = CreateRasterizerState(internal::s_oPipeline.pDeferredRasterizer, internal::s_oPipeline.rRasterizerCfg);
+    internal::Pipeline.DeferredShadowsVS.Release();
+    hResult = internal::Pipeline.DeferredShadowsVS.Init(g_ShadowsVS, ARRAYSIZE(g_ShadowsVS));
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Set standard rasterizer config
-    D3D11_RASTERIZER_DESC rShadowRasterizer = D3D11_RASTERIZER_DESC();
-    rShadowRasterizer.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-    rShadowRasterizer.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
-    rShadowRasterizer.DepthBias = 1000;
-    rShadowRasterizer.DepthBiasClamp = 0.0f;
-    rShadowRasterizer.SlopeScaledDepthBias = 1.5f;
-    rShadowRasterizer.DepthClipEnable = true;
-    rShadowRasterizer.ScissorEnable = false;
-    rShadowRasterizer.MultisampleEnable = false;
-
-    // Create rasterizer
-    hResult = CreateRasterizerState(internal::s_oPipeline.pShadowsRasterizer, rShadowRasterizer);
+    internal::Pipeline.DrawTriangleVS.Release();
+    hResult = internal::Pipeline.DrawTriangleVS.Init(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Set standard blend state config
-    internal::s_oPipeline.rBlendStateCfg.BlendEnable = false;
-    internal::s_oPipeline.rBlendStateCfg.SrcBlend = D3D11_BLEND_ONE;
-    internal::s_oPipeline.rBlendStateCfg.DestBlend = D3D11_BLEND_BLEND_FACTOR;
-    internal::s_oPipeline.rBlendStateCfg.BlendOp = D3D11_BLEND_OP_ADD;
-    internal::s_oPipeline.rBlendStateCfg.SrcBlendAlpha = D3D11_BLEND_ONE;
-    internal::s_oPipeline.rBlendStateCfg.DestBlendAlpha = D3D11_BLEND_ZERO;
-    internal::s_oPipeline.rBlendStateCfg.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    internal::s_oPipeline.rBlendStateCfg.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
-
-    hResult = CreateBlendState(internal::s_oPipeline.rBlendStateCfg);
+    internal::Pipeline.DeferredGBuffer.Release();
+    hResult = internal::Pipeline.DeferredGBuffer.Init(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Update scissor
-    SetScissorRect(_uWidth, _uHeight);
-
-    return hResult;
-  }
-  // ------------------------------------
-  void CRender::SetScissorRect(uint32_t _uWidth, uint32_t _uHeight)
-  {
-    D3D11_RECT rRect = D3D11_RECT();
-    rRect.left = 0;
-    rRect.top = 0;
-    rRect.right = static_cast<LONG>(_uWidth);
-    rRect.bottom = static_cast<LONG>(_uHeight);
-    global::dx::s_pDeviceContext->RSSetScissorRects(1, &rRect);
-  }
-  // ------------------------------------
-  bool CRender::InitImGui()
-  {
-    if (!IMGUI_CHECKVERSION())
-    {
-      return false;
-    }
-    if (!ImGui::CreateContext())
-    {
-      return false;
-    }
-    if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHandle()))
-    {
-      return false;
-    }
-    if (!ImGui_ImplDX11_Init(global::dx::s_pDevice, global::dx::s_pDeviceContext))
-    {
-      return false;
-    }
-
-    ImGui::StyleColorsDark();
-    return true;
+    internal::Pipeline.DeferredLights.Release();
+    return internal::Pipeline.DeferredLights.Init(g_LightsPS, ARRAYSIZE(g_LightsPS));
   }
   // ------------------------------------
   HRESULT CRender::CreateDevice(uint32_t _uWidth, uint32_t _uHeight)
@@ -629,47 +831,96 @@ namespace render
 
     // Create device and swap chain
     return D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, uFlags, lstFeatureLevels,
-      uNumFeatureLevels, D3D11_SDK_VERSION, &rSwapChainDescriptor, &internal::s_oPipeline.pSwapChain,
-      &global::dx::s_pDevice, &oFeatureLevel, &global::dx::s_pDeviceContext);
+      uNumFeatureLevels, D3D11_SDK_VERSION, &rSwapChainDescriptor, &internal::Pipeline.SwapChain,
+      &global::api::Device, &oFeatureLevel, &global::api::DeviceContext);
   }
   // ------------------------------------
-  void CRender::OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight)
+  HRESULT CRender::InitPipeline(uint32_t _uWidth, uint32_t _uHeight)
   {
-    // Remove current target view
-    global::dx::SafeRelease(internal::s_oPipeline.pBackBuffer);
+    // Configure viewport
+    SetViewport(_uWidth, _uHeight);
 
-    // Resize buffers
-    HRESULT hResult = internal::s_oPipeline.pSwapChain->ResizeBuffers(0, _uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-#ifdef _DEBUG
-    assert(!FAILED(hResult));
-#endif // DEBUG
-
-    // Init pipeline
-    hResult = InitPipeline(_uWidth, _uHeight);
-#ifdef _DEBUG
-    assert(!FAILED(hResult));
-#endif // DEBUG
-  }
-  // ------------------------------------
-  HRESULT CRender::CreateBackBuffer()
-  {
-    ID3D11Texture2D* pTexture = nullptr;
-    internal::s_oPipeline.pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pTexture));
-    if (!pTexture)
-    {
-      return E_FAIL;
-    }
-
-    HRESULT hResult = global::dx::s_pDevice->CreateRenderTargetView(pTexture, nullptr, &internal::s_oPipeline.pBackBuffer);
+    // Setup depth stencil
+    HRESULT hResult = SetupDepthStencil(_uWidth, _uHeight);
     if (FAILED(hResult))
     {
       return hResult;
     }
-    pTexture->Release();
+
+    // Setup deferred rendering
+    hResult = SetupDeferredRendering(_uWidth, _uHeight);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Create back buffer
+    hResult = CreateBackBuffer();
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Set standard rasterizer config
+    internal::Pipeline.RasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+    internal::Pipeline.RasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+    internal::Pipeline.RasterizerCfg.FrontCounterClockwise = false;
+    internal::Pipeline.RasterizerCfg.DepthBias = 0;
+    internal::Pipeline.RasterizerCfg.DepthBiasClamp = 0.0f;
+    internal::Pipeline.RasterizerCfg.SlopeScaledDepthBias = 0.0f;
+    internal::Pipeline.RasterizerCfg.DepthClipEnable = true;
+    internal::Pipeline.RasterizerCfg.ScissorEnable = true;
+    internal::Pipeline.RasterizerCfg.MultisampleEnable = false;
+    internal::Pipeline.RasterizerCfg.AntialiasedLineEnable = false;
+
+    // Create rasterizer
+    hResult = CreateRasterizerState(internal::Pipeline.DeferredRasterizer, internal::Pipeline.RasterizerCfg);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Set standard rasterizer config
+    D3D11_RASTERIZER_DESC rShadowRasterizer = D3D11_RASTERIZER_DESC();
+    rShadowRasterizer.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+    rShadowRasterizer.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+    rShadowRasterizer.DepthBias = 1000;
+    rShadowRasterizer.DepthBiasClamp = 0.0f;
+    rShadowRasterizer.SlopeScaledDepthBias = 1.5f;
+    rShadowRasterizer.DepthClipEnable = true;
+    rShadowRasterizer.ScissorEnable = false;
+    rShadowRasterizer.MultisampleEnable = false;
+
+    // Create rasterizer
+    hResult = CreateRasterizerState(internal::Pipeline.ShadowsRasterizer, rShadowRasterizer);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Set standard blend state config
+    internal::Pipeline.BlendStateCfg.BlendEnable = false;
+    internal::Pipeline.BlendStateCfg.SrcBlend = D3D11_BLEND_ONE;
+    internal::Pipeline.BlendStateCfg.DestBlend = D3D11_BLEND_BLEND_FACTOR;
+    internal::Pipeline.BlendStateCfg.BlendOp = D3D11_BLEND_OP_ADD;
+    internal::Pipeline.BlendStateCfg.SrcBlendAlpha = D3D11_BLEND_ONE;
+    internal::Pipeline.BlendStateCfg.DestBlendAlpha = D3D11_BLEND_ZERO;
+    internal::Pipeline.BlendStateCfg.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    internal::Pipeline.BlendStateCfg.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
+
+    hResult = CreateBlendState(internal::Pipeline.BlendStateCfg);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Update scissor
+    SetScissorRect(_uWidth, _uHeight);
+
     return hResult;
   }
   // ------------------------------------
-  HRESULT CRender::SetupDepthStencils(uint32_t _uWidth, uint32_t _uHeight)
+  HRESULT CRender::SetupDepthStencil(uint32_t _uWidth, uint32_t _uHeight)
   {
     // Create depth stencil texture
     D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -681,8 +932,8 @@ namespace render
     rTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS; // Format
     rTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
 
-    internal::s_oPipeline.rDepthStencil.Release();
-    HRESULT hResult = internal::s_oPipeline.rDepthStencil.CreateTexture(rTextureDesc);
+    internal::Pipeline.DepthStencil.Release();
+    HRESULT hResult = internal::Pipeline.DepthStencil.CreateTexture(rTextureDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating depth stencil texture!");
@@ -695,7 +946,7 @@ namespace render
     rDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
     // Create the depth stencil view
-    hResult = internal::s_oPipeline.rDepthStencil.CreateView(rDepthStencilViewDesc);
+    hResult = internal::Pipeline.DepthStencil.CreateView(rDepthStencilViewDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating stencil view!");
@@ -708,9 +959,9 @@ namespace render
     rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     rSRVDesc.Texture2D.MipLevels = 1;
 
-    internal::s_oPipeline.rDepthTexture.Release();
-    ID3D11Texture2D* pStencilTexture = internal::s_oPipeline.rDepthStencil;
-    hResult = internal::s_oPipeline.rDepthTexture.CreateViewFromTexture(pStencilTexture, rSRVDesc);
+    internal::Pipeline.DepthTexture.Release();
+    ID3D11Texture2D* pStencilTexture = internal::Pipeline.DepthStencil;
+    hResult = internal::Pipeline.DepthTexture.CreateViewFromTexture(pStencilTexture, rSRVDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating view!");
@@ -738,95 +989,34 @@ namespace render
     rDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
     rDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-    // Z-Prepass
-    global::dx::SafeRelease(internal::s_oPipeline.pZPrepassStencilState);
-    hResult = global::dx::s_pDevice->CreateDepthStencilState(&rDepthStencilDesc, &internal::s_oPipeline.pZPrepassStencilState);
-    if (FAILED(hResult))
-    {
-      ERROR_LOG("Error creating zprepass stencil state!");
-      return hResult;
-    }
-
-    // Deferred
-    global::dx::SafeRelease(internal::s_oPipeline.pDeferredStencilState);
-    rDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
-    rDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ZERO;
-    hResult = global::dx::s_pDevice->CreateDepthStencilState(&rDepthStencilDesc, &internal::s_oPipeline.pDeferredStencilState);
-    if (FAILED(hResult))
-    {
-      ERROR_LOG("Error creating deferred stencil state!");
-      return hResult;
-    }
-
-    // Primitives (debug)
-    global::dx::SafeRelease(internal::s_oPipeline.pDebugStencilState);
-    rDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-    rDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    return global::dx::s_pDevice->CreateDepthStencilState(&rDepthStencilDesc, &internal::s_oPipeline.pDebugStencilState);
+    // Depth 
+    global::api::SafeRelease(internal::Pipeline.DepthStencilState);
+    return global::api::Device->CreateDepthStencilState(&rDepthStencilDesc, &internal::Pipeline.DepthStencilState);
   }
   // ------------------------------------
-  HRESULT CRender::SetupDeferredRendering(uint32_t _uWidth, uint32_t _uHeight)
+  HRESULT CRender::CreateBackBuffer()
   {
-    // Create renderer
-    if (!m_pDeferredRenderer)
+    ID3D11Texture2D* pTexture = nullptr;
+    internal::Pipeline.SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pTexture));
+    if (!pTexture)
     {
-      m_pDeferredRenderer = std::make_unique<CDeferredRenderer>();
+      return E_FAIL;
     }
-    HRESULT hResult = m_pDeferredRenderer->Init(_uWidth, _uHeight);
+
+    HRESULT hResult = global::api::Device->CreateRenderTargetView(pTexture, nullptr, &internal::Pipeline.BackBuffer);
     if (FAILED(hResult))
     {
       return hResult;
     }
-
-    // Linear sampler
-    D3D11_SAMPLER_DESC rSamplerDesc = D3D11_SAMPLER_DESC();
-    rSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    rSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    rSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    rSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    rSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    rSamplerDesc.BorderColor[0] = 0.0f;
-    rSamplerDesc.BorderColor[1] = 0.0f;
-    rSamplerDesc.BorderColor[2] = 0.0f;
-    rSamplerDesc.BorderColor[3] = 0.0f;
-    rSamplerDesc.MaxAnisotropy = 16u;
-    rSamplerDesc.MipLODBias = 0.0f;
-    rSamplerDesc.MinLOD = 0.0f;
-    rSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-    // Create simple sampler
-    global::dx::SafeRelease(internal::s_oPipeline.pLinearSampler);
-    hResult = global::dx::s_pDevice->CreateSamplerState(&rSamplerDesc, &internal::s_oPipeline.pLinearSampler);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Shadow sampler
-    D3D11_SAMPLER_DESC rShadowSampler = D3D11_SAMPLER_DESC();
-    rShadowSampler.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
-    rShadowSampler.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-    rShadowSampler.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-    rShadowSampler.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-    rShadowSampler.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
-    rShadowSampler.BorderColor[0] = 1.0f;
-    rShadowSampler.BorderColor[1] = 1.0f;
-    rShadowSampler.BorderColor[2] = 1.0f;
-    rShadowSampler.BorderColor[3] = 1.0f;
-    rShadowSampler.MaxAnisotropy = 1u;
-    rShadowSampler.MinLOD = 0.0f;
-    rShadowSampler.MaxLOD = 0.0f;
-
-    // Create shadow sampler
-    global::dx::SafeRelease(internal::s_oPipeline.pShadowSampler);
-    return global::dx::s_pDevice->CreateSamplerState(&rShadowSampler, &internal::s_oPipeline.pShadowSampler);
+    pTexture->Release();
+    return hResult;
   }
   // ------------------------------------
   HRESULT CRender::CreateRasterizerState(ID3D11RasterizerState*& _pRasterizer_, const D3D11_RASTERIZER_DESC& _rRasterizerCfg)
   {
     // Create rasterizer state
-    global::dx::SafeRelease(_pRasterizer_);
-    return global::dx::s_pDevice->CreateRasterizerState(&_rRasterizerCfg, &_pRasterizer_);
+    global::api::SafeRelease(_pRasterizer_);
+    return global::api::Device->CreateRasterizerState(&_rRasterizerCfg, &_pRasterizer_);
   }
   // ------------------------------------
   HRESULT CRender::CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _rBlendState)
@@ -837,46 +1027,127 @@ namespace render
     oBlendDesc.RenderTarget[0] = _rBlendState;
 
     // Create blend state
-    global::dx::SafeRelease(internal::s_oPipeline.pBlendState);
-    return global::dx::s_pDevice->CreateBlendState(&oBlendDesc, &internal::s_oPipeline.pBlendState);
+    global::api::SafeRelease(internal::Pipeline.BlendState);
+    return global::api::Device->CreateBlendState(&oBlendDesc, &internal::Pipeline.BlendState);
   }
   // ------------------------------------
-  void CRender::DrawOpaqueModels(scene::CScene* _pScene)
+  D3D_PRIMITIVE_TOPOLOGY CRender::GetTopology(render::ERenderMode _eRenderMode)
+  {
+    switch (_eRenderMode)
+    {
+    case render::ERenderMode::SOLID: { return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; }
+    case render::ERenderMode::WIREFRAME: { return D3D_PRIMITIVE_TOPOLOGY_LINELIST; }
+    case render::ERenderMode::INVALID:
+    default:
+    {
+      return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+    }
+    }
+  }
+  // ------------------------------------
+  void CRender::SetViewport(uint32_t _uWidth, uint32_t _uHeight)
+  {
+    if (!global::api::DeviceContext || !m_pRenderWindow)
+    {
+      ERROR_LOG("Rendering window or context is not valid!");
+      return;
+    }
+
+    D3D11_VIEWPORT rViewport = D3D11_VIEWPORT();
+    rViewport.Width = static_cast<float>(_uWidth);
+    rViewport.Height = static_cast<float>(_uHeight);
+    rViewport.MinDepth = internal::s_fMinDepth;
+    rViewport.MaxDepth = internal::s_fMaxDepth;
+
+    // Apply viewport
+    global::api::DeviceContext->RSSetViewports(1, &rViewport);
+  }
+  // ------------------------------------
+  void CRender::SetScissorRect(uint32_t _uWidth, uint32_t _uHeight)
+  {
+    D3D11_RECT rRect = D3D11_RECT();
+    rRect.left = 0;
+    rRect.top = 0;
+    rRect.right = static_cast<LONG>(_uWidth);
+    rRect.bottom = static_cast<LONG>(_uHeight);
+    global::api::DeviceContext->RSSetScissorRects(1, &rRect);
+  }
+  // ------------------------------------
+  bool CRender::InitImGui()
+  {
+    if (!IMGUI_CHECKVERSION())
+    {
+      return false;
+    }
+    if (!ImGui::CreateContext())
+    {
+      return false;
+    }
+    if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHandle()))
+    {
+      return false;
+    }
+    if (!ImGui_ImplDX11_Init(global::api::Device, global::api::DeviceContext))
+    {
+      return false;
+    }
+
+    ImGui::StyleColorsDark();
+    return true;
+  }
+  // ------------------------------------
+  void CRender::BeginMarker(const wchar_t* _sMarker) const
+  {
+    if (internal::Pipeline.pUserMarker)
+    {
+      internal::Pipeline.pUserMarker->BeginEvent(_sMarker);
+    }
+  }
+  // ------------------------------------
+  void CRender::EndMarker() const
+  {
+    if (internal::Pipeline.pUserMarker)
+    {
+      internal::Pipeline.pUserMarker->EndEvent();
+    }
+  }
+  // ------------------------------------
+  void CRender::DrawOpaqueModels(scene::CRenderScene* _pScene)
   {
     // Bind buffer
-    internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>(internal::s_oPipeline.uTransformSlot);
+    internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
 
     ID3D11InputLayout* pCurrentLayout = nullptr;
-    global::dx::s_pDeviceContext->IAGetInputLayout(&pCurrentLayout);
-    if (pCurrentLayout != internal::s_oPipeline.pStandardLayout)
+    global::api::DeviceContext->IAGetInputLayout(&pCurrentLayout);
+    if (pCurrentLayout != internal::Pipeline.StandardLayout)
     {
-      global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pStandardLayout);
+      global::api::DeviceContext->IASetInputLayout(internal::Pipeline.StandardLayout);
     }
 
     // Detach simple pixel shader
-    internal::s_oPipeline.rForwardPS.Detach();
+    internal::Pipeline.ForwardPS.Detach();
     // Attach deferred vertex shader
-    internal::s_oPipeline.rDeferredVS.Attach();
+    internal::Pipeline.DeferredVS.Attach();
 
     // Set render targets
-    ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.rDepthStencil.GetView();
+    ID3D11DepthStencilView* pDepthStencilView = internal::Pipeline.DepthStencil.GetView();
     m_pDeferredRenderer->AttachRenderTargets(pDepthStencilView);
 
     // Set depth stencil state
     ID3D11DepthStencilState* pCurrentStencil = nullptr;
     uint32_t uCurrentRef = 0;
-    global::dx::s_pDeviceContext->OMGetDepthStencilState(&pCurrentStencil, &uCurrentRef);
-    if (pCurrentStencil != internal::s_oPipeline.pZPrepassStencilState)
+    global::api::DeviceContext->OMGetDepthStencilState(&pCurrentStencil, &uCurrentRef);
+    if (pCurrentStencil != internal::Pipeline.DepthStencilState)
     {
-      global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pZPrepassStencilState, 1);
+      global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
     }
 
     // Set linear sampler(read textures)
-    global::dx::s_pDeviceContext->PSSetSamplers(0, 1, &internal::s_oPipeline.pLinearSampler);
+    global::api::DeviceContext->PSSetSamplers(0, 1, &internal::Pipeline.LinearSampler);
     // Attach g-buffer(pixel shader)
-    internal::s_oPipeline.rDeferredGBuffer.Attach();
+    internal::Pipeline.DeferredGBuffer.Attach();
     // Set constant buffer (texture info)
-    internal::s_oPipeline.tMaterialInfoBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uMaterialInfoSlot);
+    internal::Pipeline.MaterialBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.MaterialSlot);
 
     // Draw models
     DrawModels(_pScene);
@@ -885,92 +1156,155 @@ namespace render
     m_pDeferredRenderer->DetachRenderTargets();
   }
   // ------------------------------------
-  void CRender::DrawModels(scene::CScene* _pScene)
+  void CRender::ComputeGBuffer(scene::CRenderScene* _pScene)
+  {
+    // Attach triangle shader (vertex shader)
+    internal::Pipeline.DrawTriangleVS.Attach();
+    // Attach calculate lights shader(pixel shader)
+    internal::Pipeline.DeferredLights.Attach();
+
+    // Set transform constant
+    internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.CameraTransformSlot);
+
+    // Shadow mapping
+    ID3D11ShaderResourceView* pShadowTexture = nullptr;
+    render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
+    const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
+    const render::lights::CDirectionalLight* pDirLight = pLightManager->GetDirectionalLight();
+
+    bool bCastShadows = pDirLight && pDirLight->CastShadows();
+    if (bCastShadows && lstShadowMaps.GetSize() > 0)
+    {
+      pShadowTexture = lstShadowMaps[0]->GetShadowTexture().GetView();
+      global::api::DeviceContext->PSSetSamplers(1, 1, &internal::Pipeline.ShadowSampler);
+      internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.LightingViewSlot);
+    }
+
+    static constexpr uint32_t uTexturesSize(5);
+    ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
+    {
+      internal::Pipeline.DepthTexture.GetView(),
+      m_pDeferredRenderer->GetDiffuseRT()->GetRTView(),
+      m_pDeferredRenderer->GetNormalRT()->GetRTView(),
+      m_pDeferredRenderer->GetNormalRT()->GetRTView(),
+      pShadowTexture
+    };
+
+    // Bind buffers
+    global::api::DeviceContext->OMSetRenderTargets(1, &internal::Pipeline.BackBuffer, nullptr);
+    global::api::DeviceContext->PSSetShaderResources(0, uTexturesSize, &lstGBufferSRV[0]);
+
+    // Setup triangle
+    global::api::DeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+    global::api::DeviceContext->IASetInputLayout(nullptr);
+
+    D3D_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+    global::api::DeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
+    if (eCurrentTopology != D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+    {
+      global::api::DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    }
+
+    // Draw triangle as fake quad!
+    global::api::DeviceContext->Draw(3, 0);
+
+    // Set invalid shaders
+    ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize] = { nullptr, nullptr, nullptr, nullptr };
+    global::api::DeviceContext->PSSetShaderResources(0, uTexturesSize, lstEmptyTextures);
+
+    // Attach back buffer
+    ID3D11DepthStencilView* pDepthStencilView = internal::Pipeline.DepthStencil.GetView();
+    global::api::DeviceContext->OMSetRenderTargets(1, &internal::Pipeline.BackBuffer, pDepthStencilView);
+  }
+  // ------------------------------------
+  void CRender::DrawModels(scene::CRenderScene* _pScene)
   {
     uint16_t uDrawableCount = 0;
     const scene::TModels& lstModels = _pScene->GetModels();
     const scene::TCachedModels& lstCacheModels = _pScene->GetCacheModels(uDrawableCount);
+
     for (uint16_t uI = 0; uI < uDrawableCount; uI++)
     {
-      // Handle model
+      // Draw model
       const scene::TCachedModel& rCachedModel = lstCacheModels[uI];
       const utils::CWeakPtr<render::gfx::CModel>& pModel = lstModels[rCachedModel.Index];
-
-      // Push buffers
-      D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-      HRESULT hResult = global::dx::s_pDeviceContext->Map(global::dx::s_pInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
-      if (FAILED(hResult))
-      {
-        ERROR_LOG("Error mapping buffer!");
-        return;
-      }
-
-      // Mapped instance data
-      render::gfx::TModelInstanceData* pInstanceData = static_cast<render::gfx::TModelInstanceData*>(rMappedSubresource.pData);
-
-      // Set model matrix
-      uint16_t uInstance = 0;
-      pInstanceData[uInstance++].Transform = pModel->GetMatrix();
-
-      // Set instances
-      const gfx::TInstances& lstInstances = pModel->GetInstances();
-      for (uint16_t uJ = 0; uJ < rCachedModel.InstanceCount; ++uJ)
-      {
-        uint16_t uID = rCachedModel.DrawableInstances[uJ];
-        pInstanceData[uInstance++].Transform = lstInstances[uID]->GetMatrix();
-      }
-
-      // Unmap
-      global::dx::s_pDeviceContext->Unmap(global::dx::s_pInstanceBuffer, 0);
-
-      // Set vertex buffers
-      static const uint32_t uBuffersCount(2);
-      ID3D11Buffer* pBuffers[uBuffersCount] = { pModel->GetVertexBuffer(), global::dx::s_pInstanceBuffer };
-
-      uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
-      uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
-      global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
-
-      // Set topology
-      D3D_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-      global::dx::s_pDeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
-      if (eCurrentTopology != D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
-      {
-        global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-      }
-
-      // Set values
-      uint16_t uInstanceCount = rCachedModel.InstanceCount;
-      uint16_t uTotalCount = rCachedModel.Visible ? ++uInstanceCount : uInstanceCount;
-      uint16_t uStartOffset = !rCachedModel.Visible;
-
-      // Draw meshes
-      const gfx::TMeshes& lstMeshes = pModel->GetMeshes();
-      for (const std::unique_ptr<render::gfx::CMesh>& pMesh : lstMeshes)
-      {
-        // Push material - constant buffer
-        PushMaterial(pMesh->GetMaterial());
-
-        // Draw mesh
-        global::dx::s_pDeviceContext->IASetIndexBuffer(pMesh->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-        global::dx::s_pDeviceContext->DrawIndexedInstanced(pMesh->GetIndexCount(), uTotalCount, 0, 0, uStartOffset);
-      }
+      DrawModel(pModel.GetPtr(), rCachedModel.Visible, rCachedModel.DrawableInstances, rCachedModel.InstanceCount);
     }
   }
   // ------------------------------------
-  void CRender::DrawPrimitives(scene::CScene* _pScene)
+  void CRender::DrawModel
+  (
+    const render::gfx::CModel* _pModel, 
+    bool _bVisible,
+    render::gfx::TDrawableInstances _lstDrawableInstances, 
+    uint16_t _uInstanceCount
+  )
+  {
+    // Push buffers
+    D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+    HRESULT hResult = global::api::DeviceContext->Map(internal::Pipeline.InstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error mapping buffer!");
+      return;
+    }
+
+    // Mapped instance data
+    render::gfx::TModelInstanceData* pInstanceData = static_cast<render::gfx::TModelInstanceData*>(rMappedSubresource.pData);
+
+    // Set model matrix
+    uint16_t uInstance = 0;
+    pInstanceData[uInstance++].Transform = _pModel->GetMatrix();
+
+    // Set instances
+    const render::gfx::TInstances& lstInstances = _pModel->GetInstances();
+    for (uint16_t uJ = 0; uJ < _uInstanceCount; ++uJ)
+    {
+      uint16_t uID = _lstDrawableInstances[uJ];
+      pInstanceData[uInstance++].Transform = lstInstances[uID]->GetMatrix();
+    }
+
+    // Unmap
+    global::api::DeviceContext->Unmap(internal::Pipeline.InstanceBuffer, 0);
+
+    // Set topology
+    D3D_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+    global::api::DeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
+    if (eCurrentTopology != D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
+    {
+      global::api::DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    }
+
+    // Set values
+    uint16_t uInstances = _bVisible ? ++_uInstanceCount : _uInstanceCount;
+    uint16_t uStartOffset = !_bVisible;
+    uint32_t uVertexOffset = _pModel->GetVertexOffset();
+
+    // Draw meshes
+    const render::gfx::TMeshes& lstMeshes = _pModel->GetMeshes();
+    for (const std::unique_ptr<render::gfx::CMesh>& pMesh : lstMeshes)
+    {
+      // Push material - constant buffer
+      PushMaterial(pMesh->GetMaterial());
+
+      // Draw mesh
+      uint32_t uIndexCount = pMesh->GetIndexCount();
+      uint32_t uIndexOffset = pMesh->GetIndexOffset();
+      global::api::DeviceContext->DrawIndexedInstanced(uIndexCount, uInstances, uIndexOffset, uVertexOffset, uStartOffset);
+    }
+  }
+  // ------------------------------------
+  void CRender::DrawPrimitives(scene::CRenderScene* _pScene)
   {
     // Set input layout
-    global::dx::s_pDeviceContext->IASetInputLayout(internal::s_oPipeline.pDebugLayout);
-    // Set depth stencil state
-    global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pDebugStencilState, 1);
+    global::api::DeviceContext->IASetInputLayout(internal::Pipeline.DebugLayout);
 
     // Attach shaders
-    internal::s_oPipeline.rForwardVS.Attach();
-    internal::s_oPipeline.rForwardPS.Attach();
+    internal::Pipeline.ForwardVS.Attach();
+    internal::Pipeline.ForwardPS.Attach();
 
     // Bind buffer
-    internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_VERTEX>(internal::s_oPipeline.uTransformSlot);
+    internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
 
     // Draw primitives
     uint16_t uDrawableCount = 0;
@@ -997,7 +1331,7 @@ namespace render
   {
     // Apply Buffers
     D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-    HRESULT hResult = global::dx::s_pDeviceContext->Map(global::dx::s_pPrimitiveInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+    HRESULT hResult = global::api::DeviceContext->Map(internal::Pipeline.PrimitiveInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error mapping buffer!");
@@ -1013,23 +1347,23 @@ namespace render
     pInstanceData[uIndex].Color = _pPrimitive->GetColor();
 
     // Unmap
-    global::dx::s_pDeviceContext->Unmap(global::dx::s_pPrimitiveInstanceBuffer, 0);
+    global::api::DeviceContext->Unmap(internal::Pipeline.PrimitiveInstanceBuffer, 0);
 
     // Set vertex buffers
     static const uint32_t uBuffersCount(2);
-    ID3D11Buffer* pBuffers[uBuffersCount] = { _pPrimitive->GetVertexBuffer(), global::dx::s_pPrimitiveInstanceBuffer };
+    ID3D11Buffer* pBuffers[uBuffersCount] = { _pPrimitive->GetVertexBuffer(),internal::Pipeline.PrimitiveInstanceBuffer };
 
-    uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TPrimitiveData), sizeof(render::gfx::TPrimitiveInstanceData) };
+    uint32_t lstStrides[uBuffersCount] = { sizeof(math::CVector3), sizeof(render::gfx::TPrimitiveInstanceData) };
     uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
-    global::dx::s_pDeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
+    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
 
     // Set topology
     D3D11_PRIMITIVE_TOPOLOGY eTargetTopology = GetTopology(_pPrimitive->GetRenderMode());
     D3D11_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-    global::dx::s_pDeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
+    global::api::DeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
     if (eCurrentTopology != eTargetTopology)
     {
-      global::dx::s_pDeviceContext->IASetPrimitiveTopology(eTargetTopology);
+      global::api::DeviceContext->IASetPrimitiveTopology(eTargetTopology);
     }
 
     // Set values - currently we don't support having multiple instances drawing primitives
@@ -1037,340 +1371,7 @@ namespace render
     const uint16_t uStartOffset = 0;
 
     // Draw primitive
-    global::dx::s_pDeviceContext->IASetIndexBuffer(_pPrimitive->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-    global::dx::s_pDeviceContext->DrawIndexedInstanced(_pPrimitive->GetIndices(), uInstanceCount, 0, 0, uStartOffset);
-  }
-  // ------------------------------------
-  void CRender::ComputeGBuffer(scene::CScene* _pScene)
-  {
-    // Attach triangle shader (vertex shader)
-    internal::s_oPipeline.rDrawTriangleVS.Attach();
-    // Attach calculate lights shader(pixel shader)
-    internal::s_oPipeline.rDeferredLights.Attach();
-
-    // Set transform constant
-    internal::s_oPipeline.tTransformsBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uTransformSlot);
-
-    // Shadow mapping
-    ID3D11ShaderResourceView* pShadowTexture = nullptr;
-    render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
-    const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
-    const render::lights::CDirectionalLight* pDirLight = pLightManager->GetDirectionalLight();
-
-    bool bCastShadows = pDirLight && pDirLight->CastShadows();
-    if (bCastShadows && lstShadowMaps.GetSize() > 0)
-    {
-      pShadowTexture = lstShadowMaps[0]->GetShadowTexture().GetView();
-      global::dx::s_pDeviceContext->PSSetSamplers(1, 1, &internal::s_oPipeline.pShadowSampler);
-      internal::s_oPipeline.tLightViewBuffer.Bind<render::EShader::E_PIXEL>(internal::s_oPipeline.uLightViewSlot);
-    }
-
-    static constexpr uint32_t uTexturesSize(5);
-    ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
-    {
-      internal::s_oPipeline.rDepthTexture.GetView(),
-      m_pDeferredRenderer->GetDiffuseRT()->GetRTView(),
-      m_pDeferredRenderer->GetNormalRT()->GetRTView(),
-      m_pDeferredRenderer->GetNormalRT()->GetRTView(),
-      pShadowTexture
-    };
-
-    // Bind buffers
-    global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oPipeline.pBackBuffer, nullptr);
-    global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, &lstGBufferSRV[0]);
-
-    // Draw triangle as fake quad!
-    global::dx::s_pDeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-    global::dx::s_pDeviceContext->IASetInputLayout(nullptr);
-    global::dx::s_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    global::dx::s_pDeviceContext->Draw(3, 0);
-
-    // Set invalid shaders
-    ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize] = { nullptr, nullptr, nullptr, nullptr };
-    global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, lstEmptyTextures);
-
-    // Attach back buffer
-    ID3D11DepthStencilView* pDepthStencilView = internal::s_oPipeline.rDepthStencil.GetView();
-    global::dx::s_pDeviceContext->OMSetRenderTargets(1, &internal::s_oPipeline.pBackBuffer, pDepthStencilView);
-  }
-  // ------------------------------------
-  void CRender::SetViewport(uint32_t _uWidth, uint32_t _uHeight)
-  {
-    if (!global::dx::s_pDeviceContext || !m_pRenderWindow)
-    {
-      ERROR_LOG("Rendering window or context is not valid!");
-      return;
-    }
-
-    D3D11_VIEWPORT rViewport = D3D11_VIEWPORT();
-    rViewport.Width = static_cast<float>(_uWidth);
-    rViewport.Height = static_cast<float>(_uHeight);
-    rViewport.MinDepth = internal::s_fMinDepth;
-    rViewport.MaxDepth = internal::s_fMaxDepth;
-
-    // Apply viewport
-    global::dx::s_pDeviceContext->RSSetViewports(1, &rViewport);
-  }
-  // ------------------------------------
-  void CRender::PrepareFrame()
-  {
-    // Clear resources
-    BeginMarker(internal::s_sPrepareFrameMrk);
-    {
-      // Clear back buffer
-      global::dx::s_pDeviceContext->ClearRenderTargetView(internal::s_oPipeline.pBackBuffer, internal::s_v4ClearColor);
-
-      // Clear RTs
-      m_pDeferredRenderer->ClearRenderTargets(internal::s_v4ClearColor);
-
-      // Clear depth stencil view
-      global::dx::s_pDeviceContext->ClearDepthStencilView(internal::s_oPipeline.rDepthStencil.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-
-      // Prepare ImGu
-      ImGui_ImplDX11_NewFrame();
-      ImGui_ImplWin32_NewFrame();
-      ImGui::NewFrame();
-
-      // ImGuizmo
-      ImGuizmo::BeginFrame();
-    }
-    EndMarker();
-  }
-  // ------------------------------------
-  void CRender::Draw(scene::CScene* _pScene)
-  {
-    // Calculate projection and invert projection
-#ifdef _DEBUG
-    assert(m_pRenderCamera);
-#endif
-    math::CMatrix4x4 mViewProjection = m_pRenderCamera->GetViewProjection();
-    internal::s_oTransforms.ViewProjection = mViewProjection;
-    internal::s_oTransforms.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
-
-    // Write
-    bool bOk = internal::s_oPipeline.tTransformsBuffer.WriteBuffer(internal::s_oTransforms);
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk);
-#endif
-
-    // Draw models
-    BeginMarker(internal::s_sDrawGBufferMrk);
-    {
-      // Cache models
-      _pScene->CacheModels(m_pRenderCamera);
-
-      // Draw models
-      DrawOpaqueModels(_pScene);
-
-      // Compute lighting
-      render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
-
-      BeginMarker(internal::s_sComputeShadowsMrk);
-      {
-        const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
-        render::lights::CDirectionalLight* pDirectionalLight = pLightManager->GetDirectionalLight();
-
-        bool bCastShadows = pDirectionalLight && pDirectionalLight->CastShadows();
-        if (bCastShadows && lstShadowMaps.GetSize() > 0)
-        {
-          // Set custom rasterizer for shadow mapping
-          global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pShadowsRasterizer);
-          {
-            // Clear depth stencil view
-            const render::gfx::CShadowMap* pShadowMap = lstShadowMaps[0];
-            const texture::TDepthStencil& rShadowDepth = pShadowMap->GetShadowDepth();
-            global::dx::s_pDeviceContext->ClearDepthStencilView(rShadowDepth.GetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-            // Configure viewport
-            uint32_t uWidth = 0, uHeight = 0;
-            rShadowDepth.GetTextureSize(uWidth, uHeight);
-            SetViewport(uWidth, uHeight);
-
-            // Create view matrix from directional light
-            const float fMaxDistance = 50.0f;
-            math::CVector3 v3Dir = pLightManager->GetDirectionalLight()->GetDir();
-            math::CVector3 v3SceneCenter = m_pRenderCamera->GetPos() + (m_pRenderCamera->GetDir() * fMaxDistance); // Max distance
-            math::CVector3 v3ShadowPos = v3SceneCenter + (v3Dir * (fMaxDistance * 2.0f)); // Get shadow pos
-            math::CVector3 v3ShadowCameraPos = v3SceneCenter + (-v3Dir * (fMaxDistance * 2.0f)); // Get shadow camera pos
-
-            // Orthographic values ( testing )
-            float fHeight = 100.0f;
-            float fAspectRatio = static_cast<float>(uWidth / static_cast<float>(uHeight));
-            float fWidth = fHeight * fAspectRatio;
-            float fNear = m_pRenderCamera->GetNear();
-            float fFar = m_pRenderCamera->GetFar();
-
-            math::CMatrix4x4 mOrthographicProj = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar);
-            math::CMatrix4x4 mView = math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp);
-
-#ifdef _DEBUG
-            assert(m_pShadowCamera);
-#endif
-            // Configure shadow camera
-            m_pShadowCamera->SetProjectionMode(EProjectionMode::ORTOGRAPHIC);
-            m_pShadowCamera->SetOrthographicSize(fHeight);
-            m_pShadowCamera->SetProjectionMatrix(mOrthographicProj);
-            m_pShadowCamera->SetViewMatrix(mView);
-
-            m_pShadowCamera->SetPos(v3ShadowCameraPos);
-            m_pShadowCamera->SetDir(v3Dir);
-            m_pShadowCamera->SetAspectRatio(fAspectRatio);
-
-            m_pShadowCamera->SetNear(fNear);
-            m_pShadowCamera->SetFar(fFar);
-
-            // Build frustum planes
-            m_pShadowCamera->BuildFrustumPlanes();
-
-            TLightView rLightView = TLightView();
-            rLightView.LightViewProjection = m_pShadowCamera->GetViewProjection();
-
-            // Write buffer
-            bOk = internal::s_oPipeline.tLightViewBuffer.WriteBuffer(rLightView);
-#ifdef _DEBUG
-            assert(bOk);
-#endif // DEBUG
-            internal::s_oPipeline.tLightViewBuffer.Bind<render::EShader::E_VERTEX>(internal::s_oPipeline.uTransformSlot);
-
-            // Set render target
-            global::dx::s_pDeviceContext->OMSetRenderTargets(0, nullptr, rShadowDepth.GetView());
-            // Set depth stencil state
-            global::dx::s_pDeviceContext->OMSetDepthStencilState(internal::s_oPipeline.pZPrepassStencilState, 1);
-
-            // Attach vertex shader for shadows (vertex shader)
-            internal::s_oPipeline.rDeferredShadowsVS.Attach();
-            // Detach pixel shader for models
-            internal::s_oPipeline.rDeferredGBuffer.Detach();
-
-            // Cache models
-            _pScene->CacheModels(m_pShadowCamera);
-
-            // Draw models only in z-prepass pass from the light view
-            DrawModels(_pScene);
-
-            uint32_t uRenderWidth = 0, uRenderHeight = 0;
-            m_pRenderWindow->GetWindowSize(uRenderWidth, uRenderHeight);
-            SetViewport(uRenderWidth, uRenderHeight);
-          }
-          // Restore rasterizer
-          global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pDeferredRasterizer);
-        }
-      }
-      EndMarker();
-
-      // Compute lighting
-      pLightManager->ApplyLighting();
-
-      // Compute GBuffer
-      ComputeGBuffer(_pScene);
-    }
-    EndMarker();
-
-    // Draw primitives (forward rendering)
-    BeginMarker(internal::s_sDrawPrimitivesMrk);
-    {
-      // Cache primitives
-      _pScene->CachePrimitives(m_pRenderCamera);
-
-      // Cache debug primitives
-      _pScene->CacheDebugPrimitives(m_pRenderCamera);
-
-      // Draw primitives
-      DrawPrimitives(_pScene);
-    }
-    EndMarker();
-
-    // Update resources
-    global::dx::s_pDeviceContext->OMSetBlendState(internal::s_oPipeline.pBlendState, nullptr, 0xFFFFFFFF);
-    global::dx::s_pDeviceContext->RSSetState(internal::s_oPipeline.pDeferredRasterizer);
-
-    // Render ImGui
-    BeginMarker(internal::s_sImGuiMarker);
-    {
-      ::ImGui::Render();
-      ::ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
-    }
-    EndMarker();
-
-    // Present
-    const uint32_t uFlags = 0;
-    internal::s_oPipeline.pSwapChain->Present(m_bVerticalSync, uFlags);
-  }
-  // ------------------------------------
-  void CRender::PushMaterial(const render::mat::CMaterial* _pMaterial)
-  {
-    if (!_pMaterial)
-    {
-      return;
-    }
-
-    // Set material info
-    TMaterialInfo rMaterialInfo = TMaterialInfo();
-    rMaterialInfo.DiffuseColor = _pMaterial->GetDiffuseColor();
-    rMaterialInfo.SpecularColor = _pMaterial->GetSpecularColor();
-
-    texture::TSharedTexture pDiffuse = _pMaterial->GetTexture(render::ETexture::DIFFUSE);
-    rMaterialInfo.HasDiffuseTexture = static_cast<bool>(pDiffuse);
-    texture::TSharedTexture pNormal = _pMaterial->GetTexture(render::ETexture::NORMAL);
-    rMaterialInfo.HasNormalTexture = static_cast<bool>(pNormal);
-    texture::TSharedTexture pSpecular = _pMaterial->GetTexture(render::ETexture::SPECULAR);
-    rMaterialInfo.HasSpecularTexture = static_cast<bool>(pSpecular);
-
-    // Write buffer
-    bool bOk = internal::s_oPipeline.tMaterialInfoBuffer.WriteBuffer(rMaterialInfo);
-    UNUSED_VAR(bOk);
-#ifdef _DEBUG
-    assert(bOk);
-#endif // DEBUG
-
-    // Set textures 
-    const uint32_t uTexturesSize(3);
-    ID3D11ShaderResourceView* lstTextures[uTexturesSize] =
-    {
-      rMaterialInfo.HasDiffuseTexture ? pDiffuse->GetView() : nullptr,
-      rMaterialInfo.HasNormalTexture ? pNormal->GetView() : nullptr,
-      rMaterialInfo.HasSpecularTexture ? pSpecular->GetView() : nullptr
-    };
-
-    // Bind shaders
-    global::dx::s_pDeviceContext->PSSetShaderResources(0, uTexturesSize, lstTextures);
-  }
-  // ------------------------------------
-  void CRender::SetFillMode(D3D11_FILL_MODE _eFillMode)
-  {
-    // Update rasterizer
-    internal::s_oPipeline.rRasterizerCfg.FillMode = _eFillMode;
-    CreateRasterizerState(internal::s_oPipeline.pDeferredRasterizer, internal::s_oPipeline.rRasterizerCfg);
-  }
-  // ------------------------------------
-  D3D_PRIMITIVE_TOPOLOGY CRender::GetTopology(render::ERenderMode _eRenderMode)
-  {
-    switch (_eRenderMode)
-    {
-      case render::ERenderMode::SOLID: { return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; }
-      case render::ERenderMode::WIREFRAME: { return D3D_PRIMITIVE_TOPOLOGY_LINELIST; }
-      case render::ERenderMode::INVALID:   
-      default: 
-      {
-        return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-      }
-    }
-  }
-  // ------------------------------------
-  void CRender::BeginMarker(const wchar_t* _sMarker) const
-  {
-    if (internal::s_oPipeline.pUserMarker)
-    {
-      internal::s_oPipeline.pUserMarker->BeginEvent(_sMarker);
-    }
-  }
-  // ------------------------------------
-  void CRender::EndMarker() const
-  {
-    if (internal::s_oPipeline.pUserMarker)
-    {
-      internal::s_oPipeline.pUserMarker->EndEvent();
-    }
+    global::api::DeviceContext->IASetIndexBuffer(_pPrimitive->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+    global::api::DeviceContext->DrawIndexedInstanced(_pPrimitive->GetIndices(), uInstanceCount, 0, 0, uStartOffset);
   }
 }

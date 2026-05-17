@@ -1,12 +1,13 @@
 #pragma once
 #include "Engine/Render/Resources/RenderTarget.h"
+#include "Renderer.h"
 
 namespace render
 {
-  class CDeferredRenderer
+  class CDeferredRenderer : public IRenderer
   {
   public:
-    CDeferredRenderer() = default;
+    CDeferredRenderer(CRender* _pRender) : IRenderer(_pRender) {}
     ~CDeferredRenderer() {}
 
     HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);

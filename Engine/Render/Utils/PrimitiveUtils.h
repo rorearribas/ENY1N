@@ -11,10 +11,10 @@ namespace render
     {
     public:
       // Primitive data
-      static const std::vector<render::gfx::TPrimitiveData> s_oTrianglePrimitive;
-      static const std::vector<render::gfx::TPrimitiveData> s_oSquarePrimitive;
-      static const std::vector<render::gfx::TPrimitiveData> s_oCubePrimitive;
-      static const std::vector<render::gfx::TPrimitiveData> s_oPlanePrimitive;
+      static const std::vector<math::CVector3> s_oTrianglePrimitive;
+      static const std::vector<math::CVector3> s_oSquarePrimitive;
+      static const std::vector<math::CVector3> s_oCubePrimitive;
+      static const std::vector<math::CVector3> s_oPlanePrimitive;
 
       // 2D Square
       static const std::vector<uint32_t> s_oSquareIndices;
@@ -33,19 +33,19 @@ namespace render
       static const std::vector<uint32_t> s_oWireframePlaneIndices;
 
       // 2D Circle
-      static gfx::TCustomPrimitive CreateCircle(float _fRadius, uint32_t _uSegments, render::ERenderMode _eRenderMode);
+      static TCustomPrimitive CreateCircle(float _fRadius, uint32_t _uSegments, render::ERenderMode _eRenderMode);
 
       // 3D Line
-      static gfx::TCustomPrimitive CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest);
+      static TCustomPrimitive CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest);
 
       // 3D Plane
-      static gfx::TCustomPrimitive CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode);
+      static TCustomPrimitive CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode);
 
       // 3D Capsule
-      static gfx::TCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, uint32_t _uStacks, uint32_t _iulices, render::ERenderMode _eRenderMode);
+      static TCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, uint32_t _uStacks, uint32_t _iulices, render::ERenderMode _eRenderMode);
 
       // 3D Sphere
-      static void CreateSphere(float _fRadius, uint32_t _iStacks, uint32_t _uSlices, std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData_);
+      static void CreateSphere(float _fRadius, uint32_t _iStacks, uint32_t _uSlices, std::vector<math::CVector3>& _lstPrimitiveData_);
 
       static std::vector<uint32_t> GetSphereIndices(uint32_t _uSegments, uint32_t _uSlices);
       static std::vector<uint32_t> GetWireframeSphereIndices(uint32_t _uStacks, uint32_t _uSlices);

@@ -1,8 +1,7 @@
 #pragma once
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
-#include "Engine/Utils/Plane.h"
-#include "Engine/Scenes/Scene.h"
+#include "Engine/Scenes/RenderScene.h"
 #include "Engine/Render/Render.h"
 #include "Engine/Render/RenderTypes.h"
 
@@ -18,7 +17,7 @@ namespace scene
     typedef std::array<render::CCamera*, s_uMaxCameras> TCameraList;
 
     static int constexpr s_iMaxScenes = 1;
-    typedef std::array<CScene*, s_iMaxScenes> TSceneList;
+    typedef std::array<CRenderScene*, s_iMaxScenes> TSceneList;
 
   public:
     CSceneManager() { Setup(); }
@@ -26,16 +25,17 @@ namespace scene
 
     // Handle scene
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
-    inline scene::CScene* const GetCurrentScene() { return m_pCurrentScene; };
+    inline scene::CRenderScene* const GetCurrentScene() { return m_pCurrentScene; };
 
     inline const TSceneList& GetScenes() { return m_lstScenes; }
     inline render::CCamera* const GetRenderCamera() { return m_lstCameraList.front(); }
     inline render::CCamera* const GetShadowCamera() { return m_lstCameraList.back(); }
 
-    // Handle graphics
+    // Handle primitives
     render::gfx::CPrimitive* const CreatePrimitive(const render::EPrimitive&, render::ERenderMode, uint32_t _uSceneIndex = 0);
     bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex = 0);
 
+    // Handle models
     utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char*, uint32_t _uSceneIndex = 0);
     bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_, uint32_t _uSceneIndex = 0);
 
@@ -61,7 +61,7 @@ namespace scene
     TCameraList m_lstCameraList = TCameraList();
 
   private:
-    mutable scene::CScene* m_pCurrentScene = nullptr;
+    mutable scene::CRenderScene* m_pCurrentScene = nullptr;
   };
 }
 

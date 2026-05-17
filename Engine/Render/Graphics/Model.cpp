@@ -15,11 +15,9 @@ namespace render
     // ------------------------------------
     CModel::CModel(TModelData& _rModelData)
     {
-      HRESULT hResult = InitModel(_rModelData);
-      UNUSED_VAR(hResult);
-#ifdef _DEBUG
-      assert(!FAILED(hResult));
-#endif // DEBUG
+      m_lstMeshes = std::move(_rModelData.Meshes);
+      memcpy(m_sAssetPath, _rModelData.AssetPath, strlen(_rModelData.AssetPath));
+      collision::ComputeLocalAABB(_rModelData.VertexData, m_oLocalAABB);
     }
     // ------------------------------------
     CModel::~CModel()
@@ -111,46 +109,8 @@ namespace render
       return bOk;
     }
     // ------------------------------------
-    HRESULT CModel::InitModel(TModelData& _rModelData)
-    {
-      if (_rModelData.Meshes.empty())
-      {
-        return E_FAIL;
-      }
-
-      // Flush model data
-      Clear();
-
-      // Set data
-      m_lstMeshes = std::move(_rModelData.Meshes);
-      memcpy(m_sAssetPath, _rModelData.AssetPath, strlen(_rModelData.AssetPath));
-
-      // We create here the vertex buffer
-      D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
-      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(TVertexData) * _rModelData.Vertices.size()));
-      rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-      rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-      rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-      D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
-      rSubresourceData.pSysMem = _rModelData.Vertices.data();
-      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_pVertexBuffer);
-      if (FAILED(hResult))
-      {
-        return hResult;
-      }
-
-      // Calculate local AABB
-      collision::ComputeLocalAABB(_rModelData.Vertices, m_oLocalAABB);
-
-      return S_OK;
-    }
-    // ------------------------------------
     void CModel::Clear()
     {
-      // Clear buffers
-      global::dx::SafeRelease(m_pVertexBuffer);
-
       // Clear model data
       for (auto& pMesh : m_lstMeshes)
       {

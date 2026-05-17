@@ -15,13 +15,11 @@ namespace global
     HWND s_oHwnd = nullptr;
   }
   // DirectX
-  namespace dx
+  namespace api
   {
     // Device
-    ID3D11Device* s_pDevice = nullptr;
-    ID3D11DeviceContext* s_pDeviceContext = nullptr;
-    ID3D11Buffer* s_pInstanceBuffer = nullptr;
-    ID3D11Buffer* s_pPrimitiveInstanceBuffer = nullptr;
+    ID3D11Device* Device = nullptr;
+    ID3D11DeviceContext* DeviceContext = nullptr;
   }
   // Global delegates
   namespace delegates

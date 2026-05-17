@@ -20,8 +20,8 @@ static constexpr uint32_t s_uAlign = 16;
 | matrix NxM      | N×16 bytes     |
 */
 
-// Transforms [128 Bytes]
-struct __declspec(align(s_uAlign)) TTransforms
+// Camera transform [128 Bytes]
+struct __declspec(align(s_uAlign)) TCameraTransform
 {
   // Transforms
   math::CMatrix4x4 ViewProjection = math::CMatrix4x4::Identity;

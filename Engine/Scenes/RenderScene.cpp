@@ -1,7 +1,5 @@
-#include "Scene.h"
-#include "Engine/Engine.h"
-#include "Engine/Utils/Plane.h"
-#include "Engine/Render/Render.h"
+#include "RenderScene.h"
+#include "Engine/Camera/Camera.h"
 #include "Engine/Render/Lighting/Light.h"
 #include "Engine/Render/Lighting/DirectionalLight.h"
 #include "Engine/Render/Utils/PrimitiveUtils.h"
@@ -9,38 +7,69 @@
 #include "Engine/Global/GlobalResources.h"
 
 #include "Libs/Macros/GlobalMacros.h"
-#include <algorithm>
-#include <random>
 #include <cassert>
-#include <iostream>
 
 namespace scene
 {
   // ------------------------------------
-  CScene::~CScene()
+  HRESULT CRenderScene::Init()
+  {
+    // Create model buffers
+    D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
+    rVertexBufferDesc.ByteWidth = MAX_MODELS_VB_SIZE;
+    rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    HRESULT hResult = global::api::Device->CreateBuffer(&rVertexBufferDesc, nullptr, &m_pModelsVB);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating vertex buffer.");
+      return hResult;
+    }
+
+    D3D11_BUFFER_DESC rIndexBufferDesc = D3D11_BUFFER_DESC();
+    rIndexBufferDesc.ByteWidth = MAX_MODELS_IB_SIZE;
+    rIndexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    rIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+    rIndexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    hResult = global::api::Device->CreateBuffer(&rIndexBufferDesc, nullptr, &m_pModelsIB);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating index buffer.");
+      m_pModelsVB->Release();
+      m_pModelsVB = nullptr;
+      return hResult;
+    }
+
+    return hResult;
+  }
+  // ------------------------------------
+  CRenderScene::~CRenderScene()
   {
     Clear();
   }
   // ------------------------------------
-  const TCachedModels& CScene::GetCacheModels(uint16_t& _uDrawableCount_) const
+  const TCachedModels& CRenderScene::GetCacheModels(uint16_t& _uDrawableCount_) const
   {
     _uDrawableCount_ = m_uDrawableModels;
     return m_lstCachedModels;
   }
   // ------------------------------------
-  const scene::TCachedPrimitives& CScene::GetCachedPrimitives(uint16_t& _uDrawableCount_) const
+  const scene::TCachedPrimitives& CRenderScene::GetCachedPrimitives(uint16_t& _uDrawableCount_) const
   {
     _uDrawableCount_ = m_uDrawablePrimitives;
     return m_lstCachedPrimitives;
   }
   // ------------------------------------
-  const scene::TCachedDebugPrimitives& CScene::GetCachedDebugPrimitives(uint16_t& _uDrawableCount_) const
+  const scene::TCachedDebugPrimitives& CRenderScene::GetCachedDebugPrimitives(uint16_t& _uDrawableCount_) const
   {
     _uDrawableCount_ = m_uDrawableDebugPrimitives;
     return m_lstCachedDebugPrimitives;
   }
   // ------------------------------------
-  render::gfx::CPrimitive* const CScene::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
+  render::gfx::CPrimitive* const CRenderScene::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
   {
     if (m_lstPrimitives.GetSize() >= m_lstPrimitives.GetMaxSize())
     {
@@ -50,12 +79,12 @@ namespace scene
     return m_lstPrimitives.Create(_eType, _eRenderMode);
   }
   // ------------------------------------
-  bool CScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
+  bool CRenderScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
   {
     return m_lstPrimitives.Remove(_pPrimitive_);
   }
   // ------------------------------------
-  utils::CWeakPtr<render::gfx::CModel> const CScene::LoadModel(const char* _sModelPath)
+  utils::CWeakPtr<render::gfx::CModel> const CRenderScene::LoadModel(const char* _sModelPath)
   {
     // Check preload model
     utils::CWeakPtr<render::gfx::CModel> wpModel;
@@ -85,39 +114,120 @@ namespace scene
     {
       // Load model
       CResourceManager* pResourceManager = CResourceManager::GetInstance();
-      std::unique_ptr<render::gfx::CModel> pLoadedModel = pResourceManager->LoadModel(_sModelPath);
+      render::gfx::TModelData rModelData = pResourceManager->LoadModel(_sModelPath);
+
+      #pragma region VERTEX BUFFER
+
+      uint32_t uVertexCount = static_cast<uint32_t>(rModelData.VertexData.size());
+      uint32_t uTargetSize = uVertexCount * sizeof(render::gfx::TVertexData);
+      uint32_t uNextOffset = m_uModelsVertexOffset * sizeof(render::gfx::TVertexData) + uTargetSize;
+
+      if (uNextOffset > MAX_MODELS_VB_SIZE)
+      {
+        ERROR_LOG("There isn't enough memory to create a new model!");
+        return utils::CWeakPtr<render::gfx::CModel>();
+      }
+
+      // Map buffer
+      D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+      HRESULT hResult = global::api::DeviceContext->Map(m_pModelsVB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &rMappedSubresource);
+      if (FAILED(hResult))
+      {
+        ERROR_LOG("Error mapping buffer!");
+        return utils::CWeakPtr<render::gfx::CModel>();
+      }
+
+      uint32_t uStartVertexOffset = m_uModelsVertexOffset;
+      render::gfx::TVertexData * pVertexData = static_cast<render::gfx::TVertexData*>(rMappedSubresource.pData);
+      render::gfx::TVertexData* pWritePtr = pVertexData + uStartVertexOffset;
+      memcpy(pWritePtr, rModelData.VertexData.data(), uTargetSize);
+
+      // Add offset
+      m_uModelsVertexOffset += uVertexCount;
+
+      // Unmap
+      global::api::DeviceContext->Unmap(m_pModelsVB, 0);
+
+      #pragma endregion
+
+      #pragma region INDEX BUFFER
+
+      for (std::unique_ptr<render::gfx::CMesh>& pMesh : rModelData.Meshes)
+      {
+        uint32_t uIndices = static_cast<uint32_t>(pMesh->GetIndexCount());
+        uTargetSize = uIndices * sizeof(uint32_t);
+        uNextOffset = m_uModelsIndexOffset * sizeof(uint32_t) + uTargetSize;
+
+        if (uNextOffset > MAX_MODELS_IB_SIZE)
+        {
+          ERROR_LOG("There isn't enough memory to create a new model!");
+          return utils::CWeakPtr<render::gfx::CModel>();
+        }
+
+        // Map buffer
+        rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
+        hResult = global::api::DeviceContext->Map(m_pModelsIB, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &rMappedSubresource);
+        if (FAILED(hResult))
+        {
+          ERROR_LOG("Error mapping buffer!");
+          return utils::CWeakPtr<render::gfx::CModel>();
+        }
+
+        uint32_t uStartIndicesOffset = m_uModelsIndexOffset;
+        uint32_t* pIndexData = static_cast<uint32_t*>(rMappedSubresource.pData);
+
+        uint32_t* pPtr = pIndexData + uStartIndicesOffset;
+        std::vector<uint32_t>& lstIndices = pMesh->GetIndices();
+        memcpy(pPtr, lstIndices.data(), uTargetSize);
+        lstIndices.clear();
+
+        // Unmap
+        global::api::DeviceContext->Unmap(m_pModelsIB, 0);
+
+        // Add offset
+        m_uModelsIndexOffset += uIndices;
+        pMesh->SetIndexOffset(m_uModelsIndexOffset - uIndices);
+      }
+
+      #pragma endregion
+
+      // Create model + set vertex offset
+      std::unique_ptr<render::gfx::CModel> pLoadedModel = std::make_unique<render::gfx::CModel>(rModelData);
+      pLoadedModel->SetVertexOffset(m_uModelsVertexOffset - uVertexCount);
+
+      SUCCESS_LOG("Created model! -> " << _sModelPath);
       wpModel = m_lstModels.Insert(std::move(pLoadedModel));
     }
 
     return wpModel;
   }
   // ------------------------------------
-  bool CScene::DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_)
+  bool CRenderScene::DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_)
   {
     return m_lstModels.Remove(_wpModel_);
   }
   // ------------------------------------
-  render::lights::CDirectionalLight* const CScene::CreateDirectionalLight()
+  render::lights::CDirectionalLight* const CRenderScene::CreateDirectionalLight()
   {
     return m_oLightManager.CreateDirectionalLight();
   }
   // ------------------------------------
-  render::lights::CPointLight* const CScene::CreatePointLight()
+  render::lights::CPointLight* const CRenderScene::CreatePointLight()
   {
     return m_oLightManager.CreatePointLight();
   }
   // ------------------------------------
-  render::lights::CSpotLight* const CScene::CreateSpotLight()
+  render::lights::CSpotLight* const CRenderScene::CreateSpotLight()
   {
     return m_oLightManager.CreateSpotLight();
   }
   // ------------------------------------
-  bool CScene::DestroyLight(render::lights::CLight*& _pLight_)
+  bool CRenderScene::DestroyLight(render::lights::CLight*& _pLight_)
   {
     return m_oLightManager.DestroyLight(_pLight_);
   }
   // ------------------------------------
-  void CScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
+  void CRenderScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
     float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
   {
     if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
@@ -143,7 +253,7 @@ namespace scene
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CRenderScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
@@ -165,7 +275,7 @@ namespace scene
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CRenderScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
@@ -176,7 +286,7 @@ namespace scene
     // Fill primitive data
     using namespace render::gfx;
     TCustomPrimitive rData = TCustomPrimitive();
-    CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, rData.PrimitiveData);
+    CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, rData.Vertices);
 
     // Fill indices
     rData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ? CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) :
@@ -193,7 +303,7 @@ namespace scene
     pSpherePrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CRenderScene::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
@@ -217,7 +327,7 @@ namespace scene
     pPlanePrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
+  void CRenderScene::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
     if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
@@ -239,7 +349,7 @@ namespace scene
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
-  void CScene::CacheModels(render::CCamera* _pCamera)
+  void CRenderScene::CacheModels(render::CCamera* _pCamera)
   {
     // Reset value
     m_uDrawableModels = 0;
@@ -293,7 +403,7 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::CachePrimitives(render::CCamera* _pCamera)
+  void CRenderScene::CachePrimitives(render::CCamera* _pCamera)
   {
     // Reset value
     m_uDrawablePrimitives = 0;
@@ -318,7 +428,7 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::CacheDebugPrimitives(render::CCamera* _pCamera)
+  void CRenderScene::CacheDebugPrimitives(render::CCamera* _pCamera)
   {
     // Reset value
     m_uDrawableDebugPrimitives = 0;
@@ -343,15 +453,20 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CScene::ApplyLighting()
+  void CRenderScene::ApplyLighting()
   {
     m_oLightManager.ApplyLighting();
   }
-  // ------------------------------------
-  void CScene::Clear()
+// ------------------------------------
+  void CRenderScene::Clear()
   {
-    // Models + primitives
-    m_lstPrimitives.Clear();
+    // Clear buffers
+    global::api::SafeRelease(m_pModelsVB);
+    global::api::SafeRelease(m_pModelsIB);
+
+    // Flush items
     m_lstModels.Clear();
+    m_lstPrimitives.Clear();
+    m_lstDebugPrimitives.Clear();
   }
 }

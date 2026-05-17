@@ -1,10 +1,5 @@
 #pragma once
 #include "Engine/Render/Resources/Material.h"
-#include "Libs/Math/Vector3.h"
-#include "Libs/Math/Vector2.h"
-#include "Libs/Math/Transform.h"
-
-#include <vector>
 
 namespace render { class CRender; }
 namespace render { namespace mat { class CMaterial; } }
@@ -16,27 +11,24 @@ namespace render
     class CMesh
     {
     public:
-      CMesh(const TIndices& _lstIndices);
-      ~CMesh();
+      CMesh(std::vector<uint32_t>& _lstIndices);
+      ~CMesh() {}
+
+      inline std::vector<uint32_t>& GetIndices() { return m_lstIndices; }
+      inline void SetIndexCount(uint32_t _uIndexCount) { m_uIndexCount = _uIndexCount; }
+      inline uint32_t GetIndexCount() const { return m_uIndexCount; }
+      inline void SetIndexOffset(uint32_t _uIndexOffset) { m_uIndexOffset = _uIndexOffset; }
+      inline uint32_t GetIndexOffset() const { return m_uIndexOffset; }
 
       inline render::mat::CMaterial* GetMaterial() const { return m_pMaterial.get(); }
       inline void SetMaterial(std::unique_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }
 
-      inline ID3D11Buffer* GetIndexBuffer() const { return m_pIndexBuffer; }
-      inline uint32_t GetIndexCount() const { return m_uIndices; }
-
-    private:
-      HRESULT CreateBuffer(const TIndices& _lstIndices);
-      void ClearBuffer();
-      void ClearMaterial();
-
-    private:
-      // Buffer
-      ID3D11Buffer* m_pIndexBuffer = nullptr;
-      uint32_t m_uIndices = 0;
-
     private:
       std::unique_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
+
+      std::vector<uint32_t> m_lstIndices = std::vector<uint32_t>();
+      uint32_t m_uIndexCount = 0;
+      uint32_t m_uIndexOffset = 0;
     };
   }
 }

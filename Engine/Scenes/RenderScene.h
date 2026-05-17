@@ -25,6 +25,12 @@ namespace scene
     uint16_t InstanceCount = 0;
   };
 
+  // Max GPU
+  constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 128u;
+  constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 64u;
+  constexpr uint32_t MAX_PRIMITIVES_VB_SIZE = 1024u * 1024u * 32u;
+  constexpr uint32_t MAX_PRIMITIVES_IB_SIZE = 1024u * 1024u * 16u;
+
   static constexpr uint16_t s_uMaxModels = 128u;
   typedef utils::CUniquePtrList<render::gfx::CModel, s_uMaxModels> TModels;
   typedef std::array<TCachedModel, s_uMaxModels> TCachedModels;
@@ -39,34 +45,35 @@ namespace scene
   typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugPrimitives> TDebugPrimitives;
   typedef std::array<uint16_t, s_uMaxDebugPrimitives> TCachedDebugPrimitives;
 
-  class CScene
+  class CRenderScene
   {
   public:
-    CScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex) {}
-    ~CScene();
+    CRenderScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex) { Init(); }
+    ~CRenderScene();
 
     // Handle scene
     inline void SetEnabled(bool _bEnabled) { m_bEnabled = _bEnabled; }
     inline const bool IsEnabled() const { return m_bEnabled; }
     inline const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
-    // Scene items
-    inline const TModels& GetModels() const { return m_lstModels; }
-    inline const TPrimitives& GetPrimitives() const { return m_lstPrimitives; }
-    inline const TDebugPrimitives& GetDebugPrimitives() const { return m_lstDebugPrimitives; }
-
     // Cached items
     const TCachedModels& GetCacheModels(uint16_t& _uDrawableCount_) const;
     const TCachedPrimitives& GetCachedPrimitives(uint16_t& _uDrawableCount_) const;
     const TCachedDebugPrimitives& GetCachedDebugPrimitives(uint16_t& _uDrawableCount_) const;
 
-    // Handle graphics
+    // Scene items
+    inline const TModels& GetModels() const { return m_lstModels; }
+    inline const TPrimitives& GetPrimitives() const { return m_lstPrimitives; }
+    inline const TDebugPrimitives& GetDebugPrimitives() const { return m_lstDebugPrimitives; }
+
+    // Handle models
+    utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char* _sModelPath);
+    bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _pModel_);
+
+    // Handle primitives
     render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
     bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
     inline void ClearDebugItems() { m_lstDebugPrimitives.Clear(); }
-
-    utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char* _sModelPath);
-    bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _pModel_);
 
     // Handle lights
     render::lights::CLightManager* const GetLightManager() { return &m_oLightManager; }
@@ -84,6 +91,15 @@ namespace scene
 
   private:
     friend class render::CRender;
+
+    ID3D11Buffer* GetModelsVB() const { return m_pModelsVB; }
+    ID3D11Buffer* GetModelsIB() const { return m_pModelsIB; }
+
+    ID3D11Buffer* GetPrimitivesVB() const { return m_pPrimitivesVB; }
+    ID3D11Buffer* GetPrimitivesIB() const { return m_pPrimitivesIB; }
+
+  private:
+    HRESULT Init();
     void Clear();
 
     // Cache items
@@ -98,7 +114,6 @@ namespace scene
     bool m_bEnabled = false;
     uint32_t m_uSceneIdx = 0;
 
-  private:
     // Models
     TModels m_lstModels = TModels();
     TCachedModels m_lstCachedModels = TCachedModels();
@@ -112,6 +127,17 @@ namespace scene
     TDebugPrimitives m_lstDebugPrimitives = TDebugPrimitives();
     TCachedDebugPrimitives m_lstCachedDebugPrimitives = TCachedDebugPrimitives();
     uint16_t m_uDrawableDebugPrimitives = 0;
+
+    // Buffers
+    ID3D11Buffer* m_pModelsVB = nullptr;
+    uint32_t m_uModelsVertexOffset = 0;
+    ID3D11Buffer* m_pModelsIB = nullptr;
+    uint32_t m_uModelsIndexOffset = 0;
+
+    ID3D11Buffer* m_pPrimitivesVB = nullptr;
+    uint32_t m_uPrimitiveVertexOffset = 0;
+    ID3D11Buffer* m_pPrimitivesIB = nullptr;
+    uint32_t m_uPrimitiveIndexOffset = 0;
 
     // Lights
     render::lights::CLightManager m_oLightManager;

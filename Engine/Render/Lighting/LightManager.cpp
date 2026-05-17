@@ -24,16 +24,7 @@ namespace render
     HRESULT CLightManager::Setup()
     {
       // Init constant buffer
-      HRESULT hResult = m_oLightingBuffer.Init();
-      if (FAILED(hResult))
-      {
-        return hResult;
-      }
-
-
-
-
-      return hResult;
+      return m_oLightingBuffer.Init();
     }
     // ------------------------------------
     void CLightManager::ComputeShadows()

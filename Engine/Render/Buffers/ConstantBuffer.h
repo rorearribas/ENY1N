@@ -18,12 +18,12 @@ public:
   {
     switch (_Type)
     {
-      case render::EShader::E_VERTEX:   global::dx::s_pDeviceContext->VSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-      case render::EShader::E_HULL:     global::dx::s_pDeviceContext->HSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-      case render::EShader::E_DOMAIN:   global::dx::s_pDeviceContext->DSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-      case render::EShader::E_GEOMETRY: global::dx::s_pDeviceContext->GSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-      case render::EShader::E_PIXEL:    global::dx::s_pDeviceContext->PSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
-      case render::EShader::E_COMPUTE:  global::dx::s_pDeviceContext->CSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_VERTEX:   global::api::DeviceContext->VSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_HULL:     global::api::DeviceContext->HSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_DOMAIN:   global::api::DeviceContext->DSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_GEOMETRY: global::api::DeviceContext->GSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_PIXEL:    global::api::DeviceContext->PSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
+      case render::EShader::E_COMPUTE:  global::api::DeviceContext->CSSetConstantBuffers(_uSlot, 1, &m_pBuffer); break;
     }
   }
   bool WriteBuffer(const T& _rData);
@@ -44,20 +44,20 @@ HRESULT CConstantBuffer<T>::Init()
   rBufferDesc.StructureByteStride = 0;
   rBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(T) + 15) & ~15);
 
-  return global::dx::s_pDevice->CreateBuffer(&rBufferDesc, 0, &m_pBuffer);
+  return global::api::Device->CreateBuffer(&rBufferDesc, 0, &m_pBuffer);
 }
 
 template<class T>
 void CConstantBuffer<T>::Release()
 {
-  global::dx::SafeRelease(m_pBuffer);
+  global::api::SafeRelease(m_pBuffer);
 }
 
 template<class T>
 bool CConstantBuffer<T>::WriteBuffer(const T& _rData)
 {
   D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-  HRESULT hResult = global::dx::s_pDeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+  HRESULT hResult = global::api::DeviceContext->Map(m_pBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
   if (FAILED(hResult))
   {
     return false;
@@ -65,6 +65,6 @@ bool CConstantBuffer<T>::WriteBuffer(const T& _rData)
 
   // Copy memory into buffer
   memcpy(rMappedSubresource.pData, &_rData, sizeof(T));
-  global::dx::s_pDeviceContext->Unmap(m_pBuffer, 0);
+  global::api::DeviceContext->Unmap(m_pBuffer, 0);
   return true;
 }

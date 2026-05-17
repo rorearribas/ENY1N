@@ -29,7 +29,7 @@ namespace render
     };
 
     // Set render targets
-    global::dx::s_pDeviceContext->OMSetRenderTargets(internal::uRenderTargets, lstGBufferRTV, _pDepthStencilView);
+    global::api::DeviceContext->OMSetRenderTargets(internal::uRenderTargets, lstGBufferRTV, _pDepthStencilView);
   }
   // ------------------------------------
   void CDeferredRenderer::DetachRenderTargets()
@@ -37,7 +37,7 @@ namespace render
     // Remove render targets
     static constexpr uint32_t uRenderTargets(3);
     ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };
-    global::dx::s_pDeviceContext->OMSetRenderTargets(uRenderTargets, lstEmptyRTs, nullptr);
+    global::api::DeviceContext->OMSetRenderTargets(uRenderTargets, lstEmptyRTs, nullptr);
   }
   // ------------------------------------
   void CDeferredRenderer::ClearRenderTargets(const float _v4ClearColor[4])

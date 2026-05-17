@@ -26,7 +26,7 @@ namespace scene
     {
       return nullptr;
     }
-    scene::CScene* pScene = m_lstScenes[_uSceneIndex];
+    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
     return pScene->CreatePrimitive(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
@@ -36,7 +36,7 @@ namespace scene
     {
       return false;
     }
-    scene::CScene* pScene = m_lstScenes.at(_uSceneIndex);
+    scene::CRenderScene* pScene = m_lstScenes.at(_uSceneIndex);
     return pScene->DestroyPrimitive(_pPrimitive_);
   }
   // ------------------------------------
@@ -46,7 +46,7 @@ namespace scene
     {
       return utils::CWeakPtr<render::gfx::CModel>();
     }
-    scene::CScene* pScene = m_lstScenes[_uSceneIndex];
+    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
     return pScene->LoadModel(_sModelPath);
   }
   // ------------------------------------
@@ -56,7 +56,7 @@ namespace scene
     {
       return false;
     }
-    scene::CScene* pScene = m_lstScenes.at(_uSceneIndex);
+    scene::CRenderScene* pScene = m_lstScenes.at(_uSceneIndex);
     return pScene->DestroyModel(_wpModel_);
   }
   // ------------------------------------
@@ -66,7 +66,7 @@ namespace scene
     {
       return nullptr;
     }
-    scene::CScene* pScene = m_lstScenes[_uSceneIndex];
+    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
     return pScene->CreateDirectionalLight();
   }
   // ------------------------------------
@@ -76,7 +76,7 @@ namespace scene
     {
       return nullptr;
     }    
-    scene::CScene* pScene = m_lstScenes[_uSceneIndex];
+    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
     return pScene->CreatePointLight();
   }
   // ------------------------------------
@@ -86,7 +86,7 @@ namespace scene
     {
       return nullptr;
     }
-    scene::CScene* pScene = m_lstScenes[_uSceneIndex];
+    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
     return pScene->CreateSpotLight();
   }
   // ------------------------------------
@@ -96,7 +96,7 @@ namespace scene
     {
       return false;
     }
-    scene::CScene* pScene = m_lstScenes.at(_uSceneIndex);
+    scene::CRenderScene* pScene = m_lstScenes.at(_uSceneIndex);
     return pScene->DestroyLight(_pLight_);
   }
   // ------------------------------------
@@ -144,9 +144,9 @@ namespace scene
   void CSceneManager::Setup()
   {
     int iCurrentIdx = 0;
-    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [&](scene::CScene*& _pScene_)
+    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [&](scene::CRenderScene*& _pScene_)
     {
-      _pScene_ = new scene::CScene(iCurrentIdx++);
+      _pScene_ = new scene::CRenderScene(iCurrentIdx++);
       _pScene_->SetEnabled(false);
     });
 
@@ -158,7 +158,7 @@ namespace scene
   // ------------------------------------
   void CSceneManager::Clear()
   {
-    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [](CScene*& _pScene_)
+    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [](CRenderScene*& _pScene_)
     {
       global::ReleaseObject(_pScene_);
     });

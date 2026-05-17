@@ -21,10 +21,10 @@ namespace render
     static constexpr uint32_t s_uSubvH = 12;
     static constexpr uint32_t s_uSubvV = 12;
 
-    CPrimitive::CPrimitive(TCustomPrimitive& _oData, render::ERenderMode _eRenderMode)
+    CPrimitive::CPrimitive(TCustomPrimitive& _rData, render::ERenderMode _eRenderMode)
     {
       // Create from custom data
-      HRESULT hResult = CreateBuffer(_oData.PrimitiveData, _oData.Indices);
+      HRESULT hResult = CreateBuffer(_rData.Vertices, _rData.Indices);
       UNUSED_VAR(hResult);
 #ifdef _DEBUG
       assert(!FAILED(hResult));
@@ -116,8 +116,8 @@ namespace render
     // ------------------------------------
     void CPrimitive::Clear()
     {
-      global::dx::SafeRelease(m_pVertexBuffer);
-      global::dx::SafeRelease(m_pIndexBuffer);
+      global::api::SafeRelease(m_pVertexBuffer);
+      global::api::SafeRelease(m_pIndexBuffer);
     }
     // ------------------------------------
     HRESULT CPrimitive::CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode)
@@ -137,15 +137,15 @@ namespace render
         case EPrimitive::E3D_SPHERE:
         {
           // Create sphere
-          std::vector<render::gfx::TPrimitiveData> lstPrimitiveData = std::vector<render::gfx::TPrimitiveData>();
-          CPrimitiveUtils::CreateSphere(s_fStandardRadius, s_uSubvH, s_uSubvV, lstPrimitiveData);
+          std::vector<math::CVector3> lstVertices = std::vector<math::CVector3>();
+          CPrimitiveUtils::CreateSphere(s_fStandardRadius, s_uSubvH, s_uSubvV, lstVertices);
 
           // Get indices
           const auto& lstIndices = _eRenderMode == (render::ERenderMode::SOLID) ? CPrimitiveUtils::GetSphereIndices(s_uSubvH, s_uSubvV) :
           CPrimitiveUtils::GetWireframeSphereIndices(s_uSubvH, s_uSubvV);
 
           // Create buffer
-          return CreateBuffer(lstPrimitiveData, lstIndices);
+          return CreateBuffer(lstVertices, lstIndices);
         }
         case EPrimitive::E3D_CAPSULE:
         {
@@ -158,7 +158,7 @@ namespace render
             s_uSubvV,
             _eRenderMode
           );
-          return CreateBuffer(oPrimitiveData.PrimitiveData, oPrimitiveData.Indices);
+          return CreateBuffer(oPrimitiveData.Vertices, oPrimitiveData.Indices);
         }
         case EPrimitive::E3D_PLANE:
         {
@@ -183,7 +183,7 @@ namespace render
         {
           // Create 2D Circle
           TCustomPrimitive oPrimitiveData = CPrimitiveUtils::CreateCircle(s_fStandardRadius, s_uCircleSegments, _eRenderMode);
-          return CreateBuffer(oPrimitiveData.PrimitiveData, oPrimitiveData.Indices);
+          return CreateBuffer(oPrimitiveData.Vertices, oPrimitiveData.Indices);
         }
         break;
         case EPrimitive::E2D_TRIANGLE:
@@ -201,7 +201,7 @@ namespace render
       return S_FALSE;
     }
     // ------------------------------------
-    HRESULT CPrimitive::CreateBuffer(const std::vector<render::gfx::TPrimitiveData>& _lstPrimitiveData, const std::vector<uint32_t>& _lstIndices)
+    HRESULT CPrimitive::CreateBuffer(const std::vector<math::CVector3>& _lstPrimitiveData, const std::vector<uint32_t>& _lstIndices)
     {
       if (_lstPrimitiveData.empty() || _lstIndices.empty())
       {
@@ -213,7 +213,7 @@ namespace render
 
       // Config vertex buffer
       D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
-      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>(sizeof(render::gfx::TPrimitiveData) * _lstPrimitiveData.size());
+      rVertexBufferDesc.ByteWidth = static_cast<uint32_t>(sizeof(math::CVector3) * _lstPrimitiveData.size());
       rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
       rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
       rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
@@ -221,7 +221,7 @@ namespace render
       // Create vertex buffer
       D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
       rSubresourceData.pSysMem = _lstPrimitiveData.data();
-      HRESULT hResult = global::dx::s_pDevice->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_pVertexBuffer);
+      HRESULT hResult = global::api::Device->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_pVertexBuffer);
       if (FAILED(hResult))
       {
         return hResult;
@@ -239,7 +239,7 @@ namespace render
 
       // Create index buffer
       rSubresourceData.pSysMem = _lstIndices.data();
-      hResult = global::dx::s_pDevice->CreateBuffer(&rIndexBufferDesc, &rSubresourceData, &m_pIndexBuffer);
+      hResult = global::api::Device->CreateBuffer(&rIndexBufferDesc, &rSubresourceData, &m_pIndexBuffer);
       if (FAILED(hResult))
       {
         return hResult;
