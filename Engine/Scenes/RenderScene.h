@@ -8,6 +8,7 @@
 
 #include "Libs/Utils/FixedPool.h"
 #include "Libs/Utils/UniquePtrList.h"
+#include "Engine/Render/Buffers/RenderBuffer.h"
 
 namespace render { class CCamera; }
 namespace render { class CRender; }
@@ -73,7 +74,7 @@ namespace scene
     // Handle primitives
     render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
     bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
-    inline void ClearDebugItems() { m_lstDebugPrimitives.Clear(); }
+    void ClearDebugItems();
 
     // Handle lights
     render::lights::CLightManager* const GetLightManager() { return &m_oLightManager; }
@@ -92,11 +93,14 @@ namespace scene
   private:
     friend class render::CRender;
 
-    ID3D11Buffer* GetModelsVB() const { return m_pModelsVB; }
-    ID3D11Buffer* GetModelsIB() const { return m_pModelsIB; }
+    ID3D11Buffer* GetModelsVB() const { return m_oModelsVB; }
+    ID3D11Buffer* GetModelsIB() const { return m_oModelsIB; }
 
-    ID3D11Buffer* GetPrimitivesVB() const { return m_pPrimitivesVB; }
-    ID3D11Buffer* GetPrimitivesIB() const { return m_pPrimitivesIB; }
+    ID3D11Buffer* GetPrimitivesVB() const { return m_oPrimitivesVB; }
+    ID3D11Buffer* GetPrimitivesIB() const { return m_oPrimitivesIB; }
+
+    ID3D11Buffer* GetDebugPrimitivesVB() const { return m_oDebugPrimitivesVB; }
+    ID3D11Buffer* GetDebugPrimitivesIB() const { return m_oDebugPrimitivesIB; }
 
   private:
     HRESULT Init();
@@ -114,6 +118,10 @@ namespace scene
     bool m_bEnabled = false;
     uint32_t m_uSceneIdx = 0;
 
+    // Lighting
+    render::lights::CLightManager m_oLightManager;
+
+  private:
     // Models
     TModels m_lstModels = TModels();
     TCachedModels m_lstCachedModels = TCachedModels();
@@ -128,18 +136,17 @@ namespace scene
     TCachedDebugPrimitives m_lstCachedDebugPrimitives = TCachedDebugPrimitives();
     uint16_t m_uDrawableDebugPrimitives = 0;
 
-    // Buffers
-    ID3D11Buffer* m_pModelsVB = nullptr;
-    uint32_t m_uModelsVertexOffset = 0;
-    ID3D11Buffer* m_pModelsIB = nullptr;
-    uint32_t m_uModelsIndexOffset = 0;
+  private:
+    // Render buffer by models
+    CRenderBuffer<render::gfx::TVertexData> m_oModelsVB;
+    CRenderBuffer<uint32_t> m_oModelsIB;
 
-    ID3D11Buffer* m_pPrimitivesVB = nullptr;
-    uint32_t m_uPrimitiveVertexOffset = 0;
-    ID3D11Buffer* m_pPrimitivesIB = nullptr;
-    uint32_t m_uPrimitiveIndexOffset = 0;
+    // Render buffer by primitives
+    CRenderBuffer<math::CVector3> m_oPrimitivesVB;
+    CRenderBuffer<uint32_t> m_oPrimitivesIB;
 
-    // Lights
-    render::lights::CLightManager m_oLightManager;
+    // Render buffer by debug primitives
+    CRenderBuffer<math::CVector3> m_oDebugPrimitivesVB;
+    CRenderBuffer<uint32_t> m_oDebugPrimitivesIB;
   };
 }

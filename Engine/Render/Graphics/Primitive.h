@@ -16,9 +16,8 @@ namespace render
     class CPrimitive
     {
     public:
-      CPrimitive(TCustomPrimitive& _rData, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
-      CPrimitive(EPrimitive _eType, render::ERenderMode _eRenderMode = ERenderMode::SOLID);
-      ~CPrimitive();
+      CPrimitive() = default;
+      ~CPrimitive() = default;
 
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPos() const { return m_oTransform.GetPos(); }
@@ -35,46 +34,39 @@ namespace render
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool IsVisible() const { return m_bVisible; }
 
-      void SetRenderMode(render::ERenderMode _eRenderMode);
+      inline void SetRenderMode(render::ERenderMode _eRenderMode) { m_eRenderMode = _eRenderMode; }
       inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
-      inline const EPrimitive& GetPrimitiveType() const { return m_ePrimitiveType; }
 
       inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
       inline const math::CTransform& GetTransform() const { return m_oTransform; }
 
-      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
+      inline void SetLocalAABB(const collision::CAABB& _rLocalAABB) { m_oLocalAABB = _rLocalAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
+      inline void SetWorldAABB(const collision::CAABB& _rWorldAABB) { m_oWorldAABB = _rWorldAABB; }
+      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
 
-      inline ID3D11Buffer* GetVertexBuffer() const { return m_pVertexBuffer; }
-      inline ID3D11Buffer* GetIndexBuffer() const { return m_pIndexBuffer; }
-
-      inline const uint32_t& GetIndices() const { return m_uIndices; }
-      inline const uint32_t& GetVerticesCount() const { return m_uVertices; }
-
-    private:
-      void Clear();
-      HRESULT CreatePrimitive(EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode);
-      HRESULT CreateBuffer(const std::vector<math::CVector3>& _lstPrimitiveData, const std::vector<uint32_t>& _lstIndices);
+      inline const uint32_t& GetIdxCount() const { return m_uIndexCount; }
+      inline void SetIdxCount(uint32_t _uIndexCount) { m_uIndexCount = _uIndexCount; }
+      inline const uint32_t& GetVtxOffset() const { return m_uVertexOffset; }
+      inline void SetVtxOffset(const uint32_t& _uVertexOffset) { m_uVertexOffset = _uVertexOffset; }
+      inline const uint32_t& GetIdxOffset() const { return m_uIndexOffset; }
+      inline void SetIdxOffset(const uint32_t& _uIndexOffset) { m_uIndexOffset = _uIndexOffset; }
 
     private:
-      // Buffers
-      ID3D11Buffer* m_pVertexBuffer = nullptr;
-      ID3D11Buffer* m_pIndexBuffer = nullptr;
-
       // Data
       ERenderMode m_eRenderMode = ERenderMode::SOLID;
-      EPrimitive m_ePrimitiveType = EPrimitive::INVALID;
+      math::CVector3 m_v3Color = math::CVector3::One;
 
       math::CTransform m_oTransform = math::CTransform();
       collision::CAABB m_oWorldAABB = collision::CAABB();
       collision::CAABB m_oLocalAABB = collision::CAABB();
 
-      math::CVector3 m_v3Color = math::CVector3::One;
       bool m_bCullEnabled = true;
       bool m_bVisible = true;
 
-      uint32_t m_uVertices = 0;
-      uint32_t m_uIndices = 0;
+      uint32_t m_uIndexCount = 0;
+      uint32_t m_uVertexOffset = 0;
+      uint32_t m_uIndexOffset = 0;
     };
   }
 }

@@ -317,15 +317,6 @@ namespace render
   // ------------------------------------
   void CRender::Draw(scene::CRenderScene* _pScene)
   {
-    // Set model vertex/index buffer
-    static const uint32_t uBuffersCount(2);
-    ID3D11Buffer* pBuffers[uBuffersCount] = { _pScene->GetModelsVB(), internal::Pipeline.InstanceBuffer };
-
-    uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
-    uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
-    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
-    global::api::DeviceContext->IASetIndexBuffer(_pScene->GetModelsIB(), DXGI_FORMAT_R32_UINT, 0);
-
     // Calculate projection and invert projection
 #ifdef _DEBUG
     assert(m_pRenderCamera);
@@ -1114,6 +1105,15 @@ namespace render
   // ------------------------------------
   void CRender::DrawOpaqueModels(scene::CRenderScene* _pScene)
   {
+    // Set model vertex/index buffer
+    static const uint32_t uBuffersCount(2);
+    ID3D11Buffer* pBuffers[uBuffersCount] = { _pScene->GetModelsVB(), internal::Pipeline.InstanceBuffer };
+
+    uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
+    uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
+    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
+    global::api::DeviceContext->IASetIndexBuffer(_pScene->GetModelsIB(), DXGI_FORMAT_R32_UINT, 0);
+
     // Bind buffer
     internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
 
@@ -1278,7 +1278,7 @@ namespace render
     // Set values
     uint16_t uInstances = _bVisible ? ++_uInstanceCount : _uInstanceCount;
     uint16_t uStartOffset = !_bVisible;
-    uint32_t uVertexOffset = _pModel->GetVertexOffset();
+    uint32_t uVtxOffset = _pModel->GetVtxOffset();
 
     // Draw meshes
     const render::gfx::TMeshes& lstMeshes = _pModel->GetMeshes();
@@ -1288,9 +1288,9 @@ namespace render
       PushMaterial(pMesh->GetMaterial());
 
       // Draw mesh
-      uint32_t uIndexCount = pMesh->GetIndexCount();
-      uint32_t uIndexOffset = pMesh->GetIndexOffset();
-      global::api::DeviceContext->DrawIndexedInstanced(uIndexCount, uInstances, uIndexOffset, uVertexOffset, uStartOffset);
+      uint32_t uIdxCount = pMesh->GetIdxCount();
+      uint32_t uIdxOffset = pMesh->GetIdxOffset();
+      global::api::DeviceContext->DrawIndexedInstanced(uIdxCount, uInstances, uIdxOffset, uVtxOffset, uStartOffset);
     }
   }
   // ------------------------------------
@@ -1306,6 +1306,14 @@ namespace render
     // Bind buffer
     internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
 
+    // Set primitives global buffers
+    static const uint32_t uBuffersCount(2);
+    ID3D11Buffer* pPrimitiveBuffers[uBuffersCount] = { _pScene->GetPrimitivesVB(), internal::Pipeline.PrimitiveInstanceBuffer };
+    uint32_t lstStrides[uBuffersCount] = { sizeof(math::CVector3), sizeof(render::gfx::TPrimitiveInstanceData) };
+    uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
+    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pPrimitiveBuffers, lstStrides, lstOffsets);
+    global::api::DeviceContext->IASetIndexBuffer(_pScene->GetPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
+
     // Draw primitives
     uint16_t uDrawableCount = 0;
     const scene::TPrimitives& lstPrimitives = _pScene->GetPrimitives();
@@ -1314,6 +1322,11 @@ namespace render
     {
       DrawPrimitive(lstPrimitives[lstCachedPrimitives[uI]]);
     }
+
+    // Set debug global buffers
+    ID3D11Buffer* pDebugPrimitiveBuffers[uBuffersCount] = { _pScene->GetDebugPrimitivesVB(), internal::Pipeline.PrimitiveInstanceBuffer };
+    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pDebugPrimitiveBuffers, lstStrides, lstOffsets);
+    global::api::DeviceContext->IASetIndexBuffer(_pScene->GetDebugPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
     // Draw debug primitives
     const scene::TDebugPrimitives& lstDebugPrimitives = _pScene->GetDebugPrimitives();
@@ -1349,14 +1362,6 @@ namespace render
     // Unmap
     global::api::DeviceContext->Unmap(internal::Pipeline.PrimitiveInstanceBuffer, 0);
 
-    // Set vertex buffers
-    static const uint32_t uBuffersCount(2);
-    ID3D11Buffer* pBuffers[uBuffersCount] = { _pPrimitive->GetVertexBuffer(),internal::Pipeline.PrimitiveInstanceBuffer };
-
-    uint32_t lstStrides[uBuffersCount] = { sizeof(math::CVector3), sizeof(render::gfx::TPrimitiveInstanceData) };
-    uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
-    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
-
     // Set topology
     D3D11_PRIMITIVE_TOPOLOGY eTargetTopology = GetTopology(_pPrimitive->GetRenderMode());
     D3D11_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
@@ -1370,8 +1375,11 @@ namespace render
     const uint16_t uInstanceCount = 1;
     const uint16_t uStartOffset = 0;
 
+    uint32_t uIdxCount = _pPrimitive->GetIdxCount();
+    uint32_t uVtxOffset = _pPrimitive->GetVtxOffset();
+    uint32_t uIdxOffset = _pPrimitive->GetIdxOffset();
+
     // Draw primitive
-    global::api::DeviceContext->IASetIndexBuffer(_pPrimitive->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
-    global::api::DeviceContext->DrawIndexedInstanced(_pPrimitive->GetIndices(), uInstanceCount, 0, 0, uStartOffset);
+    global::api::DeviceContext->DrawIndexedInstanced(uIdxCount, uInstanceCount, uIdxOffset, uVtxOffset, uStartOffset);
   }
 }

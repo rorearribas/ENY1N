@@ -45,8 +45,8 @@ namespace render
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool IsVisible() const { return m_bVisible; }
 
-      inline const uint32_t& GetVertexOffset() const { return m_uVertexOffset; }
-      inline void SetVertexOffset(const uint32_t& _uVertexOffset) { m_uVertexOffset = _uVertexOffset; }
+      inline const uint32_t& GetVtxOffset() const { return m_uVertexOffset; }
+      inline void SetVtxOffset(const uint32_t& _uVertexOffset) { m_uVertexOffset = _uVertexOffset; }
 
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }

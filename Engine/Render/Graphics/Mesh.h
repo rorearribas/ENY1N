@@ -15,10 +15,10 @@ namespace render
       ~CMesh() {}
 
       inline std::vector<uint32_t>& GetIndices() { return m_lstIndices; }
-      inline void SetIndexCount(uint32_t _uIndexCount) { m_uIndexCount = _uIndexCount; }
-      inline uint32_t GetIndexCount() const { return m_uIndexCount; }
-      inline void SetIndexOffset(uint32_t _uIndexOffset) { m_uIndexOffset = _uIndexOffset; }
-      inline uint32_t GetIndexOffset() const { return m_uIndexOffset; }
+      inline void SetIdxCount(uint32_t _uIndexCount) { m_uIndexCount = _uIndexCount; }
+      inline uint32_t GetIdxCount() const { return m_uIndexCount; }
+      inline void SetIdxOffset(uint32_t _uIndexOffset) { m_uIndexOffset = _uIndexOffset; }
+      inline uint32_t GetIdxOffset() const { return m_uIndexOffset; }
 
       inline render::mat::CMaterial* GetMaterial() const { return m_pMaterial.get(); }
       inline void SetMaterial(std::unique_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }

@@ -154,6 +154,7 @@
     <ClInclude Include="Collisions\CapsuleCollider.h" />
     <ClInclude Include="Collisions\CollisionManager.h" />
     <ClInclude Include="Collisions\AABB.h" />
+    <ClInclude Include="Render\Buffers\RenderBuffer.h" />
     <ClInclude Include="Render\Renderers\Renderer.h" />
     <ClInclude Include="Render\Renderers\ForwardRenderer.h" />
     <ClInclude Include="Render\Renderers\LightingRenderer.h" />

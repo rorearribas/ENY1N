@@ -32,17 +32,20 @@ namespace render
       static const std::vector<uint32_t> s_oPlaneIndices;
       static const std::vector<uint32_t> s_oWireframePlaneIndices;
 
+      // Create primitive
+      static TPrimitiveData CreatePrimitive(render::EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode);
+
       // 2D Circle
-      static TCustomPrimitive CreateCircle(float _fRadius, uint32_t _uSegments, render::ERenderMode _eRenderMode);
+      static TPrimitiveData CreateCircle(float _fRadius, uint32_t _uSegments, render::ERenderMode _eRenderMode);
 
       // 3D Line
-      static TCustomPrimitive CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest);
+      static TPrimitiveData CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest);
 
       // 3D Plane
-      static TCustomPrimitive CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode);
+      static TPrimitiveData CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode);
 
       // 3D Capsule
-      static TCustomPrimitive CreateCapsule(float _fRadius, float _fHeight, uint32_t _uStacks, uint32_t _iulices, render::ERenderMode _eRenderMode);
+      static TPrimitiveData CreateCapsule(float _fRadius, float _fHeight, uint32_t _uStacks, uint32_t _iulices, render::ERenderMode _eRenderMode);
 
       // 3D Sphere
       static void CreateSphere(float _fRadius, uint32_t _iStacks, uint32_t _uSlices, std::vector<math::CVector3>& _lstPrimitiveData_);

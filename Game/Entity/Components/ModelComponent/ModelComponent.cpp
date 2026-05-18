@@ -112,14 +112,6 @@ namespace game
     }
   }
   // ------------------------------------
-  void CModelComponent::SetRenderMode(render::ERenderMode _eRenderMode)
-  {
-    if (m_pPrimitive)
-    {
-      m_pPrimitive->SetRenderMode(_eRenderMode);
-    }
-  }
-  // ------------------------------------
   void CModelComponent::SetColor(const math::CVector3& _v3Color)
   {
     if (m_pPrimitive)

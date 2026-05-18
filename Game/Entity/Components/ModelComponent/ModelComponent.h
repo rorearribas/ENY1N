@@ -21,7 +21,6 @@ namespace game
     void LoadModel(const char* _sModelPath);
     void CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
 
-    void SetRenderMode(render::ERenderMode _eRenderMode);
     void SetColor(const math::CVector3& _v3Color);
     void SetCullingEnabled(bool _bCull);
 

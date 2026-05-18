@@ -6,6 +6,14 @@ namespace render
 {
   namespace gfx
   {
+    // Internal definitions
+    static constexpr float s_fStandardRadius = 0.5f;
+    static constexpr float s_fCapsuleHeight = 2.0f;
+
+    static constexpr uint32_t s_uCircleSegments = 12;
+    static constexpr uint32_t s_uSubvH = 12;
+    static constexpr uint32_t s_uSubvV = 12;
+
     // Triangle Primitive
     const std::vector<math::CVector3> CPrimitiveUtils::s_oTrianglePrimitive =
     {
@@ -152,7 +160,72 @@ namespace render
     };
 
     // ------------------------------------
-    TCustomPrimitive CPrimitiveUtils::CreateCircle
+    TPrimitiveData CPrimitiveUtils::CreatePrimitive(render::EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode)
+    {
+      TPrimitiveData rPrimitiveData = TPrimitiveData();
+      switch (_ePrimitiveType)
+      {
+        // 3D Implementation
+        case EPrimitive::E3D_CUBE:
+        {
+          // Create 3D Cube
+          rPrimitiveData.Vertices = CPrimitiveUtils::s_oCubePrimitive;
+          rPrimitiveData.Indices = _eRenderMode == (render::ERenderMode::SOLID) ? s_oCubeIndices : s_oWireframeCubeIndices;
+        }
+        break;
+        case EPrimitive::E3D_SPHERE:
+        {
+          // Create sphere
+          std::vector<math::CVector3> lstVertices = std::vector<math::CVector3>();
+          CreateSphere(s_fStandardRadius, s_uSubvH, s_uSubvV, lstVertices);
+
+          // Get indices
+          const std::vector<uint32_t>& lstIndices = _eRenderMode == (render::ERenderMode::SOLID) ?
+          GetSphereIndices(s_uSubvH, s_uSubvV) : GetWireframeSphereIndices(s_uSubvH, s_uSubvV);
+
+          rPrimitiveData.Vertices = lstVertices;
+          rPrimitiveData.Indices = lstIndices;
+        }
+        break;
+        case EPrimitive::E3D_CAPSULE:
+        {
+          // Create capsule
+          rPrimitiveData = CreateCapsule(s_fStandardRadius, s_fCapsuleHeight, s_uSubvH, s_uSubvV, _eRenderMode);
+        }
+        break;
+        case EPrimitive::E3D_PLANE:
+        {
+          // Create 3D Plane
+          rPrimitiveData.Vertices = s_oPlanePrimitive;
+          rPrimitiveData.Indices = _eRenderMode == (render::ERenderMode::SOLID) ? s_oPlaneIndices : s_oWireframePlaneIndices;
+        }
+        break;
+        // 2D Implementation
+        case EPrimitive::E2D_SQUARE:
+        {
+          // Create 2D Square
+          rPrimitiveData.Vertices = CPrimitiveUtils::s_oSquarePrimitive;
+          rPrimitiveData.Indices = _eRenderMode == (render::ERenderMode::SOLID) ? s_oSquareIndices : s_oSquareWireframeIndices;
+        }
+        break;
+        case EPrimitive::E2D_CIRCLE:
+        {
+          // Create 2D Circle
+          rPrimitiveData = CreateCircle(s_fStandardRadius, s_uCircleSegments, _eRenderMode);
+        }
+        break;
+        case EPrimitive::E2D_TRIANGLE:
+        {
+          // Create 2D Triangle
+          rPrimitiveData.Vertices = s_oTrianglePrimitive;
+          rPrimitiveData.Indices = _eRenderMode == (render::ERenderMode::SOLID) ? s_oTriangleIndices : s_oWireframeTriangleIndices;
+        }
+        break;
+      }
+      return rPrimitiveData;
+    }
+    // ------------------------------------
+    TPrimitiveData CPrimitiveUtils::CreateCircle
     (
       float _fRadius,
       uint32_t _uSegments,
@@ -160,7 +233,7 @@ namespace render
     )
     {
       // Create primitive
-      TCustomPrimitive rCustomData = TCustomPrimitive();
+      TPrimitiveData rCustomData = TPrimitiveData();
 
       if (_eRenderMode == ERenderMode::SOLID)
       {
@@ -178,19 +251,19 @@ namespace render
 
       switch (_eRenderMode)
       {
-        case render::ERenderMode::SOLID: rCustomData.Indices = GetCircleIndices(_uSegments); break;
-        case render::ERenderMode::WIREFRAME: rCustomData.Indices = GetWireframeCircleIndices(_uSegments); break;
-        default: break;
+      case render::ERenderMode::SOLID: rCustomData.Indices = GetCircleIndices(_uSegments); break;
+      case render::ERenderMode::WIREFRAME: rCustomData.Indices = GetWireframeCircleIndices(_uSegments); break;
+      default: break;
       }
 
       return rCustomData;
     }
 
     // ------------------------------------
-    TCustomPrimitive CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest)
+    TPrimitiveData CPrimitiveUtils::CreateLine(const math::CVector3& _v3Origin, const math::CVector3& _v3Dest)
     {
       // Create primitive
-      TCustomPrimitive rCustomPrimitive = TCustomPrimitive();
+      TPrimitiveData rCustomPrimitive = TPrimitiveData();
 
       // Fill data 
       uint32_t uIndex = 0;
@@ -204,10 +277,10 @@ namespace render
       return rCustomPrimitive;
     }
     // ------------------------------------
-    TCustomPrimitive CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode)
+    TPrimitiveData CPrimitiveUtils::CreatePlane(const math::CPlane& _oPlane, render::ERenderMode _eRenderMode)
     {
       // Create primitive
-      TCustomPrimitive rCustomPrimitive = TCustomPrimitive();
+      TPrimitiveData rCustomPrimitive = TPrimitiveData();
       rCustomPrimitive.Vertices = s_oPlanePrimitive;
       rCustomPrimitive.Indices = _eRenderMode == render::ERenderMode::SOLID ? s_oPlaneIndices : s_oWireframePlaneIndices;
 
@@ -250,7 +323,7 @@ namespace render
     }
 
     // ------------------------------------
-    TCustomPrimitive CPrimitiveUtils::CreateCapsule
+    TPrimitiveData CPrimitiveUtils::CreateCapsule
     (
       float _fRadius,
       float _fHeight,
@@ -260,7 +333,7 @@ namespace render
     )
     {
       // Create primitve
-      TCustomPrimitive rCustomPrimitive = TCustomPrimitive();
+      TPrimitiveData rCustomPrimitive = TPrimitiveData();
 
       // Calculate values
       float fHalfHeight = _fHeight * 0.5f;

@@ -10,7 +10,6 @@ namespace render
     //------------------------------------------------
     //-------------------MODELS-----------------------
     //------------------------------------------------
-    typedef std::vector<uint32_t> TIndices;
     struct TVertexData
     {
       math::CVector3 VertexPos = math::CVector3::Zero;
@@ -33,10 +32,10 @@ namespace render
     //------------------------------------------------
     //------------------PRIMITIVES--------------------
     //------------------------------------------------
-    struct TCustomPrimitive
+    struct TPrimitiveData
     {
       std::vector<math::CVector3> Vertices;
-      TIndices Indices;
+      std::vector<uint32_t> Indices;
     };
     struct TPrimitiveInstanceData
     {
