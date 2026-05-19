@@ -54,19 +54,18 @@ namespace render
       inline const uint32_t GetIndexCount() const { return m_oIdxBufferHandler.GetOffset(); }
 
     private:
-      // Data
-      ERenderMode m_eRenderMode = ERenderMode::SOLID;
       math::CVector3 m_v3Color = math::CVector3::One;
 
       math::CTransform m_oTransform = math::CTransform();
       collision::CAABB m_oWorldAABB = collision::CAABB();
       collision::CAABB m_oLocalAABB = collision::CAABB();
 
-      bool m_bCullEnabled = true;
-      bool m_bVisible = true;
-
+      ERenderMode m_eRenderMode = ERenderMode::SOLID;
       CBufferHandler m_oVtxBufferHandler = CBufferHandler();
       CBufferHandler m_oIdxBufferHandler = CBufferHandler();
+
+      bool m_bCullEnabled = true;
+      bool m_bVisible = true;
     };
   }
 }

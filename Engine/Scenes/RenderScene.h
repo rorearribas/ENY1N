@@ -49,7 +49,7 @@ namespace scene
   class CRenderScene
   {
   public:
-    CRenderScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex) { Init(); }
+    CRenderScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex) { SetupBuffers(); }
     ~CRenderScene();
 
     // Handle scene
@@ -103,7 +103,7 @@ namespace scene
     ID3D11Buffer* GetDebugPrimitivesIB() const { return m_oDebugPrimitivesIB; }
 
   private:
-    HRESULT Init();
+    HRESULT SetupBuffers();
     void Clear();
 
     // Cache items

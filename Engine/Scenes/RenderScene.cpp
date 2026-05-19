@@ -13,7 +13,7 @@
 namespace scene
 {
   // ------------------------------------
-  HRESULT CRenderScene::Init()
+  HRESULT CRenderScene::SetupBuffers()
   {
     // Create vertex buffer by models
     D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
@@ -25,7 +25,7 @@ namespace scene
     HRESULT hResult = m_oModelsVB.Init(rVertexBufferDesc);
     if (FAILED(hResult))
     {
-      ERROR_LOG("Error creating vertex buffer.");
+      ERROR_LOG("Error creating vertex buffer!");
       return hResult;
     }
 
@@ -39,7 +39,7 @@ namespace scene
     hResult = m_oModelsIB.Init(rIndexBufferDesc);
     if (FAILED(hResult))
     {
-      ERROR_LOG("Error creating index buffer.");
+      ERROR_LOG("Error creating index buffer!");
       return hResult;
     }
 
@@ -48,16 +48,16 @@ namespace scene
     m_oPrimitivesVB.Init(rVertexBufferDesc);
     if (FAILED(hResult))
     {
-      ERROR_LOG("Error creating vertex buffer.");
+      ERROR_LOG("Error creating vertex buffer!");
       return hResult;
     }
 
     // Create index buffer by primitives
     rIndexBufferDesc.ByteWidth = MAX_PRIMITIVES_IB_SIZE;
-    m_oPrimitivesIB.Init(rVertexBufferDesc);
+    m_oPrimitivesIB.Init(rIndexBufferDesc);
     if (FAILED(hResult))
     {
-      ERROR_LOG("Error creating vertex buffer.");
+      ERROR_LOG("Error creating index buffer!");
       return hResult;
     }
 
@@ -66,16 +66,16 @@ namespace scene
     m_oDebugPrimitivesVB.Init(rVertexBufferDesc);
     if (FAILED(hResult))
     {
-      ERROR_LOG("Error creating vertex buffer.");
+      ERROR_LOG("Error creating vertex buffer!");
       return hResult;
     }
 
     // Create index buffer by debug primitives
     rIndexBufferDesc.ByteWidth = MAX_PRIMITIVES_IB_SIZE;
-    m_oDebugPrimitivesIB.Init(rVertexBufferDesc);
+    m_oDebugPrimitivesIB.Init(rIndexBufferDesc);
     if (FAILED(hResult))
     {
-      ERROR_LOG("Error creating vertex buffer.");
+      ERROR_LOG("Error creating index buffer!");
       return hResult;
     }
 
@@ -158,9 +158,8 @@ namespace scene
   // ------------------------------------
   void CRenderScene::ClearDebugItems()
   {
-    // @Hack
-    m_oDebugPrimitivesVB.Dealloc();
-    m_oDebugPrimitivesIB.Dealloc();
+    m_oDebugPrimitivesVB.ResetOffset();
+    m_oDebugPrimitivesIB.ResetOffset();
     m_lstDebugPrimitives.Clear();
   }
   // ------------------------------------
