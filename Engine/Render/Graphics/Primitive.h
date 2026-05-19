@@ -1,4 +1,5 @@
 #pragma once
+#include "Engine/Render/Buffers/RenderBuffer.h"
 #include "Engine/Render/RenderTypes.h"
 #include "Engine/Render/Graphics/Model.h"
 #include "Engine/Collisions/AABB.h"
@@ -45,12 +46,12 @@ namespace render
       inline void SetWorldAABB(const collision::CAABB& _rWorldAABB) { m_oWorldAABB = _rWorldAABB; }
       inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
 
-      inline const uint32_t& GetIdxCount() const { return m_uIndexCount; }
-      inline void SetIdxCount(uint32_t _uIndexCount) { m_uIndexCount = _uIndexCount; }
-      inline const uint32_t& GetVtxOffset() const { return m_uVertexOffset; }
-      inline void SetVtxOffset(const uint32_t& _uVertexOffset) { m_uVertexOffset = _uVertexOffset; }
-      inline const uint32_t& GetIdxOffset() const { return m_uIndexOffset; }
-      inline void SetIdxOffset(const uint32_t& _uIndexOffset) { m_uIndexOffset = _uIndexOffset; }
+      // Handlers
+      inline const CBufferHandler& GetVtxBufferHandler() const { return m_oVtxBufferHandler; }
+      inline void SetVtxBufferHandler(const CBufferHandler& _rBufferHandler) { m_oVtxBufferHandler = _rBufferHandler; }
+      inline const CBufferHandler& GetIdxBufferHandler() const { return m_oIdxBufferHandler; }
+      inline void SetIdxBufferHandler(const CBufferHandler& _rBufferHandler) { m_oIdxBufferHandler  = _rBufferHandler; }
+      inline const uint32_t GetIndexCount() const { return m_oIdxBufferHandler.GetOffset(); }
 
     private:
       // Data
@@ -64,9 +65,8 @@ namespace render
       bool m_bCullEnabled = true;
       bool m_bVisible = true;
 
-      uint32_t m_uIndexCount = 0;
-      uint32_t m_uVertexOffset = 0;
-      uint32_t m_uIndexOffset = 0;
+      CBufferHandler m_oVtxBufferHandler = CBufferHandler();
+      CBufferHandler m_oIdxBufferHandler = CBufferHandler();
     };
   }
 }

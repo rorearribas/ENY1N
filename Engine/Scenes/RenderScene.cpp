@@ -118,18 +118,18 @@ namespace scene
     TPrimitiveData rPrimitiveData = CPrimitiveUtils::CreatePrimitive(_eType, _eRenderMode);
 
     // Vertex buffer
-    uint32_t uVertexOffset = 0;
+    CBufferHandler rVtxBufferHandler = CBufferHandler();
     uint32_t uVertexCount = static_cast<uint32_t>(rPrimitiveData.Vertices.size());
-    if (!m_oPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, uVertexOffset))
+    if (!m_oPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, rVtxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return nullptr;
     }
 
     // Index buffer
-    uint32_t uIndexOffset = 0;
+    CBufferHandler rIdxBufferHandler = CBufferHandler();
     uint32_t uIndices = static_cast<uint32_t>(rPrimitiveData.Indices.size());
-    if (!m_oPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, uIndexOffset))
+    if (!m_oPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, rIdxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return nullptr;
@@ -145,9 +145,8 @@ namespace scene
 
     // Setup
     pPrimitive->SetRenderMode(_eRenderMode);
-    pPrimitive->SetVtxOffset(uVertexOffset);
-    pPrimitive->SetIdxOffset(uIndexOffset);
-    pPrimitive->SetIdxCount(uIndices);
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
 
     return pPrimitive;
   }
@@ -198,33 +197,33 @@ namespace scene
       render::gfx::TModelData rModelData = pResourceManager->LoadModel(_sModelPath);
 
       // Vertex buffer
-      uint32_t uVertexOffset = 0;
+      CBufferHandler rVtxBufferHandler = CBufferHandler();
       uint32_t uVertexCount = static_cast<uint32_t>(rModelData.VertexData.size());
       render::gfx::TVertexData* pVertexData = rModelData.VertexData.data();
-      if (!m_oModelsVB.Alloc(pVertexData, uVertexCount, uVertexOffset))
+      if (!m_oModelsVB.Alloc(pVertexData, uVertexCount, rVtxBufferHandler))
       {
         return utils::CWeakPtr<render::gfx::CModel>();
       }
 
       // Index buffer
-      for (std::unique_ptr<render::gfx::CMesh>& pMesh : rModelData.Meshes)
+      for (uint32_t uIdx = 0; uIdx < rModelData.Meshes.size(); uIdx++)
       {
         // Allocate
-        uint32_t uIndexOffset = 0;
-        uint32_t uIndices = static_cast<uint32_t>(pMesh->GetIdxCount());
-        std::vector<uint32_t>& lstIndices = pMesh->GetIndices();
-        if (!m_oModelsIB.Alloc(lstIndices.data(), uIndices, uIndexOffset))
+        CBufferHandler rIdxBufferHandler = CBufferHandler();
+        uint32_t uIdxCount = static_cast<uint32_t>(rModelData.Indices[uIdx].size());
+        uint32_t* pIndices = rModelData.Indices[uIdx].data();
+        if (!m_oModelsIB.Alloc(pIndices, uIdxCount, rIdxBufferHandler))
         {
           return utils::CWeakPtr<render::gfx::CModel>();
         }
-
-        // Set index offset
-        pMesh->SetIdxOffset(uIndexOffset);
+        // Set idx buffer handler
+        std::unique_ptr<render::gfx::CMesh>& pMesh = rModelData.Meshes[uIdx];
+        pMesh->SetIdxBufferHandler(rIdxBufferHandler);
       }
 
       // Create model + set vertex offset
       std::unique_ptr<render::gfx::CModel> pLoadedModel = std::make_unique<render::gfx::CModel>(rModelData);
-      pLoadedModel->SetVtxOffset(uVertexOffset);
+      pLoadedModel->SetVtxBufferHandler(rVtxBufferHandler);
 
       SUCCESS_LOG("Created model! -> " << _sModelPath);
       wpModel = m_lstModels.Insert(std::move(pLoadedModel));
@@ -272,18 +271,18 @@ namespace scene
     TPrimitiveData rPrimitiveData = CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
 
     // Vertex buffer
-    uint32_t uVertexOffset = 0;
+    CBufferHandler rVtxBufferHandler = CBufferHandler();
     uint32_t uVertexCount = static_cast<uint32_t>(rPrimitiveData.Vertices.size());
-    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, uVertexOffset))
+    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, rVtxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
     }
 
     // Index buffer
-    uint32_t uIndexOffset = 0;
+    CBufferHandler rIdxBufferHandler = CBufferHandler();
     uint32_t uIndices = static_cast<uint32_t>(rPrimitiveData.Indices.size());
-    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, uIndexOffset))
+    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, rIdxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
@@ -302,9 +301,8 @@ namespace scene
 
     // Setup
     pPrimitive->SetRenderMode(_eRenderMode);
-    pPrimitive->SetVtxOffset(uVertexOffset);
-    pPrimitive->SetIdxOffset(uIndexOffset);
-    pPrimitive->SetIdxCount(uIndices);
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
 
     // Set values
     pPrimitive->SetPos(_v3Pos);
@@ -325,18 +323,18 @@ namespace scene
     TPrimitiveData rPrimitiveData = CPrimitiveUtils::CreatePrimitive(render::EPrimitive::E3D_CUBE, _eRenderMode);
 
     // Vertex buffer
-    uint32_t uVertexOffset = 0;
+    CBufferHandler rVtxBufferHandler = CBufferHandler();
     uint32_t uVertexCount = static_cast<uint32_t>(rPrimitiveData.Vertices.size());
-    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, uVertexOffset))
+    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, rVtxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
     }
 
     // Index buffer
-    uint32_t uIndexOffset = 0;
+    CBufferHandler rIdxBufferHandler = CBufferHandler();
     uint32_t uIndices = static_cast<uint32_t>(rPrimitiveData.Indices.size());
-    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, uIndexOffset))
+    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, rIdxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
@@ -356,9 +354,8 @@ namespace scene
 
     // Setup
     pPrimitive->SetRenderMode(_eRenderMode);
-    pPrimitive->SetVtxOffset(uVertexOffset);
-    pPrimitive->SetIdxOffset(uIndexOffset);
-    pPrimitive->SetIdxCount(uIndices);
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
 
     // Set values
     pPrimitive->SetColor(_v3Color);
@@ -385,18 +382,18 @@ namespace scene
       CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) : CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
 
     // Vertex buffer
-    uint32_t uVertexOffset = 0;
+    CBufferHandler rVtxBufferHandler = CBufferHandler();
     uint32_t uVertexCount = static_cast<uint32_t>(rPrimitiveData.Vertices.size());
-    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, uVertexOffset))
+    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, rVtxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
     }
 
     // Index buffer
-    uint32_t uIndexOffset = 0;
+    CBufferHandler rIdxBufferHandler = CBufferHandler();
     uint32_t uIndices = static_cast<uint32_t>(rPrimitiveData.Indices.size());
-    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, uIndexOffset))
+    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, rIdxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
@@ -415,9 +412,8 @@ namespace scene
   
     // Setup
     pPrimitive->SetRenderMode(_eRenderMode);
-    pPrimitive->SetVtxOffset(uVertexOffset);
-    pPrimitive->SetIdxOffset(uIndexOffset);
-    pPrimitive->SetIdxCount(uIndices);
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
 
     // Set values
     pPrimitive->SetPos(_v3Pos);
@@ -437,18 +433,18 @@ namespace scene
     TPrimitiveData rPrimitiveData = render::gfx::CPrimitiveUtils::CreatePlane(_rPlane, _eRenderMode);
 
     // Vertex buffer
-    uint32_t uVertexOffset = 0;
+    CBufferHandler rVtxBufferHandler = CBufferHandler();
     uint32_t uVertexCount = static_cast<uint32_t>(rPrimitiveData.Vertices.size());
-    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, uVertexOffset))
+    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, rVtxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
     }
 
     // Index buffer
-    uint32_t uIndexOffset = 0;
+    CBufferHandler rIdxBufferHandler = CBufferHandler();
     uint32_t uIndices = static_cast<uint32_t>(rPrimitiveData.Indices.size());
-    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, uIndexOffset))
+    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, rIdxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
@@ -467,9 +463,8 @@ namespace scene
 
     // Setup
     pPrimitive->SetRenderMode(_eRenderMode);
-    pPrimitive->SetVtxOffset(uVertexOffset);
-    pPrimitive->SetIdxOffset(uIndexOffset);
-    pPrimitive->SetIdxCount(uIndices);
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
 
     // Set values
     pPrimitive->SetPos(_rPlane.GetPos());
@@ -490,18 +485,18 @@ namespace scene
     TPrimitiveData rPrimitiveData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
 
     // Vertex buffer
-    uint32_t uVertexOffset = 0;
+    CBufferHandler rVtxBufferHandler = CBufferHandler();
     uint32_t uVertexCount = static_cast<uint32_t>(rPrimitiveData.Vertices.size());
-    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, uVertexOffset))
+    if (!m_oDebugPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, rVtxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
     }
 
     // Index buffer
-    uint32_t uIndexOffset = 0;
+    CBufferHandler rIdxBufferHandler = CBufferHandler();
     uint32_t uIndices = static_cast<uint32_t>(rPrimitiveData.Indices.size());
-    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, uIndexOffset))
+    if (!m_oDebugPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, rIdxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
       return;
@@ -520,9 +515,8 @@ namespace scene
 
     // Setup
     pPrimitive->SetRenderMode(render::ERenderMode::WIREFRAME);
-    pPrimitive->SetVtxOffset(uVertexOffset);
-    pPrimitive->SetIdxOffset(uIndexOffset);
-    pPrimitive->SetIdxCount(uIndices);
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
 
     // Set values
     pPrimitive->SetPos(math::CVector3::Zero);

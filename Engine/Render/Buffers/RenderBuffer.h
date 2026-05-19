@@ -2,6 +2,13 @@
 #include "Engine/Global/GlobalResources.h"
 #include "Libs/Macros/GlobalMacros.h"
 
+struct CBufferHandler 
+{
+  uint32_t BeginOffset = 0; 
+  uint32_t EndOffset = 0; 
+  inline uint32_t GetOffset() const { return EndOffset - BeginOffset; }
+};
+
 template<class T>
 class CRenderBuffer
 {
@@ -9,8 +16,8 @@ public:
   HRESULT Init(const D3D11_BUFFER_DESC& _rBufferDesc);
   void Release();
 
-  bool Alloc(T* _pData, uint32_t _uCount, uint32_t& _uStartOffset_);
-  bool Dealloc();
+  bool Alloc(T* _pData, uint32_t _uCount, CBufferHandler& _rBufferHandle);
+  bool Dealloc(/*uint32_t _uStartOffset, uint32_t _uEndOffset*/);
 
   inline ID3D11Buffer* GetBuffer() const { return m_pBuffer; }
   inline const uint32_t& GetCurrentOffset() const { return m_uCurrentOffset; }
@@ -38,10 +45,10 @@ void CRenderBuffer<T>::Release()
 }
 
 template<class T>
-bool CRenderBuffer<T>::Alloc(T* _pData, uint32_t _uCount, uint32_t& _uStartOffset_)
+bool CRenderBuffer<T>::Alloc(T* _pData, uint32_t _uElements, CBufferHandler& _rBufferHandle)
 {
-  uint32_t uTargetSize = _uCount * sizeof(T);
-  uint32_t uNextOffset = m_uCurrentOffset * sizeof(T) + uTargetSize;
+  uint32_t uTargetSize = (_uElements * sizeof(T));
+  uint32_t uNextOffset = (m_uCurrentOffset * sizeof(T)) + uTargetSize;
   if (uNextOffset > m_uMaxBufferSize)
   {
     ERROR_LOG("There isn't enough memory to allocate memory!");
@@ -63,8 +70,11 @@ bool CRenderBuffer<T>::Alloc(T* _pData, uint32_t _uCount, uint32_t& _uStartOffse
   memcpy(pWritePtr, _pData, uTargetSize);
 
   // Set offsets
-  _uStartOffset_ = m_uCurrentOffset;
-  m_uCurrentOffset += _uCount;
+  m_uCurrentOffset += _uElements;
+
+  // Set handle
+  _rBufferHandle.BeginOffset = uStartOffset;
+  _rBufferHandle.EndOffset = m_uCurrentOffset;
 
   // Unmap
   global::api::DeviceContext->Unmap(m_pBuffer, 0);

@@ -6,6 +6,7 @@
 
 #include "Libs/Utils/FixedPool.h"
 #include "Libs/Math/Transform.h"
+#include <map>
 
 namespace render { class CRender; }
 
@@ -18,8 +19,9 @@ namespace render
 
     struct TModelData
     {
-      std::vector<std::unique_ptr<render::gfx::CMesh>> Meshes;
+      std::map<uint32_t, std::vector<uint32_t>> Indices;
       std::vector<render::gfx::TVertexData> VertexData;
+      std::vector<std::unique_ptr<render::gfx::CMesh>> Meshes;
       char AssetPath[128];
     };
 
@@ -39,17 +41,17 @@ namespace render
       inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
       inline const math::CTransform& GetTransform() const { return m_oTransform; }
 
-      void SetCullEnabled(bool _bCull);
-      inline const bool IsCullEnabled() const { return m_bCullEnabled; }
+      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
+      inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
+
+      inline const CBufferHandler& GetVtxBufferHandler() const { return m_oVtxBufferHandler; }
+      inline void SetVtxBufferHandler(const CBufferHandler& _rBufferHandler) { m_oVtxBufferHandler = _rBufferHandler; }
 
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool IsVisible() const { return m_bVisible; }
 
-      inline const uint32_t& GetVtxOffset() const { return m_uVertexOffset; }
-      inline void SetVtxOffset(const uint32_t& _uVertexOffset) { m_uVertexOffset = _uVertexOffset; }
-
-      inline const collision::CAABB& GetWorldAABB() const { return m_oWorldAABB; }
-      inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }
+      void SetCullEnabled(bool _bCull);
+      inline const bool IsCullEnabled() const { return m_bCullEnabled; }
 
       inline std::string GetAssetPath() const { return std::string(m_sAssetPath); }
       inline const TMeshes& GetMeshes() const { return m_lstMeshes; }
@@ -75,9 +77,9 @@ namespace render
       collision::CAABB m_oLocalAABB = collision::CAABB();
       collision::CAABB m_oWorldAABB = collision::CAABB();
 
+      CBufferHandler m_oVtxBufferHandler = CBufferHandler();
       bool m_bCullEnabled = true;
       bool m_bVisible = true;
-      uint32_t m_uVertexOffset = 0;
     };
   }
 }

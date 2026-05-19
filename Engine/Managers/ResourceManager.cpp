@@ -42,6 +42,11 @@ char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
   return cBuffer;
 }
 // ------------------------------------
+unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
+{
+  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture2D<>::s_uChannels);
+}
+// ------------------------------------
 render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)
 {
   // Create importer instance
@@ -136,14 +141,14 @@ render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)
 
   // Load meshes
   std::unordered_map<render::gfx::TVertexData, uint32_t> mVertexMap;
-  for (uint32_t uI = 0; uI < pScene->mNumMeshes; uI++)
+  for (uint32_t uMeshID = 0; uMeshID < pScene->mNumMeshes; uMeshID++)
   {
-    aiMesh* pSceneMesh = pScene->mMeshes[uI];
+    aiMesh* pSceneMesh = pScene->mMeshes[uMeshID];
 #ifdef _DEBUG
     assert(pSceneMesh);
 #endif // DEBUG
 
-    std::vector<uint32_t> lstIndices;
+    std::vector<uint32_t> lstIndices = std::vector<uint32_t>();
     for (uint32_t uJ = 0; uJ < pSceneMesh->mNumFaces; uJ++)
     {
       const aiFace& rVertexFace = pSceneMesh->mFaces[uJ];
@@ -194,7 +199,7 @@ render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)
     }
 
     // Create mesh
-    std::unique_ptr pMesh = std::make_unique<render::gfx::CMesh>(lstIndices);
+    std::unique_ptr pMesh = std::make_unique<render::gfx::CMesh>();
 #ifdef _DEBUG
     assert(pMesh);
 #endif // DEBUG
@@ -205,16 +210,13 @@ render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)
       pMesh->SetMaterial(std::move(lstMaterials[pSceneMesh->mMaterialIndex]));
     }
 
+    // Add data
+    rModelData.Indices.emplace(uMeshID, std::move(lstIndices));
     rModelData.Meshes.emplace_back(std::move(pMesh));
   }
 
   SUCCESS_LOG("Loaded model data! -> " << _sPath);
   return rModelData;
-}
-// ------------------------------------
-unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
-{
-  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture2D<>::s_uChannels);
 }
 // ------------------------------------
 void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& _pMaterial_, render::ETexture _eType, const std::filesystem::path& _sPath)

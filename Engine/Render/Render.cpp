@@ -1276,9 +1276,9 @@ namespace render
     }
 
     // Set values
+    uint32_t uVtxOffset = _pModel->GetVtxBufferHandler().BeginOffset;
     uint16_t uInstances = _bVisible ? ++_uInstanceCount : _uInstanceCount;
     uint16_t uStartOffset = !_bVisible;
-    uint32_t uVtxOffset = _pModel->GetVtxOffset();
 
     // Draw meshes
     const render::gfx::TMeshes& lstMeshes = _pModel->GetMeshes();
@@ -1288,8 +1288,8 @@ namespace render
       PushMaterial(pMesh->GetMaterial());
 
       // Draw mesh
-      uint32_t uIdxCount = pMesh->GetIdxCount();
-      uint32_t uIdxOffset = pMesh->GetIdxOffset();
+      uint32_t uIdxCount = pMesh->GetIndexCount();
+      uint32_t uIdxOffset = pMesh->GetIdxBufferHandler().BeginOffset;
       global::api::DeviceContext->DrawIndexedInstanced(uIdxCount, uInstances, uIdxOffset, uVtxOffset, uStartOffset);
     }
   }
@@ -1375,9 +1375,9 @@ namespace render
     const uint16_t uInstanceCount = 1;
     const uint16_t uStartOffset = 0;
 
-    uint32_t uIdxCount = _pPrimitive->GetIdxCount();
-    uint32_t uVtxOffset = _pPrimitive->GetVtxOffset();
-    uint32_t uIdxOffset = _pPrimitive->GetIdxOffset();
+    uint32_t uIdxCount = _pPrimitive->GetIndexCount();
+    uint32_t uIdxOffset = _pPrimitive->GetIdxBufferHandler().BeginOffset;
+    uint32_t uVtxOffset = _pPrimitive->GetVtxBufferHandler().BeginOffset;
 
     // Draw primitive
     global::api::DeviceContext->DrawIndexedInstanced(uIdxCount, uInstanceCount, uIdxOffset, uVtxOffset, uStartOffset);
