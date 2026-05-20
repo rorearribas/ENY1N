@@ -97,7 +97,7 @@ int main()
   static_cast<render::lights::CPointLight*>(pLightComp->GetLight())->SetColor(math::CVector3(0.0f, 1.0f, 0.0f));
 
   float fOffsetZ = 0.0f;
-  for (uint32_t uIndex = 0; uIndex < 5u; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 1u; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
     pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-10.0f, 10.0f)));
@@ -221,7 +221,7 @@ int main()
       }
       ImGui::End();
 
-      ImGui::Begin("Create Lights");
+      ImGui::Begin("Creation test");
       if (ImGui::Button("Create point light"))
       {
         // Create point light
@@ -243,6 +243,14 @@ int main()
         pModelCompTest->SetColor(math::CVector3(0.0f, 0.5f, 0.5f));
         pPrimitiveTest->RegisterComponent<game::CCollisionComponent>(eColliderTypes[0]);
         pPrimitiveTest->RegisterComponent<game::CRigidbodyComponent>();
+      }
+      if (ImGui::Button("Create model"))
+      {
+        game::CEntity* pModelEnt = pGameManager->CreateEntity("Plant");
+        pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-10.0f, 10.0f)));
+        game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
+        pModelTest->LoadModel("models/plant/Low-Poly Plant_.fbx");
+        fOffsetZ += 10;
       }
       ImGui::End();
 

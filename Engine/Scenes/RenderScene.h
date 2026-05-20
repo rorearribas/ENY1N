@@ -26,9 +26,9 @@ namespace scene
     uint16_t InstanceCount = 0;
   };
 
-  // Max GPU
-  constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 128u;
-  constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 64u;
+  // GPU Memory
+  constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 256u;
+  constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 128u;
   constexpr uint32_t MAX_PRIMITIVES_VB_SIZE = 1024u * 1024u * 32u;
   constexpr uint32_t MAX_PRIMITIVES_IB_SIZE = 1024u * 1024u * 16u;
 

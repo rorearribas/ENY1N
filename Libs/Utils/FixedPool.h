@@ -30,10 +30,12 @@ namespace utils
 
       for (size_t tIndex = 0; tIndex < MAX_ITEMS; ++tIndex)
       {
-        if (m_lstAssignedItems[tIndex] < 0)
+        if (!m_lstMemoryState[tIndex])
         {
           void* pMem = static_cast<void*>(&m_lstPool[tIndex]);
           ItemType* pItem = new (pMem) ItemType(std::forward<Args>(args)...);
+
+          m_lstMemoryState[tIndex] = true;
           m_lstAssignedItems[m_tRegisteredItems++] = tIndex;
           return pItem;
         }
@@ -43,24 +45,36 @@ namespace utils
 
     inline T* operator[](size_t _tIndex)
     {
-      bool bAssignedBlock = (_tIndex < MAX_ITEMS && (m_lstAssignedItems[_tIndex] >= 0));
+      bool bAssignedBlock = (_tIndex < m_tRegisteredItems);
       return bAssignedBlock ? reinterpret_cast<T*>(&m_lstPool[m_lstAssignedItems[_tIndex]]) : nullptr;
     }
 
     inline const T* operator[](size_t _tIndex) const
     {
-      bool bAssignedBlock = (_tIndex < MAX_ITEMS && (m_lstAssignedItems[_tIndex] >= 0));
+      bool bAssignedBlock = (_tIndex < m_tRegisteredItems);
       return bAssignedBlock ? reinterpret_cast<const T*>(&m_lstPool[m_lstAssignedItems[_tIndex]]) : nullptr;
     }
 
-    inline T* begin() { return reinterpret_cast<T*>(m_lstPool); }
-    inline const T* begin() const { return reinterpret_cast<const T*>(m_lstPool); }
+    class CIterator
+    {
+    public:
+      CIterator(CFixedPool* _pPool, size_t _tIdx) : m_pPool(_pPool), m_tIndex(_tIdx) {}
+      inline T& operator*() { return *(*m_pPool)[m_tIndex]; }
+      inline T* operator->() { return (*m_pPool)[m_tIndex]; }
+      inline CIterator& operator++() { ++m_tIndex; return *this; }
+      inline bool operator!=(const CIterator& _rOther) const { return m_tIndex != _rOther.m_tIndex; }
 
-    inline T* end() { return reinterpret_cast<T*>(m_lstPool) + m_tRegisteredItems; }
-    inline const T* end() const { return reinterpret_cast<const T*>(m_lstPool) + m_tRegisteredItems; }
+    private:
+      friend class CFixedPool;
+      CFixedPool* m_pPool;
+      size_t m_tIndex;
+    };
 
-    inline T* last() { return reinterpret_cast<T*>(&m_lstPool[m_tRegisteredItems > 0 ? (m_tRegisteredItems - 1) : 0]); }
-    inline const T* last() const { return reinterpret_cast<const T*>(&m_lstPool[m_tRegisteredItems > 0 ? (m_tRegisteredItems - 1) : 0]); }
+    inline CIterator begin() { return CIterator(this, 0); }
+    inline CIterator end() { return CIterator(this, m_tRegisteredItems); }
+
+    inline T* last() { return m_tRegisteredItems > 0 ? reinterpret_cast<T*>(&m_lstPool[m_lstAssignedItems[m_tRegisteredItems - 1]]) : nullptr; }
+    inline const T* last() const { return m_tRegisteredItems > 0 ? reinterpret_cast<const T*>(&m_lstPool[m_lstAssignedItems[m_tRegisteredItems - 1]]) : nullptr; }
 
     bool Remove(T*& _pItem_);
     void Clear();
@@ -73,11 +87,14 @@ namespace utils
     void Init()
     {
       m_lstAssignedItems.fill(-1);
+      m_lstMemoryState.reset();
     }
 
   private:
     std::aligned_storage_t<sizeof(T), alignof(std::max_align_t)> m_lstPool[MAX_ITEMS];
     std::array<__int64, MAX_ITEMS> m_lstAssignedItems = std::array<__int64, MAX_ITEMS>();
+
+    std::bitset<MAX_ITEMS> m_lstMemoryState;
     size_t m_tRegisteredItems = 0;
   };
 
@@ -92,6 +109,8 @@ namespace utils
       {
         pItem->~T();
         _pItem_ = nullptr;
+
+        m_lstMemoryState[tValidIdx] = false;
         m_lstAssignedItems[tIndex] = -1;
 
         std::swap(m_lstAssignedItems[tIndex], m_lstAssignedItems[m_tRegisteredItems - 1]);
@@ -110,8 +129,9 @@ namespace utils
       size_t tValidIdx = m_lstAssignedItems[tIndex];
       T* pItem = reinterpret_cast<T*>(&m_lstPool[tValidIdx]);
       pItem->~T();
-      m_lstAssignedItems[tIndex] = -1;
     }
+    m_lstAssignedItems.fill(-1);
+    m_lstMemoryState.reset();
     m_tRegisteredItems = 0;
   }
 }

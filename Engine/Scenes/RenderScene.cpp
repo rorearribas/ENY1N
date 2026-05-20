@@ -1,14 +1,14 @@
 #include "RenderScene.h"
 #include "Engine/Camera/Camera.h"
+#include "Engine/Render/Graphics/Primitive.h"
+#include "Engine/Render/Utils/PrimitiveUtils.h"
 #include "Engine/Render/Lighting/Light.h"
 #include "Engine/Render/Lighting/DirectionalLight.h"
-#include "Engine/Render/Utils/PrimitiveUtils.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Engine/Global/GlobalResources.h"
 
 #include "Libs/Macros/GlobalMacros.h"
 #include <cassert>
-#include "../Render/Graphics/Primitive.h"
 
 namespace scene
 {
@@ -18,9 +18,8 @@ namespace scene
     // Create vertex buffer by models
     D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
     rVertexBufferDesc.ByteWidth = MAX_MODELS_VB_SIZE;
-    rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    rVertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
     rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
     HRESULT hResult = m_oModelsVB.Init(rVertexBufferDesc);
     if (FAILED(hResult))
@@ -32,9 +31,8 @@ namespace scene
     // Create index buffer by models
     D3D11_BUFFER_DESC rIndexBufferDesc = D3D11_BUFFER_DESC();
     rIndexBufferDesc.ByteWidth = MAX_MODELS_IB_SIZE;
-    rIndexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    rIndexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
     rIndexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-    rIndexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
     hResult = m_oModelsIB.Init(rIndexBufferDesc);
     if (FAILED(hResult))
@@ -233,7 +231,62 @@ namespace scene
   // ------------------------------------
   bool CRenderScene::DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_)
   {
-    return m_lstModels.Remove(_wpModel_);
+    if (!_wpModel_.IsValid())
+    {
+      return false;
+    }
+
+    // Get info
+    uint32_t uModelIdx = static_cast<uint32_t>(m_lstModels.FindIndex(_wpModel_)); // Get model idx
+    uint16_t uCurrentSize = static_cast<uint16_t>(m_lstModels.GetSize());
+
+    const CBufferHandler& rVtxBufferHandler = _wpModel_->GetVtxBufferHandler();
+    uint32_t uVtxDisplacement = 0;
+    m_oModelsVB.Free(rVtxBufferHandler, uVtxDisplacement);
+
+    if (uVtxDisplacement > 0)
+    {
+      uint32_t uFirstOffset = rVtxBufferHandler.BeginOffset;
+      for (uint32_t uI = (uModelIdx + 1); uI < uCurrentSize; uI++)
+      {
+        utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
+        CBufferHandler rBufferHandler = pModel->GetVtxBufferHandler();
+
+        uint32_t uOffsetSize = rBufferHandler.GetOffset();
+        rBufferHandler.BeginOffset = uFirstOffset;
+        rBufferHandler.EndOffset = rBufferHandler.BeginOffset + uOffsetSize;
+
+        pModel->SetVtxBufferHandler(rBufferHandler);
+        uFirstOffset = rBufferHandler.EndOffset;
+      }
+    }
+
+    uint32_t uIdxDisplacement = 0; // BUG CRITICO REVISAR
+    const render::gfx::TMeshes& lstMeshes = _wpModel_->GetMeshes();
+    for (const std::unique_ptr<render::gfx::CMesh>& pMesh : lstMeshes)
+    {
+      uint32_t uDisplacement = 0;
+      const CBufferHandler& rIdxBufferHandler = pMesh->GetIdxBufferHandler();
+      m_oModelsIB.Free(rIdxBufferHandler, uDisplacement);
+      uIdxDisplacement += uDisplacement;
+    }
+
+    if (uIdxDisplacement > 0)
+    {
+      for (uint32_t uIdx = (uModelIdx + 1); uIdx < uCurrentSize; uIdx++)
+      {
+        utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uIdx];
+        for (const std::unique_ptr<render::gfx::CMesh>& pMesh : pModel->GetMeshes())
+        {
+          CBufferHandler rIdxBufferHandler = pMesh->GetIdxBufferHandler();
+          rIdxBufferHandler.BeginOffset -= uIdxDisplacement;
+          rIdxBufferHandler.EndOffset -= uIdxDisplacement;
+          pMesh->SetIdxBufferHandler(rIdxBufferHandler);
+        }
+      }
+    }
+
+    return m_lstModels.RemoveAt(uModelIdx);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CRenderScene::CreateDirectionalLight()
@@ -529,13 +582,8 @@ namespace scene
 
     for (uint16_t uI = 0; uI < m_lstModels.GetSize(); uI++)
     {
-      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
-      if (!pModel.IsValid())
-      {
-        continue;
-      }
-
       // Handle model
+      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
       TCachedModel& rCachedModel = m_lstCachedModels[m_uDrawableModels];
       rCachedModel.Visible = pModel->IsVisible();
 
