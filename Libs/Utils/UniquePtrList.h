@@ -224,25 +224,19 @@ namespace utils
       TInternalData& rInternalData = m_lstInternalData[tIndex];
       if (rInternalData.uPtr.get() == _pItem.GetPtr())
       {
-        size_t tSlotIndex = rInternalData.tSlotIndex;
-        TSlotData& pSlotToRemove = m_lstSparseSlots[tSlotIndex];
+        size_t tSlotToDelete = m_lstInternalData[tIndex].tSlotIndex;
+        m_lstSlotStates[tSlotToDelete] = false;
+        m_lstSparseSlots[tSlotToDelete].tGeneration++;
 
-        m_lstSlotStates[tSlotIndex] = false;
-        pSlotToRemove.tGeneration++;
-
-        // Swap data
-        size_t tLastDenseIdx = m_tRegisteredItems - 1;
-        if (tIndex < tLastDenseIdx)
+        size_t tLastDenseIdx = (m_tRegisteredItems - 1);
+        for (size_t i = tIndex; i < tLastDenseIdx; ++i)
         {
-          m_lstInternalData[tIndex] = std::move(m_lstInternalData[tLastDenseIdx]);
-          size_t tMovedSlotIdx = m_lstInternalData[tIndex].tSlotIndex;
-          m_lstSparseSlots[tMovedSlotIdx].tDenseIndex = tIndex;
-        }
-        else
-        {
-          rInternalData.uPtr.reset();
+          m_lstInternalData[i] = std::move(m_lstInternalData[i + 1]);
+          size_t tMovedSlotIdx = m_lstInternalData[i].tSlotIndex;
+          m_lstSparseSlots[tMovedSlotIdx].tDenseIndex = i;
         }
 
+        m_lstInternalData[tLastDenseIdx].uPtr.reset();
         --m_tRegisteredItems;
         return true;
       }
@@ -258,26 +252,19 @@ namespace utils
       return false;
     }
 
-    TInternalData& rInternalData = m_lstInternalData[_tIndex];
-    size_t tSlotIndex = rInternalData.tSlotIndex;
-    TSlotData& pSlotToRemove = m_lstSparseSlots[tSlotIndex];
+    size_t tSlotToDelete = m_lstInternalData[_tIndex].tSlotIndex;
+    m_lstSlotStates[tSlotToDelete] = false;
+    m_lstSparseSlots[tSlotToDelete].tGeneration++;
 
-    m_lstSlotStates[tSlotIndex] = false;
-    pSlotToRemove.tGeneration++;
-
-    // Swap data
     size_t tLastDenseIdx = m_tRegisteredItems - 1;
-    if (_tIndex < tLastDenseIdx)
+    for (size_t i = _tIndex; i < tLastDenseIdx; ++i)
     {
-      m_lstInternalData[_tIndex] = std::move(m_lstInternalData[tLastDenseIdx]);
-      size_t tMovedSlotIdx = m_lstInternalData[_tIndex].tSlotIndex;
-      m_lstSparseSlots[tMovedSlotIdx].tDenseIndex = _tIndex;
-    }
-    else
-    {
-      rInternalData.uPtr.reset();
+      m_lstInternalData[i] = std::move(m_lstInternalData[i + 1]);
+      size_t tMovedSlotIdx = m_lstInternalData[i].tSlotIndex;
+      m_lstSparseSlots[tMovedSlotIdx].tDenseIndex = i;
     }
 
+    m_lstInternalData[tLastDenseIdx].uPtr.reset();
     --m_tRegisteredItems;
     return true;
   }

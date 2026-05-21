@@ -206,17 +206,15 @@ int main()
       {
         bThrowRay = !bThrowRay;
       }
-      if (ImGui::Button("Add random models (500 units)"))
+      if (ImGui::Button("Add models (1024 units)"))
       {
-        for (uint32_t uIndex = 0; uIndex < 500; uIndex++)
+        for (uint32_t uIndex = 0; uIndex < 1024; uIndex++)
         {
-          game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-          pModelEnt->SetPos(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-100.0f, 100.0f)));
-
-          //const std::string& sModel = GenerateString(vAvailableModels);
+          game::CEntity* pModelEnt = pGameManager->CreateEntity("Plant");
+          pModelEnt->SetPos(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-100.0f, 100.0f)));
           game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
-          pModelTest->LoadModel("models/spaceship/spaceship.fbx");
-          pModelEnt->SetRot(math::CVector3(90.0f, 0.0f, 0.0f));
+          pModelTest->LoadModel("models/plant/Low-Poly Plant_.fbx");
+          fOffsetZ += 10;
         }
       }
       ImGui::End();

@@ -85,16 +85,115 @@ namespace scene
     Clear();
   }
   // ------------------------------------
+  void CRenderScene::CacheModels(render::CCamera* _pCamera)
+  {
+    // Reset value
+    m_uDrawableModels = 0;
+
+    for (uint16_t uI = 0; uI < m_lstModels.GetSize(); uI++)
+    {
+      // Handle model
+      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
+      TCachedModel& rCachedModel = m_lstCachedModels[m_uDrawableModels];
+      rCachedModel.Visible = pModel->IsVisible();
+
+      // Check culling
+      if (rCachedModel.Visible && pModel->IsCullEnabled())
+      {
+        rCachedModel.Visible = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
+      }
+
+      // Handle instances
+      rCachedModel.InstanceCount = 0;
+      render::gfx::TInstances& lstInstances = pModel->GetInstances();
+      for (uint32_t uJ = 0; uJ < lstInstances.GetSize(); uJ++)
+      {
+        render::gfx::CRenderInstance* pInstance = lstInstances[uJ];
+        if (!pInstance || !pInstance->IsVisible())
+        {
+          continue;
+        }
+
+        bool bOnFrustum = true;
+        if (pInstance->IsCullEnabled()) // Check culling
+        {
+          bOnFrustum = _pCamera->IsOnFrustum(pInstance->GetWorldAABB());
+        }
+        if (bOnFrustum)
+        {
+          rCachedModel.DrawableInstances[rCachedModel.InstanceCount++] = pInstance->GetInstanceID();
+        }
+      }
+
+      // Register drawable model
+      if (rCachedModel.Visible || rCachedModel.InstanceCount > 0)
+      {
+        rCachedModel.Index = uI;
+        m_uDrawableModels++;
+      }
+    }
+  }
+  // ------------------------------------
   const TCachedModels& CRenderScene::GetCacheModels(uint16_t& _uDrawableCount_) const
   {
     _uDrawableCount_ = m_uDrawableModels;
     return m_lstCachedModels;
   }
   // ------------------------------------
+  void CRenderScene::CachePrimitives(render::CCamera* _pCamera)
+  {
+    // Reset value
+    m_uDrawablePrimitives = 0;
+
+    for (uint16_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
+    {
+      // Handle debug primitive
+      const render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uI];
+      uint16_t& uCachedIdx = m_lstCachedPrimitives[m_uDrawablePrimitives];
+
+      bool bOnFrustum = true;
+      if (pPrimitive->IsCullEnabled()) // Check culling
+      {
+        bOnFrustum = _pCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
+      }
+
+      if (bOnFrustum)
+      {
+        uCachedIdx = uI;
+        m_uDrawablePrimitives++;
+      }
+    }
+  }
+  // ------------------------------------
   const scene::TCachedPrimitives& CRenderScene::GetCachedPrimitives(uint16_t& _uDrawableCount_) const
   {
     _uDrawableCount_ = m_uDrawablePrimitives;
     return m_lstCachedPrimitives;
+  }
+  // ------------------------------------
+  void CRenderScene::CacheDebugPrimitives(render::CCamera* _pCamera)
+  {
+    // Reset value
+    m_uDrawableDebugPrimitives = 0;
+
+    for (uint16_t uI = 0; uI < m_lstDebugPrimitives.GetSize(); uI++)
+    {
+      // Handle debug primitive
+      const render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugPrimitives[uI];
+      uint16_t& uCachedIdx = m_lstCachedDebugPrimitives[m_uDrawableDebugPrimitives];
+
+      bool bOnFrustum = true;
+      if (pDebugPrimitive->IsCullEnabled()) // Check culling
+      {
+        bOnFrustum = _pCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
+      }
+
+      if (bOnFrustum)
+      {
+        uCachedIdx = uI;
+        m_uDrawableDebugPrimitives++;
+      }
+    }
   }
   // ------------------------------------
   const scene::TCachedDebugPrimitives& CRenderScene::GetCachedDebugPrimitives(uint16_t& _uDrawableCount_) const
@@ -237,7 +336,7 @@ namespace scene
     }
 
     // Get info
-    uint32_t uModelIdx = static_cast<uint32_t>(m_lstModels.FindIndex(_wpModel_)); // Get model idx
+    uint32_t uModelIdx = static_cast<uint32_t>(m_lstModels.FindIndex(_wpModel_));
     uint16_t uCurrentSize = static_cast<uint16_t>(m_lstModels.GetSize());
 
     const CBufferHandler& rVtxBufferHandler = _wpModel_->GetVtxBufferHandler();
@@ -261,13 +360,13 @@ namespace scene
       }
     }
 
-    uint32_t uIdxDisplacement = 0; // BUG CRITICO REVISAR
-    const render::gfx::TMeshes& lstMeshes = _wpModel_->GetMeshes();
-    for (const std::unique_ptr<render::gfx::CMesh>& pMesh : lstMeshes)
+    uint32_t uIdxDisplacement = 0; 
+    size_t tIndex = (_wpModel_->GetMeshes().size() - 1);
+    render::gfx::TMeshes::const_reverse_iterator it = _wpModel_->GetMeshes().rbegin();
+    for (; it != _wpModel_->GetMeshes().rend(); ++it, --tIndex)
     {
       uint32_t uDisplacement = 0;
-      const CBufferHandler& rIdxBufferHandler = pMesh->GetIdxBufferHandler();
-      m_oModelsIB.Free(rIdxBufferHandler, uDisplacement);
+      m_oModelsIB.Free(it->get()->GetIdxBufferHandler(), uDisplacement);
       uIdxDisplacement += uDisplacement;
     }
 
@@ -275,13 +374,15 @@ namespace scene
     {
       for (uint32_t uIdx = (uModelIdx + 1); uIdx < uCurrentSize; uIdx++)
       {
-        utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uIdx];
-        for (const std::unique_ptr<render::gfx::CMesh>& pMesh : pModel->GetMeshes())
+        tIndex = (m_lstModels[uIdx]->GetMeshes().size() - 1);
+        it = m_lstModels[uIdx]->GetMeshes().rbegin();
+
+        for (; it != m_lstModels[uIdx]->GetMeshes().rend(); ++it, --tIndex)
         {
-          CBufferHandler rIdxBufferHandler = pMesh->GetIdxBufferHandler();
+          CBufferHandler rIdxBufferHandler = it->get()->GetIdxBufferHandler();
           rIdxBufferHandler.BeginOffset -= uIdxDisplacement;
           rIdxBufferHandler.EndOffset -= uIdxDisplacement;
-          pMesh->SetIdxBufferHandler(rIdxBufferHandler);
+          it->get()->SetIdxBufferHandler(rIdxBufferHandler);
         }
       }
     }
@@ -573,110 +674,6 @@ namespace scene
     // Set values
     pPrimitive->SetPos(math::CVector3::Zero);
     pPrimitive->SetColor(_v3Color);
-  }
-  // ------------------------------------
-  void CRenderScene::CacheModels(render::CCamera* _pCamera)
-  {
-    // Reset value
-    m_uDrawableModels = 0;
-
-    for (uint16_t uI = 0; uI < m_lstModels.GetSize(); uI++)
-    {
-      // Handle model
-      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
-      TCachedModel& rCachedModel = m_lstCachedModels[m_uDrawableModels];
-      rCachedModel.Visible = pModel->IsVisible();
-
-      // Check culling
-      if (rCachedModel.Visible && pModel->IsCullEnabled())
-      {
-        rCachedModel.Visible = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
-      }
-
-      // Handle instances
-      rCachedModel.InstanceCount = 0;
-      render::gfx::TInstances& lstInstances = pModel->GetInstances();
-      for (uint32_t uJ = 0; uJ < lstInstances.GetSize(); uJ++)
-      {
-        render::gfx::CRenderInstance* pInstance = lstInstances[uJ];
-        if (!pInstance || !pInstance->IsVisible())
-        {
-          continue;
-        }
-
-        bool bOnFrustum = true;
-        if (pInstance->IsCullEnabled()) // Check culling
-        {
-          bOnFrustum = _pCamera->IsOnFrustum(pInstance->GetWorldAABB());
-        }
-        if (bOnFrustum)
-        {
-          rCachedModel.DrawableInstances[rCachedModel.InstanceCount++] = pInstance->GetInstanceID();
-        }
-      }
-
-      // Register drawable model
-      if (rCachedModel.Visible || rCachedModel.InstanceCount > 0)
-      {
-        rCachedModel.Index = uI;
-        m_uDrawableModels++;
-      }
-    }
-  }
-  // ------------------------------------
-  void CRenderScene::CachePrimitives(render::CCamera* _pCamera)
-  {
-    // Reset value
-    m_uDrawablePrimitives = 0;
-
-    for (uint16_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
-    {
-      // Handle debug primitive
-      const render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uI];
-      uint16_t& uCachedIdx = m_lstCachedPrimitives[m_uDrawablePrimitives];
-
-      bool bOnFrustum = true;
-      if (pPrimitive->IsCullEnabled()) // Check culling
-      {
-        bOnFrustum = _pCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
-      }
-
-      if (bOnFrustum)
-      {
-        uCachedIdx = uI;
-        m_uDrawablePrimitives++;
-      }
-    }
-  }
-  // ------------------------------------
-  void CRenderScene::CacheDebugPrimitives(render::CCamera* _pCamera)
-  {
-    // Reset value
-    m_uDrawableDebugPrimitives = 0;
-
-    for (uint16_t uI = 0; uI < m_lstDebugPrimitives.GetSize(); uI++)
-    {
-      // Handle debug primitive
-      const render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugPrimitives[uI];
-      uint16_t& uCachedIdx = m_lstCachedDebugPrimitives[m_uDrawableDebugPrimitives];
-
-      bool bOnFrustum = true;
-      if (pDebugPrimitive->IsCullEnabled()) // Check culling
-      {
-        bOnFrustum = _pCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
-      }
-
-      if (bOnFrustum)
-      {
-        uCachedIdx = uI;
-        m_uDrawableDebugPrimitives++;
-      }
-    }
-  }
-  // ------------------------------------
-  void CRenderScene::ApplyLighting()
-  {
-    m_oLightManager.ApplyLighting();
   }
   // ------------------------------------
   void CRenderScene::Clear()

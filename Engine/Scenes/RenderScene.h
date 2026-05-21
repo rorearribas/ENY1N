@@ -16,6 +16,12 @@ namespace render { namespace lights { class CDirectionalLight; } }
 
 namespace scene
 {
+  // GPU Memory
+  constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 256u;
+  constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 128u;
+  constexpr uint32_t MAX_PRIMITIVES_VB_SIZE = 1024u * 1024u * 32u;
+  constexpr uint32_t MAX_PRIMITIVES_IB_SIZE = 1024u * 1024u * 16u;
+
   // Models
   struct TCachedModel
   {
@@ -26,23 +32,18 @@ namespace scene
     uint16_t InstanceCount = 0;
   };
 
-  // GPU Memory
-  constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 256u;
-  constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 128u;
-  constexpr uint32_t MAX_PRIMITIVES_VB_SIZE = 1024u * 1024u * 32u;
-  constexpr uint32_t MAX_PRIMITIVES_IB_SIZE = 1024u * 1024u * 16u;
-
-  static constexpr uint16_t s_uMaxModels = 128u;
+  // Models
+  static constexpr uint16_t s_uMaxModels = 256u;
   typedef utils::CUniquePtrList<render::gfx::CModel, s_uMaxModels> TModels;
   typedef std::array<TCachedModel, s_uMaxModels> TCachedModels;
 
   // Primitives
-  static constexpr uint16_t s_uMaxPrimitives = 256u;
+  static constexpr uint16_t s_uMaxPrimitives = 128u;
   typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxPrimitives> TPrimitives;
   typedef std::array<uint16_t, s_uMaxPrimitives> TCachedPrimitives;
 
   // Debug primitives
-  static constexpr uint16_t s_uMaxDebugPrimitives = 1024u;
+  static constexpr uint16_t s_uMaxDebugPrimitives = 256u;
   typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugPrimitives> TDebugPrimitives;
   typedef std::array<uint16_t, s_uMaxDebugPrimitives> TCachedDebugPrimitives;
 
@@ -58,8 +59,11 @@ namespace scene
     inline const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
     // Cached items
+    void CacheModels(render::CCamera* _pCamera);
     const TCachedModels& GetCacheModels(uint16_t& _uDrawableCount_) const;
+    void CachePrimitives(render::CCamera* _pCamera);
     const TCachedPrimitives& GetCachedPrimitives(uint16_t& _uDrawableCount_) const;
+    void CacheDebugPrimitives(render::CCamera* _pCamera);
     const TCachedDebugPrimitives& GetCachedDebugPrimitives(uint16_t& _uDrawableCount_) const;
 
     // Scene items
@@ -90,15 +94,13 @@ namespace scene
     void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
     void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
 
-  private:
-    friend class render::CRender;
-
+    // Buffers - Models
     ID3D11Buffer* GetModelsVB() const { return m_oModelsVB; }
     ID3D11Buffer* GetModelsIB() const { return m_oModelsIB; }
-
+    // Buffers - Primitives
     ID3D11Buffer* GetPrimitivesVB() const { return m_oPrimitivesVB; }
     ID3D11Buffer* GetPrimitivesIB() const { return m_oPrimitivesIB; }
-
+    // Buffers - Debug Primitives
     ID3D11Buffer* GetDebugPrimitivesVB() const { return m_oDebugPrimitivesVB; }
     ID3D11Buffer* GetDebugPrimitivesIB() const { return m_oDebugPrimitivesIB; }
 
@@ -106,19 +108,9 @@ namespace scene
     HRESULT SetupBuffers();
     void Clear();
 
-    // Cache items
-    void CacheModels(render::CCamera* _pCamera);
-    void CachePrimitives(render::CCamera* _pCamera);
-    void CacheDebugPrimitives(render::CCamera* _pCamera);
-
-    // Draw calls
-    void ApplyLighting();
-
   private:
     bool m_bEnabled = false;
     uint32_t m_uSceneIdx = 0;
-
-    // Lighting
     render::lights::CLightManager m_oLightManager;
 
   private:
@@ -126,26 +118,22 @@ namespace scene
     TModels m_lstModels = TModels();
     TCachedModels m_lstCachedModels = TCachedModels();
     uint16_t m_uDrawableModels = 0;
-
     // Primitives
     TPrimitives m_lstPrimitives = TPrimitives();
     TCachedPrimitives m_lstCachedPrimitives = TCachedPrimitives();
     uint16_t m_uDrawablePrimitives = 0;
-
+    // Debug primitives
     TDebugPrimitives m_lstDebugPrimitives = TDebugPrimitives();
     TCachedDebugPrimitives m_lstCachedDebugPrimitives = TCachedDebugPrimitives();
     uint16_t m_uDrawableDebugPrimitives = 0;
 
-  private:
-    // Render buffer by models
+    // Render buffers - models
     CRenderBuffer<render::gfx::TVertexData> m_oModelsVB;
     CRenderBuffer<uint32_t> m_oModelsIB;
-
-    // Render buffer by primitives
+    // Render buffers - primitives
     CRenderBuffer<math::CVector3> m_oPrimitivesVB;
     CRenderBuffer<uint32_t> m_oPrimitivesIB;
-
-    // Render buffer by debug primitives
+    // Render buffer - debug primitives
     CRenderBuffer<math::CVector3> m_oDebugPrimitivesVB;
     CRenderBuffer<uint32_t> m_oDebugPrimitivesIB;
   };
