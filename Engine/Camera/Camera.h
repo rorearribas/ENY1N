@@ -21,8 +21,8 @@ namespace render
     static constexpr uint32_t s_uFrustumPlanes = 6;
 
   public:
-    CCamera() {}
-    ~CCamera() {}
+    CCamera() = default;
+    ~CCamera() = default;
 
     void Update(float _fDeltaTime);
     bool IsOnFrustum(const collision::CAABB& _oBoundingBox) const;

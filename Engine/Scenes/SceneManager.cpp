@@ -7,11 +7,14 @@ namespace scene
   // ------------------------------------
   void CSceneManager::SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const
   {
-    if (_uIndex > (s_iMaxScenes - 1))
+    if (_uIndex > (m_lstScenes.GetMaxSize() - 1))
     {
       return;
     }
     m_pCurrentScene = m_lstScenes[_uIndex];
+#ifdef _DEBUG
+    assert(m_pCurrentScene.IsValid());
+#endif // _DEBUG
     m_pCurrentScene->SetEnabled(_bEnabled);
   }
   // ------------------------------------
@@ -22,88 +25,113 @@ namespace scene
     uint32_t _uSceneIndex
   )
   {
-    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1))
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {
       return nullptr;
     }
-    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
+
+    utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes[_uSceneIndex];
+#ifdef _DEBUG
+    assert(pScene.IsValid());
+#endif // _DEBUG
     return pScene->CreatePrimitive(_ePrimitiveType, _eRenderMode);
   }
   // ------------------------------------
   bool CSceneManager::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_, uint32_t _uSceneIndex)
   {
-    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1))
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {
       return false;
     }
-    scene::CRenderScene* pScene = m_lstScenes.at(_uSceneIndex);
+    utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes[_uSceneIndex];
+#ifdef _DEBUG
+    assert(pScene.IsValid());
+#endif // _DEBUG
     return pScene->DestroyPrimitive(_pPrimitive_);
   }
   // ------------------------------------
   utils::CWeakPtr<render::gfx::CModel> const CSceneManager::LoadModel(const char* _sModelPath, uint32_t _uSceneIndex)
   {
-    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1))
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {
       return utils::CWeakPtr<render::gfx::CModel>();
     }
-    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
+    utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes[_uSceneIndex];
+#ifdef _DEBUG
+    assert(pScene.IsValid());
+#endif // _DEBUG
     return pScene->LoadModel(_sModelPath);
   }
   // ------------------------------------
   bool CSceneManager::DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_, uint32_t _uSceneIndex)
   {
-    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1))
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {
       return false;
     }
-    scene::CRenderScene* pScene = m_lstScenes.at(_uSceneIndex);
+    utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes[_uSceneIndex];
+#ifdef _DEBUG
+assert(pScene.IsValid());
+#endif // _DEBUG
     return pScene->DestroyModel(_wpModel_);
   }
   // ------------------------------------
   render::lights::CDirectionalLight* const CSceneManager::CreateDirectionalLight(uint32_t _uSceneIndex)
   {
-    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1))
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {
       return nullptr;
     }
-    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
+    utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes[_uSceneIndex];
+#ifdef _DEBUG
+    assert(pScene.IsValid());
+#endif // _DEBUG
     return pScene->CreateDirectionalLight();
   }
   // ------------------------------------
   render::lights::CPointLight* const CSceneManager::CreatePointLight(uint32_t _uSceneIndex)
   {
-    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1))
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {
       return nullptr;
     }    
-    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
+    utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes[_uSceneIndex];
+#ifdef _DEBUG
+    assert(pScene.IsValid());
+#endif // _DEBUG
     return pScene->CreatePointLight();
   }
   // ------------------------------------
   render::lights::CSpotLight* const CSceneManager::CreateSpotLight(uint32_t _uSceneIndex)
   {
-    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1))
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {
       return nullptr;
     }
-    scene::CRenderScene* pScene = m_lstScenes[_uSceneIndex];
+    utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes[_uSceneIndex];
+#ifdef _DEBUG
+    assert(pScene.IsValid());
+#endif // _DEBUG
     return pScene->CreateSpotLight();
   }
   // ------------------------------------
   bool CSceneManager::DestroyLight(render::lights::CLight*& _pLight_, uint32_t _uSceneIndex)
   {
-    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.size() - 1)) 
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1)) 
     {
       return false;
     }
-    scene::CRenderScene* pScene = m_lstScenes.at(_uSceneIndex);
+    utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes[_uSceneIndex];
+#ifdef _DEBUG
+    assert(pScene.IsValid());
+#endif // _DEBUG
     return pScene->DestroyLight(_pLight_);
   }
   // ------------------------------------
   void CSceneManager::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
     float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
   {
-    if (m_pCurrentScene)
+    if (m_pCurrentScene.IsValid())
     {
       m_pCurrentScene->DrawCapsule(_v3Pos, _v3Rot, _v3Color, _fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
     }
@@ -111,7 +139,7 @@ namespace scene
   // ------------------------------------
   void CSceneManager::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_pCurrentScene)
+    if (m_pCurrentScene.IsValid())
     {
       m_pCurrentScene->DrawCube(_v3Pos, _v3Rot, _v3Size, _v3Color, _eRenderMode);
     }
@@ -119,7 +147,7 @@ namespace scene
   // ------------------------------------
   void CSceneManager::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_pCurrentScene)
+    if (m_pCurrentScene.IsValid())
     {
       m_pCurrentScene->DrawSphere(_v3Pos, _fRadius, _iSubvH, _iSubvV, _v3Color, _eRenderMode);
     }
@@ -127,7 +155,7 @@ namespace scene
   // ------------------------------------
   void CSceneManager::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
-    if (m_pCurrentScene)
+    if (m_pCurrentScene.IsValid())
     {
       m_pCurrentScene->DrawPlane(_rPlane, _v3Size, _v3Color, _eRenderMode);
     }
@@ -135,7 +163,7 @@ namespace scene
   // ------------------------------------
   void CSceneManager::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
   {
-    if (m_pCurrentScene)
+    if (m_pCurrentScene.IsValid())
     {
       m_pCurrentScene->DrawLine(_v3Start, _v3Dest, _v3Color);
     }
@@ -143,29 +171,23 @@ namespace scene
   // ------------------------------------
   void CSceneManager::Setup()
   {
-    int iCurrentIdx = 0;
-    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [&](scene::CRenderScene*& _pScene_)
+    // Create scenes
+    for (int iIdx = 0; iIdx < m_lstScenes.GetMaxSize(); iIdx++)
     {
-      _pScene_ = new scene::CRenderScene(iCurrentIdx++);
-      _pScene_->SetEnabled(false);
-    });
+      utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes.Add(iIdx);
+      pScene->SetEnabled(false);
+    }
 
-    std::for_each(m_lstCameraList.begin(), m_lstCameraList.end(), [&](render::CCamera*& _pCamera)
+    // Create cameras
+    for (int iIdx = 0; iIdx < m_lstCameras.GetMaxSize(); iIdx++)
     {
-      _pCamera = new render::CCamera();
-    });
+      m_lstCameras.Add();
+    }
   }
   // ------------------------------------
   void CSceneManager::Clear()
   {
-    std::for_each(m_lstScenes.begin(), m_lstScenes.end(), [](CRenderScene*& _pScene_)
-    {
-      global::ReleaseObject(_pScene_);
-    });
-
-    std::for_each(m_lstCameraList.begin(), m_lstCameraList.end(), [](render::CCamera*& _pCamera)
-    {
-      global::ReleaseObject(_pCamera);
-    });
+    m_lstScenes.Clear();
+    m_lstCameras.Clear();
   }
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "Libs/Macros/GlobalMacros.h"
 #include <mutex>
+#include <memory>
 
 namespace utils
 {
@@ -21,14 +22,14 @@ namespace utils
     ~CSingleton() {}
 
   private:
-    inline static T* m_pInstance = nullptr;
+    inline static std::unique_ptr<T> m_pInstance;
     inline static std::mutex m_mutex;
   };
 
   template <typename T, bool Lazy>
   T* CSingleton<T, Lazy>::GetInstance()
   {
-    return (Lazy && !m_pInstance) ? CreateSingleton() : m_pInstance;
+    return (Lazy && !m_pInstance) ? CreateSingleton() : m_pInstance.get();
   }
 
   template <typename T, bool Lazy>
@@ -37,20 +38,16 @@ namespace utils
     std::lock_guard<std::mutex> lock(m_mutex);
     if (!m_pInstance)
     {
-      m_pInstance = new T();
+      m_pInstance = std::make_unique<T>();
       SUCCESS_LOG("Singleton created! -> " << typeid(T).name());
     }
-    return m_pInstance;
+    return m_pInstance.get();
   }
 
   template <typename T, bool Lazy>
   void CSingleton<T, Lazy>::DestroySingleton()
   {
     std::lock_guard<std::mutex> lock(m_mutex);
-    if (m_pInstance)
-    {
-      delete m_pInstance;
-      m_pInstance = nullptr;
-    }
+    m_pInstance.reset();
   }
 }

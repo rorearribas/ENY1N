@@ -2,7 +2,7 @@
 #include "Components/Component.h"
 #include "Libs/Math/Transform.h"
 #include "Engine/Collisions/Collider.h"
-#include <array>
+#include "Libs/Utils/UniquePtrList.h"
 #include <string>
 
 namespace game { class CComponent; }
@@ -13,7 +13,7 @@ namespace game
   {
   public:
     static int constexpr s_iMaxComponents = 25;
-    typedef std::array<CComponent*, s_iMaxComponents> TComponents;
+    typedef utils::CUniquePtrList<CComponent, s_iMaxComponents> TComponents;
 
   public:
     CEntity(std::string _sEntityName) : m_sEntityName(_sEntityName) {}
@@ -36,12 +36,10 @@ namespace game
     inline math::CVector3 GetScl() const { return m_oTransform.GetScl(); }
 
     template<typename T, typename ...Args>
-    inline T* RegisterComponent(Args&&... args)
+    inline T* RegisterComponent(Args&&... _rArgs)
     {
-      if (m_iRegisteredComponents >= s_iMaxComponents) return nullptr;
-      T* pComponent = new T(this, std::forward<Args>(args)...);
-      m_lstComponents[m_iRegisteredComponents++] = pComponent;
-      return static_cast<T*>(pComponent);
+      utils::CWeakPtr<T> pComponent = m_lstComponents.Add<T>(this, std::forward<Args>(_rArgs)...);
+      return pComponent.GetPtr();
     }
     template<typename T>
     inline T* GetComponent()
@@ -50,7 +48,10 @@ namespace game
       for (CComponent* pComp : m_lstComponents)
       {
         T* pComponent = dynamic_cast<T*>(pComp);
-        if (pComponent) return pComponent;
+        if (pComponent) 
+        {
+          return pComponent;
+        }
       }
       return nullptr;
     }
@@ -64,11 +65,10 @@ namespace game
     void Clear();
 
   private:
+    std::string m_sEntityName = std::string();
     TComponents m_lstComponents = TComponents();
-    math::CTransform m_oTransform;
 
-    std::string m_sEntityName = {};
-    int m_iRegisteredComponents = 0;
+    math::CTransform m_oTransform = math::CTransform();
     bool m_bTickEnabled = true;
   };
 }

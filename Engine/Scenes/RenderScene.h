@@ -60,7 +60,7 @@ namespace scene
 
     // Cached items
     void CacheModels(render::CCamera* _pCamera);
-    const TCachedModels& GetCacheModels(uint16_t& _uDrawableCount_) const;
+    const TCachedModels& GetCachedModels(uint16_t& _uDrawableCount_) const;
     void CachePrimitives(render::CCamera* _pCamera);
     const TCachedPrimitives& GetCachedPrimitives(uint16_t& _uDrawableCount_) const;
     void CacheDebugPrimitives(render::CCamera* _pCamera);
@@ -97,9 +97,11 @@ namespace scene
     // Buffers - Models
     ID3D11Buffer* GetModelsVB() const { return m_oModelsVB; }
     ID3D11Buffer* GetModelsIB() const { return m_oModelsIB; }
+
     // Buffers - Primitives
     ID3D11Buffer* GetPrimitivesVB() const { return m_oPrimitivesVB; }
     ID3D11Buffer* GetPrimitivesIB() const { return m_oPrimitivesIB; }
+
     // Buffers - Debug Primitives
     ID3D11Buffer* GetDebugPrimitivesVB() const { return m_oDebugPrimitivesVB; }
     ID3D11Buffer* GetDebugPrimitivesIB() const { return m_oDebugPrimitivesIB; }
@@ -118,21 +120,26 @@ namespace scene
     TModels m_lstModels = TModels();
     TCachedModels m_lstCachedModels = TCachedModels();
     uint16_t m_uDrawableModels = 0;
+
     // Primitives
     TPrimitives m_lstPrimitives = TPrimitives();
     TCachedPrimitives m_lstCachedPrimitives = TCachedPrimitives();
     uint16_t m_uDrawablePrimitives = 0;
+
     // Debug primitives
     TDebugPrimitives m_lstDebugPrimitives = TDebugPrimitives();
     TCachedDebugPrimitives m_lstCachedDebugPrimitives = TCachedDebugPrimitives();
     uint16_t m_uDrawableDebugPrimitives = 0;
 
+  private:
     // Render buffers - models
     CRenderBuffer<render::gfx::TVertexData> m_oModelsVB;
     CRenderBuffer<uint32_t> m_oModelsIB;
+
     // Render buffers - primitives
     CRenderBuffer<math::CVector3> m_oPrimitivesVB;
     CRenderBuffer<uint32_t> m_oPrimitivesIB;
+
     // Render buffer - debug primitives
     CRenderBuffer<math::CVector3> m_oDebugPrimitivesVB;
     CRenderBuffer<uint32_t> m_oDebugPrimitivesIB;

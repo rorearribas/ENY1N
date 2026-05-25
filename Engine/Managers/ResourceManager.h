@@ -13,7 +13,6 @@ public:
   CResourceManager() {}
   ~CResourceManager() {}
 
-  [[nodiscard]] char* LoadFile(const char* _sPath, const char* _sMode);
   [[nodiscard]] unsigned char* LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_);
   [[nodiscard]] render::gfx::TModelData LoadModel(const char* _sPath);
 

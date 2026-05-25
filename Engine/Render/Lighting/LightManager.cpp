@@ -93,18 +93,18 @@ namespace render
       if (m_pDirectionalLight)
       {
         WARNING_LOG("There is a directional light!");
-        return m_pDirectionalLight;
+        return m_pDirectionalLight.get();
       }
 
       // Create directional light
-      m_pDirectionalLight = new render::lights::CDirectionalLight();
+      m_pDirectionalLight = std::make_unique<render::lights::CDirectionalLight>();
       m_pDirectionalLight->SetCastShadows(true);
 
       // Create shadow map
       render::gfx::CShadowMap* pShadowMap = m_lstShadowMaps.Create();
       pShadowMap->Setup(2048, 2048);
 
-      return m_pDirectionalLight;
+      return m_pDirectionalLight.get();
     }
     // ------------------------------------
     render::lights::CPointLight* const CLightManager::CreatePointLight()
@@ -134,7 +134,8 @@ namespace render
       {
       case render::ELight::DIRECTIONAL_LIGHT:
       {
-        bOk = global::ReleaseObject(m_pDirectionalLight);
+        m_pDirectionalLight.reset();
+        bOk = !m_pDirectionalLight;
       }
       break;
       case render::ELight::POINT_LIGHT:
@@ -159,7 +160,7 @@ namespace render
     void CLightManager::Clean()
     {
       // Destroy lights
-      global::ReleaseObject(m_pDirectionalLight);
+      m_pDirectionalLight.reset();
       m_lstPointLights.Clear();
       m_lstSpotLights.Clear();
     }

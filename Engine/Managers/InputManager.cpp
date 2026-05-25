@@ -155,9 +155,10 @@ namespace input
   CInputManager::CInputManager()
   {
     // Create mouse instance
-    m_pMouse = new CMouse();
+    m_pMouse = std::make_unique<CMouse>();
+
     // Create keyboard instance
-    m_pKeyboard = new CKeyboard();
+    m_pKeyboard = std::make_unique<CKeyboard>();
   }
   // ------------------------------------
   CInputManager::~CInputManager()
@@ -176,8 +177,8 @@ namespace input
   // ------------------------------------
   void CInputManager::Clean()
   {
-    global::ReleaseObject(m_pMouse);
-    global::ReleaseObject(m_pKeyboard);
+    m_pMouse.reset();
+    m_pKeyboard.reset();
   }
   // ------------------------------------
   bool CInputManager::IsKeyPressed(USHORT _uKey) const

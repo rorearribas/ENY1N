@@ -15,36 +15,9 @@
 std::string CResourceManager::s_sRelativeTexturesPath("/textures");
 
 // ------------------------------------
-char* CResourceManager::LoadFile(const char* _sPath, const char* _sMode)
-{
-  FILE* pFile = nullptr;
-  fopen_s(&pFile, _sPath, _sMode);
-  if (!pFile) { return nullptr; }
-
-  fseek(pFile, 0, SEEK_END);
-  long lFileSize = ftell(pFile);
-  rewind(pFile);
-
-  const size_t tMaxSize = lFileSize;
-  char* cBuffer = new char[tMaxSize + 1];
-  if (cBuffer == nullptr)
-  {
-    perror("Error allocating memory");
-    fclose(pFile);
-    return nullptr;
-  }
-
-  // Read buffer
-  size_t tSize = fread_s(cBuffer, tMaxSize, 1, lFileSize, pFile);
-  cBuffer[tSize] = '\0';
-  fclose(pFile);
-
-  return cBuffer;
-}
-// ------------------------------------
 unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
 {
-  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::CTexture2D<>::s_uChannels);
+  return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::s_uRGBA);
 }
 // ------------------------------------
 render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)

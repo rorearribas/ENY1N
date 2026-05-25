@@ -12,8 +12,8 @@ namespace utils
   {
   public:
     CWeakPtr() = default;
-    CWeakPtr(T* _pPtr, size_t* _uTargetGen, size_t _uCurrentGen) :
-      m_pPtr(_pPtr), m_uTargetGen(_uTargetGen), m_uCurrentGen(_uCurrentGen) {}
+    CWeakPtr(T* _pPtr, size_t* _tTargetGen, size_t _tCurrentGen) : m_pPtr(_pPtr), 
+    m_uTargetGen(_tTargetGen), m_uCurrentGen(_tCurrentGen) {}
     ~CWeakPtr() { m_pPtr = nullptr; }
 
     inline bool IsValid() const { return m_uTargetGen ? *m_uTargetGen == m_uCurrentGen : false; }
@@ -49,14 +49,14 @@ namespace utils
     ~CUniquePtrList() { Clear(); }
 
     template<typename _Type = T, typename ...Args>
-    inline CWeakPtr<T> Create(Args&&... args)
+    inline CWeakPtr<_Type> Add(Args&&... args)
     {
       if (m_tRegisteredItems >= MAX_ITEMS)
       {
 #ifdef _DEBUG
         assert(false);
 #endif
-        return CWeakPtr<T>();
+        return CWeakPtr<_Type>();
       }
 
       for (size_t tSlotIdx = 0; tSlotIdx < MAX_ITEMS; ++tSlotIdx)
@@ -77,18 +77,20 @@ namespace utils
           m_lstSlotStates[tSlotIdx] = true;
 
           m_tRegisteredItems++;
-          return CWeakPtr<T>(rInternalData.uPtr.get(), &pSlot.tGeneration, pSlot.tGeneration);
+          _Type* pRawPtr = static_cast<_Type*>(rInternalData.uPtr.get());
+          return CWeakPtr<_Type>(pRawPtr, &pSlot.tGeneration, pSlot.tGeneration);
         }
       }
 
-      return CWeakPtr<T>();
+      return CWeakPtr<_Type>();
     }
 
-    inline CWeakPtr<T> Insert(std::unique_ptr<T> _pData)
+    template<typename _Type = T, typename ...Args>
+    inline CWeakPtr<_Type> Insert(std::unique_ptr<_Type> _pData)
     {
       if (m_tRegisteredItems >= MAX_ITEMS || !_pData)
       {
-        return CWeakPtr<T>();
+        return CWeakPtr<_Type>();
       }
 
       for (size_t tSlotIdx = 0; tSlotIdx < MAX_ITEMS; ++tSlotIdx)
@@ -107,12 +109,12 @@ namespace utils
           m_lstSlotStates[tSlotIdx] = true;
 
           m_tRegisteredItems++;
-
-          return CWeakPtr<T>(rInternalData.uPtr.get(), &pSlot.tGeneration, pSlot.tGeneration);
+          _Type* pRawPtr = static_cast<_Type*>(rInternalData.uPtr.get());
+          return CWeakPtr<_Type>(pRawPtr, &pSlot.tGeneration, pSlot.tGeneration);
         }
       }
 
-      return CWeakPtr<T>();
+      return CWeakPtr<_Type>();
     }
 
     inline CWeakPtr<T> operator[](size_t _tIndex)
@@ -140,17 +142,24 @@ namespace utils
     class CIterator
     {
     public:
-      CIterator(CUniquePtrList* _pList, size_t _tIdx) : m_pList(_pList), m_tIndex(_tIdx) {}
-      inline T& operator*() { return *m_pList->m_lstInternalData[m_tIndex].uPtr; }
+      CIterator(CUniquePtrList* _pList, size_t _tIdx) : 
+      m_pList(_pList), m_tIndex(_tIdx) {}
+
+      inline T* operator*() { return m_pList->m_lstInternalData[m_tIndex].uPtr.get(); }
       inline T* operator->() { return m_pList->m_lstInternalData[m_tIndex].uPtr.get(); }
+
       inline CIterator& operator++() { ++m_tIndex; return *this; }
       inline bool operator!=(const CIterator& _rOther) const { return m_tIndex != _rOther.m_tIndex; }
+
     private:
       CUniquePtrList* m_pList;
       size_t m_tIndex;
     };
 
+    inline T* front() const { return m_tRegisteredItems > 0 ? m_lstInternalData[0].uPtr.get() : nullptr; }
     inline CIterator begin() { return CIterator(this, 0); }
+
+    inline T* back() const { return m_tRegisteredItems > 0 ? m_lstInternalData[m_tRegisteredItems - 1].uPtr.get() : nullptr; }
     inline CIterator end() { return CIterator(this, m_tRegisteredItems); }
 
     size_t FindIndex(const CWeakPtr<T>& _pItem);

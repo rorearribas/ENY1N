@@ -48,8 +48,8 @@ namespace input
     CInputManager();
     ~CInputManager();
 
-    CMouse* GetMouse() const { return m_pMouse; }
-    CKeyboard* GetKeyboard() const { return m_pKeyboard; }
+    CMouse* GetMouse() const { return m_pMouse.get(); }
+    CKeyboard* GetKeyboard() const { return m_pKeyboard.get(); }
 
     void Flush();
     bool IsKeyPressed(USHORT _uKey) const;
@@ -57,8 +57,8 @@ namespace input
   private:
     void Clean();
 
-    CMouse* m_pMouse = nullptr;
-    CKeyboard* m_pKeyboard = nullptr;
+    std::unique_ptr<CMouse> m_pMouse = nullptr;
+    std::unique_ptr<CKeyboard> m_pKeyboard = nullptr;
   };
 }
 

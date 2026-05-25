@@ -26,7 +26,7 @@ namespace render
     void PrepareFrame();
     void Draw(scene::CRenderScene* _pScene);
 
-    inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow; }
+    inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow.get(); }
     inline void SetRenderCamera(render::CCamera* _pCamera) { m_pRenderCamera = _pCamera; }
     inline void SetShadowCamera(render::CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
 
@@ -80,7 +80,7 @@ namespace render
     void DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive);
 
   private:
-    render::CRenderWindow* m_pRenderWindow = nullptr;
+    std::unique_ptr<render::CRenderWindow> m_pRenderWindow = nullptr;
     bool m_bVerticalSync = false;
 
     render::CCamera* m_pRenderCamera = nullptr;

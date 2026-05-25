@@ -7,6 +7,7 @@
 
 #include "Libs/Utils/FixedList.h"
 #include "Libs/Utils/Singleton.h"
+#include "Libs/Utils/UniquePtrList.h"
 
 namespace scene
 {
@@ -14,10 +15,10 @@ namespace scene
   {
   public:
     static const uint32_t s_uMaxCameras = 2u;
-    typedef std::array<render::CCamera*, s_uMaxCameras> TCameraList;
+    typedef utils::CUniquePtrList<render::CCamera, s_uMaxCameras> TCameraList;
 
     static int constexpr s_iMaxScenes = 1;
-    typedef std::array<CRenderScene*, s_iMaxScenes> TSceneList;
+    typedef utils::CUniquePtrList<scene::CRenderScene, s_iMaxScenes> TSceneList;
 
   public:
     CSceneManager() { Setup(); }
@@ -25,11 +26,11 @@ namespace scene
 
     // Handle scene
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
-    inline scene::CRenderScene* const GetCurrentScene() { return m_pCurrentScene; };
+    inline scene::CRenderScene* const GetCurrentScene() { return m_pCurrentScene.IsValid() ? m_pCurrentScene.GetPtr() : nullptr; };
 
     inline const TSceneList& GetScenes() { return m_lstScenes; }
-    inline render::CCamera* const GetRenderCamera() { return m_lstCameraList.front(); }
-    inline render::CCamera* const GetShadowCamera() { return m_lstCameraList.back(); }
+    inline render::CCamera* GetRenderCamera() const { return m_lstCameras.front(); }
+    inline render::CCamera* GetShadowCamera() const { return m_lstCameras.back(); }
 
     // Handle primitives
     render::gfx::CPrimitive* const CreatePrimitive(const render::EPrimitive&, render::ERenderMode, uint32_t _uSceneIndex = 0);
@@ -58,10 +59,8 @@ namespace scene
 
   private:
     TSceneList m_lstScenes = TSceneList();
-    TCameraList m_lstCameraList = TCameraList();
-
-  private:
-    mutable scene::CRenderScene* m_pCurrentScene = nullptr;
+    TCameraList m_lstCameras = TCameraList();
+    mutable utils::CWeakPtr<scene::CRenderScene> m_pCurrentScene;
   };
 }
 

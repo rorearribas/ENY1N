@@ -134,7 +134,7 @@ namespace scene
     }
   }
   // ------------------------------------
-  const TCachedModels& CRenderScene::GetCacheModels(uint16_t& _uDrawableCount_) const
+  const TCachedModels& CRenderScene::GetCachedModels(uint16_t& _uDrawableCount_) const
   {
     _uDrawableCount_ = m_uDrawableModels;
     return m_lstCachedModels;

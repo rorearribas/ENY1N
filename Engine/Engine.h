@@ -30,9 +30,9 @@ namespace engine
     void Draw();
 
     // Getters
-    inline scene::CSceneManager* GetSceneManager() const { return m_pSceneManager; }
+    inline scene::CSceneManager* GetSceneManager() const { return m_pSceneManager.get(); }
     inline render::CCamera* GetCamera() const { return m_pSceneManager->GetRenderCamera(); }
-    inline render::CRender* GetRender() const { return m_pRender; }
+    inline render::CRender* GetRender() const { return m_pRender.get(); }
 
     // Handle graphics
     render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
@@ -58,8 +58,9 @@ namespace engine
     void OnWindowResizeEvent(uint32_t _uX, uint32_t _uY);
     bool m_bInitialized = false;
 
-    scene::CSceneManager* m_pSceneManager = nullptr;
-    render::CRender* m_pRender = nullptr;
+  private:
+    std::unique_ptr<scene::CSceneManager> m_pSceneManager;
+    std::unique_ptr<render::CRender> m_pRender;
   };
 }
 

@@ -22,12 +22,9 @@ namespace game
     if (m_bTickEnabled)
     {
       // Update components
-      for (CComponent* pComponent : m_lstComponents)
+      for (game::CComponent* pComponent : m_lstComponents)
       {
-        if (pComponent)
-        {
-          pComponent->Update(_fDeltaTime);
-        }
+        pComponent->Update(_fDeltaTime);
       }
     }
   }
@@ -47,20 +44,30 @@ namespace game
 
     // Operation
     if (ImGui::RadioButton("Translate", s_eGizmoOperation == ImGuizmo::TRANSLATE))
+    {
       s_eGizmoOperation = ImGuizmo::TRANSLATE;
+    }
     ImGui::SameLine();
     if (ImGui::RadioButton("Rotate", s_eGizmoOperation == ImGuizmo::ROTATE))
+    {
       s_eGizmoOperation = ImGuizmo::ROTATE;
+    }
     ImGui::SameLine();
     if (ImGui::RadioButton("Scale", s_eGizmoOperation == ImGuizmo::SCALE))
+    {
       s_eGizmoOperation = ImGuizmo::SCALE;
+    }
 
     // Mode
     if (ImGui::RadioButton("World", s_eGizmoMode == ImGuizmo::WORLD))
+    {
       s_eGizmoMode = ImGuizmo::WORLD;
+    }
     ImGui::SameLine();
     if (ImGui::RadioButton("Local", s_eGizmoMode == ImGuizmo::LOCAL))
+    {
       s_eGizmoMode = ImGuizmo::LOCAL;
+    }
 
     ImGui::Separator();
     ImGui::Spacing();
@@ -133,13 +140,10 @@ namespace game
     }
 
     // Draw debug on components
-    for (CComponent* pComponent : m_lstComponents)
+    for (game::CComponent* pComponent : m_lstComponents)
     {
-      if (pComponent)
-      {
-        ImGui::Spacing();
-        pComponent->DrawDebug();
-      }
+      ImGui::Spacing();
+      pComponent->DrawDebug();
     }
 
     ImGui::End();
@@ -152,10 +156,7 @@ namespace game
     // Notify to components
     for (game::CComponent* pComponent : m_lstComponents)
     {
-      if (pComponent)
-      {
-        pComponent->OnPositionChanged(_v3Pos);
-      }
+      pComponent->OnPositionChanged(_v3Pos);
     }
   }
   // ------------------------------------
@@ -166,10 +167,7 @@ namespace game
     // Notify to components
     for (game::CComponent* pComponent : m_lstComponents)
     {
-      if (pComponent)
-      {
-        pComponent->OnRotationChanged(_v3Rot);
-      }
+      pComponent->OnRotationChanged(_v3Rot);
     }
   }
   // ------------------------------------
@@ -180,10 +178,7 @@ namespace game
     // Notify to components
     for (game::CComponent* pComponent : m_lstComponents)
     {
-      if (pComponent)
-      {
-        pComponent->OnScaleChanged(_v3Scl);
-      }
+      pComponent->OnScaleChanged(_v3Scl);
     }
   }
   // ------------------------------------
@@ -192,10 +187,7 @@ namespace game
     // Notify to components
     for (game::CComponent* pComponent : m_lstComponents)
     {
-      if (pComponent)
-      {
-        pComponent->OnCollisionEnter(_oHitEvent);
-      }
+      pComponent->OnCollisionEnter(_oHitEvent);
     }
   }
   // ------------------------------------
@@ -204,10 +196,7 @@ namespace game
     // Notify to components
     for (game::CComponent* pComponent : m_lstComponents)
     {
-      if (pComponent)
-      {
-        pComponent->OnCollisionStay(_oHitEvent);
-      }
+      pComponent->OnCollisionStay(_oHitEvent);
     }
   }
   // ------------------------------------
@@ -216,18 +205,12 @@ namespace game
     // Notify to components
     for (game::CComponent* pComponent : m_lstComponents)
     {
-      if (pComponent)
-      {
-        pComponent->OnCollisionExit(_oHitEvent);
-      }
+      pComponent->OnCollisionExit(_oHitEvent);
     }
   }
   // ------------------------------------
   void CEntity::Clear()
   {
-    std::for_each(m_lstComponents.begin(), m_lstComponents.end(), [](CComponent*& _pComponent)
-    {
-      global::ReleaseObject(_pComponent);
-    });
+    m_lstComponents.Clear();
   }
 }

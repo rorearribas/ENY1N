@@ -42,7 +42,7 @@ namespace render
 
       // Shadow maps
       const TShadowMaps& GetShadowMaps() { return m_lstShadowMaps; }
-      render::lights::CDirectionalLight* const GetDirectionalLight() { return m_pDirectionalLight; }
+      render::lights::CDirectionalLight* const GetDirectionalLight() { return m_pDirectionalLight.get(); }
 
       // Handle lights
       render::lights::CDirectionalLight* const CreateDirectionalLight();
@@ -58,7 +58,7 @@ namespace render
 
     private:
       // Lights
-      render::lights::CDirectionalLight* m_pDirectionalLight = nullptr;
+      std::unique_ptr<render::lights::CDirectionalLight> m_pDirectionalLight;
       TPointLights m_lstPointLights = TPointLights();
       TSpotLights m_lstSpotLights = TSpotLights();
 

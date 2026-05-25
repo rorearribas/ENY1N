@@ -11,12 +11,11 @@ namespace render
 {
   namespace texture
   {
+    static constexpr uint32_t s_uRGBA = 4;
+
     template<render::EView T = render::EView::UNKNOWN>
     class CTexture2D
     {
-    public:
-      static constexpr uint32_t s_uChannels = 4;
-
     public:
       CTexture2D() = default;
       ~CTexture2D() { Release(); }

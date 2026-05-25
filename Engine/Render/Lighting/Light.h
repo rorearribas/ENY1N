@@ -10,7 +10,7 @@ namespace render
     {
     public:
       CLight(ELight _eLightType) : m_eLightType(_eLightType) {}
-      virtual ~CLight() {}
+      virtual ~CLight() = default;
 
       void SetPos(const math::CVector3& _v3Pos) { m_v3Pos = _v3Pos; }
       inline const math::CVector3& GetPos() const { return m_v3Pos; }

@@ -10,7 +10,7 @@ namespace render
     {
     public:
       CDirectionalLight();
-      virtual ~CDirectionalLight() {}
+      virtual ~CDirectionalLight() = default;
 
       // Intensity
       inline void SetIntensity(float _fIntensity) { m_fIntensity = _fIntensity; }

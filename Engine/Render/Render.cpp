@@ -141,7 +141,7 @@ namespace render
   {
     // Create render window
     LOG("Creating render window...");
-    m_pRenderWindow = new render::CRenderWindow(_uWidth, _uHeight);
+    m_pRenderWindow = std::make_unique<render::CRenderWindow>(_uWidth, _uHeight);
     SUCCESS_LOG("The window has been created successfully!");
 
     // Init render
@@ -206,7 +206,7 @@ namespace render
     global::api::SafeRelease(global::api::DeviceContext);
 
     // Release render window
-    global::ReleaseObject(m_pRenderWindow);
+    m_pRenderWindow.reset();
   }
   // ------------------------------------
   void CRender::PrepareFrame()
@@ -1140,7 +1140,7 @@ namespace render
   {
     uint16_t uDrawableCount = 0;
     const scene::TModels& lstModels = _pScene->GetModels();
-    const scene::TCachedModels& lstCacheModels = _pScene->GetCacheModels(uDrawableCount);
+    const scene::TCachedModels& lstCacheModels = _pScene->GetCachedModels(uDrawableCount);
 
     for (uint16_t uI = 0; uI < uDrawableCount; uI++)
     {
@@ -1216,7 +1216,12 @@ namespace render
   void CRender::DrawPrimitives(scene::CRenderScene* _pScene)
   {
     // Set input layout
-    global::api::DeviceContext->IASetInputLayout(internal::Pipeline.DebugLayout);
+    ID3D11InputLayout* pCurrentLayout = nullptr;
+    global::api::DeviceContext->IAGetInputLayout(&pCurrentLayout);
+    if (pCurrentLayout != internal::Pipeline.DebugLayout)
+    {
+      global::api::DeviceContext->IASetInputLayout(internal::Pipeline.DebugLayout);
+    }
 
     // Attach shaders
     internal::Pipeline.ForwardVS.Attach();
@@ -1290,15 +1295,12 @@ namespace render
       global::api::DeviceContext->IASetPrimitiveTopology(eTargetTopology);
     }
 
-    // Set values - currently we don't support having multiple instances drawing primitives
-    const uint16_t uInstanceCount = 1;
-    const uint16_t uStartOffset = 0;
-
+    // Set values - we don't currently support real primitive instances!
     uint32_t uIdxCount = _pPrimitive->GetIndexCount();
     uint32_t uIdxOffset = _pPrimitive->GetIdxBufferHandler().BeginOffset;
     uint32_t uVtxOffset = _pPrimitive->GetVtxBufferHandler().BeginOffset;
 
     // Draw primitive
-    global::api::DeviceContext->DrawIndexedInstanced(uIdxCount, uInstanceCount, uIdxOffset, uVtxOffset, uStartOffset);
+    global::api::DeviceContext->DrawIndexedInstanced(uIdxCount, 1, uIdxOffset, uVtxOffset, 0);
   }
 }
