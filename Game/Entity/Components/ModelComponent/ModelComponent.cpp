@@ -20,16 +20,15 @@ namespace game
   {
     // Flush primitive
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    if (m_pPrimitive)
+    if (m_wpPrimitive.IsValid())
     {
-      pEngine->DestroyPrimitive(m_pPrimitive);
+      pEngine->DestroyPrimitive(m_wpPrimitive);
     }
 
     // Handle model and instances
-    if (m_pRenderInstance)
+    if (m_wpModel.IsValid() && m_wpModelInstance.IsValid())
     {
-      m_wpModel->RemoveInstance(m_pRenderInstance->GetInstanceID());
-      m_pRenderInstance = nullptr;
+      m_wpModel->RemoveInstance(m_wpModelInstance);
     }
     else if (m_wpModel.IsValid())
     {
@@ -57,13 +56,13 @@ namespace game
     if (m_wpModel->HasInstances())
     {
       // Set instance ID
-      render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
-      m_pRenderInstance = rInstances.last();
+      const render::gfx::TInstances& rInstances = m_wpModel->GetInstances();
+      m_wpModelInstance = rInstances[rInstances.GetSize() - 1];
 
       // Update transform
-      m_pRenderInstance->SetPos(GetPosition());
-      m_pRenderInstance->SetRot(GetRotation());
-      m_pRenderInstance->SetScl(GetScale());
+      m_wpModelInstance->SetPos(GetPosition());
+      m_wpModelInstance->SetRot(GetRotation());
+      m_wpModelInstance->SetScl(GetScale());
     }
     else
     {
@@ -81,42 +80,42 @@ namespace game
 
     // Create primitive
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    m_pPrimitive = pEngine->CreatePrimitive(_eType, _eRenderMode);
+    m_wpPrimitive = pEngine->CreatePrimitive(_eType, _eRenderMode);
 #ifdef _DEBUG
-    assert(m_pPrimitive);
+    assert(m_wpPrimitive.IsValid());
 #endif
 
     // Update transform
     CEntity* pOwner = GetOwner();
     if (pOwner)
     {
-      m_pPrimitive->SetPos(pOwner->GetPos());
-      m_pPrimitive->SetRot(pOwner->GetRot());
+      m_wpPrimitive->SetPos(pOwner->GetPos());
+      m_wpPrimitive->SetRot(pOwner->GetRot());
     }
   }
   // ------------------------------------
   void CModelComponent::SetCullingEnabled(bool _bCull)
   {
-    if (m_pPrimitive)
+    if (m_wpPrimitive.IsValid())
     {
-      m_pPrimitive->SetCullEnabled(_bCull);
+      m_wpPrimitive->SetCullEnabled(_bCull);
     }
 
-    if (m_wpModel.IsValid() && !m_pRenderInstance)
+    if (m_wpModel.IsValid() && !m_wpModelInstance.IsValid())
     {
       m_wpModel->SetCullEnabled(_bCull);
     }
-    else if (m_pRenderInstance)
+    else if (m_wpModelInstance.IsValid())
     {
-      m_pRenderInstance->SetCullEnabled(_bCull);
+      m_wpModelInstance->SetCullEnabled(_bCull);
     }
   }
   // ------------------------------------
   void CModelComponent::SetColor(const math::CVector3& _v3Color)
   {
-    if (m_pPrimitive)
+    if (m_wpPrimitive.IsValid())
     {
-      m_pPrimitive->SetColor(_v3Color);
+      m_wpPrimitive->SetColor(_v3Color);
     }
   }
   // ------------------------------------
@@ -137,18 +136,18 @@ namespace game
   // ------------------------------------
   void CModelComponent::SetPos(const math::CVector3& _v3Pos)
   {
-    if (m_pPrimitive)
+    if (m_wpPrimitive.IsValid())
     {
-      m_pPrimitive->SetPos(_v3Pos);
+      m_wpPrimitive->SetPos(_v3Pos);
     }
 
-    if (m_wpModel.IsValid() && !m_pRenderInstance)
+    if (m_wpModel.IsValid() && !m_wpModelInstance.IsValid())
     {
       m_wpModel->SetPos(_v3Pos);
     }
-    else if (m_pRenderInstance)
+    else if (m_wpModelInstance.IsValid())
     {
-      m_pRenderInstance->SetPos(_v3Pos);
+      m_wpModelInstance->SetPos(_v3Pos);
     }
   }
   // ------------------------------------
@@ -159,19 +158,18 @@ namespace game
   // ------------------------------------
   void CModelComponent::SetRotation(const math::CVector3& _v3Rot)
   {
-    if (m_pPrimitive)
+    if (m_wpPrimitive.IsValid())
     {
-      m_pPrimitive->SetRot(_v3Rot);
-      return;
+      m_wpPrimitive->SetRot(_v3Rot);
     }
 
-    if (m_wpModel.IsValid() && !m_pRenderInstance)
+    if (m_wpModel.IsValid() && !m_wpModelInstance.IsValid())
     {
       m_wpModel->SetRot(_v3Rot);
     }
-    else if (m_pRenderInstance)
+    else if (m_wpModelInstance.IsValid())
     {
-      m_pRenderInstance->SetRot(_v3Rot);
+      m_wpModelInstance->SetRot(_v3Rot);
     }
   }
   // ------------------------------------
@@ -182,18 +180,18 @@ namespace game
   // ------------------------------------
   void CModelComponent::SetScl(const math::CVector3& _v3Scl)
   {
-    if (m_pPrimitive)
+    if (m_wpPrimitive.IsValid())
     {
-      m_pPrimitive->SetScl(_v3Scl);
+      m_wpPrimitive->SetScl(_v3Scl);
     }
 
-    if (m_wpModel.IsValid() && !m_pRenderInstance)
+    if (m_wpModel.IsValid() && !m_wpModelInstance.IsValid())
     {
       m_wpModel->SetScl(_v3Scl);
     }
-    else if (m_pRenderInstance)
+    else if (m_wpModelInstance.IsValid())
     {
-      m_pRenderInstance->SetScl(_v3Scl);
+      m_wpModelInstance->SetScl(_v3Scl);
     }
   }
   // ------------------------------------
@@ -209,14 +207,14 @@ namespace game
     CEntity* pEntity = GetOwner();
     std::string sOwnerName = pEntity->GetName();
 
-    if (m_pPrimitive)
+    if (m_wpPrimitive.IsValid())
     {
       ImGui::Text("PRIMITIVE");
-      const math::CVector3& v3Color = m_pPrimitive->GetColor();
+      const math::CVector3& v3Color = m_wpPrimitive->GetColor();
       float fColor[3] = { v3Color.x, v3Color.y, v3Color.z };
       ImGui::InputFloat3("Color", fColor);
       ImGui::Separator();
-      m_pPrimitive->SetColor(math::CVector3(fColor[0], fColor[1], fColor[2]));
+      m_wpPrimitive->SetColor(math::CVector3(fColor[0], fColor[1], fColor[2]));
     } 
   }
 }

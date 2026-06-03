@@ -1,10 +1,13 @@
 #pragma once
-#include "Engine/Render/Buffers/BufferTypes.h"
-#include "Engine/Render/Buffers/ConstantBuffer.h"
+
+#include "Engine/Render/Lighting/DirectionalLight.h"
 #include "Engine/Render/Lighting/PointLight.h"
 #include "Engine/Render/Lighting/SpotLight.h"
 #include "Engine/Render/Graphics/ShadowMap.h"
 #include "Engine/Render/Resources/Texture2D.h"
+
+#include "Engine/Render/Buffers/BufferTypes.h"
+#include "Engine/Render/Buffers/ConstantBuffer.h"
 
 #include "Libs/Utils/Singleton.h"
 #include "Libs/Utils/FixedPool.h"
@@ -15,7 +18,6 @@ namespace render
   {
     // Forward declaration
     class CLight;
-    class CDirectionalLight;
 
     class CLightManager
     {
@@ -40,25 +42,27 @@ namespace render
       void ComputeShadows();
       void ApplyLighting();
 
-      // Shadow maps
-      const TShadowMaps& GetShadowMaps() { return m_lstShadowMaps; }
-      render::lights::CDirectionalLight* const GetDirectionalLight() { return m_pDirectionalLight.get(); }
-
       // Handle lights
-      render::lights::CDirectionalLight* const CreateDirectionalLight();
-      render::lights::CPointLight* const CreatePointLight();
-      render::lights::CSpotLight* const CreateSpotLight();
+      utils::CWeakPtr<render::lights::CDirectionalLight> GetDirectionalLight();
+      inline const TPointLights& GetPointLights() const { return m_lstPointLights; }
+      inline const TSpotLights& GetSpotLights() const { return m_lstSpotLights; }
 
-      // Destruction
-      bool DestroyLight(render::lights::CLight*& pLight_);
+      // Lights creation
+      utils::CWeakPtr<render::lights::CDirectionalLight> const CreateDirectionalLight();
+      utils::CWeakPtr<render::lights::CPointLight> const CreatePointLight();
+      utils::CWeakPtr<render::lights::CSpotLight> const CreateSpotLight();
+      bool DestroyLight(utils::CWeakPtr<render::lights::CLight> _wpLight);
+
+      // Shadow mapping
+      inline const TShadowMaps& GetShadowMaps() const { return m_lstShadowMaps; }
 
     private:
       void Clean();
       HRESULT Setup();
 
     private:
-      // Lights
-      std::unique_ptr<render::lights::CDirectionalLight> m_pDirectionalLight;
+      // Lighting
+      utils::CUniquePtr<render::lights::CDirectionalLight> m_pDirectionalLight;
       TPointLights m_lstPointLights = TPointLights();
       TSpotLights m_lstSpotLights = TSpotLights();
 

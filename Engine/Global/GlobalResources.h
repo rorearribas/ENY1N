@@ -52,7 +52,7 @@ namespace global
   // Global delegates
   namespace delegates
   {
-    extern std::vector< utils::CDelegate<void(uint32_t, uint32_t)>> s_lstOnWindowResizeDelegates;
+    extern std::vector<utils::CDelegate<void(uint32_t, uint32_t)>> s_lstOnWindowResizeDelegates;
     extern utils::CDelegate<void(RAWKEYBOARD*)> s_oOnUpdateKeyboardDelegate;
     extern utils::CDelegate<void(RAWMOUSE*)> s_oUpdateMouseDelegate;
   }

@@ -22,9 +22,9 @@ namespace game
     if (m_bTickEnabled)
     {
       // Update components
-      for (game::CComponent* pComponent : m_lstComponents)
+      for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
       {
-        pComponent->Update(_fDeltaTime);
+        m_lstComponents[uI]->Update(_fDeltaTime);
       }
     }
   }
@@ -36,7 +36,7 @@ namespace game
 
     // Gizmo config
     static ImGuizmo::OPERATION s_eGizmoOperation = ImGuizmo::TRANSLATE;
-    static ImGuizmo::MODE s_eGizmoMode = ImGuizmo::WORLD;
+    static ImGuizmo::MODE s_eGizmoMode = ImGuizmo::LOCAL;
 
     if (ImGui::IsKeyPressed(ImGuiKey_W)) s_eGizmoOperation = ImGuizmo::TRANSLATE;
     if (ImGui::IsKeyPressed(ImGuiKey_E)) s_eGizmoOperation = ImGuizmo::ROTATE;
@@ -140,10 +140,10 @@ namespace game
     }
 
     // Draw debug on components
-    for (game::CComponent* pComponent : m_lstComponents)
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
     {
       ImGui::Spacing();
-      pComponent->DrawDebug();
+      m_lstComponents[uI]->DrawDebug();
     }
 
     ImGui::End();
@@ -154,9 +154,9 @@ namespace game
     m_oTransform.SetPos(_v3Pos);
 
     // Notify to components
-    for (game::CComponent* pComponent : m_lstComponents)
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
     {
-      pComponent->OnPositionChanged(_v3Pos);
+      m_lstComponents[uI]->OnPositionChanged(_v3Pos);
     }
   }
   // ------------------------------------
@@ -165,9 +165,9 @@ namespace game
     m_oTransform.SetRot(_v3Rot);
 
     // Notify to components
-    for (game::CComponent* pComponent : m_lstComponents)
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
     {
-      pComponent->OnRotationChanged(_v3Rot);
+      m_lstComponents[uI]->OnRotationChanged(_v3Rot);
     }
   }
   // ------------------------------------
@@ -176,36 +176,36 @@ namespace game
     m_oTransform.SetScl(_v3Scl);
 
     // Notify to components
-    for (game::CComponent* pComponent : m_lstComponents)
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
     {
-      pComponent->OnScaleChanged(_v3Scl);
+      m_lstComponents[uI]->OnScaleChanged(_v3Scl);
     }
   }
   // ------------------------------------
   void CEntity::OnCollisionEnter(const collision::THitEvent& _oHitEvent)
   {
     // Notify to components
-    for (game::CComponent* pComponent : m_lstComponents)
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
     {
-      pComponent->OnCollisionEnter(_oHitEvent);
+      m_lstComponents[uI]->OnCollisionEnter(_oHitEvent);
     }
   }
   // ------------------------------------
   void CEntity::OnCollisionStay(const collision::THitEvent& _oHitEvent)
   {
     // Notify to components
-    for (game::CComponent* pComponent : m_lstComponents)
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
     {
-      pComponent->OnCollisionStay(_oHitEvent);
+      m_lstComponents[uI]->OnCollisionStay(_oHitEvent);
     }
   }
   // ------------------------------------
   void CEntity::OnCollisionExit(const collision::THitEvent& _oHitEvent)
   {
     // Notify to components
-    for (game::CComponent* pComponent : m_lstComponents)
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
     {
-      pComponent->OnCollisionExit(_oHitEvent);
+      m_lstComponents[uI]->OnCollisionExit(_oHitEvent);
     }
   }
   // ------------------------------------

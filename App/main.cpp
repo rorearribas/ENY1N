@@ -86,20 +86,22 @@ int main()
   // Input manager
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
 
-  // Create directional light
-  game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
-  pDirectionalLight->RegisterComponent<game::CLightComponent>(render::ELight::DIRECTIONAL_LIGHT);
+  //Create directional light
+  utils::CWeakPtr<game::CEntity> pDirectionalLight = pGameManager->CreateEntity("Directional Light");
+  game::CLightComponent* pDirComp =  pDirectionalLight->RegisterComponent<game::CLightComponent>();
+  pDirComp->CreateLight(render::ELight::DIRECTIONAL_LIGHT);
 
-  game::CEntity* pSpotLight = pGameManager->CreateEntity("SpotLight");
-  game::CLightComponent* pLightComp = pSpotLight->RegisterComponent<game::CLightComponent>(render::ELight::POINT_LIGHT);
-  static_cast<render::lights::CPointLight*>(pLightComp->GetLight())->SetRange(100.0f);
-  static_cast<render::lights::CPointLight*>(pLightComp->GetLight())->SetIntensity(0.1f);
-  static_cast<render::lights::CPointLight*>(pLightComp->GetLight())->SetColor(math::CVector3(0.0f, 1.0f, 0.0f));
+  utils::CWeakPtr<game::CEntity> pSpotLight = pGameManager->CreateEntity("SpotLight");
+  game::CLightComponent* pSpotComp = pSpotLight->RegisterComponent<game::CLightComponent>();
+  pSpotComp->CreateLight(render::ELight::SPOT_LIGHT);
+  static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetRange(100.0f);
+  static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetIntensity(0.1f);
+  static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetColor(math::CVector3(0.0f, 1.0f, 0.0f));
 
   float fOffsetZ = 0.0f;
   for (uint32_t uIndex = 0; uIndex < 1u; uIndex++)
   {
-    game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+    utils::CWeakPtr<game::CEntity> pModelEnt = pGameManager->CreateEntity("Model");
     pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/spaceship.fbx");
@@ -107,13 +109,14 @@ int main()
   }
 
   // Floor
-  game::CEntity* pFloor = pGameManager->CreateEntity("Floor");
+  utils::CWeakPtr<game::CEntity> pFloor = pGameManager->CreateEntity("Floor");
   pFloor->SetPos(math::CVector3(0.0f, 0.0f, 0.0f));
   game::CModelComponent* pFloorModelComp = pFloor->RegisterComponent<game::CModelComponent>();
   pFloorModelComp->LoadModel("models/floor/floor.fbx");
   pFloor->SetScl(math::CVector3(50.0f, 50.0f, 50.0f));
-  game::CCollisionComponent* CollComp = pFloor->RegisterComponent<game::CCollisionComponent>(collision::EColliderType::BOX_COLLIDER);
-  static_cast<collision::CBoxCollider*>(CollComp->GetCollider())->SetSize(math::CVector3(100.0f, 0.0f, 100.0f));
+  game::CCollisionComponent* pCollComp = pFloor->RegisterComponent<game::CCollisionComponent>();
+  pCollComp->CreateCollider(collision::EColliderType::BOX_COLLIDER);
+  static_cast<collision::CBoxCollider*>(pCollComp->GetCollider())->SetSize(math::CVector3(100.0f, 0.0f, 100.0f));
 
   // Create primitives
   const uint32_t uSize = 3;
@@ -132,13 +135,17 @@ int main()
 
   for (uint32_t uIndex = 0; uIndex < uSize; uIndex++)
   {
-    game::CEntity* pPrimitiveTest = pGameManager->CreateEntity("Primitive");
+    utils::CWeakPtr<game::CEntity> pPrimitiveTest = pGameManager->CreateEntity("Primitive");
     pPrimitiveTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 10.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelCompTest = pPrimitiveTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(ePrimitiveTypes[uIndex], render::ERenderMode::SOLID);
     pModelCompTest->SetColor(math::CVector3(0.0f, 0.5f, 0.5f));
-    pPrimitiveTest->RegisterComponent<game::CCollisionComponent>(eColliderTypes[uIndex]);
-    pPrimitiveTest->RegisterComponent<game::CRigidbodyComponent>();
+
+    game::CCollisionComponent* pCollTest = pPrimitiveTest->RegisterComponent<game::CCollisionComponent>();
+    pCollTest->CreateCollider(eColliderTypes[uIndex]);
+
+    game::CRigidbodyComponent* pRigidbodyComp = pPrimitiveTest->RegisterComponent<game::CRigidbodyComponent>();
+    pRigidbodyComp->CreateRigidbody(physics::ERigidbodyType::KINEMATIC);
   }
 
   render::CRender* const pRender = pEngine->GetRender();
@@ -210,7 +217,7 @@ int main()
       {
         for (uint32_t uIndex = 0; uIndex < 1024; uIndex++)
         {
-          game::CEntity* pModelEnt = pGameManager->CreateEntity("Plant");
+          utils::CWeakPtr<game::CEntity> pModelEnt = pGameManager->CreateEntity("Plant");
           pModelEnt->SetPos(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-100.0f, 100.0f)));
           game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
           pModelTest->LoadModel("models/plant/Low-Poly Plant_.fbx");
@@ -220,31 +227,30 @@ int main()
       ImGui::End();
 
       ImGui::Begin("Creation test");
-      if (ImGui::Button("Create point light"))
+      if (ImGui::Button("Create Directional Light"))
       {
-        // Create point light
-        game::CEntity* pTemp = pGameManager->CreateEntity("Point Light");
-        pTemp->RegisterComponent<game::CLightComponent>(render::ELight::POINT_LIGHT);
+        // Create directional light
+        utils::CWeakPtr<game::CEntity> pTempLight = pGameManager->CreateEntity("Directional Light");
+        game::CLightComponent* pTempComp = pTempLight->RegisterComponent<game::CLightComponent>();
+        pTempComp->CreateLight(render::ELight::DIRECTIONAL_LIGHT);
       }
-      if (ImGui::Button("Create spot light"))
+      if (ImGui::Button("Create Point light"))
       {
         // Create spot light
-        game::CEntity* pTemp = pGameManager->CreateEntity("Spot Light");
-        pTemp->RegisterComponent<game::CLightComponent>(render::ELight::SPOT_LIGHT);
+        utils::CWeakPtr<game::CEntity> pTempLight = pGameManager->CreateEntity("Point Light");
+        game::CLightComponent* pTempComp = pTempLight->RegisterComponent<game::CLightComponent>();
+        pTempComp->CreateLight(render::ELight::POINT_LIGHT);
       }
-      if(ImGui::Button("Create primitive"))
+      if (ImGui::Button("Create Spot light"))
       {
-        game::CEntity* pPrimitiveTest = pGameManager->CreateEntity("Primitive");
-        pPrimitiveTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 10.0f), GenerateFloat(-10.0f, 10.0f)));
-        game::CModelComponent* pModelCompTest = pPrimitiveTest->RegisterComponent<game::CModelComponent>();
-        pModelCompTest->CreatePrimitive(ePrimitiveTypes[0], render::ERenderMode::SOLID);
-        pModelCompTest->SetColor(math::CVector3(0.0f, 0.5f, 0.5f));
-        pPrimitiveTest->RegisterComponent<game::CCollisionComponent>(eColliderTypes[0]);
-        pPrimitiveTest->RegisterComponent<game::CRigidbodyComponent>();
+        // Create spot light
+        utils::CWeakPtr<game::CEntity> pTempLight = pGameManager->CreateEntity("Spot Light");
+        game::CLightComponent* pTempComp = pTempLight->RegisterComponent<game::CLightComponent>();
+        pTempComp->CreateLight(render::ELight::SPOT_LIGHT);
       }
-      if (ImGui::Button("Create model"))
+      if (ImGui::Button("Create Model"))
       {
-        game::CEntity* pModelEnt = pGameManager->CreateEntity("Plant");
+        utils::CWeakPtr<game::CEntity> pModelEnt = pGameManager->CreateEntity("Plant");
         pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-10.0f, 10.0f)));
         game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
         pModelTest->LoadModel("models/plant/Low-Poly Plant_.fbx");

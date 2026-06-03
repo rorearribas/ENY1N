@@ -266,17 +266,16 @@ namespace render
       BeginMarker(internal::s_sComputeShadowsMrk);
       {
         const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
-        render::lights::CDirectionalLight* pDirectionalLight = pLightManager->GetDirectionalLight();
-
-        bool bCastShadows = pDirectionalLight && pDirectionalLight->CastShadows();
+        utils::CWeakPtr<render::lights::CDirectionalLight> pDirLight = pLightManager->GetDirectionalLight();
+        bool bCastShadows = pDirLight.IsValid() && pDirLight->CastShadows();
         if (bCastShadows && lstShadowMaps.GetSize() > 0)
         {
           // Set custom rasterizer for shadow mapping
           global::api::DeviceContext->RSSetState(internal::Pipeline.ShadowsRasterizer);
           {
             // Clear depth stencil view
-            const render::gfx::CShadowMap* pShadowMap = lstShadowMaps[0];
-            const texture::TDepthStencil& rShadowDepth = pShadowMap->GetShadowDepth();
+            utils::CWeakPtr<render::gfx::CShadowMap> wpShadowMap = lstShadowMaps[0];
+            const texture::TDepthStencil& rShadowDepth = wpShadowMap->GetShadowDepth();
             global::api::DeviceContext->ClearDepthStencilView(rShadowDepth.GetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 
             // Configure viewport
@@ -1088,10 +1087,11 @@ namespace render
     // Shadow mapping
     ID3D11ShaderResourceView* pShadowTexture = nullptr;
     render::lights::CLightManager* pLightManager = _pScene->GetLightManager();
-    const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
-    const render::lights::CDirectionalLight* pDirLight = pLightManager->GetDirectionalLight();
 
-    bool bCastShadows = pDirLight && pDirLight->CastShadows();
+    utils::CWeakPtr<render::lights::CDirectionalLight> pDirLight = pLightManager->GetDirectionalLight();
+    bool bCastShadows = pDirLight.IsValid() && pDirLight->CastShadows();
+    const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
+
     if (bCastShadows && lstShadowMaps.GetSize() > 0)
     {
       pShadowTexture = lstShadowMaps[0]->GetShadowTexture().GetView();
@@ -1200,15 +1200,17 @@ namespace render
     uint16_t uStartOffset = !_bVisible;
 
     // Draw meshes
-    const render::gfx::TMeshes& lstMeshes = _pModel->GetMeshes();
-    for (const std::unique_ptr<render::gfx::CMesh>& pMesh : lstMeshes)
+    uint16_t uMeshCount = 0;
+    const render::gfx::TMeshes& lstMeshes = _pModel->GetMeshes(uMeshCount);
+    for (uint16_t uI = 0; uI < uMeshCount; uI++)
     {
       // Push material - constant buffer
-      PushMaterial(pMesh->GetMaterial());
+      const render::gfx::CMesh& rMesh = lstMeshes[uI];
+      PushMaterial(rMesh.GetMaterial());
 
       // Draw mesh
-      uint32_t uIdxCount = pMesh->GetIndexCount();
-      uint32_t uIdxOffset = pMesh->GetIdxBufferHandler().BeginOffset;
+      uint32_t uIdxCount = rMesh.GetIndexCount();
+      uint32_t uIdxOffset = rMesh.GetIdxBufferHandler().BeginOffset;
       global::api::DeviceContext->DrawIndexedInstanced(uIdxCount, uInstances, uIdxOffset, uVtxOffset, uStartOffset);
     }
   }
@@ -1244,7 +1246,8 @@ namespace render
     const scene::TCachedPrimitives& lstCachedPrimitives = _pScene->GetCachedPrimitives(uDrawableCount);
     for (uint16_t uI = 0; uI < uDrawableCount; uI++)
     {
-      DrawPrimitive(lstPrimitives[lstCachedPrimitives[uI]]);
+      utils::CWeakPtr<render::gfx::CPrimitive> pPrimitive = lstPrimitives[lstCachedPrimitives[uI]];
+      DrawPrimitive(pPrimitive.GetPtr());
     }
 
     // Set debug global buffers
@@ -1257,7 +1260,8 @@ namespace render
     const scene::TCachedDebugPrimitives& lstCachedDebugPrimitives = _pScene->GetCachedDebugPrimitives(uDrawableCount);
     for (uint16_t uI = 0; uI < uDrawableCount; uI++)
     {
-      DrawPrimitive(lstDebugPrimitives[lstCachedDebugPrimitives[uI]]);
+      const render::gfx::CPrimitive* pPrimitive = lstDebugPrimitives[(lstCachedDebugPrimitives[uI])];
+      DrawPrimitive(pPrimitive);
     }
 
     // Clear debug items

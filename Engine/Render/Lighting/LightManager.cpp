@@ -52,13 +52,14 @@ namespace render
       // Update point lights
       for (uint32_t uIndex = 0; uIndex < m_lstPointLights.GetSize(); uIndex++)
       {
-        if (render::lights::CPointLight* pPointLight = m_lstPointLights[uIndex])
-        {
-          rLightingData.PointLights[uIndex].Pos = pPointLight->GetPos();
-          rLightingData.PointLights[uIndex].Range = pPointLight->GetRange();
-          rLightingData.PointLights[uIndex].Color = pPointLight->GetColor();
-          rLightingData.PointLights[uIndex].Intensity = pPointLight->GetIntensity();
-        }
+        // Get point light
+        utils::CWeakPtr<render::lights::CPointLight> wpPointLight = m_lstPointLights[uIndex];
+
+        // Set data
+        rLightingData.PointLights[uIndex].Pos = wpPointLight->GetPos();
+        rLightingData.PointLights[uIndex].Range = wpPointLight->GetRange();
+        rLightingData.PointLights[uIndex].Color = wpPointLight->GetColor();
+        rLightingData.PointLights[uIndex].Intensity = wpPointLight->GetIntensity();
       }
       // Set the number of registered point lights
       rLightingData.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetSize());
@@ -66,14 +67,15 @@ namespace render
       // Update spot lights
       for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetSize(); uIndex++)
       {
-        if (render::lights::CSpotLight* pSpotLight = m_lstSpotLights[uIndex])
-        {
-          rLightingData.SpotLights[uIndex].Pos = pSpotLight->GetPos();
-          rLightingData.SpotLights[uIndex].Dir = pSpotLight->GetDir();
-          rLightingData.SpotLights[uIndex].Range = pSpotLight->GetRange();
-          rLightingData.SpotLights[uIndex].Color = pSpotLight->GetColor();
-          rLightingData.SpotLights[uIndex].Intensity = pSpotLight->GetIntensity();
-        }
+        // Get spotlight
+        utils::CWeakPtr<render::lights::CSpotLight> wpSpotLight = m_lstSpotLights[uIndex];
+
+        // Set data
+        rLightingData.SpotLights[uIndex].Pos = wpSpotLight->GetPos();
+        rLightingData.SpotLights[uIndex].Dir = wpSpotLight->GetDir();
+        rLightingData.SpotLights[uIndex].Range = wpSpotLight->GetRange();
+        rLightingData.SpotLights[uIndex].Color = wpSpotLight->GetColor();
+        rLightingData.SpotLights[uIndex].Intensity = wpSpotLight->GetIntensity();
       }
       // Set the number of registered spot lights
       rLightingData.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetSize());
@@ -88,79 +90,87 @@ namespace render
       m_oLightingBuffer.Bind<render::EShader::E_PIXEL>(uSlot);
     }
     // ------------------------------------
-    render::lights::CDirectionalLight* const CLightManager::CreateDirectionalLight()
+    utils::CWeakPtr<render::lights::CDirectionalLight> CLightManager::GetDirectionalLight()
+    {
+      return m_pDirectionalLight.GetRef();
+    }
+    // ------------------------------------
+    utils::CWeakPtr<render::lights::CDirectionalLight> const CLightManager::CreateDirectionalLight()
     {
       if (m_pDirectionalLight)
       {
         WARNING_LOG("There is a directional light!");
-        return m_pDirectionalLight.get();
+        return m_pDirectionalLight.GetRef();
       }
 
       // Create directional light
-      m_pDirectionalLight = std::make_unique<render::lights::CDirectionalLight>();
+      m_pDirectionalLight.Make_Unique();
       m_pDirectionalLight->SetCastShadows(true);
 
-      // Create shadow map
-      render::gfx::CShadowMap* pShadowMap = m_lstShadowMaps.Create();
-      pShadowMap->Setup(2048, 2048);
+      // Create shadow map - testing
+      utils::CWeakPtr<render::gfx::CShadowMap> pShadowMap = m_lstShadowMaps.Create();
+      pShadowMap->Setup(2048u, 2048u);
 
-      return m_pDirectionalLight.get();
+      return m_pDirectionalLight.GetRef();
     }
     // ------------------------------------
-    render::lights::CPointLight* const CLightManager::CreatePointLight()
+    utils::CWeakPtr<render::lights::CPointLight> const CLightManager::CreatePointLight()
     {
       if (m_lstPointLights.GetSize() >= s_uMaxPointLights)
       {
         WARNING_LOG("You have reached maximum point lights in the current scene!");
-        return nullptr;
+        return utils::CWeakPtr<render::lights::CPointLight>();
       }
       return m_lstPointLights.Create();
     }
     // ------------------------------------
-    render::lights::CSpotLight* const CLightManager::CreateSpotLight()
+    utils::CWeakPtr<render::lights::CSpotLight> const CLightManager::CreateSpotLight()
     {
       if (m_lstSpotLights.GetSize() >= s_uMaxSpotLights)
       {
         WARNING_LOG("You have reached maximum spot lights in the current scene!");
-        return nullptr;
+        return utils::CWeakPtr<render::lights::CSpotLight>();
       }
       return m_lstSpotLights.Create();
     }
     // ------------------------------------
-    bool CLightManager::DestroyLight(render::lights::CLight*& _pLight_)
+    bool CLightManager::DestroyLight(utils::CWeakPtr<render::lights::CLight> _wpLight)
     {
+      if (!_wpLight.IsValid())
+      {
+        return false;
+      }
+
       bool bOk = false;
-      switch (_pLight_->GetLightType())
+      switch (_wpLight->GetLightType())
       {
-      case render::ELight::DIRECTIONAL_LIGHT:
-      {
-        m_pDirectionalLight.reset();
-        bOk = !m_pDirectionalLight;
-      }
-      break;
-      case render::ELight::POINT_LIGHT:
-      {
-        render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(_pLight_);
-        bOk = m_lstPointLights.Remove(pPointLight);
-      }
-      break;
-      case render::ELight::SPOT_LIGHT:
-      {
-        render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(_pLight_);
-        bOk = m_lstSpotLights.Remove(pSpotLight);
-      }
-      break;
-      default:
+        case render::ELight::DIRECTIONAL_LIGHT:
+        {
+          m_pDirectionalLight.Release();
+          bOk = true;
+        }
         break;
+        case render::ELight::POINT_LIGHT:
+        {
+          auto* pPointLight = static_cast<render::lights::CPointLight*>(_wpLight.GetPtr());
+          bOk = m_lstPointLights.Remove(pPointLight);
+        }
+        break;
+        case render::ELight::SPOT_LIGHT:
+        {
+          auto* pPointLight = static_cast<render::lights::CSpotLight*>(_wpLight.GetPtr());
+          bOk = m_lstSpotLights.Remove(pPointLight);
+        }
+        break;
+        default: break;
       }
-      _pLight_ = nullptr; // Set as nullptr
       return bOk;
     }
     // ------------------------------------
     void CLightManager::Clean()
     {
       // Destroy lights
-      m_pDirectionalLight.reset();
+      m_pDirectionalLight.Release();
       m_lstPointLights.Clear();
       m_lstSpotLights.Clear();
     }

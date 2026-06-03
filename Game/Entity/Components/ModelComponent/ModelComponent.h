@@ -1,13 +1,13 @@
 #pragma once
 #include "Game/Entity/Components/Component.h"
-#include "Engine/Render/Graphics/RenderInstance.h"
-#include "Engine/Render/RenderTypes.h"
-#include "Libs/Math/Vector3.h"
-#include <Libs/Utils/UniquePtrList.h>
 
-namespace render { namespace gfx { class CRenderInstance; } }
-namespace render { namespace gfx { class CPrimitive; } }
-namespace render { namespace gfx { class CModel; } }
+#include "Libs/Utils/FixedPool.h"
+#include "Libs/Math/Vector3.h"
+
+#include "Engine/Render/RenderTypes.h"
+#include "Engine/Render/Graphics/RenderInstance.h"
+#include "Engine/Render/Graphics/Model.h"
+#include "Engine/Render/Graphics/Primitive.h"
 
 namespace game { class CEntity; }
 namespace game
@@ -41,13 +41,10 @@ namespace game
   private:
     void Clean();
 
-  private:
-    // Primitive
-    render::gfx::CPrimitive* m_pPrimitive = nullptr;
-
-    // Model
+    // Items
     utils::CWeakPtr<render::gfx::CModel> m_wpModel;
-    render::gfx::CRenderInstance* m_pRenderInstance = nullptr;
+    utils::CWeakPtr<render::gfx::CRenderInstance> m_wpModelInstance;
+    utils::CWeakPtr<render::gfx::CPrimitive> m_wpPrimitive;
   };
 }
 

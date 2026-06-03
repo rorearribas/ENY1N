@@ -21,23 +21,20 @@ namespace game
     // Show the list of entities
     for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetSize(); ++uIndex)
     {
-      CEntity* pEntity = m_lstEntitiesList[uIndex];
-      if (pEntity)
+      utils::CWeakPtr<CEntity> pEntity = m_lstEntitiesList[uIndex];
+      std::string sLabel = pEntity->GetName() + "##" + std::to_string(uIndex);
+      if (ImGui::Selectable(sLabel.c_str(), iSelectedIdx == static_cast<int>(uIndex)))
       {
-        std::string sLabel = pEntity->GetName() + "##" + std::to_string(uIndex);
-        if (ImGui::Selectable(sLabel.c_str(), iSelectedIdx == static_cast<int>(uIndex)))
-        {
-          iSelectedIdx = uIndex;
-        }
-
-        ImGui::SameLine();
-        ImGui::PushID(uIndex);
-        if (ImGui::Button("Destroy"))
-        {
-          lstDeleteActors.emplace_back(pEntity->GetName());
-        }
-        ImGui::PopID();
+        iSelectedIdx = uIndex;
       }
+
+      ImGui::SameLine();
+      ImGui::PushID(uIndex);
+      if (ImGui::Button("Destroy"))
+      {
+        lstDeleteActors.emplace_back(pEntity->GetName());
+      }
+      ImGui::PopID();
     }
     ImGui::End();
 
@@ -50,19 +47,16 @@ namespace game
     // Update
     for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetSize(); ++uIndex)
     {
-      CEntity* pEntity = m_lstEntitiesList[uIndex];
-      if (pEntity)
-      {
-        pEntity->Update(_fDeltaTime);
+      utils::CWeakPtr<CEntity> pEntity = m_lstEntitiesList[uIndex];
+      pEntity->Update(_fDeltaTime);
 #ifdef DEBUG_MODE
-        if (uIndex == static_cast<uint32_t>(iSelectedIdx))
-        {
-          ImGui::PushID(uIndex);
-          pEntity->DrawDebug();
-          ImGui::PopID();
-        }
-#endif
+      if (uIndex == static_cast<uint32_t>(iSelectedIdx))
+      {
+        ImGui::PushID(uIndex);
+        pEntity->DrawDebug();
+        ImGui::PopID();
       }
+#endif
     }
   }
   // ------------------------------------
@@ -71,10 +65,12 @@ namespace game
     m_lstEntitiesList.Clear();
   }
   // ------------------------------------
-  CEntity* CGameManager::CreateEntity(const char* _sEntityName)
+  utils::CWeakPtr<CEntity> CGameManager::CreateEntity(const char* _sEntityName)
   {
     if (m_uRegisteredEntities >= m_lstEntitiesList.GetMaxSize())
-      return nullptr;
+    {
+      return utils::CWeakPtr<CEntity>();
+    }
 
     // Check collision name
     std::string sTarget = _sEntityName;
@@ -97,21 +93,21 @@ namespace game
 
     // Register entity
     m_uRegisteredEntities++;
-    CEntity* pEntity = m_lstEntitiesList.Create(sTarget.c_str());
-    return pEntity;
+    utils::CWeakPtr<CEntity> wpEntity = m_lstEntitiesList.Create(sTarget.c_str());
+    return wpEntity;
   }
   // ------------------------------------
   bool CGameManager::DestroyEntity(const char* _sEntityName)
   {
-    CEntity* pEntity = nullptr;
+    utils::CWeakPtr<CEntity> wpEntity = utils::CWeakPtr<CEntity>();
     for (uint32_t uIndex = 0; uIndex < m_lstEntitiesList.GetSize(); ++uIndex)
     {
-      pEntity = m_lstEntitiesList[uIndex];
-      if (pEntity && pEntity->GetName() == _sEntityName)
+      wpEntity = m_lstEntitiesList[uIndex];
+      if (wpEntity.IsValid() && wpEntity->GetName() == _sEntityName)
       {
         break;
       }
     }
-    return m_lstEntitiesList.Remove(pEntity);
+    return m_lstEntitiesList.Remove(wpEntity);
   }
 }

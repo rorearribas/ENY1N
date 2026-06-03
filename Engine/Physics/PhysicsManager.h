@@ -19,8 +19,8 @@ namespace physics
 
     void Update(float _fDeltaTime);
 
-    CRigidbody* CreateRigidbody(ERigidbodyType _eRigidbodyType = ERigidbodyType::KINEMATIC);
-    void DestroyRigidbody(CRigidbody*& _pRigidbody);
+    utils::CWeakPtr<CRigidbody> CreateRigidbody(ERigidbodyType _eRigidbodyType = ERigidbodyType::KINEMATIC);
+    bool DestroyRigidbody(utils::CWeakPtr<CRigidbody> _wpRigidbody);
 
   private:
     void Clear();

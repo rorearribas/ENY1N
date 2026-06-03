@@ -14,14 +14,15 @@ namespace render
 {
   namespace gfx
   {
-    typedef std::vector<std::unique_ptr<render::gfx::CMesh>> TMeshes;
+    typedef std::array<render::gfx::CMesh, s_uMaxMeshesPerModel> TMeshes;
     typedef utils::CFixedPool<render::gfx::CRenderInstance, s_uMaxDrawableInstances> TInstances;
 
     struct TModelData
     {
       std::map<uint32_t, std::vector<uint32_t>> Indices;
       std::vector<render::gfx::TVertexData> VertexData;
-      std::vector<std::unique_ptr<render::gfx::CMesh>> Meshes;
+      TMeshes Meshes;
+      uint16_t MeshesCount;
       char AssetPath[128];
     };
 
@@ -30,6 +31,11 @@ namespace render
     public:
       CModel(TModelData& _rModelData);
       ~CModel();
+
+      CModel(CModel&& _rOther) noexcept;
+      CModel& operator=(CModel&& _rOther) noexcept;
+      CModel(const CModel& _rOther) = delete;
+      CModel& operator=(const CModel& _rOther) = delete;
 
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPosition() const { return m_oTransform.GetPos(); }
@@ -54,12 +60,12 @@ namespace render
       inline const bool IsCullEnabled() const { return m_bCullEnabled; }
 
       inline std::string GetAssetPath() const { return std::string(m_sAssetPath); }
-      inline const TMeshes& GetMeshes() const { return m_lstMeshes; }
-      inline TInstances& GetInstances() { return m_lstInstances; }
-      inline const TInstances& GetInstances() const { return m_lstInstances; }
+      const TMeshes& GetMeshes(uint16_t& _uCount_) const;
+      TMeshes& GetMeshes(uint16_t& _uCount_);
 
-      CRenderInstance* CreateInstance();
-      bool RemoveInstance(uint16_t _uInstanceID);
+      inline const TInstances& GetInstances() const { return m_lstInstances; }
+      utils::CWeakPtr<render::gfx::CRenderInstance> CreateInstance();
+      bool RemoveInstance(utils::CWeakPtr<render::gfx::CRenderInstance> _pInstance_);
 
       inline const bool AllowInstancing() const { return m_lstInstances.GetSize() < m_lstInstances.GetMaxSize(); }
       inline const bool HasInstances() const { return GetInstances().GetSize() > 0; }
@@ -69,6 +75,8 @@ namespace render
 
     private:
       TMeshes m_lstMeshes = TMeshes();
+      uint16_t m_uMeshesCount = 0;
+
       TInstances m_lstInstances = TInstances();
       char m_sAssetPath[128];
 

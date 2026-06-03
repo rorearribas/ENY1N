@@ -2,8 +2,7 @@
 #include "Game/Entity/Entity.h"
 #include "Libs/Utils/Singleton.h"
 #include "Engine/Collisions/CollisionManager.h"
-#include "Libs/Utils/FixedPool.h"
-#include <unordered_set>
+#include "Libs/Utils/UniquePtrList.h"
 
 namespace collision { class CCollider; }
 
@@ -13,7 +12,7 @@ namespace game
   {
   public:
     static const uint32_t s_uMaxEntities = 100000u;
-    typedef utils::CFixedPool<CEntity, s_uMaxEntities> TEntitiesList;
+    typedef utils::CUniquePtrList<CEntity, s_uMaxEntities> TEntitiesList;
 
   public:
     CGameManager() {};
@@ -21,7 +20,7 @@ namespace game
 
     void Update(float _fDeltaTime);
 
-    CEntity* CreateEntity(const char* _sEntityName);
+    utils::CWeakPtr<CEntity> CreateEntity(const char* _sEntityName);
     bool DestroyEntity(const char* _sEntityName);
 
   private:

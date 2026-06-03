@@ -10,10 +10,6 @@
 
 namespace game
 {
-  CCollisionComponent::CCollisionComponent(CEntity* _pOwner, collision::EColliderType _eColliderType) : CComponent(_pOwner)
-  {
-    CreateCollider(_eColliderType);
-  }
   // ------------------------------------
   void CCollisionComponent::CreateCollider(collision::EColliderType _eColliderType)
   {

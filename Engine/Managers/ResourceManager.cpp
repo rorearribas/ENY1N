@@ -171,21 +171,15 @@ render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)
       }
     }
 
-    // Create mesh
-    std::unique_ptr pMesh = std::make_unique<render::gfx::CMesh>();
-#ifdef _DEBUG
-    assert(pMesh);
-#endif // DEBUG
-
     // Add material
     if (pSceneMesh->mMaterialIndex >= 0 && pSceneMesh->mMaterialIndex < (int)lstMaterials.size())
     {
-      pMesh->SetMaterial(std::move(lstMaterials[pSceneMesh->mMaterialIndex]));
+      render::gfx::CMesh& rMesh = rModelData.Meshes[rModelData.MeshesCount++];
+      rMesh.SetMaterial(std::move(lstMaterials[pSceneMesh->mMaterialIndex]));
     }
 
     // Add data
     rModelData.Indices.emplace(uMeshID, std::move(lstIndices));
-    rModelData.Meshes.emplace_back(std::move(pMesh));
   }
 
   SUCCESS_LOG("Loaded model data! -> " << _sPath);

@@ -13,9 +13,19 @@ namespace game
     const float s_fRebound(1.75f);
   }
   // ------------------------------------
-  CRigidbodyComponent::CRigidbodyComponent(CEntity* _pOwner, physics::ERigidbodyType _eRigidbodyType) : CComponent(_pOwner)
+  void CRigidbodyComponent::CreateRigidbody(physics::ERigidbodyType _eRigidbodyType)
   {
-    CreateRigidbody(_eRigidbodyType);
+    Clean();
+
+    // Create rigidbody
+    m_pRigidbody = physics::CPhysicsManager::GetInstance()->CreateRigidbody(_eRigidbodyType);
+#ifdef _DEBUG
+    assert(m_pRigidbody.IsValid());
+#endif
+
+    // Set notifications
+    m_pRigidbody->SetOnVelocityChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnApplyVelocity, this));
+    m_pRigidbody->SetOnRotationChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnApplyRotation, this));
   }
   // ------------------------------------
   void CRigidbodyComponent::SetRigidbodyType(physics::ERigidbodyType _eRigidbodyType)
@@ -120,24 +130,9 @@ namespace game
     }
   }
   // ------------------------------------
-  void CRigidbodyComponent::CreateRigidbody(physics::ERigidbodyType _eRigidbodyType)
-  {
-    Clean();
-
-    // Create rigidbody
-    m_pRigidbody = physics::CPhysicsManager::GetInstance()->CreateRigidbody(_eRigidbodyType);
-#ifdef _DEBUG
-    assert(m_pRigidbody);
-#endif
-
-    // Set notifications
-    m_pRigidbody->SetOnVelocityChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnApplyVelocity, this));
-    m_pRigidbody->SetOnRotationChangedDelegate(physics::CRigidbody::TOnVelocityChangedDelegate(&CRigidbodyComponent::OnApplyRotation, this));
-  }
-  // ------------------------------------
   void CRigidbodyComponent::Clean()
   {
-    if (m_pRigidbody)
+    if (m_pRigidbody.IsValid())
     {
       physics::CPhysicsManager::GetInstance()->DestroyRigidbody(m_pRigidbody);
     }
@@ -147,7 +142,10 @@ namespace game
   {
     ImGui::Spacing();
     std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
-    if (!m_pRigidbody) return;
+    if (!m_pRigidbody.IsValid()) 
+    {
+      return;
+    }
 
     ImGui::Text("RIGIDBODY");
     float fMass = GetMass();
@@ -156,7 +154,7 @@ namespace game
     ImGui::Checkbox("Kinematic", &bKinematic);
 
     // Apply
-    if (m_pRigidbody)
+    if (m_pRigidbody.IsValid())
     {
       physics::ERigidbodyType eRbType = bKinematic ? physics::ERigidbodyType::KINEMATIC : physics::ERigidbodyType::DYNAMIC;
       if (eRbType != GetRigidbodyType())

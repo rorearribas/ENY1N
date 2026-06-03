@@ -22,7 +22,7 @@ namespace physics
   {
     for (uint32_t uIndex = 0; uIndex < m_lstRigidbodys.GetSize(); ++uIndex)
     {
-      physics::CRigidbody* pRigidbody = m_lstRigidbodys[uIndex];
+      utils::CWeakPtr<physics::CRigidbody> pRigidbody = m_lstRigidbodys[uIndex];
       bool bDynamic = pRigidbody->GetRigidbodyType() == physics::ERigidbodyType::DYNAMIC;
       if (!bDynamic)
       {
@@ -66,24 +66,19 @@ namespace physics
     }
   }
   // ------------------------------------
-  CRigidbody* CPhysicsManager::CreateRigidbody(ERigidbodyType _eRigidbodyType)
+  utils::CWeakPtr<CRigidbody> CPhysicsManager::CreateRigidbody(ERigidbodyType _eRigidbodyType)
   {
     if (m_lstRigidbodys.GetSize() >= m_lstRigidbodys.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum rigidbodys!");
-      return nullptr;
+      return utils::CWeakPtr<CRigidbody>();
     }
     return m_lstRigidbodys.Create(_eRigidbodyType);
   }
   // ------------------------------------
-  void CPhysicsManager::DestroyRigidbody(CRigidbody*& _pRigidbody)
+  bool CPhysicsManager::DestroyRigidbody(utils::CWeakPtr<CRigidbody> _wpRigidbody)
   {
-    bool bOk = m_lstRigidbodys.Remove(_pRigidbody);
-    if (!bOk) 
-    {
-      ERROR_LOG("Error removing rigidbody!");    
-    }
-    _pRigidbody = nullptr;
+    return m_lstRigidbodys.Remove(_wpRigidbody);
   }
   // ------------------------------------
   void CPhysicsManager::Clear()

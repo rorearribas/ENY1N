@@ -105,11 +105,11 @@ namespace scene
 
       // Handle instances
       rCachedModel.InstanceCount = 0;
-      render::gfx::TInstances& lstInstances = pModel->GetInstances();
+      const render::gfx::TInstances& lstInstances = pModel->GetInstances();
       for (uint32_t uJ = 0; uJ < lstInstances.GetSize(); uJ++)
       {
-        render::gfx::CRenderInstance* pInstance = lstInstances[uJ];
-        if (!pInstance || !pInstance->IsVisible())
+        utils::CWeakPtr<render::gfx::CRenderInstance> pInstance = lstInstances[uJ];
+        if (!pInstance->IsVisible())
         {
           continue;
         }
@@ -148,7 +148,7 @@ namespace scene
     for (uint16_t uI = 0; uI < m_lstPrimitives.GetSize(); uI++)
     {
       // Handle debug primitive
-      const render::gfx::CPrimitive* pPrimitive = m_lstPrimitives[uI];
+      utils::CWeakPtr<render::gfx::CPrimitive> pPrimitive = m_lstPrimitives[uI];
       uint16_t& uCachedIdx = m_lstCachedPrimitives[m_uDrawablePrimitives];
 
       bool bOnFrustum = true;
@@ -179,7 +179,7 @@ namespace scene
     for (uint16_t uI = 0; uI < m_lstDebugPrimitives.GetSize(); uI++)
     {
       // Handle debug primitive
-      const render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugPrimitives[uI];
+      render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugPrimitives[uI];
       uint16_t& uCachedIdx = m_lstCachedDebugPrimitives[m_uDrawableDebugPrimitives];
 
       bool bOnFrustum = true;
@@ -202,17 +202,16 @@ namespace scene
     return m_lstCachedDebugPrimitives;
   }
   // ------------------------------------
-  render::gfx::CPrimitive* const CRenderScene::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
+  utils::CWeakPtr<render::gfx::CPrimitive> const CRenderScene::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
   {
     if (m_lstPrimitives.GetSize() >= m_lstPrimitives.GetMaxSize())
     {
       WARNING_LOG("You have reached maximum primitives in the current scene!");
-      return nullptr;
+      return utils::CWeakPtr<render::gfx::CPrimitive>();
     }
 
     // Create primitive data
-    using namespace render::gfx;
-    TPrimitiveData rPrimitiveData = CPrimitiveUtils::CreatePrimitive(_eType, _eRenderMode);
+    render::gfx::TPrimitiveData rPrimitiveData = render::gfx::CPrimitiveUtils::CreatePrimitive(_eType, _eRenderMode);
 
     // Vertex buffer
     CBufferHandler rVtxBufferHandler = CBufferHandler();
@@ -220,7 +219,7 @@ namespace scene
     if (!m_oPrimitivesVB.Alloc(rPrimitiveData.Vertices.data(), uVertexCount, rVtxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
-      return nullptr;
+      return utils::CWeakPtr<render::gfx::CPrimitive>();
     }
 
     // Index buffer
@@ -229,11 +228,14 @@ namespace scene
     if (!m_oPrimitivesIB.Alloc(rPrimitiveData.Indices.data(), uIndices, rIdxBufferHandler))
     {
       ERROR_LOG("Error allocating memory!");
-      return nullptr;
+      return utils::CWeakPtr<render::gfx::CPrimitive>();
     }
 
     // Create primitive
-    render::gfx::CPrimitive* pPrimitive = m_lstPrimitives.Create();
+    utils::CWeakPtr<render::gfx::CPrimitive> pPrimitive = m_lstPrimitives.Create();
+#ifdef _DEBUG
+    assert(pPrimitive.IsValid()); // Sanity check
+#endif
 
     // Set AABB
     collision::CAABB rAABB = collision::CAABB();
@@ -248,7 +250,7 @@ namespace scene
     return pPrimitive;
   }
   // ------------------------------------
-  bool CRenderScene::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
+  bool CRenderScene::DestroyPrimitive(utils::CWeakPtr<render::gfx::CPrimitive> _pPrimitive_)
   {
     return m_lstPrimitives.Remove(_pPrimitive_);
   }
@@ -282,7 +284,7 @@ namespace scene
     }
 
     // Create instance
-    if (wpModel.IsValid() && wpModel->CreateInstance())
+    if (wpModel.IsValid() && wpModel->CreateInstance().IsValid())
     {
       LOG("Created Instance! -> " << _sModelPath);
     }
@@ -302,7 +304,7 @@ namespace scene
       }
 
       // Index buffer
-      for (uint32_t uIdx = 0; uIdx < rModelData.Meshes.size(); uIdx++)
+      for (uint32_t uIdx = 0; uIdx < rModelData.MeshesCount; uIdx++)
       {
         // Allocate
         CBufferHandler rIdxBufferHandler = CBufferHandler();
@@ -313,16 +315,14 @@ namespace scene
           return utils::CWeakPtr<render::gfx::CModel>();
         }
         // Set idx buffer handler
-        std::unique_ptr<render::gfx::CMesh>& pMesh = rModelData.Meshes[uIdx];
-        pMesh->SetIdxBufferHandler(rIdxBufferHandler);
+        render::gfx::CMesh& rMesh = rModelData.Meshes[uIdx];
+        rMesh.SetIdxBufferHandler(rIdxBufferHandler);
       }
 
-      // Create model + set vertex offset
-      std::unique_ptr<render::gfx::CModel> pLoadedModel = std::make_unique<render::gfx::CModel>(rModelData);
-      pLoadedModel->SetVtxBufferHandler(rVtxBufferHandler);
-
+      // Create model
+      wpModel = m_lstModels.Create(rModelData);
+      wpModel->SetVtxBufferHandler(rVtxBufferHandler);
       SUCCESS_LOG("Created model! -> " << _sModelPath);
-      wpModel = m_lstModels.Insert(std::move(pLoadedModel));
     }
 
     return wpModel;
@@ -360,13 +360,17 @@ namespace scene
       }
     }
 
+    // Get meshes
+    uint16_t uCount = 0;
+    render::gfx::TMeshes& lstMeshes = _wpModel_->GetMeshes(uCount);
+
     uint32_t uIdxDisplacement = 0; 
-    size_t tIndex = (_wpModel_->GetMeshes().size() - 1);
-    render::gfx::TMeshes::const_reverse_iterator it = _wpModel_->GetMeshes().rbegin();
-    for (; it != _wpModel_->GetMeshes().rend(); ++it, --tIndex)
+    size_t tIndex = (uCount - 1);
+    render::gfx::TMeshes::reverse_iterator it = lstMeshes.rbegin();
+    for (; it != lstMeshes.rend(); ++it, --tIndex)
     {
       uint32_t uDisplacement = 0;
-      m_oModelsIB.Free(it->get()->GetIdxBufferHandler(), uDisplacement);
+      m_oModelsIB.Free(it->GetIdxBufferHandler(), uDisplacement);
       uIdxDisplacement += uDisplacement;
     }
 
@@ -374,15 +378,18 @@ namespace scene
     {
       for (uint32_t uIdx = (uModelIdx + 1); uIdx < uCurrentSize; uIdx++)
       {
-        tIndex = (m_lstModels[uIdx]->GetMeshes().size() - 1);
-        it = m_lstModels[uIdx]->GetMeshes().rbegin();
+        uCount = 0;
+        render::gfx::TMeshes& tmpMeshes = m_lstModels[uIdx]->GetMeshes(uCount);
 
-        for (; it != m_lstModels[uIdx]->GetMeshes().rend(); ++it, --tIndex)
+        tIndex = (uCount - 1);
+        it = tmpMeshes.rbegin();
+
+        for (; it != tmpMeshes.rend(); ++it, --tIndex)
         {
-          CBufferHandler rIdxBufferHandler = it->get()->GetIdxBufferHandler();
+          CBufferHandler rIdxBufferHandler = it->GetIdxBufferHandler();
           rIdxBufferHandler.BeginOffset -= uIdxDisplacement;
           rIdxBufferHandler.EndOffset -= uIdxDisplacement;
-          it->get()->SetIdxBufferHandler(rIdxBufferHandler);
+          it->SetIdxBufferHandler(rIdxBufferHandler);
         }
       }
     }
@@ -390,24 +397,24 @@ namespace scene
     return m_lstModels.RemoveAt(uModelIdx);
   }
   // ------------------------------------
-  render::lights::CDirectionalLight* const CRenderScene::CreateDirectionalLight()
+  utils::CWeakPtr<render::lights::CDirectionalLight> const CRenderScene::CreateDirectionalLight()
   {
     return m_oLightManager.CreateDirectionalLight();
   }
   // ------------------------------------
-  render::lights::CPointLight* const CRenderScene::CreatePointLight()
+  utils::CWeakPtr<render::lights::CPointLight> const CRenderScene::CreatePointLight()
   {
     return m_oLightManager.CreatePointLight();
   }
   // ------------------------------------
-  render::lights::CSpotLight* const CRenderScene::CreateSpotLight()
+  utils::CWeakPtr<render::lights::CSpotLight> const CRenderScene::CreateSpotLight()
   {
     return m_oLightManager.CreateSpotLight();
   }
   // ------------------------------------
-  bool CRenderScene::DestroyLight(render::lights::CLight*& _pLight_)
+  bool CRenderScene::DestroyLight(utils::CWeakPtr<render::lights::CLight> _wpLight)
   {
-    return m_oLightManager.DestroyLight(_pLight_);
+    return m_oLightManager.DestroyLight(_wpLight);
   }
   // ------------------------------------
   void CRenderScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
@@ -420,8 +427,7 @@ namespace scene
     }
 
     // Create primitive data
-    using namespace render::gfx;
-    TPrimitiveData rPrimitiveData = CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
+    render::gfx::TPrimitiveData rPrimitiveData = render::gfx::CPrimitiveUtils::CreateCapsule(_fRadius, _fHeight, _iSubvH, _iSubvV, _eRenderMode);
 
     // Vertex buffer
     CBufferHandler rVtxBufferHandler = CBufferHandler();
@@ -441,8 +447,8 @@ namespace scene
       return;
     }
 
-    // Create item + configure
-    render::gfx::CPrimitive* pPrimitive = m_lstDebugPrimitives.Create();
+    // Create temporal primitive
+    render::gfx::CPrimitive* pPrimitive = m_lstDebugPrimitives.Alloc();
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -472,8 +478,7 @@ namespace scene
     }
 
     // Create primitive data
-    using namespace render::gfx;
-    TPrimitiveData rPrimitiveData = CPrimitiveUtils::CreatePrimitive(render::EPrimitive::E3D_CUBE, _eRenderMode);
+    render::gfx::TPrimitiveData rPrimitiveData = render::gfx::CPrimitiveUtils::CreatePrimitive(render::EPrimitive::E3D_CUBE, _eRenderMode);
 
     // Vertex buffer
     CBufferHandler rVtxBufferHandler = CBufferHandler();
@@ -493,9 +498,8 @@ namespace scene
       return;
     }
 
-    // Create cube
-    using namespace render::gfx;
-    CPrimitive* pPrimitive = m_lstDebugPrimitives.Create();
+    // Create temporal primitive
+    render::gfx::CPrimitive* pPrimitive = m_lstDebugPrimitives.Alloc();
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -525,14 +529,13 @@ namespace scene
       return;
     }
 
-    // Fill primitive data
-    using namespace render::gfx;
-    TPrimitiveData rPrimitiveData = TPrimitiveData();
-    CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, rPrimitiveData.Vertices);
+    // Create primitive data
+    render::gfx::TPrimitiveData rPrimitiveData = render::gfx::TPrimitiveData();
+    render::gfx::CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, rPrimitiveData.Vertices);
 
     // Fill indices
     rPrimitiveData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ?
-      CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) : CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
+      render::gfx::CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) : render::gfx::CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
 
     // Vertex buffer
     CBufferHandler rVtxBufferHandler = CBufferHandler();
@@ -552,8 +555,8 @@ namespace scene
       return;
     }
 
-    // Create temporal item + set pos
-    CPrimitive* pPrimitive = m_lstDebugPrimitives.Create();
+    // Create temporal primitive
+    render::gfx::CPrimitive* pPrimitive = m_lstDebugPrimitives.Alloc();
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -581,9 +584,8 @@ namespace scene
       return;
     }
 
-    // Create plane
-    using namespace render::gfx;
-    TPrimitiveData rPrimitiveData = render::gfx::CPrimitiveUtils::CreatePlane(_rPlane, _eRenderMode);
+    // Create primitive data
+    render::gfx::TPrimitiveData rPrimitiveData = render::gfx::CPrimitiveUtils::CreatePlane(_rPlane, _eRenderMode);
 
     // Vertex buffer
     CBufferHandler rVtxBufferHandler = CBufferHandler();
@@ -603,8 +605,8 @@ namespace scene
       return;
     }
 
-    // Create primitive
-    CPrimitive* pPrimitive = m_lstDebugPrimitives.Create();
+    // Create temporal primitive
+    render::gfx::CPrimitive* pPrimitive = m_lstDebugPrimitives.Alloc();
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif
@@ -633,9 +635,8 @@ namespace scene
       return;
     }
 
-    // Create data
-    using namespace render::gfx;
-    TPrimitiveData rPrimitiveData = CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
+    // Create primitive data
+    render::gfx::TPrimitiveData rPrimitiveData = render::gfx::CPrimitiveUtils::CreateLine(_v3Start, _v3Dest);
 
     // Vertex buffer
     CBufferHandler rVtxBufferHandler = CBufferHandler();
@@ -656,7 +657,7 @@ namespace scene
     }
 
     // Create temporal item
-    CPrimitive* pPrimitive = m_lstDebugPrimitives.Create();
+    render::gfx::CPrimitive* pPrimitive = m_lstDebugPrimitives.Alloc();
 #ifdef _DEBUG
     assert(pPrimitive); // Sanity check
 #endif

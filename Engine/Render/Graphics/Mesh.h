@@ -15,6 +15,11 @@ namespace render
       CMesh() = default;
       ~CMesh() { m_pMaterial.reset(); };
 
+      CMesh(CMesh&& _rOther) noexcept;
+      CMesh& operator=(CMesh&& _rOther) noexcept;
+      CMesh(const CMesh& _rOther) = delete;
+      CMesh& operator=(const CMesh& _rOther) = delete;
+
       // Material
       inline render::mat::CMaterial* GetMaterial() const { return m_pMaterial.get(); }
       inline void SetMaterial(std::unique_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }
@@ -25,7 +30,7 @@ namespace render
       inline const uint32_t GetIndexCount() const { return m_oIdxBufferHandler.GetOffset(); }
 
     private:
-      std::unique_ptr<render::mat::CMaterial> m_pMaterial = nullptr;
+      std::unique_ptr<render::mat::CMaterial> m_pMaterial;
       CBufferHandler m_oIdxBufferHandler = CBufferHandler();
     };
   }

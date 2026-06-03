@@ -10,6 +10,7 @@ namespace render
     //------------------------------------------------
     //-------------------MODELS-----------------------
     //------------------------------------------------
+    static constexpr uint16_t s_uMaxMeshesPerModel = 4u;
     struct TVertexData
     {
       math::CVector3 VertexPos = math::CVector3::Zero;

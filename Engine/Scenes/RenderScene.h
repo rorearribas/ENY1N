@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Engine/Render/RenderTypes.h"
+#include "Engine/Render/Buffers/RenderBuffer.h"
 #include "Engine/Render/Lighting/LightManager.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
 #include "Engine/Utils/Plane.h"
 
 #include "Libs/Utils/FixedPool.h"
-#include "Libs/Utils/UniquePtrList.h"
-#include "Engine/Render/Buffers/RenderBuffer.h"
+#include "Libs/Utils/ArenaPool.h"
 
 namespace render { class CCamera; }
 namespace render { class CRender; }
@@ -28,13 +28,13 @@ namespace scene
     bool Visible = false;
     uint16_t Index = 0;
 
-    render::gfx::TDrawableInstances DrawableInstances;
+    render::gfx::TDrawableInstances DrawableInstances = render::gfx::TDrawableInstances();
     uint16_t InstanceCount = 0;
   };
 
   // Models
   static constexpr uint16_t s_uMaxModels = 256u;
-  typedef utils::CUniquePtrList<render::gfx::CModel, s_uMaxModels> TModels;
+  typedef utils::CFixedPool<render::gfx::CModel, s_uMaxModels> TModels;
   typedef std::array<TCachedModel, s_uMaxModels> TCachedModels;
 
   // Primitives
@@ -44,7 +44,8 @@ namespace scene
 
   // Debug primitives
   static constexpr uint16_t s_uMaxDebugPrimitives = 256u;
-  typedef utils::CFixedPool<render::gfx::CPrimitive, s_uMaxDebugPrimitives> TDebugPrimitives;
+  static constexpr uint16_t s_uMaxChunkSize = sizeof(render::gfx::CPrimitive) * s_uMaxDebugPrimitives;
+  typedef utils::CArenaPool<render::gfx::CPrimitive, s_uMaxChunkSize, s_uMaxDebugPrimitives> TDebugPrimitives;
   typedef std::array<uint16_t, s_uMaxDebugPrimitives> TCachedDebugPrimitives;
 
   class CRenderScene
@@ -76,22 +77,22 @@ namespace scene
     bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _pModel_);
 
     // Handle primitives
-    render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
-    bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
+    utils::CWeakPtr<render::gfx::CPrimitive> const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
+    bool DestroyPrimitive(utils::CWeakPtr<render::gfx::CPrimitive> _pPrimitive_);
     void ClearDebugItems();
 
     // Handle lights
     render::lights::CLightManager* const GetLightManager() { return &m_oLightManager; }
-    render::lights::CDirectionalLight* const CreateDirectionalLight();
-    render::lights::CPointLight* const CreatePointLight();
-    render::lights::CSpotLight* const CreateSpotLight();
-    bool DestroyLight(render::lights::CLight*& pLight_);
+    utils::CWeakPtr<render::lights::CDirectionalLight> const CreateDirectionalLight();
+    utils::CWeakPtr<render::lights::CPointLight> const CreatePointLight();
+    utils::CWeakPtr<render::lights::CSpotLight> const CreateSpotLight();
+    bool DestroyLight(utils::CWeakPtr<render::lights::CLight> _wpLight);
 
     // Debug
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);
     void DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
     void DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
-    void DrawPlane(const math::CPlane& _oPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
+    void DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode);
     void DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color);
 
     // Buffers - Models

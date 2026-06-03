@@ -20,6 +20,11 @@ namespace render
       CPrimitive() = default;
       ~CPrimitive() = default;
 
+      CPrimitive(CPrimitive&& _rOther) noexcept;
+      CPrimitive& operator=(CPrimitive&& _rOther) noexcept;
+      CPrimitive(const CPrimitive& _rOther) = delete;
+      CPrimitive& operator=(const CPrimitive& _rOther) = delete;
+
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPos() const { return m_oTransform.GetPos(); }
       void SetRot(const math::CVector3& _v3Rot);

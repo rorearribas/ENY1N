@@ -16,8 +16,44 @@ namespace render
     CModel::CModel(TModelData& _rModelData)
     {
       m_lstMeshes = std::move(_rModelData.Meshes);
-      memcpy(m_sAssetPath, _rModelData.AssetPath, strlen(_rModelData.AssetPath));
+      m_uMeshesCount = _rModelData.MeshesCount;
+
+      strncpy_s(m_sAssetPath, _rModelData.AssetPath, sizeof(m_sAssetPath) - 1);
       collision::ComputeLocalAABB(_rModelData.VertexData, m_oLocalAABB);
+    }
+    // ------------------------------------
+    CModel::CModel(CModel&& _rOther) noexcept : m_lstMeshes(std::move(_rOther.m_lstMeshes))
+      , m_lstInstances(std::move(_rOther.m_lstInstances)) 
+      , m_uMeshesCount(_rOther.m_uMeshesCount)
+      , m_oTransform(_rOther.m_oTransform)
+      , m_oLocalAABB(_rOther.m_oLocalAABB)
+      , m_oWorldAABB(_rOther.m_oWorldAABB)
+      , m_oVtxBufferHandler(_rOther.m_oVtxBufferHandler)
+      , m_bCullEnabled(_rOther.m_bCullEnabled)
+      , m_bVisible(_rOther.m_bVisible)  
+    {
+      memcpy(m_sAssetPath, _rOther.m_sAssetPath, strlen(_rOther.m_sAssetPath));
+    }
+    // ------------------------------------
+    render::gfx::CModel& CModel::operator=(CModel&& _rOther) noexcept
+    {
+      if (this != &_rOther)
+      {
+        m_lstInstances.Clear();
+        m_lstMeshes = std::move(_rOther.m_lstMeshes);
+        m_lstInstances = std::move(_rOther.m_lstInstances);
+
+        m_uMeshesCount = _rOther.m_uMeshesCount;
+        m_oTransform = _rOther.m_oTransform;
+        m_oLocalAABB = _rOther.m_oLocalAABB;
+        m_oWorldAABB = _rOther.m_oWorldAABB;
+        m_oVtxBufferHandler = _rOther.m_oVtxBufferHandler;
+        m_bCullEnabled = _rOther.m_bCullEnabled;
+        m_bVisible = _rOther.m_bVisible;
+
+        strncpy_s(m_sAssetPath, _rOther.m_sAssetPath, sizeof(m_sAssetPath) - 1);
+      }
+      return *this;
     }
     // ------------------------------------
     CModel::~CModel()
@@ -76,12 +112,24 @@ namespace render
       }
     }
     // ------------------------------------
-    CRenderInstance* CModel::CreateInstance()
+    const render::gfx::TMeshes& CModel::GetMeshes(uint16_t& _uCount_) const
+    {
+      _uCount_ = m_uMeshesCount;
+      return m_lstMeshes;
+    }
+    // ------------------------------------
+    render::gfx::TMeshes& CModel::GetMeshes(uint16_t& _uCount_)
+    {
+      _uCount_ = m_uMeshesCount;
+      return m_lstMeshes;
+    }
+    // ------------------------------------
+    utils::CWeakPtr<render::gfx::CRenderInstance> CModel::CreateInstance()
     {
       if (!AllowInstancing())
       {
         WARNING_LOG("You have reached maximum instances in this model!");
-        return nullptr;
+        return utils::CWeakPtr<render::gfx::CRenderInstance>();
       }
 
       // Create instance
@@ -89,13 +137,10 @@ namespace render
       return m_lstInstances.Create(this, uInstanceID);
     }
     // ------------------------------------
-    bool CModel::RemoveInstance(uint16_t _uID)
+    bool CModel::RemoveInstance(utils::CWeakPtr<render::gfx::CRenderInstance> _pInstance_)
     {
-      bool bOk = false;
-      if (render::gfx::CRenderInstance* pInstance = m_lstInstances[_uID])
-      {
-        bOk = m_lstInstances.Remove(pInstance);
-      }
+      bool bOk = m_lstInstances.Remove(_pInstance_);
+      UNUSED_VAR(bOk);
 #ifdef _DEBUG
       assert(bOk);
 #endif
@@ -103,7 +148,7 @@ namespace render
       uint16_t uSize = static_cast<uint16_t>(m_lstInstances.GetSize());
       for (uint16_t uIndex = 0; uIndex < uSize; uIndex++)
       {
-        render::gfx::CRenderInstance* pInstance = m_lstInstances[uIndex];
+        utils::CWeakPtr<render::gfx::CRenderInstance> pInstance = m_lstInstances[uIndex];
         pInstance->SetInstanceID(uIndex);
       }
       return bOk;
@@ -112,11 +157,7 @@ namespace render
     void CModel::Clear()
     {
       // Clear model data
-      for (auto& pMesh : m_lstMeshes)
-      {
-        pMesh.reset();
-      }
-      m_lstMeshes.clear();
+      //m_lstMeshes.Clear();
 
       // Clear instances
       m_lstInstances.Clear();

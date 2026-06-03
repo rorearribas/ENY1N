@@ -56,15 +56,15 @@ namespace engine
     m_pRender->Draw(m_pSceneManager->GetCurrentScene());
   }
   // ------------------------------------
-  render::gfx::CPrimitive* const CEngine::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
+  utils::CWeakPtr<render::gfx::CPrimitive> const CEngine::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreatePrimitive(_eType, _eRenderMode, _uSceneIndex);
   }
   // ------------------------------------
-  bool CEngine::DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_)
+  bool CEngine::DestroyPrimitive(utils::CWeakPtr<render::gfx::CPrimitive> _pPrimitive_)
   {
 #ifdef _DEBUG
-    assert(_pPrimitive_);
+    assert(_pPrimitive_.IsValid());
 #endif // DEBUG
     return m_pSceneManager->DestroyPrimitive(_pPrimitive_);
   }
@@ -81,28 +81,28 @@ namespace engine
 #endif // DEBUG
     return m_pSceneManager->DestroyModel(_wpModel_, _uSceneIndex);
   }
-  // ------------------------------------
-  render::lights::CDirectionalLight* const CEngine::CreateDirectionalLight(uint32_t _uSceneIndex)
+  //// ------------------------------------
+  utils::CWeakPtr<render::lights::CDirectionalLight> const CEngine::CreateDirectionalLight(uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreateDirectionalLight(_uSceneIndex);
   }
   // ------------------------------------
-  render::lights::CPointLight* const CEngine::CreatePointLight(uint32_t _uSceneIndex)
+  utils::CWeakPtr<render::lights::CPointLight> const CEngine::CreatePointLight(uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreatePointLight(_uSceneIndex);
   }
   // ------------------------------------
-  render::lights::CSpotLight* const CEngine::CreateSpotLight(uint32_t _uSceneIndex)
+  utils::CWeakPtr<render::lights::CSpotLight> const CEngine::CreateSpotLight(uint32_t _uSceneIndex)
   {
     return m_pSceneManager->CreateSpotLight(_uSceneIndex);
   }
   // ------------------------------------
-  bool CEngine::DestroyLight(render::lights::CLight*& _pLight_)
+  bool CEngine::DestroyLight(utils::CWeakPtr<render::lights::CLight> _wpLight)
   {
 #ifdef _DEBUG
-    assert(_pLight_);
+    assert(_wpLight.IsValid());
 #endif // DEBUG
-    return m_pSceneManager->DestroyLight(_pLight_);
+    return m_pSceneManager->DestroyLight(_wpLight);
   }
   // ------------------------------------
   void CEngine::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,

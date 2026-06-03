@@ -5,8 +5,8 @@
 
 namespace physics
 {
-  enum ERigidbodyType { KINEMATIC, DYNAMIC };
-  enum ERigidbodyState { IN_THE_AIR, COLLIDING };
+  enum class ERigidbodyType { KINEMATIC, DYNAMIC };
+  enum class ERigidbodyState { IN_THE_AIR, COLLIDING };
 
   class CRigidbody
   {
@@ -15,7 +15,7 @@ namespace physics
     typedef utils::CDelegate<void(const math::CVector3&)> TOnRotationChangedDelegate;
 
   public:
-    CRigidbody(const ERigidbodyType _eRigidbodyType = KINEMATIC) : m_eRigidbodyType(_eRigidbodyType) {}
+    CRigidbody(const ERigidbodyType _eRigidbodyType = ERigidbodyType::KINEMATIC) : m_eRigidbodyType(_eRigidbodyType) {}
     ~CRigidbody() {}
 
     void SetRigidbodyType(ERigidbodyType _eRigidbodyType);
@@ -53,8 +53,8 @@ namespace physics
     TOnVelocityChangedDelegate m_OnVelocityChangedDelegate;
     TOnRotationChangedDelegate m_OnRotationChangedDelegate;
 
-    ERigidbodyType m_eRigidbodyType = KINEMATIC;
-    ERigidbodyState m_eRidibodyState = IN_THE_AIR;
+    ERigidbodyType m_eRigidbodyType = ERigidbodyType::KINEMATIC;
+    ERigidbodyState m_eRidibodyState = ERigidbodyState::IN_THE_AIR;
 
     float m_fInertia = 1.0f;
     float m_fMass = 1.0f;

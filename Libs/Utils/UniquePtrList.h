@@ -1,33 +1,11 @@
 #pragma once
-#include <algorithm>
 #include <array>
-#include <memory>
 #include <cassert>
 #include <bitset>
+#include "WeakPtr.h"
 
 namespace utils
 {
-  template<typename T>
-  class CWeakPtr
-  {
-  public:
-    CWeakPtr() = default;
-    CWeakPtr(T* _pPtr, size_t* _tTargetGen, size_t _tCurrentGen) : m_pPtr(_pPtr), 
-    m_uTargetGen(_tTargetGen), m_uCurrentGen(_tCurrentGen) {}
-    ~CWeakPtr() { m_pPtr = nullptr; }
-
-    inline bool IsValid() const { return m_uTargetGen ? *m_uTargetGen == m_uCurrentGen : false; }
-    inline T* GetPtr() const { return m_pPtr; }
-
-    inline T* operator->() { return m_pPtr; }
-    inline const T* operator->() const { return m_pPtr; }
-
-  private:
-    T* m_pPtr = nullptr;
-    size_t* m_uTargetGen = nullptr;
-    size_t m_uCurrentGen = 0;
-  };
-
   template<typename T, size_t MAX_ITEMS>
   class CUniquePtrList
   {
@@ -49,7 +27,7 @@ namespace utils
     ~CUniquePtrList() { Clear(); }
 
     template<typename _Type = T, typename ...Args>
-    inline CWeakPtr<_Type> Add(Args&&... args)
+    inline CWeakPtr<_Type> Create(Args&&... args)
     {
       if (m_tRegisteredItems >= MAX_ITEMS)
       {

@@ -4,7 +4,7 @@
 #include "Engine/Scenes/SceneManager.h"
 
 #include "Libs/Utils/Singleton.h"
-#include "Libs/Utils/FixedList.h"
+#include "Libs/Utils/FixedPool.h"
 
 namespace render { class CRender; }
 namespace render { namespace gfx { class CModel; } }
@@ -34,18 +34,19 @@ namespace engine
     inline render::CCamera* GetCamera() const { return m_pSceneManager->GetRenderCamera(); }
     inline render::CRender* GetRender() const { return m_pRender.get(); }
 
-    // Handle graphics
-    render::gfx::CPrimitive* const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
-    bool DestroyPrimitive(render::gfx::CPrimitive*& _pPrimitive_);
-
+    // Handle models
     utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);
     bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_, uint32_t _uSceneIndex = 0);
 
+    // Handle primitives
+    utils::CWeakPtr<render::gfx::CPrimitive> const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
+    bool DestroyPrimitive(utils::CWeakPtr<render::gfx::CPrimitive> _pPrimitive_);
+
     // Handle lights
-    render::lights::CDirectionalLight* const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
-    render::lights::CPointLight* const CreatePointLight(uint32_t _uSceneIndex = 0);
-    render::lights::CSpotLight* const CreateSpotLight(uint32_t _uSceneIndex = 0);
-    bool DestroyLight(render::lights::CLight*& _pLight_);
+    utils::CWeakPtr<render::lights::CDirectionalLight> const CreateDirectionalLight(uint32_t _uSceneIndex = 0);
+    utils::CWeakPtr<render::lights::CPointLight> const CreatePointLight(uint32_t _uSceneIndex = 0);
+    utils::CWeakPtr<render::lights::CSpotLight> const CreateSpotLight(uint32_t _uSceneIndex = 0);
+    bool DestroyLight(utils::CWeakPtr<render::lights::CLight> _wpLight);
 
     // Debug creation
     void DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color, float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode);

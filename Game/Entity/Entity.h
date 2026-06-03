@@ -2,8 +2,7 @@
 #include "Components/Component.h"
 #include "Libs/Math/Transform.h"
 #include "Engine/Collisions/Collider.h"
-#include "Libs/Utils/UniquePtrList.h"
-#include <string>
+#include "Libs/Utils/ArenaPool.h"
 
 namespace game { class CComponent; }
 
@@ -11,9 +10,9 @@ namespace game
 {
   class CEntity
   {
-  public:
-    static int constexpr s_iMaxComponents = 25;
-    typedef utils::CUniquePtrList<CComponent, s_iMaxComponents> TComponents;
+  private:
+    static constexpr uint32_t s_uMaxBlockComponents = 1024u;
+    static constexpr uint32_t s_uMaxComponents = 8u;
 
   public:
     CEntity(std::string _sEntityName) : m_sEntityName(_sEntityName) {}
@@ -38,17 +37,16 @@ namespace game
     template<typename T, typename ...Args>
     inline T* RegisterComponent(Args&&... _rArgs)
     {
-      utils::CWeakPtr<T> pComponent = m_lstComponents.Add<T>(this, std::forward<Args>(_rArgs)...);
-      return pComponent.GetPtr();
+      T* pComponent = m_lstComponents.Alloc<T>(this, std::forward<Args>(_rArgs)...);
+      return pComponent;
     }
     template<typename T>
     inline T* GetComponent()
     {
-      // @TODO: Hay que evitar usar dynamic cast!!
-      for (CComponent* pComp : m_lstComponents)
+      for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
       {
-        T* pComponent = dynamic_cast<T*>(pComp);
-        if (pComponent) 
+        T* pComponent = static_cast<T*>(m_lstComponents[uI]);
+        if (pComponent)
         {
           return pComponent;
         }
@@ -66,7 +64,7 @@ namespace game
 
   private:
     std::string m_sEntityName = std::string();
-    TComponents m_lstComponents = TComponents();
+    utils::CArenaPool<CComponent, s_uMaxBlockComponents, s_uMaxComponents> m_lstComponents;
 
     math::CTransform m_oTransform = math::CTransform();
     bool m_bTickEnabled = true;

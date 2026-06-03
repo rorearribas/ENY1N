@@ -1,6 +1,7 @@
 #pragma once
 #include "Game/Entity/Components/Component.h"
 #include "Engine/Physics/Rigidbody.h"
+#include "Libs/Utils/FixedPool.h"
 
 namespace physics { class CRigidbody; }
 
@@ -10,9 +11,10 @@ namespace game
   class CRigidbodyComponent : public CComponent
   {
   public:
-    CRigidbodyComponent(CEntity* _pOwner, physics::ERigidbodyType _eRigidbodyType = physics::ERigidbodyType::KINEMATIC);
+    CRigidbodyComponent(CEntity* _pOwner) : CComponent(_pOwner) {}
     virtual ~CRigidbodyComponent() { Clean(); }
 
+    void CreateRigidbody(physics::ERigidbodyType _eRigidbodyType);
     void SetRigidbodyType(physics::ERigidbodyType _eRigidbodyType);
     inline const physics::ERigidbodyType& GetRigidbodyType() const { return m_pRigidbody->GetRigidbodyType(); }
 
@@ -27,12 +29,10 @@ namespace game
 
   private:
     void Clean();
-    void CreateRigidbody(physics::ERigidbodyType _eRigidbodyType);
-
     void OnApplyVelocity(const math::CVector3& _v3Velocity);
     void OnApplyRotation(const math::CVector3& _v3Rot);
 
   private:
-    physics::CRigidbody* m_pRigidbody = nullptr;
+    utils::CWeakPtr<physics::CRigidbody> m_pRigidbody;
   };
 }

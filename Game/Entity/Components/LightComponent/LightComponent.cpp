@@ -11,11 +11,6 @@
 namespace game
 {
   // ------------------------------------
-  CLightComponent::CLightComponent(CEntity* _pOwner, render::ELight _eLightType) : CComponent(_pOwner)
-  {
-    CreateLight(_eLightType);
-  }
-  // ------------------------------------
   CLightComponent::~CLightComponent()
   {
     Clean();
@@ -43,7 +38,7 @@ namespace game
   // ------------------------------------
   void CLightComponent::OnRotationChanged(const math::CVector3& _v3Rot)
   {
-    if (m_pLight)
+    if (m_pLight.IsValid())
     {
       m_pLight->SetDir(math::CMatrix4x4::CreateRotation(_v3Rot) * math::CVector3::Forward);
     }
@@ -51,7 +46,7 @@ namespace game
   // ------------------------------------
   void CLightComponent::Clean()
   {
-    if (m_pLight)
+    if (m_pLight.IsValid())
     {
       engine::CEngine* pEngine = engine::CEngine::GetInstance();
       pEngine->DestroyLight(m_pLight);
@@ -60,6 +55,11 @@ namespace game
   // ------------------------------------
   void CLightComponent::DrawDebug()
   {
+    if (!m_pLight.IsValid())
+    {
+      return;
+    }
+
     ImGui::Spacing();
 
     CEntity* pEntity = GetOwner();
@@ -69,7 +69,7 @@ namespace game
     {
     case render::ELight::DIRECTIONAL_LIGHT:
     {
-      render::lights::CDirectionalLight* pDirectional = static_cast<render::lights::CDirectionalLight*>(m_pLight);
+      render::lights::CDirectionalLight* pDirectional = static_cast<render::lights::CDirectionalLight*>(m_pLight.GetPtr());
       float fColor[3] = { pDirectional->GetColor().x, pDirectional->GetColor().y, pDirectional->GetColor().z };
       float fIntensity = pDirectional->GetIntensity();
       bool bCastShadows = pDirectional->CastShadows();
@@ -93,7 +93,7 @@ namespace game
     break;
     case render::ELight::POINT_LIGHT:
     {
-      render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(m_pLight);
+      render::lights::CPointLight* pPointLight = static_cast<render::lights::CPointLight*>(m_pLight.GetPtr());
       float lstColor[3] = { pPointLight->GetColor().x, pPointLight->GetColor().y, pPointLight->GetColor().z };
       float fIntensity = pPointLight->GetIntensity();
       float fRange = pPointLight->GetRange();
@@ -114,7 +114,7 @@ namespace game
     break;
     case render::ELight::SPOT_LIGHT:
     {
-      render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight);
+      render::lights::CSpotLight* pSpotLight = static_cast<render::lights::CSpotLight*>(m_pLight.GetPtr());
       float lstColor[3] = { pSpotLight->GetColor().x, pSpotLight->GetColor().y, pSpotLight->GetColor().z };
       float fIntensity = pSpotLight->GetIntensity();
       float fRange = pSpotLight->GetRange();
