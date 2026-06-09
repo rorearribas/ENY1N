@@ -2,10 +2,11 @@
 #include <new>
 #include <memory>
 #include <cstddef>
+#include <array>
 
 namespace utils
 {
-  template<typename T, uint32_t CHUNK_SIZE, uint32_t MAX_ITEMS = 1024u>
+  template<typename T, uint32_t CHUNK_SIZE, uint32_t MAX_ITEMS = 128u>
   class CArenaPool
   {
   public:
@@ -14,16 +15,38 @@ namespace utils
       m_pBuffer = new unsigned char[CHUNK_SIZE];
     }
 
-    ~CArenaPool() 
-    { 
-      Clear(); 
-      delete[] m_pBuffer;
+    ~CArenaPool() { Flush(); }
+
+    CArenaPool(CArenaPool&& _rOther) noexcept
+    {
+      m_pBuffer = std::move(_rOther.m_pBuffer);
+      m_lstOffsetTable = std::move(_rOther.m_lstOffsetTable);
+      m_tCurrentOffset = _rOther.m_tCurrentOffset;
+      m_uRegisteredItems = _rOther.m_uRegisteredItems;
+
+      _rOther.m_pBuffer = nullptr;
+      _rOther.m_uRegisteredItems = 0;
     }
 
-    CArenaPool(const CArenaPool&) = delete;
-    CArenaPool& operator=(const CArenaPool&) = delete;
-    CArenaPool(CArenaPool&&) = delete;
-    CArenaPool& operator=(CArenaPool&&) = delete;
+    CArenaPool& operator=(CArenaPool&& _rOther) noexcept
+    {
+      if (this != &_rOther)
+      {
+        Flush();
+
+        m_pBuffer = std::move(_rOther.m_pBuffer);
+        m_lstOffsetTable = std::move(_rOther.m_lstOffsetTable);
+        m_tCurrentOffset = _rOther.m_tCurrentOffset;
+        m_uRegisteredItems = _rOther.m_uRegisteredItems;
+
+        _rOther.m_pBuffer = nullptr;
+        _rOther.m_uRegisteredItems = 0;
+      }
+      return *this;
+    }
+
+    CArenaPool(const CArenaPool& _rOther) = delete;
+    CArenaPool& operator=(const CArenaPool& _rOther) = delete;
 
     template<typename _T = T, typename ...Args>
     inline _T* Alloc(Args&&... args)
@@ -83,7 +106,7 @@ namespace utils
 
       if (m_uRegisteredItems > 0)
       {
-        std::memset(m_lstOffsetTable, 0, m_uRegisteredItems * sizeof(uint32_t));
+        m_lstOffsetTable.fill(0);
       }
 
       m_tCurrentOffset = 0;
@@ -94,8 +117,15 @@ namespace utils
     inline uint32_t GetMaxSize() const { return MAX_ITEMS; }
 
   private:
+    inline void Flush()
+    {
+      Clear();
+      delete[] m_pBuffer;
+    }
+
+  private:
     unsigned char* m_pBuffer = nullptr;
-    uint32_t m_lstOffsetTable[MAX_ITEMS];
+    std::array<uint32_t, MAX_ITEMS> m_lstOffsetTable;
 
     size_t m_tCurrentOffset;
     uint32_t m_uRegisteredItems;

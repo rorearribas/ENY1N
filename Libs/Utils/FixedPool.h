@@ -49,20 +49,22 @@ namespace utils
       {
         if (!m_lstSlotStates[tSlotIdx])
         {
-          size_t tDenseIdx = m_tRegisteredItems;
-          TInternalData& rInternalData = m_lstInternalData[tDenseIdx];
-          TSlotData& pSlot = m_lstSparseSlots[tSlotIdx];
+          TInternalData& rInternalData = m_lstInternalData[tSlotIdx];
+          TSlotData& rSlot = m_lstSparseSlots[tSlotIdx];
 
           new (rInternalData.Data) _Type(std::forward<Args>(args)...);
           rInternalData.SlotIdx = tSlotIdx;
 
-          pSlot.tDenseIndex = tDenseIdx;
-          pSlot.tGeneration++;
+          size_t tNewDenseIdx = m_tRegisteredItems;
+          m_lstDenseOrder[tNewDenseIdx] = tSlotIdx;
+
+          rSlot.tDenseIndex = tNewDenseIdx;
+          rSlot.tGeneration++;
           m_lstSlotStates[tSlotIdx] = true;
 
           m_tRegisteredItems++;
           _Type* pRawPtr = static_cast<_Type*>(rInternalData.Get());
-          return CWeakPtr<_Type>(pRawPtr, &pSlot.tGeneration, pSlot.tGeneration);
+          return CWeakPtr<_Type>(pRawPtr, &rSlot.tGeneration, rSlot.tGeneration);
         }
       }
 
@@ -75,8 +77,9 @@ namespace utils
       {
         return CWeakPtr<T>();
       }
-      TInternalData& rInternalData = m_lstInternalData[_tIndex];
-      TSlotData& rSlot = m_lstSparseSlots[rInternalData.SlotIdx];
+      size_t tSlotIdx = m_lstDenseOrder[_tIndex];
+      TSlotData& rSlot = m_lstSparseSlots[tSlotIdx];
+      TInternalData& rInternalData = m_lstInternalData[tSlotIdx];
       return CWeakPtr<T>(rInternalData.Get(), &rSlot.tGeneration, rSlot.tGeneration);
     }
 
@@ -86,8 +89,9 @@ namespace utils
       {
         return CWeakPtr<T>();
       }
-      const TInternalData& rInternalData = m_lstInternalData[_tIndex];
-      const TSlotData& rSlot = m_lstSparseSlots[rInternalData.SlotIdx];
+      size_t tSlotIdx = m_lstDenseOrder[_tIndex];
+      const TSlotData& rSlot = m_lstSparseSlots[tSlotIdx];
+      const TInternalData& rInternalData = m_lstInternalData[tSlotIdx];
       return CWeakPtr<T>(const_cast<T*>(rInternalData.Get()), const_cast<size_t*>(&rSlot.tGeneration), rSlot.tGeneration);
     }
 
@@ -96,8 +100,8 @@ namespace utils
     public:
       CIterator(CFixedPool* _pList, size_t _tIdx) : m_pList(_pList), m_tIndex(_tIdx) {}
 
-      inline T* operator*() { return m_pList->m_lstInternalData[m_tIndex].Get(); }
-      inline T* operator->() { return m_pList->m_lstInternalData[m_tIndex].Get(); }
+      inline T* operator*() { return m_pList->m_lstInternalData[m_pList->m_lstDenseOrder[m_tIndex]].Get(); }
+      inline T* operator->() { return m_pList->m_lstInternalData[m_pList->m_lstDenseOrder[m_tIndex]].Get(); }
 
       inline CIterator& operator++() { ++m_tIndex; return *this; }
       inline bool operator!=(const CIterator& _rOther) const { return m_tIndex != _rOther.m_tIndex; }
@@ -107,10 +111,10 @@ namespace utils
       size_t m_tIndex;
     };
 
-    inline T* front() const { return m_tRegisteredItems > 0 ? const_cast<T*>(m_lstInternalData[0].Get()) : nullptr; }
+    inline T* front() const { return m_tRegisteredItems > 0 ? const_cast<T*>(m_lstInternalData[m_lstDenseOrder[0]].Get()) : nullptr; }
     inline CIterator begin() { return CIterator(this, 0); }
 
-    inline T* back() const { return m_tRegisteredItems > 0 ? const_cast<T*>(m_lstInternalData[m_tRegisteredItems - 1].Get()) : nullptr; }
+    inline T* back() const { return m_tRegisteredItems > 0 ? const_cast<T*>(m_lstInternalData[m_lstDenseOrder[m_tRegisteredItems - 1]].Get()) : nullptr; }
     inline CIterator end() { return CIterator(this, m_tRegisteredItems); }
 
     size_t FindIndex(const CWeakPtr<T>& _pItem);
@@ -133,6 +137,7 @@ namespace utils
   private:
     std::array<TInternalData, MAX_ITEMS> m_lstInternalData = std::array<TInternalData, MAX_ITEMS>();
     std::array<TSlotData, MAX_ITEMS> m_lstSparseSlots = std::array<TSlotData, MAX_ITEMS>();
+    std::array<size_t, MAX_ITEMS> m_lstDenseOrder = std::array<size_t, MAX_ITEMS>();
 
     std::bitset<MAX_ITEMS> m_lstSlotStates;
     size_t m_tRegisteredItems = 0;
@@ -146,7 +151,8 @@ namespace utils
     {
       for (size_t i = 0; i < m_tRegisteredItems; i++)
       {
-        if (m_lstInternalData[i].Get() == _pItem_)
+        size_t tSlotIdx = m_lstDenseOrder[i];
+        if (m_lstInternalData[tSlotIdx].Get() == _pItem_)
         {
           tIndex = i;
           break;
@@ -170,19 +176,13 @@ namespace utils
       return;
     }
 
-    // Flush data
     for (size_t tIndex = 0; tIndex < m_tRegisteredItems; tIndex++)
     {
-      m_lstInternalData[tIndex].Get()->~T();
+      size_t tSlotIdx = m_lstDenseOrder[tIndex];
+      m_lstInternalData[tSlotIdx].Get()->~T();
+      m_lstSparseSlots[tSlotIdx].tGeneration++;
     }
 
-    // Update sparse slots
-    for (size_t tIndex = 0; tIndex < m_tRegisteredItems; tIndex++)
-    {
-      m_lstSparseSlots[tIndex].tGeneration++;
-    }
-
-    // Reset state
     m_lstSlotStates.reset();
     m_tRegisteredItems = 0;
   }
@@ -190,23 +190,28 @@ namespace utils
   template<typename T, size_t MAX_ITEMS>
   size_t CFixedPool<T, MAX_ITEMS>::FindIndex(const CWeakPtr<T>& _pItem)
   {
-    if (!_pItem.IsValid() || _pItem.GetTargetGen() == nullptr)
+    if (!_pItem.IsValid())
     {
       return static_cast<size_t>(-1);
     }
 
-    ptrdiff_t tSlotIdx = _pItem.GetTargetGen() - &m_lstSparseSlots[0].tGeneration;
+    const char* pBlock = reinterpret_cast<const char*>(_pItem.GetPtr());
+    const char* pBeginBlock = reinterpret_cast<const char*>(&m_lstInternalData[0]);
+
+    ptrdiff_t tDiff = pBlock - pBeginBlock;
+    ptrdiff_t tSlotIdx = tDiff / sizeof(TInternalData);
+
     if (tSlotIdx < 0 || tSlotIdx >= static_cast<ptrdiff_t>(MAX_ITEMS))
     {
       return static_cast<size_t>(-1);
     }
 
-    size_t tDenseIdx = m_lstSparseSlots[tSlotIdx].tDenseIndex;
-    if (tDenseIdx < m_tRegisteredItems && m_lstInternalData[tDenseIdx].SlotIdx == static_cast<size_t>(tSlotIdx))
+    if (!m_lstSlotStates[tSlotIdx])
     {
-      return tDenseIdx;
+      return static_cast<size_t>(-1);
     }
-    return static_cast<size_t>(-1);
+
+    return m_lstSparseSlots[tSlotIdx].tDenseIndex;
   }
 
   template<typename T, size_t MAX_ITEMS>
@@ -228,25 +233,17 @@ namespace utils
       return false;
     }
 
-    // Destructor
-    m_lstInternalData[_tIndex].Get()->~T();
+    size_t tSlotIdxToDelete = m_lstDenseOrder[_tIndex];
 
-    size_t tSlotToDelete = m_lstInternalData[_tIndex].SlotIdx;
-    m_lstSlotStates[tSlotToDelete] = false;
-    m_lstSparseSlots[tSlotToDelete].tGeneration++;
+    m_lstInternalData[tSlotIdxToDelete].Get()->~T();
+    m_lstSlotStates[tSlotIdxToDelete] = false;
+    m_lstSparseSlots[tSlotIdxToDelete].tGeneration++;
 
-    // Readjust
-    size_t tLastDenseIdx = m_tRegisteredItems - 1;
-    for (size_t i = _tIndex; i < tLastDenseIdx; ++i)
+    for (size_t i = _tIndex; i < m_tRegisteredItems - 1; ++i)
     {
-      TInternalData& rDestData = m_lstInternalData[i];
-      TInternalData& rSrcData = m_lstInternalData[i + 1];
-
-      new (rDestData.Data) T(std::move(*rSrcData.Get()));
-      rSrcData.Get()->~T();
-
-      rDestData.SlotIdx = rSrcData.SlotIdx;
-      m_lstSparseSlots[rDestData.SlotIdx].tDenseIndex = i;
+      m_lstDenseOrder[i] = m_lstDenseOrder[i + 1];
+      size_t tMovedSlotIdx = m_lstDenseOrder[i];
+      m_lstSparseSlots[tMovedSlotIdx].tDenseIndex = i;
     }
 
     --m_tRegisteredItems;

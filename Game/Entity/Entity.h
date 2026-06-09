@@ -18,6 +18,11 @@ namespace game
     CEntity(std::string _sEntityName) : m_sEntityName(_sEntityName) {}
     ~CEntity();
 
+    CEntity(CEntity&& _rOther) noexcept;
+    CEntity& operator=(CEntity&& _rOther) noexcept;
+    CEntity(const CEntity& _rOther) = delete;
+    CEntity& operator=(const CEntity& _rOther) = delete;
+
     void Update(float _fDeltaTime);
     void DrawDebug();
 
@@ -63,10 +68,10 @@ namespace game
     void Clear();
 
   private:
-    std::string m_sEntityName = std::string();
     utils::CArenaPool<CComponent, s_uMaxBlockComponents, s_uMaxComponents> m_lstComponents;
-
     math::CTransform m_oTransform = math::CTransform();
+
+    std::string m_sEntityName = std::string();
     bool m_bTickEnabled = true;
   };
 }

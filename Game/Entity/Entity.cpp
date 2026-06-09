@@ -17,6 +17,26 @@ namespace game
     Clear();
   }
   // ------------------------------------
+  CEntity::CEntity(CEntity&& _rOther) noexcept
+  {
+    m_lstComponents = std::move(_rOther.m_lstComponents);
+    m_oTransform = _rOther.m_oTransform;
+    m_sEntityName = _rOther.m_sEntityName;
+    m_bTickEnabled = _rOther.m_bTickEnabled;
+  }
+  // ------------------------------------
+  game::CEntity& CEntity::operator=(CEntity&& _rOther) noexcept
+  {
+    if (this != &_rOther)
+    {
+      m_lstComponents = std::move(_rOther.m_lstComponents);
+      m_oTransform = _rOther.m_oTransform;
+      m_sEntityName = _rOther.m_sEntityName;
+      m_bTickEnabled = _rOther.m_bTickEnabled;
+    }
+    return *this;
+  }
+  // ------------------------------------
   void CEntity::Update(float _fDeltaTime)
   {
     if (m_bTickEnabled)

@@ -87,11 +87,11 @@ int main()
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
 
   //Create directional light
-  utils::CWeakPtr<game::CEntity> pDirectionalLight = pGameManager->CreateEntity("Directional Light");
+  game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   game::CLightComponent* pDirComp =  pDirectionalLight->RegisterComponent<game::CLightComponent>();
   pDirComp->CreateLight(render::ELight::DIRECTIONAL_LIGHT);
 
-  utils::CWeakPtr<game::CEntity> pSpotLight = pGameManager->CreateEntity("SpotLight");
+  game::CEntity* pSpotLight = pGameManager->CreateEntity("SpotLight");
   game::CLightComponent* pSpotComp = pSpotLight->RegisterComponent<game::CLightComponent>();
   pSpotComp->CreateLight(render::ELight::SPOT_LIGHT);
   static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetRange(100.0f);
@@ -99,17 +99,17 @@ int main()
   static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetColor(math::CVector3(0.0f, 1.0f, 0.0f));
 
   float fOffsetZ = 0.0f;
-  for (uint32_t uIndex = 0; uIndex < 1u; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 32u; uIndex++)
   {
-    utils::CWeakPtr<game::CEntity> pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-10.0f, 10.0f)));
+    game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+    pModelEnt->SetPos(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-100.0f, 100.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/spaceship.fbx");
     fOffsetZ += 10;
   }
 
   // Floor
-  utils::CWeakPtr<game::CEntity> pFloor = pGameManager->CreateEntity("Floor");
+  game::CEntity* pFloor = pGameManager->CreateEntity("Floor");
   pFloor->SetPos(math::CVector3(0.0f, 0.0f, 0.0f));
   game::CModelComponent* pFloorModelComp = pFloor->RegisterComponent<game::CModelComponent>();
   pFloorModelComp->LoadModel("models/floor/floor.fbx");
@@ -135,7 +135,7 @@ int main()
 
   for (uint32_t uIndex = 0; uIndex < uSize; uIndex++)
   {
-    utils::CWeakPtr<game::CEntity> pPrimitiveTest = pGameManager->CreateEntity("Primitive");
+    game::CEntity* pPrimitiveTest = pGameManager->CreateEntity("Primitive");
     pPrimitiveTest->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 10.0f), GenerateFloat(-10.0f, 10.0f)));
     game::CModelComponent* pModelCompTest = pPrimitiveTest->RegisterComponent<game::CModelComponent>();
     pModelCompTest->CreatePrimitive(ePrimitiveTypes[uIndex], render::ERenderMode::SOLID);
@@ -217,7 +217,7 @@ int main()
       {
         for (uint32_t uIndex = 0; uIndex < 1024; uIndex++)
         {
-          utils::CWeakPtr<game::CEntity> pModelEnt = pGameManager->CreateEntity("Plant");
+          game::CEntity* pModelEnt = pGameManager->CreateEntity("Plant");
           pModelEnt->SetPos(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-100.0f, 100.0f)));
           game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
           pModelTest->LoadModel("models/plant/Low-Poly Plant_.fbx");
@@ -230,27 +230,27 @@ int main()
       if (ImGui::Button("Create Directional Light"))
       {
         // Create directional light
-        utils::CWeakPtr<game::CEntity> pTempLight = pGameManager->CreateEntity("Directional Light");
+        game::CEntity* pTempLight = pGameManager->CreateEntity("Directional Light");
         game::CLightComponent* pTempComp = pTempLight->RegisterComponent<game::CLightComponent>();
         pTempComp->CreateLight(render::ELight::DIRECTIONAL_LIGHT);
       }
       if (ImGui::Button("Create Point light"))
       {
         // Create spot light
-        utils::CWeakPtr<game::CEntity> pTempLight = pGameManager->CreateEntity("Point Light");
+        game::CEntity* pTempLight = pGameManager->CreateEntity("Point Light");
         game::CLightComponent* pTempComp = pTempLight->RegisterComponent<game::CLightComponent>();
         pTempComp->CreateLight(render::ELight::POINT_LIGHT);
       }
       if (ImGui::Button("Create Spot light"))
       {
         // Create spot light
-        utils::CWeakPtr<game::CEntity> pTempLight = pGameManager->CreateEntity("Spot Light");
+        game::CEntity* pTempLight = pGameManager->CreateEntity("Spot Light");
         game::CLightComponent* pTempComp = pTempLight->RegisterComponent<game::CLightComponent>();
         pTempComp->CreateLight(render::ELight::SPOT_LIGHT);
       }
       if (ImGui::Button("Create Model"))
       {
-        utils::CWeakPtr<game::CEntity> pModelEnt = pGameManager->CreateEntity("Plant");
+        game::CEntity* pModelEnt = pGameManager->CreateEntity("Plant");
         pModelEnt->SetPos(math::CVector3(GenerateFloat(-10.0f, 10.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-10.0f, 10.0f)));
         game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
         pModelTest->LoadModel("models/plant/Low-Poly Plant_.fbx");

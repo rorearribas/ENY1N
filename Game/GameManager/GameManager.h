@@ -11,22 +11,22 @@ namespace game
   class CGameManager : public utils::CSingleton<CGameManager>
   {
   public:
-    static const uint32_t s_uMaxEntities = 100000u;
-    typedef utils::CUniquePtrList<CEntity, s_uMaxEntities> TEntitiesList;
+    static const uint32_t s_uMaxEntities = 10000u;
+    typedef std::vector<CEntity> TEntitiesList;
 
   public:
-    CGameManager() {};
+    CGameManager() { m_lstEntitiesList.reserve(s_uMaxEntities); };
     ~CGameManager();
 
     void Update(float _fDeltaTime);
 
-    utils::CWeakPtr<CEntity> CreateEntity(const char* _sEntityName);
+    CEntity* CreateEntity(const char* _sEntityName);
     bool DestroyEntity(const char* _sEntityName);
 
   private:
     void DestroyAll();
 
-    TEntitiesList m_lstEntitiesList = TEntitiesList();
+    TEntitiesList m_lstEntitiesList;
     std::unordered_map<std::string, uint32_t> m_uMapNextSuffix;
     std::unordered_set<std::string> m_uSetNames;
     uint32_t m_uRegisteredEntities = 0;

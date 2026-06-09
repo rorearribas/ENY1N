@@ -39,7 +39,7 @@ namespace render
     {
       if (this != &_rOther)
       {
-        m_lstInstances.Clear();
+        Clear();
         m_lstMeshes = std::move(_rOther.m_lstMeshes);
         m_lstInstances = std::move(_rOther.m_lstInstances);
 
@@ -156,9 +156,6 @@ namespace render
     // ------------------------------------
     void CModel::Clear()
     {
-      // Clear model data
-      //m_lstMeshes.Clear();
-
       // Clear instances
       m_lstInstances.Clear();
     }

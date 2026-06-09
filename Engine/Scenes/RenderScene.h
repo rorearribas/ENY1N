@@ -19,6 +19,7 @@ namespace scene
   // GPU Memory
   constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 256u;
   constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 128u;
+
   constexpr uint32_t MAX_PRIMITIVES_VB_SIZE = 1024u * 1024u * 32u;
   constexpr uint32_t MAX_PRIMITIVES_IB_SIZE = 1024u * 1024u * 16u;
 
@@ -44,7 +45,7 @@ namespace scene
 
   // Debug primitives
   static constexpr uint16_t s_uMaxDebugPrimitives = 256u;
-  static constexpr uint16_t s_uMaxChunkSize = sizeof(render::gfx::CPrimitive) * s_uMaxDebugPrimitives;
+  static constexpr uint16_t s_uMaxChunkSize = s_uMaxDebugPrimitives * sizeof(render::gfx::CPrimitive);
   typedef utils::CArenaPool<render::gfx::CPrimitive, s_uMaxChunkSize, s_uMaxDebugPrimitives> TDebugPrimitives;
   typedef std::array<uint16_t, s_uMaxDebugPrimitives> TCachedDebugPrimitives;
 

@@ -369,8 +369,11 @@ namespace scene
     render::gfx::TMeshes::reverse_iterator it = lstMeshes.rbegin();
     for (; it != lstMeshes.rend(); ++it, --tIndex)
     {
+      const CBufferHandler& rBufferHandler = it->GetIdxBufferHandler();
+      if(rBufferHandler.GetOffset() <= 0) continue;
+
       uint32_t uDisplacement = 0;
-      m_oModelsIB.Free(it->GetIdxBufferHandler(), uDisplacement);
+      m_oModelsIB.Free(rBufferHandler, uDisplacement);
       uIdxDisplacement += uDisplacement;
     }
 
@@ -387,6 +390,9 @@ namespace scene
         for (; it != tmpMeshes.rend(); ++it, --tIndex)
         {
           CBufferHandler rIdxBufferHandler = it->GetIdxBufferHandler();
+          if (rIdxBufferHandler.GetOffset() <= 0) continue;
+
+          // Apply displacement
           rIdxBufferHandler.BeginOffset -= uIdxDisplacement;
           rIdxBufferHandler.EndOffset -= uIdxDisplacement;
           it->SetIdxBufferHandler(rIdxBufferHandler);

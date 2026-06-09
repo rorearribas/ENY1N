@@ -1023,15 +1023,6 @@ namespace render
   // ------------------------------------
   void CRender::DrawOpaqueModels(scene::CRenderScene* _pScene)
   {
-    // Set model vertex/index buffer
-    static const uint32_t uBuffersCount(2);
-    ID3D11Buffer* pBuffers[uBuffersCount] = { _pScene->GetModelsVB(), internal::Pipeline.InstanceBuffer };
-
-    uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
-    uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
-    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
-    global::api::DeviceContext->IASetIndexBuffer(_pScene->GetModelsIB(), DXGI_FORMAT_R32_UINT, 0);
-
     // Bind buffer
     internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
 
@@ -1138,10 +1129,20 @@ namespace render
   // ------------------------------------
   void CRender::DrawModels(scene::CRenderScene* _pScene)
   {
+    // Set model vertex/index buffer
     uint16_t uDrawableCount = 0;
-    const scene::TModels& lstModels = _pScene->GetModels();
     const scene::TCachedModels& lstCacheModels = _pScene->GetCachedModels(uDrawableCount);
+    if (uDrawableCount > 0)
+    {
+      const uint32_t uBuffersCount(2);
+      ID3D11Buffer* pBuffers[uBuffersCount] = { _pScene->GetModelsVB(), internal::Pipeline.InstanceBuffer };
+      uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
+      uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
+      global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
+      global::api::DeviceContext->IASetIndexBuffer(_pScene->GetModelsIB(), DXGI_FORMAT_R32_UINT, 0);
+    }
 
+    const scene::TModels& lstModels = _pScene->GetModels();
     for (uint16_t uI = 0; uI < uDrawableCount; uI++)
     {
       // Draw model
@@ -1232,40 +1233,48 @@ namespace render
     // Bind buffer
     internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
 
-    // Set primitives global buffers
-    static const uint32_t uBuffersCount(2);
-    ID3D11Buffer* pPrimitiveBuffers[uBuffersCount] = { _pScene->GetPrimitivesVB(), internal::Pipeline.PrimitiveInstanceBuffer };
+    // Set layout
+    const uint32_t uBuffersCount(2);
     uint32_t lstStrides[uBuffersCount] = { sizeof(math::CVector3), sizeof(render::gfx::TPrimitiveInstanceData) };
     uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
-    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pPrimitiveBuffers, lstStrides, lstOffsets);
-    global::api::DeviceContext->IASetIndexBuffer(_pScene->GetPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
     // Draw primitives
     uint16_t uDrawableCount = 0;
-    const scene::TPrimitives& lstPrimitives = _pScene->GetPrimitives();
     const scene::TCachedPrimitives& lstCachedPrimitives = _pScene->GetCachedPrimitives(uDrawableCount);
-    for (uint16_t uI = 0; uI < uDrawableCount; uI++)
+    if (uDrawableCount > 0)
     {
-      utils::CWeakPtr<render::gfx::CPrimitive> pPrimitive = lstPrimitives[lstCachedPrimitives[uI]];
-      DrawPrimitive(pPrimitive.GetPtr());
-    }
+      // Set primitives global buffers
+      ID3D11Buffer* pPrimitiveBuffers[uBuffersCount] = { _pScene->GetPrimitivesVB(), internal::Pipeline.PrimitiveInstanceBuffer };
+      global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pPrimitiveBuffers, lstStrides, lstOffsets);
+      global::api::DeviceContext->IASetIndexBuffer(_pScene->GetPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
-    // Set debug global buffers
-    ID3D11Buffer* pDebugPrimitiveBuffers[uBuffersCount] = { _pScene->GetDebugPrimitivesVB(), internal::Pipeline.PrimitiveInstanceBuffer };
-    global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pDebugPrimitiveBuffers, lstStrides, lstOffsets);
-    global::api::DeviceContext->IASetIndexBuffer(_pScene->GetDebugPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
+      const scene::TPrimitives& lstPrimitives = _pScene->GetPrimitives();
+      for (uint16_t uI = 0; uI < uDrawableCount; uI++)
+      {
+        utils::CWeakPtr<render::gfx::CPrimitive> pPrimitive = lstPrimitives[lstCachedPrimitives[uI]];
+        DrawPrimitive(pPrimitive.GetPtr());
+      }
+    }
 
     // Draw debug primitives
     const scene::TDebugPrimitives& lstDebugPrimitives = _pScene->GetDebugPrimitives();
     const scene::TCachedDebugPrimitives& lstCachedDebugPrimitives = _pScene->GetCachedDebugPrimitives(uDrawableCount);
-    for (uint16_t uI = 0; uI < uDrawableCount; uI++)
+    if(uDrawableCount > 0)
     {
-      const render::gfx::CPrimitive* pPrimitive = lstDebugPrimitives[(lstCachedDebugPrimitives[uI])];
-      DrawPrimitive(pPrimitive);
-    }
+      // Set debug global buffers
+      ID3D11Buffer* pDebugPrimitiveBuffers[uBuffersCount] = { _pScene->GetDebugPrimitivesVB(), internal::Pipeline.PrimitiveInstanceBuffer };
+      global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pDebugPrimitiveBuffers, lstStrides, lstOffsets);
+      global::api::DeviceContext->IASetIndexBuffer(_pScene->GetDebugPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
-    // Clear debug items
-    _pScene->ClearDebugItems();
+      for (uint16_t uI = 0; uI < uDrawableCount; uI++)
+      {
+        const render::gfx::CPrimitive* pPrimitive = lstDebugPrimitives[(lstCachedDebugPrimitives[uI])];
+        DrawPrimitive(pPrimitive);
+      }
+
+      // Clear debug items
+      _pScene->ClearDebugItems();
+    }
   }
   // ------------------------------------
   void CRender::DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive)

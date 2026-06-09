@@ -43,20 +43,20 @@ namespace utils
         {
           size_t tDenseIdx = m_tRegisteredItems;
           TInternalData& rInternalData = m_lstInternalData[tDenseIdx];
-          TSlotData& pSlot = m_lstSparseSlots[tSlotIdx];
+          TSlotData& rSlot = m_lstSparseSlots[tSlotIdx];
 
           // Create ptr
           rInternalData.uPtr = std::make_unique<_Type>(std::forward<Args>(args)...);
           rInternalData.tSlotIndex = tSlotIdx;
 
           // Set slot
-          pSlot.tDenseIndex = tDenseIdx;
-          pSlot.tGeneration++;
+          rSlot.tDenseIndex = tDenseIdx;
+          rSlot.tGeneration++;
           m_lstSlotStates[tSlotIdx] = true;
 
           m_tRegisteredItems++;
           _Type* pRawPtr = static_cast<_Type*>(rInternalData.uPtr.get());
-          return CWeakPtr<_Type>(pRawPtr, &pSlot.tGeneration, pSlot.tGeneration);
+          return CWeakPtr<_Type>(pRawPtr, &rSlot.tGeneration, rSlot.tGeneration);
         }
       }
 
@@ -77,18 +77,18 @@ namespace utils
         {
           size_t tDenseIdx = m_tRegisteredItems;
           TInternalData& rInternalData = m_lstInternalData[tDenseIdx];
-          TSlotData& pSlot = m_lstSparseSlots[tSlotIdx];
+          TSlotData& rSlot = m_lstSparseSlots[tSlotIdx];
 
           rInternalData.uPtr = std::move(_pData);
           rInternalData.tSlotIndex = tSlotIdx;
 
-          pSlot.tDenseIndex = tDenseIdx;
-          pSlot.tGeneration++;
+          rSlot.tDenseIndex = tDenseIdx;
+          rSlot.tGeneration++;
           m_lstSlotStates[tSlotIdx] = true;
 
           m_tRegisteredItems++;
           _Type* pRawPtr = static_cast<_Type*>(rInternalData.uPtr.get());
-          return CWeakPtr<_Type>(pRawPtr, &pSlot.tGeneration, pSlot.tGeneration);
+          return CWeakPtr<_Type>(pRawPtr, &rSlot.tGeneration, rSlot.tGeneration);
         }
       }
 
@@ -142,7 +142,6 @@ namespace utils
 
     size_t FindIndex(const CWeakPtr<T>& _pItem);
     bool Remove(const CWeakPtr<T>& _pItem);
-    bool RemoveAt(size_t _tIndex);
     void Clear();
 
     inline const size_t& GetSize() const { return m_tRegisteredItems; }
@@ -181,20 +180,28 @@ namespace utils
   template<typename T, size_t MAX_ITEMS>
   size_t utils::CUniquePtrList<T, MAX_ITEMS>::FindIndex(const CWeakPtr<T>& _pItem)
   {
-    if(!_pItem.IsValid())
+    if (!_pItem.IsValid())
     {
       return static_cast<size_t>(-1);
     }
 
-    for (size_t tIndex = 0; tIndex < m_tRegisteredItems; ++tIndex)
+    const char* pBlock = reinterpret_cast<const char*>((_pItem.GetTargetGen()));
+    const char* pEndBlock = pBlock - offsetof(TSlotData, tGeneration);
+    const char* pBeginBlock = reinterpret_cast<const char*>(&m_lstSparseSlots[0]);
+
+    ptrdiff_t tDiff = pEndBlock - pBeginBlock;
+    ptrdiff_t tSlotIdx = tDiff / sizeof(TSlotData);
+
+    if (tSlotIdx < 0 || tSlotIdx >= static_cast<ptrdiff_t>(MAX_ITEMS))
     {
-      TInternalData& rInternalData = m_lstInternalData[tIndex];
-      if (rInternalData.uPtr.get() == _pItem.GetPtr())
-      {
-        return tIndex;
-      }
+      return static_cast<size_t>(-1);
     }
 
+    size_t tDenseIdx = m_lstSparseSlots[tSlotIdx].tDenseIndex;
+    if (tDenseIdx < m_tRegisteredItems && m_lstInternalData[tDenseIdx].SlotIdx == static_cast<size_t>(tSlotIdx))
+    {
+      return tDenseIdx;
+    }
     return static_cast<size_t>(-1);
   }
 
@@ -208,51 +215,23 @@ namespace utils
 
     for (size_t tIndex = 0; tIndex < m_tRegisteredItems; ++tIndex)
     {
-      TInternalData& rInternalData = m_lstInternalData[tIndex];
-      if (rInternalData.uPtr.get() == _pItem.GetPtr())
+      if (m_lstInternalData[tIndex].uPtr.get() == _pItem.GetPtr())
       {
-        size_t tSlotToDelete = m_lstInternalData[tIndex].tSlotIndex;
-        m_lstSlotStates[tSlotToDelete] = false;
-        m_lstSparseSlots[tSlotToDelete].tGeneration++;
+        m_lstSlotStates[tIndex] = false;
+        m_lstSparseSlots[tIndex].tGeneration++;
+        m_lstInternalData[tIndex].uPtr.reset();
 
         size_t tLastDenseIdx = (m_tRegisteredItems - 1);
         for (size_t i = tIndex; i < tLastDenseIdx; ++i)
         {
           m_lstInternalData[i] = std::move(m_lstInternalData[i + 1]);
-          size_t tMovedSlotIdx = m_lstInternalData[i].tSlotIndex;
-          m_lstSparseSlots[tMovedSlotIdx].tDenseIndex = i;
+          m_lstSparseSlots[m_lstInternalData[i].tSlotIndex].tDenseIndex = i + 1;
         }
 
-        m_lstInternalData[tLastDenseIdx].uPtr.reset();
         --m_tRegisteredItems;
         return true;
       }
     }
     return false;
-  }
-
-  template<typename T, size_t MAX_ITEMS>
-  bool utils::CUniquePtrList<T, MAX_ITEMS>::RemoveAt(size_t _tIndex)
-  {
-    if (_tIndex >= m_tRegisteredItems)
-    {
-      return false;
-    }
-
-    size_t tSlotToDelete = m_lstInternalData[_tIndex].tSlotIndex;
-    m_lstSlotStates[tSlotToDelete] = false;
-    m_lstSparseSlots[tSlotToDelete].tGeneration++;
-
-    size_t tLastDenseIdx = m_tRegisteredItems - 1;
-    for (size_t i = _tIndex; i < tLastDenseIdx; ++i)
-    {
-      m_lstInternalData[i] = std::move(m_lstInternalData[i + 1]);
-      size_t tMovedSlotIdx = m_lstInternalData[i].tSlotIndex;
-      m_lstSparseSlots[tMovedSlotIdx].tDenseIndex = i;
-    }
-
-    m_lstInternalData[tLastDenseIdx].uPtr.reset();
-    --m_tRegisteredItems;
-    return true;
   }
 }

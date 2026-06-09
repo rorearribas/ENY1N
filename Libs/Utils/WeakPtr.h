@@ -23,13 +23,13 @@ namespace utils
       m_uCurrentGen(_rOther.GetCurrentGen())
     {}
 
-    inline T* GetPtr() const { return IsValid() ? m_pPtr : nullptr; }
+    inline bool IsValid() const { return m_uTargetGen ? *m_uTargetGen == m_uCurrentGen : false; }
     size_t* GetTargetGen() const { return m_uTargetGen; }
     size_t GetCurrentGen() const { return m_uCurrentGen; }
 
-    inline bool IsValid() const { return m_uTargetGen ? *m_uTargetGen == m_uCurrentGen : false; }
-    inline T* operator->() { return m_pPtr; }
-    inline const T* operator->() const { return m_pPtr; }
+    inline T* GetPtr() const { return IsValid() ? m_pPtr : nullptr; }
+    inline T* operator->() { return GetPtr(); }
+    inline const T* operator->() const { return GetPtr(); }
 
   private:
     T* m_pPtr = nullptr;
