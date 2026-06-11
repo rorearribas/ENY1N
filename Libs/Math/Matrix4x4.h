@@ -3,7 +3,7 @@
 
 namespace math
 {
-  class CMatrix4x4
+  class __declspec(align(16)) CMatrix4x4
   {
   private:
     static constexpr int s_iColumnSize = 4;
@@ -29,8 +29,6 @@ namespace math
       float _m31, float _m32, float _m33, float _m34,
       float _m41, float _m42, float _m43, float _m44
     );
-
-    CMatrix4x4 operator*(const CMatrix4x4& _Other) const;
     inline CMatrix4x4& operator=(const CMatrix4x4& _Other)
     {
       if (this != &_Other)
@@ -39,13 +37,9 @@ namespace math
       }
       return *this;
     }
-    inline math::CVector3 operator*(const math::CVector3& _v3Other) const
-    {
-      float fX = _v3Other.x * m[0] + _v3Other.y * m[4] + _v3Other.z * m[8] + m[12];
-      float fY = _v3Other.x * m[1] + _v3Other.y * m[5] + _v3Other.z * m[9] + m[13];
-      float fZ = _v3Other.x * m[2] + _v3Other.y * m[6] + _v3Other.z * m[10] + m[14];
-      return math::CVector3(fX, fY, fZ);
-    }
+
+    CMatrix4x4 operator*(const CMatrix4x4& _Other) const;
+    math::CVector3 operator*(const math::CVector3& _v3Other) const;
 
     inline operator const float* () const { return &m[0]; }
     inline operator float*() { return &m[0]; }

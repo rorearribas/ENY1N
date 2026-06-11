@@ -1,6 +1,9 @@
 ﻿#include "Matrix4x4.h"
 #include "Math.h"
 
+#include <xmmintrin.h>
+#include <immintrin.h>
+
 namespace math
 {
   const CMatrix4x4 CMatrix4x4::Identity =
@@ -35,19 +38,76 @@ namespace math
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::operator*(const CMatrix4x4& _Other) const
   {
-    CMatrix4x4 mMatrix = CMatrix4x4::Zero;
-    for (int iColumn = 0; iColumn < s_iColumnSize; ++iColumn)
+    CMatrix4x4 mMatrix = CMatrix4x4::Identity;
+
+    __m128 r0 = _mm_load_ps(&this->m[0]);
+    __m128 r1 = _mm_load_ps(&this->m[4]);
+    __m128 r2 = _mm_load_ps(&this->m[8]);
+    __m128 r3 = _mm_load_ps(&this->m[12]);
+
+    __m256 row0 = _mm256_setr_m128(r0, r0); // [r0.x, r0.y, r0.z, r0.w, r0.x, r0.y, r0.z, r0.w]
+    __m256 row1 = _mm256_setr_m128(r1, r1);
+    __m256 row2 = _mm256_setr_m128(r2, r2);
+    __m256 row3 = _mm256_setr_m128(r3, r3);
+
+    // --- First 2 columns (Elements 0 to 7) ---
     {
-      for (int iRow = 0; iRow < s_iRowSize; ++iRow)
-      {
-        mMatrix.m[iColumn * 4 + iRow] =
-          this->m[0 * 4 + iRow] * _Other.m[iColumn * 4 + 0] +
-          this->m[1 * 4 + iRow] * _Other.m[iColumn * 4 + 1] +
-          this->m[2 * 4 + iRow] * _Other.m[iColumn * 4 + 2] +
-          this->m[3 * 4 + iRow] * _Other.m[iColumn * 4 + 3];
-      }
+      __m256 e0 = _mm256_setr_ps(_Other.m[0], _Other.m[0], _Other.m[0], _Other.m[0], _Other.m[4], _Other.m[4], _Other.m[4], _Other.m[4]);
+      __m256 e1 = _mm256_setr_ps(_Other.m[1], _Other.m[1], _Other.m[1], _Other.m[1], _Other.m[5], _Other.m[5], _Other.m[5], _Other.m[5]);
+      __m256 e2 = _mm256_setr_ps(_Other.m[2], _Other.m[2], _Other.m[2], _Other.m[2], _Other.m[6], _Other.m[6], _Other.m[6], _Other.m[6]);
+      __m256 e3 = _mm256_setr_ps(_Other.m[3], _Other.m[3], _Other.m[3], _Other.m[3], _Other.m[7], _Other.m[7], _Other.m[7], _Other.m[7]);
+
+      __m256 dst = _mm256_mul_ps(e0, row0);
+      dst = _mm256_fmadd_ps(e1, row1, dst);
+      dst = _mm256_fmadd_ps(e2, row2, dst);
+      dst = _mm256_fmadd_ps(e3, row3, dst);
+
+      _mm256_store_ps(&mMatrix.m[0], dst);
     }
+
+    // --- Last 2 columns (Elements 8 to 15) ---
+    {
+      __m256 e0 = _mm256_setr_ps(_Other.m[8], _Other.m[8], _Other.m[8], _Other.m[8], _Other.m[12], _Other.m[12], _Other.m[12], _Other.m[12]);
+      __m256 e1 = _mm256_setr_ps(_Other.m[9], _Other.m[9], _Other.m[9], _Other.m[9], _Other.m[13], _Other.m[13], _Other.m[13], _Other.m[13]);
+      __m256 e2 = _mm256_setr_ps(_Other.m[10], _Other.m[10], _Other.m[10], _Other.m[10], _Other.m[14], _Other.m[14], _Other.m[14], _Other.m[14]);
+      __m256 e3 = _mm256_setr_ps(_Other.m[11], _Other.m[11], _Other.m[11], _Other.m[11], _Other.m[15], _Other.m[15], _Other.m[15], _Other.m[15]);
+
+      __m256 dst = _mm256_mul_ps(e0, row0);
+      dst = _mm256_fmadd_ps(e1, row1, dst);
+      dst = _mm256_fmadd_ps(e2, row2, dst);
+      dst = _mm256_fmadd_ps(e3, row3, dst);
+
+      _mm256_store_ps(&mMatrix.m[8], dst);
+    }
+
     return mMatrix;
+  }
+  // ------------------------------------
+  math::CVector3 CMatrix4x4::operator*(const math::CVector3& _v3Other) const
+  {
+    // Load the matching components of the matrix (Rows/Columns depending on layout)
+    __m128 r0 = _mm_load_ps(&m[0]);  // [m[0],  m[1],  m[2],  m[3]]
+    __m128 r1 = _mm_load_ps(&m[4]);  // [m[4],  m[5],  m[6],  m[7]]
+    __m128 r2 = _mm_load_ps(&m[8]);  // [m[8],  m[9],  m[10], m[11]]
+    __m128 r3 = _mm_load_ps(&m[12]);// [m[12], m[13], m[14], m[15]]
+
+    // Broadcast each component of the vector into all 4 channels of an SSE register
+    __m128 vX = _mm_set1_ps(_v3Other.x);
+    __m128 vY = _mm_set1_ps(_v3Other.y);
+    __m128 vZ = _mm_set1_ps(_v3Other.z);
+
+    // Perform the linear combination using Fused Multiply-Add (FMA)
+    // result = vX * m0 + vY * m4 + vZ * m8 + 1.0 * m12
+    __m128 vResult = _mm_mul_ps(vX, r0);
+    vResult = _mm_fmadd_ps(vY, r1, vResult);
+    vResult = _mm_fmadd_ps(vZ, r2, vResult);
+    vResult = _mm_add_ps(vResult, r3);
+
+    // Extract the final x, y, z components from the register back to CVector3
+    float alignas(16) fRes[4];
+    _mm_store_ps(fRes, vResult);
+
+    return math::CVector3(fRes[0], fRes[1], fRes[2]);
   }
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::CreatePerspectiveMatrix(float _fFov, float _fAspectRatio, float _fNear, float _fFar)
@@ -205,135 +265,42 @@ namespace math
   // ------------------------------------
   math::CMatrix4x4 CMatrix4x4::Invert(const math::CMatrix4x4& _m)
   {
-    // Calculate cofactors
+    // 1. Calculate cofactors
     float fInvert[16];
     {
-      fInvert[0] = _m[5] * _m[10] * _m[15] -
-      _m[5] * _m[11] * _m[14] -
-      _m[9] * _m[6] * _m[15] +
-      _m[9] * _m[7] * _m[14] +
-      _m[13] * _m[6] * _m[11] -
-      _m[13] * _m[7] * _m[10];
-
-      fInvert[4] = -_m[4] * _m[10] * _m[15] +
-      _m[4] * _m[11] * _m[14] +
-      _m[8] * _m[6] * _m[15] -
-      _m[8] * _m[7] * _m[14] -
-      _m[12] * _m[6] * _m[11] +
-      _m[12] * _m[7] * _m[10];
-
-      fInvert[8] = _m[4] * _m[9] * _m[15] -
-      _m[4] * _m[11] * _m[13] -
-      _m[8] * _m[5] * _m[15] +
-      _m[8] * _m[7] * _m[13] +
-      _m[12] * _m[5] * _m[11] -
-      _m[12] * _m[7] * _m[9];
-
-      fInvert[12] = -_m[4] * _m[9] * _m[14] +
-      _m[4] * _m[10] * _m[13] +
-      _m[8] * _m[5] * _m[14] -
-      _m[8] * _m[6] * _m[13] -
-      _m[12] * _m[5] * _m[10] +
-      _m[12] * _m[6] * _m[9];
-
-      fInvert[1] = -_m[1] * _m[10] * _m[15] +
-      _m[1] * _m[11] * _m[14] +
-      _m[9] * _m[2] * _m[15] -
-      _m[9] * _m[3] * _m[14] -
-      _m[13] * _m[2] * _m[11] +
-      _m[13] * _m[3] * _m[10];
-
-      fInvert[5] = _m[0] * _m[10] * _m[15] -
-      _m[0] * _m[11] * _m[14] -
-      _m[8] * _m[2] * _m[15] +
-      _m[8] * _m[3] * _m[14] +
-      _m[12] * _m[2] * _m[11] -
-      _m[12] * _m[3] * _m[10];
-
-      fInvert[9] = -_m[0] * _m[9] * _m[15] +
-      _m[0] * _m[11] * _m[13] +
-      _m[8] * _m[1] * _m[15] -
-      _m[8] * _m[3] * _m[13] -
-      _m[12] * _m[1] * _m[11] +
-      _m[12] * _m[3] * _m[9];
-
-      fInvert[13] = _m[0] * _m[9] * _m[14] -
-      _m[0] * _m[10] * _m[13] -
-      _m[8] * _m[1] * _m[14] +
-      _m[8] * _m[2] * _m[13] +
-      _m[12] * _m[1] * _m[10] -
-      _m[12] * _m[2] * _m[9];
-
-      fInvert[2] = _m[1] * _m[6] * _m[15] -
-      _m[1] * _m[7] * _m[14] -
-      _m[5] * _m[2] * _m[15] +
-      _m[5] * _m[3] * _m[14] +
-      _m[13] * _m[2] * _m[7] -
-      _m[13] * _m[3] * _m[6];
-
-      fInvert[6] = -_m[0] * _m[6] * _m[15] +
-      _m[0] * _m[7] * _m[14] +
-      _m[4] * _m[2] * _m[15] -
-      _m[4] * _m[3] * _m[14] -
-      _m[12] * _m[2] * _m[7] +
-      _m[12] * _m[3] * _m[6];
-
-      fInvert[10] = _m[0] * _m[5] * _m[15] -
-      _m[0] * _m[7] * _m[13] -
-      _m[4] * _m[1] * _m[15] +
-      _m[4] * _m[3] * _m[13] +
-      _m[12] * _m[1] * _m[7] -
-      _m[12] * _m[3] * _m[5];
-
-      fInvert[14] = -_m[0] * _m[5] * _m[14] +
-      _m[0] * _m[6] * _m[13] +
-      _m[4] * _m[1] * _m[14] -
-      _m[4] * _m[2] * _m[13] -
-      _m[12] * _m[1] * _m[6] +
-      _m[12] * _m[2] * _m[5];
-
-      fInvert[3] = -_m[1] * _m[6] * _m[11] +
-      _m[1] * _m[7] * _m[10] +
-      _m[5] * _m[2] * _m[11] -
-      _m[5] * _m[3] * _m[10] -
-      _m[9] * _m[2] * _m[7] +
-      _m[9] * _m[3] * _m[6];
-
-      fInvert[7] = _m[0] * _m[6] * _m[11] -
-      _m[0] * _m[7] * _m[10] -
-      _m[4] * _m[2] * _m[11] +
-      _m[4] * _m[3] * _m[10] +
-      _m[8] * _m[2] * _m[7] -
-      _m[8] * _m[3] * _m[6];
-
-      fInvert[11] = -_m[0] * _m[5] * _m[11] +
-      _m[0] * _m[7] * _m[9] +
-      _m[4] * _m[1] * _m[11] -
-      _m[4] * _m[3] * _m[9] -
-      _m[8] * _m[1] * _m[7] +
-      _m[8] * _m[3] * _m[5];
-
-      fInvert[15] = _m[0] * _m[5] * _m[10] -
-      _m[0] * _m[6] * _m[9] -
-      _m[4] * _m[1] * _m[10] +
-      _m[4] * _m[2] * _m[9] +
-      _m[8] * _m[1] * _m[6] -
-      _m[8] * _m[2] * _m[5];
+      fInvert[0] = _m[5] * _m[10] * _m[15] - _m[5] * _m[11] * _m[14] - _m[9] * _m[6] * _m[15] + _m[9] * _m[7] * _m[14] + _m[13] * _m[6] * _m[11] - _m[13] * _m[7] * _m[10];
+      fInvert[4] = -_m[4] * _m[10] * _m[15] + _m[4] * _m[11] * _m[14] + _m[8] * _m[6] * _m[15] - _m[8] * _m[7] * _m[14] - _m[12] * _m[6] * _m[11] + _m[12] * _m[7] * _m[10];
+      fInvert[8] = _m[4] * _m[9] * _m[15] - _m[4] * _m[11] * _m[13] - _m[8] * _m[5] * _m[15] + _m[8] * _m[7] * _m[13] + _m[12] * _m[5] * _m[11] - _m[12] * _m[7] * _m[9];
+      fInvert[12] = -_m[4] * _m[9] * _m[14] + _m[4] * _m[10] * _m[13] + _m[8] * _m[5] * _m[14] - _m[8] * _m[6] * _m[13] - _m[12] * _m[5] * _m[10] + _m[12] * _m[6] * _m[9];
+      fInvert[1] = -_m[1] * _m[10] * _m[15] + _m[1] * _m[11] * _m[14] + _m[9] * _m[2] * _m[15] - _m[9] * _m[3] * _m[14] - _m[13] * _m[2] * _m[11] + _m[13] * _m[3] * _m[10];
+      fInvert[5] = _m[0] * _m[10] * _m[15] - _m[0] * _m[11] * _m[14] - _m[8] * _m[2] * _m[15] + _m[8] * _m[3] * _m[14] + _m[12] * _m[2] * _m[11] - _m[12] * _m[3] * _m[10];
+      fInvert[9] = -_m[0] * _m[9] * _m[15] + _m[0] * _m[11] * _m[13] + _m[8] * _m[1] * _m[15] - _m[8] * _m[3] * _m[13] - _m[12] * _m[1] * _m[11] + _m[12] * _m[3] * _m[9];
+      fInvert[13] = _m[0] * _m[9] * _m[14] - _m[0] * _m[10] * _m[13] - _m[8] * _m[1] * _m[14] + _m[8] * _m[2] * _m[13] + _m[12] * _m[1] * _m[10] - _m[12] * _m[2] * _m[9];
+      fInvert[2] = _m[1] * _m[6] * _m[15] - _m[1] * _m[7] * _m[14] - _m[5] * _m[2] * _m[15] + _m[5] * _m[3] * _m[14] + _m[13] * _m[2] * _m[7] - _m[13] * _m[3] * _m[6];
+      fInvert[6] = -_m[0] * _m[6] * _m[15] + _m[0] * _m[7] * _m[14] + _m[4] * _m[2] * _m[15] - _m[4] * _m[3] * _m[14] - _m[12] * _m[2] * _m[7] + _m[12] * _m[3] * _m[6];
+      fInvert[10] = _m[0] * _m[5] * _m[15] - _m[0] * _m[7] * _m[13] - _m[4] * _m[1] * _m[15] + _m[4] * _m[3] * _m[13] + _m[12] * _m[1] * _m[7] - _m[12] * _m[3] * _m[5];
+      fInvert[14] = -_m[0] * _m[5] * _m[14] + _m[0] * _m[6] * _m[13] + _m[4] * _m[1] * _m[14] - _m[4] * _m[2] * _m[13] - _m[12] * _m[1] * _m[6] + _m[12] * _m[2] * _m[5];
+      fInvert[3] = -_m[1] * _m[6] * _m[11] + _m[1] * _m[7] * _m[10] + _m[5] * _m[2] * _m[11] - _m[5] * _m[3] * _m[10] - _m[9] * _m[2] * _m[7] + _m[9] * _m[3] * _m[6];
+      fInvert[7] = _m[0] * _m[6] * _m[11] - _m[0] * _m[7] * _m[10] - _m[4] * _m[2] * _m[11] + _m[4] * _m[3] * _m[10] + _m[8] * _m[2] * _m[7] - _m[8] * _m[3] * _m[6];
+      fInvert[11] = -_m[0] * _m[5] * _m[11] + _m[0] * _m[7] * _m[9] + _m[4] * _m[1] * _m[11] - _m[4] * _m[3] * _m[9] - _m[8] * _m[1] * _m[7] + _m[8] * _m[3] * _m[5];
+      fInvert[15] = _m[0] * _m[5] * _m[10] - _m[0] * _m[6] * _m[9] - _m[4] * _m[1] * _m[10] + _m[4] * _m[2] * _m[9] + _m[8] * _m[1] * _m[6] - _m[8] * _m[2] * _m[5];
     }
 
-    // Calculate determinant
+    // 2. Calculate determinant
     float fDet = _m[0] * fInvert[0] + _m[1] * fInvert[4] + _m[2] * fInvert[8] + _m[3] * fInvert[12];
     if (fabsf(fDet) < math::s_fEpsilon7)
     {
       return CMatrix4x4::Identity;
     }
-    fDet = (1.0f / fDet);
 
-    CMatrix4x4 mInvert = CMatrix4x4::Identity;
-    for (uint32_t uI = 0; uI < (s_iColumnSize * s_iRowSize); uI++)
-    {
-      mInvert[uI] = fInvert[uI] * fDet;
-    }
+    // 3. SSE Optimization: Multiply all 4 columns in parallel, replacing the scalar loop
+    __m128 vDetInv = _mm_set1_ps(1.0f / fDet);
+
+    math::CMatrix4x4 mInvert;
+    _mm_store_ps(&mInvert.m[0], _mm_mul_ps(_mm_loadu_ps(&fInvert[0]), vDetInv));
+    _mm_store_ps(&mInvert.m[4], _mm_mul_ps(_mm_loadu_ps(&fInvert[4]), vDetInv));
+    _mm_store_ps(&mInvert.m[8], _mm_mul_ps(_mm_loadu_ps(&fInvert[8]), vDetInv));
+    _mm_store_ps(&mInvert.m[12], _mm_mul_ps(_mm_loadu_ps(&fInvert[12]), vDetInv));
 
     return mInvert;
   }
@@ -346,13 +313,31 @@ namespace math
   math::CMatrix4x4 CMatrix4x4::Transpose(const CMatrix4x4& _mMatrix)
   {
     CMatrix4x4 mResult = CMatrix4x4::Identity;
-    for (int iRow = 0; iRow < s_iRowSize; ++iRow)
-    {
-      for (int iColumn = 0; iColumn < s_iColumnSize; ++iColumn)
-      {
-        mResult.m[iColumn * 4 + iRow] = _mMatrix.m[iRow * 4 + iColumn];
-      }
-    }
+
+    // Load the 4 rows of the source matrix into 128-bit registers
+    __m128 r0 = _mm_load_ps(&_mMatrix.m[0]);  // Row 0: [m0,  m1,  m2,  m3]
+    __m128 r1 = _mm_load_ps(&_mMatrix.m[4]);  // Row 1: [m4,  m5,  m6,  m7]
+    __m128 r2 = _mm_load_ps(&_mMatrix.m[8]);  // Row 2: [m8,  m9,  m10, m11]
+    __m128 r3 = _mm_load_ps(&_mMatrix.m[12]); // Row 3: [m12, m13, m14, m15]
+
+    // Interleave lower and upper parts of the rows
+    __m128 tmp0 = _mm_unpacklo_ps(r0, r1); // [m0, m4, m1, m5]
+    __m128 tmp1 = _mm_unpacklo_ps(r2, r3); // [m8, m12, m9, m13]
+    __m128 tmp2 = _mm_unpackhi_ps(r0, r1); // [m2, m6, m3, m7]
+    __m128 tmp3 = _mm_unpackhi_ps(r2, r3); // [m10, m14, m11, m15]
+
+    // Combine temporary registers into the final transposed rows
+    __m128 out0 = _mm_movelh_ps(tmp0, tmp1); // Row 0 result: [m0, m4, m8, m12]
+    __m128 out1 = _mm_movehl_ps(tmp1, tmp0); // Row 1 result: [m1, m5, m9, m13]
+    __m128 out2 = _mm_movelh_ps(tmp2, tmp3); // Row 2 result: [m2, m6, m10, m14]
+    __m128 out3 = _mm_movehl_ps(tmp3, tmp2); // Row 3 result: [m3, m7, m11, m15]
+
+    // Store the transposed rows directly into the result matrix
+    _mm_store_ps(&mResult.m[0], out0);
+    _mm_store_ps(&mResult.m[4], out1);
+    _mm_store_ps(&mResult.m[8], out2);
+    _mm_store_ps(&mResult.m[12], out3);
+
     return mResult;
   }
   // ------------------------------------

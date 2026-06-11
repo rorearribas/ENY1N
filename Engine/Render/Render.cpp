@@ -89,8 +89,8 @@ namespace render
       ID3D11SamplerState* ShadowSampler = nullptr;
 
       // Instancing buffers
-      ID3D11Buffer* InstanceBuffer = nullptr;
-      ID3D11Buffer* PrimitiveInstanceBuffer = nullptr;
+      ID3D11Buffer* RenderInstancesBuffer = nullptr;
+      ID3D11Buffer* PrimitiveInstancesBuffer = nullptr;
 
       // Global constant buffers
       CConstantBuffer<TCameraTransform> CameraTransformBuffer;
@@ -106,7 +106,7 @@ namespace render
       texture::TShaderResource DepthTexture;
 
       // Rasterizer
-      ID3D11RasterizerState* DeferredRasterizer = nullptr;
+      ID3D11RasterizerState* DefaultRasterizer = nullptr;
       ID3D11RasterizerState* ShadowsRasterizer = nullptr;
       D3D11_RASTERIZER_DESC RasterizerCfg = D3D11_RASTERIZER_DESC();
 
@@ -189,13 +189,13 @@ namespace render
     // Release rasterizer, blending..
     global::api::SafeRelease(internal::Pipeline.LinearSampler);
     global::api::SafeRelease(internal::Pipeline.ShadowSampler);
-    global::api::SafeRelease(internal::Pipeline.DeferredRasterizer);
+    global::api::SafeRelease(internal::Pipeline.DefaultRasterizer);
     global::api::SafeRelease(internal::Pipeline.ShadowsRasterizer);
     global::api::SafeRelease(internal::Pipeline.BlendState);
     global::api::SafeRelease(internal::Pipeline.pUserMarker);
 
-    global::api::SafeRelease(internal::Pipeline.InstanceBuffer);
-    global::api::SafeRelease(internal::Pipeline.PrimitiveInstanceBuffer);
+    global::api::SafeRelease(internal::Pipeline.RenderInstancesBuffer);
+    global::api::SafeRelease(internal::Pipeline.PrimitiveInstancesBuffer);
 
     // Release swap chain
     global::api::SafeRelease(internal::Pipeline.SwapChain);
@@ -207,6 +207,157 @@ namespace render
 
     // Release render window
     m_pRenderWindow.reset();
+  }
+  // ------------------------------------
+  HRESULT CRender::Init(uint32_t _uX, uint32_t _uY)
+  {
+    // Create device
+    HRESULT hResult = CreateDevice(_uX, _uY);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating device!");
+      return hResult;
+    }
+
+    // Setup basic pipeline
+    hResult = InitBasicPipeline(_uX, _uY);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Setups precompiled shaders
+    hResult = SetupPrecompiledShaders();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating shaders!");
+      return hResult;
+    }
+
+    // Setups constant buffers
+    hResult = SetupConstantBuffers();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating constant buffers!");
+      return hResult;
+    }
+
+    // Setup render buffers
+    hResult = SetupRenderBuffers();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating render buffers!");
+      return hResult;
+    }
+
+    hResult = SetupBlendState();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating blend state!");
+      return hResult;
+    }
+
+    // Setup rasterizers
+    hResult = SetupRasterizers();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating rasterizers!");
+      return hResult;
+    }
+
+    // Setup samplers
+    hResult = SetupSamplers();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating samplers!");
+      return hResult;
+    }
+
+    // Setup standard layouts
+    hResult = SetupLayouts();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating layouts!");
+      return hResult;
+    }
+
+    // Init ImGui
+    hResult = SetupImGui();
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error initializing ImGui!");
+      return hResult;
+    }
+
+    // Set delegate
+    utils::CDelegate<void(uint32_t, uint32_t)> rDelegate(&CRender::OnWindowResizeEvent, this);
+    global::delegates::s_lstOnWindowResizeDelegates.emplace_back(rDelegate);
+
+    // Get user def
+    return global::api::DeviceContext->QueryInterface
+    (
+      __uuidof(ID3DUserDefinedAnnotation),
+      reinterpret_cast<void**>(&internal::Pipeline.pUserMarker)
+    );
+  }
+  // ------------------------------------
+  HRESULT CRender::CreateDevice(uint32_t _uWidth, uint32_t _uHeight)
+  {
+    // Create descriptor
+    DXGI_SWAP_CHAIN_DESC rSwapChainDescriptor = DXGI_SWAP_CHAIN_DESC();
+    rSwapChainDescriptor.BufferCount = 1;
+    rSwapChainDescriptor.BufferDesc.Width = _uWidth;
+    rSwapChainDescriptor.BufferDesc.Height = _uHeight;
+    rSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHandle();
+    rSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    rSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+    rSwapChainDescriptor.SampleDesc.Count = 1;
+    rSwapChainDescriptor.SampleDesc.Quality = 0;
+    rSwapChainDescriptor.Windowed = TRUE;
+
+    D3D_FEATURE_LEVEL lstFeatureLevels[] =
+    {
+      D3D_FEATURE_LEVEL_11_0,
+      D3D_FEATURE_LEVEL_10_1,
+      D3D_FEATURE_LEVEL_10_0,
+      D3D_FEATURE_LEVEL_9_3,
+      D3D_FEATURE_LEVEL_9_2,
+      D3D_FEATURE_LEVEL_9_1
+    };
+    uint32_t uNumFeatureLevels = ARRAYSIZE(lstFeatureLevels);
+    D3D_FEATURE_LEVEL oFeatureLevel = D3D_FEATURE_LEVEL();
+    uint32_t uFlags = 0;
+
+    // Create device and swap chain
+    return D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, uFlags, lstFeatureLevels,
+      uNumFeatureLevels, D3D11_SDK_VERSION, &rSwapChainDescriptor, &internal::Pipeline.SwapChain,
+      &global::api::Device, &oFeatureLevel, &global::api::DeviceContext);
+  }
+  // ------------------------------------
+  HRESULT CRender::InitBasicPipeline(uint32_t _uWidth, uint32_t _uHeight)
+  {
+    // Configure viewport
+    SetViewport(_uWidth, _uHeight);
+
+    // Update scissor
+    SetScissorRect(_uWidth, _uHeight);
+
+    // Setup depth stencil
+    HRESULT hResult = SetupDepthStencil(_uWidth, _uHeight);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Setup deferred rendering
+    hResult = SetupRenderers(_uWidth, _uHeight);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Create back buffer
+    return CreateBackBuffer();
   }
   // ------------------------------------
   void CRender::PrepareFrame()
@@ -357,7 +508,7 @@ namespace render
             SetViewport(uRenderWidth, uRenderHeight);
           }
           // Restore rasterizer
-          global::api::DeviceContext->RSSetState(internal::Pipeline.DeferredRasterizer);
+          global::api::DeviceContext->RSSetState(internal::Pipeline.DefaultRasterizer);
         }
       }
       EndMarker();
@@ -386,7 +537,7 @@ namespace render
 
     // Update resources
     global::api::DeviceContext->OMSetBlendState(internal::Pipeline.BlendState, nullptr, 0xFFFFFFFF);
-    global::api::DeviceContext->RSSetState(internal::Pipeline.DeferredRasterizer);
+    global::api::DeviceContext->RSSetState(internal::Pipeline.DefaultRasterizer);
 
     // Render ImGui
     BeginMarker(internal::s_sImGuiMarker);
@@ -405,7 +556,9 @@ namespace render
   {
     // Update rasterizer
     internal::Pipeline.RasterizerCfg.FillMode = _eFillMode;
-    CreateRasterizerState(internal::Pipeline.DeferredRasterizer, internal::Pipeline.RasterizerCfg);
+
+    global::api::SafeRelease(internal::Pipeline.DefaultRasterizer);
+    global::api::Device->CreateRasterizerState(&internal::Pipeline.RasterizerCfg, &internal::Pipeline.DefaultRasterizer);
   }
   // ------------------------------------
   void CRender::PushMaterial(const render::mat::CMaterial* _pMaterial)
@@ -459,374 +612,10 @@ namespace render
 #endif // DEBUG
 
     // Init pipeline
-    hResult = InitPipeline(_uWidth, _uHeight);
+    hResult = InitBasicPipeline(_uWidth, _uHeight);
 #ifdef _DEBUG
     assert(!FAILED(hResult));
 #endif // DEBUG
-  }
-  // ------------------------------------
-  HRESULT CRender::Init(uint32_t _uX, uint32_t _uY)
-  {
-    // Create device
-    HRESULT hResult = CreateDevice(_uX, _uY);
-    if (FAILED(hResult))
-    {
-      ERROR_LOG("Error creating device!");
-      return hResult;
-    }
-
-    // Test global instance buffer
-    D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
-    rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::TModelInstanceData) * render::gfx::s_uMaxInstances));
-    rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-    D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
-    rSubresourceData.pSysMem = render::gfx::s_tModelInstanceData; // Global buffer
-    hResult = global::api::Device->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &internal::Pipeline.InstanceBuffer);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Test global primitive instance buffer
-    rVertexBufferDesc = D3D11_BUFFER_DESC();
-    rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::TPrimitiveInstanceData) * render::gfx::s_uMaxInstances));
-    rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-    rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-    rSubresourceData = D3D11_SUBRESOURCE_DATA();
-    rSubresourceData.pSysMem = render::gfx::s_tPrimitiveInstanceData; // Global buffer
-    hResult = global::api::Device->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &internal::Pipeline.PrimitiveInstanceBuffer);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    if (!m_pForwardRenderer)
-    {
-      m_pForwardRenderer = std::make_unique<CForwardRenderer>();
-    }
-
-    // Setup basic pipeline
-    hResult = InitPipeline(_uX, _uY);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    hResult = SetupLayouts();
-    if (FAILED(hResult))
-    {
-      ERROR_LOG("Error creating layouts!");
-      return hResult;
-    }
-
-    // Init constant buffers
-    hResult = InitConstantBuffers();
-    if (FAILED(hResult))
-    {
-      ERROR_LOG("Error creating constant buffers!");
-      return hResult;
-    }
-
-    // Init shaders
-    hResult = InitShaders();
-    if (FAILED(hResult))
-    {
-      ERROR_LOG("Error creating shaders!");
-      return hResult;
-    }
-
-    // Init ImGui
-    if (!InitImGui())
-    {
-      ERROR_LOG("Error initializing imgui!");
-      return E_FAIL;
-    }
-
-    // Set delegate
-    utils::CDelegate<void(uint32_t, uint32_t)> rDelegate(&CRender::OnWindowResizeEvent, this);
-    global::delegates::s_lstOnWindowResizeDelegates.emplace_back(rDelegate);
-
-    // Get user def
-    return global::api::DeviceContext->QueryInterface
-    (
-      __uuidof(ID3DUserDefinedAnnotation),
-      reinterpret_cast<void**>(&internal::Pipeline.pUserMarker)
-    );
-  }
-  // ------------------------------------
-  HRESULT CRender::SetupDeferredRendering(uint32_t _uWidth, uint32_t _uHeight)
-  {
-    // Create renderer
-    if (!m_pDeferredRenderer)
-    {
-      m_pDeferredRenderer = std::make_unique<CDeferredRenderer>(this);
-    }
-    HRESULT hResult = m_pDeferredRenderer->Init(_uWidth, _uHeight);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Linear sampler
-    D3D11_SAMPLER_DESC rSamplerDesc = D3D11_SAMPLER_DESC();
-    rSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    rSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    rSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-    rSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    rSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-    rSamplerDesc.BorderColor[0] = 0.0f;
-    rSamplerDesc.BorderColor[1] = 0.0f;
-    rSamplerDesc.BorderColor[2] = 0.0f;
-    rSamplerDesc.BorderColor[3] = 0.0f;
-    rSamplerDesc.MaxAnisotropy = 16u;
-    rSamplerDesc.MipLODBias = 0.0f;
-    rSamplerDesc.MinLOD = 0.0f;
-    rSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
-
-    // Create simple sampler
-    global::api::SafeRelease(internal::Pipeline.LinearSampler);
-    hResult = global::api::Device->CreateSamplerState(&rSamplerDesc, &internal::Pipeline.LinearSampler);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Shadow sampler
-    D3D11_SAMPLER_DESC rShadowSampler = D3D11_SAMPLER_DESC();
-    rShadowSampler.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
-    rShadowSampler.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-    rShadowSampler.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-    rShadowSampler.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-    rShadowSampler.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
-    rShadowSampler.BorderColor[0] = 1.0f;
-    rShadowSampler.BorderColor[1] = 1.0f;
-    rShadowSampler.BorderColor[2] = 1.0f;
-    rShadowSampler.BorderColor[3] = 1.0f;
-    rShadowSampler.MaxAnisotropy = 1u;
-    rShadowSampler.MinLOD = 0.0f;
-    rShadowSampler.MaxLOD = 0.0f;
-
-    // Create shadow sampler
-    global::api::SafeRelease(internal::Pipeline.ShadowSampler);
-    return global::api::Device->CreateSamplerState(&rShadowSampler, &internal::Pipeline.ShadowSampler);
-  }
-  // ------------------------------------
-  HRESULT CRender::InitConstantBuffers()
-  {
-    // Transforms buffer
-    HRESULT hResult = internal::Pipeline.CameraTransformBuffer.Init();
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-    // Light view buffer
-    hResult = internal::Pipeline.LightingViewBuffer.Init();
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-    // Material info buffer
-    return internal::Pipeline.MaterialBuffer.Init();
-  }
-  // ------------------------------------
-  HRESULT CRender::SetupLayouts()
-  {
-    // Create standard layout
-    HRESULT hResult = global::api::Device->CreateInputLayout
-    (
-      internal::s_tStandardLayout,
-      internal::s_iStandardLayoutSize,
-      g_StandardVS,
-      sizeof(g_StandardVS),
-      &internal::Pipeline.StandardLayout
-    );
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Create debug layout
-    return global::api::Device->CreateInputLayout
-    (
-      internal::s_tPrimitivesLayout,
-      internal::s_iPrimitiveLayoutSize,
-      g_SimpleVS,
-      sizeof(g_SimpleVS),
-      &internal::Pipeline.DebugLayout
-    );
-  }
-  // ------------------------------------
-  HRESULT CRender::InitShaders()
-  {
-    // Forward shaders
-    internal::Pipeline.ForwardVS.Release();
-    HRESULT hResult = internal::Pipeline.ForwardVS.Init(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::Pipeline.ForwardPS.Release();
-    hResult = internal::Pipeline.ForwardPS.Init(g_SimplePS, ARRAYSIZE(g_SimplePS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Deferred shaders
-    internal::Pipeline.DeferredVS.Release();
-    hResult = internal::Pipeline.DeferredVS.Init(g_StandardVS, ARRAYSIZE(g_StandardVS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::Pipeline.DeferredShadowsVS.Release();
-    hResult = internal::Pipeline.DeferredShadowsVS.Init(g_ShadowsVS, ARRAYSIZE(g_ShadowsVS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::Pipeline.DrawTriangleVS.Release();
-    hResult = internal::Pipeline.DrawTriangleVS.Init(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::Pipeline.DeferredGBuffer.Release();
-    hResult = internal::Pipeline.DeferredGBuffer.Init(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::Pipeline.DeferredLights.Release();
-    return internal::Pipeline.DeferredLights.Init(g_LightsPS, ARRAYSIZE(g_LightsPS));
-  }
-  // ------------------------------------
-  HRESULT CRender::CreateDevice(uint32_t _uWidth, uint32_t _uHeight)
-  {
-    // Create descriptor
-    DXGI_SWAP_CHAIN_DESC rSwapChainDescriptor = DXGI_SWAP_CHAIN_DESC();
-    rSwapChainDescriptor.BufferCount = 1;
-    rSwapChainDescriptor.BufferDesc.Width = _uWidth;
-    rSwapChainDescriptor.BufferDesc.Height = _uHeight;
-    rSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHandle();
-    rSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    rSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    rSwapChainDescriptor.SampleDesc.Count = 1;
-    rSwapChainDescriptor.SampleDesc.Quality = 0;
-    rSwapChainDescriptor.Windowed = TRUE;
-
-    D3D_FEATURE_LEVEL lstFeatureLevels[] =
-    {
-      D3D_FEATURE_LEVEL_11_0,
-      D3D_FEATURE_LEVEL_10_1,
-      D3D_FEATURE_LEVEL_10_0,
-      D3D_FEATURE_LEVEL_9_3,
-      D3D_FEATURE_LEVEL_9_2,
-      D3D_FEATURE_LEVEL_9_1
-    };
-    uint32_t uNumFeatureLevels = ARRAYSIZE(lstFeatureLevels);
-    D3D_FEATURE_LEVEL oFeatureLevel = D3D_FEATURE_LEVEL();
-    uint32_t uFlags = 0;
-
-    // Create device and swap chain
-    return D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, uFlags, lstFeatureLevels,
-      uNumFeatureLevels, D3D11_SDK_VERSION, &rSwapChainDescriptor, &internal::Pipeline.SwapChain,
-      &global::api::Device, &oFeatureLevel, &global::api::DeviceContext);
-  }
-  // ------------------------------------
-  HRESULT CRender::InitPipeline(uint32_t _uWidth, uint32_t _uHeight)
-  {
-    // Configure viewport
-    SetViewport(_uWidth, _uHeight);
-
-    // Setup depth stencil
-    HRESULT hResult = SetupDepthStencil(_uWidth, _uHeight);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Setup deferred rendering
-    hResult = SetupDeferredRendering(_uWidth, _uHeight);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Create back buffer
-    hResult = CreateBackBuffer();
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Set standard rasterizer config
-    internal::Pipeline.RasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-    internal::Pipeline.RasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-    internal::Pipeline.RasterizerCfg.FrontCounterClockwise = false;
-    internal::Pipeline.RasterizerCfg.DepthBias = 0;
-    internal::Pipeline.RasterizerCfg.DepthBiasClamp = 0.0f;
-    internal::Pipeline.RasterizerCfg.SlopeScaledDepthBias = 0.0f;
-    internal::Pipeline.RasterizerCfg.DepthClipEnable = true;
-    internal::Pipeline.RasterizerCfg.ScissorEnable = true;
-    internal::Pipeline.RasterizerCfg.MultisampleEnable = false;
-    internal::Pipeline.RasterizerCfg.AntialiasedLineEnable = false;
-
-    // Create rasterizer
-    hResult = CreateRasterizerState(internal::Pipeline.DeferredRasterizer, internal::Pipeline.RasterizerCfg);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Set standard rasterizer config
-    D3D11_RASTERIZER_DESC rShadowRasterizer = D3D11_RASTERIZER_DESC();
-    rShadowRasterizer.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-    rShadowRasterizer.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
-    rShadowRasterizer.DepthBias = 1000;
-    rShadowRasterizer.DepthBiasClamp = 0.0f;
-    rShadowRasterizer.SlopeScaledDepthBias = 1.5f;
-    rShadowRasterizer.DepthClipEnable = true;
-    rShadowRasterizer.ScissorEnable = false;
-    rShadowRasterizer.MultisampleEnable = false;
-
-    // Create rasterizer
-    hResult = CreateRasterizerState(internal::Pipeline.ShadowsRasterizer, rShadowRasterizer);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Set standard blend state config
-    internal::Pipeline.BlendStateCfg.BlendEnable = false;
-    internal::Pipeline.BlendStateCfg.SrcBlend = D3D11_BLEND_ONE;
-    internal::Pipeline.BlendStateCfg.DestBlend = D3D11_BLEND_BLEND_FACTOR;
-    internal::Pipeline.BlendStateCfg.BlendOp = D3D11_BLEND_OP_ADD;
-    internal::Pipeline.BlendStateCfg.SrcBlendAlpha = D3D11_BLEND_ONE;
-    internal::Pipeline.BlendStateCfg.DestBlendAlpha = D3D11_BLEND_ZERO;
-    internal::Pipeline.BlendStateCfg.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    internal::Pipeline.BlendStateCfg.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
-
-    hResult = CreateBlendState(internal::Pipeline.BlendStateCfg);
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    // Update scissor
-    SetScissorRect(_uWidth, _uHeight);
-
-    return hResult;
   }
   // ------------------------------------
   HRESULT CRender::SetupDepthStencil(uint32_t _uWidth, uint32_t _uHeight)
@@ -903,6 +692,34 @@ namespace render
     return global::api::Device->CreateDepthStencilState(&rDepthStencilDesc, &internal::Pipeline.DepthStencilState);
   }
   // ------------------------------------
+  HRESULT CRender::SetupRenderers(uint32_t _uWidth, uint32_t _uHeight)
+  {
+    // Create deferred renderer
+    if (!m_pDeferredRenderer)
+    {
+      m_pDeferredRenderer = std::make_unique<CDeferredRenderer>(this);
+    }
+    HRESULT hResult = m_pDeferredRenderer->Init(_uWidth, _uHeight);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Create forward renderer
+    if (!m_pForwardRenderer)
+    {
+      m_pForwardRenderer = std::make_unique<CForwardRenderer>(this);
+    }
+
+    // Create lighting renderer
+    if (!m_pLightingRenderer)
+    {
+      m_pLightingRenderer = std::make_unique<CLightingRenderer>(this);
+    }
+
+    return S_OK;
+  }
+  // ------------------------------------
   HRESULT CRender::CreateBackBuffer()
   {
     ID3D11Texture2D* pTexture = nullptr;
@@ -921,23 +738,256 @@ namespace render
     return hResult;
   }
   // ------------------------------------
-  HRESULT CRender::CreateRasterizerState(ID3D11RasterizerState*& _pRasterizer_, const D3D11_RASTERIZER_DESC& _rRasterizerCfg)
+  HRESULT CRender::SetupPrecompiledShaders()
   {
-    // Create rasterizer state
-    global::api::SafeRelease(_pRasterizer_);
-    return global::api::Device->CreateRasterizerState(&_rRasterizerCfg, &_pRasterizer_);
+    // Forward shaders
+    internal::Pipeline.ForwardVS.Release();
+    HRESULT hResult = internal::Pipeline.ForwardVS.Init(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    internal::Pipeline.ForwardPS.Release();
+    hResult = internal::Pipeline.ForwardPS.Init(g_SimplePS, ARRAYSIZE(g_SimplePS));
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Deferred shaders
+    internal::Pipeline.DeferredVS.Release();
+    hResult = internal::Pipeline.DeferredVS.Init(g_StandardVS, ARRAYSIZE(g_StandardVS));
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    internal::Pipeline.DeferredShadowsVS.Release();
+    hResult = internal::Pipeline.DeferredShadowsVS.Init(g_ShadowsVS, ARRAYSIZE(g_ShadowsVS));
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    internal::Pipeline.DrawTriangleVS.Release();
+    hResult = internal::Pipeline.DrawTriangleVS.Init(g_DrawTriangleVS, ARRAYSIZE(g_DrawTriangleVS));
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    internal::Pipeline.DeferredGBuffer.Release();
+    hResult = internal::Pipeline.DeferredGBuffer.Init(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    internal::Pipeline.DeferredLights.Release();
+    return internal::Pipeline.DeferredLights.Init(g_LightsPS, ARRAYSIZE(g_LightsPS));
   }
   // ------------------------------------
-  HRESULT CRender::CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _rBlendState)
+  HRESULT CRender::SetupConstantBuffers()
   {
+    // Transforms buffer
+    HRESULT hResult = internal::Pipeline.CameraTransformBuffer.Init();
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+    // Light view buffer
+    hResult = internal::Pipeline.LightingViewBuffer.Init();
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+    // Material info buffer
+    return internal::Pipeline.MaterialBuffer.Init();
+  }
+  // ------------------------------------
+  HRESULT CRender::SetupRenderBuffers()
+  {
+    // Render instances buffer
+    D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
+    rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::TModelInstanceData) * render::gfx::s_uMaxInstances));
+    rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
+    rSubresourceData.pSysMem = render::gfx::s_tModelInstanceData; // Global buffer
+    global::api::SafeRelease(internal::Pipeline.RenderInstancesBuffer);
+    HRESULT hResult = global::api::Device->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &internal::Pipeline.RenderInstancesBuffer);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Primitives buffer
+    rVertexBufferDesc = D3D11_BUFFER_DESC();
+    rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::TPrimitiveInstanceData) * render::gfx::s_uMaxInstances));
+    rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+    rVertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+    rVertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+    rSubresourceData = D3D11_SUBRESOURCE_DATA();
+    rSubresourceData.pSysMem = render::gfx::s_tPrimitiveInstanceData; // Global buffer
+    global::api::SafeRelease(internal::Pipeline.PrimitiveInstancesBuffer);
+    return global::api::Device->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &internal::Pipeline.PrimitiveInstancesBuffer);
+  }
+  // ------------------------------------
+  HRESULT CRender::SetupBlendState()
+  {
+    internal::Pipeline.BlendStateCfg.BlendEnable = false;
+    internal::Pipeline.BlendStateCfg.SrcBlend = D3D11_BLEND_ONE;
+    internal::Pipeline.BlendStateCfg.DestBlend = D3D11_BLEND_BLEND_FACTOR;
+    internal::Pipeline.BlendStateCfg.BlendOp = D3D11_BLEND_OP_ADD;
+    internal::Pipeline.BlendStateCfg.SrcBlendAlpha = D3D11_BLEND_ONE;
+    internal::Pipeline.BlendStateCfg.DestBlendAlpha = D3D11_BLEND_ZERO;
+    internal::Pipeline.BlendStateCfg.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    internal::Pipeline.BlendStateCfg.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
+
     // Create blend desc
-    D3D11_BLEND_DESC oBlendDesc = D3D11_BLEND_DESC();
-    oBlendDesc.AlphaToCoverageEnable = false;
-    oBlendDesc.RenderTarget[0] = _rBlendState;
+    D3D11_BLEND_DESC rBlendDesc = D3D11_BLEND_DESC();
+    rBlendDesc.AlphaToCoverageEnable = false;
+    rBlendDesc.RenderTarget[0] = internal::Pipeline.BlendStateCfg;
 
     // Create blend state
     global::api::SafeRelease(internal::Pipeline.BlendState);
-    return global::api::Device->CreateBlendState(&oBlendDesc, &internal::Pipeline.BlendState);
+    return global::api::Device->CreateBlendState(&rBlendDesc, &internal::Pipeline.BlendState);
+  }
+  // ------------------------------------
+  HRESULT CRender::SetupRasterizers()
+  {
+    // Set standard rasterizer config
+    internal::Pipeline.RasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+    internal::Pipeline.RasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+    internal::Pipeline.RasterizerCfg.FrontCounterClockwise = false;
+    internal::Pipeline.RasterizerCfg.DepthBias = 0;
+    internal::Pipeline.RasterizerCfg.DepthBiasClamp = 0.0f;
+    internal::Pipeline.RasterizerCfg.SlopeScaledDepthBias = 0.0f;
+    internal::Pipeline.RasterizerCfg.DepthClipEnable = true;
+    internal::Pipeline.RasterizerCfg.ScissorEnable = true;
+    internal::Pipeline.RasterizerCfg.MultisampleEnable = false;
+    internal::Pipeline.RasterizerCfg.AntialiasedLineEnable = false;
+
+    // Create default rasterizer
+    HRESULT hResult = global::api::Device->CreateRasterizerState(&internal::Pipeline.RasterizerCfg, &internal::Pipeline.DefaultRasterizer);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Set standard rasterizer config
+    D3D11_RASTERIZER_DESC rShadowRasterizerCfg = D3D11_RASTERIZER_DESC();
+    rShadowRasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+    rShadowRasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+    rShadowRasterizerCfg.DepthBias = 100;
+    rShadowRasterizerCfg.DepthBiasClamp = 0.0f;
+    rShadowRasterizerCfg.SlopeScaledDepthBias = 1.5f;
+    rShadowRasterizerCfg.DepthClipEnable = true;
+    rShadowRasterizerCfg.ScissorEnable = false;
+    rShadowRasterizerCfg.MultisampleEnable = false;
+
+    // Create rasterizer
+    return global::api::Device->CreateRasterizerState(&rShadowRasterizerCfg, &internal::Pipeline.ShadowsRasterizer);
+  }
+  // ------------------------------------
+  HRESULT CRender::SetupSamplers()
+  {
+    // Linear sampler
+    D3D11_SAMPLER_DESC rSamplerDesc = D3D11_SAMPLER_DESC();
+    rSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+    rSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+    rSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    rSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+    rSamplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+    rSamplerDesc.BorderColor[0] = 0.0f;
+    rSamplerDesc.BorderColor[1] = 0.0f;
+    rSamplerDesc.BorderColor[2] = 0.0f;
+    rSamplerDesc.BorderColor[3] = 0.0f;
+    rSamplerDesc.MaxAnisotropy = 16u;
+    rSamplerDesc.MipLODBias = 0.0f;
+    rSamplerDesc.MinLOD = 0.0f;
+    rSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+    // Create simple sampler
+    global::api::SafeRelease(internal::Pipeline.LinearSampler);
+    HRESULT hResult = global::api::Device->CreateSamplerState(&rSamplerDesc, &internal::Pipeline.LinearSampler);
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Shadow sampler
+    D3D11_SAMPLER_DESC rShadowSampler = D3D11_SAMPLER_DESC();
+    rShadowSampler.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_MIP_LINEAR;
+    rShadowSampler.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    rShadowSampler.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    rShadowSampler.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    rShadowSampler.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
+    rShadowSampler.BorderColor[0] = 1.0f;
+    rShadowSampler.BorderColor[1] = 1.0f;
+    rShadowSampler.BorderColor[2] = 1.0f;
+    rShadowSampler.BorderColor[3] = 1.0f;
+    rShadowSampler.MaxAnisotropy = 1u;
+    rShadowSampler.MinLOD = 0.0f;
+    rShadowSampler.MaxLOD = 0.0f;
+
+    // Create shadow sampler
+    global::api::SafeRelease(internal::Pipeline.ShadowSampler);
+    return global::api::Device->CreateSamplerState(&rShadowSampler, &internal::Pipeline.ShadowSampler);
+  }
+  // ------------------------------------
+  HRESULT CRender::SetupLayouts()
+  {
+    // Create standard layout
+    HRESULT hResult = global::api::Device->CreateInputLayout
+    (
+      internal::s_tStandardLayout,
+      internal::s_iStandardLayoutSize,
+      g_StandardVS,
+      sizeof(g_StandardVS),
+      &internal::Pipeline.StandardLayout
+    );
+    if (FAILED(hResult))
+    {
+      return hResult;
+    }
+
+    // Create debug layout
+    return global::api::Device->CreateInputLayout
+    (
+      internal::s_tPrimitivesLayout,
+      internal::s_iPrimitiveLayoutSize,
+      g_SimpleVS,
+      sizeof(g_SimpleVS),
+      &internal::Pipeline.DebugLayout
+    );
+  }
+  // ------------------------------------
+  HRESULT CRender::SetupImGui()
+  {
+    if (!IMGUI_CHECKVERSION())
+    {
+      return E_FAIL;
+    }
+    if (!ImGui::CreateContext())
+    {
+      return E_FAIL;
+    }
+    if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHandle()))
+    {
+      return E_FAIL;
+    }
+    if (!ImGui_ImplDX11_Init(global::api::Device, global::api::DeviceContext))
+    {
+      return E_FAIL;
+    }
+
+    ImGui::StyleColorsDark();
+    return S_OK;
   }
   // ------------------------------------
   D3D_PRIMITIVE_TOPOLOGY CRender::GetTopology(render::ERenderMode _eRenderMode)
@@ -980,29 +1030,6 @@ namespace render
     rRect.right = static_cast<LONG>(_uWidth);
     rRect.bottom = static_cast<LONG>(_uHeight);
     global::api::DeviceContext->RSSetScissorRects(1, &rRect);
-  }
-  // ------------------------------------
-  bool CRender::InitImGui()
-  {
-    if (!IMGUI_CHECKVERSION())
-    {
-      return false;
-    }
-    if (!ImGui::CreateContext())
-    {
-      return false;
-    }
-    if (!ImGui_ImplWin32_Init(m_pRenderWindow->GetHandle()))
-    {
-      return false;
-    }
-    if (!ImGui_ImplDX11_Init(global::api::Device, global::api::DeviceContext))
-    {
-      return false;
-    }
-
-    ImGui::StyleColorsDark();
-    return true;
   }
   // ------------------------------------
   void CRender::BeginMarker(const wchar_t* _sMarker) const
@@ -1135,7 +1162,7 @@ namespace render
     if (uDrawableCount > 0)
     {
       const uint32_t uBuffersCount(2);
-      ID3D11Buffer* pBuffers[uBuffersCount] = { _pScene->GetModelsVB(), internal::Pipeline.InstanceBuffer };
+      ID3D11Buffer* pBuffers[uBuffersCount] = { _pScene->GetModelsVB(), internal::Pipeline.RenderInstancesBuffer };
       uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
       uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
       global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
@@ -1154,15 +1181,15 @@ namespace render
   // ------------------------------------
   void CRender::DrawModel
   (
-    const render::gfx::CModel* _pModel, 
+    const render::gfx::CModel* _pModel,
     bool _bVisible,
-    render::gfx::TDrawableInstances _lstDrawableInstances, 
+    render::gfx::TDrawableInstances _lstDrawableInstances,
     uint16_t _uInstanceCount
   )
   {
     // Push buffers
     D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-    HRESULT hResult = global::api::DeviceContext->Map(internal::Pipeline.InstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+    HRESULT hResult = global::api::DeviceContext->Map(internal::Pipeline.RenderInstancesBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error mapping buffer!");
@@ -1185,7 +1212,7 @@ namespace render
     }
 
     // Unmap
-    global::api::DeviceContext->Unmap(internal::Pipeline.InstanceBuffer, 0);
+    global::api::DeviceContext->Unmap(internal::Pipeline.RenderInstancesBuffer, 0);
 
     // Set topology
     D3D_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
@@ -1244,7 +1271,7 @@ namespace render
     if (uDrawableCount > 0)
     {
       // Set primitives global buffers
-      ID3D11Buffer* pPrimitiveBuffers[uBuffersCount] = { _pScene->GetPrimitivesVB(), internal::Pipeline.PrimitiveInstanceBuffer };
+      ID3D11Buffer* pPrimitiveBuffers[uBuffersCount] = { _pScene->GetPrimitivesVB(), internal::Pipeline.PrimitiveInstancesBuffer };
       global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pPrimitiveBuffers, lstStrides, lstOffsets);
       global::api::DeviceContext->IASetIndexBuffer(_pScene->GetPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
@@ -1259,10 +1286,10 @@ namespace render
     // Draw debug primitives
     const scene::TDebugPrimitives& lstDebugPrimitives = _pScene->GetDebugPrimitives();
     const scene::TCachedDebugPrimitives& lstCachedDebugPrimitives = _pScene->GetCachedDebugPrimitives(uDrawableCount);
-    if(uDrawableCount > 0)
+    if (uDrawableCount > 0)
     {
       // Set debug global buffers
-      ID3D11Buffer* pDebugPrimitiveBuffers[uBuffersCount] = { _pScene->GetDebugPrimitivesVB(), internal::Pipeline.PrimitiveInstanceBuffer };
+      ID3D11Buffer* pDebugPrimitiveBuffers[uBuffersCount] = { _pScene->GetDebugPrimitivesVB(), internal::Pipeline.PrimitiveInstancesBuffer };
       global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pDebugPrimitiveBuffers, lstStrides, lstOffsets);
       global::api::DeviceContext->IASetIndexBuffer(_pScene->GetDebugPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
@@ -1271,17 +1298,17 @@ namespace render
         const render::gfx::CPrimitive* pPrimitive = lstDebugPrimitives[(lstCachedDebugPrimitives[uI])];
         DrawPrimitive(pPrimitive);
       }
-
-      // Clear debug items
-      _pScene->ClearDebugItems();
     }
+
+    // Clear debug items
+    _pScene->ClearDebugItems();
   }
   // ------------------------------------
   void CRender::DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive)
   {
     // Apply Buffers
     D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-    HRESULT hResult = global::api::DeviceContext->Map(internal::Pipeline.PrimitiveInstanceBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+    HRESULT hResult = global::api::DeviceContext->Map(internal::Pipeline.PrimitiveInstancesBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error mapping buffer!");
@@ -1297,7 +1324,7 @@ namespace render
     pInstanceData[uIndex].Color = _pPrimitive->GetColor();
 
     // Unmap
-    global::api::DeviceContext->Unmap(internal::Pipeline.PrimitiveInstanceBuffer, 0);
+    global::api::DeviceContext->Unmap(internal::Pipeline.PrimitiveInstancesBuffer, 0);
 
     // Set topology
     D3D11_PRIMITIVE_TOPOLOGY eTargetTopology = GetTopology(_pPrimitive->GetRenderMode());

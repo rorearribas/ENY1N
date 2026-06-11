@@ -42,28 +42,28 @@ namespace render
 
   private:
     HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);
-
-    HRESULT SetupDeferredRendering(uint32_t _uWidth, uint32_t _uHeight);
-    HRESULT InitConstantBuffers();
-    HRESULT SetupLayouts();
-    HRESULT InitShaders();
+    HRESULT CreateDevice(uint32_t _uWidth, uint32_t _uHeight);
+    HRESULT InitBasicPipeline(uint32_t _uWidth, uint32_t _uHeight);
 
   private:
-    HRESULT CreateDevice(uint32_t _uWidth, uint32_t _uHeight);
-    HRESULT InitPipeline(uint32_t _uWidth, uint32_t _uHeight);
-
     HRESULT SetupDepthStencil(uint32_t _uWidth, uint32_t _uHeight);
+    HRESULT SetupRenderers(uint32_t _uWidth, uint32_t _uHeight);
     HRESULT CreateBackBuffer();
 
-    HRESULT CreateRasterizerState(ID3D11RasterizerState*& _pRasterizer_, const D3D11_RASTERIZER_DESC& _rRasterizerCfg);
-    HRESULT CreateBlendState(const D3D11_RENDER_TARGET_BLEND_DESC& _rBlendState);
-
-    D3D_PRIMITIVE_TOPOLOGY GetTopology(render::ERenderMode _eRenderMode);
+  private:
+    HRESULT SetupPrecompiledShaders();
+    HRESULT SetupConstantBuffers();
+    HRESULT SetupRenderBuffers();
+    HRESULT SetupBlendState();
+    HRESULT SetupRasterizers();
+    HRESULT SetupSamplers();
+    HRESULT SetupLayouts();
+    HRESULT SetupImGui();
 
   private:
+    D3D_PRIMITIVE_TOPOLOGY GetTopology(render::ERenderMode _eRenderMode);
     void SetViewport(uint32_t _uWidth, uint32_t _uHeight);
     void SetScissorRect(uint32_t _uWidth, uint32_t _uHeight);
-    bool InitImGui();
 
     void BeginMarker(const wchar_t* _sMarker) const;
     void EndMarker() const;
@@ -73,7 +73,7 @@ namespace render
     void DrawOpaqueModels(scene::CRenderScene* _pScene);
     void ComputeGBuffer(scene::CRenderScene* _pScene);
 
-    void DrawModels(scene::CRenderScene* _pScene); 
+    void DrawModels(scene::CRenderScene* _pScene);
     void DrawModel(const render::gfx::CModel* _pModel, bool _bVisible, render::gfx::TDrawableInstances _lstDrawableInstances, uint16_t _uInstanceCount);
 
     void DrawPrimitives(scene::CRenderScene* _pScene);
