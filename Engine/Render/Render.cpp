@@ -1183,7 +1183,7 @@ namespace render
   (
     const render::gfx::CModel* _pModel,
     bool _bVisible,
-    render::gfx::TDrawableInstances _lstDrawableInstances,
+    const render::gfx::TDrawableInstances& _lstDrawableInstances,
     uint16_t _uInstanceCount
   )
   {

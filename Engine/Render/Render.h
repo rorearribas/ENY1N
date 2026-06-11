@@ -74,7 +74,7 @@ namespace render
     void ComputeGBuffer(scene::CRenderScene* _pScene);
 
     void DrawModels(scene::CRenderScene* _pScene);
-    void DrawModel(const render::gfx::CModel* _pModel, bool _bVisible, render::gfx::TDrawableInstances _lstDrawableInstances, uint16_t _uInstanceCount);
+    void DrawModel(const render::gfx::CModel* _pModel, bool _bVisible, const render::gfx::TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
 
     void DrawPrimitives(scene::CRenderScene* _pScene);
     void DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive);
