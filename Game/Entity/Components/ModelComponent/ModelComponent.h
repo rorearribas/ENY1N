@@ -31,7 +31,9 @@ namespace game
     void SetScl(const math::CVector3& _v3Scl);
     math::CVector3 GetScale() const;
 
+#ifdef _DEBUG
     virtual void DrawDebug() override;
+#endif
 
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;

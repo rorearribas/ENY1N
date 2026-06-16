@@ -1,6 +1,8 @@
 #pragma once
 #include "Renderer.h"
 
+namespace scene { class CRenderScene; }
+
 namespace render
 {
   class CLightingRenderer : public IRenderer
@@ -9,6 +11,9 @@ namespace render
     CLightingRenderer(CRender* _pRender) : IRenderer(_pRender) {}
     ~CLightingRenderer() {}
 
+    void Execute(scene::CRenderScene* _pRenderScene) override;
+
+  private:
   };
 }
 

@@ -89,7 +89,7 @@ namespace scene
     if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {
       return utils::CWeakPtr<render::lights::CPointLight>();
-    }    
+    }
     utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes[_uSceneIndex];
 #ifdef _DEBUG
     assert(pScene.IsValid());
@@ -112,7 +112,7 @@ namespace scene
   // ------------------------------------
   bool CSceneManager::DestroyLight(utils::CWeakPtr<render::lights::CLight> _wpLight, uint32_t _uSceneIndex)
   {
-    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1)) 
+    if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {
       return false;
     }
@@ -123,6 +123,7 @@ namespace scene
     return pScene->DestroyLight(_wpLight);
   }
   // ------------------------------------
+#ifdef _DEBUG
   void CSceneManager::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
     float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
   {
@@ -163,6 +164,7 @@ namespace scene
       m_pCurrentScene->DrawLine(_v3Start, _v3Dest, _v3Color);
     }
   }
+#endif
   // ------------------------------------
   void CSceneManager::Setup()
   {

@@ -49,7 +49,68 @@ namespace game
     }
   }
   // ------------------------------------
-  void CEntity::DrawDebug()
+  void CEntity::SetPos(const math::CVector3& _v3Pos)
+  {
+    m_oTransform.SetPos(_v3Pos);
+
+    // Notify to components
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
+    {
+      m_lstComponents[uI]->OnPositionChanged(_v3Pos);
+    }
+  }
+  // ------------------------------------
+  void CEntity::SetRot(const math::CVector3& _v3Rot)
+  {
+    m_oTransform.SetRot(_v3Rot);
+
+    // Notify to components
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
+    {
+      m_lstComponents[uI]->OnRotationChanged(_v3Rot);
+    }
+  }
+  // ------------------------------------
+  void CEntity::SetScl(const math::CVector3& _v3Scl)
+  {
+    m_oTransform.SetScl(_v3Scl);
+
+    // Notify to components
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
+    {
+      m_lstComponents[uI]->OnScaleChanged(_v3Scl);
+    }
+  }
+  // ------------------------------------
+  void CEntity::OnCollisionEnter(const collision::THitEvent& _oHitEvent)
+  {
+    // Notify to components
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
+    {
+      m_lstComponents[uI]->OnCollisionEnter(_oHitEvent);
+    }
+  }
+  // ------------------------------------
+  void CEntity::OnCollisionStay(const collision::THitEvent& _oHitEvent)
+  {
+    // Notify to components
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
+    {
+      m_lstComponents[uI]->OnCollisionStay(_oHitEvent);
+    }
+  }
+  // ------------------------------------
+  void CEntity::OnCollisionExit(const collision::THitEvent& _oHitEvent)
+  {
+    // Notify to components
+    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
+    {
+      m_lstComponents[uI]->OnCollisionExit(_oHitEvent);
+    }
+  }
+  // ------------------------------------
+#ifdef ENABLE_IMGUI
+  void CEntity::ShowGizmo()
   {
     // Begin
     ImGui::Begin(m_sEntityName.c_str());
@@ -116,21 +177,21 @@ namespace game
       // Apply modifications
       switch (s_eGizmoOperation)
       {
-        case ImGuizmo::TRANSLATE:
-        {
-          SetPos(mMatrix.GetTranslate());
-        }
-        break;
-        case ImGuizmo::ROTATE:
-        {
-          SetRot(mMatrix.GetRotation());
-        }
-        break;
-        case ImGuizmo::SCALE:
-        {
-          SetScl(mMatrix.GetScale());
-        }
-        break;
+      case ImGuizmo::TRANSLATE:
+      {
+        SetPos(mMatrix.GetTranslate());
+      }
+      break;
+      case ImGuizmo::ROTATE:
+      {
+        SetRot(mMatrix.GetRotation());
+      }
+      break;
+      case ImGuizmo::SCALE:
+      {
+        SetScl(mMatrix.GetScale());
+      }
+      break;
       }
     }
 
@@ -159,6 +220,18 @@ namespace game
       }
     }
 
+    // End
+    ImGui::End();
+  }
+
+#endif // ENABLE_GIZMO
+  // ------------------------------------
+#ifdef _DEBUG
+  void CEntity::DrawDebug()
+  {
+    // Begin
+    ImGui::Begin(m_sEntityName.c_str());
+
     // Draw debug on components
     for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
     {
@@ -166,68 +239,10 @@ namespace game
       m_lstComponents[uI]->DrawDebug();
     }
 
+    // End
     ImGui::End();
   }
-  // ------------------------------------
-  void CEntity::SetPos(const math::CVector3& _v3Pos)
-  {
-    m_oTransform.SetPos(_v3Pos);
-
-    // Notify to components
-    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
-    {
-      m_lstComponents[uI]->OnPositionChanged(_v3Pos);
-    }
-  }
-  // ------------------------------------
-  void CEntity::SetRot(const math::CVector3& _v3Rot)
-  {
-    m_oTransform.SetRot(_v3Rot);
-
-    // Notify to components
-    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
-    {
-      m_lstComponents[uI]->OnRotationChanged(_v3Rot);
-    }
-  }
-  // ------------------------------------
-  void CEntity::SetScl(const math::CVector3& _v3Scl)
-  {
-    m_oTransform.SetScl(_v3Scl);
-
-    // Notify to components
-    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
-    {
-      m_lstComponents[uI]->OnScaleChanged(_v3Scl);
-    }
-  }
-  // ------------------------------------
-  void CEntity::OnCollisionEnter(const collision::THitEvent& _oHitEvent)
-  {
-    // Notify to components
-    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
-    {
-      m_lstComponents[uI]->OnCollisionEnter(_oHitEvent);
-    }
-  }
-  // ------------------------------------
-  void CEntity::OnCollisionStay(const collision::THitEvent& _oHitEvent)
-  {
-    // Notify to components
-    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
-    {
-      m_lstComponents[uI]->OnCollisionStay(_oHitEvent);
-    }
-  }
-  // ------------------------------------
-  void CEntity::OnCollisionExit(const collision::THitEvent& _oHitEvent)
-  {
-    // Notify to components
-    for (uint16_t uI = 0; uI < m_lstComponents.GetSize(); uI++)
-    {
-      m_lstComponents[uI]->OnCollisionExit(_oHitEvent);
-    }
-  }
+#endif
   // ------------------------------------
   void CEntity::Clear()
   {

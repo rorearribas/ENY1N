@@ -6,12 +6,12 @@ namespace math
   class CPlane
   {
   public:
-    CPlane() : m_v3Point(math::CVector3::Zero), m_v3Normal(math::CVector3::Zero) {}
-    CPlane(const math::CVector3& _v3Pos, const math::CVector3& _v3Normal) : m_v3Point(_v3Pos), m_v3Normal(_v3Normal) {}
+    CPlane() : m_v3Origin(math::CVector3::Zero), m_v3Normal(math::CVector3::Zero) {}
+    CPlane(const math::CVector3& _v3Pos, const math::CVector3& _v3Normal) : m_v3Origin(_v3Pos), m_v3Normal(_v3Normal) {}
     ~CPlane() {}
 
-    inline void SetPos(const math::CVector3& _v3Pos) { m_v3Point = _v3Pos; }
-    inline const math::CVector3& GetPos() const { return m_v3Point; }
+    inline void SetPos(const math::CVector3& _v3Pos) { m_v3Origin = _v3Pos; }
+    inline const math::CVector3& GetPos() const { return m_v3Origin; }
     inline void SetNormal(const math::CVector3& _v3Normal) { m_v3Normal = math::CVector3::Normalize(_v3Normal); }
     inline const math::CVector3& GetNormal() const { return m_v3Normal; }
 
@@ -20,7 +20,7 @@ namespace math
     static float DistanceToPoint(const math::CPlane& _oPlane, const math::CVector3& _v3Point);
 
   private:
-    math::CVector3 m_v3Point;
+    math::CVector3 m_v3Origin;
     math::CVector3 m_v3Normal;
   };
 }

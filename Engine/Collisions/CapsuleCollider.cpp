@@ -78,6 +78,7 @@ namespace collision
     RecalculateCollider();
   }
   // ------------------------------------
+#ifdef _DEBUG
   void CCapsuleCollider::DrawDebug()
   {
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
@@ -100,6 +101,7 @@ namespace collision
       render::ERenderMode::WIREFRAME
     );
   }
+#endif
   // ------------------------------------
   bool CCapsuleCollider::IntersectRay(const physics::CRay& _oRay, THitEvent& _oHitEvent_, const float& _fMaxDistance)
   {

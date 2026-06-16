@@ -88,7 +88,7 @@ int main()
 
   //Create directional light
   game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
-  game::CLightComponent* pDirComp =  pDirectionalLight->RegisterComponent<game::CLightComponent>();
+  game::CLightComponent* pDirComp = pDirectionalLight->RegisterComponent<game::CLightComponent>();
   pDirComp->CreateLight(render::ELight::DIRECTIONAL_LIGHT);
 
   game::CEntity* pSpotLight = pGameManager->CreateEntity("SpotLight");
@@ -174,6 +174,7 @@ int main()
       float fOffset = math::Clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
       m_fFixedDeltaAccumulator += fOffset;
 
+#ifdef _DEBUG
       if (bThrowRay)
       {
         // Draw line
@@ -181,7 +182,7 @@ int main()
         const float fMaxDistance(100);
 
         physics::CRay oRay(v3Pos, math::CVector3::Forward);
-        oRay.DrawRay(fMaxDistance, math::CVector3::Right);
+        oRay.DrawDebug(fMaxDistance, math::CVector3::Right);
 
         // Throw ray
         std::vector<collision::THitEvent> lstHits;
@@ -193,6 +194,7 @@ int main()
           }
         }
       }
+#endif
 
       // Update
       while (m_fFixedDeltaAccumulator >= fFixedDelta)
@@ -269,7 +271,7 @@ int main()
       uint32_t uWidth, uHeight;
       pRender->GetRenderWindow()->GetWindowSize(uWidth, uHeight);
       ImGui::SetNextWindowPos(ImVec2(static_cast<float>(uWidth - 160.0f), 30.0f));
-      if (ImGui::Begin("Watermark", nullptr, iFlags)) 
+      if (ImGui::Begin("Watermark", nullptr, iFlags))
       {
         ImGui::Text("ENY1N | FPS: %.1f", ImGui::GetIO().Framerate);
       }

@@ -18,12 +18,14 @@ namespace collision
     lstExtents[7] = m_v3Max;
   }
   // ------------------------------------
+#ifdef _DEBUG
   void CAABB::DrawDebug(math::CVector3 _v3Color) const
   {
     // Draw cube
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     pEngine->DrawCube(GetCenter(), math::CVector3::Zero, GetSize(), _v3Color, render::ERenderMode::WIREFRAME);
   }
+#endif
   // ------------------------------------
   void ComputeLocalAABB(const std::vector<math::CVector3>& _lstVertices, CAABB& _rLocalAABB_)
   {

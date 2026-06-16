@@ -14,7 +14,7 @@ namespace collision
   }
   // ------------------------------------
   CBoxCollider::CBoxCollider(void* _pOwner) : CCollider(collision::EColliderType::BOX_COLLIDER, _pOwner),
-  m_bOBB(false)
+    m_bOBB(false)
   {
     ComputeMinMax();
     ComputeExtents();
@@ -33,22 +33,22 @@ namespace collision
 #endif // DEBUG
     switch (eColliderType)
     {
-      case EColliderType::BOX_COLLIDER:
-      {
-        const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
+    case EColliderType::BOX_COLLIDER:
+    {
+      const CBoxCollider& oBoxCollider = static_cast<const CBoxCollider&>(_oCollider);
 #ifdef _DEBUG
-        assert(&oBoxCollider);
+      assert(&oBoxCollider);
 #endif // DEBUG
-        return IsOBB() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckAABBCollision(&oBoxCollider, _oHitEvent_);
-      }
-      case EColliderType::SPHERE_COLLIDER:
-      {
-        const CSphereCollider& oSphereCollider = static_cast<const CSphereCollider&>(_oCollider);
+      return IsOBB() ? CheckOBBCollision(&oBoxCollider, _oHitEvent_) : CheckAABBCollision(&oBoxCollider, _oHitEvent_);
+    }
+    case EColliderType::SPHERE_COLLIDER:
+    {
+      const CSphereCollider& oSphereCollider = static_cast<const CSphereCollider&>(_oCollider);
 #ifdef _DEBUG
-        assert(&oSphereCollider);
+      assert(&oSphereCollider);
 #endif // DEBUG
-        return IsOBB() ? CheckOBBSphereCollision(&oSphereCollider, _oHitEvent_) : CheckSphereCollision(&oSphereCollider, _oHitEvent_);
-      }
+      return IsOBB() ? CheckOBBSphereCollision(&oSphereCollider, _oHitEvent_) : CheckSphereCollision(&oSphereCollider, _oHitEvent_);
+    }
     }
     return false;
   }
@@ -337,6 +337,7 @@ namespace collision
     m_v3Max = GetPos() + v3HalfSize;
   }
   // ------------------------------------
+#ifdef _DEBUG
   void CBoxCollider::DrawDebug()
   {
     // Draw cube
@@ -351,4 +352,5 @@ namespace collision
       pEngine->DrawSphere(v3Pos, internal_box_collider::s_fDebugRadius * fMagnitude, 8, 8, math::CVector3::One, render::ERenderMode::WIREFRAME);
     }
   }
+#endif
 }

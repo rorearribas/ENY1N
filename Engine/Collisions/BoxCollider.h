@@ -36,7 +36,9 @@ namespace collision
     inline const math::CVector3& GetUpAxis() const { return m_v3Up; }
     inline const math::CVector3& GetForwardAxis() const { return m_v3Forward; }
 
+#ifdef _DEBUG
     virtual void DrawDebug() override;
+#endif
 
   private:
     bool CheckOBBCollision(const CBoxCollider* _pOther, THitEvent& _oHitEvent_) const;

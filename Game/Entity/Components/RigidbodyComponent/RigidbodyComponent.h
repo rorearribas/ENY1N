@@ -25,7 +25,10 @@ namespace game
     virtual void OnCollisionEnter(const collision::THitEvent&) override;
     virtual void OnCollisionStay(const collision::THitEvent&) override;
     virtual void OnCollisionExit(const collision::THitEvent&) override;
+
+#ifdef _DEBUG
     virtual void DrawDebug() override;
+#endif
 
   private:
     void Clean();
@@ -34,5 +37,9 @@ namespace game
 
   private:
     utils::CWeakPtr<physics::CRigidbody> m_pRigidbody;
+
+#ifdef _DEBUG
+    math::CVector3 m_v3DebugForce = math::CVector3::Zero;
+#endif
   };
 }

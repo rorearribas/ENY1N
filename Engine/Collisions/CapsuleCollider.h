@@ -32,7 +32,9 @@ namespace collision
     inline const math::CVector3& GetOrientedAxis() const { return m_v3OrientedAxis; }
     inline void SetOrientedAxis(math::CVector3 _v3Axis) { m_v3OrientedAxis = _v3Axis; }
 
+#ifdef _DEBUG
     virtual void DrawDebug() override;
+#endif // _DEBUG
 
   private:
     bool CheckCapsuleCollision(const CCapsuleCollider* _pOther, THitEvent& _oHitEvent_) const;

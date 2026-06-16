@@ -15,7 +15,7 @@ namespace game
   void CGameManager::Update(float _fDeltaTime)
   {
     static int iSelectedIdx = -1;
-#ifdef DEBUG_MODE
+#ifdef ENABLE_IMGUI
     static std::vector<std::string> lstDeleteActors = {};
     ImGui::Begin("Entity Selector");
 
@@ -51,14 +51,17 @@ namespace game
     {
       CEntity& rEntity = m_lstEntitiesList.at(uIndex);
       rEntity.Update(_fDeltaTime);
-#ifdef DEBUG_MODE
       if (uIndex == static_cast<uint32_t>(iSelectedIdx))
       {
+#ifdef ENABLE_IMGUI
         ImGui::PushID(uIndex);
+        rEntity.ShowGizmo();
+#ifdef _DEBUG
         rEntity.DrawDebug();
-        ImGui::PopID();
-      }
 #endif
+        ImGui::PopID();
+#endif // ENABLE_GIZMO
+      }
     }
   }
   // ------------------------------------

@@ -199,6 +199,7 @@ namespace game
   {
     return m_pOwner->GetScl();
   }
+#ifdef _DEBUG
   // ------------------------------------
   void CModelComponent::DrawDebug()
   {
@@ -215,6 +216,7 @@ namespace game
       ImGui::InputFloat3("Color", fColor);
       ImGui::Separator();
       m_wpPrimitive->SetColor(math::CVector3(fColor[0], fColor[1], fColor[2]));
-    } 
+    }
   }
+#endif
 }

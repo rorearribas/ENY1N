@@ -79,12 +79,12 @@ namespace render
     m_bHasBeenUpdated = false;
   }
   // ------------------------------------
-  bool CCamera::IsOnFrustum(const collision::CAABB& _oBoundingBox) const
+  bool CCamera::IsOnFrustum(const collision::CAABB& _rBoundingBox) const
   {
-    const math::CVector3& v3Center = _oBoundingBox.GetCenter();
-    const math::CVector3& v3HalfExtents = _oBoundingBox.GetHalfSize();
+    const math::CVector3& v3Center = _rBoundingBox.GetCenter();
+    const math::CVector3& v3HalfExtents = _rBoundingBox.GetHalfSize();
 
-    for (uint32_t uIndex = 0; uIndex < s_uFrustumPlanes; ++uIndex)
+    for (uint32_t uIndex = 0; uIndex < s_uFrustumPlanes; uIndex++)
     {
       const math::CPlane& rPlane = m_oPlanes[uIndex];
       const math::CVector3& v3Normal = rPlane.GetNormal();

@@ -13,10 +13,12 @@ namespace physics
     return _oRay.CalculatePoint(_fDist);
   }
   // ------------------------------------
-  void CRay::DrawRay(float _fDist, const math::CVector3& _v3Color)
+#ifdef _DEBUG
+  void CRay::DrawDebug(float _fDist, const math::CVector3& _v3Color)
   {
     math::CVector3 v3TargetPos = CalculatePoint(_fDist);
     engine::CEngine::GetInstance()->DrawLine(m_v3Origin, v3TargetPos, _v3Color);
   }
+#endif
 }
 

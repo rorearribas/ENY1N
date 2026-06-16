@@ -24,10 +24,10 @@ namespace game
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
     switch (_eLightType)
     {
-      case render::ELight::DIRECTIONAL_LIGHT: { m_pLight = pEngine->CreateDirectionalLight(); } break;
-      case render::ELight::POINT_LIGHT: { m_pLight = pEngine->CreatePointLight(); } break;
-      case render::ELight::SPOT_LIGHT: { m_pLight = pEngine->CreateSpotLight(); } break;
-      default: break;
+    case render::ELight::DIRECTIONAL_LIGHT: { m_pLight = pEngine->CreateDirectionalLight(); } break;
+    case render::ELight::POINT_LIGHT: { m_pLight = pEngine->CreatePointLight(); } break;
+    case render::ELight::SPOT_LIGHT: { m_pLight = pEngine->CreateSpotLight(); } break;
+    default: break;
     }
   }
   // ------------------------------------
@@ -53,6 +53,7 @@ namespace game
     }
   }
   // ------------------------------------
+#ifdef _DEBUG
   void CLightComponent::DrawDebug()
   {
     if (!m_pLight.IsValid())
@@ -149,5 +150,5 @@ namespace game
       break;
     }
   }
-  // ------------------------------------
+#endif
 }

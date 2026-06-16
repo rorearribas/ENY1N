@@ -25,7 +25,9 @@ namespace collision
     inline math::CVector3 GetHalfSize() const { return math::CVector3(m_v3Max - m_v3Min) * 0.5f; }
     inline math::CVector3 GetSize() const { return math::CVector3(m_v3Max - m_v3Min); }
 
+#ifdef _DEBUG
     void DrawDebug(math::CVector3 _v3Color = math::CVector3::Right) const;
+#endif
 
   private:
     math::CVector3 m_v3Min = math::CVector3::Zero;

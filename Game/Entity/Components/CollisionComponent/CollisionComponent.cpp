@@ -91,6 +91,7 @@ namespace game
     }
   }
   // ------------------------------------
+#ifdef _DEBUG
   void CCollisionComponent::DrawDebug()
   {
     ImGui::Spacing();
@@ -195,6 +196,7 @@ namespace game
       m_pCollider->DrawDebug();
     }
   }
+#endif
 }
 
 

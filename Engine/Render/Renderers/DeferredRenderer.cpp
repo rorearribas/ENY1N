@@ -1,4 +1,6 @@
 #include "DeferredRenderer.h"
+#include "Engine/Render/Render.h"
+#include "Engine/Scenes/RenderScene.h"
 
 namespace render
 {
@@ -17,6 +19,18 @@ namespace render
   HRESULT CDeferredRenderer::Init(uint32_t _uWidth, uint32_t _uHeight)
   {
     return SetupRenderTargets(_uWidth, _uHeight);
+  }
+  // ------------------------------------
+  void CDeferredRenderer::Execute(scene::CRenderScene* /*_pRenderScene*/)
+  {
+    //// Cache models using render camera
+    //_pRenderScene->CacheModels(m_pRenderCamera);
+
+    //// Compute GBuffer pass
+    //m_pRender->ComputeGBuffer(_pRenderScene);
+
+    //// Compute lighting pass
+    //m_pRender->ComputeLightingPass(_pRenderScene);
   }
   // ------------------------------------
   void CDeferredRenderer::AttachRenderTargets(ID3D11DepthStencilView* _pDepthStencilView)

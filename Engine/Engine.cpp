@@ -104,6 +104,7 @@ namespace engine
 #endif // DEBUG
     return m_pSceneManager->DestroyLight(_wpLight);
   }
+#ifdef _DEBUG
   // ------------------------------------
   void CEngine::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
     float _fRadius, float _fHeight, int _iSubvH, int _iSubvV, render::ERenderMode _eRenderMode)
@@ -130,6 +131,7 @@ namespace engine
   {
     m_pSceneManager->DrawLine(_v3Start, _v3Dest, _v3Color);
   }
+#endif
   // ------------------------------------
   void CEngine::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
   {

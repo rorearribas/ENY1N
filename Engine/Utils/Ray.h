@@ -16,9 +16,12 @@ namespace physics
     inline void SetDir(const math::CVector3& _v3Dir) { m_v3Dir = math::CVector3::Normalize(_v3Dir); }
     inline const math::CVector3& GetDir() const { return m_v3Dir; }
 
-    void DrawRay(float _fDist, const math::CVector3& _v3Color);
     math::CVector3 CalculatePoint(float _fDist) const;
     static math::CVector3 CalculatePoint(const CRay& _oRay, float _fDist);
+
+#ifdef _DEBUG
+    void DrawDebug(float _fDist, const math::CVector3& _v3Color);
+#endif
 
   private:
     math::CVector3 m_v3Origin;

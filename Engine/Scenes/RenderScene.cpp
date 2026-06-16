@@ -59,6 +59,7 @@ namespace scene
       return hResult;
     }
 
+#ifdef _DEBUG
     // Create vertex buffer by debug primitives
     rVertexBufferDesc.ByteWidth = MAX_PRIMITIVES_VB_SIZE;
     m_oDebugPrimitivesVB.Init(rVertexBufferDesc);
@@ -76,6 +77,7 @@ namespace scene
       ERROR_LOG("Error creating index buffer!");
       return hResult;
     }
+#endif
 
     return hResult;
   }
@@ -171,37 +173,6 @@ namespace scene
     return m_lstCachedPrimitives;
   }
   // ------------------------------------
-  void CRenderScene::CacheDebugPrimitives(render::CCamera* _pCamera)
-  {
-    // Reset value
-    m_uDrawableDebugPrimitives = 0;
-
-    for (uint16_t uI = 0; uI < m_lstDebugPrimitives.GetSize(); uI++)
-    {
-      // Handle debug primitive
-      render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugPrimitives[uI];
-      uint16_t& uCachedIdx = m_lstCachedDebugPrimitives[m_uDrawableDebugPrimitives];
-
-      bool bOnFrustum = true;
-      if (pDebugPrimitive->IsCullEnabled()) // Check culling
-      {
-        bOnFrustum = _pCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
-      }
-
-      if (bOnFrustum)
-      {
-        uCachedIdx = uI;
-        m_uDrawableDebugPrimitives++;
-      }
-    }
-  }
-  // ------------------------------------
-  const scene::TCachedDebugPrimitives& CRenderScene::GetCachedDebugPrimitives(uint16_t& _uDrawableCount_) const
-  {
-    _uDrawableCount_ = m_uDrawableDebugPrimitives;
-    return m_lstCachedDebugPrimitives;
-  }
-  // ------------------------------------
   utils::CWeakPtr<render::gfx::CPrimitive> const CRenderScene::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
   {
     if (m_lstPrimitives.GetSize() >= m_lstPrimitives.GetMaxSize())
@@ -253,13 +224,6 @@ namespace scene
   bool CRenderScene::DestroyPrimitive(utils::CWeakPtr<render::gfx::CPrimitive> _pPrimitive_)
   {
     return m_lstPrimitives.Remove(_pPrimitive_);
-  }
-  // ------------------------------------
-  void CRenderScene::ClearDebugItems()
-  {
-    m_oDebugPrimitivesVB.ResetOffset();
-    m_oDebugPrimitivesIB.ResetOffset();
-    m_lstDebugPrimitives.Clear();
   }
   // ------------------------------------
   utils::CWeakPtr<render::gfx::CModel> const CRenderScene::LoadModel(const char* _sModelPath)
@@ -364,13 +328,13 @@ namespace scene
     uint16_t uCount = 0;
     render::gfx::TMeshes& lstMeshes = _wpModel_->GetMeshes(uCount);
 
-    uint32_t uIdxDisplacement = 0; 
+    uint32_t uIdxDisplacement = 0;
     size_t tIndex = (uCount - 1);
     render::gfx::TMeshes::reverse_iterator it = lstMeshes.rbegin();
     for (; it != lstMeshes.rend(); ++it, --tIndex)
     {
       const CBufferHandler& rBufferHandler = it->GetIdxBufferHandler();
-      if(rBufferHandler.GetOffset() <= 0) continue;
+      if (rBufferHandler.GetOffset() <= 0) continue;
 
       uint32_t uDisplacement = 0;
       m_oModelsIB.Free(rBufferHandler, uDisplacement);
@@ -421,6 +385,38 @@ namespace scene
   bool CRenderScene::DestroyLight(utils::CWeakPtr<render::lights::CLight> _wpLight)
   {
     return m_oLightManager.DestroyLight(_wpLight);
+  }
+  // ------------------------------------
+#ifdef _DEBUG
+  void CRenderScene::CacheDebugPrimitives(render::CCamera* _pCamera)
+  {
+    // Reset value
+    m_uDrawableDebugPrimitives = 0;
+
+    for (uint16_t uI = 0; uI < m_lstDebugPrimitives.GetSize(); uI++)
+    {
+      // Handle debug primitive
+      render::gfx::CPrimitive* pDebugPrimitive = m_lstDebugPrimitives[uI];
+      uint16_t& uCachedIdx = m_lstCachedDebugPrimitives[m_uDrawableDebugPrimitives];
+
+      bool bOnFrustum = true;
+      if (pDebugPrimitive->IsCullEnabled()) // Check culling
+      {
+        bOnFrustum = _pCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
+      }
+
+      if (bOnFrustum)
+      {
+        uCachedIdx = uI;
+        m_uDrawableDebugPrimitives++;
+      }
+    }
+  }
+  // ------------------------------------
+  const scene::TCachedDebugPrimitives& CRenderScene::GetCachedDebugPrimitives(uint16_t& _uDrawableCount_) const
+  {
+    _uDrawableCount_ = m_uDrawableDebugPrimitives;
+    return m_lstCachedDebugPrimitives;
   }
   // ------------------------------------
   void CRenderScene::DrawCapsule(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Color,
@@ -571,7 +567,7 @@ namespace scene
     collision::CAABB rAABB = collision::CAABB();
     collision::ComputeLocalAABB(rPrimitiveData.Vertices, rAABB);
     pPrimitive->SetLocalAABB(rAABB);
-  
+
     // Setup
     pPrimitive->SetRenderMode(_eRenderMode);
     pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
@@ -683,21 +679,35 @@ namespace scene
     pPrimitive->SetColor(_v3Color);
   }
   // ------------------------------------
+  void CRenderScene::ClearDebugItems()
+  {
+    m_oDebugPrimitivesVB.ResetOffset();
+    m_oDebugPrimitivesIB.ResetOffset();
+    m_lstDebugPrimitives.Clear();
+  }
+#endif
+  // ------------------------------------
   void CRenderScene::Clear()
   {
     // Clear vertex buffers
     m_oModelsVB.Release();
     m_oPrimitivesVB.Release();
+#ifdef _DEBUG
     m_oDebugPrimitivesVB.Release();
+#endif
 
     // Clear index buffers
     m_oModelsIB.Release();
     m_oPrimitivesIB.Release();
+#ifdef _DEBUG
     m_oDebugPrimitivesIB.Release();
+#endif
 
     // Flush items
     m_lstModels.Clear();
     m_lstPrimitives.Clear();
+#ifdef _DEBUG
     m_lstDebugPrimitives.Clear();
+#endif
   }
 }

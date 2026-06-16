@@ -2,6 +2,8 @@
 #include "Engine/Render/Resources/RenderTarget.h"
 #include "Renderer.h"
 
+namespace scene { class CRenderScene; }
+
 namespace render
 {
   class CDeferredRenderer : public IRenderer
@@ -11,6 +13,7 @@ namespace render
     ~CDeferredRenderer() {}
 
     HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);
+    void Execute(scene::CRenderScene* _pRenderScene) override;
 
     void DrawOpaques(void) {}
     void ComputeGraphicsBuffer(void) {}

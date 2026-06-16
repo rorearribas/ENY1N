@@ -26,6 +26,8 @@ namespace render
     void PrepareFrame();
     void Draw(scene::CRenderScene* _pScene);
 
+	public:
+
     inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow.get(); }
     inline void SetRenderCamera(render::CCamera* _pCamera) { m_pRenderCamera = _pCamera; }
     inline void SetShadowCamera(render::CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
@@ -33,6 +35,9 @@ namespace render
     inline void ShowRenderWindow(bool _bStatus) { m_pRenderWindow->SetEnabled(_bStatus); }
     void SetFillMode(D3D11_FILL_MODE _eFillMode);
     void PushMaterial(const render::mat::CMaterial* _pMaterial);
+
+    void BeginMarker(const wchar_t* _sMarker) const;
+    void EndMarker() const;
 
     inline void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
     inline bool IsVSyncEnabled() const { return m_bVerticalSync; }
@@ -65,13 +70,11 @@ namespace render
     void SetViewport(uint32_t _uWidth, uint32_t _uHeight);
     void SetScissorRect(uint32_t _uWidth, uint32_t _uHeight);
 
-    void BeginMarker(const wchar_t* _sMarker) const;
-    void EndMarker() const;
-
   private:
     // Deferred
-    void DrawOpaqueModels(scene::CRenderScene* _pScene);
     void ComputeGBuffer(scene::CRenderScene* _pScene);
+    void ComputeShadowMapping(scene::CRenderScene* _pScene);
+    void ComputeLightingPass(scene::CRenderScene* _pScene);
 
     void DrawModels(scene::CRenderScene* _pScene);
     void DrawModel(const render::gfx::CModel* _pModel, bool _bVisible, const render::gfx::TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);

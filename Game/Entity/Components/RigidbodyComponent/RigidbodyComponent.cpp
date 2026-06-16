@@ -138,11 +138,12 @@ namespace game
     }
   }
   // ------------------------------------
+#ifdef _DEBUG
   void CRigidbodyComponent::DrawDebug()
   {
     ImGui::Spacing();
     std::string sOwnerName = GetOwner() ? GetOwner()->GetName() : std::string();
-    if (!m_pRigidbody.IsValid()) 
+    if (!m_pRigidbody.IsValid())
     {
       return;
     }
@@ -153,15 +154,26 @@ namespace game
     bool bKinematic = GetRigidbodyType() == physics::ERigidbodyType::KINEMATIC;
     ImGui::Checkbox("Kinematic", &bKinematic);
 
-    // Apply
-    if (m_pRigidbody.IsValid())
+    float fSetForce[3] = { m_v3DebugForce.x, m_v3DebugForce.y, m_v3DebugForce.z };
+    ImGui::InputFloat3("Set Force", fSetForce);
+    m_v3DebugForce = math::CVector3(fSetForce[0], fSetForce[1], fSetForce[2]);
+
+    ImGui::SameLine();
+    if (ImGui::Button("Apply Force"))
     {
-      physics::ERigidbodyType eRbType = bKinematic ? physics::ERigidbodyType::KINEMATIC : physics::ERigidbodyType::DYNAMIC;
-      if (eRbType != GetRigidbodyType())
-      {
-        SetRigidbodyType(eRbType);
-      }
+      m_pRigidbody->AddForce(m_v3DebugForce);
+    }
+
+    // Apply
+    physics::ERigidbodyType eRbType = bKinematic ? physics::ERigidbodyType::KINEMATIC : physics::ERigidbodyType::DYNAMIC;
+    if (eRbType != GetRigidbodyType())
+    {
+      SetRigidbodyType(eRbType);
+    }
+    if (fMass != GetMass())
+    {
       SetMass(fMass);
     }
   }
+#endif
 }

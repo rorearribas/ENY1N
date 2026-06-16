@@ -32,7 +32,10 @@ namespace game
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;
     virtual void OnRotationChanged(const math::CVector3& _v3Rot) override;
+
+#ifdef _DEBUG
     virtual void DrawDebug() override;
+#endif
 
   private:
     void Clean();

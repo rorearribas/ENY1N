@@ -154,6 +154,7 @@ namespace collision
     return false;
   }
   // ------------------------------------
+#ifdef _DEBUG
   void CSphereCollider::DrawDebug()
   {
     // Draw sphere
@@ -168,4 +169,5 @@ namespace collision
       render::ERenderMode::WIREFRAME
     );
   }
+#endif
 }

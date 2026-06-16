@@ -25,7 +25,10 @@ namespace game
     inline math::CVector3 GetDir() const { return m_pLight->GetDir(); }
 
     render::lights::CLight* GetLight() const { return m_pLight.GetPtr(); }
+
+#ifdef _DEBUG
     virtual void DrawDebug() override;
+#endif
 
   protected:
     virtual void OnPositionChanged(const math::CVector3& _v3Pos) override;

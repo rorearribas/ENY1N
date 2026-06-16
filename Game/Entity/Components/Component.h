@@ -27,7 +27,9 @@ namespace game
     virtual void OnCollisionStay(const collision::THitEvent&) {}
     virtual void OnCollisionExit(const collision::THitEvent&) {}
 
+#ifdef _DEBUG
     virtual void DrawDebug() {}
+#endif
 
   protected:
     CEntity* m_pOwner = nullptr;

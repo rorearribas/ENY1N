@@ -1,8 +1,10 @@
 #pragma once
 #include "Components/Component.h"
-#include "Libs/Math/Transform.h"
 #include "Engine/Collisions/Collider.h"
+
+#include "Libs/Math/Transform.h"
 #include "Libs/Utils/ArenaPool.h"
+#include "Libs/Macros/GlobalMacros.h"
 
 namespace game { class CComponent; }
 
@@ -24,8 +26,6 @@ namespace game
     CEntity& operator=(const CEntity& _rOther) = delete;
 
     void Update(float _fDeltaTime);
-    void DrawDebug();
-
     void SetTickEnabled(bool _bStatus) { m_bTickEnabled = _bStatus; }
     const bool IsTickable() const { return m_bTickEnabled; }
 
@@ -64,10 +64,16 @@ namespace game
     void OnCollisionStay(const collision::THitEvent&);
     void OnCollisionExit(const collision::THitEvent&);
 
+#ifdef ENABLE_IMGUI
+    void ShowGizmo();
+#endif // ENABLE_IMGUI
+#ifdef _DEBUG
+    void DrawDebug();
+#endif
+
   private:
     void Clear();
 
-  private:
     utils::CArenaPool<CComponent, s_uMaxBlockComponents, s_uMaxComponents> m_lstComponents;
     math::CTransform m_oTransform = math::CTransform();
 

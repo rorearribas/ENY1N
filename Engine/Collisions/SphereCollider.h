@@ -21,7 +21,9 @@ namespace collision
     inline void SetRadius(float _fRadius) { m_fRadius = _fRadius; }
     inline const float& GetRadius() const { return m_fRadius; }
 
+#ifdef _DEBUG
     virtual void DrawDebug() override;
+#endif
 
   private:
     bool CheckSphereCollision(const CSphereCollider* _pOther, THitEvent& _oHitEvent_) const;
