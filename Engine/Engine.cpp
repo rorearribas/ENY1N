@@ -53,7 +53,12 @@ namespace engine
   void CEngine::Draw()
   {
     // Draw
+    m_pSceneManager->GetCurrentScene()->DrawOctree();
     m_pRender->Draw(m_pSceneManager->GetCurrentScene());
+
+    // Flush camera state
+    m_pSceneManager->GetRenderCamera()->FlushState();
+    m_pSceneManager->GetShadowCamera()->FlushState();
   }
   // ------------------------------------
   utils::CWeakPtr<render::gfx::CPrimitive> const CEngine::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)

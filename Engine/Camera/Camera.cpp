@@ -74,9 +74,6 @@ namespace render
       // Update frustum
       BuildFrustumPlanes();
     }
-
-    // Restore state
-    m_bHasBeenUpdated = false;
   }
   // ------------------------------------
   bool CCamera::IsOnFrustum(const collision::CAABB& _rBoundingBox) const

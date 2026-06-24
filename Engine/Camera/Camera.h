@@ -59,6 +59,9 @@ namespace render
     inline void SetOrthographicSize(float _fOrthographic) { m_fOrtographicSize = _fOrthographic; }
     inline float GetOrthographicSize() const { return m_fOrtographicSize; }
 
+    inline bool HasBeenUpdated() const { return m_bHasBeenUpdated; }
+    inline void FlushState() { m_bHasBeenUpdated = false; }
+
     void BuildFrustumPlanes();
     void DrawDebug();
 

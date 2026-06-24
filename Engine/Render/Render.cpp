@@ -953,13 +953,6 @@ namespace render
     // Bind buffer
     internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
 
-    ID3D11InputLayout* pCurrentLayout = nullptr;
-    global::api::DeviceContext->IAGetInputLayout(&pCurrentLayout);
-    if (pCurrentLayout != internal::Pipeline.StandardLayout)
-    {
-      global::api::DeviceContext->IASetInputLayout(internal::Pipeline.StandardLayout);
-    }
-
     // Detach simple pixel shader
     internal::Pipeline.ForwardPS.Detach();
     // Attach deferred vertex shader
@@ -969,14 +962,10 @@ namespace render
     ID3D11DepthStencilView* pDepthStencilView = internal::Pipeline.DepthStencil.GetView();
     m_pDeferredRenderer->AttachRenderTargets(pDepthStencilView);
 
+    // Set standard layout
+    global::api::DeviceContext->IASetInputLayout(internal::Pipeline.StandardLayout);
     // Set depth stencil state
-    ID3D11DepthStencilState* pCurrentStencil = nullptr;
-    uint32_t uCurrentRef = 0;
-    global::api::DeviceContext->OMGetDepthStencilState(&pCurrentStencil, &uCurrentRef);
-    if (pCurrentStencil != internal::Pipeline.DepthStencilState)
-    {
-      global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
-    }
+    global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
 
     // Set linear sampler(read textures)
     global::api::DeviceContext->PSSetSamplers(0, 1, &internal::Pipeline.LinearSampler);
@@ -1146,13 +1135,7 @@ namespace render
     // Setup triangle
     global::api::DeviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
     global::api::DeviceContext->IASetInputLayout(nullptr);
-
-    D3D_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-    global::api::DeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
-    if (eCurrentTopology != D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
-    {
-      global::api::DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    }
+	  global::api::DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     // Draw triangle as fake quad!
     const uint16_t uVertexCount = 3, uStartVertexLocation = 0;
@@ -1261,12 +1244,7 @@ namespace render
   void CRender::DrawPrimitives(scene::CRenderScene* _pScene)
   {
     // Set input layout
-    ID3D11InputLayout* pCurrentLayout = nullptr;
-    global::api::DeviceContext->IAGetInputLayout(&pCurrentLayout);
-    if (pCurrentLayout != internal::Pipeline.DebugLayout)
-    {
-      global::api::DeviceContext->IASetInputLayout(internal::Pipeline.DebugLayout);
-    }
+    global::api::DeviceContext->IASetInputLayout(internal::Pipeline.DebugLayout);
 
     // Attach shaders
     internal::Pipeline.ForwardVS.Attach();

@@ -13,11 +13,11 @@ namespace scene
   class CSceneManager
   {
   public:
-    static const uint32_t s_uMaxCameras = 2u;
+    static constexpr uint32_t s_uMaxCameras = 2u;
     typedef utils::CFixedPool<render::CCamera, s_uMaxCameras> TCameraList;
 
-    static int constexpr s_iMaxScenes = 1;
-    typedef utils::CFixedPool<scene::CRenderScene, s_iMaxScenes> TSceneList;
+    static constexpr uint32_t s_uMaxScenes = 1u;
+    typedef utils::CFixedPool<scene::CRenderScene, s_uMaxScenes> TSceneList;
 
   public:
     CSceneManager() { Setup(); }
@@ -44,6 +44,8 @@ namespace scene
     utils::CWeakPtr<render::lights::CPointLight> const CreatePointLight(uint32_t _uSceneIndex = 0);
     utils::CWeakPtr<render::lights::CSpotLight> const CreateSpotLight(uint32_t _uSceneIndex = 0);
     bool DestroyLight(utils::CWeakPtr<render::lights::CLight> _pLight, uint32_t _uSceneIndex = 0);
+
+    inline void DrawOctree() const { if (m_pCurrentScene.IsValid()) m_pCurrentScene->DrawOctree(); }
 
     // Debug creation
 #ifdef _DEBUG

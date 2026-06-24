@@ -70,6 +70,8 @@ namespace render
       inline const bool AllowInstancing() const { return m_lstInstances.GetSize() < m_lstInstances.GetMaxSize(); }
       inline const bool HasInstances() const { return GetInstances().GetSize() > 0; }
 
+      void DrawDebug() const;
+
     private:
       void Clear();
 

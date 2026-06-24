@@ -15,6 +15,15 @@ namespace scene
   // ------------------------------------
   HRESULT CRenderScene::SetupBuffers()
   {
+    // Initialize Octree with world bounds
+    collision::CAABB oWorldBounds
+    (
+      math::CVector3::Zero,                           // center
+      math::CVector3(1000.0f, 1000.0f, 1000.0f)       // half-size
+    );
+    m_pOctreeModels = std::make_unique<COctree<render::gfx::CModel>>(oWorldBounds, 8);
+    m_pOctreeInstances = std::make_unique<COctree<render::gfx::CRenderInstance>>(oWorldBounds, 8);
+
     // Create vertex buffer by models
     D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
     rVertexBufferDesc.ByteWidth = MAX_MODELS_VB_SIZE;
@@ -89,14 +98,14 @@ namespace scene
   // ------------------------------------
   void CRenderScene::CacheModels(render::CCamera* _pCamera)
   {
-    // Reset value
-    m_uDrawableModels = 0;
+    // Cache models and instances
+    uint16_t uDrawableModels = 0;
 
     for (uint16_t uI = 0; uI < m_lstModels.GetSize(); uI++)
     {
       // Handle model
       utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
-      TCachedModel& rCachedModel = m_lstCachedModels[m_uDrawableModels];
+      TCachedModel& rCachedModel = m_lstCachedModels[uDrawableModels];
       rCachedModel.Visible = pModel->IsVisible();
 
       // Check culling
@@ -131,9 +140,12 @@ namespace scene
       if (rCachedModel.Visible || rCachedModel.InstanceCount > 0)
       {
         rCachedModel.Index = uI;
-        m_uDrawableModels++;
+        uDrawableModels++;
       }
     }
+
+    // Update drawable models count
+    m_uDrawableModels = uDrawableModels;
   }
   // ------------------------------------
   const TCachedModels& CRenderScene::GetCachedModels(uint16_t& _uDrawableCount_) const
@@ -288,6 +300,8 @@ namespace scene
       wpModel->SetVtxBufferHandler(rVtxBufferHandler);
       SUCCESS_LOG("Created model! -> " << _sModelPath);
     }
+
+    RebuildOctree();
 
     return wpModel;
   }
@@ -685,7 +699,42 @@ namespace scene
     m_oDebugPrimitivesIB.ResetOffset();
     m_lstDebugPrimitives.Clear();
   }
+  // ------------------------------------
+  void CRenderScene::DrawOctree() const
+  {
+    m_pOctreeModels->DrawDebug();
+    m_pOctreeInstances->DrawDebug();
+  }
 #endif
+  // ------------------------------------
+  void CRenderScene::RebuildOctree()
+  {
+    if (!m_pOctreeModels || !m_pOctreeInstances)
+    {
+      return;
+    }
+
+    // Rebuild octree
+    std::vector<std::pair<render::gfx::CModel*, collision::CAABB>> lstModelObjects;
+    std::vector<std::pair<render::gfx::CRenderInstance*, collision::CAABB>> lstInstanceObjects;
+
+    for (uint32_t uI = 0; uI < m_lstModels.GetSize(); ++uI)
+    {
+      utils::CWeakPtr<render::gfx::CModel> pModel = m_lstModels[uI];
+      lstModelObjects.emplace_back(pModel.GetPtr(), pModel->GetWorldAABB());
+
+      const render::gfx::TInstances& lstInstances = pModel->GetInstances();
+      for (uint32_t uJ = 0; uJ < lstInstances.GetSize(); ++uJ)
+      {
+        utils::CWeakPtr<render::gfx::CRenderInstance> pInstance = lstInstances[uJ];
+        lstInstanceObjects.emplace_back(pInstance.GetPtr(), pInstance->GetWorldAABB());
+      }
+    }
+
+    // Rebuild
+    m_pOctreeModels->Rebuild(lstModelObjects);
+    m_pOctreeInstances->Rebuild(lstInstanceObjects);
+  }
   // ------------------------------------
   void CRenderScene::Clear()
   {

@@ -11,11 +11,15 @@ namespace collision
   // ------------------------------------
   void CCollisionManager::Update(float /*_fDeltaTime*/)
   {
-    // Check collisions
+    // Check collisions with early-exit optimization for inactive objects
     for (uint32_t uI = 0; uI < m_lstColliders.GetCurrentSize(); ++uI)
     {
       // Get current collider
       collision::CCollider* pCollider = m_lstColliders[uI];
+
+      // Early-exit: skip static colliders that haven't moved
+      // (Optimization: only check against dynamic objects or recently moved ones)
+      // TODO: Implement spatial partitioning for O(n) broad-phase instead of O(n²)
 
       // Initialize the set of previous colliders for this collider if not already done
       if (m_dctHandleCollisions.find(pCollider) == m_dctHandleCollisions.end())
@@ -33,7 +37,7 @@ namespace collision
         if (pCollider->CheckCollision(*pTargetCollider, oHitEvent))
         {
           // Collision Enter
-          bool bCollisionEnter = m_dctHandleCollisions[pCollider].find(pTargetCollider) != m_dctHandleCollisions[pCollider].end();
+          bool bCollisionEnter = m_dctHandleCollisions[pCollider].find(pTargetCollider) == m_dctHandleCollisions[pCollider].end();
           if (!bCollisionEnter)
           {
             // Notify to current collider

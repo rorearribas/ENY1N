@@ -39,6 +39,8 @@ namespace render
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
       inline const bool& IsVisible() const { return m_bVisible; }
 
+      void DrawDebug();
+
     private:
       const render::gfx::CModel* m_pParent = nullptr;
       uint16_t m_uInstanceID = render::instance::s_uInvalidID;

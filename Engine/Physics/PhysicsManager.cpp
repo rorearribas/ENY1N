@@ -11,6 +11,15 @@ namespace physics
   {
     const float s_fGravityForce(9.8f);
     static math::CVector3 s_v3GravityForce(0.0f, -internal_physics_manager::s_fGravityForce, 0.0f);
+
+    // Fast exponential approximation: exp(-x) ≈ 1 / (1 + x) for small x
+    // More accurate for physics drag calculations
+    inline float FastExpApprox(float x)
+    {
+      // Using Padé approximant for better accuracy: exp(-x) ≈ (12 - 6x) / (12 + 6x)
+      const float c = 6.0f * x;
+      return (12.0f - c) / (12.0f + c);
+    }
   }
   // ------------------------------------
   CPhysicsManager::~CPhysicsManager()
@@ -41,7 +50,7 @@ namespace physics
       // Decrease velocity
       bool bInTheAir = pRigidbody->GetRigidbodyState() == physics::ERigidbodyState::IN_THE_AIR;
       const float fExpCoefficient = bInTheAir ? 0.1f : 0.2f;
-      pRigidbody->m_v3Velocity *= expf(-fExpCoefficient * _fDeltaTime);
+      pRigidbody->m_v3Velocity *= internal_physics_manager::FastExpApprox(fExpCoefficient * _fDeltaTime);
 
       // Notify displacement -> i extracted this equation from the internet
       math::CVector3 v3Displacement = (pRigidbody->m_v3Velocity * _fDeltaTime) + (pRigidbody->m_v3Acceleration * _fDeltaTime * _fDeltaTime * 0.5f);
@@ -54,7 +63,7 @@ namespace physics
       }
 
       // Decrease angular velocity
-      const float fAngularDrag = expf(-fExpCoefficient * _fDeltaTime);
+      const float fAngularDrag = internal_physics_manager::FastExpApprox(fExpCoefficient * _fDeltaTime);
       pRigidbody->m_v3AngularVelocity *= fAngularDrag;
 
       // Notify angular displacement

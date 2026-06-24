@@ -5,6 +5,7 @@
 #include "Engine/Render/Lighting/LightManager.h"
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
+#include "Engine/Render/Spatial/Octree.h"
 #include "Engine/Utils/Plane.h"
 
 #include "Libs/Utils/FixedPool.h"
@@ -17,8 +18,8 @@ namespace render { namespace lights { class CDirectionalLight; } }
 namespace scene
 {
   // GPU Memory
-  constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 256u;
-  constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 128u;
+  constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 512u;
+  constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 256u;
 
   constexpr uint32_t MAX_PRIMITIVES_VB_SIZE = 1024u * 1024u * 32u;
   constexpr uint32_t MAX_PRIMITIVES_IB_SIZE = 1024u * 1024u * 16u;
@@ -109,6 +110,9 @@ namespace scene
     ID3D11Buffer* GetDebugPrimitivesVB() const { return m_oDebugPrimitivesVB; }
     ID3D11Buffer* GetDebugPrimitivesIB() const { return m_oDebugPrimitivesIB; }
     void ClearDebugItems();
+
+    void RebuildOctree(); 
+    void DrawOctree() const;
 #endif
 
   private:
@@ -119,6 +123,8 @@ namespace scene
     bool m_bEnabled = false;
     uint32_t m_uSceneIdx = 0;
     render::lights::CLightManager m_oLightManager;
+    std::unique_ptr<COctree<render::gfx::CModel>> m_pOctreeModels;
+    std::unique_ptr<COctree<render::gfx::CRenderInstance>> m_pOctreeInstances;
 
   private:
     // Models

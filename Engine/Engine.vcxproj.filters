@@ -150,6 +150,9 @@
     <ClInclude Include="Render\Buffers\RenderBuffer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Spatial\Octree.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -261,6 +264,9 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\Renderers\ForwardRenderer.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Spatial\Octree.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

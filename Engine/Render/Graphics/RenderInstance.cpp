@@ -65,6 +65,11 @@ namespace render
         collision::ComputeWorldAABB(m_pParent->GetLocalAABB(), m_oTransform, m_oWorldAABB);
       }
     }
+    // ------------------------------------
+    void CRenderInstance::DrawDebug()
+    {
+      m_oWorldAABB.DrawDebug(math::CVector3::Forward);
+    }
   }
 }
 
