@@ -47,7 +47,7 @@ template<typename T>
 class COctree
 {
 public:
-  explicit COctree(const collision::CAABB& _rWorldAABB, int _iMaxDepth = COctreeNode<T>::s_uMaxDepth);
+  explicit COctree(const collision::CAABB& _rWorldAABB, uint32_t _uMaxDepth = COctreeNode<T>::s_uMaxDepth);
   ~COctree() = default;
 
   // Handle octree

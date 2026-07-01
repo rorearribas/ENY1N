@@ -154,11 +154,6 @@ namespace render
       return bOk;
     }
     // ------------------------------------
-    void CModel::DrawDebug() const
-    {
-      m_oWorldAABB.DrawDebug();
-    }
-    // ------------------------------------
     void CModel::Clear()
     {
       // Clear instances

@@ -46,7 +46,7 @@ namespace render
     static const wchar_t* s_sDrawPrimitivesMrk(L"Primitives");
     static const wchar_t* s_sImGuiMarker(L"ImGui");
 
-    static const float s_v4ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    static const float s_v4ClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
 

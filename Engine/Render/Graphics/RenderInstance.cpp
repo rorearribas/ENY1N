@@ -66,10 +66,12 @@ namespace render
       }
     }
     // ------------------------------------
+#ifdef _DEBUG
     void CRenderInstance::DrawDebug()
     {
       m_oWorldAABB.DrawDebug(math::CVector3::Forward);
     }
+#endif
   }
 }
 

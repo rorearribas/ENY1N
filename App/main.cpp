@@ -19,6 +19,7 @@
 #include "Engine/Collisions/BoxCollider.h"
 #include "Engine/Physics/PhysicsManager.h"
 #include "Engine/Render/RenderTypes.h"
+#include "Engine/Scenes/RenderScene.h"
 
 #include "Game/GameManager/GameManager.h"
 #include "Game/Entity/Components/ModelComponent/ModelComponent.h"
@@ -99,10 +100,10 @@ int main()
   static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetColor(math::CVector3(0.0f, 1.0f, 0.0f));
 
   float fOffsetZ = 0.0f;
-  for (uint32_t uIndex = 0; uIndex < 32u; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 128u; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPos(math::CVector3(GenerateFloat(-100.0f, 100.0f), GenerateFloat(5.0f, 50.0f), GenerateFloat(-100.0f, 100.0f)));
+    pModelEnt->SetPos(math::CVector3(GenerateFloat(-90.0f, 90.0f), GenerateFloat(-90.0f, 90.0f), GenerateFloat(-90.0f, 90.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/spaceship.fbx");
     fOffsetZ += 10;
@@ -152,7 +153,14 @@ int main()
   render::CCamera* const pCamera = pEngine->GetCamera();
   pRender->ShowRenderWindow(true);
 
-  float m_fFixedDeltaAccumulator = 0.0f;
+#ifdef _DEBUG
+  // Only for testing purposes, in a real scenario, you would manage scenes differently
+  scene::CSceneManager* pSceneManager = pEngine->GetSceneManager();
+  scene::CRenderScene* pCurrentScene = pSceneManager->GetCurrentScene();
+  pCurrentScene->RebuildOctree();
+#endif // _DEBUG
+
+  float fFixedDeltaAcc = 0.0f;
   MSG oMsg = { 0 };
 
   while (WM_QUIT != oMsg.message)
@@ -169,35 +177,12 @@ int main()
 
       // Calculate delta
       pTimeManager->BeginFrame();
-      float fDeltaTime = pTimeManager->GetDeltaTime();
       float fFixedDelta = pTimeManager->GetFixedDelta();
-      float fOffset = math::Clamp(fDeltaTime, 0.0f, pTimeManager->GetMaxFixedDelta());
-      m_fFixedDeltaAccumulator += fOffset;
-
-#ifdef _DEBUG
-      if (bThrowRay)
-      {
-        // Draw line
-        math::CVector3 v3Pos = math::CVector3(0.0f, 10.0f, 0.0f);
-        const float fMaxDistance(100);
-
-        physics::CRay oRay(v3Pos, math::CVector3::Forward);
-        oRay.DrawDebug(fMaxDistance, math::CVector3::Right);
-
-        // Throw ray
-        std::vector<collision::THitEvent> lstHits;
-        if (pCollisionManager->RaycastAll(oRay, fMaxDistance, lstHits))
-        {
-          for (auto& HitEvent : lstHits)
-          {
-            pEngine->DrawSphere(HitEvent.ImpactPoint, 0.05f, 8, 8, math::CVector3::Up, render::ERenderMode::WIREFRAME);
-          }
-        }
-      }
-#endif
+      float fOffset = math::Clamp(pTimeManager->GetDeltaTime(), 0.0f, pTimeManager->GetMaxFixedDelta());
+      fFixedDeltaAcc += fOffset;
 
       // Update
-      while (m_fFixedDeltaAccumulator >= fFixedDelta)
+      while (fFixedDeltaAcc >= fFixedDelta)
       {
         pCamera->Update(fFixedDelta);
         pCamera->DrawDebug();
@@ -207,7 +192,7 @@ int main()
         pGameManager->Update(fFixedDelta);
 
         pInputManager->Flush();
-        m_fFixedDeltaAccumulator -= fFixedDelta;
+        fFixedDeltaAcc -= fFixedDelta;
       }
 
       ImGui::Begin("Testing");
@@ -268,7 +253,7 @@ int main()
         ImGuiWindowFlags_NoFocusOnAppearing |
         ImGuiWindowFlags_NoNav;
 
-      uint32_t uWidth, uHeight;
+      uint32_t uWidth = 0, uHeight = 0;
       pRender->GetRenderWindow()->GetWindowSize(uWidth, uHeight);
       ImGui::SetNextWindowPos(ImVec2(static_cast<float>(uWidth - 160.0f), 30.0f));
       if (ImGui::Begin("Watermark", nullptr, iFlags))

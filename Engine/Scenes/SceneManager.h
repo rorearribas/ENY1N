@@ -45,7 +45,9 @@ namespace scene
     utils::CWeakPtr<render::lights::CSpotLight> const CreateSpotLight(uint32_t _uSceneIndex = 0);
     bool DestroyLight(utils::CWeakPtr<render::lights::CLight> _pLight, uint32_t _uSceneIndex = 0);
 
+#ifdef _DEBUG
     inline void DrawOctree() const { if (m_pCurrentScene.IsValid()) m_pCurrentScene->DrawOctree(); }
+#endif
 
     // Debug creation
 #ifdef _DEBUG

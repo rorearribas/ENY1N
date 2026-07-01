@@ -7,7 +7,7 @@ template<typename T>
 COctreeNode<T>::COctreeNode(const collision::CAABB& _oAABB, uint32_t _uDepth)
   : m_oAABB(_oAABB), m_uDepth(_uDepth)
 {
-  for (uint32_t uI = 0; uI < m_uDepth; ++uI)
+  for (uint32_t uI = 0; uI < s_uMaxDepth; ++uI)
   {
     m_lstChildren[uI] = nullptr;
   }
@@ -37,6 +37,7 @@ void COctreeNode<T>::Insert(T* _pObject, const collision::CAABB& _oObjectBounds)
     {
       Subdivide();
     }
+
     return;
   }
 
@@ -73,7 +74,7 @@ void COctreeNode<T>::Query(const collision::CAABB& _oQueryBounds, std::vector<T*
   // if not is a leaf, search in children
   if (!IsLeaf())
   {
-    for (uint32_t uI = 0; uI < m_uDepth; ++uI)
+    for (uint32_t uI = 0; uI < s_uMaxDepth; ++uI)
     {
       if (m_lstChildren[uI])
       {
@@ -125,13 +126,12 @@ template<typename T>
 void COctreeNode<T>::Clear()
 {
   m_lstObjects.clear();
-
-  for (int i = 0; i < 8; ++i)
+  for (uint32_t uI = 0; uI < s_uMaxDepth; ++uI)
   {
-    if (m_lstChildren[i])
+    if (m_lstChildren[uI])
     {
-      m_lstChildren[i]->Clear();
-      m_lstChildren[i].reset();
+      m_lstChildren[uI]->Clear();
+      m_lstChildren[uI].reset();
     }
   }
 }
@@ -144,7 +144,7 @@ void COctreeNode<T>::Subdivide()
   math::CVector3 v3Quarter = v3HalfSize * 0.5f;
 
   // Create children octants
-  for (uint32_t ui = 0; ui < m_uDepth; ++ui)
+  for (uint32_t ui = 0; ui < s_uMaxDepth; ++ui)
   {
     math::CVector3 v3Offset = math::CVector3::Zero;
     v3Offset.x = (ui & 1) ? v3Quarter.x : -v3Quarter.x;
@@ -164,7 +164,7 @@ void COctreeNode<T>::Subdivide()
   for (T* pObj : lstObjectsCopy)
   {
     // insert the object into the appropriate children
-    for (uint32_t uI = 0; uI < m_uDepth; ++uI)
+    for (uint32_t uI = 0; uI < s_uMaxDepth; ++uI)
     {
       if (m_lstChildren[uI])
       {
@@ -181,7 +181,7 @@ void COctreeNode<T>::GetIntersectingOctants(const collision::CAABB& _rAABB, std:
   math::CVector3 v3HalfSize = m_oAABB.GetHalfSize();
   math::CVector3 v3Quarter = v3HalfSize * 0.5f;
 
-  for (uint32_t uI = 0; uI < m_uDepth; ++uI)
+  for (uint32_t uI = 0; uI < s_uMaxDepth; ++uI)
   {
     math::CVector3 v3Offset = math::CVector3::Zero;
     v3Offset.x = (uI & 1) ? v3Quarter.x : -v3Quarter.x;
@@ -241,7 +241,7 @@ void COctreeNode<T>::DrawDebug() const
   // Draw children recursively
   if (!IsLeaf())
   {
-    for (uint32_t uI = 0; uI < m_uDepth; ++uI)
+    for (uint32_t uI = 0; uI < s_uMaxDepth; ++uI)
     {
       if (m_lstChildren[uI])
       {
@@ -253,8 +253,8 @@ void COctreeNode<T>::DrawDebug() const
 #endif
 
 template<typename T>
-COctree<T>::COctree(const collision::CAABB& _rWorldAABB, int _iMaxDepth)
-  : m_uMaxDepth(_iMaxDepth), m_uObjectCount(0)
+COctree<T>::COctree(const collision::CAABB& _rWorldAABB, uint32_t _uMaxDepth)
+  : m_uMaxDepth(_uMaxDepth), m_uObjectCount(0)
 {
   m_pRoot = std::make_unique<COctreeNode<T>>(_rWorldAABB, 0);
 }

@@ -15,15 +15,6 @@ namespace scene
   // ------------------------------------
   HRESULT CRenderScene::SetupBuffers()
   {
-    // Initialize Octree with world bounds
-    collision::CAABB oWorldBounds
-    (
-      math::CVector3::Zero,                           // center
-      math::CVector3(1000.0f, 1000.0f, 1000.0f)       // half-size
-    );
-    m_pOctreeModels = std::make_unique<COctree<render::gfx::CModel>>(oWorldBounds, 8);
-    m_pOctreeInstances = std::make_unique<COctree<render::gfx::CRenderInstance>>(oWorldBounds, 8);
-
     // Create vertex buffer by models
     D3D11_BUFFER_DESC rVertexBufferDesc = D3D11_BUFFER_DESC();
     rVertexBufferDesc.ByteWidth = MAX_MODELS_VB_SIZE;
@@ -70,7 +61,7 @@ namespace scene
 
 #ifdef _DEBUG
     // Create vertex buffer by debug primitives
-    rVertexBufferDesc.ByteWidth = MAX_PRIMITIVES_VB_SIZE;
+    rVertexBufferDesc.ByteWidth = MAX_DEBUG_PRIMITIVES_VB_SIZE;
     m_oDebugPrimitivesVB.Init(rVertexBufferDesc);
     if (FAILED(hResult))
     {
@@ -79,13 +70,21 @@ namespace scene
     }
 
     // Create index buffer by debug primitives
-    rIndexBufferDesc.ByteWidth = MAX_PRIMITIVES_IB_SIZE;
+    rIndexBufferDesc.ByteWidth = MAX_DEBUG_PRIMITIVES_IB_SIZE;
     m_oDebugPrimitivesIB.Init(rIndexBufferDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating index buffer!");
       return hResult;
     }
+#endif
+
+#ifdef _DEBUG
+    // Initialize Octree with world bounds - origin at (0,0,0) and size of 200x200x200
+    math::CVector3 v3Min(100.0f, 100.0f, 100.0f), v3Max(-100.0f, -100.0f, -100.0f);
+    collision::CAABB rWorldBounds(v3Min, v3Max);
+    m_pOctreeModels = std::make_unique<COctree<render::gfx::CModel>>(rWorldBounds);
+    m_pOctreeInstances = std::make_unique<COctree<render::gfx::CRenderInstance>>(rWorldBounds);
 #endif
 
     return hResult;
@@ -300,8 +299,6 @@ namespace scene
       wpModel->SetVtxBufferHandler(rVtxBufferHandler);
       SUCCESS_LOG("Created model! -> " << _sModelPath);
     }
-
-    RebuildOctree();
 
     return wpModel;
   }
@@ -705,7 +702,6 @@ namespace scene
     m_pOctreeModels->DrawDebug();
     m_pOctreeInstances->DrawDebug();
   }
-#endif
   // ------------------------------------
   void CRenderScene::RebuildOctree()
   {
@@ -735,6 +731,7 @@ namespace scene
     m_pOctreeModels->Rebuild(lstModelObjects);
     m_pOctreeInstances->Rebuild(lstInstanceObjects);
   }
+#endif
   // ------------------------------------
   void CRenderScene::Clear()
   {

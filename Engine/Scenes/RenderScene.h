@@ -17,12 +17,17 @@ namespace render { namespace lights { class CDirectionalLight; } }
 
 namespace scene
 {
-  // GPU Memory
-  constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 512u;
-  constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 256u;
-
+  // Models memory limits
+  constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 256u;
+  constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 128u;
+  // Primitives memory limits
   constexpr uint32_t MAX_PRIMITIVES_VB_SIZE = 1024u * 1024u * 32u;
   constexpr uint32_t MAX_PRIMITIVES_IB_SIZE = 1024u * 1024u * 16u;
+#ifdef _DEBUG
+  // Debug primitives memory limits
+  constexpr uint32_t MAX_DEBUG_PRIMITIVES_VB_SIZE = 1024u * 1024u * 128u;
+  constexpr uint32_t MAX_DEBUG_PRIMITIVES_IB_SIZE = 1024u * 1024u * 64u;
+#endif
 
   // Models
   struct TCachedModel
@@ -45,10 +50,12 @@ namespace scene
   typedef std::array<uint16_t, s_uMaxPrimitives> TCachedPrimitives;
 
   // Debug primitives
+#ifdef _DEBUG
   static constexpr uint16_t s_uMaxDebugPrimitives = 256u;
   static constexpr uint16_t s_uMaxChunkSize = s_uMaxDebugPrimitives * sizeof(render::gfx::CPrimitive);
   typedef utils::CArenaPool<render::gfx::CPrimitive, s_uMaxChunkSize, s_uMaxDebugPrimitives> TDebugPrimitives;
   typedef std::array<uint16_t, s_uMaxDebugPrimitives> TCachedDebugPrimitives;
+#endif
 
   class CRenderScene
   {
@@ -111,8 +118,8 @@ namespace scene
     ID3D11Buffer* GetDebugPrimitivesIB() const { return m_oDebugPrimitivesIB; }
     void ClearDebugItems();
 
-    void RebuildOctree(); 
     void DrawOctree() const;
+    void RebuildOctree();
 #endif
 
   private:
@@ -123,14 +130,18 @@ namespace scene
     bool m_bEnabled = false;
     uint32_t m_uSceneIdx = 0;
     render::lights::CLightManager m_oLightManager;
-    std::unique_ptr<COctree<render::gfx::CModel>> m_pOctreeModels;
-    std::unique_ptr<COctree<render::gfx::CRenderInstance>> m_pOctreeInstances;
 
   private:
     // Models
     TModels m_lstModels = TModels();
     TCachedModels m_lstCachedModels = TCachedModels();
     uint16_t m_uDrawableModels = 0;
+
+#ifdef _DEBUG
+    // Testing octree
+    std::unique_ptr<COctree<render::gfx::CModel>> m_pOctreeModels;
+    std::unique_ptr<COctree<render::gfx::CRenderInstance>> m_pOctreeInstances;
+#endif
 
     // Primitives
     TPrimitives m_lstPrimitives = TPrimitives();
@@ -143,7 +154,6 @@ namespace scene
     TCachedDebugPrimitives m_lstCachedDebugPrimitives = TCachedDebugPrimitives();
     uint16_t m_uDrawableDebugPrimitives = 0;
 #endif
-
   private:
     // Render buffers - models
     CRenderBuffer<render::gfx::TVertexData> m_oModelsVB;

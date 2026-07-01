@@ -53,7 +53,9 @@ namespace engine
   void CEngine::Draw()
   {
     // Draw
+#ifdef _DEBUG
     m_pSceneManager->GetCurrentScene()->DrawOctree();
+#endif // _DEBUG
     m_pRender->Draw(m_pSceneManager->GetCurrentScene());
 
     // Flush camera state

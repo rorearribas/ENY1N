@@ -553,10 +553,10 @@ namespace GraphEditor {
 
     // test nested IO
     drawList->ChannelsSetCurrent(1); // Background
-    const size_t InputsCount = nodeTemplate.mInputCount;
-    const size_t OutputsCount = nodeTemplate.mOutputCount;
 
     /*
+    const size_t InputsCount = nodeTemplate.mInputCount;
+    const size_t OutputsCount = nodeTemplate.mOutputCount;
     for (int i = 0; i < 2; i++)
     {
         const size_t slotCount[2] = {InputsCount, OutputsCount};
