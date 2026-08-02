@@ -19,58 +19,57 @@ namespace render
       // sort through and find what code to run for the message given
       switch (_uMsg)
       {
-      case WM_DESTROY:
-      {
-        PostQuitMessage(0);
-        return 0;
-      }
-      break;
-
-      case WM_SIZE:
-      {
-        if (_wParam == SIZE_RESTORED || _wParam == SIZE_MAXIMIZED)
+        case WM_DESTROY:
         {
-          for (auto& oDelegate : global::delegates::s_lstOnWindowResizeDelegates)
+          PostQuitMessage(0);
+          return 0;
+        }
+        case WM_SIZE:
+        {
+          if (_wParam == SIZE_RESTORED || _wParam == SIZE_MAXIMIZED)
           {
-            oDelegate((uint32_t)(LOWORD(_lParam)), (uint32_t)(HIWORD(_lParam)));
+            for (auto& rDelegate : global::delegates::s_lstOnWindowResizeDelegates)
+            {
+              rDelegate((uint32_t)(LOWORD(_lParam)), (uint32_t)(HIWORD(_lParam)));
+            }
           }
         }
-      }
-      break;
-      case WM_INPUT:
-      {
-        uint32_t uSize = 0;
-        GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, nullptr, &uSize, sizeof(RAWINPUTHEADER));
-        if (uSize == 0) break;
+        break;
+        case WM_INPUT:
+        {
+          uint32_t uSize = 0;
+          GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, nullptr, &uSize, sizeof(RAWINPUTHEADER));
+          if (uSize == 0) break;
 
-        // Get raw input data
-        std::unique_ptr<BYTE[]> pData(new BYTE[uSize]);
-        if (GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, pData.get(), &uSize, sizeof(RAWINPUTHEADER)) != uSize)
-        {
-#ifdef _DEBUG
-          assert(false && "Failed to retrieve RAWINPUT data.");
-#endif // DEBUG
-          break;
-        }
+          // Get raw input data
+          std::unique_ptr<BYTE[]> pData(new BYTE[uSize]);
+          if (GetRawInputData((HRAWINPUT)_lParam, RID_INPUT, pData.get(), &uSize, sizeof(RAWINPUTHEADER)) != uSize)
+          {
+#ifdef   _DEBUG
+            assert(false && "Failed to retrieve RAWINPUT data.");
+#endif   // DEBUG
+            break;
+          }
 
-        // Mouse
-        RAWINPUT* pRawInput = reinterpret_cast<RAWINPUT*>(pData.get());
-        if (pRawInput && pRawInput->header.dwType == RIM_TYPEMOUSE)
-        {
-          global::delegates::s_oUpdateMouseDelegate(&pRawInput->data.mouse);
+          // Mouse
+          RAWINPUT* pRawInput = reinterpret_cast<RAWINPUT*>(pData.get());
+          if (pRawInput && pRawInput->header.dwType == RIM_TYPEMOUSE)
+          {
+            global::delegates::s_oUpdateMouseDelegate(&pRawInput->data.mouse);
+          }
+          // Keyboard
+          if (pRawInput && pRawInput->header.dwType == RIM_TYPEKEYBOARD)
+          {
+            global::delegates::s_oOnUpdateKeyboardDelegate(&pRawInput->data.keyboard);
+          }
         }
-        // Keyboard
-        if (pRawInput && pRawInput->header.dwType == RIM_TYPEKEYBOARD)
-        {
-          global::delegates::s_oOnUpdateKeyboardDelegate(&pRawInput->data.keyboard);
-        }
-      }
-      break;
+        break;
       }
 
       // Handle any messages the switch statement didn't
       return DefWindowProc(_hWnd, _uMsg, _wParam, _lParam);
     }
+    // ------------------------------------
     static HWND WINAPI CreateWinMain(HINSTANCE _hInstance, uint32_t _uWidth, uint32_t _uHeight)
     {
       // this struct holds information for the window class
@@ -92,7 +91,7 @@ namespace render
       RegisterClassEx(&wc);
 
       // create the window and use the result as the handle
-      HWND hHandle = CreateWindowEx
+      return CreateWindowEx
       (
         NULL,
         L"ENY1N", // name of the window class
@@ -107,35 +106,37 @@ namespace render
         _hInstance, // application handle
         NULL
       ); // used with multiple windows, NULL
-
-      return hHandle;
     }
   }
+  // ------------------------------------
   // ------------------------------------
   CRenderWindow::CRenderWindow(uint32_t _uWidth, uint32_t _uHeight)
   {
     HINSTANCE hInstance = GetModuleHandle(nullptr);
-    m_hWinHandle = internal_window::CreateWinMain(hInstance, _uWidth, _uHeight);
-    global::window::s_oHwnd = m_hWinHandle; // Set instance!
+    m_hHandle = internal_window::CreateWinMain(hInstance, _uWidth, _uHeight);
+    global::window::s_oHwnd = m_hHandle; // Set instance!
 #ifdef _DEBUG
-    assert(m_hWinHandle);
+    assert(m_hHandle);
 #endif // DEBUG
   }
   // ------------------------------------
   void CRenderWindow::SetEnabled(bool _bEnabled) const
   {
-    ShowWindow(m_hWinHandle, _bEnabled);
+    ShowWindow(m_hHandle, _bEnabled);
   }
   // ------------------------------------
-  void CRenderWindow::GetWindowSize(uint32_t& _uWidth, uint32_t& _uHeight)
+  void CRenderWindow::GetWindowSize(uint32_t& _uWidth, uint32_t& _uHeight) const
   {
 #ifdef _DEBUG
-    assert(m_hWinHandle);
+    assert(m_hHandle);
 #endif // DEBUG
-    if (m_hWinHandle)
+    if (m_hHandle)
     {
+      // Get client rect
       RECT rClientRect = RECT();
-      GetClientRect(m_hWinHandle, &rClientRect);
+      GetClientRect(m_hHandle, &rClientRect);
+
+      // Set width and height
       _uWidth = static_cast<uint32_t>(rClientRect.right - rClientRect.left);
       _uHeight = static_cast<uint32_t>(rClientRect.bottom - rClientRect.top);
     }

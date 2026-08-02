@@ -69,9 +69,9 @@ namespace scene
     inline const uint32_t& GetSceneIndex() const { return m_uSceneIdx; }
 
     // Cached items
-    void CacheModels(render::CCamera* _pCamera);
+    void CacheModels(const render::CCamera& _rCamera);
     const TCachedModels& GetCachedModels(uint16_t& _uDrawableCount_) const;
-    void CachePrimitives(render::CCamera* _pCamera);
+    void CachePrimitives(const render::CCamera& _rCamera);
     const TCachedPrimitives& GetCachedPrimitives(uint16_t& _uDrawableCount_) const;
 
     // Scene items
@@ -102,7 +102,7 @@ namespace scene
     bool DestroyLight(utils::CWeakPtr<render::lights::CLight> _wpLight);
 
 #ifdef _DEBUG
-    void CacheDebugPrimitives(render::CCamera* _pCamera);
+    void CacheDebugPrimitives(const render::CCamera& _rCamera);
     const TCachedDebugPrimitives& GetCachedDebugPrimitives(uint16_t& _uDrawableCount_) const;
     inline const TDebugPrimitives& GetDebugPrimitives() const { return m_lstDebugPrimitives; }
 

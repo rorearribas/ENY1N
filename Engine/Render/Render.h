@@ -24,11 +24,11 @@ namespace render
     ~CRender();
 
     void PrepareFrame();
-    void Draw(scene::CRenderScene* _pScene);
+    void Draw(scene::CRenderScene& _rScene);
 
 	public:
 
-    inline render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow.get(); }
+    inline const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow.get(); }
     inline void SetRenderCamera(render::CCamera* _pCamera) { m_pRenderCamera = _pCamera; }
     inline void SetShadowCamera(render::CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
 
@@ -72,14 +72,14 @@ namespace render
 
   private:
     // Deferred
-    void ComputeGBuffer(scene::CRenderScene* _pScene);
-    void ComputeShadowMapping(scene::CRenderScene* _pScene);
-    void ComputeLightingPass(scene::CRenderScene* _pScene);
+    void ComputeGBuffer(scene::CRenderScene& _rScene);
+    void ComputeShadowMapping(scene::CRenderScene& _rScene);
+    void ComputeLightingPass(scene::CRenderScene& _rScene);
 
-    void DrawModels(scene::CRenderScene* _pScene);
+    void DrawModels(scene::CRenderScene& _rScene);
     void DrawModel(const render::gfx::CModel* _pModel, bool _bVisible, const render::gfx::TDrawableInstances& _lstDrawableInstances, uint16_t _uInstanceCount);
 
-    void DrawPrimitives(scene::CRenderScene* _pScene);
+    void DrawPrimitives(scene::CRenderScene& _rScene);
     void DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive);
 
   private:

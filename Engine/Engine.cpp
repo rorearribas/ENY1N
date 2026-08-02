@@ -56,8 +56,10 @@ namespace engine
 #ifdef _DEBUG
     m_pSceneManager->GetCurrentScene()->DrawOctree();
 #endif // _DEBUG
-    m_pRender->Draw(m_pSceneManager->GetCurrentScene());
-
+    if (scene::CRenderScene* pCurrentScene = m_pSceneManager->GetCurrentScene())
+    {
+      m_pRender->Draw(*pCurrentScene);
+    }
     // Flush camera state
     m_pSceneManager->GetRenderCamera()->FlushState();
     m_pSceneManager->GetShadowCamera()->FlushState();
@@ -142,7 +144,10 @@ namespace engine
   // ------------------------------------
   void CEngine::OnWindowResizeEvent(uint32_t _uX, uint32_t _uY)
   {
-    GetCamera()->SetAspectRatio(static_cast<float>(_uX / static_cast<float>(_uY)));
+    if (render::CCamera* pRenderCamera = m_pSceneManager->GetRenderCamera())
+    {
+      pRenderCamera->SetAspectRatio(static_cast<float>(_uX) / static_cast<float>(_uY));
+    }
   }
   // ------------------------------------
 }

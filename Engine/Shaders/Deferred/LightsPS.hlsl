@@ -99,7 +99,6 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   if (dirLight.CastShadows)
   {
     // Calculate shadows
-    const uint max_samples = 16;
     float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
     float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
 
@@ -108,57 +107,57 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
       texture_shadowmap, 
       sampler_shadows, 
       get_uvs_from_light_space(posLightSpace), 
-      current_shadow_depth,
-      max_samples
+      current_shadow_depth
     );
   }
 
-  float fDiffuseFactor = saturate(dot(dirLight.Dir, v3Normal));
+  // Apply color
+	float fDiffuseFactor = saturate(dot(normalize(-dirLight.Dir), v3Normal));
   v3TotalLight += (fDiffuseFactor * dirLight.Color * dirLight.Intensity) * fShadowFactor;
 
   // Point Lights
   for (int i = 0; i < RegisteredLights.x; i++)
   {
-    PointLight pointLight = pointLights[i];
-    float fDist = distance(pointLight.Pos, v3WorldPos);
-    if (fDist > pointLight.Range)
-    {
-      continue;
-    }
+		PointLight pointLight = pointLights[i];
+		float fDist = distance(pointLight.Pos, v3WorldPos);
+		if (fDist > pointLight.Range)
+		{
+			continue;
+		}
 
     // Calculate point light
-    float3 v3LightDir = normalize(pointLight.Pos - v3WorldPos);
-    float fDiffuse = saturate(dot(v3LightDir, v3Normal));
-    float fFalloff = saturate(1.0f - fDist / pointLight.Range);
+		float3 v3LightDir = normalize(pointLight.Pos - v3WorldPos);
+		float fDistanceFalloff = saturate(1.0f - fDist / pointLight.Range);
+		float fFalloff = fDistanceFalloff;
 
-    // Add light
-    v3TotalLight += pointLight.Color * pointLight.Intensity * fFalloff;
-  }
+    // Apply color
+		v3TotalLight += pointLight.Color * pointLight.Intensity * fFalloff;
+	}
 
   // Spot lights
-  for (int j = 0; j < RegisteredLights.y; j++)
-  {
-    Spotlight spotlight = spotLights[j];
-    float fDist = distance(spotlight.Pos, v3WorldPos);
-    if (fDist > spotlight.Range)
-    {
-      continue;
-    }
+	for (int j = 0; j < RegisteredLights.y; j++)
+	{
+		Spotlight spotlight = spotLights[j];
+		float fDist = distance(spotlight.Pos, v3WorldPos);
+		if (fDist > spotlight.Range)
+		{
+			continue;
+		}
 
     // Calculate spot light
-    float3 v3LightDir = normalize(spotlight.Pos - v3WorldPos);
-    float3 v3SpotDir = normalize(spotlight.Dir);
+		float3 v3LightDir = normalize(spotlight.Pos - v3WorldPos);
+		float3 v3SpotDir = normalize(spotlight.Dir);
 
-    float fSpotFactor = dot(-v3LightDir, v3SpotDir);
-    float fInner = cos(radians(15.0f));
-    float fOuter = cos(radians(35.0f));
-    float fAngleFalloff = saturate((fSpotFactor - fOuter) / (fInner - fOuter));
-    float fDistanceFalloff = saturate(1.0f - fDist / spotlight.Range);
-    float fFalloff = fAngleFalloff * fDistanceFalloff;
+		float fSpotFactor = dot(normalize(-v3LightDir), v3SpotDir);
+		float fInner = cos(radians(15.0f));
+		float fOuter = cos(radians(35.0f));
+		float fAngleFalloff = saturate((fSpotFactor - fOuter) / (fInner - fOuter));
+		float fDistanceFalloff = saturate(1.0f - fDist / spotlight.Range);
+		float fFalloff = fAngleFalloff * fDistanceFalloff;
 
-    // Add color
-    v3TotalLight += spotlight.Color * spotlight.Intensity * fFalloff;
-  }
+    // Apply color
+		v3TotalLight += spotlight.Color * spotlight.Intensity * fFalloff;
+	}
 
   return float4(saturate(v3TotalLight * v3Diffuse), 1.0f);
 }

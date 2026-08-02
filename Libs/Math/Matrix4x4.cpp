@@ -116,7 +116,7 @@ namespace math
     float fFovRadians = math::Deg2Radians(_fFov);
     float fTan = tanf(fFovRadians / 2.0f);
 
-    CMatrix4x4 mPerspective = CMatrix4x4::Identity;
+    CMatrix4x4 mPerspective = CMatrix4x4::Zero;
     mPerspective.m[0] = 1.0f / (_fAspectRatio * fTan);
     mPerspective.m[5] = 1.0f / fTan;
     mPerspective.m[10] = _fFar / (_fFar - _fNear);
@@ -129,11 +129,11 @@ namespace math
   math::CMatrix4x4 CMatrix4x4::CreateOrtographicMatrix(float _fWidth, float _fHeight, float _fNear, float _fFar)
   {
     // DirectX left-handed style
-    CMatrix4x4 mOrtographic = CMatrix4x4::Identity;
+    CMatrix4x4 mOrtographic = CMatrix4x4::Zero;
     mOrtographic.m[0] = 2.0f / _fWidth;
     mOrtographic.m[5] = 2.0f / _fHeight;
     mOrtographic.m[10] = 1.0f / (_fFar - _fNear);
-    mOrtographic.m[14] = -_fNear / (_fFar - _fNear);
+    mOrtographic.m[14] = _fNear / (_fNear - _fFar);
     mOrtographic.m[15] = 1.0f;
     return mOrtographic;
   }

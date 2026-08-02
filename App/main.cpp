@@ -67,7 +67,13 @@ int main()
   // Init
   engine::CEngine* pEngine = engine::CEngine::CreateSingleton();
   pEngine->Init(WIDTH, HEIGHT);
-  pEngine->GetCamera()->SetPos(math::CVector3(0.0f, 10.0f, -10.0f));
+
+  scene::CSceneManager& rSceneManager = pEngine->GetSceneManager();
+  if (render::CCamera* pRenderCamera = rSceneManager.GetRenderCamera())
+  {
+    pRenderCamera->SetPos(math::CVector3(0.0f, 10.0f, -10.0f));
+    pRenderCamera->SetFov(45.0f);
+  }
 
   global::mem::s_oMemoryTracker.PrintStats();
 
@@ -100,10 +106,10 @@ int main()
   static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetColor(math::CVector3(0.0f, 1.0f, 0.0f));
 
   float fOffsetZ = 0.0f;
-  for (uint32_t uIndex = 0; uIndex < 128u; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 64u; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPos(math::CVector3(GenerateFloat(-90.0f, 90.0f), GenerateFloat(-90.0f, 90.0f), GenerateFloat(-90.0f, 90.0f)));
+    pModelEnt->SetPos(math::CVector3(GenerateFloat(-50.0f, 50.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-50.0f, 50.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/spaceship.fbx");
     fOffsetZ += 10;
@@ -149,16 +155,21 @@ int main()
     pRigidbodyComp->CreateRigidbody(physics::ERigidbodyType::KINEMATIC);
   }
 
-  render::CRender* const pRender = pEngine->GetRender();
-  render::CCamera* const pCamera = pEngine->GetCamera();
-  pRender->ShowRenderWindow(true);
+  render::CCamera* const pCamera = pEngine->GetSceneManager().GetRenderCamera();
+  render::CRender& rRender = pEngine->GetRender();
+  rRender.ShowRenderWindow(true);
 
 #ifdef _DEBUG
   // Only for testing purposes, in a real scenario, you would manage scenes differently
-  scene::CSceneManager* pSceneManager = pEngine->GetSceneManager();
-  scene::CRenderScene* pCurrentScene = pSceneManager->GetCurrentScene();
-  pCurrentScene->RebuildOctree();
+  if (scene::CRenderScene* pCurrentScene = rSceneManager.GetCurrentScene())
+  {
+    pCurrentScene->RebuildOctree();
+  }
 #endif // _DEBUG
+
+  bool bDayNightCycle = false;
+  const float fDayNightCycleSpeed = 50.0f;
+  math::CVector3 v3DayNightCycle = math::CVector3(0.0f, 0.0f, 0.0f);
 
   float fFixedDeltaAcc = 0.0f;
   MSG oMsg = { 0 };
@@ -184,6 +195,14 @@ int main()
       // Update
       while (fFixedDeltaAcc >= fFixedDelta)
       {
+        if (bDayNightCycle)
+        {
+          v3DayNightCycle.x += fDayNightCycleSpeed * fFixedDelta;
+          math::CVector3 v3Dir = math::CMatrix4x4::CreateRotation(v3DayNightCycle) * math::CVector3::Forward;
+          v3Dir.Normalize();
+          pDirComp->SetDir(v3Dir);
+        }
+
         pCamera->Update(fFixedDelta);
         pCamera->DrawDebug();
 
@@ -211,6 +230,11 @@ int main()
           fOffsetZ += 10;
         }
       }
+      if (ImGui::Button("Play/Pause - Day/Night Cycle"))
+      {
+        bDayNightCycle = !bDayNightCycle;
+      }
+
       ImGui::End();
 
       ImGui::Begin("Creation test");
@@ -254,7 +278,10 @@ int main()
         ImGuiWindowFlags_NoNav;
 
       uint32_t uWidth = 0, uHeight = 0;
-      pRender->GetRenderWindow()->GetWindowSize(uWidth, uHeight);
+      if (const render::CRenderWindow* pRenderWindow = rRender.GetRenderWindow())
+      {
+        pRenderWindow->GetWindowSize(uWidth, uHeight);
+      }
       ImGui::SetNextWindowPos(ImVec2(static_cast<float>(uWidth - 160.0f), 30.0f));
       if (ImGui::Begin("Watermark", nullptr, iFlags))
       {

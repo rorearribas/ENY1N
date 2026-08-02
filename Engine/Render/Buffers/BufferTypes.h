@@ -97,9 +97,3 @@ struct __declspec(align(s_uAlign)) TGlobalLighting
   int RegisteredSpotLights;
   float Padding[2];
 };
-
-// TLightView [16 Bytes]
-struct __declspec(align(s_uAlign)) TLightView
-{
-  math::CMatrix4x4 LightViewProjection = math::CMatrix4x4::Identity;
-};

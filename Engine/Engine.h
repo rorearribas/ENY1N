@@ -30,9 +30,8 @@ namespace engine
     void Draw();
 
     // Getters
-    inline scene::CSceneManager* GetSceneManager() const { return m_pSceneManager.get(); }
-    inline render::CCamera* GetCamera() const { return m_pSceneManager->GetRenderCamera(); }
-    inline render::CRender* GetRender() const { return m_pRender.get(); }
+    inline scene::CSceneManager& GetSceneManager() const { return *m_pSceneManager.get(); }
+    inline render::CRender& GetRender() const { return *m_pRender.get(); }
 
     // Handle models
     utils::CWeakPtr<render::gfx::CModel> const LoadModel(const char* _sModelPath, uint32_t _uSceneIndex = 0);

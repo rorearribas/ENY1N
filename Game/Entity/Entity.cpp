@@ -155,68 +155,70 @@ namespace game
 
     // Get view matrix and projection matrix
     engine::CEngine* pEngine = engine::CEngine::GetInstance();
-    const render::CCamera* pCamera = pEngine->GetCamera();
-
-    // Get matrix
-    float fTranslation[3] = { m_oTransform.GetPos().x, m_oTransform.GetPos().y, m_oTransform.GetPos().z };
-    float fRotation[3] = { m_oTransform.GetRot().x, m_oTransform.GetRot().y, m_oTransform.GetRot().z };
-    float fScale[3] = { m_oTransform.GetScl().x, m_oTransform.GetScl().y, m_oTransform.GetScl().z };
-
-    // Set rect
-    ImGuiIO& io = ImGui::GetIO();
-    ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
-
-    // get view matrix
-    const math::CMatrix4x4& viewMatrix = pCamera->GetViewMatrix();
-    const math::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
-
-    // Manipulate gizmo
-    math::CMatrix4x4 mMatrix = m_oTransform.GetMatrix();
-    if (ImGuizmo::Manipulate(viewMatrix, projectionMatrix, s_eGizmoOperation, s_eGizmoMode, mMatrix))
+    scene::CSceneManager& rSceneManager = pEngine->GetSceneManager();
+    if (const render::CCamera* pCamera = rSceneManager.GetRenderCamera())
     {
-      // Apply modifications
-      switch (s_eGizmoOperation)
-      {
-      case ImGuizmo::TRANSLATE:
-      {
-        SetPos(mMatrix.GetTranslate());
-      }
-      break;
-      case ImGuizmo::ROTATE:
-      {
-        SetRot(mMatrix.GetRotation());
-      }
-      break;
-      case ImGuizmo::SCALE:
-      {
-        SetScl(mMatrix.GetScale());
-      }
-      break;
-      }
-    }
+      // Get matrix
+      float fTranslation[3] = { m_oTransform.GetPos().x, m_oTransform.GetPos().y, m_oTransform.GetPos().z };
+      float fRotation[3] = { m_oTransform.GetRot().x, m_oTransform.GetRot().y, m_oTransform.GetRot().z };
+      float fScale[3] = { m_oTransform.GetScl().x, m_oTransform.GetScl().y, m_oTransform.GetScl().z };
 
-    ImGui::InputFloat3("Translation", fTranslation);
-    ImGui::InputFloat3("Rotation", fRotation);
-    ImGui::InputFloat3("Scaling", fScale);
+      // Set rect
+      ImGuiIO& io = ImGui::GetIO();
+      ImGuizmo::SetRect(0, 0, io.DisplaySize.x, io.DisplaySize.y);
 
-    math::CVector3 v3Pos(fTranslation[0], fTranslation[1], fTranslation[2]);
-    math::CVector3 v3Rot(fRotation[0], fRotation[1], fRotation[2]);
-    math::CVector3 v3Scale(fScale[0], fScale[1], fScale[2]);
+      // get view matrix
+      const math::CMatrix4x4& viewMatrix = pCamera->GetViewMatrix();
+      const math::CMatrix4x4& projectionMatrix = pCamera->GetProjectionMatrix();
 
-    if (!ImGuizmo::IsUsing())
-    {
-      // Update the entity
-      if (!GetPos().Equal(v3Pos))
+      // Manipulate gizmo
+      math::CMatrix4x4 mMatrix = m_oTransform.GetMatrix();
+      if (ImGuizmo::Manipulate(viewMatrix, projectionMatrix, s_eGizmoOperation, s_eGizmoMode, mMatrix))
       {
-        SetPos(v3Pos);
+        // Apply modifications
+        switch (s_eGizmoOperation)
+        {
+        case ImGuizmo::TRANSLATE:
+        {
+          SetPos(mMatrix.GetTranslate());
+        }
+        break;
+        case ImGuizmo::ROTATE:
+        {
+          SetRot(mMatrix.GetRotation());
+        }
+        break;
+        case ImGuizmo::SCALE:
+        {
+          SetScl(mMatrix.GetScale());
+        }
+        break;
+        }
       }
-      if (!GetRot().Equal(v3Rot))
+
+      ImGui::InputFloat3("Translation", fTranslation);
+      ImGui::InputFloat3("Rotation", fRotation);
+      ImGui::InputFloat3("Scaling", fScale);
+
+      math::CVector3 v3Pos(fTranslation[0], fTranslation[1], fTranslation[2]);
+      math::CVector3 v3Rot(fRotation[0], fRotation[1], fRotation[2]);
+      math::CVector3 v3Scale(fScale[0], fScale[1], fScale[2]);
+
+      if (!ImGuizmo::IsUsing())
       {
-        SetRot(v3Rot);
-      }
-      if (!GetScl().Equal(v3Scale))
-      {
-        SetScl(v3Scale);
+        // Update the entity
+        if (!GetPos().Equal(v3Pos))
+        {
+          SetPos(v3Pos);
+        }
+        if (!GetRot().Equal(v3Rot))
+        {
+          SetRot(v3Rot);
+        }
+        if (!GetScl().Equal(v3Scale))
+        {
+          SetScl(v3Scale);
+        }
       }
     }
 

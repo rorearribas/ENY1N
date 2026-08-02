@@ -40,7 +40,9 @@ namespace game
   {
     if (m_pLight.IsValid())
     {
-      m_pLight->SetDir(math::CMatrix4x4::CreateRotation(_v3Rot) * math::CVector3::Forward);
+      math::CVector3 v3Dir = math::CMatrix4x4::CreateRotation(_v3Rot) * math::CVector3::Forward;
+      v3Dir.Normalize();
+      m_pLight->SetDir(v3Dir);
     }
   }
   // ------------------------------------

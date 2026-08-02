@@ -95,7 +95,7 @@ namespace scene
     Clear();
   }
   // ------------------------------------
-  void CRenderScene::CacheModels(render::CCamera* _pCamera)
+  void CRenderScene::CacheModels(const render::CCamera& _rCamera)
   {
     // Cache models and instances
     uint16_t uDrawableModels = 0;
@@ -110,7 +110,7 @@ namespace scene
       // Check culling
       if (rCachedModel.Visible && pModel->IsCullEnabled())
       {
-        rCachedModel.Visible = _pCamera->IsOnFrustum(pModel->GetWorldAABB());
+        rCachedModel.Visible = _rCamera.IsOnFrustum(pModel->GetWorldAABB());
       }
 
       // Handle instances
@@ -127,7 +127,7 @@ namespace scene
         bool bOnFrustum = true;
         if (pInstance->IsCullEnabled()) // Check culling
         {
-          bOnFrustum = _pCamera->IsOnFrustum(pInstance->GetWorldAABB());
+          bOnFrustum = _rCamera.IsOnFrustum(pInstance->GetWorldAABB());
         }
         if (bOnFrustum)
         {
@@ -153,7 +153,7 @@ namespace scene
     return m_lstCachedModels;
   }
   // ------------------------------------
-  void CRenderScene::CachePrimitives(render::CCamera* _pCamera)
+  void CRenderScene::CachePrimitives(const render::CCamera& _rCamera)
   {
     // Reset value
     m_uDrawablePrimitives = 0;
@@ -167,7 +167,7 @@ namespace scene
       bool bOnFrustum = true;
       if (pPrimitive->IsCullEnabled()) // Check culling
       {
-        bOnFrustum = _pCamera->IsOnFrustum(pPrimitive->GetWorldAABB());
+        bOnFrustum = _rCamera.IsOnFrustum(pPrimitive->GetWorldAABB());
       }
 
       if (bOnFrustum)
@@ -399,7 +399,7 @@ namespace scene
   }
   // ------------------------------------
 #ifdef _DEBUG
-  void CRenderScene::CacheDebugPrimitives(render::CCamera* _pCamera)
+  void CRenderScene::CacheDebugPrimitives(const render::CCamera& _rCamera)
   {
     // Reset value
     m_uDrawableDebugPrimitives = 0;
@@ -413,7 +413,7 @@ namespace scene
       bool bOnFrustum = true;
       if (pDebugPrimitive->IsCullEnabled()) // Check culling
       {
-        bOnFrustum = _pCamera->IsOnFrustum(pDebugPrimitive->GetWorldAABB());
+        bOnFrustum = _rCamera.IsOnFrustum(pDebugPrimitive->GetWorldAABB());
       }
 
       if (bOnFrustum)

@@ -25,7 +25,7 @@ namespace scene
 
     // Handle scene
     void SetSceneEnabled(uint32_t _uIndex, bool _bEnabled) const;
-    inline scene::CRenderScene* const GetCurrentScene() { return m_pCurrentScene.IsValid() ? m_pCurrentScene.GetPtr() : nullptr; };
+    inline scene::CRenderScene* const GetCurrentScene() { return m_pCurrentScene.GetPtr(); };
 
     inline const TSceneList& GetScenes() { return m_lstScenes; }
     inline render::CCamera* GetRenderCamera() const { return m_lstCameras.front(); }
