@@ -765,16 +765,17 @@ namespace render
       return hResult;
     }
 
-    // Set standard rasterizer config
+    // Set shadow rasterizer config
     D3D11_RASTERIZER_DESC rShadowRasterizerCfg = D3D11_RASTERIZER_DESC();
     rShadowRasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
     rShadowRasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
-    rShadowRasterizerCfg.DepthBias = 10000;
+    rShadowRasterizerCfg.DepthBias = 500;
     rShadowRasterizerCfg.DepthBiasClamp = 0.0f;
     rShadowRasterizerCfg.SlopeScaledDepthBias = 1.5f;
     rShadowRasterizerCfg.DepthClipEnable = true;
     rShadowRasterizerCfg.ScissorEnable = false;
     rShadowRasterizerCfg.MultisampleEnable = false;
+    rShadowRasterizerCfg.AntialiasedLineEnable = false;
 
     // Create rasterizer
     return global::api::Device->CreateRasterizerState(&rShadowRasterizerCfg, &internal::Pipeline.ShadowsRasterizer);
@@ -813,7 +814,7 @@ namespace render
     rShadowSampler.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
     rShadowSampler.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
     rShadowSampler.ComparisonFunc = D3D11_COMPARISON_LESS_EQUAL;
-    rShadowSampler.BorderColor[0] = 1.0f;
+    rShadowSampler.BorderColor[0] = 0.0f;
     rShadowSampler.BorderColor[1] = 1.0f;
     rShadowSampler.BorderColor[2] = 1.0f;
     rShadowSampler.BorderColor[3] = 1.0f;
@@ -880,13 +881,13 @@ namespace render
   {
     switch (_eRenderMode)
     {
-    case render::ERenderMode::SOLID: { return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; }
-    case render::ERenderMode::WIREFRAME: { return D3D_PRIMITIVE_TOPOLOGY_LINELIST; }
-    case render::ERenderMode::INVALID:
-    default:
-    {
-      return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-    }
+      case render::ERenderMode::SOLID: { return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; }
+      case render::ERenderMode::WIREFRAME: { return D3D_PRIMITIVE_TOPOLOGY_LINELIST; }
+      case render::ERenderMode::INVALID:
+      default:
+      {
+        return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+      }
     }
   }
   // ------------------------------------
@@ -1002,7 +1003,7 @@ namespace render
           // Clear depth stencil view
           utils::CWeakPtr<render::gfx::CShadowMap> wpShadowMap = lstShadowMaps[0];
           const texture::TDepthStencil& rShadowDepth = wpShadowMap->GetShadowDepth();
-          global::api::DeviceContext->ClearDepthStencilView(rShadowDepth.GetView(), D3D11_CLEAR_DEPTH, 1.0f, 0);
+          global::api::DeviceContext->ClearDepthStencilView(rShadowDepth.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
           // Configure viewport
           uint32_t uWidth = 0, uHeight = 0;
@@ -1016,14 +1017,15 @@ namespace render
           math::CVector3 v3ShadowPos = v3SceneCenter - (v3Dir * (fMaxDistance * 2.0f)); // Calculate shadow pos
 
           // Orthographic values ( testing )
+          float fAspectRatio = static_cast<float>(uWidth) / static_cast<float>(uHeight);
           float fHeight = 100.0f;
-          float fAspectRatio = static_cast<float>(uWidth / static_cast<float>(uHeight));
           float fWidth = fHeight * fAspectRatio;
-          float fNear = m_pRenderCamera->GetNear();
-          float fFar = m_pRenderCamera->GetFar();
 
-          math::CMatrix4x4 mOrthographicProj = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar);
+          const float fNear = m_pRenderCamera->GetNear();
+          const float fFar = m_pRenderCamera->GetFar();
+
           math::CMatrix4x4 mView = math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp);
+          math::CMatrix4x4 mOrthographicProj = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar);
 
 #ifdef _DEBUG
           assert(m_pShadowCamera);

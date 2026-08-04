@@ -149,11 +149,17 @@ namespace render
     template<render::EView T>
     void render::texture::CTexture2D<T>::GetTextureSize(uint32_t& _uWidth_, uint32_t& _uHeight_) const
     {
+      // Fail-safe initialization to prevent garbage values
+      _uWidth_ = 0;
+      _uHeight_ = 0;
+
       if (m_pInternalTexture)
       {
+        // Get texture info
         D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
         m_pInternalTexture->GetDesc(&rTextureDesc);
 
+        // Set size
         _uWidth_ = rTextureDesc.Width;
         _uHeight_ = rTextureDesc.Height;
       }
