@@ -98,20 +98,22 @@ int main()
   game::CLightComponent* pDirComp = pDirectionalLight->RegisterComponent<game::CLightComponent>();
   pDirComp->CreateLight(render::ELight::DIRECTIONAL_LIGHT);
 
-  game::CEntity* pSpotLight = pGameManager->CreateEntity("SpotLight");
-  game::CLightComponent* pSpotComp = pSpotLight->RegisterComponent<game::CLightComponent>();
-  pSpotComp->CreateLight(render::ELight::SPOT_LIGHT);
-  static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetRange(100.0f);
-  static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetIntensity(0.1f);
-  static_cast<render::lights::CPointLight*>(pSpotComp->GetLight())->SetColor(math::CVector3(0.0f, 1.0f, 0.0f));
-
   float fOffsetZ = 0.0f;
-  for (uint32_t uIndex = 0; uIndex < 64u; uIndex++)
+  for (uint32_t uIndex = 0; uIndex < 32u; uIndex++)
   {
     game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
-    pModelEnt->SetPos(math::CVector3(GenerateFloat(-50.0f, 50.0f), GenerateFloat(10.0f, 100.0f), GenerateFloat(-50.0f, 50.0f)));
+    pModelEnt->SetPos(math::CVector3(GenerateFloat(-30.0f, 30.0f), GenerateFloat(10.0f, 60.0f), GenerateFloat(-40.0f, 40.0f)));
     game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
     pModelTest->LoadModel("models/spaceship/spaceship.fbx");
+    fOffsetZ += 10;
+  }
+
+  for (uint32_t uIndex = 0; uIndex < 32u; uIndex++)
+  {
+    game::CEntity* pModelEnt = pGameManager->CreateEntity("Model");
+    pModelEnt->SetPos(math::CVector3(GenerateFloat(-30.0f, 30.0f), GenerateFloat(10.0f, 60.0f), GenerateFloat(-40.0f, 40.0f)));
+    game::CModelComponent* pModelTest = pModelEnt->RegisterComponent<game::CModelComponent>();
+    pModelTest->LoadModel("models/cube/cube.fbx");
     fOffsetZ += 10;
   }
 

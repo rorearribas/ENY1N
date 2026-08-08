@@ -29,7 +29,8 @@ PS_INPUT VSMain(VS_INPUT input)
 {
   PS_INPUT output;
   {
-    output.position = mul(ViewProjection, mul(input.modelMatrix, float4(input.position, 1.0)));
+		float4 worldPosition = mul(input.modelMatrix, float4(input.position, 1.0));
+		output.position = mul(ViewProjection, worldPosition);
     output.color = input.color;
   }
   return output;

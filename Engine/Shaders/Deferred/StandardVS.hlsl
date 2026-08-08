@@ -16,7 +16,7 @@ struct VS_INPUT
 	float2 uv : UV;
 
   // Instancing
-	float4x4 modelMatrix : INSTANCE_TRANSFORM;
+	float4x4 instanceMatrix : INSTANCE_TRANSFORM;
 };
 
 // PS Input
@@ -32,17 +32,20 @@ PS_INPUT VSMain(VS_INPUT input)
 {
 	PS_INPUT output;
   {
-		// Set world position and transform to clip space
-		float4 worldPosition = mul(input.modelMatrix, float4(input.position, 1.0));
+		// Calculate world pos and transform to clip space
+		float4 worldPosition = mul(input.instanceMatrix, float4(input.position, 1.0));
 		output.position = mul(ViewProjection, worldPosition);
 		output.worldpos = worldPosition.xyz;
-
-		// Normalize the normal using the model matrix to account for scaling and rotation
-		float3 col0 = normalize(float3(input.modelMatrix[0].x, input.modelMatrix[1].x, input.modelMatrix[2].x));
-		float3 col1 = normalize(float3(input.modelMatrix[0].y, input.modelMatrix[1].y, input.modelMatrix[2].y));
-		float3 col2 = normalize(float3(input.modelMatrix[0].z, input.modelMatrix[1].z, input.modelMatrix[2].z));
-		float3x3 normalizedMatrix = float3x3(col0, col1, col2);
-		output.normal = normalize(mul(normalizedMatrix, input.normal));
+		
+		// Calculate normal (it doesn't work with negative scales)
+		float3x3 instanceMatrix = (float3x3) input.instanceMatrix;
+		float3 scale;
+		{
+			scale.x = length(instanceMatrix[0].xyz);
+			scale.y = length(instanceMatrix[1].xyz);
+			scale.z = length(instanceMatrix[2].xyz);
+		}
+		output.normal = normalize(mul(instanceMatrix, (input.normal / (scale * scale))));
 				
 		// Set uv coordinates
 		output.uv = input.uv;

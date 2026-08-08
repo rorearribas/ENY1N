@@ -16,7 +16,7 @@ PS_INPUT_SHADOW Shadows_VSMain(VS_INPUT input)
 {
   PS_INPUT_SHADOW output;
   {
-    float4 worldPosition = mul(input.modelMatrix, float4(input.position, 1.0));
+		float4 worldPosition = mul(input.instanceMatrix, float4(input.position, 1.0));
     output.position = mul(LightViewProjection, worldPosition);
   }
   return output;
