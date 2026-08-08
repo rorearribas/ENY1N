@@ -113,13 +113,8 @@ bool CRenderBuffer<T>::Free(const CBufferHandler& _rBufferHandler, uint32_t& _uL
   uint32_t uEndMoveBytes = m_uCurrentOffset * sizeof(T);
   uint32_t uDestMoveBytes = _rBufferHandler.BeginOffset * sizeof(T);
 
-  D3D11_BOX rSrcBox = D3D11_BOX();
-  rSrcBox.left = uStartMoveBytes;
-  rSrcBox.right = uEndMoveBytes;
-  rSrcBox.top = 0; rSrcBox.bottom = 1;
-  rSrcBox.front = 0; rSrcBox.back = 1;
-
   // Update memory
+  D3D11_BOX rSrcBox = { uStartMoveBytes, 0u, 0u, uEndMoveBytes, 1u, 1u };
   global::api::DeviceContext->CopySubresourceRegion(m_pBuffer, 0, uDestMoveBytes, 0, 0, m_pBuffer, 0, &rSrcBox);
 
   // Update offset

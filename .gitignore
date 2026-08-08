@@ -15,6 +15,7 @@
 *.vsidx
 *.opendb
 *.db-shm
+*.ini
 
 # Compiled Dynamic libraries
 *.so
