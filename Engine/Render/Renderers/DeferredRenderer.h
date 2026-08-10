@@ -13,19 +13,18 @@ namespace render
     ~CDeferredRenderer() {}
 
     HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);
-    void Execute(scene::CRenderScene* _pRenderScene) override;
+    void Execute(scene::CRenderScene& _rRenderScene) override;
 
     void DrawOpaques(void) {}
     void ComputeGraphicsBuffer(void) {}
 
-    void AttachRenderTargets(ID3D11DepthStencilView* _pDepthStencilView);
+    void AttachRenderTargets(render::texture::TDepthStencil& _rDepthStencil);
     void DetachRenderTargets();
 
-    const CRenderTarget* GetDiffuseRT() const { return m_pDiffuseRT.get(); }
-    const CRenderTarget* GetNormalRT() const { return m_pNormalRT.get(); }
-    const CRenderTarget* GetSpecularRT() const { return m_pSpecularRT.get(); }
-
     void ClearRenderTargets(const float _v4ClearColor[4]);
+    CRenderTarget& GetDiffuseRT() const { return *m_pDiffuseRT; }
+    CRenderTarget& GetNormalRT() const { return *m_pNormalRT; }
+    CRenderTarget& GetSpecularRT() const { return *m_pSpecularRT; }
 
   private:
     HRESULT SetupRenderTargets(uint32_t _uWidth, uint32_t _uHeight);

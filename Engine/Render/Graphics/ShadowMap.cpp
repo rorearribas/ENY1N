@@ -4,10 +4,27 @@ namespace render
 {
 	namespace gfx
 	{
-    CShadowMap::~CShadowMap()
+    void CShadowMap::Release()
     {
       m_oShadowDepth.Release();
       m_oShadowTexture.Release();
+    }
+    // ------------------------------------
+    CShadowMap::CShadowMap(CShadowMap&& _rOther) noexcept :
+        m_oShadowDepth(std::move(_rOther.m_oShadowDepth))
+      , m_oShadowTexture(std::move(_rOther.m_oShadowTexture))
+    {
+    }
+    // ------------------------------------
+    render::gfx::CShadowMap& CShadowMap::operator=(CShadowMap&& _rOther) noexcept
+    {
+      if (this != &_rOther)
+      {
+        Release();
+        m_oShadowDepth = std::move(_rOther.m_oShadowDepth);
+        m_oShadowTexture = std::move(_rOther.m_oShadowTexture);
+      }
+      return *this;
     }
     // ------------------------------------
     HRESULT CShadowMap::Setup(uint32_t _uWidth, uint32_t _uHeight)
@@ -49,5 +66,5 @@ namespace render
       rSRVDesc.Texture2D.MipLevels = 1;
       return m_oShadowTexture.CreateViewFromTexture(m_oShadowDepth, rSRVDesc);
     }
-  }
+}
 }

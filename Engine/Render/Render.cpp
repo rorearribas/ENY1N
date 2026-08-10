@@ -50,14 +50,15 @@ namespace render
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
 
-    // Standard layout - VTX(36) / INST(64)
-    static constexpr int s_iStandardLayoutSize(7);
+    // Standard layout - VTX(48) / INST(64)
+    static constexpr int s_iStandardLayoutSize(8);
     static const D3D11_INPUT_ELEMENT_DESC s_tStandardLayout[s_iStandardLayoutSize] =
     {
       // Vertex layout
       { "VERTEXPOS",          0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 12
       { "NORMAL",             0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 24
-      { "UV",                 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 36
+      { "TANGENT",            0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 36
+      { "UV",                 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 48
       // Instancing
       { "INSTANCE_TRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 16
       { "INSTANCE_TRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 32
@@ -103,8 +104,8 @@ namespace render
 
       // Depth
       ID3D11DepthStencilState* DepthStencilState = nullptr;
-      texture::TDepthStencil DepthStencil;
-      texture::TShaderResource DepthTexture;
+      render::texture::TDepthStencil DepthStencil;
+      render::texture::TShaderResource DepthTexture;
 
       // Rasterizer
       ID3D11RasterizerState* DefaultRasterizer = nullptr;
@@ -123,16 +124,16 @@ namespace render
       ID3DUserDefinedAnnotation* pUserMarker = nullptr;
 
       // Forward
-      shader::CShader<EShader::E_VERTEX> ForwardVS;
-      shader::CShader<EShader::E_PIXEL> ForwardPS;
+      render::shader::CShader<EShader::E_VERTEX> ForwardVS;
+      render::shader::CShader<EShader::E_PIXEL> ForwardPS;
 
       // Deferred
-      shader::CShader<EShader::E_VERTEX> DrawTriangleVS;
-      shader::CShader<EShader::E_VERTEX> DeferredShadowsVS;
-      shader::CShader<EShader::E_VERTEX> DeferredVS;
+      render::shader::CShader<EShader::E_VERTEX> DrawTriangleVS;
+      render::shader::CShader<EShader::E_VERTEX> DeferredShadowsVS;
+      render::shader::CShader<EShader::E_VERTEX> DeferredVS;
 
-      shader::CShader<EShader::E_PIXEL> DeferredGBuffer;
-      shader::CShader<EShader::E_PIXEL> DeferredLights;
+      render::shader::CShader<EShader::E_PIXEL> DeferredGBuffer;
+      render::shader::CShader<EShader::E_PIXEL> DeferredLights;
     };
 
     static TRenderPipeline Pipeline;
@@ -934,6 +935,12 @@ namespace render
       internal::Pipeline.pUserMarker->EndEvent();
     }
   }
+
+  void CRender::SetRenderTargets(uint32_t _uSize, ID3D11RenderTargetView** _pRenderTargets, ID3D11DepthStencilView* _pStencilView)
+  {
+    global::api::DeviceContext->OMSetRenderTargets(_uSize, _pRenderTargets, _pStencilView);
+  }
+
   // ------------------------------------
   void CRender::ComputeGBuffer(scene::CRenderScene& _rScene)
   {
@@ -960,8 +967,7 @@ namespace render
     internal::Pipeline.DeferredVS.Attach();
 
     // Set render targets
-    ID3D11DepthStencilView* pDepthStencilView = internal::Pipeline.DepthStencil.GetView();
-    m_pDeferredRenderer->AttachRenderTargets(pDepthStencilView);
+    m_pDeferredRenderer->AttachRenderTargets(internal::Pipeline.DepthStencil);
 
     // Set standard layout
     global::api::DeviceContext->IASetInputLayout(internal::Pipeline.StandardLayout);
@@ -1002,12 +1008,12 @@ namespace render
         {
           // Clear depth stencil view
           utils::CWeakPtr<render::gfx::CShadowMap> wpShadowMap = lstShadowMaps[0];
-          const texture::TDepthStencil& rShadowDepth = wpShadowMap->GetShadowDepth();
-          global::api::DeviceContext->ClearDepthStencilView(rShadowDepth.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+          const texture::TDepthStencil& rShadowStencil = wpShadowMap->GetStencil();
+          global::api::DeviceContext->ClearDepthStencilView(rShadowStencil.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
           // Configure viewport
           uint32_t uWidth = 0, uHeight = 0;
-          rShadowDepth.GetTextureSize(uWidth, uHeight);
+          rShadowStencil.GetTextureSize(uWidth, uHeight);
           SetViewport(uWidth, uHeight);
 
           // Create view matrix from directional light
@@ -1063,7 +1069,7 @@ namespace render
           internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
 
           // Set render target
-          global::api::DeviceContext->OMSetRenderTargets(0, nullptr, rShadowDepth.GetView());
+          SetRenderTargets(0u, nullptr, rShadowStencil.GetView());
 
           // Set depth stencil state
           ID3D11DepthStencilState* pCurrentStencilState = nullptr;
@@ -1119,8 +1125,8 @@ namespace render
     ID3D11ShaderResourceView* pShadowTexture = nullptr;
     if (bCastShadows && lstShadowMaps.GetSize() > 0)
     {
-      pShadowTexture = lstShadowMaps[0]->GetShadowTexture().GetView();
-      global::api::DeviceContext->PSSetSamplers(1, 1, &internal::Pipeline.ShadowSampler);
+      pShadowTexture = lstShadowMaps[0]->GetTexture().GetView();
+      global::api::DeviceContext->PSSetSamplers(1u, 1u, &internal::Pipeline.ShadowSampler);
       internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.LightingViewSlot);
     }
 
@@ -1128,14 +1134,14 @@ namespace render
     ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
     {
       internal::Pipeline.DepthTexture.GetView(),
-      m_pDeferredRenderer->GetDiffuseRT()->GetRTView(),
-      m_pDeferredRenderer->GetNormalRT()->GetRTView(),
-      m_pDeferredRenderer->GetNormalRT()->GetRTView(),
+      m_pDeferredRenderer->GetDiffuseRT().GetShaderView(),
+      m_pDeferredRenderer->GetNormalRT().GetShaderView(),
+      m_pDeferredRenderer->GetNormalRT().GetShaderView(),
       pShadowTexture
     };
 
     // Bind buffers
-    global::api::DeviceContext->OMSetRenderTargets(1, &internal::Pipeline.BackBuffer, nullptr);
+    SetRenderTargets(1u, &internal::Pipeline.BackBuffer);
     global::api::DeviceContext->PSSetShaderResources(0, uTexturesSize, &lstGBufferSRV[0]);
 
     // Setup triangle
@@ -1153,7 +1159,7 @@ namespace render
 
     // Attach back buffer
     ID3D11DepthStencilView* pDepthStencilView = internal::Pipeline.DepthStencil.GetView();
-    global::api::DeviceContext->OMSetRenderTargets(1, &internal::Pipeline.BackBuffer, pDepthStencilView);
+    SetRenderTargets(1u, &internal::Pipeline.BackBuffer, pDepthStencilView);
   }
   // ------------------------------------
   void CRender::DrawModels(scene::CRenderScene& _rScene)

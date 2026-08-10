@@ -15,10 +15,17 @@ namespace render
     {
       math::CVector3 VertexPos = math::CVector3::Zero;
       math::CVector3 Normal = math::CVector3::Zero;
+      math::CVector3 Tangent = math::CVector3::Zero;
       math::CVector2 TexCoord = math::CVector2::Zero;
 
-      inline bool operator==(const TVertexData& _other) const { return VertexPos == _other.VertexPos && Normal == _other.Normal && TexCoord == _other.TexCoord; }
-      inline bool operator!=(const TVertexData& _other) const { return !(*this == _other); }
+      inline bool operator==(const TVertexData& _rOther) const 
+      { 
+        return (VertexPos == _rOther.VertexPos) 
+        && (Normal == _rOther.Normal) 
+        && (Tangent == _rOther.Tangent) 
+        && (TexCoord == _rOther.TexCoord); 
+      }
+      inline bool operator!=(const TVertexData& _rOther) const { return !(*this == _rOther); }
     };
     //------------------------------------------------
     //------------------INSTANCING--------------------
@@ -128,13 +135,29 @@ namespace std
   template <>
   struct hash<render::gfx::TVertexData>
   {
-    size_t operator()(const render::gfx::TVertexData& v) const
+    // Algorithm from std::boost
+    size_t operator()(const render::gfx::TVertexData& _rVertexData) const
     {
-      auto oFunc = [](float f) { return static_cast<int>(f * 1000); };
-      size_t h1 = hash<int>()(oFunc(v.VertexPos.x)) ^ hash<int>()(oFunc(v.VertexPos.y)) ^ hash<int>()(oFunc(v.VertexPos.z));
-      size_t h2 = hash<int>()(oFunc(v.Normal.x)) ^ hash<int>()(oFunc(v.Normal.y)) ^ hash<int>()(oFunc(v.Normal.z));
-      size_t h3 = hash<int>()(oFunc(v.TexCoord.x)) ^ hash<int>()(oFunc(v.TexCoord.y));
-      return h1 ^ (h2 << 1) ^ (h3 << 2);
+      size_t seed = 0;
+      auto rFunc = [](float f) { return static_cast<int>(f * 1000); };
+      auto hash_combine = [](size_t& s, size_t v) { s ^= v + 0x9e3779b9 + (s << 6) + (s >> 2); };
+
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.VertexPos.x)));
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.VertexPos.y)));
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.VertexPos.z)));
+
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.Normal.x)));
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.Normal.y)));
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.Normal.z)));
+
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.Tangent.x)));
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.Tangent.y)));
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.Tangent.z)));
+
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.TexCoord.x)));
+      hash_combine(seed, hash<int>()(rFunc(_rVertexData.TexCoord.y)));
+
+      return seed;
     }
   };
 }

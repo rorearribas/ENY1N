@@ -26,8 +26,6 @@ namespace render
     void PrepareFrame();
     void Draw(scene::CRenderScene& _rScene);
 
-	public:
-
     inline const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow.get(); }
     inline void SetRenderCamera(render::CCamera* _pCamera) { m_pRenderCamera = _pCamera; }
     inline void SetShadowCamera(render::CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
@@ -41,6 +39,8 @@ namespace render
 
     inline void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
     inline bool IsVSyncEnabled() const { return m_bVerticalSync; }
+
+    void SetRenderTargets(uint32_t _uSize, ID3D11RenderTargetView** _pRenderTargets, ID3D11DepthStencilView* _pStencilView = nullptr);
 
   protected:
     void OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight);

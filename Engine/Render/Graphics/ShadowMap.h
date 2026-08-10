@@ -8,16 +8,22 @@ namespace render
     class CShadowMap
     {
     public:
-      CShadowMap() {}
-      ~CShadowMap();
+      CShadowMap() = default;
+      ~CShadowMap() { Release(); }
+
+      CShadowMap(CShadowMap&& _rOther) noexcept;
+      CShadowMap& operator=(CShadowMap&& _rOther) noexcept;
+      CShadowMap(const CShadowMap& _rOther) = delete;
+      CShadowMap& operator=(const CShadowMap& _rOther) = delete;
 
       HRESULT Setup(uint32_t _uWidth, uint32_t _uHeight);
-      const texture::TDepthStencil& GetShadowDepth() const { return m_oShadowDepth; }
-      const texture::TShaderResource& GetShadowTexture() const { return m_oShadowTexture; }
+      const texture::TDepthStencil& GetStencil() const { return m_oShadowDepth; }
+      const texture::TShaderResource& GetTexture() const { return m_oShadowTexture; }
 
     private:
-      texture::TDepthStencil m_oShadowDepth;
-      texture::TShaderResource m_oShadowTexture;
+      void Release();
+      render::texture::TDepthStencil m_oShadowDepth;
+      render::texture::TShaderResource m_oShadowTexture;
     };
   }
 }

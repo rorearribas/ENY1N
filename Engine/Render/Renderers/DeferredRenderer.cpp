@@ -21,7 +21,7 @@ namespace render
     return SetupRenderTargets(_uWidth, _uHeight);
   }
   // ------------------------------------
-  void CDeferredRenderer::Execute(scene::CRenderScene* /*_pRenderScene*/)
+  void CDeferredRenderer::Execute(scene::CRenderScene& /*_rRenderScene*/)
   {
     //// Cache models using render camera
     //_pRenderScene->CacheModels(m_pRenderCamera);
@@ -33,25 +33,31 @@ namespace render
     //m_pRender->ComputeLightingPass(_pRenderScene);
   }
   // ------------------------------------
-  void CDeferredRenderer::AttachRenderTargets(ID3D11DepthStencilView* _pDepthStencilView)
+  void CDeferredRenderer::AttachRenderTargets(render::texture::TDepthStencil& _rDepthStencil)
   {
-    ID3D11RenderTargetView* lstGBufferRTV[internal::uRenderTargets] =
-    { 
-      m_pDiffuseRT->GetRenderTargetView(), 
-      m_pNormalRT->GetRenderTargetView(), 
-      m_pSpecularRT->GetRenderTargetView()
-    };
+    if (m_pRender)
+    {
+      // GBuffer render targets
+      ID3D11RenderTargetView* lstGBufferRTs[internal::uRenderTargets] =
+      {
+        m_pDiffuseRT->GetTexture().GetView(),
+        m_pNormalRT->GetTexture().GetView(),
+        m_pSpecularRT->GetTexture().GetView()
+      };
 
-    // Set render targets
-    global::api::DeviceContext->OMSetRenderTargets(internal::uRenderTargets, lstGBufferRTV, _pDepthStencilView);
+      // Set render targets
+      m_pRender->SetRenderTargets(internal::uRenderTargets, lstGBufferRTs, _rDepthStencil.GetView());
+    }
   }
   // ------------------------------------
   void CDeferredRenderer::DetachRenderTargets()
   {
-    // Remove render targets
-    static constexpr uint32_t uRenderTargets(3);
-    ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };
-    global::api::DeviceContext->OMSetRenderTargets(uRenderTargets, lstEmptyRTs, nullptr);
+    if (m_pRender)
+    {
+      // Remove render targets
+      ID3D11RenderTargetView* lstEmptyRTs[internal::uRenderTargets] = { nullptr, nullptr, nullptr };
+      m_pRender->SetRenderTargets(internal::uRenderTargets, lstEmptyRTs);
+    }
   }
   // ------------------------------------
   void CDeferredRenderer::ClearRenderTargets(const float _v4ClearColor[4])

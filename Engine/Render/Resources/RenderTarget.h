@@ -18,12 +18,11 @@ namespace render
     void SetClearColor(const float _v4ClearColor[4]);
     void Release();
 
-    ID3D11Texture2D* GetTexture() const { return m_oRTTexture; }
-    ID3D11RenderTargetView* GetRenderTargetView() const { return m_oRTTexture.GetView(); }
-    ID3D11ShaderResourceView* GetRTView() const { return m_pShaderView; }
+    render::texture::TRenderTarget& GetTexture() { return m_oRTTexture; }
+    ID3D11ShaderResourceView* GetShaderView() { return m_oBindedTexture.GetView(); }
 
   private:
-    texture::CTexture2D<render::EView::RENDER_TARGET> m_oRTTexture;
-    ID3D11ShaderResourceView* m_pShaderView = nullptr;
+    render::texture::TRenderTarget m_oRTTexture;
+    render::texture::TShaderResource m_oBindedTexture;
   };
 }

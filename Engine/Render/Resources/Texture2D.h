@@ -11,7 +11,8 @@ namespace render
 {
   namespace texture
   {
-    static constexpr uint32_t s_uRGBA = 4;
+    static constexpr uint32_t s_uRGB = 3u;
+    static constexpr uint32_t s_uRGBA = 4u;
 
     template<render::EView T = render::EView::UNKNOWN>
     class CTexture2D
@@ -19,6 +20,11 @@ namespace render
     public:
       CTexture2D() = default;
       ~CTexture2D() { Release(); }
+
+      CTexture2D(CTexture2D&& _rOther) noexcept;
+      CTexture2D& operator=(CTexture2D&& _rOther) noexcept;
+      CTexture2D(const CTexture2D&) = delete;
+      CTexture2D& operator=(const CTexture2D&) = delete;
 
       // Handler
       HRESULT CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _rTextureCfg, uint32_t _uChannels = 4);
@@ -122,12 +128,31 @@ namespace render
     };
 
     template<render::EView T>
+    render::texture::CTexture2D<T>::CTexture2D(render::texture::CTexture2D<T>&& _rOther) noexcept
+      : m_pInternalTexture(std::exchange(_rOther.m_pInternalTexture, nullptr))
+      , m_pInternalView(std::exchange(_rOther.m_pInternalView, nullptr))
+    {
+    }
+
+    template<render::EView T>
+    render::texture::CTexture2D<T>& render::texture::CTexture2D<T>::operator=(render::texture::CTexture2D<T>&& _rOther) noexcept
+    {
+      if (this != &_rOther)
+      {
+        Release();
+        m_pInternalTexture = std::exchange(_rOther.m_pInternalTexture, nullptr);
+        m_pInternalView = std::exchange(_rOther.m_pInternalView, nullptr);
+      }
+      return *this;
+    }
+
+    template<render::EView T>
     HRESULT render::texture::CTexture2D<T>::CreateTexture(void* _pData, const D3D11_TEXTURE2D_DESC& _rTextureDesc, uint32_t _uChannels)
     {
       // Clear
       global::api::SafeRelease(m_pInternalTexture);
 
-      // Create texture using raw data!
+      // Create texture from data
       D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
       rSubresourceData.pSysMem = _pData;
       rSubresourceData.SysMemPitch = _rTextureDesc.Width * _uChannels;

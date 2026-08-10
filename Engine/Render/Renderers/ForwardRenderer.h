@@ -9,7 +9,7 @@ namespace render
     CForwardRenderer(CRender* _pRender) : IRenderer(_pRender) {}
     ~CForwardRenderer() {}
 
-    void Execute(scene::CRenderScene* _pRenderScene) override;
+    void Execute(scene::CRenderScene& _rRenderScene) override;
 
   private:
   };

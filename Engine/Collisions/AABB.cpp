@@ -115,5 +115,4 @@ namespace collision
     _rWorldAABB_.SetMin(v3Min);
     _rWorldAABB_.SetMax(v3Max);
   }
-
 }

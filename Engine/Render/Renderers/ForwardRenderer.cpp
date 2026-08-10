@@ -3,7 +3,7 @@
 
 namespace render
 {
-  void CForwardRenderer::Execute(scene::CRenderScene* /*_pRenderScene*/)
+  void CForwardRenderer::Execute(scene::CRenderScene& /*_rRenderScene*/)
   {
     //throw std::logic_error("The method or operation is not implemented.");
   }

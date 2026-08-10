@@ -32,9 +32,10 @@ render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)
   // Read file
   LOG("Loading model -> " << _sPath);
 
-  uint32_t uFlags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate | aiProcess_GenNormals 
-  | aiProcess_ImproveCacheLocality | aiProcess_OptimizeMeshes;
-  const aiScene* pScene = rImporter.ReadFile(_sPath, uFlags);
+  uint32_t uD3D11Flags = aiProcess_ConvertToLeftHanded | aiProcess_Triangulate;
+  uint32_t uCalcNormalsFlags = aiProcess_GenSmoothNormals | aiProcess_CalcTangentSpace;
+  uint32_t uPerformanceFlags = aiProcess_ImproveCacheLocality | aiProcess_OptimizeMeshes;
+  const aiScene* pScene = rImporter.ReadFile(_sPath, (uD3D11Flags | uCalcNormalsFlags | uPerformanceFlags));
   if (!pScene)
   {
     ERROR_LOG("Error loading model! " << rImporter.GetErrorString());
@@ -146,6 +147,15 @@ render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)
         {
           std::string sMesh = std::string(pSceneMesh->mName.C_Str());
           WARNING_LOG("Normals are not defined correctly in: " + sMesh);
+        }
+
+        // Tangents and bitangents
+        if (pSceneMesh->HasTangentsAndBitangents())
+        {
+          // Tangent
+          aiVector3D v3Tangent =  pSceneMesh->mTangents[uPosIdx];
+          v3Tangent = aiMatrix3x3(mRotX) * v3Tangent;
+          rVertexData.Tangent = math::CVector3(v3Tangent.x, v3Tangent.y, v3Tangent.z);;
         }
 
         // Texture coords

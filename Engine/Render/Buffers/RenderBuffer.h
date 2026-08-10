@@ -10,7 +10,7 @@ struct CBufferHandler
   inline uint32_t GetOffset() const { return EndOffset - BeginOffset; }
 
   CBufferHandler() : BeginOffset(0), EndOffset(0) {}
-  ~CBufferHandler() {}
+  ~CBufferHandler() = default;
 };
 
 template<class T>

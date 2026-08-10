@@ -11,7 +11,7 @@ namespace render
     CLightingRenderer(CRender* _pRender) : IRenderer(_pRender) {}
     ~CLightingRenderer() {}
 
-    void Execute(scene::CRenderScene* _pRenderScene) override;
+    void Execute(scene::CRenderScene& _rRenderScene) override;
 
   private:
   };

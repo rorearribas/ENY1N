@@ -6,6 +6,36 @@ namespace render
   namespace gfx
   {
     // ------------------------------------
+    CDecal::CDecal(CDecal&& _rOther) noexcept : m_oDecalTexture(std::move(_rOther.m_oDecalTexture))
+      , m_oTransform(_rOther.m_oTransform)
+      , m_oLocalAABB(_rOther.m_oLocalAABB)
+      , m_oWorldAABB(_rOther.m_oWorldAABB)
+      , m_bCullEnabled(_rOther.m_bCullEnabled)
+      , m_bVisible(_rOther.m_bVisible)
+    {
+    }
+    // ------------------------------------
+    render::gfx::CDecal& CDecal::operator=(CDecal&& _rOther) noexcept
+    {
+      if (this != &_rOther)
+      {
+        Release();
+
+        m_oDecalTexture = std::move(_rOther.m_oDecalTexture);
+        m_oTransform = _rOther.m_oTransform;
+        m_oLocalAABB = _rOther.m_oLocalAABB;
+        m_oWorldAABB = _rOther.m_oWorldAABB;
+        m_bCullEnabled = _rOther.m_bCullEnabled;
+        m_bVisible = _rOther.m_bVisible;
+      }
+      return *this;
+    }
+    // ------------------------------------
+    void CDecal::Release()
+    {
+      m_oDecalTexture.Release();
+    }
+    // ------------------------------------
     void CDecal::SetPos(const math::CVector3& _v3Pos)
     {
       // Set pos

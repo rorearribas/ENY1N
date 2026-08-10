@@ -16,13 +16,15 @@ namespace render
 
     // Set texture config
     D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
-    rTextureDesc.Width = _uWidth;
-    rTextureDesc.Height = _uHeight;
-    rTextureDesc.MipLevels = 1;
-    rTextureDesc.ArraySize = 1;
-    rTextureDesc.SampleDesc.Count = 1;
-    rTextureDesc.Format = _eFormat;
-    rTextureDesc.BindFlags = internal_RT::s_uFlags;
+    {
+      rTextureDesc.Width = _uWidth;
+      rTextureDesc.Height = _uHeight;
+      rTextureDesc.MipLevels = 1;
+      rTextureDesc.ArraySize = 1;
+      rTextureDesc.SampleDesc.Count = 1;
+      rTextureDesc.Format = _eFormat;
+      rTextureDesc.BindFlags = internal_RT::s_uFlags;
+    }
 
     HRESULT hResult = m_oRTTexture.CreateTexture(rTextureDesc);
     if (FAILED(hResult))
@@ -33,9 +35,11 @@ namespace render
 
     // Creating a view of the texture to be used when binding it as a render target
     D3D11_RENDER_TARGET_VIEW_DESC rRenderTargetDesc = D3D11_RENDER_TARGET_VIEW_DESC();
-    rRenderTargetDesc.Format = _eFormat;
-    rRenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-    rRenderTargetDesc.Texture2D.MipSlice = 0;
+    {
+      rRenderTargetDesc.Format = _eFormat;
+      rRenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+      rRenderTargetDesc.Texture2D.MipSlice = 0;
+    }
     hResult = m_oRTTexture.CreateView(rRenderTargetDesc);
     if (FAILED(hResult))
     {
@@ -43,17 +47,19 @@ namespace render
       return hResult;
     }
 
-    // Creating a view of the texture to be used when binding it as a render target
+    // Create view from texture
     D3D11_SHADER_RESOURCE_VIEW_DESC rSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
-    rSRVDesc.Format = _eFormat;
-    rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    rSRVDesc.Texture2D.MipLevels = 1;
-    return global::api::Device->CreateShaderResourceView(m_oRTTexture, &rSRVDesc, &m_pShaderView);
+    {
+      rSRVDesc.Format = _eFormat;
+      rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+      rSRVDesc.Texture2D.MipLevels = 1u;
+    }
+    return m_oBindedTexture.CreateViewFromTexture(m_oRTTexture, rSRVDesc);
   }
   // ------------------------------------
   void CRenderTarget::SetClearColor(const float _v4ClearColor[4])
   {
-    if (ID3D11RenderTargetView* pRenderTargetView = GetRenderTargetView())
+    if (ID3D11RenderTargetView* pRenderTargetView = m_oRTTexture.GetView())
     {
       global::api::DeviceContext->ClearRenderTargetView(pRenderTargetView, _v4ClearColor);
     }
@@ -61,8 +67,8 @@ namespace render
   // ------------------------------------
   void CRenderTarget::Release()
   {
-    global::api::SafeRelease(m_pShaderView);
     m_oRTTexture.Release();
+    m_oBindedTexture.Release();
   }
 }
 
