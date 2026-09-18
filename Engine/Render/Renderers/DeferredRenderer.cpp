@@ -97,25 +97,13 @@ namespace render
     return SetupRenderTargets(_uWidth, _uHeight);
   }
   // ------------------------------------
-  void CDeferredRenderer::Execute(scene::CRenderScene* /*_pRenderScene*/)
-  <<<<<<< Updated upstream
-    ====== =
-    >>>>>> > Stashed changes
+  void CDeferredRenderer::PrepareFrame()
   {
-    //// Cache models using render camera
-    //_pRenderScene->CacheModels(m_pRenderCamera);
-
-    //// Compute GBuffer pass
-    //m_pRender->ComputeGBuffer(_pRenderScene);
-
-    //// Compute lighting pass
-    //m_pRender->ComputeLightingPass(_pRenderScene);
+    ClearRenderTargets(internal::s_v4ClearColor);
     m_pRender->ClearDepthStencil(m_oDepthStencilTexture.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
   }
   // ------------------------------------
-    // ------------------------------------
-    <<<<<< < Updated upstream
-    void CDeferredRenderer::AttachRenderTargets(ID3D11DepthStencilView * _pDepthStencilView)
+  void CDeferredRenderer::AttachRenderTargets(ID3D11DepthStencilView* _pDepthStencilView)
   {
     ID3D11RenderTargetView* lstGBufferRTV[internal::uRenderTargets] =
     {

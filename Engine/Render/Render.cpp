@@ -168,9 +168,6 @@ namespace render
     internal::Pipeline.LightingViewBuffer.Release();
     internal::Pipeline.MaterialBuffer.Release();
 
-    // Release depth textures
-    internal::Pipeline.DepthStencil.Release();
-    internal::Pipeline.DepthTexture.Release();
     // Release shaders (forward)
     internal::Pipeline.ForwardVS.Release();
     internal::Pipeline.ForwardPS.Release();
@@ -350,7 +347,7 @@ namespace render
     BeginMarker(internal::s_sPrepareFrameMrk);
     {
       // Clear back buffer
-      global::api::DeviceContext->ClearRenderTargetView(internal::Pipeline.BackBuffer, internal::s_v4ClearColor);
+      ClearRenderTargets(&internal::Pipeline.BackBuffer, internal::s_v4ClearColor);
 
       // Prepare frame
       m_pDeferredRenderer->PrepareFrame();

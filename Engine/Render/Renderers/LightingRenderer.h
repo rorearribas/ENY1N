@@ -13,6 +13,7 @@ namespace render
     void Execute(scene::CRenderScene& _rRenderScene) override;
     HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);
 
+    void SetShadowCamera(CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
     const CCamera& GetShadowCamera() const { return *m_pShadowCamera; }
 
   private:
