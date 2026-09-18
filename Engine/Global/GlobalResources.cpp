@@ -18,8 +18,8 @@ namespace global
   namespace api
   {
     // Device
-    ID3D11Device* Device = nullptr;
-    ID3D11DeviceContext* DeviceContext = nullptr;
+   ID3D11Device* Device;
+   ID3D11DeviceContext* DeviceContext;
   }
   // Global delegates
   namespace delegates

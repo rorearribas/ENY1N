@@ -120,9 +120,9 @@ namespace render
 #endif // DEBUG
   }
   // ------------------------------------
-  void CRenderWindow::SetEnabled(bool _bEnabled) const
+  void CRenderWindow::ShowWindow(bool _bShow) const
   {
-    ShowWindow(m_hHandle, _bEnabled);
+    ::ShowWindow(m_hHandle, _bShow);
   }
   // ------------------------------------
   void CRenderWindow::GetWindowSize(uint32_t& _uWidth, uint32_t& _uHeight) const

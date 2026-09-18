@@ -13,7 +13,9 @@ namespace render
     ~CDeferredRenderer() {}
 
     HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);
-    void Execute(scene::CRenderScene* _pRenderScene) override;
+
+    void PrepareFrame() override;
+    void Execute(scene::CRenderScene& _rRenderScene) override;
 
     void DrawOpaques(void) {}
     void ComputeGraphicsBuffer(void) {}
@@ -35,6 +37,10 @@ namespace render
     std::unique_ptr<CRenderTarget> m_pDiffuseRT;
     std::unique_ptr<CRenderTarget> m_pNormalRT;
     std::unique_ptr<CRenderTarget> m_pSpecularRT;
+
+    ID3D11DepthStencilState* m_pDepthStencilState = nullptr;
+    render::texture::TDepthStencil m_oDepthStencilTexture;
+    render::texture::TShaderResource m_oDepthStencilResource;
   };
 }
 

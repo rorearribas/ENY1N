@@ -13,6 +13,7 @@
 #include "Libs/Time/TimeManager.h"
 #include "Libs/ImGui/imgui_internal.h"
 
+#include "Engine/Render/Window/RenderWindow.h"
 #include "Engine/Managers/ResourceManager.h"
 #include "Engine/Managers/InputManager.h"
 #include "Engine/Collisions/CollisionManager.h"
@@ -94,7 +95,7 @@ int main()
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
 
   //Create directional light
-  game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
+  game::CEntity* pDirectionalLight = pGameManager->Creat eEntity("Directional Light");
   game::CLightComponent* pDirComp = pDirectionalLight->RegisterComponent<game::CLightComponent>();
   pDirComp->CreateLight(render::ELight::DIRECTIONAL_LIGHT);
 

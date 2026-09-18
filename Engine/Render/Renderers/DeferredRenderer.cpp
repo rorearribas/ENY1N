@@ -7,6 +7,7 @@ namespace render
   namespace internal
   {
     static constexpr uint32_t uRenderTargets(3);
+    static const float s_v4ClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
   }
   // ------------------------------------
   void CDeferredRenderer::Release()
@@ -18,10 +19,88 @@ namespace render
   // ------------------------------------
   HRESULT CDeferredRenderer::Init(uint32_t _uWidth, uint32_t _uHeight)
   {
+    // Create depth stencil texture
+    D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
+    rTextureDesc.Width = _uWidth;
+    rTextureDesc.Height = _uHeight;
+    rTextureDesc.MipLevels = 1;
+    rTextureDesc.ArraySize = 1;
+    rTextureDesc.SampleDesc.Count = 1;
+    rTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS; // Format
+    rTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
+
+    m_oDepthStencilTexture.Release();
+    HRESULT hResult = m_oDepthStencilTexture.CreateTexture(rTextureDesc);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating depth stencil texture!");
+      return hResult;
+    }
+
+    // Set depth stencil view desc
+    D3D11_DEPTH_STENCIL_VIEW_DESC rDepthStencilViewDesc = D3D11_DEPTH_STENCIL_VIEW_DESC();
+    rDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+    rDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+    // Create the depth stencil view
+    hResult = m_oDepthStencilTexture.CreateView(rDepthStencilViewDesc);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating stencil view!");
+      return hResult;
+    }
+
+    // Creating view from texture
+    D3D11_SHADER_RESOURCE_VIEW_DESC rSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
+    rSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+    rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    rSRVDesc.Texture2D.MipLevels = 1;
+
+    m_oDepthStencilResource.Release();
+    hResult = m_oDepthStencilResource.CreateViewFromTexture(m_oDepthStencilTexture, rSRVDesc);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating view!");
+      return hResult;
+    }
+
+    // Create standard depth stencil state for zprepass
+    D3D11_DEPTH_STENCIL_DESC rDepthStencilDesc = D3D11_DEPTH_STENCIL_DESC();
+    rDepthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+    rDepthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+    rDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+    rDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+    rDepthStencilDesc.DepthEnable = true;
+    rDepthStencilDesc.StencilEnable = false;
+
+    // Front-face
+    rDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    rDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+    rDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    rDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+    // Back-face
+    rDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+    rDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+    rDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+    rDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+    // Depth
+    global::api::SafeRelease(m_pDepthStencilState);
+    hResult = m_pRender->CreateDepthStencilState(rDepthStencilDesc, &m_pDepthStencilState);
+    if (FAILED(hResult))
+    {
+      ERROR_LOG("Error creating depth stencil state!");
+      return hResult;
+    }
+
     return SetupRenderTargets(_uWidth, _uHeight);
   }
   // ------------------------------------
   void CDeferredRenderer::Execute(scene::CRenderScene* /*_pRenderScene*/)
+  <<<<<<< Updated upstream
+    ====== =
+    >>>>>> > Stashed changes
   {
     //// Cache models using render camera
     //_pRenderScene->CacheModels(m_pRenderCamera);
@@ -31,14 +110,17 @@ namespace render
 
     //// Compute lighting pass
     //m_pRender->ComputeLightingPass(_pRenderScene);
+    m_pRender->ClearDepthStencil(m_oDepthStencilTexture.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
   }
   // ------------------------------------
-  void CDeferredRenderer::AttachRenderTargets(ID3D11DepthStencilView* _pDepthStencilView)
+    // ------------------------------------
+    <<<<<< < Updated upstream
+    void CDeferredRenderer::AttachRenderTargets(ID3D11DepthStencilView * _pDepthStencilView)
   {
     ID3D11RenderTargetView* lstGBufferRTV[internal::uRenderTargets] =
-    { 
-      m_pDiffuseRT->GetRenderTargetView(), 
-      m_pNormalRT->GetRenderTargetView(), 
+    {
+      m_pDiffuseRT->GetRenderTargetView(),
+      m_pNormalRT->GetRenderTargetView(),
       m_pSpecularRT->GetRenderTargetView()
     };
 
@@ -52,6 +134,32 @@ namespace render
     static constexpr uint32_t uRenderTargets(3);
     ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };
     global::api::DeviceContext->OMSetRenderTargets(uRenderTargets, lstEmptyRTs, nullptr);
+  }
+  // ------------------------------------
+  void CDeferredRenderer::Execute(scene::CRenderScene& _rRenderScene)
+  {
+    // Set render targets
+    ID3D11RenderTargetView* lstGBufferRTs[internal::uRenderTargets] =
+    {
+      m_pDiffuseRT->GetTexture().GetView(),
+      m_pNormalRT->GetTexture().GetView(),
+      m_pSpecularRT->GetTexture().GetView()
+    };
+
+    // Set render targets
+    m_pRender->SetRenderTargets(internal::uRenderTargets, lstGBufferRTs, m_oDepthStencilTexture.GetView());
+    // Set depth stencil state
+    m_pRender->SetDepthStencilState(m_pDepthStencilState, 1u);
+
+    // Cache models
+    _rRenderScene.CacheModels(*m_pRenderCamera);
+
+    // Draw models
+    m_pRender->DrawModels(_rRenderScene);
+
+    // Detach render targets
+    ID3D11RenderTargetView* lstEmptyRTs[internal::uRenderTargets] = { nullptr, nullptr, nullptr };
+    m_pRender->SetRenderTargets(internal::uRenderTargets, lstEmptyRTs);
   }
   // ------------------------------------
   void CDeferredRenderer::ClearRenderTargets(const float _v4ClearColor[4])

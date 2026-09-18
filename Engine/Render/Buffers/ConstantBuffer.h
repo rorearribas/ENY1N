@@ -43,7 +43,6 @@ HRESULT CConstantBuffer<T>::Init()
   rBufferDesc.MiscFlags = 0;
   rBufferDesc.StructureByteStride = 0;
   rBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(T) + 15) & ~15);
-
   return global::api::Device->CreateBuffer(&rBufferDesc, 0, &m_pBuffer);
 }
 

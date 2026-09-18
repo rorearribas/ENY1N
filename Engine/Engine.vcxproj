@@ -154,6 +154,7 @@
     <ClInclude Include="Collisions\CapsuleCollider.h" />
     <ClInclude Include="Collisions\CollisionManager.h" />
     <ClInclude Include="Collisions\AABB.h" />
+    <ClInclude Include="Render\Renderers\ImGuiRenderer.h" />
     <ClInclude Include="Render\Buffers\RenderBuffer.h" />
     <ClInclude Include="Render\Renderers\Renderer.h" />
     <ClInclude Include="Render\Renderers\ForwardRenderer.h" />
@@ -199,6 +200,7 @@
     <ClInclude Include="Collisions\SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Render\Renderers\ImGuiRenderer.cpp" />
     <ClCompile Include="Render\Renderers\ForwardRenderer.cpp" />
     <ClCompile Include="Render\Renderers\LightingRenderer.cpp" />
     <ClCompile Include="Render\Renderers\DeferredRenderer.cpp" />
@@ -239,11 +241,11 @@
     <ClCompile Include="Collisions\SphereCollider.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="Shaders\Deferred\DrawTriangleVS.hlsl">
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_DrawTriangleVS</VariableName>
-      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_DrawTriangleVS</VariableName>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Shaders\Deferred\DrawTriangleVS.h</HeaderFileOutput>
-      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Shaders\Deferred\DrawTriangleVS.h</HeaderFileOutput>
+    <FxCompile Include="Shaders\Deferred\DrawQuadVS.hlsl">
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">g_DrawQuadVS</VariableName>
+      <VariableName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">g_DrawQuadVS</VariableName>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)Shaders\Deferred\DrawQuadVS.h</HeaderFileOutput>
+      <HeaderFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)Shaders\Deferred\DrawQuadVS.h</HeaderFileOutput>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
@@ -252,8 +254,8 @@
       </ObjectFileOutput>
       <ObjectFileOutput Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ObjectFileOutput>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS_FullscreenTriangle</EntryPointName>
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VS_FullscreenTriangle</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">VS_Quad</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">VS_Quad</EntryPointName>
     </FxCompile>
     <FxCompile Include="Shaders\Deferred\GBufferPS.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">DeferredPSMain</EntryPointName>

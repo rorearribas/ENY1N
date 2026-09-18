@@ -13,7 +13,7 @@ namespace collision
   public:
     CAABB() : m_v3Min(math::CVector3::Zero), m_v3Max(math::CVector3::Zero) {}
     CAABB(const math::CVector3& _v3Min, const math::CVector3& _v3Max) : m_v3Min(_v3Min), m_v3Max(_v3Max) {}
-    ~CAABB() {}
+    ~CAABB() = default;
 
     inline void SetMin(const math::CVector3& _v3Min) { m_v3Min = _v3Min; }
     inline const math::CVector3& GetMin() const { return m_v3Min; }

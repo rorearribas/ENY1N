@@ -10,7 +10,7 @@ namespace render
     CRenderWindow(uint32_t _uWidth, uint32_t _uHeight);
     ~CRenderWindow() {}
 
-    void SetEnabled(bool _bEnabled) const;
+    void ShowWindow(bool _bShow) const;
     void GetWindowSize(uint32_t& _uWidth, uint32_t& _uHeight) const;
     inline const HWND& GetHandle() const { return m_hHandle; }
 

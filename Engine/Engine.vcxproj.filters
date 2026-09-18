@@ -153,6 +153,9 @@
     <ClInclude Include="Render\Spatial\Octree.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Render\Renderers\ImGuiRenderer.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine.cpp">
@@ -269,13 +272,16 @@
     <ClCompile Include="Render\Spatial\Octree.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="Render\Renderers\ImGuiRenderer.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\Deferred\GBufferPS.hlsl" />
     <FxCompile Include="Shaders\Deferred\LightsPS.hlsl" />
     <FxCompile Include="Shaders\Forward\SimpleVS.hlsl" />
     <FxCompile Include="Shaders\Forward\SimplePS.hlsl" />
-    <FxCompile Include="Shaders\Deferred\DrawTriangleVS.hlsl" />
+    <FxCompile Include="Shaders\Deferred\DrawQuadVS.hlsl" />
     <FxCompile Include="Shaders\Deferred\StandardVS.hlsl" />
     <FxCompile Include="Shaders\Deferred\ShadowsVS.hlsl" />
   </ItemGroup>

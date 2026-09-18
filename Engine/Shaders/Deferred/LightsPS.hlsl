@@ -1,4 +1,4 @@
-#include "DrawTriangleVS.hlsl"
+#include "DrawQuadVS.hlsl"
 #include "global.hlsli"
 
 // Pixel Shader

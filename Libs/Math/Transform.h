@@ -8,7 +8,7 @@ namespace math
   public:
     CTransform() = default;
     CTransform(const math::CMatrix4x4& _mMatrix) : m_mMatrix(_mMatrix) {}
-    ~CTransform() {}
+    ~CTransform() = default;
 
     inline const math::CMatrix4x4& GetMatrix() const { return m_mMatrix; }
     inline void SetMatrix(const math::CMatrix4x4& _mMatrix) { m_mMatrix = _mMatrix; }
