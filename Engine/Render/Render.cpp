@@ -387,7 +387,7 @@ namespace render
       // Set standard layout
       global::api::DeviceContext->IASetInputLayout(internal::Pipeline.StandardLayout);
       // Set depth stencil state
-      global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
+      //global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
 
       // Set linear sampler(read textures)
       global::api::DeviceContext->PSSetSamplers(0, 1, &internal::Pipeline.LinearSampler);
@@ -395,6 +395,9 @@ namespace render
       internal::Pipeline.DeferredGBufferPS.Attach();
       // Set constant buffer (texture info)
       internal::Pipeline.MaterialBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.MaterialSlot);
+
+      // Set default rasterizer
+      SetRasterizerState(internal::Pipeline.DefaultRasterizer);
 
       // Deferred pass
       m_pDeferredRenderer->SetRenderCamera(m_pRenderCamera);
@@ -1142,7 +1145,7 @@ namespace render
     static constexpr uint32_t uTexturesSize(5);
     ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
     {
-      internal::Pipeline.DepthTexture.GetView(),
+      m_pDeferredRenderer->GetDepthTexture(),
       m_pDeferredRenderer->GetDiffuseRT()->GetShaderView(),
       m_pDeferredRenderer->GetNormalRT()->GetShaderView(),
       m_pDeferredRenderer->GetNormalRT()->GetShaderView(),

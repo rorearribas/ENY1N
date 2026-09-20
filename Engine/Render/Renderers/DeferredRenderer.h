@@ -23,6 +23,7 @@ namespace render
     void AttachRenderTargets(ID3D11DepthStencilView* _pDepthStencilView);
     void DetachRenderTargets();
 
+    ID3D11ShaderResourceView* GetDepthTexture() const { return m_oDepthStencilResource.GetView(); }
     const CRenderTarget* GetDiffuseRT() const { return m_pDiffuseRT.get(); }
     const CRenderTarget* GetNormalRT() const { return m_pNormalRT.get(); }
     const CRenderTarget* GetSpecularRT() const { return m_pSpecularRT.get(); }

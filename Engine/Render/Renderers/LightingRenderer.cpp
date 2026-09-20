@@ -31,13 +31,10 @@ namespace render
   // ------------------------------------
   void CLightingRenderer::Draw(scene::CRenderScene& _rRenderScene)
   {
-    // Get light manager -> apply lighting
-    render::lights::CLightManager* pLightManager = _rRenderScene.GetLightManager();
-    pLightManager->ApplyLighting();
-
     m_pRender->BeginMarker(internal::s_sComputeShadowsMrk);
     {
       // Compute shadow map
+      render::lights::CLightManager* pLightManager = _rRenderScene.GetLightManager();
       const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
       utils::CWeakPtr<render::lights::CDirectionalLight> pDirLight = pLightManager->GetDirectionalLight();
       bool bCastShadows = pDirLight.IsValid() && pDirLight->CastShadows();
