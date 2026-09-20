@@ -124,18 +124,18 @@ namespace render
     global::api::DeviceContext->OMSetRenderTargets(uRenderTargets, lstEmptyRTs, nullptr);
   }
   // ------------------------------------
-  void CDeferredRenderer::Execute(scene::CRenderScene& _rRenderScene)
+  void CDeferredRenderer::Draw(scene::CRenderScene& _rRenderScene)
   {
     // Set render targets
     ID3D11RenderTargetView* lstGBufferRTs[internal::uRenderTargets] =
     {
-      m_pDiffuseRT->GetTexture().GetView(),
-      m_pNormalRT->GetTexture().GetView(),
-      m_pSpecularRT->GetTexture().GetView()
+      m_pDiffuseRT->GetRenderTargetView(),
+      m_pNormalRT->GetRenderTargetView(),
+      m_pSpecularRT->GetRenderTargetView()
     };
 
     // Set render targets
-    m_pRender->SetRenderTargets(internal::uRenderTargets, lstGBufferRTs, m_oDepthStencilTexture.GetView());
+    m_pRender->SetRenderTargets(lstGBufferRTs, internal::uRenderTargets, m_oDepthStencilTexture.GetView());
     // Set depth stencil state
     m_pRender->SetDepthStencilState(m_pDepthStencilState, 1u);
 
@@ -147,7 +147,7 @@ namespace render
 
     // Detach render targets
     ID3D11RenderTargetView* lstEmptyRTs[internal::uRenderTargets] = { nullptr, nullptr, nullptr };
-    m_pRender->SetRenderTargets(internal::uRenderTargets, lstEmptyRTs);
+    m_pRender->SetRenderTargets(lstEmptyRTs, internal::uRenderTargets);
   }
   // ------------------------------------
   void CDeferredRenderer::ClearRenderTargets(const float _v4ClearColor[4])

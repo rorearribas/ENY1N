@@ -52,7 +52,7 @@ namespace render
     ImGuizmo::BeginFrame();
   }
   // ------------------------------------
-  void CImGuiRenderer::Execute(scene::CRenderScene& /*_rRenderScene*/)
+  void CImGuiRenderer::Draw(scene::CRenderScene& /*_rRenderScene*/)
   {
     // Render ImGui
     m_pRender->BeginMarker(internal::s_sImGuiMarker);

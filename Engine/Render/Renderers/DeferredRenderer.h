@@ -10,12 +10,12 @@ namespace render
   {
   public:
     CDeferredRenderer(CRender* _pRender) : IRenderer(_pRender) {}
-    ~CDeferredRenderer() {}
+    ~CDeferredRenderer() { Release(); }
 
     HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);
 
     void PrepareFrame() override;
-    void Execute(scene::CRenderScene& _rRenderScene) override;
+    void Draw(scene::CRenderScene& _rRenderScene) override;
 
     void DrawOpaques(void) {}
     void ComputeGraphicsBuffer(void) {}

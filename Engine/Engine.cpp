@@ -46,8 +46,7 @@ namespace engine
   // ------------------------------------
   void CEngine::PrepareFrame()
   {
-    // Prepare
-    m_pRender->PrepareFrame();
+    m_pRender->PrepareFrame(); 
   }
   // ------------------------------------
   void CEngine::Draw()

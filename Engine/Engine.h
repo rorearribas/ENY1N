@@ -23,6 +23,7 @@ namespace engine
     CEngine() {}
     ~CEngine();
 
+    // Setup
     void Init(uint32_t _uWidth, uint32_t _uHeight);
 
     // Render pipeline

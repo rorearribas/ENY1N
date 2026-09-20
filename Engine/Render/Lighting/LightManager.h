@@ -31,7 +31,7 @@ namespace render
       typedef utils::CFixedPool<render::gfx::CShadowMap, s_uMaxShadowMaps> TShadowMaps;
 
     private:
-      typedef TGlobalLighting<s_uMaxPointLights, s_uMaxSpotLights> TLightingData;
+      typedef buffertypes::TGlobalLighting<s_uMaxPointLights, s_uMaxSpotLights> TLightingData;
       typedef CConstantBuffer<TLightingData> TLightingBuffer;
 
     public:

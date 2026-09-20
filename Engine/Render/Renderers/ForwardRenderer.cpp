@@ -9,7 +9,7 @@ namespace render
     // Prepare frame for forward rendering
   }
   // ------------------------------------
-  void CForwardRenderer::Execute(scene::CRenderScene& _rRenderScene)
+  void CForwardRenderer::Draw(scene::CRenderScene& _rRenderScene)
   {
     // Cache primitives
     _rRenderScene.CachePrimitives(*m_pRenderCamera);

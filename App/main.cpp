@@ -95,7 +95,7 @@ int main()
   input::CInputManager* pInputManager = input::CInputManager::CreateSingleton();
 
   //Create directional light
-  game::CEntity* pDirectionalLight = pGameManager->Creat eEntity("Directional Light");
+  game::CEntity* pDirectionalLight = pGameManager->CreateEntity("Directional Light");
   game::CLightComponent* pDirComp = pDirectionalLight->RegisterComponent<game::CLightComponent>();
   pDirComp->CreateLight(render::ELight::DIRECTIONAL_LIGHT);
 
@@ -184,7 +184,7 @@ int main()
     }
     else
     {
-      // Push begin draw
+      // Prepare frame
       pEngine->PrepareFrame();
 
       // Calculate delta

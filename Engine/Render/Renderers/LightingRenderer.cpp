@@ -26,10 +26,10 @@ namespace render
     rShadowRasterizerCfg.AntialiasedLineEnable = false;
 
     // Create rasterizer
-    return global::api::Device->CreateRasterizerState(&rShadowRasterizerCfg, &m_pShadowsRasterizer);
+    return m_pRender->CreateRasterizerState(rShadowRasterizerCfg, &m_pShadowsRasterizer);
   }
   // ------------------------------------
-  void CLightingRenderer::Execute(scene::CRenderScene& _rRenderScene)
+  void CLightingRenderer::Draw(scene::CRenderScene& _rRenderScene)
   {
     // Get light manager -> apply lighting
     render::lights::CLightManager* pLightManager = _rRenderScene.GetLightManager();
@@ -48,8 +48,8 @@ namespace render
         {
           // Clear depth stencil view
           utils::CWeakPtr<render::gfx::CShadowMap> wpShadowMap = lstShadowMaps[0];
-          const texture::TDepthStencil& rShadowStencil = wpShadowMap->GetStencil();
-          global::api::DeviceContext->ClearDepthStencilView(rShadowStencil.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+          const texture::TDepthStencil& rShadowStencil = wpShadowMap->GetShadowDepth();
+          m_pRender->ClearDepthStencil(rShadowStencil.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 
           // Configure viewport
           uint32_t uWidth = 0, uHeight = 0;
@@ -93,7 +93,7 @@ namespace render
           m_pShadowCamera->BuildFrustumPlanes();
 
           // Calculate transforms for shadow mapping
-          TCameraTransform rTransforms = TCameraTransform();
+          buffertypes::TCameraTransform rTransforms = buffertypes::TCameraTransform();
           {
             math::CMatrix4x4 mViewProjection = m_pShadowCamera->GetViewProjection();
             rTransforms.ViewProjection = mViewProjection;
@@ -101,29 +101,13 @@ namespace render
           }
 
           // Write buffer
-          bool bOk = internal::Pipeline.LightingViewBuffer.WriteBuffer(rTransforms);
-          UNUSED_VAR(bOk);
-#ifdef _DEBUG
-          assert(bOk);
-#endif // DEBUG
-          internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
+          m_pRender->PushLightingViewTransform(rTransforms);
 
-          // Set render target
-          m_pRender->SetRenderTargets(0u, nullptr, rShadowStencil.GetView());
+          // Set invalid render target
+          m_pRender->SetRenderTargets(nullptr, 0u, rShadowStencil.GetView());
 
-          // Set depth stencil state
-          ID3D11DepthStencilState* pCurrentStencilState = nullptr;
-          uint32_t uCurrentRef = 0;
-          global::api::DeviceContext->OMGetDepthStencilState(&pCurrentStencilState, &uCurrentRef);
-          if (pCurrentStencilState != internal::Pipeline.DepthStencilState)
-          {
-            global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
-          }
-
-          // Attach vertex shader for shadows (vertex shader)
-          internal::Pipeline.DeferredShadowsVS.Attach();
-          // Detach pixel shader for models
-          internal::Pipeline.DeferredGBuffer.Detach();
+          // Push lighting pass
+          m_pRender->PushLightingPass();
 
           // Cache models
           _rRenderScene.CacheModels(*m_pShadowCamera);
@@ -138,58 +122,6 @@ namespace render
         // Set invalid rasterizer
         m_pRender->SetRasterizerState(nullptr);
       }
-    }
-    m_pRender->EndMarker();
-
-    m_pRender->BeginMarker(internal::s_sComputeLightingMrk);
-    {
-      // Set transform constant
-      internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.CameraTransformSlot);
-
-      // Apply lighting
-      render::lights::CLightManager* pLightManager = _rRenderScene.GetLightManager();
-      pLightManager->ApplyLighting();
-
-      utils::CWeakPtr<render::lights::CDirectionalLight> pDirLight = pLightManager->GetDirectionalLight();
-      bool bCastShadows = pDirLight.IsValid() && pDirLight->CastShadows();
-      const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
-
-      // Shadow mapping texture
-      ID3D11ShaderResourceView* pShadowTexture = nullptr;
-      if (bCastShadows && lstShadowMaps.GetSize() > 0)
-      {
-        pShadowTexture = lstShadowMaps[0]->GetTexture().GetView();
-        global::api::DeviceContext->PSSetSamplers(1u, 1u, &internal::Pipeline.ShadowSampler);
-        internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.LightingViewSlot);
-      }
-
-      static constexpr uint32_t uTexturesSize(5);
-      ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
-      {
-        internal::Pipeline.DepthTexture.GetView(),
-        m_pDeferredRenderer->GetDiffuseRT().GetShaderView(),
-        m_pDeferredRenderer->GetNormalRT().GetShaderView(),
-        m_pDeferredRenderer->GetNormalRT().GetShaderView(),
-        pShadowTexture
-      };
-
-      // Bind buffers
-      SetRenderTargets(1u, &internal::Pipeline.BackBuffer);
-      global::api::DeviceContext->PSSetShaderResources(0, uTexturesSize, &lstGBufferSRV[0]);
-
-      // Attach calculate lights shader (pixel shader)
-      internal::Pipeline.DeferredLightsPS.Attach();
-
-      // Draw quad to apply lighting
-      m_pRender->DrawQuad();
-
-      // Set invalid shaders
-      ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize] = { nullptr, nullptr, nullptr, nullptr };
-      global::api::DeviceContext->PSSetShaderResources(0, uTexturesSize, lstEmptyTextures);
-
-      // Attach back buffer
-      ID3D11DepthStencilView* pDepthStencilView = internal::Pipeline.DepthStencil.GetView();
-      SetRenderTargets(1u, &internal::Pipeline.BackBuffer, pDepthStencilView);
     }
     m_pRender->EndMarker();
   }

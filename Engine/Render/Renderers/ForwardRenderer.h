@@ -10,7 +10,7 @@ namespace render
     ~CForwardRenderer() {}
 
     void PrepareFrame() override;
-    void Execute(scene::CRenderScene& _rRenderScene) override;
+    void Draw(scene::CRenderScene& _rRenderScene) override;
   };
 
 }

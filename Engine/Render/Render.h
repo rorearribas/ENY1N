@@ -2,6 +2,7 @@
 #include "Engine/Scenes/RenderScene.h"
 #include "Engine/Camera/Camera.h"
 #include "Engine/Shaders/Shader.h"
+#include "Engine/Render/Buffers/BufferTypes.h"
 
 namespace render { class CRenderWindow; }
 
@@ -28,14 +29,19 @@ namespace render
     void PrepareFrame();
     void Draw(scene::CRenderScene& _rScene);
 
-	public:
     inline const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow.get(); }
     inline void SetRenderCamera(render::CCamera* _pCamera) { m_pRenderCamera = _pCamera; }
     inline void SetShadowCamera(render::CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
 
     void ShowRenderWindow(bool _bStatus);
     void SetFillMode(D3D11_FILL_MODE _eFillMode);
+
     void PushMaterial(const render::mat::CMaterial* _pMaterial);
+
+    void PushLightingViewTransform(const buffertypes::TCameraTransform& rTransforms);
+    void PushLightingPass();
+
+
 
     void BeginMarker(const wchar_t* _sMarker) const;
     void EndMarker() const;
@@ -43,8 +49,8 @@ namespace render
     inline void SetVSync(bool _bEnabled) { m_bVerticalSync = _bEnabled; }
     inline bool IsVSyncEnabled() const { return m_bVerticalSync; }
 
-    void SetRenderTargets(uint32_t _uSize, ID3D11RenderTargetView** _pRenderTargets, ID3D11DepthStencilView* _pStencilView = nullptr);
-    void ClearRenderTargets(ID3D11RenderTargetView** _pRenderTargets, const float _v4ClearColor[4]);
+    void SetRenderTargets(ID3D11RenderTargetView** _pRenderTargets, uint32_t _uSize, ID3D11DepthStencilView* _pStencilView = nullptr);
+    void ClearRenderTargets(ID3D11RenderTargetView** _pRenderTargets, uint32_t _uSize, const float _v4ClearColor[4]);
 
     void SetClearColor(const float _v4ClearColor[4]);
     void ClearDepthStencil(ID3D11DepthStencilView* _pDepthStencilView, uint32_t uFlags, float _fDepth = 1.0f, uint8_t _uStencil = 0u);
@@ -64,6 +70,7 @@ namespace render
 
     void DrawPrimitives(scene::CRenderScene& _rRenderScene);
     void DrawModels(scene::CRenderScene& _rRenderScene);
+    void DrawQuad();
 
   protected:
     void OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight);
@@ -96,7 +103,6 @@ namespace render
     void ComputeLightingPass(scene::CRenderScene& _rRenderScene);
 
   private:
-    void DrawQuad();
     void DrawModel(const render::gfx::CModel* _pModel, const scene::TCachedModel& _rCachedModel);
     void DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive);
 

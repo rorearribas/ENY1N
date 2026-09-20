@@ -24,8 +24,41 @@ namespace render
       void Attach();
       void Detach();
 
+      // Get shader
+      inline auto* GetShader() const
+      {
+        if constexpr (T == render::EShader::E_VERTEX)
+        {
+          return static_cast<ID3D11VertexShader*>(m_pInternalPtr);
+        }
+        else if constexpr (T == render::EShader::E_HULL)
+        {
+          return static_cast<ID3D11HullShader*>(m_pInternalPtr);
+        }
+        else if constexpr (T == render::EShader::E_DOMAIN)
+        {
+          return static_cast<ID3D11DomainShader*>(m_pInternalPtr);
+        }
+        else if constexpr (T == render::EShader::E_GEOMETRY)
+        {
+          return static_cast<ID3D11GeometryShader*>(m_pInternalPtr);
+        }
+        else if constexpr (T == render::EShader::E_PIXEL)
+        {
+          return static_cast<ID3D11PixelShader*>(m_pInternalPtr);
+        }
+        else if constexpr (T == render::EShader::E_COMPUTE)
+        {
+          return static_cast<ID3D11ComputeShader*>(m_pInternalPtr);
+        }
+        else
+        {
+          return nullptr;
+        }
+      }
+
     private:
-      ID3D11DeviceChild* m_pInternalPtr = nullptr;
+      IUnknown* m_pInternalPtr = nullptr;
     };
 
     template<EShader T>

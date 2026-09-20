@@ -283,7 +283,7 @@
     <FxCompile Include="Shaders\Forward\SimplePS.hlsl" />
     <FxCompile Include="Shaders\Deferred\DrawQuadVS.hlsl" />
     <FxCompile Include="Shaders\Deferred\StandardVS.hlsl" />
-    <FxCompile Include="Shaders\Deferred\ShadowsVS.hlsl" />
+    <FxCompile Include="Shaders\Deferred\LightingVS.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\global.hlsli" />
