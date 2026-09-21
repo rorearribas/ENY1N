@@ -18,7 +18,10 @@ namespace render
     {
     public:
       CRenderInstance(const render::gfx::CModel* _pParent, uint16_t _uId);
-      ~CRenderInstance() {}
+      ~CRenderInstance() = default;
+
+      CRenderInstance(const CRenderInstance& _rOther) = delete;
+      CRenderInstance& operator=(const CRenderInstance& _rOther) = delete;
 
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPos() const { return m_oTransform.GetPos(); }
@@ -37,7 +40,7 @@ namespace render
       inline void SetInstanceID(const uint16_t& _uIndex) { m_uInstanceID = _uIndex; }
       inline const uint16_t GetInstanceID() const { return m_uInstanceID; }
       inline void SetVisible(bool _bVisible) { m_bVisible = _bVisible; }
-      inline const bool& IsVisible() const { return m_bVisible; }
+      inline const bool IsVisible() const { return m_bVisible; }
 
 #ifdef _DEBUG
       void DrawDebug();
@@ -48,8 +51,8 @@ namespace render
       uint16_t m_uInstanceID = render::instance::s_uInvalidID;
 
     private:
-      collision::CAABB m_oWorldAABB = collision::CAABB();
       math::CTransform m_oTransform = math::CTransform();
+      collision::CAABB m_oWorldAABB = collision::CAABB();
 
       bool m_bCullEnabled = true;
       bool m_bVisible = true;

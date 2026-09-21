@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Engine/Collisions/AABB.h"
+#include "Engine/Render/Resources/Texture2D.h"
 #include "Libs/Math/Transform.h"
 #include "Libs/Math/Vector3.h"
 
@@ -11,8 +12,13 @@ namespace render
     class CDecal
     {
     public:
-      CDecal() {}
-      ~CDecal() {}
+      CDecal() = default;
+      ~CDecal() { Release(); }
+
+      CDecal(CDecal&& _rOther) noexcept;
+      CDecal& operator=(CDecal&& _rOther) noexcept;
+      CDecal(const CDecal& _rOther) = delete;
+      CDecal& operator=(const CDecal& _rOther) = delete;
 
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPos() const { return m_oTransform.GetPos(); }
@@ -33,12 +39,18 @@ namespace render
       inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
 
     private:
+      void Release();
+
+    private:
+      math::CTransform m_oTransform = math::CTransform();
       collision::CAABB m_oLocalAABB = collision::CAABB();
       collision::CAABB m_oWorldAABB = collision::CAABB();
-      math::CTransform m_oTransform = math::CTransform();
 
       bool m_bCullEnabled = true;
       bool m_bVisible = true;
+
+      // Texture
+      render::texture::TShaderResource m_oDecalTexture;
     };
   }
 }

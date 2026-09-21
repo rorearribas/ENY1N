@@ -26,19 +26,24 @@ namespace game
     }
 
     // Handle model and instances
-    if (m_wpModel.IsValid() && m_wpModelInstance.IsValid())
+    if (m_wpModel.IsValid())
     {
-      m_wpModel->RemoveInstance(m_wpModelInstance);
-    }
-    else if (m_wpModel.IsValid())
-    {
-      m_wpModel->SetVisible(false);
-    }
+      if (m_wpModelInstance.IsValid())
+      {
+        // Remove instance
+        m_wpModel->RemoveInstance(m_wpModelInstance);
+      }
+      else
+      {
+        // Hide model
+        m_wpModel->SetVisible(false);
+      }
 
-    // Remove model
-    if (m_wpModel.IsValid() && m_wpModel->GetInstances().IsEmpty())
-    {
-      pEngine->DestroyModel(m_wpModel);
+      // Destroy model
+      if (m_wpModel->GetInstances().IsEmpty() && !m_wpModel->IsVisible())
+      {
+        pEngine->DestroyModel(m_wpModel);
+      }
     }
   }
   // ------------------------------------

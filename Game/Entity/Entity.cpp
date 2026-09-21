@@ -51,6 +51,7 @@ namespace game
   // ------------------------------------
   void CEntity::SetPos(const math::CVector3& _v3Pos)
   {
+    // Set position
     m_oTransform.SetPos(_v3Pos);
 
     // Notify to components
@@ -62,6 +63,7 @@ namespace game
   // ------------------------------------
   void CEntity::SetRot(const math::CVector3& _v3Rot)
   {
+    // Set rotation
     m_oTransform.SetRot(_v3Rot);
 
     // Notify to components
@@ -73,6 +75,7 @@ namespace game
   // ------------------------------------
   void CEntity::SetScl(const math::CVector3& _v3Scl)
   {
+    // Set scale
     m_oTransform.SetScl(_v3Scl);
 
     // Notify to components

@@ -64,6 +64,7 @@ cbuffer cbGlobalLighting : register(b1)
 cbuffer cbLightingView : register(b2)
 {
   matrix LightViewProjection;
+	matrix InvLightViewProjection;
 }
 
 // GBuffer
@@ -100,7 +101,7 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   {
     // Calculate shadows
     float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
-    float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
+		float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
 
     fShadowFactor = compute_shadow_mapping
     (

@@ -39,7 +39,15 @@ GBuffer DeferredPSMain(PS_INPUT input)
     gBuffer.SpecularRT = HasSpecularTexture ? texture_specular.Sample(sampler_default, input.uv) * fSpecularColor : fSpecularColor;
 
     // Set normal
-    gBuffer.NormalRT = HasNormalTexture ? float4(unpack_normal(texture_normal.Sample(sampler_default, input.uv).xyz), 1.0f) : float4(input.normal, 1.0f);
-  }
+		float4 fNormal = float4(input.normal, 1.0f);
+		if (HasNormalTexture)
+		{
+      // Calculate TBN matrix
+			float3x3 TBN = float3x3(input.tangent, cross(input.normal, input.tangent), input.normal);
+			float3 fTextureNormal = texture_normal.Sample(sampler_default, input.uv).xyz;
+			fNormal = float4(mul(unpack_normal(fTextureNormal), TBN), 1.0f);
+		}
+		gBuffer.NormalRT = fNormal;
+	}
   return gBuffer;
 }

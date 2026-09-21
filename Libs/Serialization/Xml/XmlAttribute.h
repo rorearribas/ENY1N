@@ -7,11 +7,10 @@ namespace serialization
   {
   public:
     CXmlAttribute() = default;
+    CXmlAttribute(const pugi::xml_attribute& _rXmlAttribute);
     CXmlAttribute(CXmlAttribute&& _other) noexcept;
     CXmlAttribute(const CXmlAttribute& _other);
-    CXmlAttribute(const pugi::xml_attribute& _oXmlAttribute);
     ~CXmlAttribute() {}
-
 
   private:
     pugi::xml_attribute m_oXmlAttribute;
