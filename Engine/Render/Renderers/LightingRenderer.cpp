@@ -41,11 +41,10 @@ namespace render
       if (bCastShadows && lstShadowMaps.GetSize() > 0)
       {
         // Set custom rasterizer for shadow mapping
-        m_pRender->SetRasterizerState(m_pShadowsRasterizer);
         {
           // Clear depth stencil view
           utils::CWeakPtr<render::gfx::CShadowMap> wpShadowMap = lstShadowMaps[0];
-          const texture::TDepthStencil& rShadowStencil = wpShadowMap->GetShadowDepth();
+          const texture::TDepthStencil& rShadowStencil = wpShadowMap->GetDepthStencil();
           m_pRender->ClearDepthStencil(rShadowStencil.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0u);
 
           // Configure viewport
@@ -89,29 +88,24 @@ namespace render
           // Build frustum planes
           m_pShadowCamera->BuildFrustumPlanes();
 
-          // Calculate transforms for shadow mapping
-          buffertypes::TCameraTransform rTransforms = buffertypes::TCameraTransform();
-          {
-            math::CMatrix4x4 mViewProjection = m_pShadowCamera->GetViewProjection();
-            rTransforms.ViewProjection = mViewProjection;
-            rTransforms.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
-          }
-
-          // Write buffer
-          m_pRender->PushLightingViewTransform(rTransforms);
-
-          // Set invalid render target
-          m_pRender->SetRenderTargets(nullptr, 0u, rShadowStencil.GetView());
+          // Push lighting
+          m_pRender->PushLightingTransform(*m_pShadowCamera);
 
           // Push lighting pass
           m_pRender->PushLightingPass();
 
+          // Only write in stencil (z-prepass)
+          m_pRender->SetRenderTargets(nullptr, 0u, rShadowStencil.GetView());
+          // Set rasterizer
+          m_pRender->SetRasterizerState(m_pShadowsRasterizer);
+
           // Cache models
           _rRenderScene.CacheModels(*m_pShadowCamera);
 
-          // Draw models only in z-prepass pass from the light view
+          // Draw models in z-prepass pass
           m_pRender->DrawModels(_rRenderScene);
 
+          // Restore viewport
           uint32_t uRenderWidth = 0, uRenderHeight = 0;
           m_pRender->GetRenderWindow()->GetWindowSize(uRenderWidth, uRenderHeight);
           m_pRender->SetViewport(uRenderWidth, uRenderHeight);

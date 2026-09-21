@@ -19,10 +19,10 @@ namespace render
     void Release();
 
     inline ID3D11RenderTargetView* GetRenderTargetView() const { return m_oRTTexture.GetView(); }
-    inline ID3D11ShaderResourceView* GetShaderView() const { return m_pShaderView; }
+    inline ID3D11ShaderResourceView* GetShaderResourceView() const { return m_pShaderResourceView; }
 
   private:
     texture::CTexture2D<render::EView::RENDER_TARGET> m_oRTTexture;
-    ID3D11ShaderResourceView* m_pShaderView = nullptr;
+    ID3D11ShaderResourceView* m_pShaderResourceView = nullptr;
   };
 }

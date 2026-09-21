@@ -6,8 +6,8 @@ namespace render
 	{
     CShadowMap::~CShadowMap()
     {
-      m_oShadowDepth.Release();
-      m_oShadowTexture.Release();
+      m_oDepthStencil.Release();
+      m_oShaderResource.Release();
     }
     // ------------------------------------
     HRESULT CShadowMap::Setup(uint32_t _uWidth, uint32_t _uHeight)
@@ -22,7 +22,7 @@ namespace render
       rTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
 
       // Create shadow depth texture
-      HRESULT hResult = m_oShadowDepth.CreateTexture(rTextureDesc);
+      HRESULT hResult = m_oDepthStencil.CreateTexture(rTextureDesc);
       if (FAILED(hResult))
       {
         ERROR_LOG("Error creating depth stencil texture!");
@@ -35,7 +35,7 @@ namespace render
       rDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
       // Create the depth stencil view
-      hResult = m_oShadowDepth.CreateView(rDepthStencilViewDesc);
+      hResult = m_oDepthStencil.CreateView(rDepthStencilViewDesc);
       if (FAILED(hResult))
       {
         ERROR_LOG("Error creating stencil view!");
@@ -47,7 +47,7 @@ namespace render
       rSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
       rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
       rSRVDesc.Texture2D.MipLevels = 1;
-      return m_oShadowTexture.CreateViewFromTexture(m_oShadowDepth, rSRVDesc);
+      return m_oShaderResource.CreateViewFromTexture(m_oDepthStencil, rSRVDesc);
     }
   }
 }

@@ -70,10 +70,10 @@ cbuffer cbLightingView : register(b2)
 Texture2D texture_depth    : register(t0);
 Texture2D texture_diffuse  : register(t1);
 Texture2D texture_normal   : register(t2);
-Texture2D texture_specular : register(t3);
+//Texture2D texture_specular : register(t3);
 
 // Shadow mapping
-Texture2D texture_shadowmap : register(t4);
+Texture2D texture_shadowmap : register(t3);
 
 // Samplers
 SamplerState sampler_default : register(s0);
@@ -86,7 +86,7 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
 
   // Get diffuse color + specular
   float3 v3Diffuse = texture_diffuse.Sample(sampler_default, input.uv).rgb;
-  float3 v3Specular = texture_specular.Sample(sampler_default, input.uv).rgb;
+  //float3 v3Specular = texture_specular.Sample(sampler_default, input.uv).rgb;
 
   // Get world pos
   float fDepth = texture_depth.Sample(sampler_default, input.uv).r;

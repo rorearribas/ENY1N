@@ -38,9 +38,9 @@ namespace render
 
     void PushMaterial(const render::mat::CMaterial* _pMaterial);
 
-    void PushLightingViewTransform(const buffertypes::TCameraTransform& rTransforms);
+    void PushCameraTransform(const CCamera& _RenderCamera);
+    void PushLightingTransform(const CCamera& _RenderCamera);
     void PushLightingPass();
-
 
 
     void BeginMarker(const wchar_t* _sMarker) const;
@@ -98,8 +98,6 @@ namespace render
 
   private:
     // Deferred
-    void ComputeGBuffer(scene::CRenderScene& _rRenderScene);
-    void ComputeShadowMapping(scene::CRenderScene& _rRenderScene);
     void ComputeLightingPass(scene::CRenderScene& _rRenderScene);
 
   private:

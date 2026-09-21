@@ -48,7 +48,7 @@ namespace render
     rSRVDesc.Format = _eFormat;
     rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     rSRVDesc.Texture2D.MipLevels = 1;
-    return global::api::Device->CreateShaderResourceView(m_oRTTexture, &rSRVDesc, &m_pShaderView);
+    return global::api::Device->CreateShaderResourceView(m_oRTTexture, &rSRVDesc, &m_pShaderResourceView);
   }
   // ------------------------------------
   void CRenderTarget::SetClearColor(const float _v4ClearColor[4])
@@ -61,7 +61,7 @@ namespace render
   // ------------------------------------
   void CRenderTarget::Release()
   {
-    global::api::SafeRelease(m_pShaderView);
+    global::api::SafeRelease(m_pShaderResourceView);
     m_oRTTexture.Release();
   }
 }

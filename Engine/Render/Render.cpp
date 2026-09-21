@@ -95,17 +95,12 @@ namespace render
       ID3D11Buffer* PrimitiveInstancesBuffer = nullptr;
 
       // Global constant buffers
-      CConstantBuffer<buffertypes::TCameraTransform> CameraTransformBuffer;
+      CConstantBuffer<buffertypes::TCameraTransform> RenderCameraBuffer;
       static constexpr uint32_t CameraTransformSlot = 0;
       CConstantBuffer<buffertypes::TCameraTransform> LightingViewBuffer;
       static constexpr uint32_t LightingViewSlot = 2;
       CConstantBuffer<buffertypes::TMaterialInfo> MaterialBuffer;
       static constexpr uint32_t MaterialSlot = 0;
-
-      // Depth
-      ID3D11DepthStencilState* DepthStencilState = nullptr;
-      texture::TDepthStencil DepthStencil;
-      texture::TShaderResource DepthTexture;
 
       // Rasterizer
       ID3D11RasterizerState* DefaultRasterizer = nullptr;
@@ -164,7 +159,7 @@ namespace render
     ImGui::DestroyContext();
 
     // Clear constant buffer
-    internal::Pipeline.CameraTransformBuffer.Release();
+    internal::Pipeline.RenderCameraBuffer.Release();
     internal::Pipeline.LightingViewBuffer.Release();
     internal::Pipeline.MaterialBuffer.Release();
 
@@ -362,51 +357,37 @@ namespace render
     // Deferred pass
     BeginMarker(internal::s_sDeferredPassMrk);
     {
-      // Calculate projection and invert projection
-#ifdef _DEBUG
-      assert(m_pRenderCamera);
-#endif
-      math::CMatrix4x4 mViewProjection = m_pRenderCamera->GetViewProjection();
-      buffertypes::TCameraTransform rTransforms = buffertypes::TCameraTransform();
-      rTransforms.ViewProjection = mViewProjection;
-      rTransforms.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
-      // Write
-      bool bOk = internal::Pipeline.CameraTransformBuffer.WriteBuffer(rTransforms);
-      UNUSED_VAR(bOk);
-#ifdef _DEBUG
-      assert(bOk);
-#endif
-      // Bind buffer
-      internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
+      // Push camera transform
+      PushCameraTransform(*m_pRenderCamera);
 
-      // Detach simple pixel shader
-      internal::Pipeline.ForwardPS.Detach();
-      // Attach deferred vertex shader
-      internal::Pipeline.DeferredVS.Attach();
-
-      // Set standard layout
-      global::api::DeviceContext->IASetInputLayout(internal::Pipeline.StandardLayout);
-      // Set depth stencil state
-      //global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
-
-      // Set linear sampler(read textures)
-      global::api::DeviceContext->PSSetSamplers(0, 1, &internal::Pipeline.LinearSampler);
-      // Attach G-buffer(pixel shader)
-      internal::Pipeline.DeferredGBufferPS.Attach();
-      // Set constant buffer (texture info)
-      internal::Pipeline.MaterialBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.MaterialSlot);
-
+      // Set default layout
+      SetInputLayout(internal::Pipeline.StandardLayout);
       // Set default rasterizer
       SetRasterizerState(internal::Pipeline.DefaultRasterizer);
+
+      // Attach deferred vertex shader
+      internal::Pipeline.DeferredVS.Attach();
+      // Attach G-buffer(pixel shader)
+      internal::Pipeline.DeferredGBufferPS.Attach();
+      // Set linear sampler(read textures)
+      global::api::DeviceContext->PSSetSamplers(0u, 1u, &internal::Pipeline.LinearSampler);
+
+      // Bind camera transform buffer
+      internal::Pipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
+      // Bind material buffer
+      internal::Pipeline.MaterialBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.MaterialSlot);
 
       // Deferred pass
       m_pDeferredRenderer->SetRenderCamera(m_pRenderCamera);
       m_pDeferredRenderer->Draw(_rRenderScene);
 
       // Lighting pass
-      m_pLightingRenderer->SetRenderCamera(m_pShadowCamera);
+      m_pLightingRenderer->SetRenderCamera(m_pRenderCamera);
       m_pLightingRenderer->SetShadowCamera(m_pShadowCamera);
       m_pLightingRenderer->Draw(_rRenderScene);
+
+      // Set default rasterizer
+      SetRasterizerState(internal::Pipeline.DefaultRasterizer);
 
       // Compute lighting pass
       ComputeLightingPass(_rRenderScene);
@@ -414,11 +395,26 @@ namespace render
     EndMarker();
 
     // Forward pass
-    m_pForwardRenderer->SetRenderCamera(m_pRenderCamera);
-    m_pForwardRenderer->Draw(_rRenderScene);
+    {
+      // Set render target
+      SetRenderTargets(&internal::Pipeline.BackBuffer, 1u, m_pDeferredRenderer->GetDepthStencilView());
+      SetRasterizerState(internal::Pipeline.DefaultRasterizer);
+      SetDepthStencilState(m_pDeferredRenderer->GetDepthStencilState());
+
+      // Set input layout
+      global::api::DeviceContext->IASetInputLayout(internal::Pipeline.DebugLayout);
+      // Attach shaders
+      internal::Pipeline.ForwardVS.Attach();
+      internal::Pipeline.ForwardPS.Attach();
+      // Bind buffer
+      internal::Pipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
+
+      m_pForwardRenderer->SetRenderCamera(m_pRenderCamera);
+      m_pForwardRenderer->Draw(_rRenderScene);
+    }
 
     // Update blend + rasterizer state
-    SetBlendState(internal::Pipeline.BlendState, nullptr, 0xFFFFFFFF);
+    SetBlendState(internal::Pipeline.BlendState, nullptr, 0xFFFFFFFFu);
     SetRasterizerState(internal::Pipeline.DefaultRasterizer);
 
     // ImGui
@@ -488,32 +484,51 @@ namespace render
     global::api::DeviceContext->PSSetShaderResources(0u, uTexturesSize, lstTextures);
   }
   // ------------------------------------
-  void CRender::PushLightingViewTransform(const buffertypes::TCameraTransform& rTransforms)
+  void CRender::PushCameraTransform(const CCamera& _RenderCamera)
   {
-    bool bOk = internal::Pipeline.LightingViewBuffer.WriteBuffer(rTransforms);
+    // Calculate projection and invert projection
+    math::CMatrix4x4 mViewProjection = _RenderCamera.GetViewProjection();
+    buffertypes::TCameraTransform rCameraTransform = buffertypes::TCameraTransform();
+    {
+      rCameraTransform.ViewProjection = mViewProjection;
+      rCameraTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
+    }
+
+    // Write
+    bool bOk = internal::Pipeline.RenderCameraBuffer.WriteBuffer(rCameraTransform);
+    UNUSED_VAR(bOk);
+#ifdef _DEBUG
+    assert(bOk);
+#endif
+  }
+  // ------------------------------------
+  void CRender::PushLightingTransform(const CCamera& _RenderCamera)
+  {
+    // Calculate transforms for shadow mapping
+    math::CMatrix4x4 mViewProjection = _RenderCamera.GetViewProjection();
+    buffertypes::TCameraTransform rCameraTransform = buffertypes::TCameraTransform();
+    {
+      rCameraTransform.ViewProjection = mViewProjection;
+      rCameraTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
+    }
+
+    bool bOk = internal::Pipeline.LightingViewBuffer.WriteBuffer(rCameraTransform);
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk);
 #endif // DEBUG
-    internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
   }
   // ------------------------------------
   void CRender::PushLightingPass()
   {
-    // Set depth stencil state
-    ID3D11DepthStencilState* pCurrentStencilState = nullptr;
-    uint32_t uCurrentRef = 0;
-    global::api::DeviceContext->OMGetDepthStencilState(&pCurrentStencilState, &uCurrentRef);
-    if (pCurrentStencilState != internal::Pipeline.DepthStencilState)
-    {
-      SetDepthStencilState(pCurrentStencilState, 1u);
-    }
+    // Detach all shaders in the current pipeline
+    global::api::DeviceContext->VSSetShader(nullptr, nullptr, 0u);
+    global::api::DeviceContext->PSSetShader(nullptr, nullptr, 0u);
 
-    // Detach pixel shader for gbuffer pass
-    internal::Pipeline.DeferredGBufferPS.Detach();
-
-    // Attach vertex shader for lighting
+    // Attach vertex shader for lighting pass
     internal::Pipeline.LightingVS.Attach();
+    // Attach lighting view buffer
+    internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
   }
   // ------------------------------------
   void CRender::OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight)
@@ -649,7 +664,7 @@ namespace render
   HRESULT CRender::SetupConstantBuffers()
   {
     // Transforms buffer
-    HRESULT hResult = internal::Pipeline.CameraTransformBuffer.Init();
+    HRESULT hResult = internal::Pipeline.RenderCameraBuffer.Init();
     if (FAILED(hResult))
     {
       return hResult;
@@ -959,166 +974,6 @@ namespace render
     return E_FAIL;
   }
   // ------------------------------------
-  void CRender::ComputeGBuffer(scene::CRenderScene& /*_rRenderScene*/)
-  {
-    //    // Calculate projection and invert projection
-    //#ifdef _DEBUG
-    //    assert(m_pRenderCamera);
-    //#endif
-    //    math::CMatrix4x4 mViewProjection = m_pRenderCamera->GetViewProjection();
-    //    TCameraTransform rTransforms = TCameraTransform();
-    //    rTransforms.ViewProjection = mViewProjection;
-    //    rTransforms.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
-    //    // Write
-    //    bool bOk = internal::Pipeline.CameraTransformBuffer.WriteBuffer(rTransforms);
-    //    UNUSED_VAR(bOk);
-    //#ifdef _DEBUG
-    //    assert(bOk);
-    //#endif
-    //    // Bind buffer
-    //    internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
-    //
-    //    // Detach simple pixel shader
-    //    internal::Pipeline.ForwardPS.Detach();
-    //    // Attach deferred vertex shader
-    //    internal::Pipeline.DeferredVS.Attach();
-    //
-    //    // Set standard layout
-    //    global::api::DeviceContext->IASetInputLayout(internal::Pipeline.StandardLayout);
-    //    // Set depth stencil state
-    //    global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
-    //
-    //    // Set linear sampler(read textures)
-    //    global::api::DeviceContext->PSSetSamplers(0, 1, &internal::Pipeline.LinearSampler);
-    //    // Attach G-buffer(pixel shader)
-    //    internal::Pipeline.DeferredGBufferPS.Attach();
-    //    // Set constant buffer (texture info)
-    //    internal::Pipeline.MaterialBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.MaterialSlot);
-    //
-    //    // Set render targets
-    //    m_pDeferredRenderer->AttachRenderTargets(internal::Pipeline.DepthStencil);
-    //
-    //    // Cache models
-    //    _rRenderScene.CacheModels(*m_pRenderCamera);
-    //
-    //    // Draw models
-    //    DrawModels(_rRenderScene);
-    //
-    //    // Detach render targets
-    //    m_pDeferredRenderer->DetachRenderTargets();
-  }
-  // ------------------------------------
-  void CRender::ComputeShadowMapping(scene::CRenderScene& /*_rRenderScene*/)
-  {
-    //    BeginMarker(internal::s_sComputeShadowsMrk);
-    //    {
-    //      // Compute shadow map
-    //      render::lights::CLightManager* pLightManager = _rRenderScene.GetLightManager();
-    //      const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
-    //
-    //      utils::CWeakPtr<render::lights::CDirectionalLight> pDirLight = pLightManager->GetDirectionalLight();
-    //      bool bCastShadows = pDirLight.IsValid() && pDirLight->CastShadows();
-    //      if (bCastShadows && lstShadowMaps.GetSize() > 0)
-    //      {
-    //        // Set custom rasterizer for shadow mapping
-    //        global::api::DeviceContext->RSSetState(internal::Pipeline.ShadowsRasterizer);
-    //        {
-    //          // Clear depth stencil view
-    //          utils::CWeakPtr<render::gfx::CShadowMap> wpShadowMap = lstShadowMaps[0];
-    //          const texture::TDepthStencil& rShadowStencil = wpShadowMap->GetStencil();
-    //          global::api::DeviceContext->ClearDepthStencilView(rShadowStencil.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-    //
-    //          // Configure viewport
-    //          uint32_t uWidth = 0, uHeight = 0;
-    //          rShadowStencil.GetTextureSize(uWidth, uHeight);
-    //          SetViewport(uWidth, uHeight);
-    //
-    //          // Create view matrix from directional light
-    //          const float fMaxDistance = 50.0f;
-    //          math::CVector3 v3Dir = pLightManager->GetDirectionalLight()->GetDir();
-    //          math::CVector3 v3SceneCenter = m_pRenderCamera->GetPos() + (m_pRenderCamera->GetDir() * fMaxDistance); // Max distance
-    //          math::CVector3 v3ShadowPos = v3SceneCenter - (v3Dir * (fMaxDistance * 2.0f)); // Calculate shadow pos
-    //
-    //          // Orthographic values ( testing )
-    //          float fAspectRatio = static_cast<float>(uWidth) / static_cast<float>(uHeight);
-    //          float fHeight = 100.0f;
-    //          float fWidth = fHeight * fAspectRatio;
-    //
-    //          const float fNear = m_pRenderCamera->GetNear();
-    //          const float fFar = m_pRenderCamera->GetFar();
-    //
-    //          math::CMatrix4x4 mView = math::CMatrix4x4::LookAt(v3ShadowPos, v3SceneCenter, render::CRender::s_v3WorldUp);
-    //          math::CMatrix4x4 mOrthographicProj = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar);
-    //
-    //#ifdef _DEBUG
-    //          assert(m_pShadowCamera);
-    //#endif
-    //          // Configure shadow camera
-    //          m_pShadowCamera->SetProjectionMode(EProjectionMode::ORTOGRAPHIC);
-    //          m_pShadowCamera->SetOrthographicSize(fHeight);
-    //          m_pShadowCamera->SetProjectionMatrix(mOrthographicProj);
-    //          m_pShadowCamera->SetViewMatrix(mView);
-    //
-    //          m_pShadowCamera->SetPos(v3ShadowPos);
-    //          m_pShadowCamera->SetDir(v3Dir);
-    //          m_pShadowCamera->SetAspectRatio(fAspectRatio);
-    //
-    //          m_pShadowCamera->SetNear(fNear);
-    //          m_pShadowCamera->SetFar(fFar);
-    //
-    //          // Build frustum planes
-    //          m_pShadowCamera->BuildFrustumPlanes();
-    //
-    //          // Calculate transforms for shadow mapping
-    //          TCameraTransform rTransforms = TCameraTransform();
-    //          {
-    //            math::CMatrix4x4 mViewProjection = m_pShadowCamera->GetViewProjection();
-    //            rTransforms.ViewProjection = mViewProjection;
-    //            rTransforms.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
-    //          }
-    //
-    //          // Write buffer
-    //          bool bOk = internal::Pipeline.LightingViewBuffer.WriteBuffer(rTransforms);
-    //          UNUSED_VAR(bOk);
-    //#ifdef _DEBUG
-    //          assert(bOk);
-    //#endif // DEBUG
-    //          internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
-    //
-    //          // Set render target
-    //          SetRenderTargets(0u, nullptr, rShadowStencil.GetView());
-    //
-    //          // Set depth stencil state
-    //          ID3D11DepthStencilState* pCurrentStencilState = nullptr;
-    //          uint32_t uCurrentRef = 0;
-    //          global::api::DeviceContext->OMGetDepthStencilState(&pCurrentStencilState, &uCurrentRef);
-    //          if (pCurrentStencilState != internal::Pipeline.DepthStencilState)
-    //          {
-    //            global::api::DeviceContext->OMSetDepthStencilState(internal::Pipeline.DepthStencilState, 1);
-    //          }
-    //
-    //          // Attach vertex shader for shadows (vertex shader)
-    //          internal::Pipeline.DeferredShadowsVS.Attach();
-    //          // Detach pixel shader for models
-    //          internal::Pipeline.DeferredGBuffer.Detach();
-    //
-    //          // Cache models
-    //          _rRenderScene.CacheModels(*m_pShadowCamera);
-    //
-    //          // Draw models only in z-prepass pass from the light view
-    //          DrawModels(_rRenderScene);
-    //
-    //          uint32_t uRenderWidth = 0, uRenderHeight = 0;
-    //          m_pRenderWindow->GetWindowSize(uRenderWidth, uRenderHeight);
-    //          SetViewport(uRenderWidth, uRenderHeight);
-    //        }
-    //        // Restore rasterizer
-    //        global::api::DeviceContext->RSSetState(internal::Pipeline.DefaultRasterizer);
-    //      }
-    //    }
-    //    EndMarker();
-  }
-  // ------------------------------------
   void CRender::ComputeLightingPass(scene::CRenderScene& _rRenderScene)
   {
     // Apply lighting
@@ -1126,7 +981,7 @@ namespace render
     pLightManager->ApplyLighting();
 
     // Set transform constant
-    internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.CameraTransformSlot);
+    internal::Pipeline.RenderCameraBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.CameraTransformSlot);
 
     utils::CWeakPtr<render::lights::CDirectionalLight> pDirLight = pLightManager->GetDirectionalLight();
     bool bCastShadows = pDirLight.IsValid() && pDirLight->CastShadows();
@@ -1136,22 +991,22 @@ namespace render
     ID3D11ShaderResourceView* pShadowTexture = nullptr;
     if (bCastShadows && lstShadowMaps.GetSize() > 0)
     {
-      pShadowTexture = lstShadowMaps[0]->GetShadowTexture().GetView();
+      pShadowTexture = lstShadowMaps[0]->GetShaderResource().GetView();
       global::api::DeviceContext->PSSetSamplers(1, 1, &internal::Pipeline.ShadowSampler);
       internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.LightingViewSlot);
     }
 
-    // Bind G-buffer textures
+    // Bind (Depth + GBuffer + Shadow) textures 
     static constexpr uint32_t uTexturesSize(5);
-    ID3D11ShaderResourceView* lstGBufferSRV[uTexturesSize] =
+    ID3D11ShaderResourceView* lstTexturesSRV[uTexturesSize] =
     {
-      m_pDeferredRenderer->GetDepthTexture(),
-      m_pDeferredRenderer->GetDiffuseRT()->GetShaderView(),
-      m_pDeferredRenderer->GetNormalRT()->GetShaderView(),
-      m_pDeferredRenderer->GetNormalRT()->GetShaderView(),
-      pShadowTexture
+      m_pDeferredRenderer->GetShaderResourceView(), // Depth
+      m_pDeferredRenderer->GetDiffuseRT()->GetShaderResourceView(), // Render Target
+      m_pDeferredRenderer->GetNormalRT()->GetShaderResourceView(), // Render Target
+      m_pDeferredRenderer->GetSpecularRT()->GetShaderResourceView(), // Render Target
+      pShadowTexture // Shadow texture
     };
-    global::api::DeviceContext->PSSetShaderResources(0, uTexturesSize, &lstGBufferSRV[0]);
+    global::api::DeviceContext->PSSetShaderResources(0u, uTexturesSize, &lstTexturesSRV[0]);
 
     // Bind buffers
     SetRenderTargets(&internal::Pipeline.BackBuffer, 1u, nullptr);
@@ -1166,17 +1021,14 @@ namespace render
     DrawQuad();
 
     // Set invalid shaders
-    ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize] = { nullptr, nullptr, nullptr, nullptr };
-    global::api::DeviceContext->PSSetShaderResources(0, uTexturesSize, lstEmptyTextures);
-
-    // Attach back buffer
-    ID3D11DepthStencilView* pDepthStencilView = internal::Pipeline.DepthStencil.GetView();
-    SetRenderTargets(&internal::Pipeline.BackBuffer, 1u, pDepthStencilView);
+    ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize];
+    memset(lstEmptyTextures, NULL, sizeof(lstEmptyTextures));
+    global::api::DeviceContext->PSSetShaderResources(0u, uTexturesSize, lstEmptyTextures);
   }
   // ------------------------------------
   void CRender::DrawQuad()
   {
-    // Bind buffers
+    // Bind render target
     SetRenderTargets(&internal::Pipeline.BackBuffer, 1u);
 
     // Attach quad shader (vertex shader)
@@ -1190,17 +1042,20 @@ namespace render
     // Draw quad as fake triangle!
     const uint16_t uVertexCount = 3, uStartVertexLocation = 0;
     global::api::DeviceContext->Draw(uVertexCount, uStartVertexLocation);
+
+    // Remove back buffer
+    SetRenderTargets(nullptr, 0u);
   }
   // ------------------------------------
   void CRender::DrawModels(scene::CRenderScene& _rScene)
   {
-    // Setup model vertex/index buffer
+    // Setup
     uint16_t uDrawableCount = 0;
     const scene::TCachedModels& lstCacheModels = _rScene.GetCachedModels(uDrawableCount);
     if (uDrawableCount > 0)
     {
+      // Setup vertex + index buffer
       const uint32_t uBuffersCount = 2, uIndexOffset = 0;
-
       ID3D11Buffer* pBuffers[uBuffersCount] = { _rScene.GetModelsVB(), internal::Pipeline.RenderInstancesBuffer };
       uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
       uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
@@ -1279,16 +1134,6 @@ namespace render
   // ------------------------------------
   void CRender::DrawPrimitives(scene::CRenderScene& _rRenderScene)
   {
-    // Set input layout
-    global::api::DeviceContext->IASetInputLayout(internal::Pipeline.DebugLayout);
-
-    // Attach shaders
-    internal::Pipeline.ForwardVS.Attach();
-    internal::Pipeline.ForwardPS.Attach();
-
-    // Bind buffer
-    internal::Pipeline.CameraTransformBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
-
     // Set layout
     const uint32_t uBuffersCount(2);
     uint32_t lstStrides[uBuffersCount] = { sizeof(math::CVector3), sizeof(render::gfx::TPrimitiveInstanceData) };

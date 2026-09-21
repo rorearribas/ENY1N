@@ -29,8 +29,8 @@ namespace render
     rTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS; // Format
     rTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
 
-    m_oDepthStencilTexture.Release();
-    HRESULT hResult = m_oDepthStencilTexture.CreateTexture(rTextureDesc);
+    m_oDepthStencil.Release();
+    HRESULT hResult = m_oDepthStencil.CreateTexture(rTextureDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating depth stencil texture!");
@@ -43,7 +43,7 @@ namespace render
     rDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
     // Create the depth stencil view
-    hResult = m_oDepthStencilTexture.CreateView(rDepthStencilViewDesc);
+    hResult = m_oDepthStencil.CreateView(rDepthStencilViewDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating stencil view!");
@@ -56,8 +56,8 @@ namespace render
     rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     rSRVDesc.Texture2D.MipLevels = 1;
 
-    m_oDepthStencilResource.Release();
-    hResult = m_oDepthStencilResource.CreateViewFromTexture(m_oDepthStencilTexture, rSRVDesc);
+    m_oDepthStencilShader.Release();
+    hResult = m_oDepthStencilShader.CreateViewFromTexture(m_oDepthStencil, rSRVDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating view!");
@@ -99,29 +99,13 @@ namespace render
   // ------------------------------------
   void CDeferredRenderer::PrepareFrame()
   {
-    ClearRenderTargets(internal::s_v4ClearColor);
-    m_pRender->ClearDepthStencil(m_oDepthStencilTexture.GetView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-  }
-  // ------------------------------------
-  void CDeferredRenderer::AttachRenderTargets(ID3D11DepthStencilView* _pDepthStencilView)
-  {
-    ID3D11RenderTargetView* lstGBufferRTV[internal::uRenderTargets] =
-    {
-      m_pDiffuseRT->GetRenderTargetView(),
-      m_pNormalRT->GetRenderTargetView(),
-      m_pSpecularRT->GetRenderTargetView()
-    };
+    // Clear render targets
+    m_pDiffuseRT->SetClearColor(internal::s_v4ClearColor);
+    m_pNormalRT->SetClearColor(internal::s_v4ClearColor);
+    m_pSpecularRT->SetClearColor(internal::s_v4ClearColor);
 
-    // Set render targets
-    global::api::DeviceContext->OMSetRenderTargets(internal::uRenderTargets, lstGBufferRTV, _pDepthStencilView);
-  }
-  // ------------------------------------
-  void CDeferredRenderer::DetachRenderTargets()
-  {
-    // Remove render targets
-    static constexpr uint32_t uRenderTargets(3);
-    ID3D11RenderTargetView* lstEmptyRTs[uRenderTargets] = { nullptr, nullptr, nullptr };
-    global::api::DeviceContext->OMSetRenderTargets(uRenderTargets, lstEmptyRTs, nullptr);
+    // Clear depth stencil -> zbuffer
+    m_pRender->ClearDepthStencil(GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
   }
   // ------------------------------------
   void CDeferredRenderer::Draw(scene::CRenderScene& _rRenderScene)
@@ -134,10 +118,8 @@ namespace render
       m_pSpecularRT->GetRenderTargetView()
     };
 
-    // Set render targets
-    m_pRender->SetRenderTargets(lstGBufferRTs, internal::uRenderTargets, m_oDepthStencilTexture.GetView());
-    // Set depth stencil state
-    m_pRender->SetDepthStencilState(m_pDepthStencilState, 1u);
+    m_pRender->SetRenderTargets(lstGBufferRTs, internal::uRenderTargets, GetDepthStencilView()); // Set render targets
+    m_pRender->SetDepthStencilState(m_pDepthStencilState, 1u); // Set depth stencil state
 
     // Cache models
     _rRenderScene.CacheModels(*m_pRenderCamera);
@@ -148,13 +130,6 @@ namespace render
     // Detach render targets
     ID3D11RenderTargetView* lstEmptyRTs[internal::uRenderTargets] = { nullptr, nullptr, nullptr };
     m_pRender->SetRenderTargets(lstEmptyRTs, internal::uRenderTargets);
-  }
-  // ------------------------------------
-  void CDeferredRenderer::ClearRenderTargets(const float _v4ClearColor[4])
-  {
-    m_pDiffuseRT->SetClearColor(_v4ClearColor);
-    m_pNormalRT->SetClearColor(_v4ClearColor);
-    m_pSpecularRT->SetClearColor(_v4ClearColor);
   }
   // ------------------------------------
   HRESULT CDeferredRenderer::SetupRenderTargets(uint32_t _uWidth, uint32_t _uHeight)
