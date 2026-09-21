@@ -70,7 +70,7 @@ namespace render
           math::CMatrix4x4 mOrthographicProj = math::CMatrix4x4::CreateOrtographicMatrix(fWidth, fHeight, fNear, fFar);
 
 #ifdef _DEBUG
-          assert(m_pRenderCamera);
+          assert(m_pShadowCamera);
 #endif
           // Configure shadow camera
           m_pShadowCamera->SetProjectionMode(EProjectionMode::ORTOGRAPHIC);

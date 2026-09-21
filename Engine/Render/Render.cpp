@@ -51,14 +51,15 @@ namespace render
     static const float s_fMinDepth(0.0f);
     static const float s_fMaxDepth(1.0f);
 
-    // Standard layout - VTX(36) / INST(64)
-    static constexpr int s_iStandardLayoutSize(7);
+    // Standard layout - VTX(48) / INST(64)
+    static constexpr int s_iStandardLayoutSize(8);
     static const D3D11_INPUT_ELEMENT_DESC s_tStandardLayout[s_iStandardLayoutSize] =
     {
       // Vertex layout
       { "VERTEXPOS",          0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 12
       { "NORMAL",             0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 24
-      { "UV",                 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 36
+      { "TANGENT",            0, DXGI_FORMAT_R32G32B32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 36
+      { "UV",                 0, DXGI_FORMAT_R32G32_FLOAT,       0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA,   0 }, // 48
       // Instancing
       { "INSTANCE_TRANSFORM", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 16
       { "INSTANCE_TRANSFORM", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 32
@@ -967,7 +968,7 @@ namespace render
   // ------------------------------------
   HRESULT CRender::CreateRasterizerState(D3D11_RASTERIZER_DESC& _rDesc, ID3D11RasterizerState** _ppRasterizerState)
   {
-    if(global::api::Device)
+    if (global::api::Device)
     {
       return global::api::Device->CreateRasterizerState(&_rDesc, _ppRasterizerState);
     }
@@ -997,13 +998,13 @@ namespace render
     }
 
     // Bind (Depth + GBuffer + Shadow) textures 
-    static constexpr uint32_t uTexturesSize(5);
+    static constexpr uint32_t uTexturesSize(4);
     ID3D11ShaderResourceView* lstTexturesSRV[uTexturesSize] =
     {
       m_pDeferredRenderer->GetShaderResourceView(), // Depth
       m_pDeferredRenderer->GetDiffuseRT()->GetShaderResourceView(), // Render Target
       m_pDeferredRenderer->GetNormalRT()->GetShaderResourceView(), // Render Target
-      m_pDeferredRenderer->GetSpecularRT()->GetShaderResourceView(), // Render Target
+      //m_pDeferredRenderer->GetSpecularRT()->GetShaderResourceView(), // Render Target
       pShadowTexture // Shadow texture
     };
     global::api::DeviceContext->PSSetShaderResources(0u, uTexturesSize, &lstTexturesSRV[0]);
