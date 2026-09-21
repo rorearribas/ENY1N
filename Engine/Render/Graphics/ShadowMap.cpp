@@ -2,17 +2,12 @@
 
 namespace render
 {
-	namespace gfx
-	{
-    void CShadowMap::Release()
-    {
-      m_oDepthStencil.Release();
-      m_oShaderResource.Release();
-    }
+  namespace gfx
+  {
     // ------------------------------------
     CShadowMap::CShadowMap(CShadowMap&& _rOther) noexcept :
-        m_oShadowDepth(std::move(_rOther.m_oShadowDepth))
-      , m_oShadowTexture(std::move(_rOther.m_oShadowTexture))
+      m_oDepthStencil(std::move(_rOther.m_oDepthStencil))
+      , m_oShaderResource(std::move(_rOther.m_oShaderResource))
     {
     }
     // ------------------------------------
@@ -21,8 +16,8 @@ namespace render
       if (this != &_rOther)
       {
         Release();
-        m_oShadowDepth = std::move(_rOther.m_oShadowDepth);
-        m_oShadowTexture = std::move(_rOther.m_oShadowTexture);
+        m_oDepthStencil = std::move(_rOther.m_oDepthStencil);
+        m_oShaderResource = std::move(_rOther.m_oShaderResource);
       }
       return *this;
     }
@@ -66,5 +61,11 @@ namespace render
       rSRVDesc.Texture2D.MipLevels = 1;
       return m_oShaderResource.CreateViewFromTexture(m_oDepthStencil, rSRVDesc);
     }
-}
+    // ------------------------------------
+    void CShadowMap::Release()
+    {
+      m_oDepthStencil.Release();
+      m_oShaderResource.Release();
+    }
+  }
 }
