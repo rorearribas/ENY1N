@@ -17,9 +17,9 @@ namespace render
     void PrepareFrame() override;
     void Draw(scene::CRenderScene& _rRenderScene) override;
 
-    const CRenderTarget* GetDiffuseRT() const { return m_pDiffuseRT.get(); }
-    const CRenderTarget* GetNormalRT() const { return m_pNormalRT.get(); }
-    const CRenderTarget* GetSpecularRT() const { return m_pSpecularRT.get(); }
+    CRenderTarget& GetDiffuseRT() const { return *m_pDiffuseRT; }
+    CRenderTarget& GetNormalRT() const { return *m_pNormalRT; }
+    CRenderTarget& GetSpecularRT() const { return *m_pSpecularRT; }
 
     ID3D11DepthStencilView* GetDepthStencilView() const { return m_oDepthStencil.GetView(); }
     ID3D11ShaderResourceView* GetShaderResourceView() const { return m_oDepthStencilShader.GetView(); }

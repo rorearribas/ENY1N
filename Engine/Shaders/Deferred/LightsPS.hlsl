@@ -5,76 +5,78 @@
 struct DirectionalLight
 {
   // 12 + 4 bytes = 16 bytes
-  float3 Dir;
-  float Intensity;
+	float3 Dir;
+	float Intensity;
 
   // 12 + 4 bytes = 16 bytes
-  float3 Color;
-  int CastShadows;
+	float3 Color;
+	int CastShadows;
 };
 
 struct PointLight
 {
   // 12 + 4 bytes = 16 bytes
-  float3 Pos;
-  float Range;
+	float3 Pos;
+	float Range;
 
   // 12 + 4 bytes = 16 bytes
-  float3 Color;
-  float Intensity;
+	float3 Color;
+	float Intensity;
 };
 
 struct Spotlight
 {
   // 12 + 4 bytes = 16 bytes
-  float3 Pos;
-  float Padding0;
+	float3 Pos;
+	float Padding0;
 
   // 12 + 4 bytes = 16 bytes
-  float3 Dir;
-  float Range;
+	float3 Dir;
+	float Range;
 
   // 12 + 4 bytes = 16 bytes
-  float3 Color;
-  float Intensity;
+	float3 Color;
+	float Intensity;
 };
 
 // Transforms
 cbuffer cbTransforms : register(b0)
 {
   // Transforms
-  matrix ViewProjection;
-  matrix InvViewProjection;
+	matrix ViewProjection;
+	matrix InvViewProjection;
 };
 
 // Global Lighting
 cbuffer cbGlobalLighting : register(b1)
 {
   // Lights
-  DirectionalLight dirLight;
-  PointLight pointLights[100];
-  Spotlight spotLights[100];
+	DirectionalLight dirLight;
+	PointLight pointLights[100];
+	Spotlight spotLights[100];
 
   // Handle lights
-  int2 RegisteredLights;
-  float2 Padding1;
+	int2 RegisteredLights;
+	float2 Padding1;
 };
 
 // Lighting - Shadows
 cbuffer cbLightingView : register(b2)
 {
-  matrix LightViewProjection;
+	matrix LightViewProjection;
 	matrix InvLightViewProjection;
 }
 
-// GBuffer
-Texture2D texture_depth    : register(t0);
-Texture2D texture_diffuse  : register(t1);
-Texture2D texture_normal   : register(t2);
-//Texture2D texture_specular : register(t3);
+// Depth texture
+Texture2D texture_depth : register(t0);
+
+// GBuffer Textures
+Texture2D texture_diffuse : register(t1);
+Texture2D texture_normal : register(t2);
+Texture2D texture_specular : register(t3);
 
 // Shadow mapping
-Texture2D texture_shadowmap : register(t3);
+Texture2D texture_shadowmap : register(t4);
 
 // Samplers
 SamplerState sampler_default : register(s0);
@@ -83,42 +85,51 @@ SamplerComparisonState sampler_shadows : register(s1);
 float4 PSMain(VS_OUTPUT input) : SV_TARGET
 {
   // Get pos + normal
-  float3 v3Normal = normalize(texture_normal.Sample(sampler_default, input.uv)).xyz;
+	float3 v3Normal = normalize(texture_normal.Sample(sampler_default, input.uv)).xyz;
 
   // Get diffuse color + specular
-  float3 v3Diffuse = texture_diffuse.Sample(sampler_default, input.uv).rgb;
-  //float3 v3Specular = texture_specular.Sample(sampler_default, input.uv).rgb;
+	float3 v3Diffuse = texture_diffuse.Sample(sampler_default, input.uv).rgb;
+	float3 v3Specular = texture_specular.Sample(sampler_default, input.uv).rgb;
 
   // Get world pos
-  float fDepth = texture_depth.Sample(sampler_default, input.uv).r;
-  float3 v3WorldPos = get_pos_from_depth(input.uv, fDepth, InvViewProjection);
+	float fDepth = texture_depth.Sample(sampler_default, input.uv).r;
+	float3 v3WorldPos = get_pos_from_depth(input.uv, fDepth, InvViewProjection);
 
   // Add ambient light
-  float3 v3TotalLight = float3(1.0f, 1.0f, 1.0f) * 0.2f;
+	float3 v3TotalLight = float3(1.0f, 1.0f, 1.0f) * 0.2f;
 
-  float fShadowFactor = 1.0f;
-  if (dirLight.CastShadows)
-  {
+	float fShadowFactor = 1.0f;
+	if (dirLight.CastShadows)
+	{
     // Calculate shadows
-    float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
+		float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
 		float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
 
-    fShadowFactor = compute_shadow_mapping
+		fShadowFactor = compute_shadow_mapping
     (
-      texture_shadowmap, 
-      sampler_shadows, 
-      get_uvs_from_light_space(posLightSpace), 
+      texture_shadowmap,
+      sampler_shadows,
+      get_uvs_from_light_space(posLightSpace),
       current_shadow_depth
     );
-  }
+	}
 
   // Apply color
 	float fDiffuseFactor = saturate(dot(normalize(-dirLight.Dir), v3Normal));
-  v3TotalLight += (fDiffuseFactor * dirLight.Color * dirLight.Intensity) * fShadowFactor;
+	v3TotalLight += (fDiffuseFactor * dirLight.Color * dirLight.Intensity) * fShadowFactor;
+	
+	// Ejemplo rápido integrando el especular con la luz direccional
+	float3 v3ViewDir = normalize(float3(0, 0, 0) - v3WorldPos); // Necesitarías la posición de la cámara
+	float3 v3HalfDir = normalize(-dirLight.Dir + v3ViewDir);
+	float fSpecFactor = pow(saturate(dot(v3Normal, v3HalfDir)), 32.0f); // 32.0f es el brillo (shininess)
+	float3 v3SpecularLight = dirLight.Color * fSpecFactor * v3Specular * fShadowFactor;
+	
+	// Súmala a tu luz total junto con el difuso
+	v3TotalLight += v3SpecularLight;
 
   // Point Lights
-  for (int i = 0; i < RegisteredLights.x; i++)
-  {
+	for (int i = 0; i < RegisteredLights.x; i++)
+	{
 		PointLight pointLight = pointLights[i];
 		float fDist = distance(pointLight.Pos, v3WorldPos);
 		if (fDist > pointLight.Range)
@@ -160,5 +171,5 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
 		v3TotalLight += spotlight.Color * spotlight.Intensity * fFalloff;
 	}
 
-  return float4(saturate(v3TotalLight * v3Diffuse), 1.0f);
+	return float4(saturate(v3TotalLight * v3Diffuse), 1.0f);
 }

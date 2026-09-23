@@ -992,19 +992,20 @@ namespace render
     ID3D11ShaderResourceView* pShadowTexture = nullptr;
     if (bCastShadows && lstShadowMaps.GetSize() > 0)
     {
-      pShadowTexture = lstShadowMaps[0]->GetShaderResource().GetView();
+      const utils::CWeakPtr<render::gfx::CShadowMap>& wpShadowMap = lstShadowMaps[0];
+      pShadowTexture = wpShadowMap->GetShaderResource().GetView();
       global::api::DeviceContext->PSSetSamplers(1, 1, &internal::Pipeline.ShadowSampler);
       internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.LightingViewSlot);
     }
 
     // Bind (Depth + GBuffer + Shadow) textures 
-    static constexpr uint32_t uTexturesSize(4);
+    static constexpr uint32_t uTexturesSize(5);
     ID3D11ShaderResourceView* lstTexturesSRV[uTexturesSize] =
     {
       m_pDeferredRenderer->GetShaderResourceView(), // Depth
-      m_pDeferredRenderer->GetDiffuseRT()->GetShaderResourceView(), // Render Target
-      m_pDeferredRenderer->GetNormalRT()->GetShaderResourceView(), // Render Target
-      //m_pDeferredRenderer->GetSpecularRT()->GetShaderResourceView(), // Render Target
+      m_pDeferredRenderer->GetDiffuseRT().GetShaderResourceView(), // Render Target
+      m_pDeferredRenderer->GetNormalRT().GetShaderResourceView(), // Render Target
+      m_pDeferredRenderer->GetSpecularRT().GetShaderResourceView(), // Render Target
       pShadowTexture // Shadow texture
     };
     global::api::DeviceContext->PSSetShaderResources(0u, uTexturesSize, &lstTexturesSRV[0]);
