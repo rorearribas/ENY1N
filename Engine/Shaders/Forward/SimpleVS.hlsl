@@ -1,10 +1,11 @@
 // Simple vertex shader - ENY1N
-
 cbuffer cbTransforms : register(b0)
 {
-  // Transforms
-  matrix ViewProjection;
-  matrix InvViewProjection;
+	float3 CameraPos;
+	float Padding0;
+	
+	matrix ViewProjection;
+	matrix InvViewProjection;
 };
 
 // VS Input
