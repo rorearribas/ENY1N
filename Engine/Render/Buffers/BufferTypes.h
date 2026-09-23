@@ -22,10 +22,13 @@ namespace buffertypes
   | matrix NxM      | N×16 bytes     |
   */
 
-  // Camera transform [128 Bytes]
+  // Camera transform [144 Bytes]
   struct __declspec(align(s_uAlign)) TCameraTransform
   {
     // Transforms
+    math::CVector3 CameraPos = math::CVector3::Zero;
+    float fPadding0 = 0.0f;
+
     math::CMatrix4x4 ViewProjection = math::CMatrix4x4::Identity;
     math::CMatrix4x4 InvViewProjection = math::CMatrix4x4::Identity;
   };

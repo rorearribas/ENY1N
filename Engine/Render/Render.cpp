@@ -491,6 +491,7 @@ namespace render
     math::CMatrix4x4 mViewProjection = _RenderCamera.GetViewProjection();
     buffertypes::TCameraTransform rCameraTransform = buffertypes::TCameraTransform();
     {
+      rCameraTransform.CameraPos = _RenderCamera.GetPos();
       rCameraTransform.ViewProjection = mViewProjection;
       rCameraTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
     }
@@ -509,6 +510,7 @@ namespace render
     math::CMatrix4x4 mViewProjection = _RenderCamera.GetViewProjection();
     buffertypes::TCameraTransform rCameraTransform = buffertypes::TCameraTransform();
     {
+      rCameraTransform.CameraPos = _RenderCamera.GetPos();
       rCameraTransform.ViewProjection = mViewProjection;
       rCameraTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
     }

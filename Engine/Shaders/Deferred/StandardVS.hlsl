@@ -2,7 +2,9 @@
 
 cbuffer cbTransforms : register(b0)
 {
-  // Transforms
+	float3 CameraPos;
+	float Padding0;
+	
 	matrix ViewProjection;
 	matrix InvViewProjection;
 };

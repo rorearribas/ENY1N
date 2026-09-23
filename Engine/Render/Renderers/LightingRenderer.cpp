@@ -109,6 +109,7 @@ namespace render
           uint32_t uRenderWidth = 0, uRenderHeight = 0;
           m_pRender->GetRenderWindow()->GetWindowSize(uRenderWidth, uRenderHeight);
           m_pRender->SetViewport(uRenderWidth, uRenderHeight);
+          m_pRender->SetRenderTargets(nullptr, 0u, nullptr);
         }
         // Set invalid rasterizer
         m_pRender->SetRasterizerState(nullptr);

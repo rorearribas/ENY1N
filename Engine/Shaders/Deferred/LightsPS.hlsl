@@ -42,7 +42,9 @@ struct Spotlight
 // Transforms
 cbuffer cbTransforms : register(b0)
 {
-  // Transforms
+	float3 CameraPos;
+	float Padding0;
+	
 	matrix ViewProjection;
 	matrix InvViewProjection;
 };
@@ -63,6 +65,9 @@ cbuffer cbGlobalLighting : register(b1)
 // Lighting - Shadows
 cbuffer cbLightingView : register(b2)
 {
+	float3 LightCameraPos;
+	float Padding2;
+	
 	matrix LightViewProjection;
 	matrix InvLightViewProjection;
 }
@@ -98,34 +103,40 @@ float4 PSMain(VS_OUTPUT input) : SV_TARGET
   // Add ambient light
 	float3 v3TotalLight = float3(1.0f, 1.0f, 1.0f) * 0.2f;
 
+	// Directional light
 	float fShadowFactor = 1.0f;
-	if (dirLight.CastShadows)
 	{
-    // Calculate shadows
-		float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
-		float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
+		if (dirLight.CastShadows)
+		{
+			// Calculate shadows
+			float4 posLightSpace = mul(LightViewProjection, float4(v3WorldPos, 1.0f));
+			float current_shadow_depth = float3(posLightSpace.xyz / posLightSpace.w).z;
 
-		fShadowFactor = compute_shadow_mapping
+			fShadowFactor = compute_shadow_mapping
     (
       texture_shadowmap,
       sampler_shadows,
       get_uvs_from_light_space(posLightSpace),
       current_shadow_depth
     );
-	}
+		}
 
-  // Apply color
-	float fDiffuseFactor = saturate(dot(normalize(-dirLight.Dir), v3Normal));
-	v3TotalLight += (fDiffuseFactor * dirLight.Color * dirLight.Intensity) * fShadowFactor;
+		// Apply color
+		float fDiffuseFactor = saturate(dot(normalize(-dirLight.Dir), v3Normal));
+		v3TotalLight += (fDiffuseFactor * dirLight.Color * dirLight.Intensity) * fShadowFactor;
+	}
 	
-	// Ejemplo rápido integrando el especular con la luz direccional
-	float3 v3ViewDir = normalize(float3(0, 0, 0) - v3WorldPos); // Necesitarías la posición de la cámara
-	float3 v3HalfDir = normalize(-dirLight.Dir + v3ViewDir);
-	float fSpecFactor = pow(saturate(dot(v3Normal, v3HalfDir)), 32.0f); // 32.0f es el brillo (shininess)
-	float3 v3SpecularLight = dirLight.Color * fSpecFactor * v3Specular * fShadowFactor;
-	
-	// Súmala a tu luz total junto con el difuso
-	v3TotalLight += v3SpecularLight;
+	// Specular
+	{
+		float3 v3ViewDir = normalize(CameraPos - v3WorldPos);
+		float3 v3HalfDir = normalize(-dirLight.Dir + v3ViewDir);
+		// Check if light is hitting the front face to prevent back-face artifacts
+		float fDot = saturate(dot(v3Normal, -dirLight.Dir));
+		float fSpecFactor = pow(saturate(dot(v3Normal, v3HalfDir)), 128.0f); // brightness (this will be a variable)
+		float3 v3SpecularLight = (dirLight.Color * fSpecFactor * v3Specular * fShadowFactor) * (fDot > 0.0f ? 1.0f : 0.0f);
+		// Apply specular
+		v3TotalLight += v3SpecularLight;
+	}
 
   // Point Lights
 	for (int i = 0; i < RegisteredLights.x; i++)
