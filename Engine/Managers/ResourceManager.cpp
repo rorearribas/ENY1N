@@ -221,9 +221,7 @@ void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& 
     SUCCESS_LOG("Texture loaded! -> " << _sPath.filename());
 
     // Create texture
-    m_lstCachedTextures.emplace(sTexture, std::make_shared<TShaderResource>());
-    render::texture::TSharedTexture pTexture = m_lstCachedTextures.at(sTexture);
-    _pMaterial_->SetTexture(pTexture, _eType);
+    render::texture::TSharedTexture pTexture;
 
     // Set texture config
     D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
@@ -236,19 +234,41 @@ void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& 
     oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // Bind shader resource
 
     // Create texture
-    HRESULT hResult = pTexture->CreateTexture(pBuffer, oTextureDesc, iChannels);
-#ifdef _DEBUG
-    assert(!FAILED(hResult));
-#endif // DEBUG
+    render::texture::TTextureDesc rTextureDesc = render::texture::TTextureDesc();
+    rTextureDesc.Descriptor = oTextureDesc;
+    rTextureDesc.Channels = static_cast<uint32_t>(iChannels);
+    rTextureDesc._pData = pBuffer;
 
-    // Set shader resource cfg
     D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
     oShaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
     oShaderResourceViewDesc.Texture2D.MipLevels = 1;
 
+    HRESULT hResult = S_OK;
+    if (m_pTextureManager)
+    {
+      pTexture = m_pTextureManager->Create(sTexture, rTextureDesc, oShaderResourceViewDesc);
+    }
+    else
+    {
+      pTexture = std::make_shared<TShaderResource>();
+      hResult = pTexture->CreateTexture(*m_pRenderDevice, rTextureDesc);
+    }
+    if (!pTexture)
+    {
+      return;
+    }
+    m_lstCachedTextures.emplace(sTexture, pTexture);
+    _pMaterial_->SetTexture(pTexture, _eType);
+#ifdef _DEBUG
+    assert(!FAILED(hResult));
+#endif // DEBUG
+
     // Create shader resource view
-    hResult = pTexture->CreateView(oShaderResourceViewDesc);
+    if (!m_pTextureManager)
+    {
+      hResult = pTexture->CreateView(*m_pRenderDevice, oShaderResourceViewDesc);
+    }
 #ifdef _DEBUG
     assert(!FAILED(hResult));
 #endif // DEBUG

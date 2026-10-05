@@ -2,6 +2,7 @@
 
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Render/Window/RenderWindow.h"
+#include "Engine/Render/RenderContext/RenderContextDX11.h"
 #include "Engine/Render/Buffers/BufferTypes.h"
 #include "Engine/Render/Buffers/ConstantBuffer.h"
 #include "Engine/Render/Graphics/ShadowMap.h"
@@ -80,68 +81,10 @@ namespace render
       { "INSTANCE_TRANSFORM", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 64
       { "COLOR",              0, DXGI_FORMAT_R32G32B32_FLOAT,    1, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_INSTANCE_DATA, 1 }, // 68
     };
-
-    struct TRenderPipeline
-    {
-      // Swap chain + back buffer
-      IDXGISwapChain* SwapChain = nullptr;
-      ID3D11RenderTargetView* BackBuffer = nullptr;
-
-      // Samplers
-      ID3D11SamplerState* LinearSampler = nullptr;
-      ID3D11SamplerState* ShadowSampler = nullptr;
-
-      // Instancing buffers
-      ID3D11Buffer* RenderInstancesBuffer = nullptr;
-      ID3D11Buffer* PrimitiveInstancesBuffer = nullptr;
-
-      // Global constant buffers
-      CConstantBuffer<buffertypes::TCameraTransform> RenderCameraBuffer;
-      static constexpr uint32_t CameraTransformSlot = 0;
-      CConstantBuffer<buffertypes::TCameraTransform> LightingViewBuffer;
-      static constexpr uint32_t LightingViewSlot = 2;
-      CConstantBuffer<buffertypes::TMaterialInfo> MaterialBuffer;
-      static constexpr uint32_t MaterialSlot = 0;
-
-      // Rasterizer
-      ID3D11RasterizerState* DefaultRasterizer = nullptr;
-      D3D11_RASTERIZER_DESC RasterizerCfg = D3D11_RASTERIZER_DESC();
-
-      // Blend
-      ID3D11BlendState* BlendState = nullptr;
-      D3D11_RENDER_TARGET_BLEND_DESC BlendStateCfg = D3D11_RENDER_TARGET_BLEND_DESC();
-
-      // Layouts
-      ID3D11InputLayout* StandardLayout = nullptr;
-      ID3D11InputLayout* DebugLayout = nullptr;
-
-      // Debug
-      ID3DUserDefinedAnnotation* pUserMarker = nullptr;
-
-      // Forward
-      shader::CShader<EShader::E_VERTEX> ForwardVS;
-      shader::CShader<EShader::E_PIXEL> ForwardPS;
-
-      // Deferred
-      render::shader::CShader<EShader::E_VERTEX> DrawQuadVS;
-      render::shader::CShader<EShader::E_VERTEX> LightingVS;
-      render::shader::CShader<EShader::E_VERTEX> DeferredVS;
-
-      render::shader::CShader<EShader::E_PIXEL> DeferredGBufferPS;
-      render::shader::CShader<EShader::E_PIXEL> DeferredLightsPS;
-    };
-
-    static TRenderPipeline Pipeline;
   }
-
   // ------------------------------------
   CRender::CRender(uint32_t _uWidth, uint32_t _uHeight)
   {
-    // Create render window
-    LOG("Creating render window...");
-    m_pRenderWindow = std::make_unique<render::CRenderWindow>(_uWidth, _uHeight);
-    SUCCESS_LOG("The window has been created successfully!");
-
     // Init render
     LOG("Initializing render...");
     HRESULT hResult = Init(_uWidth, _uHeight);
@@ -160,47 +103,40 @@ namespace render
     ImGui::DestroyContext();
 
     // Clear constant buffer
-    internal::Pipeline.RenderCameraBuffer.Release();
-    internal::Pipeline.LightingViewBuffer.Release();
-    internal::Pipeline.MaterialBuffer.Release();
-
-    // Release shaders (forward)
-    internal::Pipeline.ForwardVS.Release();
-    internal::Pipeline.ForwardPS.Release();
-
-    // Release shaders (deferred)
-    internal::Pipeline.DeferredVS.Release();
-    internal::Pipeline.DrawQuadVS.Release();
-    internal::Pipeline.LightingVS.Release();
-    internal::Pipeline.DeferredGBufferPS.Release();
-    internal::Pipeline.DeferredLightsPS.Release();
+    m_oRenderPipeline.RenderCameraBuffer.Release();
+    m_oRenderPipeline.LightingViewBuffer.Release();
+    m_oRenderPipeline.MaterialBuffer.Release();
 
     // Layout + states
-    global::api::SafeRelease(internal::Pipeline.StandardLayout);
-    global::api::SafeRelease(internal::Pipeline.DebugLayout);
+    global::api::SafeRelease(m_oRenderPipeline.StandardLayout);
+    global::api::SafeRelease(m_oRenderPipeline.DebugLayout);
 
     // Release rasterizer, blending..
-    global::api::SafeRelease(internal::Pipeline.LinearSampler);
-    global::api::SafeRelease(internal::Pipeline.ShadowSampler);
-    global::api::SafeRelease(internal::Pipeline.DefaultRasterizer);
-    global::api::SafeRelease(internal::Pipeline.BlendState);
-    global::api::SafeRelease(internal::Pipeline.pUserMarker);
+    global::api::SafeRelease(m_oRenderPipeline.LinearSampler);
+    global::api::SafeRelease(m_oRenderPipeline.ShadowSampler);
+    global::api::SafeRelease(m_oRenderPipeline.DefaultRasterizer);
+    global::api::SafeRelease(m_oRenderPipeline.BlendState);
+    global::api::SafeRelease(m_oRenderPipeline.pUserMarker);
 
-    global::api::SafeRelease(internal::Pipeline.RenderInstancesBuffer);
-    global::api::SafeRelease(internal::Pipeline.PrimitiveInstancesBuffer);
+    global::api::SafeRelease(m_oRenderPipeline.RenderInstancesBuffer);
+    global::api::SafeRelease(m_oRenderPipeline.PrimitiveInstancesBuffer);
 
-    // Release swap chain
-    global::api::SafeRelease(internal::Pipeline.SwapChain);
-    global::api::SafeRelease(internal::Pipeline.BackBuffer);
+    // Release render target
+    global::api::SafeRelease(m_oRenderPipeline.RenderTarget);
 
     // Release render window
     m_pRenderWindow.reset();
   }
   // ------------------------------------
-  HRESULT CRender::Init(uint32_t _uX, uint32_t _uY)
+  HRESULT CRender::Init(uint32_t _uWidth, uint32_t _uHeight)
   {
+    // Create render window
+    LOG("Creating render window...");
+    m_pRenderWindow = std::make_unique<render::CRenderWindow>(_uWidth, _uHeight);
+    SUCCESS_LOG("The window has been created successfully!");
+
     // Create device
-    HRESULT hResult = CreateDevice(_uX, _uY);
+    HRESULT hResult = CreateDevice(_uWidth, _uHeight);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating device!");
@@ -208,7 +144,7 @@ namespace render
     }
 
     // Setup basic pipeline
-    hResult = InitBasicPipeline(_uX, _uY);
+    hResult = InitBasicPipeline(_uWidth, _uHeight);
     if (FAILED(hResult))
     {
       return hResult;
@@ -274,48 +210,34 @@ namespace render
     global::delegates::s_lstOnWindowResizeDelegates.emplace_back(rDelegate);
 
     // Get user def
-    return global::api::DeviceContext->QueryInterface
+    return m_pRenderContext->GetCommands()->QueryInterface
     (
       __uuidof(ID3DUserDefinedAnnotation),
-      reinterpret_cast<void**>(&internal::Pipeline.pUserMarker)
+      reinterpret_cast<void**>(&m_oRenderPipeline.pUserMarker)
     );
   }
   // ------------------------------------
   HRESULT CRender::CreateDevice(uint32_t _uWidth, uint32_t _uHeight)
   {
-    // Create descriptor
-    DXGI_SWAP_CHAIN_DESC rSwapChainDescriptor = DXGI_SWAP_CHAIN_DESC();
-    rSwapChainDescriptor.BufferCount = 1;
-    rSwapChainDescriptor.BufferDesc.Width = _uWidth;
-    rSwapChainDescriptor.BufferDesc.Height = _uHeight;
-    rSwapChainDescriptor.OutputWindow = m_pRenderWindow->GetHandle();
-    rSwapChainDescriptor.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    rSwapChainDescriptor.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-    rSwapChainDescriptor.SampleDesc.Count = 1;
-    rSwapChainDescriptor.SampleDesc.Quality = 0;
-    rSwapChainDescriptor.Windowed = TRUE;
-
-    D3D_FEATURE_LEVEL lstFeatureLevels[] =
+    if (!m_pRenderContext)
     {
-      D3D_FEATURE_LEVEL_11_0,
-      D3D_FEATURE_LEVEL_10_1,
-      D3D_FEATURE_LEVEL_10_0,
-      D3D_FEATURE_LEVEL_9_3,
-      D3D_FEATURE_LEVEL_9_2,
-      D3D_FEATURE_LEVEL_9_1
-    };
-    uint32_t uNumFeatureLevels = ARRAYSIZE(lstFeatureLevels);
-    D3D_FEATURE_LEVEL oFeatureLevel = D3D_FEATURE_LEVEL();
-    uint32_t uFlags = 0;
+      m_pRenderContext = std::make_unique<render::CRenderContextDX11>();
+    }
 
-    // Release device and context
-    global::api::SafeRelease(global::api::Device);
-    global::api::SafeRelease(global::api::DeviceContext);
-
-    // Create device and swap chain
-    return D3D11CreateDeviceAndSwapChain(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, uFlags, lstFeatureLevels,
-      uNumFeatureLevels, D3D11_SDK_VERSION, &rSwapChainDescriptor, &internal::Pipeline.SwapChain,
-      &global::api::Device, &oFeatureLevel, &global::api::DeviceContext);
+    render::TRenderContextDesc rRenderContextDesc = render::TRenderContextDesc();
+    {
+      rRenderContextDesc.uWidth = _uWidth;
+      rRenderContextDesc.uHeight = _uHeight;
+      rRenderContextDesc.pOutputWindow = m_pRenderWindow->GetHandle();
+      rRenderContextDesc.bFullscreen = false;
+      rRenderContextDesc.bVSync = true;
+    }
+    HRESULT hResult = m_pRenderContext->Init(rRenderContextDesc);
+    if (SUCCEEDED(hResult))
+    {
+      m_oTextureManager.Initialize(m_pRenderContext->GetDevice());
+    }
+    return hResult;
   }
   // ------------------------------------
   HRESULT CRender::InitBasicPipeline(uint32_t _uWidth, uint32_t _uHeight)
@@ -343,7 +265,7 @@ namespace render
     BeginMarker(internal::s_sPrepareFrameMrk);
     {
       // Clear back buffer
-      ClearRenderTargets(&internal::Pipeline.BackBuffer, 1u, internal::s_v4ClearColor);
+      ClearRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, internal::s_v4ClearColor);
 
       // Prepare frame
       m_pDeferredRenderer->PrepareFrame();
@@ -362,21 +284,20 @@ namespace render
       PushCameraTransform(*m_pRenderCamera);
 
       // Set default layout
-      SetInputLayout(internal::Pipeline.StandardLayout);
+      SetInputLayout(m_oRenderPipeline.StandardLayout);
       // Set default rasterizer
-      SetRasterizerState(internal::Pipeline.DefaultRasterizer);
+      SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
 
       // Attach deferred vertex shader
-      internal::Pipeline.DeferredVS.Attach();
+      m_oShaderManager.Bind(m_pRenderContext->GetCommands(), m_oRenderPipeline.GBuffer_ProgramID);
       // Attach G-buffer(pixel shader)
-      internal::Pipeline.DeferredGBufferPS.Attach();
       // Set linear sampler(read textures)
-      global::api::DeviceContext->PSSetSamplers(0u, 1u, &internal::Pipeline.LinearSampler);
+      m_pRenderContext->GetCommands()->PSSetSamplers(0u, 1u, &m_oRenderPipeline.LinearSampler);
 
       // Bind camera transform buffer
-      internal::Pipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
+      m_oRenderPipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
       // Bind material buffer
-      internal::Pipeline.MaterialBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.MaterialSlot);
+      m_oRenderPipeline.MaterialBuffer.Bind<render::EShader::E_PIXEL>(m_pRenderContext->GetCommands(), m_oRenderPipeline.MaterialSlot);
 
       // Deferred pass
       m_pDeferredRenderer->SetRenderCamera(m_pRenderCamera);
@@ -388,7 +309,7 @@ namespace render
       m_pLightingRenderer->Draw(_rRenderScene);
 
       // Set default rasterizer
-      SetRasterizerState(internal::Pipeline.DefaultRasterizer);
+      SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
 
       // Compute lighting pass
       ComputeLightingPass(_rRenderScene);
@@ -398,32 +319,40 @@ namespace render
     // Forward pass
     {
       // Set render target
-      SetRenderTargets(&internal::Pipeline.BackBuffer, 1u, m_pDeferredRenderer->GetDepthStencilView());
-      SetRasterizerState(internal::Pipeline.DefaultRasterizer);
+      SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, m_pDeferredRenderer->GetDepthStencilView());
+      SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
       SetDepthStencilState(m_pDeferredRenderer->GetDepthStencilState());
 
       // Set input layout
-      global::api::DeviceContext->IASetInputLayout(internal::Pipeline.DebugLayout);
+      m_pRenderContext->GetCommands()->IASetInputLayout(m_oRenderPipeline.DebugLayout);
       // Attach shaders
-      internal::Pipeline.ForwardVS.Attach();
-      internal::Pipeline.ForwardPS.Attach();
+      m_oShaderManager.Bind(m_pRenderContext->GetCommands(), m_oRenderPipeline.Forward_ProgramID);
       // Bind buffer
-      internal::Pipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
+      m_oRenderPipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
 
       m_pForwardRenderer->SetRenderCamera(m_pRenderCamera);
       m_pForwardRenderer->Draw(_rRenderScene);
     }
 
     // Update blend + rasterizer state
-    SetBlendState(internal::Pipeline.BlendState, nullptr, 0xFFFFFFFFu);
-    SetRasterizerState(internal::Pipeline.DefaultRasterizer);
+    SetBlendState(m_oRenderPipeline.BlendState, nullptr, 0xFFFFFFFFu);
+    SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
 
     // ImGui
     m_pImGuiRenderer->Draw(_rRenderScene);
 
     // Present
     const uint32_t uFlags = 0;
-    internal::Pipeline.SwapChain->Present(m_bVerticalSync, uFlags);
+    m_pRenderContext->GetSwapChain()->Present(m_bVerticalSync, uFlags);
+  }
+  CRenderDeviceDX11& CRender::GetDevice()
+  {
+    return m_pRenderContext->GetDevice();
+  }
+  // ------------------------------------
+  CRenderCommandsDX11& CRender::GetCommands()
+  {
+    return m_pRenderContext->GetCommands();
   }
   // ------------------------------------
   void CRender::ShowRenderWindow(bool _bStatus)
@@ -437,10 +366,10 @@ namespace render
   void CRender::SetFillMode(D3D11_FILL_MODE _eFillMode)
   {
     // Update rasterizer
-    internal::Pipeline.RasterizerCfg.FillMode = _eFillMode;
+    m_oRenderPipeline.RasterizerCfg.FillMode = _eFillMode;
 
-    global::api::SafeRelease(internal::Pipeline.DefaultRasterizer);
-    CreateRasterizerState(internal::Pipeline.RasterizerCfg, &internal::Pipeline.DefaultRasterizer);
+    global::api::SafeRelease(m_oRenderPipeline.DefaultRasterizer);
+    CreateRasterizerState(m_oRenderPipeline.RasterizerCfg, &m_oRenderPipeline.DefaultRasterizer);
   }
   // ------------------------------------
   void CRender::PushMaterial(const render::mat::CMaterial* _pMaterial)
@@ -466,7 +395,7 @@ namespace render
     rMaterialInfo.HasSpecularTexture = static_cast<bool>(pSpecular);
 
     // Write buffer
-    bool bOk = internal::Pipeline.MaterialBuffer.WriteBuffer(rMaterialInfo);
+    bool bOk = m_oRenderPipeline.MaterialBuffer.WriteBuffer(m_pRenderContext->GetCommands(), rMaterialInfo);
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk);
@@ -482,7 +411,7 @@ namespace render
     };
 
     // Bind shaders
-    global::api::DeviceContext->PSSetShaderResources(0u, uTexturesSize, lstTextures);
+    m_pRenderContext->GetCommands()->PSSetShaderResources(0u, uTexturesSize, lstTextures);
   }
   // ------------------------------------
   void CRender::PushCameraTransform(const CCamera& _RenderCamera)
@@ -497,7 +426,7 @@ namespace render
     }
 
     // Write
-    bool bOk = internal::Pipeline.RenderCameraBuffer.WriteBuffer(rCameraTransform);
+    bool bOk = m_oRenderPipeline.RenderCameraBuffer.WriteBuffer(m_pRenderContext->GetCommands(), rCameraTransform);
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk);
@@ -515,32 +444,32 @@ namespace render
       rCameraTransform.InvViewProjection = math::CMatrix4x4::Invert(mViewProjection);
     }
 
-    bool bOk = internal::Pipeline.LightingViewBuffer.WriteBuffer(rCameraTransform);
+    bool bOk = m_oRenderPipeline.LightingViewBuffer.WriteBuffer(m_pRenderContext->GetCommands(), rCameraTransform);
     UNUSED_VAR(bOk);
 #ifdef _DEBUG
     assert(bOk);
 #endif // DEBUG
   }
   // ------------------------------------
-  void CRender::PushLightingPass()
+  void CRender::PushShadowMappingPass()
   {
     // Detach all shaders in the current pipeline
-    global::api::DeviceContext->VSSetShader(nullptr, nullptr, 0u);
-    global::api::DeviceContext->PSSetShader(nullptr, nullptr, 0u);
+    m_pRenderContext->GetCommands()->VSSetShader(nullptr, nullptr, 0u);
+    m_pRenderContext->GetCommands()->PSSetShader(nullptr, nullptr, 0u);
 
-    // Attach vertex shader for lighting pass
-    internal::Pipeline.LightingVS.Attach();
+    // Attach vertex shader for shadow mapping pass
+    m_oShaderManager.Bind(m_pRenderContext->GetCommands(), m_oRenderPipeline.Shadow_ProgramID);
     // Attach lighting view buffer
-    internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_VERTEX>(internal::Pipeline.CameraTransformSlot);
+    m_oRenderPipeline.LightingViewBuffer.Bind<render::EShader::E_VERTEX>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
   }
   // ------------------------------------
   void CRender::OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight)
   {
     // Remove current target view
-    global::api::SafeRelease(internal::Pipeline.BackBuffer);
+    global::api::SafeRelease(m_oRenderPipeline.RenderTarget);
 
     // Resize buffers
-    HRESULT hResult = internal::Pipeline.SwapChain->ResizeBuffers(0, _uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+    HRESULT hResult = m_pRenderContext->GetSwapChain()->ResizeBuffers(0, _uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 #ifdef _DEBUG
     assert(!FAILED(hResult));
 #endif // DEBUG
@@ -559,7 +488,7 @@ namespace render
     {
       m_pDeferredRenderer = std::make_unique<CDeferredRenderer>(this);
     }
-    HRESULT hResult = m_pDeferredRenderer->Init(_uWidth, _uHeight);
+    HRESULT hResult = m_pDeferredRenderer->Init(m_pRenderContext->GetDevice(), _uWidth, _uHeight);
     if (FAILED(hResult))
     {
       return hResult;
@@ -586,7 +515,7 @@ namespace render
     if (!m_pImGuiRenderer)
     {
       m_pImGuiRenderer = std::make_unique<CImGuiRenderer>(this);
-      hResult = m_pImGuiRenderer->Init(m_pRenderWindow->GetHandle());
+      hResult = m_pImGuiRenderer->Init(m_pRenderContext->GetDevice(), m_pRenderContext->GetCommands(), m_pRenderWindow->GetHandle());
       if (FAILED(hResult))
       {
         return hResult;
@@ -599,13 +528,13 @@ namespace render
   HRESULT CRender::CreateBackBuffer()
   {
     ID3D11Texture2D* pTexture = nullptr;
-    internal::Pipeline.SwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pTexture));
+    m_pRenderContext->GetSwapChain()->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pTexture));
     if (!pTexture)
     {
       return E_FAIL;
     }
 
-    HRESULT hResult = global::api::Device->CreateRenderTargetView(pTexture, nullptr, &internal::Pipeline.BackBuffer);
+    HRESULT hResult = m_pRenderContext->GetDevice()->CreateRenderTargetView(pTexture, nullptr, &m_oRenderPipeline.RenderTarget);
     if (FAILED(hResult))
     {
       return hResult;
@@ -616,70 +545,106 @@ namespace render
   // ------------------------------------
   HRESULT CRender::SetupPrecompiledShaders()
   {
-    // Forward shaders
-    internal::Pipeline.ForwardVS.Release();
-    HRESULT hResult = internal::Pipeline.ForwardVS.Init(g_SimpleVS, ARRAYSIZE(g_SimpleVS));
+    // Forward program
+    TShaderProgramData rShaderProgramData = TShaderProgramData();
+    {
+      rShaderProgramData.pVertexShader = g_SimpleVS;
+      rShaderProgramData.tVertexShaderSize = ARRAYSIZE(g_SimpleVS);
+      rShaderProgramData.pPixelShader = g_SimplePS;
+      rShaderProgramData.tPixelShaderSize = ARRAYSIZE(g_SimplePS);
+    }
+    HRESULT hResult = m_oShaderManager.RegisterProgram
+    (
+      m_pRenderContext->GetDevice(), 
+      rShaderProgramData,
+      m_oRenderPipeline.Forward_ProgramID
+    );
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    internal::Pipeline.ForwardPS.Release();
-    hResult = internal::Pipeline.ForwardPS.Init(g_SimplePS, ARRAYSIZE(g_SimplePS));
+    // GBuffer program
+    rShaderProgramData = TShaderProgramData();
+    {
+      rShaderProgramData.pVertexShader = g_StandardVS;
+      rShaderProgramData.tVertexShaderSize = ARRAYSIZE(g_StandardVS);
+      rShaderProgramData.pPixelShader = g_GBufferPS;
+      rShaderProgramData.tPixelShaderSize = ARRAYSIZE(g_GBufferPS);
+    }
+    hResult = m_oShaderManager.RegisterProgram
+    (
+      m_pRenderContext->GetDevice(),
+      rShaderProgramData, 
+      m_oRenderPipeline.GBuffer_ProgramID
+    );
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Deferred shaders
-    internal::Pipeline.DeferredVS.Release();
-    hResult = internal::Pipeline.DeferredVS.Init(g_StandardVS, ARRAYSIZE(g_StandardVS));
+    // Shadow mapping program
+    rShaderProgramData = TShaderProgramData();
+    {
+      rShaderProgramData.pVertexShader = g_LightingVS;
+      rShaderProgramData.tVertexShaderSize = ARRAYSIZE(g_LightingVS);
+    }
+    hResult = m_oShaderManager.RegisterProgram
+    (
+      m_pRenderContext->GetDevice(), 
+      rShaderProgramData, 
+      m_oRenderPipeline.Shadow_ProgramID
+    );
+
+    // Deferred lighting program
+    rShaderProgramData = TShaderProgramData();
+    {
+      rShaderProgramData.pVertexShader = g_DrawQuadVS;
+      rShaderProgramData.tVertexShaderSize = ARRAYSIZE(g_DrawQuadVS);
+      rShaderProgramData.pPixelShader = g_LightsPS;
+      rShaderProgramData.tPixelShaderSize = ARRAYSIZE(g_LightsPS);
+    }
+    hResult = m_oShaderManager.RegisterProgram
+    (
+      m_pRenderContext->GetDevice(), 
+      rShaderProgramData, 
+      m_oRenderPipeline.DeferredLighting_ProgramID
+    );
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    internal::Pipeline.LightingVS.Release();
-    hResult = internal::Pipeline.LightingVS.Init(g_LightingVS, ARRAYSIZE(g_LightingVS));
-    if (FAILED(hResult))
+    // Draw quad program
+    rShaderProgramData = TShaderProgramData();
     {
-      return hResult;
+      rShaderProgramData.pVertexShader = g_DrawQuadVS;
+      rShaderProgramData.tVertexShaderSize = ARRAYSIZE(g_DrawQuadVS);
     }
-
-    internal::Pipeline.DrawQuadVS.Release();
-    hResult = internal::Pipeline.DrawQuadVS.Init(g_DrawQuadVS, ARRAYSIZE(g_DrawQuadVS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::Pipeline.DeferredGBufferPS.Release();
-    hResult = internal::Pipeline.DeferredGBufferPS.Init(g_GBufferPS, ARRAYSIZE(g_GBufferPS));
-    if (FAILED(hResult))
-    {
-      return hResult;
-    }
-
-    internal::Pipeline.DeferredLightsPS.Release();
-    return internal::Pipeline.DeferredLightsPS.Init(g_LightsPS, ARRAYSIZE(g_LightsPS));
+    return m_oShaderManager.RegisterProgram
+    (
+      m_pRenderContext->GetDevice(), 
+      rShaderProgramData, 
+      m_oRenderPipeline.DrawQuad_ProgramID
+    );
   }
   // ------------------------------------
   HRESULT CRender::SetupConstantBuffers()
   {
     // Transforms buffer
-    HRESULT hResult = internal::Pipeline.RenderCameraBuffer.Init();
+    HRESULT hResult = m_oRenderPipeline.RenderCameraBuffer.Init(m_pRenderContext->GetDevice());
     if (FAILED(hResult))
     {
       return hResult;
     }
     // Light view buffer
-    hResult = internal::Pipeline.LightingViewBuffer.Init();
+    hResult = m_oRenderPipeline.LightingViewBuffer.Init(m_pRenderContext->GetDevice());
     if (FAILED(hResult))
     {
       return hResult;
     }
     // Material info buffer
-    return internal::Pipeline.MaterialBuffer.Init();
+    return m_oRenderPipeline.MaterialBuffer.Init(m_pRenderContext->GetDevice());
   }
   // ------------------------------------
   HRESULT CRender::SetupRenderBuffers()
@@ -693,14 +658,14 @@ namespace render
 
     D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
     rSubresourceData.pSysMem = render::gfx::s_tModelInstanceData; // Global buffer
-    global::api::SafeRelease(internal::Pipeline.RenderInstancesBuffer);
-    HRESULT hResult = global::api::Device->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &internal::Pipeline.RenderInstancesBuffer);
+    global::api::SafeRelease(m_oRenderPipeline.RenderInstancesBuffer);
+    HRESULT hResult = m_pRenderContext->GetDevice()->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_oRenderPipeline.RenderInstancesBuffer);
     if (FAILED(hResult))
     {
       return hResult;
     }
 
-    // Primitives buffer
+    // Primitives instances buffer
     rVertexBufferDesc = D3D11_BUFFER_DESC();
     rVertexBufferDesc.ByteWidth = static_cast<uint32_t>((sizeof(render::gfx::TPrimitiveInstanceData) * render::gfx::s_uMaxInstances));
     rVertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
@@ -709,47 +674,47 @@ namespace render
 
     rSubresourceData = D3D11_SUBRESOURCE_DATA();
     rSubresourceData.pSysMem = render::gfx::s_tPrimitiveInstanceData; // Global buffer
-    global::api::SafeRelease(internal::Pipeline.PrimitiveInstancesBuffer);
-    return global::api::Device->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &internal::Pipeline.PrimitiveInstancesBuffer);
+    global::api::SafeRelease(m_oRenderPipeline.PrimitiveInstancesBuffer);
+    return m_pRenderContext->GetDevice()->CreateBuffer(&rVertexBufferDesc, &rSubresourceData, &m_oRenderPipeline.PrimitiveInstancesBuffer);
   }
   // ------------------------------------
   HRESULT CRender::SetupBlendState()
   {
-    internal::Pipeline.BlendStateCfg.BlendEnable = false;
-    internal::Pipeline.BlendStateCfg.SrcBlend = D3D11_BLEND_ONE;
-    internal::Pipeline.BlendStateCfg.DestBlend = D3D11_BLEND_BLEND_FACTOR;
-    internal::Pipeline.BlendStateCfg.BlendOp = D3D11_BLEND_OP_ADD;
-    internal::Pipeline.BlendStateCfg.SrcBlendAlpha = D3D11_BLEND_ONE;
-    internal::Pipeline.BlendStateCfg.DestBlendAlpha = D3D11_BLEND_ZERO;
-    internal::Pipeline.BlendStateCfg.BlendOpAlpha = D3D11_BLEND_OP_ADD;
-    internal::Pipeline.BlendStateCfg.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
+    m_oRenderPipeline.BlendStateCfg.BlendEnable = false;
+    m_oRenderPipeline.BlendStateCfg.SrcBlend = D3D11_BLEND_ONE;
+    m_oRenderPipeline.BlendStateCfg.DestBlend = D3D11_BLEND_BLEND_FACTOR;
+    m_oRenderPipeline.BlendStateCfg.BlendOp = D3D11_BLEND_OP_ADD;
+    m_oRenderPipeline.BlendStateCfg.SrcBlendAlpha = D3D11_BLEND_ONE;
+    m_oRenderPipeline.BlendStateCfg.DestBlendAlpha = D3D11_BLEND_ZERO;
+    m_oRenderPipeline.BlendStateCfg.BlendOpAlpha = D3D11_BLEND_OP_ADD;
+    m_oRenderPipeline.BlendStateCfg.RenderTargetWriteMask = D3D10_COLOR_WRITE_ENABLE_ALL;
 
     // Create blend desc
     D3D11_BLEND_DESC rBlendDesc = D3D11_BLEND_DESC();
     rBlendDesc.AlphaToCoverageEnable = false;
-    rBlendDesc.RenderTarget[0] = internal::Pipeline.BlendStateCfg;
+    rBlendDesc.RenderTarget[0] = m_oRenderPipeline.BlendStateCfg;
 
     // Create blend state
-    global::api::SafeRelease(internal::Pipeline.BlendState);
-    return CreateBlendState(rBlendDesc, &internal::Pipeline.BlendState);
+    global::api::SafeRelease(m_oRenderPipeline.BlendState);
+    return CreateBlendState(rBlendDesc, &m_oRenderPipeline.BlendState);
   }
   // ------------------------------------
   HRESULT CRender::SetupRasterizers()
   {
     // Set standard rasterizer config
-    internal::Pipeline.RasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-    internal::Pipeline.RasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
-    internal::Pipeline.RasterizerCfg.FrontCounterClockwise = false;
-    internal::Pipeline.RasterizerCfg.DepthBias = 0;
-    internal::Pipeline.RasterizerCfg.DepthBiasClamp = 0.0f;
-    internal::Pipeline.RasterizerCfg.SlopeScaledDepthBias = 0.0f;
-    internal::Pipeline.RasterizerCfg.DepthClipEnable = true;
-    internal::Pipeline.RasterizerCfg.ScissorEnable = true;
-    internal::Pipeline.RasterizerCfg.MultisampleEnable = false;
-    internal::Pipeline.RasterizerCfg.AntialiasedLineEnable = false;
+    m_oRenderPipeline.RasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+    m_oRenderPipeline.RasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_BACK;
+    m_oRenderPipeline.RasterizerCfg.FrontCounterClockwise = false;
+    m_oRenderPipeline.RasterizerCfg.DepthBias = 0;
+    m_oRenderPipeline.RasterizerCfg.DepthBiasClamp = 0.0f;
+    m_oRenderPipeline.RasterizerCfg.SlopeScaledDepthBias = 0.0f;
+    m_oRenderPipeline.RasterizerCfg.DepthClipEnable = true;
+    m_oRenderPipeline.RasterizerCfg.ScissorEnable = true;
+    m_oRenderPipeline.RasterizerCfg.MultisampleEnable = false;
+    m_oRenderPipeline.RasterizerCfg.AntialiasedLineEnable = false;
 
     // Create default rasterizer
-    return CreateRasterizerState(internal::Pipeline.RasterizerCfg, &internal::Pipeline.DefaultRasterizer);
+    return CreateRasterizerState(m_oRenderPipeline.RasterizerCfg, &m_oRenderPipeline.DefaultRasterizer);
   }
   // ------------------------------------
   HRESULT CRender::SetupSamplers()
@@ -771,8 +736,8 @@ namespace render
     rSamplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
     // Create simple sampler
-    global::api::SafeRelease(internal::Pipeline.LinearSampler);
-    HRESULT hResult = global::api::Device->CreateSamplerState(&rSamplerDesc, &internal::Pipeline.LinearSampler);
+    global::api::SafeRelease(m_oRenderPipeline.LinearSampler);
+    HRESULT hResult = m_pRenderContext->GetDevice()->CreateSamplerState(&rSamplerDesc, &m_oRenderPipeline.LinearSampler);
     if (FAILED(hResult))
     {
       return hResult;
@@ -794,20 +759,20 @@ namespace render
     rShadowSampler.MaxLOD = 0.0f;
 
     // Create shadow sampler
-    global::api::SafeRelease(internal::Pipeline.ShadowSampler);
-    return global::api::Device->CreateSamplerState(&rShadowSampler, &internal::Pipeline.ShadowSampler);
+    global::api::SafeRelease(m_oRenderPipeline.ShadowSampler);
+    return m_pRenderContext->GetDevice()->CreateSamplerState(&rShadowSampler, &m_oRenderPipeline.ShadowSampler);
   }
   // ------------------------------------
   HRESULT CRender::SetupLayouts()
   {
     // Create standard layout
-    HRESULT hResult = global::api::Device->CreateInputLayout
+    HRESULT hResult = m_pRenderContext->GetDevice()->CreateInputLayout
     (
       internal::s_tStandardLayout,
       internal::s_iStandardLayoutSize,
       g_StandardVS,
       sizeof(g_StandardVS),
-      &internal::Pipeline.StandardLayout
+      &m_oRenderPipeline.StandardLayout
     );
     if (FAILED(hResult))
     {
@@ -815,13 +780,13 @@ namespace render
     }
 
     // Create debug layout
-    return global::api::Device->CreateInputLayout
+    return m_pRenderContext->GetDevice()->CreateInputLayout
     (
       internal::s_tPrimitivesLayout,
       internal::s_iPrimitiveLayoutSize,
       g_SimpleVS,
       sizeof(g_SimpleVS),
-      &internal::Pipeline.DebugLayout
+      &m_oRenderPipeline.DebugLayout
     );
   }
   // ------------------------------------
@@ -829,54 +794,51 @@ namespace render
   {
     switch (_eRenderMode)
     {
-    case render::ERenderMode::SOLID: { return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; }
-    case render::ERenderMode::WIREFRAME: { return D3D_PRIMITIVE_TOPOLOGY_LINELIST; }
-    case render::ERenderMode::INVALID:
-    default:
-    {
-      return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-    }
+      case render::ERenderMode::SOLID:     { return D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST; }
+      case render::ERenderMode::WIREFRAME: { return D3D_PRIMITIVE_TOPOLOGY_LINELIST; }
+      case render::ERenderMode::INVALID:
+      default: {return D3D_PRIMITIVE_TOPOLOGY_UNDEFINED; }
     }
   }
   // ------------------------------------
   void CRender::SetRasterizerState(ID3D11RasterizerState* _pRasterizerState)
   {
-    if (global::api::DeviceContext)
+    if (m_pRenderContext && m_pRenderContext->GetCommands())
     {
-      global::api::DeviceContext->RSSetState(_pRasterizerState);
+      m_pRenderContext->GetCommands()->RSSetState(_pRasterizerState);
     }
   }
   // ------------------------------------
   void CRender::SetInputLayout(ID3D11InputLayout* _pInputLayout)
   {
-    if (global::api::DeviceContext)
+    if (m_pRenderContext && m_pRenderContext->GetCommands())
     {
-      global::api::DeviceContext->IASetInputLayout(_pInputLayout);
+      m_pRenderContext->GetCommands()->IASetInputLayout(_pInputLayout);
     }
   }
   // ------------------------------------
   void CRender::SetDepthStencilState(ID3D11DepthStencilState* _pDepthStencilState, uint32_t _uStencilRef)
   {
-    if (global::api::DeviceContext)
+    if (m_pRenderContext && m_pRenderContext->GetCommands())
     {
-      global::api::DeviceContext->OMSetDepthStencilState(_pDepthStencilState, _uStencilRef);
+      m_pRenderContext->GetCommands()->OMSetDepthStencilState(_pDepthStencilState, _uStencilRef);
     }
   }
   // ------------------------------------
   HRESULT CRender::CreateDepthStencilState(D3D11_DEPTH_STENCIL_DESC& _rDesc, ID3D11DepthStencilState** _ppDepthStencilState)
   {
-    if (global::api::Device)
+    if (m_pRenderContext && m_pRenderContext->GetDevice())
     {
-      return global::api::Device->CreateDepthStencilState(&_rDesc, _ppDepthStencilState);
+      return m_pRenderContext->GetDevice()->CreateDepthStencilState(&_rDesc, _ppDepthStencilState);
     }
     return E_FAIL;
   }
   // ------------------------------------
   void CRender::SetViewport(uint32_t _uWidth, uint32_t _uHeight)
   {
-    if (!global::api::DeviceContext || !m_pRenderWindow)
+    if (!m_pRenderContext || !m_pRenderContext->GetCommands())
     {
-      ERROR_LOG("Rendering window or context is not valid!");
+      ERROR_LOG("Error: Rendering window or context is not valid!");
       return;
     }
 
@@ -890,11 +852,17 @@ namespace render
     }
 
     // Apply viewport
-    global::api::DeviceContext->RSSetViewports(1, &rViewport);
+    m_pRenderContext->GetCommands()->RSSetViewports(1, &rViewport);
   }
   // ------------------------------------
   void CRender::SetScissorRect(uint32_t _uWidth, uint32_t _uHeight)
   {
+    if (!m_pRenderContext || !m_pRenderContext->GetCommands())
+    {
+      ERROR_LOG("Error: Rendering window or context is not valid!");
+      return;
+    }
+
     // Create scissor rect
     D3D11_RECT rRect = D3D11_RECT();
     {
@@ -905,74 +873,74 @@ namespace render
     }
 
     // Set scissor rect
-    global::api::DeviceContext->RSSetScissorRects(1, &rRect);
+    m_pRenderContext->GetCommands()->RSSetScissorRects(1, &rRect);
   }
   // ------------------------------------
   void CRender::BeginMarker(const wchar_t* _sMarker) const
   {
-    if (internal::Pipeline.pUserMarker)
+    if (m_oRenderPipeline.pUserMarker)
     {
-      internal::Pipeline.pUserMarker->BeginEvent(_sMarker);
+      m_oRenderPipeline.pUserMarker->BeginEvent(_sMarker);
     }
   }
   // ------------------------------------
   void CRender::EndMarker() const
   {
-    if (internal::Pipeline.pUserMarker)
+    if (m_oRenderPipeline.pUserMarker)
     {
-      internal::Pipeline.pUserMarker->EndEvent();
+      m_oRenderPipeline.pUserMarker->EndEvent();
     }
   }
   // ------------------------------------
   void CRender::SetRenderTargets(ID3D11RenderTargetView** _pRenderTargets, uint32_t _uSize, ID3D11DepthStencilView* _pStencilView)
   {
-    if (global::api::DeviceContext)
+    if (m_pRenderContext && m_pRenderContext->GetCommands())
     {
-      global::api::DeviceContext->OMSetRenderTargets(_uSize, _pRenderTargets, _pStencilView);
+      m_pRenderContext->GetCommands()->OMSetRenderTargets(_uSize, _pRenderTargets, _pStencilView);
     }
   }
   // ------------------------------------
   void CRender::ClearRenderTargets(ID3D11RenderTargetView** _pRenderTargets, uint32_t _uSize, const float _v4ClearColor[4])
   {
-    if (global::api::DeviceContext)
+    if (m_pRenderContext && m_pRenderContext->GetCommands())
     {
       for (uint32_t uIndex = 0; uIndex < _uSize; ++uIndex)
       {
-        global::api::DeviceContext->ClearRenderTargetView(_pRenderTargets[uIndex], _v4ClearColor);
+        m_pRenderContext->GetCommands()->ClearRenderTargetView(_pRenderTargets[uIndex], _v4ClearColor);
       }
     }
   }
   // ------------------------------------
   void CRender::ClearDepthStencil(ID3D11DepthStencilView* _pDepthStencilView, uint32_t uFlags, float _fDepth, uint8_t _uStencil)
   {
-    if (global::api::DeviceContext && _pDepthStencilView)
+    if (m_pRenderContext && m_pRenderContext->GetCommands() && _pDepthStencilView)
     {
-      global::api::DeviceContext->ClearDepthStencilView(_pDepthStencilView, uFlags, _fDepth, _uStencil);
+      m_pRenderContext->GetCommands()->ClearDepthStencilView(_pDepthStencilView, uFlags, _fDepth, _uStencil);
     }
   }
   // ------------------------------------
   HRESULT CRender::CreateBlendState(D3D11_BLEND_DESC& _rDesc, ID3D11BlendState** _ppBlendState)
   {
-    if (global::api::Device)
+    if (m_pRenderContext && m_pRenderContext->GetDevice())
     {
-      return global::api::Device->CreateBlendState(&_rDesc, _ppBlendState);
+      return m_pRenderContext->GetDevice()->CreateBlendState(&_rDesc, _ppBlendState);
     }
     return E_FAIL;
   }
   // ------------------------------------
   void CRender::SetBlendState(ID3D11BlendState* _pBlendState, const float _v4BlendFactor[4], uint32_t _uSampleMask)
   {
-    if (global::api::DeviceContext)
+    if (m_pRenderContext && m_pRenderContext->GetCommands())
     {
-      global::api::DeviceContext->OMSetBlendState(_pBlendState, _v4BlendFactor, _uSampleMask);
+      m_pRenderContext->GetCommands()->OMSetBlendState(_pBlendState, _v4BlendFactor, _uSampleMask);
     }
   }
   // ------------------------------------
   HRESULT CRender::CreateRasterizerState(D3D11_RASTERIZER_DESC& _rDesc, ID3D11RasterizerState** _ppRasterizerState)
   {
-    if (global::api::Device)
+    if (m_pRenderContext && m_pRenderContext->GetDevice())
     {
-      return global::api::Device->CreateRasterizerState(&_rDesc, _ppRasterizerState);
+      return m_pRenderContext->GetDevice()->CreateRasterizerState(&_rDesc, _ppRasterizerState);
     }
     return E_FAIL;
   }
@@ -984,7 +952,7 @@ namespace render
     pLightManager->ApplyLighting();
 
     // Set transform constant
-    internal::Pipeline.RenderCameraBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.CameraTransformSlot);
+    m_oRenderPipeline.RenderCameraBuffer.Bind<render::EShader::E_PIXEL>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
 
     utils::CWeakPtr<render::lights::CDirectionalLight> pDirLight = pLightManager->GetDirectionalLight();
     bool bCastShadows = pDirLight.IsValid() && pDirLight->CastShadows();
@@ -996,8 +964,8 @@ namespace render
     {
       const utils::CWeakPtr<render::gfx::CShadowMap>& wpShadowMap = lstShadowMaps[0];
       pShadowTexture = wpShadowMap->GetShaderResource().GetView();
-      global::api::DeviceContext->PSSetSamplers(1, 1, &internal::Pipeline.ShadowSampler);
-      internal::Pipeline.LightingViewBuffer.Bind<render::EShader::E_PIXEL>(internal::Pipeline.LightingViewSlot);
+      m_pRenderContext->GetCommands()->PSSetSamplers(1, 1, &m_oRenderPipeline.ShadowSampler);
+      m_oRenderPipeline.LightingViewBuffer.Bind<render::EShader::E_PIXEL>(m_pRenderContext->GetCommands(), m_oRenderPipeline.LightingViewSlot);
     }
 
     // Bind (Depth + GBuffer + Shadow) textures 
@@ -1010,16 +978,16 @@ namespace render
       m_pDeferredRenderer->GetSpecularRT().GetShaderResourceView(), // Render Target
       pShadowTexture // Shadow texture
     };
-    global::api::DeviceContext->PSSetShaderResources(0u, uTexturesSize, &lstTexturesSRV[0]);
+    m_pRenderContext->GetCommands()->PSSetShaderResources(0u, uTexturesSize, &lstTexturesSRV[0]);
 
     // Bind buffers
-    SetRenderTargets(&internal::Pipeline.BackBuffer, 1u, nullptr);
+    SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, nullptr);
 
     // Set default rasterizer
-    SetRasterizerState(internal::Pipeline.DefaultRasterizer);
+    SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
 
     // Attach shader to calculate lights (pixel shader)
-    internal::Pipeline.DeferredLightsPS.Attach();
+    m_oShaderManager.Bind(m_pRenderContext->GetCommands(), m_oRenderPipeline.DeferredLighting_ProgramID);
 
     // Draw quad to apply lighting
     DrawQuad();
@@ -1027,25 +995,22 @@ namespace render
     // Set invalid shaders
     ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize];
     memset(lstEmptyTextures, NULL, sizeof(lstEmptyTextures));
-    global::api::DeviceContext->PSSetShaderResources(0u, uTexturesSize, lstEmptyTextures);
+    m_pRenderContext->GetCommands()->PSSetShaderResources(0u, uTexturesSize, lstEmptyTextures);
   }
   // ------------------------------------
   void CRender::DrawQuad()
   {
     // Bind render target
-    SetRenderTargets(&internal::Pipeline.BackBuffer, 1u);
-
-    // Attach quad shader (vertex shader)
-    internal::Pipeline.DrawQuadVS.Attach();
+    SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u);
 
     // Setup quad vertex buffer
-    global::api::DeviceContext->IASetVertexBuffers(0u, 0u, nullptr, nullptr, nullptr);
-    global::api::DeviceContext->IASetInputLayout(nullptr);
-    global::api::DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    m_pRenderContext->GetCommands()->IASetVertexBuffers(0u, 0u, nullptr, nullptr, nullptr);
+    m_pRenderContext->GetCommands()->IASetInputLayout(nullptr);
+    m_pRenderContext->GetCommands()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     // Draw quad as fake triangle!
     const uint16_t uVertexCount = 3, uStartVertexLocation = 0;
-    global::api::DeviceContext->Draw(uVertexCount, uStartVertexLocation);
+    m_pRenderContext->GetCommands()->Draw(uVertexCount, uStartVertexLocation);
 
     // Remove back buffer
     SetRenderTargets(nullptr, 0u);
@@ -1060,12 +1025,12 @@ namespace render
     {
       // Setup vertex + index buffer
       const uint32_t uBuffersCount = 2, uIndexOffset = 0;
-      ID3D11Buffer* pBuffers[uBuffersCount] = { _rScene.GetModelsVB(), internal::Pipeline.RenderInstancesBuffer };
+      ID3D11Buffer* pBuffers[uBuffersCount] = { _rScene.GetModelsVB(), m_oRenderPipeline.RenderInstancesBuffer };
       uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
       uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
 
-      global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
-      global::api::DeviceContext->IASetIndexBuffer(_rScene.GetModelsIB(), DXGI_FORMAT_R32_UINT, uIndexOffset);
+      m_pRenderContext->GetCommands()->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
+      m_pRenderContext->GetCommands()->IASetIndexBuffer(_rScene.GetModelsIB(), DXGI_FORMAT_R32_UINT, uIndexOffset);
     }
 
     const scene::TModels& lstModels = _rScene.GetModels();
@@ -1082,7 +1047,7 @@ namespace render
   {
     // Push buffers
     D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-    HRESULT hResult = global::api::DeviceContext->Map(internal::Pipeline.RenderInstancesBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+    HRESULT hResult = m_pRenderContext->GetCommands()->Map(m_oRenderPipeline.RenderInstancesBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error mapping buffer!");
@@ -1105,15 +1070,10 @@ namespace render
     }
 
     // Unmap
-    global::api::DeviceContext->Unmap(internal::Pipeline.RenderInstancesBuffer, 0);
+    m_pRenderContext->GetCommands()->Unmap(m_oRenderPipeline.RenderInstancesBuffer, 0);
 
     // Set topology
-    D3D_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-    global::api::DeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
-    if (eCurrentTopology != D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST)
-    {
-      global::api::DeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-    }
+    m_pRenderContext->GetCommands()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     // Set values
     uint32_t uVtxOffset = _pModel->GetVtxBufferHandler().BeginOffset;
@@ -1132,7 +1092,7 @@ namespace render
       // Draw mesh
       uint32_t uIdxCount = rMesh.GetIndexCount();
       uint32_t uIdxOffset = rMesh.GetIdxBufferHandler().BeginOffset;
-      global::api::DeviceContext->DrawIndexedInstanced(uIdxCount, uInstances, uIdxOffset, uVtxOffset, uStartOffset);
+      m_pRenderContext->GetCommands()->DrawIndexedInstanced(uIdxCount, uInstances, uIdxOffset, uVtxOffset, uStartOffset);
     }
   }
   // ------------------------------------
@@ -1149,9 +1109,9 @@ namespace render
     if (uDrawableCount > 0)
     {
       // Set primitives global buffers
-      ID3D11Buffer* pPrimitiveBuffers[uBuffersCount] = { _rRenderScene.GetPrimitivesVB(), internal::Pipeline.PrimitiveInstancesBuffer };
-      global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pPrimitiveBuffers, lstStrides, lstOffsets);
-      global::api::DeviceContext->IASetIndexBuffer(_rRenderScene.GetPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
+      ID3D11Buffer* pPrimitiveBuffers[uBuffersCount] = { _rRenderScene.GetPrimitivesVB(), m_oRenderPipeline.PrimitiveInstancesBuffer };
+      m_pRenderContext->GetCommands()->IASetVertexBuffers(0, uBuffersCount, pPrimitiveBuffers, lstStrides, lstOffsets);
+      m_pRenderContext->GetCommands()->IASetIndexBuffer(_rRenderScene.GetPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
       const scene::TPrimitives& lstPrimitives = _rRenderScene.GetPrimitives();
       for (uint16_t uI = 0; uI < uDrawableCount; uI++)
@@ -1168,9 +1128,9 @@ namespace render
     if (uDrawableCount > 0)
     {
       // Set debug global buffers
-      ID3D11Buffer* pDebugPrimitiveBuffers[uBuffersCount] = { _rRenderScene.GetDebugPrimitivesVB(), internal::Pipeline.PrimitiveInstancesBuffer };
-      global::api::DeviceContext->IASetVertexBuffers(0, uBuffersCount, pDebugPrimitiveBuffers, lstStrides, lstOffsets);
-      global::api::DeviceContext->IASetIndexBuffer(_rRenderScene.GetDebugPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
+      ID3D11Buffer* pDebugPrimitiveBuffers[uBuffersCount] = { _rRenderScene.GetDebugPrimitivesVB(), m_oRenderPipeline.PrimitiveInstancesBuffer };
+      m_pRenderContext->GetCommands()->IASetVertexBuffers(0, uBuffersCount, pDebugPrimitiveBuffers, lstStrides, lstOffsets);
+      m_pRenderContext->GetCommands()->IASetIndexBuffer(_rRenderScene.GetDebugPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
       for (uint16_t uI = 0; uI < uDrawableCount; uI++)
       {
@@ -1188,7 +1148,7 @@ namespace render
   {
     // Apply Buffers
     D3D11_MAPPED_SUBRESOURCE rMappedSubresource = D3D11_MAPPED_SUBRESOURCE();
-    HRESULT hResult = global::api::DeviceContext->Map(internal::Pipeline.PrimitiveInstancesBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
+    HRESULT hResult = m_pRenderContext->GetCommands()->Map(m_oRenderPipeline.PrimitiveInstancesBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &rMappedSubresource);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error mapping buffer!");
@@ -1204,16 +1164,11 @@ namespace render
     pInstanceData[uIndex].Color = _pPrimitive->GetColor();
 
     // Unmap
-    global::api::DeviceContext->Unmap(internal::Pipeline.PrimitiveInstancesBuffer, 0);
+    m_pRenderContext->GetCommands()->Unmap(m_oRenderPipeline.PrimitiveInstancesBuffer, 0);
 
     // Set topology
     D3D11_PRIMITIVE_TOPOLOGY eTargetTopology = GetTopology(_pPrimitive->GetRenderMode());
-    D3D11_PRIMITIVE_TOPOLOGY eCurrentTopology = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
-    global::api::DeviceContext->IAGetPrimitiveTopology(&eCurrentTopology);
-    if (eCurrentTopology != eTargetTopology)
-    {
-      global::api::DeviceContext->IASetPrimitiveTopology(eTargetTopology);
-    }
+    m_pRenderContext->GetCommands()->IASetPrimitiveTopology(eTargetTopology);
 
     // Set values - we don't currently support real primitive instances!
     uint32_t uIdxCount = _pPrimitive->GetIndexCount();
@@ -1221,6 +1176,11 @@ namespace render
     uint32_t uVtxOffset = _pPrimitive->GetVtxBufferHandler().BeginOffset;
 
     // Draw primitive
-    global::api::DeviceContext->DrawIndexedInstanced(uIdxCount, 1, uIdxOffset, uVtxOffset, 0);
+    m_pRenderContext->GetCommands()->DrawIndexedInstanced(uIdxCount, 1u, uIdxOffset, uVtxOffset, 0u);
   }
 }
+
+
+
+
+

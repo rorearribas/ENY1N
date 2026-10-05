@@ -17,9 +17,9 @@ namespace global
   // DirectX
   namespace api
   {
-    // Device
-   ID3D11Device* Device;
-   ID3D11DeviceContext* DeviceContext;
+   // // Device
+   //ID3D11Device* Device;
+   //ID3D11DeviceContext* DeviceContext;
   }
   // Global delegates
   namespace delegates

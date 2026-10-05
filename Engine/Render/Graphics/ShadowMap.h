@@ -16,7 +16,7 @@ namespace render
       CShadowMap(const CShadowMap& _rOther) = delete;
       CShadowMap& operator=(const CShadowMap& _rOther) = delete;
 
-      HRESULT Setup(uint32_t _uWidth, uint32_t _uHeight);
+      HRESULT Setup(const CRenderDeviceDX11& _rRenderDevice, uint32_t _uWidth, uint32_t _uHeight);
       const texture::TDepthStencil& GetDepthStencil() const { return m_oDepthStencil; }
       const texture::TShaderResource& GetShaderResource() const { return m_oShaderResource; }
 

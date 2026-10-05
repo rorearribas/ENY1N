@@ -4,6 +4,7 @@
 #include "Engine/Global/GlobalResources.h"
 #include "Engine/Managers/InputManager.h"
 #include "Engine/Shaders/Shader.h"
+#include "Engine/Managers/ResourceManager.h"
 
 #include "Libs/Macros/GlobalMacros.h"
 #include <cassert>
@@ -13,6 +14,7 @@ namespace engine
 {
   CEngine::~CEngine()
   {
+    CResourceManager::GetInstance()->DestroySingleton();
     m_pSceneManager.reset();
     m_pRender.reset();
   }
@@ -27,8 +29,12 @@ namespace engine
     // Create render
     m_pRender = std::make_unique<render::CRender>(_uWidth, _uHeight);
 
+    // Setup resource manager
+    CResourceManager::CreateSingleton();
+    CResourceManager::GetInstance()->Initialize(m_pRender->GetDevice(), &m_pRender->GetTextureManager());
+
     // Create scene manager
-    m_pSceneManager = std::make_unique<scene::CSceneManager>();
+    m_pSceneManager = std::make_unique<scene::CSceneManager>(m_pRender->GetDevice(), m_pRender->GetCommands());
     m_pSceneManager->SetSceneEnabled(0, true);
 
     // Set cameras

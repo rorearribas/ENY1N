@@ -82,9 +82,6 @@ int main()
   chrono::CTimeManager* pTimeManager = chrono::CTimeManager::CreateSingleton();
   pTimeManager->SetTargetFramerate(144);
 
-  // Create resource manager
-  CResourceManager::CreateSingleton();
-
   // Game manager
   game::CGameManager* pGameManager = game::CGameManager::CreateSingleton();
   // Collisions manager
@@ -308,7 +305,6 @@ int main()
   pTimeManager->DestroySingleton();
   pInputManager->DestroySingleton();
   pEngine->DestroySingleton();
-  CResourceManager::GetInstance()->DestroySingleton();
 
   global::mem::s_oMemoryTracker.PrintStats();
 }

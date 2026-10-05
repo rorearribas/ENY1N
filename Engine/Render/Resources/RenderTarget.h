@@ -1,10 +1,19 @@
 #pragma once
 #include <d3d11.h>
+#include "Engine/Render/RenderContext/RenderDeviceDX11.h"
+#include "Engine/Render/RenderContext/RenderCommandsDX11.h"
 #include "Engine/Render/Resources/Texture2D.h"
 #include "Engine/Render/RenderTypes.h"
 
 namespace render
 {
+  struct TRenderTargetDesc
+  {
+    DXGI_FORMAT eFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    uint32_t uWidth = 0u;
+    uint32_t uHeight = 0u;
+  };
+
   class CRenderTarget
   {
   public:
@@ -14,8 +23,8 @@ namespace render
     CRenderTarget(const CRenderTarget&) = delete;
     CRenderTarget& operator=(const CRenderTarget&) = delete;
 
-    HRESULT Init(uint32_t _uWidth, uint32_t _uHeight, DXGI_FORMAT _eFormat);
-    void SetClearColor(const float _v4ClearColor[4]);
+    HRESULT Init(const CRenderDeviceDX11& _rRenderDevice, const TRenderTargetDesc& _rDesc);
+    void SetClearColor(const CRenderCommandsDX11& _rCommands, const float _v4ClearColor[4]);
     void Release();
 
     inline ID3D11RenderTargetView* GetRenderTargetView() const { return m_oRTTexture.GetView(); }

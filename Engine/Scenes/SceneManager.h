@@ -20,7 +20,12 @@ namespace scene
     typedef utils::CFixedPool<scene::CRenderScene, s_uMaxScenes> TSceneList;
 
   public:
-    CSceneManager() { Setup(); }
+    CSceneManager(const render::CRenderDeviceDX11& _rRenderDevice, const render::CRenderCommandsDX11& _rCommands)
+      : m_pRenderDevice(&_rRenderDevice)
+      , m_pCommands(&_rCommands)
+    {
+      Setup();
+    }
     ~CSceneManager() { Clear(); }
 
     // Handle scene
@@ -66,6 +71,9 @@ namespace scene
     TSceneList m_lstScenes = TSceneList();
     TCameraList m_lstCameras = TCameraList();
     mutable utils::CWeakPtr<scene::CRenderScene> m_pCurrentScene;
+    
+    const render::CRenderDeviceDX11* m_pRenderDevice = nullptr;
+    const render::CRenderCommandsDX11* m_pCommands = nullptr;
   };
 }
 

@@ -3,13 +3,21 @@
 #include "Engine/Camera/Camera.h"
 #include "Engine/Shaders/Shader.h"
 #include "Engine/Render/Buffers/BufferTypes.h"
+#include "Engine/Render/Buffers/ConstantBuffer.h"
+#include "Engine/Render/Renderers/ShadowRenderer.h"
+#include "Engine/Render/Managers/ShaderManager.h"
+#include "Engine/Render/Managers/TextureManager.h"
 
 namespace render { class CRenderWindow; }
+namespace render { class CRenderContextDX11; }
+namespace render { class CRenderDeviceDX11; }
+namespace render { class CRenderCommandsDX11; }
 
 namespace render { namespace gfx { class CModel; } }
 namespace render { namespace gfx { class CPrimitive; } }
 namespace render { namespace mat { class CMaterial; } }
 
+namespace render { class CShadowRenderer; }
 namespace render { class CDeferredRenderer; }
 namespace render { class CForwardRenderer; }
 namespace render { class CLightingRenderer; }
@@ -17,6 +25,44 @@ namespace render { class CImGuiRenderer; }
 
 namespace render
 {
+  struct TRenderPipeline
+  {
+    // Global buffers for drawable things
+    ID3D11Buffer* RenderInstancesBuffer = nullptr;
+    ID3D11Buffer* PrimitiveInstancesBuffer = nullptr;
+
+    // Global constant buffers
+    CConstantBuffer<buffertypes::TCameraTransform> RenderCameraBuffer;
+    static constexpr uint32_t CameraTransformSlot = 0;
+    CConstantBuffer<buffertypes::TCameraTransform> LightingViewBuffer;
+    static constexpr uint32_t LightingViewSlot = 2;
+    CConstantBuffer<buffertypes::TMaterialInfo> MaterialBuffer;
+    static constexpr uint32_t MaterialSlot = 0;
+
+    // Default programs
+    uintptr_t Forward_ProgramID;
+    uintptr_t GBuffer_ProgramID;
+    uintptr_t DrawQuad_ProgramID;
+
+    uintptr_t Shadow_ProgramID;
+    uintptr_t DeferredLighting_ProgramID;
+
+    // Global states
+    ID3D11RenderTargetView* RenderTarget = nullptr;
+    ID3D11SamplerState* LinearSampler = nullptr;
+    ID3D11SamplerState* ShadowSampler = nullptr;
+
+    ID3D11RasterizerState* DefaultRasterizer = nullptr;
+    D3D11_RASTERIZER_DESC RasterizerCfg = D3D11_RASTERIZER_DESC();
+
+    ID3D11BlendState* BlendState = nullptr;
+    D3D11_RENDER_TARGET_BLEND_DESC BlendStateCfg = D3D11_RENDER_TARGET_BLEND_DESC();
+
+    ID3D11InputLayout* StandardLayout = nullptr;
+    ID3D11InputLayout* DebugLayout = nullptr;
+    ID3DUserDefinedAnnotation* pUserMarker = nullptr;
+  };
+
   class CRender
   {
   public:
@@ -30,6 +76,10 @@ namespace render
     void Draw(scene::CRenderScene& _rScene);
 
     inline const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow.get(); }
+    render::CRenderDeviceDX11& GetDevice();
+    render::CRenderCommandsDX11& GetCommands();
+    CTextureManager& GetTextureManager() { return m_oTextureManager; }
+
     inline void SetRenderCamera(render::CCamera* _pCamera) { m_pRenderCamera = _pCamera; }
     inline void SetShadowCamera(render::CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
 
@@ -40,8 +90,7 @@ namespace render
 
     void PushCameraTransform(const CCamera& _RenderCamera);
     void PushLightingTransform(const CCamera& _RenderCamera);
-    void PushLightingPass();
-
+    void PushShadowMappingPass();
 
     void BeginMarker(const wchar_t* _sMarker) const;
     void EndMarker() const;
@@ -106,15 +155,22 @@ namespace render
 
   private:
     std::unique_ptr<render::CRenderWindow> m_pRenderWindow = nullptr;
+    std::unique_ptr<render::CRenderContextDX11> m_pRenderContext = nullptr;
+
+    TRenderPipeline m_oRenderPipeline;
+    CShaderManager m_oShaderManager = CShaderManager();
+    CTextureManager m_oTextureManager = CTextureManager();
+
     bool m_bVerticalSync = false;
 
     render::CCamera* m_pRenderCamera = nullptr;
     render::CCamera* m_pShadowCamera = nullptr;
 
-    std::unique_ptr<CDeferredRenderer> m_pDeferredRenderer = nullptr;
-    std::unique_ptr<CForwardRenderer> m_pForwardRenderer = nullptr;
-    std::unique_ptr<CLightingRenderer> m_pLightingRenderer = nullptr;
-    std::unique_ptr<CImGuiRenderer> m_pImGuiRenderer = nullptr;
+    std::unique_ptr<render::CShadowRenderer> m_pShadowRenderer = nullptr;
+    std::unique_ptr<render::CDeferredRenderer> m_pDeferredRenderer = nullptr;
+    std::unique_ptr<render::CLightingRenderer> m_pLightingRenderer = nullptr;
+    std::unique_ptr<render::CForwardRenderer> m_pForwardRenderer = nullptr;
+    std::unique_ptr<render::CImGuiRenderer> m_pImGuiRenderer = nullptr;
   };
 }
 

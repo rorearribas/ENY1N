@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine/Render/Resources/RenderTarget.h"
+#include "Engine/Render/RenderContext/RenderDeviceDX11.h"
 #include "Renderer.h"
 
 namespace scene { class CRenderScene; }
@@ -12,7 +13,7 @@ namespace render
     CDeferredRenderer(CRender* _pRender) : IRenderer(_pRender) {}
     ~CDeferredRenderer() { Release(); }
 
-    HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);
+    HRESULT Init(const CRenderDeviceDX11& _rRenderDevice, uint32_t _uWidth, uint32_t _uHeight);
 
     void PrepareFrame() override;
     void Draw(scene::CRenderScene& _rRenderScene) override;
@@ -26,7 +27,7 @@ namespace render
     ID3D11DepthStencilState* GetDepthStencilState() const { return m_pDepthStencilState; }
 
   private:
-    HRESULT SetupRenderTargets(uint32_t _uWidth, uint32_t _uHeight);
+    HRESULT SetupRenderTargets(const CRenderDeviceDX11& _rRenderDevice, uint32_t _uWidth, uint32_t _uHeight);
     void Release();
 
   private:

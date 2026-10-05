@@ -8,6 +8,8 @@
 
 #include "Engine/Render/Buffers/BufferTypes.h"
 #include "Engine/Render/Buffers/ConstantBuffer.h"
+#include "Engine/Render/RenderContext/RenderCommandsDX11.h"
+#include "Engine/Render/RenderContext/RenderDeviceDX11.h"
 
 #include "Libs/Utils/Singleton.h"
 #include "Libs/Utils/FixedPool.h"
@@ -35,7 +37,7 @@ namespace render
       typedef CConstantBuffer<TLightingData> TLightingBuffer;
 
     public:
-      CLightManager();
+      CLightManager(const render::CRenderDeviceDX11& _rRenderDevice, const render::CRenderCommandsDX11& _rCommands);
       ~CLightManager();
 
       // Push lights
@@ -69,6 +71,8 @@ namespace render
       // Global lighting buffer
       TLightingBuffer m_oLightingBuffer;
       TShadowMaps m_lstShadowMaps;
+      const render::CRenderDeviceDX11* m_pRenderDevice = nullptr;
+      const render::CRenderCommandsDX11* m_pCommands = nullptr;
     };
   }
 }

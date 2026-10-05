@@ -17,20 +17,22 @@ namespace render
     m_pSpecularRT.reset();
   }
   // ------------------------------------
-  HRESULT CDeferredRenderer::Init(uint32_t _uWidth, uint32_t _uHeight)
+  HRESULT CDeferredRenderer::Init(const CRenderDeviceDX11& _rRenderDevice, uint32_t _uWidth, uint32_t _uHeight)
   {
     // Create depth stencil texture
-    D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
-    rTextureDesc.Width = _uWidth;
-    rTextureDesc.Height = _uHeight;
-    rTextureDesc.MipLevels = 1;
-    rTextureDesc.ArraySize = 1;
-    rTextureDesc.SampleDesc.Count = 1;
-    rTextureDesc.Format = DXGI_FORMAT_R32_TYPELESS; // Format
-    rTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
-
+    render::texture::TTextureDesc rTextureDesc = render::texture::TTextureDesc();
+    rTextureDesc.Descriptor = D3D11_TEXTURE2D_DESC();
+    {
+      rTextureDesc.Descriptor.Width = _uWidth;
+      rTextureDesc.Descriptor.Height = _uHeight;
+      rTextureDesc.Descriptor.MipLevels = 1;
+      rTextureDesc.Descriptor.ArraySize = 1;
+      rTextureDesc.Descriptor.SampleDesc.Count = 1;
+      rTextureDesc.Descriptor.Format = DXGI_FORMAT_R32_TYPELESS; // Format
+      rTextureDesc.Descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
+    }
     m_oDepthStencil.Release();
-    HRESULT hResult = m_oDepthStencil.CreateTexture(rTextureDesc);
+    HRESULT hResult = m_oDepthStencil.CreateTexture(_rRenderDevice, rTextureDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating depth stencil texture!");
@@ -43,7 +45,7 @@ namespace render
     rDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
     // Create the depth stencil view
-    hResult = m_oDepthStencil.CreateView(rDepthStencilViewDesc);
+    hResult = m_oDepthStencil.CreateView(_rRenderDevice, rDepthStencilViewDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating stencil view!");
@@ -57,7 +59,7 @@ namespace render
     rSRVDesc.Texture2D.MipLevels = 1;
 
     m_oDepthStencilShader.Release();
-    hResult = m_oDepthStencilShader.CreateViewFromTexture(m_oDepthStencil, rSRVDesc);
+    hResult = m_oDepthStencilShader.CreateViewFromTexture(_rRenderDevice, m_oDepthStencil, rSRVDesc);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating view!");
@@ -94,15 +96,15 @@ namespace render
       return hResult;
     }
 
-    return SetupRenderTargets(_uWidth, _uHeight);
+    return SetupRenderTargets(_rRenderDevice, _uWidth, _uHeight);
   }
   // ------------------------------------
   void CDeferredRenderer::PrepareFrame()
   {
     // Clear render targets
-    m_pDiffuseRT->SetClearColor(internal::s_v4ClearColor);
-    m_pNormalRT->SetClearColor(internal::s_v4ClearColor);
-    m_pSpecularRT->SetClearColor(internal::s_v4ClearColor);
+    m_pDiffuseRT->SetClearColor(m_pRender->GetCommands(), internal::s_v4ClearColor);
+    m_pNormalRT->SetClearColor(m_pRender->GetCommands(), internal::s_v4ClearColor);
+    m_pSpecularRT->SetClearColor(m_pRender->GetCommands(), internal::s_v4ClearColor);
 
     // Clear depth stencil -> zbuffer
     m_pRender->ClearDepthStencil(GetDepthStencilView(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
@@ -132,11 +134,15 @@ namespace render
     m_pRender->SetRenderTargets(lstEmptyRTs, internal::uRenderTargets);
   }
   // ------------------------------------
-  HRESULT CDeferredRenderer::SetupRenderTargets(uint32_t _uWidth, uint32_t _uHeight)
+  HRESULT CDeferredRenderer::SetupRenderTargets(const CRenderDeviceDX11& _rRenderDevice, uint32_t _uWidth, uint32_t _uHeight)
   {
     // Diffuse
     std::unique_ptr<CRenderTarget> pDiffuseRT = std::make_unique<CRenderTarget>();
-    HRESULT hResult = pDiffuseRT->Init(_uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
+    TRenderTargetDesc rDiffuseDesc = TRenderTargetDesc();
+    rDiffuseDesc.uWidth = _uWidth;
+    rDiffuseDesc.uHeight = _uHeight;
+    rDiffuseDesc.eFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    HRESULT hResult = pDiffuseRT->Init(_rRenderDevice, rDiffuseDesc);
     if (FAILED(hResult))
     {
       return hResult;
@@ -144,7 +150,11 @@ namespace render
 
     // Normal
     std::unique_ptr<CRenderTarget> pNormalRT = std::make_unique<CRenderTarget>();
-    hResult = pNormalRT->Init(_uWidth, _uHeight, DXGI_FORMAT_R16G16B16A16_FLOAT);
+    TRenderTargetDesc rNormalDesc = TRenderTargetDesc();
+    rNormalDesc.uWidth = _uWidth;
+    rNormalDesc.uHeight = _uHeight;
+    rNormalDesc.eFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+    hResult = pNormalRT->Init(_rRenderDevice, rNormalDesc);
     if (FAILED(hResult))
     {
       return hResult;
@@ -152,14 +162,18 @@ namespace render
 
     // Specular
     std::unique_ptr<CRenderTarget> pSpecularRT = std::make_unique<CRenderTarget>();
-    hResult = pSpecularRT->Init(_uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
+    TRenderTargetDesc rSpecularDesc = TRenderTargetDesc();
+    rSpecularDesc.uWidth = _uWidth;
+    rSpecularDesc.uHeight = _uHeight;
+    rSpecularDesc.eFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    hResult = pSpecularRT->Init(_rRenderDevice, rSpecularDesc);
     if (FAILED(hResult))
     {
       return hResult;
     }
 
     // Clean
-    Release();
+    this->Release();
 
     // Set 
     m_pDiffuseRT = std::move(pDiffuseRT);

@@ -1,6 +1,7 @@
 #pragma once
 #include "Engine/Scenes/RenderScene.h"
 
+
 namespace render { class CCamera; }
 namespace render { class CRender; }
 

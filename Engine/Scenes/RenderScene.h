@@ -6,6 +6,8 @@
 #include "Engine/Render/Graphics/Primitive.h"
 #include "Engine/Render/Graphics/Model.h"
 #include "Engine/Render/Spatial/Octree.h"
+#include "Engine/Render/RenderContext/RenderDeviceDX11.h"
+#include "Engine/Render/RenderContext/RenderCommandsDX11.h"
 #include "Engine/Utils/Plane.h"
 
 #include "Libs/Utils/FixedPool.h"
@@ -60,7 +62,14 @@ namespace scene
   class CRenderScene
   {
   public:
-    CRenderScene(uint32_t _uIndex) : m_uSceneIdx(_uIndex) { SetupBuffers(); }
+    CRenderScene(uint32_t _uIndex, const render::CRenderDeviceDX11& _rRenderDevice, const render::CRenderCommandsDX11& _rCommands)
+      : m_uSceneIdx(_uIndex)
+      , m_oLightManager(_rRenderDevice, _rCommands)
+      , m_pRenderDevice(&_rRenderDevice)
+      , m_pCommands(&_rCommands)
+    {
+      SetupBuffers();
+    }
     ~CRenderScene();
 
     // Handle scene
@@ -130,6 +139,9 @@ namespace scene
     bool m_bEnabled = false;
     uint32_t m_uSceneIdx = 0;
     render::lights::CLightManager m_oLightManager;
+
+    const render::CRenderDeviceDX11* m_pRenderDevice = nullptr;
+    const render::CRenderCommandsDX11* m_pCommands = nullptr;
 
   private:
     // Models

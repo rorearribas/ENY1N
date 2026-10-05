@@ -21,9 +21,9 @@ namespace global
   // DirectX
   namespace api
   {
-    // Device
-    extern ID3D11Device* Device;
-    extern ID3D11DeviceContext* DeviceContext;
+    //// Device
+    //extern ID3D11Device* Device;
+    //extern ID3D11DeviceContext* DeviceContext;
 
     // Release memory
     template<typename _ID3D11Resource>

@@ -14,7 +14,7 @@ namespace render
     static const wchar_t* s_sImGuiMarker(L"ImGui");
   }
   // ------------------------------------
-  HRESULT CImGuiRenderer::Init(const HWND& _hWnd)
+  HRESULT CImGuiRenderer::Init(const render::CRenderDeviceDX11& _rRenderDevice, const render::CRenderCommandsDX11& _rCommands, const HWND& _hWnd)
   {
     if (!IMGUI_CHECKVERSION())
     {
@@ -30,7 +30,7 @@ namespace render
     {
       return E_FAIL;
     }
-    if (!ImGui_ImplDX11_Init(global::api::Device, global::api::DeviceContext))
+    if (!ImGui_ImplDX11_Init(_rRenderDevice.GetDevice(), _rCommands.GetContext()))
     {
       return E_FAIL;
     }

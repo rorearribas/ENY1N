@@ -7,7 +7,9 @@ namespace render
   namespace lights
   {
     // ------------------------------------
-    CLightManager::CLightManager()
+    CLightManager::CLightManager(const render::CRenderDeviceDX11& _rRenderDevice, const render::CRenderCommandsDX11& _rCommands)
+      : m_pRenderDevice(&_rRenderDevice)
+      , m_pCommands(&_rCommands)
     {
       HRESULT hResult = Setup();
       UNUSED_VAR(hResult);
@@ -24,7 +26,7 @@ namespace render
     HRESULT CLightManager::Setup()
     {
       // Init constant buffer
-      return m_oLightingBuffer.Init();
+      return m_oLightingBuffer.Init(*m_pRenderDevice);
     }
     // ------------------------------------
     void CLightManager::ComputeShadows()
@@ -81,13 +83,13 @@ namespace render
       rLightingData.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetSize());
 
       // Write buffer
-      bool bOk = m_oLightingBuffer.WriteBuffer(rLightingData);
+      bool bOk = m_oLightingBuffer.WriteBuffer(*m_pCommands, rLightingData);
       UNUSED_VAR(bOk);
       assert(bOk);
 
       // Bind buffer
       const uint32_t uSlot(1);
-      m_oLightingBuffer.Bind<render::EShader::E_PIXEL>(uSlot);
+      m_oLightingBuffer.Bind<render::EShader::E_PIXEL>(*m_pCommands, uSlot);
     }
     // ------------------------------------
     utils::CWeakPtr<render::lights::CDirectionalLight> CLightManager::GetDirectionalLight()
@@ -109,7 +111,7 @@ namespace render
 
       // Create shadow map - testing
       utils::CWeakPtr<render::gfx::CShadowMap> pShadowMap = m_lstShadowMaps.Create();
-      pShadowMap->Setup(2048u, 2048u);
+      pShadowMap->Setup(*m_pRenderDevice, 2048u, 2048u);
 
       return m_pDirectionalLight.GetRef();
     }

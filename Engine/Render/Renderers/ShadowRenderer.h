@@ -1,0 +1,26 @@
+#pragma once
+#include "Renderer.h"
+
+namespace render
+{
+  class CShadowRenderer : public IRenderer
+  {
+  public:
+    CShadowRenderer(CRender* _pRender) : IRenderer(_pRender) {}
+    ~CShadowRenderer() = default;
+
+    HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);
+
+    void PrepareFrame() override {}
+    void Draw(scene::CRenderScene& _rRenderScene) override;
+
+    void SetShadowCamera(CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
+    const CCamera& GetShadowCamera() const { return *m_pShadowCamera; }
+
+  private:
+    ID3D11RasterizerState* m_pShadowsRasterizer = nullptr;
+    CCamera* m_pShadowCamera = nullptr;
+  };
+}
+
+

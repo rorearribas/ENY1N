@@ -1,4 +1,6 @@
 #pragma once
+#include "Engine/Render/RenderContext/RenderDeviceDX11.h"
+#include "Engine/Render/RenderContext/RenderCommandsDX11.h"
 #include "Engine/Global/GlobalResources.h"
 #include "Libs/Macros/GlobalMacros.h"
 #include <cassert>
@@ -20,12 +22,12 @@ public:
   CRenderBuffer() = default;
   ~CRenderBuffer() { Release(); }
 
-  HRESULT Init(const D3D11_BUFFER_DESC& _rBufferDesc);
+  HRESULT Init(const render::CRenderDeviceDX11& _rRenderDevice, const D3D11_BUFFER_DESC& _rBufferDesc);
   void ResetOffset();
   void Release();
 
-  bool Alloc(T* _pData, uint32_t _uCount, CBufferHandler& _rBufferHandler_);
-  bool Free(const CBufferHandler& _rBufferHandler, uint32_t& _uLeftDisplacement_);
+  bool Alloc(const render::CRenderCommandsDX11& _rCommands, T* _pData, uint32_t _uCount, CBufferHandler& _rBufferHandler_);
+  bool Free(const render::CRenderCommandsDX11& _rCommands, const CBufferHandler& _rBufferHandler, uint32_t& _uLeftDisplacement_);
 
   inline operator ID3D11Buffer* () const { return m_pBuffer; }
   inline operator ID3D11Buffer* () { return m_pBuffer; }
@@ -51,12 +53,12 @@ void CRenderBuffer<T>::Release()
 }
 
 template<class T>
-HRESULT CRenderBuffer<T>::Init(const D3D11_BUFFER_DESC& _rBufferDesc)
+HRESULT CRenderBuffer<T>::Init(const render::CRenderDeviceDX11& _rRenderDevice, const D3D11_BUFFER_DESC& _rBufferDesc)
 {
 #ifdef _DEBUG
   assert(_rBufferDesc.Usage == D3D11_USAGE_DEFAULT);
 #endif // _DEBUG
-  HRESULT hResult = global::api::Device->CreateBuffer(&_rBufferDesc, nullptr, &m_pBuffer);
+  HRESULT hResult = _rRenderDevice->CreateBuffer(&_rBufferDesc, nullptr, &m_pBuffer);
   if (!FAILED(hResult))
   {
     m_uBufferSize = _rBufferDesc.ByteWidth;
@@ -65,7 +67,7 @@ HRESULT CRenderBuffer<T>::Init(const D3D11_BUFFER_DESC& _rBufferDesc)
 }
 
 template<class T>
-bool CRenderBuffer<T>::Alloc(T* _pData, uint32_t _uElements, CBufferHandler& _rBufferHandler_)
+bool CRenderBuffer<T>::Alloc(const render::CRenderCommandsDX11& _rCommands, T* _pData, uint32_t _uElements, CBufferHandler& _rBufferHandler_)
 {
   uint32_t uTargetSize = (_uElements * sizeof(T));
   uint32_t uStartOffsetBytes = m_uCurrentOffset * sizeof(T);
@@ -84,7 +86,7 @@ bool CRenderBuffer<T>::Alloc(T* _pData, uint32_t _uElements, CBufferHandler& _rB
   rDestBox.front = 0; rDestBox.back = 1;
 
   // Update memory
-  global::api::DeviceContext->UpdateSubresource(m_pBuffer, 0, &rDestBox, _pData, 0, 0);
+  _rCommands->UpdateSubresource(m_pBuffer, 0, &rDestBox, _pData, 0, 0);
 
   // Update values
   uint32_t uStartOffset = m_uCurrentOffset;
@@ -98,7 +100,7 @@ bool CRenderBuffer<T>::Alloc(T* _pData, uint32_t _uElements, CBufferHandler& _rB
 }
 
 template<class T>
-bool CRenderBuffer<T>::Free(const CBufferHandler& _rBufferHandler, uint32_t& _uLeftDisplacement_)
+bool CRenderBuffer<T>::Free(const render::CRenderCommandsDX11& _rCommands, const CBufferHandler& _rBufferHandler, uint32_t& _uLeftDisplacement_)
 {
   // Only if is the last assigned block
   if (_rBufferHandler.EndOffset == m_uCurrentOffset)
@@ -115,7 +117,7 @@ bool CRenderBuffer<T>::Free(const CBufferHandler& _rBufferHandler, uint32_t& _uL
 
   // Update memory
   D3D11_BOX rSrcBox = { uStartMoveBytes, 0u, 0u, uEndMoveBytes, 1u, 1u };
-  global::api::DeviceContext->CopySubresourceRegion(m_pBuffer, 0, uDestMoveBytes, 0, 0, m_pBuffer, 0, &rSrcBox);
+  _rCommands->CopySubresourceRegion(m_pBuffer, 0, uDestMoveBytes, 0, 0, m_pBuffer, 0, &rSrcBox);
 
   // Update offset
   _uLeftDisplacement_ = (_rBufferHandler.EndOffset - _rBufferHandler.BeginOffset);

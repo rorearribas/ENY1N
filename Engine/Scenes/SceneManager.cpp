@@ -171,7 +171,7 @@ namespace scene
     // Create scenes
     for (int iIdx = 0; iIdx < m_lstScenes.GetMaxSize(); iIdx++)
     {
-      utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes.Create(iIdx);
+      utils::CWeakPtr<scene::CRenderScene> pScene = m_lstScenes.Create(iIdx, *m_pRenderDevice, *m_pCommands);
       pScene->SetEnabled(false);
     }
 

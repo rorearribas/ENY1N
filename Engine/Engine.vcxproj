@@ -154,6 +154,12 @@
     <ClInclude Include="Collisions\CapsuleCollider.h" />
     <ClInclude Include="Collisions\CollisionManager.h" />
     <ClInclude Include="Collisions\AABB.h" />
+    <ClInclude Include="Render\RenderContext\RenderContext.h" />
+    <ClInclude Include="Render\RenderContext\RenderContextDX11.h" />
+    <ClInclude Include="Render\RenderContext\RenderCommandsDX11.h" />
+    <ClInclude Include="Render\RenderContext\RenderDeviceDX11.h" />
+    <ClInclude Include="Render\Managers\ShaderManager.h" />
+    <ClInclude Include="Render\Managers\TextureManager.h" />
     <ClInclude Include="Render\Renderers\ImGuiRenderer.h" />
     <ClInclude Include="Render\Buffers\RenderBuffer.h" />
     <ClInclude Include="Render\Renderers\Renderer.h" />
@@ -171,6 +177,7 @@
     <ClInclude Include="Render\Spatial\Octree.h" />
     <ClInclude Include="Shaders\Deferred\StandardVS.h" />
     <ClInclude Include="Render\Graphics\ShadowMap.h" />
+    <ClInclude Include="Render\Renderers\ShadowRenderer.h" />
     <ClInclude Include="Utils\Plane.h" />
     <ClInclude Include="Utils\Ray.h" />
     <ClInclude Include="Render\Utils\PrimitiveUtils.h" />
@@ -200,6 +207,12 @@
     <ClInclude Include="Collisions\SphereCollider.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Render\RenderContext\RenderContext.cpp" />
+    <ClCompile Include="Render\RenderContext\RenderContextDX11.cpp" />
+    <ClCompile Include="Render\RenderContext\RenderCommandsDX11.cpp" />
+    <ClCompile Include="Render\RenderContext\RenderDeviceDX11.cpp" />
+    <ClCompile Include="Render\Managers\ShaderManager.cpp" />
+    <ClCompile Include="Render\Managers\TextureManager.cpp" />
     <ClCompile Include="Render\Renderers\ImGuiRenderer.cpp" />
     <ClCompile Include="Render\Renderers\ForwardRenderer.cpp" />
     <ClCompile Include="Render\Renderers\LightingRenderer.cpp" />
@@ -214,6 +227,7 @@
     <ClCompile Include="Physics\PhysicsManager.cpp" />
     <ClCompile Include="Render\Resources\RenderTarget.cpp" />
     <ClCompile Include="Render\Spatial\Octree.cpp" />
+    <ClCompile Include="Render\Renderers\ShadowRenderer.cpp" />
     <ClCompile Include="Utils\Plane.cpp" />
     <ClCompile Include="Utils\Ray.cpp" />
     <ClCompile Include="Render\Utils\PrimitiveUtils.cpp" />
@@ -367,3 +381,6 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
+
+
+

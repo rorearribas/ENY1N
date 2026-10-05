@@ -1,4 +1,6 @@
 #pragma once
+#include "Engine/Render/RenderContext/RenderDeviceDX11.h"
+#include "Engine/Render/RenderContext/RenderCommandsDX11.h"
 #include "Renderer.h"
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -16,7 +18,7 @@ namespace render
     CImGuiRenderer(CRender* _pRender) : IRenderer(_pRender) {}
     ~CImGuiRenderer() = default;
 
-    HRESULT Init(const HWND& _hWnd);
+    HRESULT Init(const render::CRenderDeviceDX11& _rRenderDevice, const render::CRenderCommandsDX11& _rCommands, const HWND& _hWnd);
 
     void PrepareFrame() override;
     void Draw(scene::CRenderScene& /*_rRenderScene*/) override;

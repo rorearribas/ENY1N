@@ -91,8 +91,8 @@ namespace render
           // Push lighting
           m_pRender->PushLightingTransform(*m_pShadowCamera);
 
-          // Push lighting pass
-          m_pRender->PushLightingPass();
+          // Push shadow mapping pass
+          m_pRender->PushShadowMappingPass();
 
           // Only write in stencil (z-prepass)
           m_pRender->SetRenderTargets(nullptr, 0u, rShadowStencil.GetView());
