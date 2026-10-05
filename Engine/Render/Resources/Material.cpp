@@ -15,12 +15,14 @@ namespace render
     // ------------------------------------
     render::texture::TSharedTexture CMaterial::GetTexture(ETexture _eType) const
     {
-      return m_lstTextures[static_cast<uint32_t>(_eType)];
+      uint32_t uIndex = static_cast<uint32_t>(_eType);
+      return m_lstTextures[uIndex];
     }
     // ------------------------------------
     void CMaterial::SetTexture(render::texture::TSharedTexture _pTexture, ETexture _eType)
     {
-      m_lstTextures[static_cast<uint32_t>(_eType)] = _pTexture;
+      uint32_t uIndex = static_cast<uint32_t>(_eType);
+      m_lstTextures[uIndex] = _pTexture;
     }
     // ------------------------------------
     void CMaterial::ClearTextures()

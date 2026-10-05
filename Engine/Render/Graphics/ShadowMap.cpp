@@ -34,7 +34,7 @@ namespace render
       rTextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
 
       // Create shadow depth texture
-      texture::TTextureDesc rTextureCfg = texture::TTextureDesc();
+      texture::TTextureData rTextureCfg = texture::TTextureData();
       rTextureCfg.Descriptor = rTextureDesc;
       HRESULT hResult = m_oDepthStencil.CreateTexture(_rRenderDevice, rTextureCfg);
       if (FAILED(hResult))

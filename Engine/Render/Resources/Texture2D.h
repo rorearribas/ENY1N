@@ -16,11 +16,11 @@ namespace render
     static constexpr uint32_t s_uRGB = 3u;
     static constexpr uint32_t s_uRGBA = 4u;
 
-    struct TTextureDesc
+    struct TTextureData
     {
       D3D11_TEXTURE2D_DESC Descriptor = D3D11_TEXTURE2D_DESC();
       uint32_t Channels = s_uRGBA;
-      void* _pData = nullptr;
+      void* Data = nullptr;
     };
 
     template<render::EView T = render::EView::UNKNOWN>
@@ -36,7 +36,7 @@ namespace render
       CTexture2D& operator=(const CTexture2D&) = delete;
 
       // Handler
-      HRESULT CreateTexture(const CRenderDeviceDX11& _rRenderDevice, const TTextureDesc& _rTextureDesc);
+      HRESULT CreateTexture(const CRenderDeviceDX11& _rRenderDevice, const TTextureData& _rTextureData);
 
       void CopyTexture(const CRenderCommandsDX11& _rCommands, ID3D11Texture2D* const _pTexture) const;
       void GetTextureSize(uint32_t& _uWidth_, uint32_t& _uHeight_) const;
@@ -155,21 +155,18 @@ namespace render
     }
 
     template<render::EView T>
-    HRESULT render::texture::CTexture2D<T>::CreateTexture(const CRenderDeviceDX11& _rRenderDevice, const TTextureDesc& _rTextureDesc)
+    HRESULT render::texture::CTexture2D<T>::CreateTexture(const CRenderDeviceDX11& _rRenderDevice, const TTextureData& _rTextureData)
     {
       // Clear
       global::api::SafeRelease(m_pInternalTexture);
 
       // Create texture from data
       D3D11_SUBRESOURCE_DATA rSubresourceData = D3D11_SUBRESOURCE_DATA();
-      rSubresourceData.SysMemPitch = _rTextureDesc.Descriptor.Width * _rTextureDesc.Channels;
-      rSubresourceData.pSysMem = _rTextureDesc._pData;
+      rSubresourceData.SysMemPitch = _rTextureData.Descriptor.Width * _rTextureData.Channels;
+      rSubresourceData.pSysMem = _rTextureData.Data;
 
-      return _rRenderDevice->CreateTexture2D
-      (
-        &_rTextureDesc.Descriptor,
-        _rTextureDesc._pData ? &rSubresourceData : nullptr,
-        &m_pInternalTexture
+      // Create texture
+      return _rRenderDevice->CreateTexture2D(&_rTextureData.Descriptor, _rTextureData.Data ? &rSubresourceData : nullptr, &m_pInternalTexture
       );
     }
 

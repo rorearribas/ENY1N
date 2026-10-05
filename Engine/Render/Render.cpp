@@ -151,7 +151,7 @@ namespace render
     }
 
     // Setups precompiled shaders
-    hResult = SetupPrecompiledShaders();
+    hResult = SetupPrecompiledPrograms();
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating shaders!");
@@ -543,7 +543,7 @@ namespace render
     return hResult;
   }
   // ------------------------------------
-  HRESULT CRender::SetupPrecompiledShaders()
+  HRESULT CRender::SetupPrecompiledPrograms()
   {
     // Forward program
     TShaderProgramData rShaderProgramData = TShaderProgramData();
@@ -631,13 +631,13 @@ namespace render
   // ------------------------------------
   HRESULT CRender::SetupConstantBuffers()
   {
-    // Transforms buffer
+    // Render camera buffer
     HRESULT hResult = m_oRenderPipeline.RenderCameraBuffer.Init(m_pRenderContext->GetDevice());
     if (FAILED(hResult))
     {
       return hResult;
     }
-    // Light view buffer
+    // Lighting view buffer
     hResult = m_oRenderPipeline.LightingViewBuffer.Init(m_pRenderContext->GetDevice());
     if (FAILED(hResult))
     {

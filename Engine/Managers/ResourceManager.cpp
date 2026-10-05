@@ -1,14 +1,13 @@
 ﻿#include "ResourceManager.h"
+#include "Engine/Render/Resources/Texture2D.h"
 #include "Libs/Macros/GlobalMacros.h"
-#include <iostream>
-#include <cassert>
-#include <unordered_set>
 
 // Assimp
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h> 
 
+// STB Image
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
@@ -155,7 +154,7 @@ render::gfx::TModelData CResourceManager::LoadModel(const char* _sPath)
           // Tangent
           aiVector3D v3Tangent =  pSceneMesh->mTangents[uPosIdx];
           v3Tangent = aiMatrix3x3(mRotX) * v3Tangent;
-          rVertexData.Tangent = math::CVector3(v3Tangent.x, v3Tangent.y, v3Tangent.z);;
+          rVertexData.Tangent = math::CVector3(v3Tangent.x, v3Tangent.y, v3Tangent.z);
         }
 
         // Texture coords
@@ -205,10 +204,10 @@ void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& 
     using namespace render::texture;
     std::string sTexture = _sPath.filename().stem().string();
 
-    auto it = m_lstCachedTextures.find(sTexture);
-    if (it != m_lstCachedTextures.end())
+    render::texture::TSharedTexture pTexture = m_pTextureManager->Find(sTexture);
+    if (pTexture)
     {
-      _pMaterial_->SetTexture(it->second, _eType);
+      _pMaterial_->SetTexture(pTexture, _eType);
       SUCCESS_LOG("Texture preloaded! -> " << _sPath.filename());
       return;
     }
@@ -220,54 +219,39 @@ void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& 
 #endif // DEBUG
     SUCCESS_LOG("Texture loaded! -> " << _sPath.filename());
 
-    // Create texture
-    render::texture::TSharedTexture pTexture;
-
     // Set texture config
-    D3D11_TEXTURE2D_DESC oTextureDesc = D3D11_TEXTURE2D_DESC();
-    oTextureDesc.Width = iWidth;
-    oTextureDesc.Height = iHeight;
-    oTextureDesc.MipLevels = 1;
-    oTextureDesc.ArraySize = 1;
-    oTextureDesc.SampleDesc.Count = 1;
-    oTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA
-    oTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // Bind shader resource
+    D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
+    rTextureDesc.Width = iWidth;
+    rTextureDesc.Height = iHeight;
+    rTextureDesc.MipLevels = 1;
+    rTextureDesc.ArraySize = 1;
+    rTextureDesc.SampleDesc.Count = 1;
+    rTextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // RGBA
+    rTextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE; // Bind shader resource
 
     // Create texture
-    render::texture::TTextureDesc rTextureDesc = render::texture::TTextureDesc();
-    rTextureDesc.Descriptor = oTextureDesc;
-    rTextureDesc.Channels = static_cast<uint32_t>(iChannels);
-    rTextureDesc._pData = pBuffer;
+    render::texture::TTextureData rTextureData = render::texture::TTextureData();
+    {
+      rTextureData.Descriptor = rTextureDesc;
+      rTextureData.Channels = iChannels;
+      rTextureData.Data = pBuffer;
+    }
 
-    D3D11_SHADER_RESOURCE_VIEW_DESC oShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
-    oShaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-    oShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    oShaderResourceViewDesc.Texture2D.MipLevels = 1;
+    D3D11_SHADER_RESOURCE_VIEW_DESC rShaderResourceViewDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
+    rShaderResourceViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+    rShaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+    rShaderResourceViewDesc.Texture2D.MipLevels = 1;
 
-    HRESULT hResult = S_OK;
-    if (m_pTextureManager)
-    {
-      pTexture = m_pTextureManager->Create(sTexture, rTextureDesc, oShaderResourceViewDesc);
-    }
-    else
-    {
-      pTexture = std::make_shared<TShaderResource>();
-      hResult = pTexture->CreateTexture(*m_pRenderDevice, rTextureDesc);
-    }
-    if (!pTexture)
-    {
-      return;
-    }
-    m_lstCachedTextures.emplace(sTexture, pTexture);
-    _pMaterial_->SetTexture(pTexture, _eType);
+    pTexture = m_pTextureManager->Create(sTexture, rTextureData, rShaderResourceViewDesc);
 #ifdef _DEBUG
-    assert(!FAILED(hResult));
-#endif // DEBUG
-
-    // Create shader resource view
-    if (!m_pTextureManager)
+    assert(pTexture);
+#endif
+    HRESULT hResult = S_OK;
+    UNUSED_VAR(hResult);
+    if (pTexture)
     {
-      hResult = pTexture->CreateView(*m_pRenderDevice, oShaderResourceViewDesc);
+      // Set texture
+      _pMaterial_->SetTexture(pTexture, _eType);
     }
 #ifdef _DEBUG
     assert(!FAILED(hResult));

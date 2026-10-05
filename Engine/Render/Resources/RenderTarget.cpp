@@ -24,9 +24,9 @@ namespace render
     rTextureDesc.Format = _rDesc.eFormat;
     rTextureDesc.BindFlags = internal_RT::s_uFlags;
 
-    texture::TTextureDesc rTextureCfg = texture::TTextureDesc();
-    rTextureCfg.Descriptor = rTextureDesc;
-    HRESULT hResult = m_oRTTexture.CreateTexture(_rRenderDevice, rTextureCfg);
+    texture::TTextureData rTextureData = texture::TTextureData();
+    rTextureData.Descriptor = rTextureDesc;
+    HRESULT hResult = m_oRTTexture.CreateTexture(_rRenderDevice, rTextureData);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating texture!");

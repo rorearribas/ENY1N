@@ -2,7 +2,7 @@
 
 namespace render
 {
-  texture::TSharedTexture CTextureManager::Create(const std::string& _sKey, const texture::TTextureDesc& _rTextureDesc, const D3D11_SHADER_RESOURCE_VIEW_DESC& _rViewDesc)
+  texture::TSharedTexture CTextureManager::Create(const std::string& _sKey, const texture::TTextureData& _rTextureData, const D3D11_SHADER_RESOURCE_VIEW_DESC& _rViewDesc)
   {
     auto it = m_lstTextures.find(_sKey);
     if (it != m_lstTextures.end())
@@ -15,8 +15,8 @@ namespace render
       return nullptr;
     }
 
-    auto pTexture = std::make_shared<texture::TShaderResource>();
-    HRESULT hResult = pTexture->CreateTexture(*m_pRenderDevice, _rTextureDesc);
+    auto pTexture = std::make_shared<render::texture::TShaderResource>();
+    HRESULT hResult = pTexture->CreateTexture(*m_pRenderDevice, _rTextureData);
     if (FAILED(hResult))
     {
       return nullptr;

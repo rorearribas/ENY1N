@@ -20,19 +20,18 @@ namespace render
   HRESULT CDeferredRenderer::Init(const CRenderDeviceDX11& _rRenderDevice, uint32_t _uWidth, uint32_t _uHeight)
   {
     // Create depth stencil texture
-    render::texture::TTextureDesc rTextureDesc = render::texture::TTextureDesc();
-    rTextureDesc.Descriptor = D3D11_TEXTURE2D_DESC();
+    render::texture::TTextureData rTextureData = render::texture::TTextureData();
     {
-      rTextureDesc.Descriptor.Width = _uWidth;
-      rTextureDesc.Descriptor.Height = _uHeight;
-      rTextureDesc.Descriptor.MipLevels = 1;
-      rTextureDesc.Descriptor.ArraySize = 1;
-      rTextureDesc.Descriptor.SampleDesc.Count = 1;
-      rTextureDesc.Descriptor.Format = DXGI_FORMAT_R32_TYPELESS; // Format
-      rTextureDesc.Descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
+      rTextureData.Descriptor.Width = _uWidth;
+      rTextureData.Descriptor.Height = _uHeight;
+      rTextureData.Descriptor.MipLevels = 1;
+      rTextureData.Descriptor.ArraySize = 1;
+      rTextureData.Descriptor.SampleDesc.Count = 1;
+      rTextureData.Descriptor.Format = DXGI_FORMAT_R32_TYPELESS; // Format
+      rTextureData.Descriptor.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE; // Depth stencil
     }
     m_oDepthStencil.Release();
-    HRESULT hResult = m_oDepthStencil.CreateTexture(_rRenderDevice, rTextureDesc);
+    HRESULT hResult = m_oDepthStencil.CreateTexture(_rRenderDevice, rTextureData);
     if (FAILED(hResult))
     {
       ERROR_LOG("Error creating depth stencil texture!");

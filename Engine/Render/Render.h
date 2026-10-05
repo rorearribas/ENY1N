@@ -134,7 +134,7 @@ namespace render
     HRESULT CreateBackBuffer();
 
   private:
-    HRESULT SetupPrecompiledShaders();
+    HRESULT SetupPrecompiledPrograms();
     HRESULT SetupConstantBuffers();
     HRESULT SetupRenderBuffers();
     HRESULT SetupBlendState();
