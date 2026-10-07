@@ -22,8 +22,8 @@
 #include "Lighting/DirectionalLight.h"
 
 // Renderers
+#include "Engine/Render/Renderers/ShadowRenderer.h"
 #include "Engine/Render/Renderers/DeferredRenderer.h"
-#include "Engine/Render/Renderers/LightingRenderer.h"
 #include "Engine/Render/Renderers/ForwardRenderer.h"
 #include "Engine/Render/Renderers/ImGuiRenderer.h"
 
@@ -280,62 +280,26 @@ namespace render
     // Deferred pass
     BeginMarker(internal::s_sDeferredPassMrk);
     {
-      // Push camera transform
-      PushCameraTransform(*m_pRenderCamera);
-
-      // Set default layout
-      SetInputLayout(m_oRenderPipeline.StandardLayout);
-      // Set default rasterizer
-      SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
-
-      // Attach deferred vertex shader
-      m_oShaderManager.Bind(m_pRenderContext->GetCommands(), m_oRenderPipeline.GBuffer_ProgramID);
-      // Attach G-buffer(pixel shader)
-      // Set linear sampler(read textures)
-      m_pRenderContext->GetCommands()->PSSetSamplers(0u, 1u, &m_oRenderPipeline.LinearSampler);
-
-      // Bind camera transform buffer
-      m_oRenderPipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
-      // Bind material buffer
-      m_oRenderPipeline.MaterialBuffer.Bind<render::EShader::E_PIXEL>(m_pRenderContext->GetCommands(), m_oRenderPipeline.MaterialSlot);
+      // Shadow mapping pass
+      m_pShadowRenderer->SetRenderCamera(m_pRenderCamera);
+      m_pShadowRenderer->Draw(_rRenderScene);
 
       // Deferred pass
       m_pDeferredRenderer->SetRenderCamera(m_pRenderCamera);
       m_pDeferredRenderer->Draw(_rRenderScene);
-
-      // Lighting pass
-      m_pLightingRenderer->SetRenderCamera(m_pRenderCamera);
-      m_pLightingRenderer->SetShadowCamera(m_pShadowCamera);
-      m_pLightingRenderer->Draw(_rRenderScene);
-
-      // Set default rasterizer
-      SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
-
-      // Compute lighting pass
-      ComputeLightingPass(_rRenderScene);
     }
     EndMarker();
 
     // Forward pass
+    BeginMarker(internal::s_sForwardPassMark);
     {
-      // Set render target
-      SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, m_pDeferredRenderer->GetDepthStencilView());
-      SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
-      SetDepthStencilState(m_pDeferredRenderer->GetDepthStencilState());
-
-      // Set input layout
-      m_pRenderContext->GetCommands()->IASetInputLayout(m_oRenderPipeline.DebugLayout);
-      // Attach shaders
-      m_oShaderManager.Bind(m_pRenderContext->GetCommands(), m_oRenderPipeline.Forward_ProgramID);
-      // Bind buffer
-      m_oRenderPipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
-
       m_pForwardRenderer->SetRenderCamera(m_pRenderCamera);
       m_pForwardRenderer->Draw(_rRenderScene);
     }
+    EndMarker();
 
     // Update blend + rasterizer state
-    SetBlendState(m_oRenderPipeline.BlendState, nullptr, 0xFFFFFFFFu);
+    SetBlendState(m_oRenderPipeline.BlendState, nullptr, UINT32_MAX);
     SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
 
     // ImGui
@@ -376,6 +340,7 @@ namespace render
   {
     if (!_pMaterial)
     {
+      WARNING_LOG("Invalid material provided!");
       return;
     }
 
@@ -387,9 +352,11 @@ namespace render
     // Diffuse
     texture::TSharedTexture pDiffuse = _pMaterial->GetTexture(render::ETexture::DIFFUSE);
     rMaterialInfo.HasDiffuseTexture = static_cast<bool>(pDiffuse);
+
     // Normal
     texture::TSharedTexture pNormal = _pMaterial->GetTexture(render::ETexture::NORMAL);
     rMaterialInfo.HasNormalTexture = static_cast<bool>(pNormal);
+
     // Specular
     texture::TSharedTexture pSpecular = _pMaterial->GetTexture(render::ETexture::SPECULAR);
     rMaterialInfo.HasSpecularTexture = static_cast<bool>(pSpecular);
@@ -411,7 +378,7 @@ namespace render
     };
 
     // Bind shaders
-    m_pRenderContext->GetCommands()->PSSetShaderResources(0u, uTexturesSize, lstTextures);
+    SetShaderResources(EShader::E_PIXEL,0u, uTexturesSize, lstTextures);
   }
   // ------------------------------------
   void CRender::PushCameraTransform(const CCamera& _RenderCamera)
@@ -433,7 +400,7 @@ namespace render
 #endif
   }
   // ------------------------------------
-  void CRender::PushLightingTransform(const CCamera& _RenderCamera)
+  void CRender::PushLightingViewTransform(const CCamera& _RenderCamera)
   {
     // Calculate transforms for shadow mapping
     math::CMatrix4x4 mViewProjection = _RenderCamera.GetViewProjection();
@@ -451,16 +418,74 @@ namespace render
 #endif // DEBUG
   }
   // ------------------------------------
-  void CRender::PushShadowMappingPass()
+  void CRender::PushShadowMappingPass(const CCamera& _RenderCamera)
   {
-    // Detach all shaders in the current pipeline
-    m_pRenderContext->GetCommands()->VSSetShader(nullptr, nullptr, 0u);
-    m_pRenderContext->GetCommands()->PSSetShader(nullptr, nullptr, 0u);
+    // Push lighting view transform
+    PushLightingViewTransform(_RenderCamera);
+    // Set default layout
+    SetInputLayout(m_oRenderPipeline.StandardLayout);
+    // Set default rasterizer
+    SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
 
     // Attach vertex shader for shadow mapping pass
-    m_oShaderManager.Bind(m_pRenderContext->GetCommands(), m_oRenderPipeline.Shadow_ProgramID);
+    m_oShaderManager.BindProgram(m_pRenderContext->GetCommands(), m_oRenderPipeline.Shadow_ProgramID);
+
     // Attach lighting view buffer
     m_oRenderPipeline.LightingViewBuffer.Bind<render::EShader::E_VERTEX>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
+  }
+  // ------------------------------------
+  void CRender::PushGBufferPass(const CCamera& _RenderCamera)
+  {
+    // Push camera transform
+    PushCameraTransform(_RenderCamera);
+    // Set default layout
+    SetInputLayout(m_oRenderPipeline.StandardLayout);
+    // Set default rasterizer
+    SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
+
+    // Attach deferred vertex shader
+    m_oShaderManager.BindProgram(m_pRenderContext->GetCommands(), m_oRenderPipeline.GBuffer_ProgramID);
+    // Set linear sampler(read textures)
+    m_pRenderContext->GetCommands()->PSSetSamplers(0u, 1u, &m_oRenderPipeline.LinearSampler);
+
+    // Bind camera transform buffer
+    m_oRenderPipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
+    // Bind material buffer
+    m_oRenderPipeline.MaterialBuffer.Bind<render::EShader::E_PIXEL>(m_pRenderContext->GetCommands(), m_oRenderPipeline.MaterialSlot);
+  }
+  // ------------------------------------
+  void CRender::PushLightingPass(const CCamera& /*_RenderCamera*/)
+  {
+    // Set constant buffers
+    m_oRenderPipeline.RenderCameraBuffer.Bind<render::EShader::E_PIXEL>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
+    m_oRenderPipeline.LightingViewBuffer.Bind<render::EShader::E_PIXEL>(m_pRenderContext->GetCommands(), m_oRenderPipeline.LightingViewSlot);
+
+    // Set samplers
+    m_pRenderContext->GetCommands()->PSSetSamplers(0u, 1u, &m_oRenderPipeline.LinearSampler);
+    m_pRenderContext->GetCommands()->PSSetSamplers(1, 1, &m_oRenderPipeline.ShadowSampler);
+
+    // Attach shader to calculate lights (pixel shader)
+    m_oShaderManager.BindProgram(m_pRenderContext->GetCommands(), m_oRenderPipeline.DeferredLighting_ProgramID);
+  }
+  // ------------------------------------
+  void CRender::PushForwardPass(const CCamera& _RenderCamera)
+  {
+    // Push camera transform
+    PushCameraTransform(_RenderCamera);
+    // Set input layout
+    SetInputLayout(m_oRenderPipeline.DebugLayout);
+    // Set rasterizer state
+    SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
+
+    // Set render target
+    SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, m_pDeferredRenderer->GetDepthStencilView());
+    // Set depth stencil state
+    SetDepthStencilState(m_pDeferredRenderer->GetDepthStencilState());
+
+    // Attach shaders
+    m_oShaderManager.BindProgram(m_pRenderContext->GetCommands(), m_oRenderPipeline.Forward_ProgramID);
+    // Bind buffer
+    m_oRenderPipeline.RenderCameraBuffer.Bind<render::EShader::E_VERTEX>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
   }
   // ------------------------------------
   void CRender::OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight)
@@ -494,21 +519,21 @@ namespace render
       return hResult;
     }
 
-    // Create forward renderer
-    if (!m_pForwardRenderer)
+    // Create shadow renderer
+    if (!m_pShadowRenderer)
     {
-      m_pForwardRenderer = std::make_unique<CForwardRenderer>(this);
-    }
-
-    // Create lighting renderer
-    if (!m_pLightingRenderer)
-    {
-      m_pLightingRenderer = std::make_unique<CLightingRenderer>(this);
-      hResult = m_pLightingRenderer->Init(_uWidth, _uHeight);
+      m_pShadowRenderer = std::make_unique<CShadowRenderer>(this);
+      hResult = m_pShadowRenderer->Init(_uWidth, _uHeight);
       if (FAILED(hResult))
       {
         return hResult;
       }
+    }
+
+    // Create forward renderer
+    if (!m_pForwardRenderer)
+    {
+      m_pForwardRenderer = std::make_unique<CForwardRenderer>(this);
     }
 
     // Create imgui renderer
@@ -834,6 +859,43 @@ namespace render
     return E_FAIL;
   }
   // ------------------------------------
+  void CRender::SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY _eTopology)
+  {
+    if (m_pRenderContext->GetCommands())
+    {
+      m_pRenderContext->GetCommands()->IASetPrimitiveTopology(_eTopology);
+    }
+  }
+  // ------------------------------------
+  void CRender::SetVertexBuffers(uint32_t _uStartSlot, uint32_t _uCount, ID3D11Buffer** _ppBuffers, const uint32_t* _pStrides, const uint32_t* _pOffsets)
+  {
+    if (m_pRenderContext->GetCommands())
+    {
+      m_pRenderContext->GetCommands()->IASetVertexBuffers(_uStartSlot, _uCount, _ppBuffers, _pStrides, _pOffsets);
+    }
+  }
+  // ------------------------------------
+  void CRender::SetIndexBuffer(ID3D11Buffer* _pBuffer, DXGI_FORMAT _eFormat, uint32_t _uOffset)
+  {
+    if (m_pRenderContext->GetCommands())
+    {
+      m_pRenderContext->GetCommands()->IASetIndexBuffer(_pBuffer, _eFormat, _uOffset);
+    }
+  }
+  // ------------------------------------
+  void CRender::SetShaderResources(render::EShader _eShaderStage, uint32_t _uStartSlot, uint32_t _uCount, ID3D11ShaderResourceView** _ppSRV)
+  {
+    switch (_eShaderStage)
+    {
+    case render::EShader::E_VERTEX: { m_pRenderContext->GetCommands()->VSSetShaderResources(_uStartSlot, _uCount, _ppSRV); } break;
+    case render::EShader::E_HULL: { m_pRenderContext->GetCommands()->HSSetShaderResources(_uStartSlot, _uCount, _ppSRV); } break;
+    case render::EShader::E_DOMAIN: { m_pRenderContext->GetCommands()->DSSetShaderResources(_uStartSlot, _uCount, _ppSRV); } break;
+    case render::EShader::E_GEOMETRY: { m_pRenderContext->GetCommands()->GSSetShaderResources(_uStartSlot, _uCount, _ppSRV); } break;
+    case render::EShader::E_PIXEL: { m_pRenderContext->GetCommands()->PSSetShaderResources(_uStartSlot, _uCount, _ppSRV); } break;
+    case render::EShader::E_COMPUTE: { m_pRenderContext->GetCommands()->CSSetShaderResources(_uStartSlot, _uCount, _ppSRV); } break;
+    }
+  }
+  // ------------------------------------
   void CRender::SetViewport(uint32_t _uWidth, uint32_t _uHeight)
   {
     if (!m_pRenderContext || !m_pRenderContext->GetCommands())
@@ -945,74 +1007,21 @@ namespace render
     return E_FAIL;
   }
   // ------------------------------------
-  void CRender::ComputeLightingPass(scene::CRenderScene& _rRenderScene)
-  {
-    // Apply lighting
-    render::lights::CLightManager* pLightManager = _rRenderScene.GetLightManager();
-    pLightManager->ApplyLighting();
-
-    // Set transform constant
-    m_oRenderPipeline.RenderCameraBuffer.Bind<render::EShader::E_PIXEL>(m_pRenderContext->GetCommands(), m_oRenderPipeline.CameraTransformSlot);
-
-    utils::CWeakPtr<render::lights::CDirectionalLight> pDirLight = pLightManager->GetDirectionalLight();
-    bool bCastShadows = pDirLight.IsValid() && pDirLight->CastShadows();
-    const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
-
-    // Shadow mapping texture
-    ID3D11ShaderResourceView* pShadowTexture = nullptr;
-    if (bCastShadows && lstShadowMaps.GetSize() > 0)
-    {
-      const utils::CWeakPtr<render::gfx::CShadowMap>& wpShadowMap = lstShadowMaps[0];
-      pShadowTexture = wpShadowMap->GetShaderResource().GetView();
-      m_pRenderContext->GetCommands()->PSSetSamplers(1, 1, &m_oRenderPipeline.ShadowSampler);
-      m_oRenderPipeline.LightingViewBuffer.Bind<render::EShader::E_PIXEL>(m_pRenderContext->GetCommands(), m_oRenderPipeline.LightingViewSlot);
-    }
-
-    // Bind (Depth + GBuffer + Shadow) textures 
-    static constexpr uint32_t uTexturesSize(5);
-    ID3D11ShaderResourceView* lstTexturesSRV[uTexturesSize] =
-    {
-      m_pDeferredRenderer->GetShaderResourceView(), // Depth
-      m_pDeferredRenderer->GetDiffuseRT().GetShaderResourceView(), // Render Target
-      m_pDeferredRenderer->GetNormalRT().GetShaderResourceView(), // Render Target
-      m_pDeferredRenderer->GetSpecularRT().GetShaderResourceView(), // Render Target
-      pShadowTexture // Shadow texture
-    };
-    m_pRenderContext->GetCommands()->PSSetShaderResources(0u, uTexturesSize, &lstTexturesSRV[0]);
-
-    // Bind buffers
-    SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, nullptr);
-
-    // Set default rasterizer
-    SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
-
-    // Attach shader to calculate lights (pixel shader)
-    m_oShaderManager.Bind(m_pRenderContext->GetCommands(), m_oRenderPipeline.DeferredLighting_ProgramID);
-
-    // Draw quad to apply lighting
-    DrawQuad();
-
-    // Set invalid shaders
-    ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize];
-    memset(lstEmptyTextures, NULL, sizeof(lstEmptyTextures));
-    m_pRenderContext->GetCommands()->PSSetShaderResources(0u, uTexturesSize, lstEmptyTextures);
-  }
-  // ------------------------------------
-  void CRender::DrawQuad()
+  void CRender::DrawQuad(ID3D11DepthStencilView* _pStencilView)
   {
     // Bind render target
-    SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u);
+    SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, _pStencilView);
 
     // Setup quad vertex buffer
-    m_pRenderContext->GetCommands()->IASetVertexBuffers(0u, 0u, nullptr, nullptr, nullptr);
-    m_pRenderContext->GetCommands()->IASetInputLayout(nullptr);
-    m_pRenderContext->GetCommands()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    SetVertexBuffers(0u, 0u, nullptr, nullptr, nullptr);
+    SetInputLayout(nullptr);
 
     // Draw quad as fake triangle!
     const uint16_t uVertexCount = 3, uStartVertexLocation = 0;
     m_pRenderContext->GetCommands()->Draw(uVertexCount, uStartVertexLocation);
 
-    // Remove back buffer
+    // Remove render target
     SetRenderTargets(nullptr, 0u);
   }
   // ------------------------------------
@@ -1029,8 +1038,8 @@ namespace render
       uint32_t lstStrides[uBuffersCount] = { sizeof(render::gfx::TVertexData), sizeof(render::gfx::TModelInstanceData) };
       uint32_t lstOffsets[uBuffersCount] = { 0, 0 };
 
-      m_pRenderContext->GetCommands()->IASetVertexBuffers(0, uBuffersCount, pBuffers, lstStrides, lstOffsets);
-      m_pRenderContext->GetCommands()->IASetIndexBuffer(_rScene.GetModelsIB(), DXGI_FORMAT_R32_UINT, uIndexOffset);
+      SetVertexBuffers(0u, uBuffersCount, pBuffers, lstStrides, lstOffsets);
+      SetIndexBuffer(_rScene.GetModelsIB(), DXGI_FORMAT_R32_UINT, uIndexOffset);
     }
 
     const scene::TModels& lstModels = _rScene.GetModels();
@@ -1073,7 +1082,7 @@ namespace render
     m_pRenderContext->GetCommands()->Unmap(m_oRenderPipeline.RenderInstancesBuffer, 0);
 
     // Set topology
-    m_pRenderContext->GetCommands()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
     // Set values
     uint32_t uVtxOffset = _pModel->GetVtxBufferHandler().BeginOffset;
@@ -1110,8 +1119,8 @@ namespace render
     {
       // Set primitives global buffers
       ID3D11Buffer* pPrimitiveBuffers[uBuffersCount] = { _rRenderScene.GetPrimitivesVB(), m_oRenderPipeline.PrimitiveInstancesBuffer };
-      m_pRenderContext->GetCommands()->IASetVertexBuffers(0, uBuffersCount, pPrimitiveBuffers, lstStrides, lstOffsets);
-      m_pRenderContext->GetCommands()->IASetIndexBuffer(_rRenderScene.GetPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
+      SetVertexBuffers(0, uBuffersCount, pPrimitiveBuffers, lstStrides, lstOffsets);
+      SetIndexBuffer(_rRenderScene.GetPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
       const scene::TPrimitives& lstPrimitives = _rRenderScene.GetPrimitives();
       for (uint16_t uI = 0; uI < uDrawableCount; uI++)
@@ -1129,8 +1138,8 @@ namespace render
     {
       // Set debug global buffers
       ID3D11Buffer* pDebugPrimitiveBuffers[uBuffersCount] = { _rRenderScene.GetDebugPrimitivesVB(), m_oRenderPipeline.PrimitiveInstancesBuffer };
-      m_pRenderContext->GetCommands()->IASetVertexBuffers(0, uBuffersCount, pDebugPrimitiveBuffers, lstStrides, lstOffsets);
-      m_pRenderContext->GetCommands()->IASetIndexBuffer(_rRenderScene.GetDebugPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
+      SetVertexBuffers(0, uBuffersCount, pDebugPrimitiveBuffers, lstStrides, lstOffsets);
+      SetIndexBuffer(_rRenderScene.GetDebugPrimitivesIB(), DXGI_FORMAT_R32_UINT, 0);
 
       for (uint16_t uI = 0; uI < uDrawableCount; uI++)
       {
@@ -1167,8 +1176,7 @@ namespace render
     m_pRenderContext->GetCommands()->Unmap(m_oRenderPipeline.PrimitiveInstancesBuffer, 0);
 
     // Set topology
-    D3D11_PRIMITIVE_TOPOLOGY eTargetTopology = GetTopology(_pPrimitive->GetRenderMode());
-    m_pRenderContext->GetCommands()->IASetPrimitiveTopology(eTargetTopology);
+    SetPrimitiveTopology(GetTopology(_pPrimitive->GetRenderMode()));
 
     // Set values - we don't currently support real primitive instances!
     uint32_t uIdxCount = _pPrimitive->GetIndexCount();
@@ -1179,8 +1187,3 @@ namespace render
     m_pRenderContext->GetCommands()->DrawIndexedInstanced(uIdxCount, 1u, uIdxOffset, uVtxOffset, 0u);
   }
 }
-
-
-
-
-

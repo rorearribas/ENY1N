@@ -132,9 +132,6 @@
     <ClInclude Include="Render\Graphics\ShadowMap.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="Render\Renderers\LightingRenderer.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Render\Renderers\DeferredRenderer.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -163,6 +160,18 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="Render\RenderContext\RenderContext.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderContext\RenderCommandsDX11.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\RenderContext\RenderDeviceDX11.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Managers\ShaderManager.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Render\Managers\TextureManager.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>
@@ -266,9 +275,6 @@
     <ClCompile Include="Render\Graphics\ShadowMap.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="Render\Renderers\LightingRenderer.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="Render\Renderers\DeferredRenderer.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
@@ -291,6 +297,18 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Render\RenderContext\RenderContext.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\RenderContext\RenderCommandsDX11.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\RenderContext\RenderDeviceDX11.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Managers\ShaderManager.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Render\Managers\TextureManager.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>

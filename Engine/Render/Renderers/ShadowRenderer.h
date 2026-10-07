@@ -14,13 +14,7 @@ namespace render
     void PrepareFrame() override {}
     void Draw(scene::CRenderScene& _rRenderScene) override;
 
-    void SetShadowCamera(CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
-    const CCamera& GetShadowCamera() const { return *m_pShadowCamera; }
-
   private:
     ID3D11RasterizerState* m_pShadowsRasterizer = nullptr;
-    CCamera* m_pShadowCamera = nullptr;
   };
 }
-
-

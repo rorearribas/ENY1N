@@ -19,6 +19,9 @@ namespace render
     // Deferred pass
     m_pRender->BeginMarker(internal::s_sForwardPassMrk);
     {
+      // Set forward pass
+      m_pRender->PushForwardPass(*m_pRenderCamera);
+
       // Cache primitives
       _rRenderScene.CachePrimitives(*m_pRenderCamera);
 #ifdef _DEBUG

@@ -20,7 +20,6 @@ namespace render { namespace mat { class CMaterial; } }
 namespace render { class CShadowRenderer; }
 namespace render { class CDeferredRenderer; }
 namespace render { class CForwardRenderer; }
-namespace render { class CLightingRenderer; }
 namespace render { class CImGuiRenderer; }
 
 namespace render
@@ -75,22 +74,26 @@ namespace render
     void PrepareFrame();
     void Draw(scene::CRenderScene& _rScene);
 
-    inline const render::CRenderWindow* GetRenderWindow() const { return m_pRenderWindow.get(); }
+    inline void SetRenderCamera(render::CCamera* _pCamera) { m_pRenderCamera = _pCamera; }
+    inline render::CRenderWindow& GetRenderWindow() const { return *m_pRenderWindow; }
+
     render::CRenderDeviceDX11& GetDevice();
     render::CRenderCommandsDX11& GetCommands();
-    CTextureManager& GetTextureManager() { return m_oTextureManager; }
 
-    inline void SetRenderCamera(render::CCamera* _pCamera) { m_pRenderCamera = _pCamera; }
-    inline void SetShadowCamera(render::CCamera* _pCamera) { m_pShadowCamera = _pCamera; }
+    CTextureManager& GetTextureManager() { return m_oTextureManager; }
+    CShaderManager& GetShaderManager() { return m_oShaderManager; }
 
     void ShowRenderWindow(bool _bStatus);
     void SetFillMode(D3D11_FILL_MODE _eFillMode);
 
     void PushMaterial(const render::mat::CMaterial* _pMaterial);
-
     void PushCameraTransform(const CCamera& _RenderCamera);
-    void PushLightingTransform(const CCamera& _RenderCamera);
-    void PushShadowMappingPass();
+    void PushLightingViewTransform(const CCamera& _RenderCamera);
+
+    void PushShadowMappingPass(const CCamera& _RenderCamera);
+    void PushGBufferPass(const CCamera& _RenderCamera);
+    void PushLightingPass(const CCamera& _RenderCamera);
+    void PushForwardPass(const CCamera& _RenderCamera);
 
     void BeginMarker(const wchar_t* _sMarker) const;
     void EndMarker() const;
@@ -114,12 +117,17 @@ namespace render
     void SetDepthStencilState(ID3D11DepthStencilState* _pDepthStencilState, uint32_t _uStencilRef = 0);
     HRESULT CreateDepthStencilState(D3D11_DEPTH_STENCIL_DESC& _rDesc, ID3D11DepthStencilState** _ppDepthStencilState);
 
+    void SetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY _eTopology);
+    void SetVertexBuffers(uint32_t _uStartSlot, uint32_t _uCount, ID3D11Buffer** _ppBuffers, const uint32_t* _pStrides, const uint32_t* _pOffsets);
+    void SetIndexBuffer(ID3D11Buffer* _pBuffer, DXGI_FORMAT _eFormat, uint32_t _uOffset);
+    void SetShaderResources(render::EShader _eShaderStage, uint32_t _uStartSlot, uint32_t _uCount, ID3D11ShaderResourceView** _ppSRV);
+
     void SetViewport(uint32_t _uWidth, uint32_t _uHeight);
     void SetScissorRect(uint32_t _uWidth, uint32_t _uHeight);
 
     void DrawPrimitives(scene::CRenderScene& _rRenderScene);
     void DrawModels(scene::CRenderScene& _rRenderScene);
-    void DrawQuad();
+    void DrawQuad(ID3D11DepthStencilView* _pStencilView = nullptr);
 
   protected:
     void OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight);
@@ -146,10 +154,6 @@ namespace render
     D3D_PRIMITIVE_TOPOLOGY GetTopology(render::ERenderMode _eRenderMode);
 
   private:
-    // Deferred
-    void ComputeLightingPass(scene::CRenderScene& _rRenderScene);
-
-  private:
     void DrawModel(const render::gfx::CModel* _pModel, const scene::TCachedModel& _rCachedModel);
     void DrawPrimitive(const render::gfx::CPrimitive* _pPrimitive);
 
@@ -161,14 +165,11 @@ namespace render
     CShaderManager m_oShaderManager = CShaderManager();
     CTextureManager m_oTextureManager = CTextureManager();
 
-    bool m_bVerticalSync = false;
-
     render::CCamera* m_pRenderCamera = nullptr;
-    render::CCamera* m_pShadowCamera = nullptr;
+    bool m_bVerticalSync = false;
 
     std::unique_ptr<render::CShadowRenderer> m_pShadowRenderer = nullptr;
     std::unique_ptr<render::CDeferredRenderer> m_pDeferredRenderer = nullptr;
-    std::unique_ptr<render::CLightingRenderer> m_pLightingRenderer = nullptr;
     std::unique_ptr<render::CForwardRenderer> m_pForwardRenderer = nullptr;
     std::unique_ptr<render::CImGuiRenderer> m_pImGuiRenderer = nullptr;
   };

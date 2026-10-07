@@ -37,9 +37,8 @@ namespace engine
     m_pSceneManager = std::make_unique<scene::CSceneManager>(m_pRender->GetDevice(), m_pRender->GetCommands());
     m_pSceneManager->SetSceneEnabled(0, true);
 
-    // Set cameras
+    // Set render camera
     m_pRender->SetRenderCamera(m_pSceneManager->GetRenderCamera());
-    m_pRender->SetShadowCamera(m_pSceneManager->GetShadowCamera());
 
     // Set delegate
     utils::CDelegate<void(uint32_t, uint32_t)> rDelegate(&CEngine::OnWindowResizeEvent, this);

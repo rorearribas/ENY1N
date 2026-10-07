@@ -46,8 +46,10 @@ namespace render
     ~CShaderManager() = default;
 
     HRESULT RegisterProgram(const CRenderDeviceDX11& _rRenderDevice, const TShaderProgramData& _rProgramData, uintptr_t& _uProgramID);
-    void Bind(const CRenderCommandsDX11& _rCommands, uintptr_t _uProgramID) const;
-    const TPrograms& GetPrograms() const { return m_lstPrograms; }
+    void BindProgram(const CRenderCommandsDX11& _rCommands, uintptr_t _uProgramID) const;
+
+    const TShaderProgram& FindProgram(uintptr_t _uProgramID) const;
+    inline const TPrograms& GetPrograms() const { return m_lstPrograms; }
 
   private:
     HRESULT InitProgram(const CRenderDeviceDX11& _rRenderDevice, TShaderProgram& _rShaderProgram, const TShaderProgramData& _rProgramData);

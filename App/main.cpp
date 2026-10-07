@@ -278,10 +278,9 @@ int main()
         ImGuiWindowFlags_NoNav;
 
       uint32_t uWidth = 0, uHeight = 0;
-      if (const render::CRenderWindow* pRenderWindow = rRender.GetRenderWindow())
-      {
-        pRenderWindow->GetWindowSize(uWidth, uHeight);
-      }
+      const render::CRenderWindow& rRenderWindow = rRender.GetRenderWindow();
+      rRenderWindow.GetWindowSize(uWidth, uHeight);
+
       ImGui::SetNextWindowPos(ImVec2(static_cast<float>(uWidth - 160.0f), 30.0f));
       if (ImGui::Begin("Watermark", nullptr, iFlags))
       {

@@ -38,15 +38,15 @@ namespace buffertypes
   {
     // 12 + 4 Bytes
     math::CVector3 DiffuseColor;
-    int HasDiffuseTexture;
+    int32_t HasDiffuseTexture;
 
     // 12 + 4 Bytes
     math::CVector3 SpecularColor;
-    int HasSpecularTexture;
+    int32_t HasSpecularTexture;
 
     // 4 + 12 Bytes;
-    int HasNormalTexture;
-    int Padding[3];
+    int32_t HasNormalTexture;
+    float Padding[3];
   };
 
   // Directional lights [32 Bytes]
@@ -98,8 +98,8 @@ namespace buffertypes
     TSpotLight SpotLights[MAX_SPOT_LIGHTS];
 
     // Handle lights [16 Bytes]
-    int RegisteredPointLights;
-    int RegisteredSpotLights;
+    int32_t RegisteredPointLights;
+    int32_t RegisteredSpotLights;
     float Padding[2];
   };
 }

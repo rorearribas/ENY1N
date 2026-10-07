@@ -6,6 +6,9 @@ namespace render
 {
   namespace internal
   {
+    static const wchar_t* s_sGBufferPassMrk(L"GBuffer");
+    static const wchar_t* s_sComputeLightingMrk(L"LightingPass");
+
     static constexpr uint32_t uRenderTargets(3);
     static const float s_v4ClearColor[4] = { 1.0f, 1.0f, 1.0f, 1.0f };
   }
@@ -111,26 +114,77 @@ namespace render
   // ------------------------------------
   void CDeferredRenderer::Draw(scene::CRenderScene& _rRenderScene)
   {
-    // Set render targets
-    ID3D11RenderTargetView* lstGBufferRTs[internal::uRenderTargets] =
+    m_pRender->BeginMarker(internal::s_sGBufferPassMrk);
     {
-      m_pDiffuseRT->GetRenderTargetView(),
-      m_pNormalRT->GetRenderTargetView(),
-      m_pSpecularRT->GetRenderTargetView()
-    };
+      // Set gbuffer pass
+      m_pRender->PushGBufferPass(*m_pRenderCamera);
 
-    m_pRender->SetRenderTargets(lstGBufferRTs, internal::uRenderTargets, GetDepthStencilView()); // Set render targets
-    m_pRender->SetDepthStencilState(m_pDepthStencilState, 1u); // Set depth stencil state
+      // Set render targets
+      ID3D11RenderTargetView* lstGBufferRTs[internal::uRenderTargets] =
+      {
+        m_pDiffuseRT->GetRenderTargetView(),
+        m_pNormalRT->GetRenderTargetView(),
+        m_pSpecularRT->GetRenderTargetView()
+      };
 
-    // Cache models
-    _rRenderScene.CacheModels(*m_pRenderCamera);
+      m_pRender->SetRenderTargets(lstGBufferRTs, internal::uRenderTargets, GetDepthStencilView()); // Set render targets
+      m_pRender->SetDepthStencilState(m_pDepthStencilState, 1u); // Set depth stencil state
 
-    // Draw models
-    m_pRender->DrawModels(_rRenderScene);
+      // Cache models
+      _rRenderScene.CacheModels(*m_pRenderCamera);
 
-    // Detach render targets
-    ID3D11RenderTargetView* lstEmptyRTs[internal::uRenderTargets] = { nullptr, nullptr, nullptr };
-    m_pRender->SetRenderTargets(lstEmptyRTs, internal::uRenderTargets);
+      // Draw models
+      m_pRender->DrawModels(_rRenderScene);
+
+      // Detach render targets
+      ID3D11RenderTargetView* lstEmptyRTs[internal::uRenderTargets] = { nullptr, nullptr, nullptr };
+      m_pRender->SetRenderTargets(lstEmptyRTs, internal::uRenderTargets);
+    }
+    m_pRender->EndMarker();
+
+    // Lighting pass
+    m_pRender->BeginMarker(internal::s_sComputeLightingMrk);
+    {
+      // Update lighting
+      render::lights::CLightManager* pLightManager = _rRenderScene.GetLightManager();
+      pLightManager->PushLights();
+
+      utils::CWeakPtr<render::lights::CDirectionalLight> pDirLight = pLightManager->GetDirectionalLight();
+      bool bCastShadows = pDirLight.IsValid() && pDirLight->CastShadows();
+      const lights::CLightManager::TShadowMaps& lstShadowMaps = pLightManager->GetShadowMaps();
+
+      // Set gbuffer pass
+      m_pRender->PushLightingPass(*m_pRenderCamera);
+
+      // Get shadow mapping texture
+      ID3D11ShaderResourceView* pShadowTexture = nullptr;
+      if (bCastShadows && lstShadowMaps.GetSize() > 0)
+      {
+        const utils::CWeakPtr<render::gfx::CShadowMap>& wpShadowMap = lstShadowMaps[0];
+        pShadowTexture = wpShadowMap->GetShaderResource().GetView();
+      }
+
+      // Bind (Depth + GBuffer + Shadow) textures 
+      static constexpr uint32_t uTexturesSize(5);
+      ID3D11ShaderResourceView* lstTexturesSRV[uTexturesSize] =
+      {
+        m_oDepthStencilShader.GetView(), // Depth
+        GetDiffuseRT().GetShaderResourceView(), // Render Target
+        GetNormalRT().GetShaderResourceView(), // Render Target
+        GetSpecularRT().GetShaderResourceView(), // Render Target
+        pShadowTexture // Shadow texture
+      };
+      m_pRender->SetShaderResources(render::EShader::E_PIXEL, 0u, uTexturesSize, lstTexturesSRV);
+
+      // Draw quad to apply lighting
+      m_pRender->DrawQuad(nullptr);
+
+      // Set invalid shaders
+      ID3D11ShaderResourceView* lstEmptyTextures[uTexturesSize];
+      memset(lstEmptyTextures, NULL, sizeof(lstEmptyTextures));
+      m_pRender->SetShaderResources(render::EShader::E_PIXEL, 0u, uTexturesSize, lstEmptyTextures);
+    }
+    m_pRender->EndMarker();
   }
   // ------------------------------------
   HRESULT CDeferredRenderer::SetupRenderTargets(const CRenderDeviceDX11& _rRenderDevice, uint32_t _uWidth, uint32_t _uHeight)

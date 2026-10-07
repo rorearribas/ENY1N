@@ -24,7 +24,7 @@ namespace render
     return S_OK;
   }
   // ------------------------------------
-  void CShaderManager::Bind(const CRenderCommandsDX11& _rCommands, uintptr_t _uProgramID) const
+  void CShaderManager::BindProgram(const CRenderCommandsDX11& _rCommands, uintptr_t _uProgramID) const
   {
     auto it = m_lstPrograms.find(_uProgramID);
     if (it == m_lstPrograms.end())
@@ -36,6 +36,16 @@ namespace render
     const TShaderProgram* pProgram = &it->second;
     _rCommands->VSSetShader(pProgram->Vertex.IsValid() ? pProgram->Vertex.GetShader() : nullptr, nullptr, 0u);
     _rCommands->PSSetShader(pProgram->Pixel.IsValid() ? pProgram->Pixel.GetShader() : nullptr, nullptr, 0u);
+  }
+  // ------------------------------------
+  const render::TShaderProgram& CShaderManager::FindProgram(uintptr_t _uProgramID) const
+  {
+    auto it = m_lstPrograms.find(_uProgramID);
+    if (it == m_lstPrograms.end())
+    {
+      throw std::runtime_error("Shader program not found!");
+    }
+    return it->second;
   }
   // ------------------------------------
   HRESULT CShaderManager::InitProgram(const CRenderDeviceDX11& _rRenderDevice, TShaderProgram& _rShaderProgram, const TShaderProgramData& _rProgramData)

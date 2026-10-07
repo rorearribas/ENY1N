@@ -29,15 +29,7 @@ namespace render
       return m_oLightingBuffer.Init(*m_pRenderDevice);
     }
     // ------------------------------------
-    void CLightManager::ComputeShadows()
-    {
-      if (m_lstShadowMaps.IsEmpty())
-      {
-        return;
-      }
-    }
-    // ------------------------------------
-    void CLightManager::ApplyLighting()
+    void CLightManager::PushLights()
     {
       // Get data
       TLightingData rLightingData = TLightingData();
@@ -64,7 +56,7 @@ namespace render
         rLightingData.PointLights[uIndex].Intensity = wpPointLight->GetIntensity();
       }
       // Set the number of registered point lights
-      rLightingData.RegisteredPointLights = static_cast<int>(m_lstPointLights.GetSize());
+      rLightingData.RegisteredPointLights = static_cast<int32_t>(m_lstPointLights.GetSize());
 
       // Update spot lights
       for (uint32_t uIndex = 0; uIndex < m_lstSpotLights.GetSize(); uIndex++)
@@ -80,7 +72,7 @@ namespace render
         rLightingData.SpotLights[uIndex].Intensity = wpSpotLight->GetIntensity();
       }
       // Set the number of registered spot lights
-      rLightingData.RegisteredSpotLights = static_cast<int>(m_lstSpotLights.GetSize());
+      rLightingData.RegisteredSpotLights = static_cast<int32_t>(m_lstSpotLights.GetSize());
 
       // Write buffer
       bool bOk = m_oLightingBuffer.WriteBuffer(*m_pCommands, rLightingData);

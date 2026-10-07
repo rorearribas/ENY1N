@@ -164,7 +164,6 @@
     <ClInclude Include="Render\Buffers\RenderBuffer.h" />
     <ClInclude Include="Render\Renderers\Renderer.h" />
     <ClInclude Include="Render\Renderers\ForwardRenderer.h" />
-    <ClInclude Include="Render\Renderers\LightingRenderer.h" />
     <ClInclude Include="Render\Renderers\DeferredRenderer.h" />
     <ClInclude Include="Render\Graphics\Decal.h" />
     <ClInclude Include="Managers\MemoryTracker.h" />
@@ -215,7 +214,6 @@
     <ClCompile Include="Render\Managers\TextureManager.cpp" />
     <ClCompile Include="Render\Renderers\ImGuiRenderer.cpp" />
     <ClCompile Include="Render\Renderers\ForwardRenderer.cpp" />
-    <ClCompile Include="Render\Renderers\LightingRenderer.cpp" />
     <ClCompile Include="Render\Renderers\DeferredRenderer.cpp" />
     <ClCompile Include="Render\Graphics\ShadowMap.cpp" />
     <ClCompile Include="Render\Graphics\Decal.cpp" />
@@ -381,6 +379,3 @@
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
 </Project>
-
-
-

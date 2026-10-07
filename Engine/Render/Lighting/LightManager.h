@@ -41,8 +41,7 @@ namespace render
       ~CLightManager();
 
       // Push lights
-      void ApplyLighting();
-      void ComputeShadows();
+      void PushLights();
 
       // Handle lights
       utils::CWeakPtr<render::lights::CDirectionalLight> GetDirectionalLight();
