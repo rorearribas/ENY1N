@@ -20,7 +20,7 @@ namespace render
       CMesh(const CMesh& _rOther) = delete;
       CMesh& operator=(const CMesh& _rOther) = delete;
 
-      // Material
+      // Material -> Ids!!!
       inline render::mat::CMaterial* GetMaterial() const { return m_pMaterial.get(); }
       inline void SetMaterial(std::unique_ptr<render::mat::CMaterial> _pMaterial) { m_pMaterial = std::move(_pMaterial); }
 

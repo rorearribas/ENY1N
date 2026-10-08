@@ -44,7 +44,7 @@ namespace scene
     return pScene->DestroyModel(_wpModel_);
   }
   // ------------------------------------
-  utils::CWeakPtr<render::gfx::CPrimitive> const CSceneManager::CreatePrimitive(const render::EPrimitive& _ePrimitiveType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
+  utils::CWeakPtr<render::gfx::CPrimitive> const CSceneManager::CreatePrimitive(render::EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
   {
     if (static_cast<size_t>(_uSceneIndex) > (m_lstScenes.GetSize() - 1))
     {

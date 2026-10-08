@@ -19,14 +19,14 @@ namespace render { namespace lights { class CDirectionalLight; } }
 
 namespace scene
 {
-  // Models memory limits
+  // Models budget
   constexpr uint32_t MAX_MODELS_VB_SIZE = 1024u * 1024u * 256u;
   constexpr uint32_t MAX_MODELS_IB_SIZE = 1024u * 1024u * 128u;
-  // Primitives memory limits
+  // Primitives budget
   constexpr uint32_t MAX_PRIMITIVES_VB_SIZE = 1024u * 1024u * 32u;
   constexpr uint32_t MAX_PRIMITIVES_IB_SIZE = 1024u * 1024u * 16u;
 #ifdef _DEBUG
-  // Debug primitives memory limits
+  // Debug primitives budget
   constexpr uint32_t MAX_DEBUG_PRIMITIVES_VB_SIZE = 1024u * 1024u * 128u;
   constexpr uint32_t MAX_DEBUG_PRIMITIVES_IB_SIZE = 1024u * 1024u * 64u;
 #endif
@@ -96,7 +96,7 @@ namespace scene
     ID3D11Buffer* GetModelsIB() const { return m_oModelsIB; }
 
     // Handle primitives
-    utils::CWeakPtr<render::gfx::CPrimitive> const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode);
+    utils::CWeakPtr<render::gfx::CPrimitive> const CreatePrimitive(render::EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode);
     bool DestroyPrimitive(utils::CWeakPtr<render::gfx::CPrimitive> _pPrimitive_);
 
     // Buffers - Primitives

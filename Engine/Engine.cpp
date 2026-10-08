@@ -69,9 +69,9 @@ namespace engine
     m_pSceneManager->GetShadowCamera()->FlushState();
   }
   // ------------------------------------
-  utils::CWeakPtr<render::gfx::CPrimitive> const CEngine::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
+  utils::CWeakPtr<render::gfx::CPrimitive> const CEngine::CreatePrimitive(render::EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex)
   {
-    return m_pSceneManager->CreatePrimitive(_eType, _eRenderMode, _uSceneIndex);
+    return m_pSceneManager->CreatePrimitive(_ePrimitiveType, _eRenderMode, _uSceneIndex);
   }
   // ------------------------------------
   bool CEngine::DestroyPrimitive(utils::CWeakPtr<render::gfx::CPrimitive> _pPrimitive_)

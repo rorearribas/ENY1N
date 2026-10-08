@@ -32,7 +32,9 @@ namespace render
       , m_bCullEnabled(_rOther.m_bCullEnabled)
       , m_bVisible(_rOther.m_bVisible)  
     {
-      memcpy(m_sAssetPath, _rOther.m_sAssetPath, strlen(_rOther.m_sAssetPath));
+      strcpy_s(m_sAssetPath, sizeof(m_sAssetPath), _rOther.m_sAssetPath);
+      _rOther.m_uMeshesCount = 0u;
+      _rOther.m_sAssetPath[0] = '\0';
     }
     // ------------------------------------
     render::gfx::CModel& CModel::operator=(CModel&& _rOther) noexcept
@@ -40,6 +42,7 @@ namespace render
       if (this != &_rOther)
       {
         Clear();
+
         m_lstMeshes = std::move(_rOther.m_lstMeshes);
         m_lstInstances = std::move(_rOther.m_lstInstances);
 
@@ -51,7 +54,9 @@ namespace render
         m_bCullEnabled = _rOther.m_bCullEnabled;
         m_bVisible = _rOther.m_bVisible;
 
-        strncpy_s(m_sAssetPath, _rOther.m_sAssetPath, sizeof(m_sAssetPath) - 1);
+        strcpy_s(m_sAssetPath, sizeof(m_sAssetPath), _rOther.m_sAssetPath);
+        _rOther.m_uMeshesCount = 0u;
+        _rOther.m_sAssetPath[0] = '\0';
       }
       return *this;
     }

@@ -14,7 +14,7 @@ namespace render
     static constexpr uint32_t s_uSubvH = 12;
     static constexpr uint32_t s_uSubvV = 12;
 
-    // Triangle Primitive
+    // 2D Triangle Primitive
     const std::vector<math::CVector3> CPrimitiveUtils::s_oTrianglePrimitive =
     {
       { math::CVector3(0.0f, 0.5f, 0.0f),    },
@@ -22,7 +22,7 @@ namespace render
       { math::CVector3(-0.5f, -0.5f,  0.0f), },
     };
 
-    // Square primitive
+    // 2D Square primitive
     const std::vector<math::CVector3> CPrimitiveUtils::s_oSquarePrimitive =
     {
       { math::CVector3(-0.5f, -0.5f, 0.5f) },
@@ -31,7 +31,7 @@ namespace render
       { math::CVector3(0.5f, -0.5f, 0.5f)  }
     };
 
-    // Cube Primitive
+    // 3D Cube Primitive
     const std::vector<math::CVector3> CPrimitiveUtils::s_oCubePrimitive =
     {
       // FRONT
@@ -71,8 +71,8 @@ namespace render
       { math::CVector3(0.5f, -0.5f, -0.5f),  },
     };
 
-    // Plane Primitive
-    static const math::CVector3 s_oPlaneNormal(0.0f, 1.0f, 0.0f);
+    // 3D Plane Primitive
+    static math::CVector3 s_v3PlaneNormal(0.0f, 1.0f, 0.0f);
     const std::vector<math::CVector3> CPrimitiveUtils::s_oPlanePrimitive =
     {
       { math::CVector3(-0.5f, 0.0f, -0.5f) }, // Bottom-left
@@ -170,7 +170,7 @@ namespace render
         {
           // Create 3D Cube
           rPrimitiveData.Vertices = CPrimitiveUtils::s_oCubePrimitive;
-          rPrimitiveData.Indices = _eRenderMode == (render::ERenderMode::SOLID) ? s_oCubeIndices : s_oWireframeCubeIndices;
+          rPrimitiveData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ? s_oCubeIndices : s_oWireframeCubeIndices;
         }
         break;
         case EPrimitive::E3D_SPHERE:
@@ -180,7 +180,7 @@ namespace render
           CreateSphere(s_fStandardRadius, s_uSubvH, s_uSubvV, lstVertices);
 
           // Get indices
-          const std::vector<uint32_t>& lstIndices = _eRenderMode == (render::ERenderMode::SOLID) ?
+          const std::vector<uint32_t>& lstIndices = (_eRenderMode == render::ERenderMode::SOLID) ?
           GetSphereIndices(s_uSubvH, s_uSubvV) : GetWireframeSphereIndices(s_uSubvH, s_uSubvV);
 
           rPrimitiveData.Vertices = lstVertices;
@@ -197,7 +197,7 @@ namespace render
         {
           // Create 3D Plane
           rPrimitiveData.Vertices = s_oPlanePrimitive;
-          rPrimitiveData.Indices = _eRenderMode == (render::ERenderMode::SOLID) ? s_oPlaneIndices : s_oWireframePlaneIndices;
+          rPrimitiveData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ? s_oPlaneIndices : s_oWireframePlaneIndices;
         }
         break;
         // 2D Implementation
@@ -205,7 +205,7 @@ namespace render
         {
           // Create 2D Square
           rPrimitiveData.Vertices = CPrimitiveUtils::s_oSquarePrimitive;
-          rPrimitiveData.Indices = _eRenderMode == (render::ERenderMode::SOLID) ? s_oSquareIndices : s_oSquareWireframeIndices;
+          rPrimitiveData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ? s_oSquareIndices : s_oSquareWireframeIndices;
         }
         break;
         case EPrimitive::E2D_CIRCLE:
@@ -218,7 +218,7 @@ namespace render
         {
           // Create 2D Triangle
           rPrimitiveData.Vertices = s_oTrianglePrimitive;
-          rPrimitiveData.Indices = _eRenderMode == (render::ERenderMode::SOLID) ? s_oTriangleIndices : s_oWireframeTriangleIndices;
+          rPrimitiveData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ? s_oTriangleIndices : s_oWireframeTriangleIndices;
         }
         break;
       }
@@ -235,9 +235,9 @@ namespace render
       // Create primitive
       TPrimitiveData rCustomData = TPrimitiveData();
 
+      // Add middle vertex
       if (_eRenderMode == ERenderMode::SOLID)
       {
-        // Middle vertex
         rCustomData.Vertices.emplace_back(math::CVector3::Zero);
       }
 
@@ -251,9 +251,9 @@ namespace render
 
       switch (_eRenderMode)
       {
-      case render::ERenderMode::SOLID: rCustomData.Indices = GetCircleIndices(_uSegments); break;
-      case render::ERenderMode::WIREFRAME: rCustomData.Indices = GetWireframeCircleIndices(_uSegments); break;
-      default: break;
+        case render::ERenderMode::SOLID: rCustomData.Indices = GetCircleIndices(_uSegments); break;
+        case render::ERenderMode::WIREFRAME: rCustomData.Indices = GetWireframeCircleIndices(_uSegments); break;
+        default: break;
       }
 
       return rCustomData;
@@ -286,7 +286,7 @@ namespace render
 
       // Invert indices
       const math::CVector3& v3Normal = _oPlane.GetNormal();
-      if (v3Normal.Dot(s_oPlaneNormal) < math::s_fEpsilon3)
+      if (v3Normal.Dot(s_v3PlaneNormal) < math::s_fEpsilon3)
       {
         size_t iSize = _eRenderMode == render::ERenderMode::SOLID ? 3 : 2;
         for (size_t i = 0; i < s_oPlaneIndices.size(); i += iSize)
@@ -297,7 +297,7 @@ namespace render
 
       // Calculate rotation
       math::CMatrix4x4 mRot = math::CMatrix4x4::Identity;
-      float fDot = math::CVector3::Dot(v3Normal, s_oPlaneNormal);
+      float fDot = math::CVector3::Dot(v3Normal, s_v3PlaneNormal);
       if (std::abs(fDot) > (1.0f - math::s_fEpsilon3))
       {
         // Rotate 180 degrees
@@ -308,8 +308,8 @@ namespace render
       }
       else
       {
-        math::CVector3 v3Dir = math::CVector3::Cross(v3Normal, s_oPlaneNormal);
-        float fAngle = math::CVector3::AngleBetween(s_oPlaneNormal, v3Normal);
+        math::CVector3 v3Dir = math::CVector3::Cross(v3Normal, s_v3PlaneNormal);
+        float fAngle = math::CVector3::AngleBetween(s_v3PlaneNormal, v3Normal);
         mRot = math::CMatrix4x4::RotationAxis(v3Dir, fAngle);
       }
 
@@ -340,7 +340,7 @@ namespace render
       float fDiff = fHalfHeight - _fRadius;
 
       // Semi sphere lambda
-      auto oCalcSemiSphereFunc = [&](bool _bInverse = false)
+      auto fnCalcSemiSphere = [&](bool _bInverse = false)
       {
         for (uint32_t uX = 0; uX <= _uSubvH; ++uX)
         {
@@ -365,7 +365,7 @@ namespace render
       };
 
       // Generate indices lambda in wireframe mode
-      auto oCalcWireIndicesFunc = [&](uint32_t _uStacks, uint32_t _uSlices, int _iBeginIdx)
+      auto fnCalcWireIndices = [&](uint32_t _uStacks, uint32_t _uSlices, int _iBeginIdx)
       {
         for (uint32_t uX = 0; uX < _uStacks; ++uX)
         {
@@ -385,7 +385,7 @@ namespace render
       };
 
       // Generate indices lambda in lit mode
-      auto oCalcIndicesFunc = [&](uint32_t _uStacks, uint32_t _uSlices, uint32_t _uBeginIdx, bool _bInverseCCW = false)
+      auto fnCalcIndices = [&](uint32_t _uStacks, uint32_t _uSlices, uint32_t _uBeginIdx, bool _bInverseCCW = false)
       {
         for (uint32_t uX = 0; uX < _uStacks; ++uX)
         {
@@ -407,14 +407,14 @@ namespace render
 
       // Top semi-sphere
       uint32_t uBeginIdx = static_cast<uint32_t>(rCustomPrimitive.Vertices.size());
-      oCalcSemiSphereFunc();
+      fnCalcSemiSphere();
       for (uint32_t uIdx = uBeginIdx; uIdx < static_cast<uint32_t>(rCustomPrimitive.Vertices.size()); ++uIdx)
       {
         rCustomPrimitive.Vertices[uIdx].y += (fDiff >= 0 ? fDiff : 0.0f);
       }
       // Compute top semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(_uSubvH, _uSubvV, uBeginIdx) :
-        oCalcWireIndicesFunc(_uSubvH, _uSubvV, uBeginIdx);
+      _eRenderMode == render::ERenderMode::SOLID ? fnCalcIndices(_uSubvH, _uSubvV, uBeginIdx) :
+        fnCalcWireIndices(_uSubvH, _uSubvV, uBeginIdx);
 
       // Body
       if (fDiff >= 0.0f)
@@ -433,21 +433,21 @@ namespace render
           }
         }
         // Compute body indices
-        _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(s_uMaxSubdv, _uSubvV, uBeginIdx, true) :
-          oCalcWireIndicesFunc(s_uMaxSubdv, _uSubvV, uBeginIdx);
+        _eRenderMode == render::ERenderMode::SOLID ? fnCalcIndices(s_uMaxSubdv, _uSubvV, uBeginIdx, true) :
+          fnCalcWireIndices(s_uMaxSubdv, _uSubvV, uBeginIdx);
       }
 
       // Bottom semi-sphere
       uBeginIdx = static_cast<int>(rCustomPrimitive.Vertices.size());
-      oCalcSemiSphereFunc(true);
+      fnCalcSemiSphere(true);
       for (int iIdx = uBeginIdx; iIdx < static_cast<int>(rCustomPrimitive.Vertices.size()); ++iIdx)
       {
         rCustomPrimitive.Vertices[iIdx].y -= (fDiff >= 0 ? fDiff : 0.0f);
       }
 
       // Compute bottom semi-sphere indices
-      _eRenderMode == render::ERenderMode::SOLID ? oCalcIndicesFunc(_uSubvH, _uSubvV, uBeginIdx, true) :
-        oCalcWireIndicesFunc(_uSubvH, _uSubvV, uBeginIdx);
+      _eRenderMode == render::ERenderMode::SOLID ? fnCalcIndices(_uSubvH, _uSubvV, uBeginIdx, true) :
+        fnCalcWireIndices(_uSubvH, _uSubvV, uBeginIdx);
 
       return rCustomPrimitive;
     }

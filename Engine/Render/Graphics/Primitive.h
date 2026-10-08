@@ -20,8 +20,8 @@ namespace render
       CPrimitive() = default;
       ~CPrimitive() = default;
 
-      CPrimitive(CPrimitive&& _rOther) noexcept;
-      CPrimitive& operator=(CPrimitive&& _rOther) noexcept;
+      CPrimitive(CPrimitive&& _rOther) noexcept = default;
+      CPrimitive& operator=(CPrimitive&& _rOther) noexcept = default;
       CPrimitive(const CPrimitive& _rOther) = delete;
       CPrimitive& operator=(const CPrimitive& _rOther) = delete;
 
@@ -41,7 +41,9 @@ namespace render
       inline const bool IsVisible() const { return m_bVisible; }
 
       inline void SetRenderMode(render::ERenderMode _eRenderMode) { m_eRenderMode = _eRenderMode; }
-      inline const ERenderMode& GetRenderMode() const { return m_eRenderMode; }
+      inline ERenderMode GetRenderMode() const { return m_eRenderMode; }
+      inline void SetPrimitiveType(render::EPrimitive _ePrimitiveType) { m_ePrimitiveType = _ePrimitiveType; }
+      inline render::EPrimitive GetPrimitiveType() const { return m_ePrimitiveType; }
 
       inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
       inline const math::CTransform& GetTransform() const { return m_oTransform; }
@@ -66,6 +68,8 @@ namespace render
       collision::CAABB m_oLocalAABB = collision::CAABB();
 
       ERenderMode m_eRenderMode = ERenderMode::SOLID;
+      EPrimitive m_ePrimitiveType = EPrimitive::INVALID;
+
       CBufferHandler m_oVtxBufferHandler = CBufferHandler();
       CBufferHandler m_oIdxBufferHandler = CBufferHandler();
 

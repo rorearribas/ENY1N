@@ -122,6 +122,7 @@ namespace render
     E3D_SPHERE,
     E3D_CAPSULE,
     E3D_PLANE,
+    E3D_LINE,
     E2D_SQUARE,
     E2D_CIRCLE,
     E2D_TRIANGLE,

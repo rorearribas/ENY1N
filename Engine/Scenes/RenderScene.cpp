@@ -183,7 +183,7 @@ namespace scene
     return m_lstCachedPrimitives;
   }
   // ------------------------------------
-  utils::CWeakPtr<render::gfx::CPrimitive> const CRenderScene::CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode)
+  utils::CWeakPtr<render::gfx::CPrimitive> const CRenderScene::CreatePrimitive(render::EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode)
   {
     if (m_lstPrimitives.GetSize() >= m_lstPrimitives.GetMaxSize())
     {
@@ -192,7 +192,7 @@ namespace scene
     }
 
     // Create primitive data
-    render::gfx::TPrimitiveData rPrimitiveData = render::gfx::CPrimitiveUtils::CreatePrimitive(_eType, _eRenderMode);
+    render::gfx::TPrimitiveData rPrimitiveData = render::gfx::CPrimitiveUtils::CreatePrimitive(_ePrimitiveType, _eRenderMode);
 
     // Vertex buffer
     CBufferHandler rVtxBufferHandler = CBufferHandler();
@@ -218,13 +218,16 @@ namespace scene
     assert(pPrimitive.IsValid()); // Sanity check
 #endif
 
-    // Set AABB
+    // Calculate AABB
     collision::CAABB rAABB = collision::CAABB();
     collision::ComputeLocalAABB(rPrimitiveData.Vertices, rAABB);
     pPrimitive->SetLocalAABB(rAABB);
 
-    // Setup
+    // Type
     pPrimitive->SetRenderMode(_eRenderMode);
+    pPrimitive->SetPrimitiveType(_ePrimitiveType);
+
+    // Buffers
     pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
     pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
 
@@ -239,12 +242,11 @@ namespace scene
   utils::CWeakPtr<render::gfx::CModel> const CRenderScene::LoadModel(const char* _sModelPath)
   {
     // Check preload model
-    utils::CWeakPtr<render::gfx::CModel> wpModel;
-    for (uint32_t uI = 0; uI < m_lstModels.GetSize(); uI++)
+    utils::CWeakPtr<render::gfx::CModel> wpModel = {};
+    for (uint32_t uModel = 0; uModel < m_lstModels.GetSize(); uModel++)
     {
-      utils::CWeakPtr<render::gfx::CModel> wpCurrentModel = m_lstModels[uI];
-      bool bPreloaded = wpCurrentModel->AllowInstancing() && (wpCurrentModel->GetAssetPath() == _sModelPath);
-      if (bPreloaded)
+      utils::CWeakPtr<render::gfx::CModel> wpCurrentModel = m_lstModels[uModel];
+      if (wpCurrentModel->AllowInstancing() && wpCurrentModel->GetAssetPath() == _sModelPath)
       {
         wpModel = wpCurrentModel;
         break;
@@ -258,8 +260,12 @@ namespace scene
     }
 
     // Create instance
-    if (wpModel.IsValid() && wpModel->CreateInstance().IsValid())
+    if (wpModel.IsValid() && wpModel->AllowInstancing())
     {
+      utils::CWeakPtr<render::gfx::CRenderInstance> wpInstance = wpModel->CreateInstance();
+#ifdef _DEBUG
+      assert(wpInstance.IsValid());
+#endif // DEBUG
       LOG("Created Instance! -> " << _sModelPath);
     }
     else
@@ -465,20 +471,23 @@ namespace scene
     assert(pPrimitive); // Sanity check
 #endif
 
-    // Set AABB
+    // Calculate AABB
     collision::CAABB rAABB = collision::CAABB();
     collision::ComputeLocalAABB(rPrimitiveData.Vertices, rAABB);
     pPrimitive->SetLocalAABB(rAABB);
 
     // Setup
-    pPrimitive->SetRenderMode(_eRenderMode);
-    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
-    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
-
-    // Set values
     pPrimitive->SetPos(_v3Pos);
     pPrimitive->SetRot(_v3Rot);
     pPrimitive->SetColor(_v3Color);
+
+    // Type
+    pPrimitive->SetPrimitiveType(render::EPrimitive::E3D_CAPSULE);
+    pPrimitive->SetRenderMode(_eRenderMode);
+
+    // Buffers
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
   }
   // ------------------------------------
   void CRenderScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -516,21 +525,24 @@ namespace scene
     assert(pPrimitive); // Sanity check
 #endif
 
-    // Set AABB
+    // Calculate AABB
     collision::CAABB rAABB = collision::CAABB();
     collision::ComputeLocalAABB(rPrimitiveData.Vertices, rAABB);
     pPrimitive->SetLocalAABB(rAABB);
 
     // Setup
-    pPrimitive->SetRenderMode(_eRenderMode);
-    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
-    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
-
-    // Set values
     pPrimitive->SetColor(_v3Color);
     pPrimitive->SetPos(_v3Pos);
     pPrimitive->SetRot(_v3Rot);
     pPrimitive->SetScl(_v3Size);
+
+    // Type
+    pPrimitive->SetPrimitiveType(render::EPrimitive::E3D_CUBE);
+    pPrimitive->SetRenderMode(_eRenderMode);
+
+    // Buffers
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
   }
   // ------------------------------------
   void CRenderScene::DrawSphere(const math::CVector3& _v3Pos, float _fRadius, int _iSubvH, int _iSubvV, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -546,8 +558,9 @@ namespace scene
     render::gfx::CPrimitiveUtils::CreateSphere(_fRadius, _iSubvH, _iSubvV, rPrimitiveData.Vertices);
 
     // Fill indices
-    rPrimitiveData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ?
-      render::gfx::CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) : render::gfx::CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
+    rPrimitiveData.Indices = (_eRenderMode == render::ERenderMode::SOLID) ? 
+    render::gfx::CPrimitiveUtils::GetSphereIndices(_iSubvH, _iSubvV) : 
+    render::gfx::CPrimitiveUtils::GetWireframeSphereIndices(_iSubvH, _iSubvV);
 
     // Vertex buffer
     CBufferHandler rVtxBufferHandler = CBufferHandler();
@@ -578,14 +591,17 @@ namespace scene
     collision::ComputeLocalAABB(rPrimitiveData.Vertices, rAABB);
     pPrimitive->SetLocalAABB(rAABB);
 
-    // Setup
-    pPrimitive->SetRenderMode(_eRenderMode);
-    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
-    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
-
     // Set values
     pPrimitive->SetPos(_v3Pos);
     pPrimitive->SetColor(_v3Color);
+
+    // Setup
+    pPrimitive->SetRenderMode(_eRenderMode);
+    pPrimitive->SetPrimitiveType(render::EPrimitive::E3D_SPHERE);
+
+    // Buffers
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
   }
   // ------------------------------------
   void CRenderScene::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
@@ -623,20 +639,23 @@ namespace scene
     assert(pPrimitive); // Sanity check
 #endif
 
-    // Set AABB
+    // Calculate AABB
     collision::CAABB rAABB = collision::CAABB();
     collision::ComputeLocalAABB(rPrimitiveData.Vertices, rAABB);
     pPrimitive->SetLocalAABB(rAABB);
-
-    // Setup
-    pPrimitive->SetRenderMode(_eRenderMode);
-    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
-    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
 
     // Set values
     pPrimitive->SetPos(_rPlane.GetPos());
     pPrimitive->SetScl(_v3Size);
     pPrimitive->SetColor(_v3Color);
+
+    // Type
+    pPrimitive->SetRenderMode(_eRenderMode);
+    pPrimitive->SetPrimitiveType(render::EPrimitive::E3D_PLANE);
+
+    // Buffers
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
   }
   // ------------------------------------
   void CRenderScene::DrawLine(const math::CVector3& _v3Start, const math::CVector3& _v3Dest, const math::CVector3& _v3Color)
@@ -674,19 +693,22 @@ namespace scene
     assert(pPrimitive); // Sanity check
 #endif
 
-    // Set AABB
+    // Calculate AABB
     collision::CAABB rAABB = collision::CAABB();
     collision::ComputeLocalAABB(rPrimitiveData.Vertices, rAABB);
     pPrimitive->SetLocalAABB(rAABB);
 
-    // Setup
-    pPrimitive->SetRenderMode(render::ERenderMode::WIREFRAME);
-    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
-    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
-
     // Set values
     pPrimitive->SetPos(math::CVector3::Zero);
     pPrimitive->SetColor(_v3Color);
+
+    // Setup
+    pPrimitive->SetRenderMode(render::ERenderMode::WIREFRAME);
+    pPrimitive->SetPrimitiveType(render::EPrimitive::E3D_LINE);
+
+    // Buffers
+    pPrimitive->SetVtxBufferHandler(rVtxBufferHandler);
+    pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
   }
   // ------------------------------------
   void CRenderScene::ClearDebugItems()

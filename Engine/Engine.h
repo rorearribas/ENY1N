@@ -39,7 +39,7 @@ namespace engine
     bool DestroyModel(utils::CWeakPtr<render::gfx::CModel> _wpModel_, uint32_t _uSceneIndex = 0);
 
     // Handle primitives
-    utils::CWeakPtr<render::gfx::CPrimitive> const CreatePrimitive(render::EPrimitive _eType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
+    utils::CWeakPtr<render::gfx::CPrimitive> const CreatePrimitive(render::EPrimitive _ePrimitiveType, render::ERenderMode _eRenderMode, uint32_t _uSceneIndex = 0);
     bool DestroyPrimitive(utils::CWeakPtr<render::gfx::CPrimitive> _pPrimitive_);
 
     // Handle lights
