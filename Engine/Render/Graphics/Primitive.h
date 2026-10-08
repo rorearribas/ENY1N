@@ -25,12 +25,15 @@ namespace render
       CPrimitive(const CPrimitive& _rOther) = delete;
       CPrimitive& operator=(const CPrimitive& _rOther) = delete;
 
+      void SetTransform(const math::CTransform& _rTransform);
+
       void SetPos(const math::CVector3& _v3Pos);
       inline const math::CVector3& GetPos() const { return m_oTransform.GetPos(); }
       void SetRot(const math::CVector3& _v3Rot);
       inline const math::CVector3& GetRot() const { return m_oTransform.GetRot(); }
       void SetScl(const math::CVector3& _v3Scl);
       inline const math::CVector3& GetScl() const { return m_oTransform.GetScl(); }
+
       inline void SetColor(const math::CVector3& _v3Color) { m_v3Color = _v3Color; }
       inline const math::CVector3& GetColor() const { return m_v3Color; }
 
@@ -45,8 +48,8 @@ namespace render
       inline void SetPrimitiveType(render::EPrimitive _ePrimitiveType) { m_ePrimitiveType = _ePrimitiveType; }
       inline render::EPrimitive GetPrimitiveType() const { return m_ePrimitiveType; }
 
-      inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
       inline const math::CTransform& GetTransform() const { return m_oTransform; }
+      inline const math::CMatrix4x4& GetMatrix() const { return m_oTransform.GetMatrix(); }
 
       inline void SetLocalAABB(const collision::CAABB& _rLocalAABB) { m_oLocalAABB = _rLocalAABB; }
       inline const collision::CAABB& GetLocalAABB() const { return m_oLocalAABB; }

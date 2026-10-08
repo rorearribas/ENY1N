@@ -14,6 +14,18 @@ namespace render
 {
   namespace gfx
   {
+    void CPrimitive::SetTransform(const math::CTransform& _rTransform)
+    {
+      // Set transform
+      m_oTransform = _rTransform;
+
+      // Update bounding box
+      if (m_bCullEnabled)
+      {
+        collision::ComputeWorldAABB(m_oLocalAABB, m_oTransform, m_oWorldAABB);
+      }
+    }
+    // ------------------------------------
     void CPrimitive::SetPos(const math::CVector3& _v3Pos)
     {
       // Set pos

@@ -477,8 +477,8 @@ namespace scene
     pPrimitive->SetLocalAABB(rAABB);
 
     // Setup
-    pPrimitive->SetPos(_v3Pos);
-    pPrimitive->SetRot(_v3Rot);
+    math::CTransform rTransform = math::CTransform::CreateTransform(_v3Pos, _v3Rot, math::CVector3::One);
+    pPrimitive->SetTransform(rTransform);
     pPrimitive->SetColor(_v3Color);
 
     // Type
@@ -490,7 +490,7 @@ namespace scene
     pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
   }
   // ------------------------------------
-  void CRenderScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CRenderScene::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Scl, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
@@ -531,10 +531,9 @@ namespace scene
     pPrimitive->SetLocalAABB(rAABB);
 
     // Setup
+    math::CTransform rTransform = math::CTransform::CreateTransform(_v3Pos, _v3Rot, _v3Scl);
+    pPrimitive->SetTransform(rTransform);
     pPrimitive->SetColor(_v3Color);
-    pPrimitive->SetPos(_v3Pos);
-    pPrimitive->SetRot(_v3Rot);
-    pPrimitive->SetScl(_v3Size);
 
     // Type
     pPrimitive->SetPrimitiveType(render::EPrimitive::E3D_CUBE);
@@ -592,7 +591,8 @@ namespace scene
     pPrimitive->SetLocalAABB(rAABB);
 
     // Set values
-    pPrimitive->SetPos(_v3Pos);
+    math::CTransform rTransform = math::CTransform::CreateTransform(_v3Pos, math::CVector3::Zero, math::CVector3::One);
+    pPrimitive->SetTransform(rTransform);
     pPrimitive->SetColor(_v3Color);
 
     // Setup
@@ -604,7 +604,7 @@ namespace scene
     pPrimitive->SetIdxBufferHandler(rIdxBufferHandler);
   }
   // ------------------------------------
-  void CRenderScene::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CRenderScene::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Scl, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_lstDebugPrimitives.GetSize() >= m_lstDebugPrimitives.GetMaxSize())
     {
@@ -645,8 +645,8 @@ namespace scene
     pPrimitive->SetLocalAABB(rAABB);
 
     // Set values
-    pPrimitive->SetPos(_rPlane.GetPos());
-    pPrimitive->SetScl(_v3Size);
+    math::CTransform rTransform = math::CTransform::CreateTransform(_rPlane.GetPos(), math::CVector3::Zero, _v3Scl);
+    pPrimitive->SetTransform(rTransform);
     pPrimitive->SetColor(_v3Color);
 
     // Type
@@ -699,7 +699,8 @@ namespace scene
     pPrimitive->SetLocalAABB(rAABB);
 
     // Set values
-    pPrimitive->SetPos(math::CVector3::Zero);
+    math::CTransform rTransform = math::CTransform::CreateTransform(math::CVector3::Zero, math::CVector3::Zero, math::CVector3::One);
+    pPrimitive->SetTransform(rTransform);
     pPrimitive->SetColor(_v3Color);
 
     // Setup

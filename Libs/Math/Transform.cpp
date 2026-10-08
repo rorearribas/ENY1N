@@ -3,7 +3,6 @@
 
 namespace math
 {
-  // ------------------------------------
   void CTransform::SetPos(const math::CVector3& _v3Pos)
   {
     // Set pos
@@ -30,5 +29,21 @@ namespace math
     math::CVector3 v3Translate = m_mMatrix.GetTranslate();
     m_mMatrix = math::CMatrix4x4::CreateRotation(m_mMatrix.GetRotation()) * CMatrix4x4::CreateScale(math::CVector3::Abs(_v3Scl));
     m_mMatrix.SetTranslate(v3Translate);
+  }
+  // ------------------------------------
+  math::CTransform CTransform::CreateTransform(const math::CVector3 _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Scl)
+  {
+    // Get valid rotation angles
+    math::CVector3 v3Angle(CalculateEulerAngle(_v3Rot.x), CalculateEulerAngle(_v3Rot.y), CalculateEulerAngle(_v3Rot.z));
+
+    // Calculate transform matrix
+    math::CMatrix4x4 mMatrix
+    (
+      math::CMatrix4x4::CreateTranslation(_v3Pos) *
+      math::CMatrix4x4::CreateRotation(v3Angle) *
+      math::CMatrix4x4::CreateScale(math::CVector3::Abs(_v3Scl))
+    );
+
+    return math::CTransform(mMatrix);
   }
 }

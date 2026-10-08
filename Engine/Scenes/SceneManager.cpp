@@ -133,11 +133,11 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CSceneManager::DrawCube(const math::CVector3& _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Scl, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene.IsValid())
     {
-      m_pCurrentScene->DrawCube(_v3Pos, _v3Rot, _v3Size, _v3Color, _eRenderMode);
+      m_pCurrentScene->DrawCube(_v3Pos, _v3Rot, _v3Scl, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------
@@ -149,11 +149,11 @@ namespace scene
     }
   }
   // ------------------------------------
-  void CSceneManager::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Size, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
+  void CSceneManager::DrawPlane(const math::CPlane& _rPlane, const math::CVector3& _v3Scl, const math::CVector3& _v3Color, render::ERenderMode _eRenderMode)
   {
     if (m_pCurrentScene.IsValid())
     {
-      m_pCurrentScene->DrawPlane(_rPlane, _v3Size, _v3Color, _eRenderMode);
+      m_pCurrentScene->DrawPlane(_rPlane, _v3Scl, _v3Color, _eRenderMode);
     }
   }
   // ------------------------------------

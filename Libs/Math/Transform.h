@@ -20,6 +20,8 @@ namespace math
     void SetScl(const math::CVector3& _v3Scl);
     inline math::CVector3 GetScl() const { return m_mMatrix.GetScale(); }
 
+    static CTransform CreateTransform(const math::CVector3 _v3Pos, const math::CVector3& _v3Rot, const math::CVector3& _v3Scl);
+
   private:
     math::CMatrix4x4 m_mMatrix = math::CMatrix4x4::Identity;
   };
