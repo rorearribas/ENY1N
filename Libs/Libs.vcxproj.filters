@@ -117,6 +117,12 @@
     <ClInclude Include="Utils\ArenaPool.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
+    <ClInclude Include="Parallelization\Task.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Parallelization\ThreadPool.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Math\Vector3.cpp">
@@ -183,6 +189,12 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="Serialization\Xml\XmlAttribute.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Parallelization\Task.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Parallelization\ThreadPool.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
