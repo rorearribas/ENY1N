@@ -31,9 +31,9 @@ namespace async
     }
 
     // Getters for task status
-    inline bool IsPending()   const { return GetTaskStatus() == ETaskStatus::PENDING; }
-    inline bool IsRunning()   const { return GetTaskStatus() == ETaskStatus::RUNNING; }
-    inline bool IsFailed()    const { return GetTaskStatus() == ETaskStatus::FAILED; }
+    inline bool IsPending()   const { return GetTaskStatus() == ETaskStatus::PENDING;   }
+    inline bool IsRunning()   const { return GetTaskStatus() == ETaskStatus::RUNNING;   }
+    inline bool IsFailed()    const { return GetTaskStatus() == ETaskStatus::FAILED;    }
     inline bool IsCompleted() const { return GetTaskStatus() == ETaskStatus::COMPLETED; }
 
   private:
