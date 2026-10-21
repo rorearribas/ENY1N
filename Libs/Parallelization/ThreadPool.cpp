@@ -1,4 +1,6 @@
 #include "ThreadPool.h"
+#include "Task.h"
+#include <algorithm>
 
 namespace async
 {
@@ -7,27 +9,23 @@ namespace async
     static const uint32_t s_uDefaultThreads = 2;
   }
   // ------------------------------------
-  CThreadPool::CThreadPool(uint32_t _uThreadCount)
-  {
-    // Set max threads
-    uint32_t uMaxThreads = std::thread::hardware_concurrency();
-    uMaxThreads = (uMaxThreads == 0) ? internal::s_uDefaultThreads : std::min(_uThreadCount, uMaxThreads);
-    m_uThreadCount.store(uMaxThreads, std::memory_order_release);
-
-    // Set initial state
-    m_eStatus.store(EThreadPoolStatus::E_INIT, std::memory_order_release);
-  }
-  // ------------------------------------
-  void CThreadPool::Start()
+  void CThreadPool::Start(uint32_t _uThreadCount)
   {
     // Wait for any previous threads to finish
     Stop();
 
+    // Set initial state
+    m_eStatus.store(EThreadPoolStatus::E_INIT, std::memory_order_release);
+
+    // Set max threads
+    uint32_t uMaxThreads = std::thread::hardware_concurrency();
+    uMaxThreads = (uMaxThreads == 0) ? internal::s_uDefaultThreads : std::min(_uThreadCount, uMaxThreads);
+
     // Create threads
-    for (uint32_t uI = 0; uI < GetThreadCount(); uI++)
+    for (uint32_t uI = 0; uI < uMaxThreads; uI++)
     {
-      std::thread rThread = std::thread(&CThreadPool::WorkerThread, this);
-      m_lstThreads.emplace_back(std::move(rThread));
+      std::thread oThread = std::thread(&CThreadPool::WorkerThread, this);
+      m_lstThreads.emplace_back(std::move(oThread));
     }
 
     // Update state
@@ -37,7 +35,7 @@ namespace async
   void CThreadPool::Stop()
   {
     m_eStatus.store(EThreadPoolStatus::E_STOPPED, std::memory_order_release);
-    m_oCondition.notify_all();
+    m_oConditionVar.notify_all();
 
     for (std::thread& rThread : m_lstThreads)
     {
@@ -53,32 +51,47 @@ namespace async
   // ------------------------------------
   void CThreadPool::AddTask(async::ITask* _pTask)
   {
+    // Add the task to the queue
     std::lock_guard<std::mutex> lock(m_oMutex);
+    m_uActiveTaskCount.fetch_add(1u, std::memory_order_relaxed);
     m_lstTasks.emplace_back(_pTask);
-    m_oCondition.notify_one();
+
+    // Notify one worker thread that a new task is available
+    m_oConditionVar.notify_one();
+  }
+  // ------------------------------------
+  void CThreadPool::WaitForAllTasks()
+  {
+    while (m_uActiveTaskCount.load(std::memory_order_acquire) > 0)
+    {
+      std::this_thread::yield();
+    }
   }
   // ------------------------------------
   void CThreadPool::WorkerThread()
   {
     while (true)
     {
-      async::ITask* pTask = nullptr;
-      {
-        std::unique_lock<std::mutex> oLock(m_oMutex);
-        m_oCondition.wait(oLock, [this]() { return !m_lstTasks.empty() || IsStopped(); });
+      std::unique_lock<std::mutex> unique_lock(m_oMutex);
+      m_oConditionVar.wait(unique_lock, [this]() { return IsStopped() || !m_lstTasks.empty(); });
 
-        if (IsStopped() && m_lstTasks.empty())
-        {
-          break;
-        }
-
-        pTask = m_lstTasks.front();
-        m_lstTasks.pop_front();
-      }
-      if(pTask && pTask->Execute())
+      // If the thread pool is stopped and there are no tasks left, exit the loop
+      if (IsStopped() && m_lstTasks.empty())
       {
-        pTask->SetCompleted(true);
+        break;
       }
+
+      // Get the next task from the queue
+      async::ITask* pTask = m_lstTasks.front();
+      m_lstTasks.pop_front();
+
+      // Update task status to running
+      pTask->SetStatus(ITask::ETaskStatus::RUNNING);
+
+      // Execute the task
+      bool bSuccess = pTask->Execute();
+      pTask->SetStatus(bSuccess ? ITask::ETaskStatus::COMPLETED : ITask::ETaskStatus::FAILED);
+      m_uActiveTaskCount.fetch_sub(1u, std::memory_order_relaxed);
     }
   }
 }

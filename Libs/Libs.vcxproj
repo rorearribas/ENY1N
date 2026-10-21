@@ -194,7 +194,6 @@
     <ClCompile Include="ImGui\ImGuizmo.cpp" />
     <ClCompile Include="ImGui\ImSequencer.cpp" />
     <ClCompile Include="Serialization\Xml\pugixml\pugixml.cpp" />
-    <ClCompile Include="Parallelization\Task.cpp" />
     <ClCompile Include="Parallelization\ThreadPool.cpp" />
     <ClCompile Include="Time\TimeManager.cpp" />
     <ClCompile Include="ImGui\imgui.cpp" />
