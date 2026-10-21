@@ -6,7 +6,7 @@ namespace async
 {
   namespace internal
   {
-    static const uint32_t s_uDefaultThreads = 2;
+    static const uint32_t s_uDefaultThreads = 4u;
   }
   // ------------------------------------
   void CThreadPool::Start(uint32_t _uThreadCount)
