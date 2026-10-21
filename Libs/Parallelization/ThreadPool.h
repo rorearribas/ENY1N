@@ -40,7 +40,7 @@ namespace async
     std::mutex                     m_oMutex;
     std::condition_variable        m_oConditionVar;
                                    
-    std::atomic<EThreadPoolState> m_eThreadPoolState;
+    std::atomic<EThreadPoolState>  m_eThreadPoolState;
     std::atomic<uint32_t>          m_uActiveTaskCount;
   };
 }
