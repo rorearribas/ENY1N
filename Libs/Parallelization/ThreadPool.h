@@ -14,10 +14,10 @@ namespace async
   class CThreadPool
   {
   private:
-    enum class EThreadPoolStatus { E_INIT, E_RUNNING, E_STOPPED };
+    enum class EThreadPoolState { E_INIT, E_RUNNING, E_STOPPED, INVALID };
 
   public:
-    CThreadPool() : m_uActiveTaskCount(0u), m_eStatus(EThreadPoolStatus::E_STOPPED) {}
+    CThreadPool() : m_eThreadPoolState(EThreadPoolState::INVALID), m_uActiveTaskCount(0u) {}
     ~CThreadPool() { Stop(); }
 
     void Start(uint32_t _uThreadCount = std::thread::hardware_concurrency());
@@ -26,9 +26,9 @@ namespace async
     void AddTask(async::ITask* _pTask);
     void WaitForAllTasks();
 
-    bool IsInitialized() const { return m_eStatus.load(std::memory_order_acquire) == EThreadPoolStatus::E_INIT; }
-    bool IsRunning() const     { return m_eStatus.load(std::memory_order_acquire) == EThreadPoolStatus::E_RUNNING; }
-    bool IsStopped() const     { return m_eStatus.load(std::memory_order_acquire) == EThreadPoolStatus::E_STOPPED; }
+    inline bool IsInitialized() const { return m_eThreadPoolState.load(std::memory_order_acquire) == EThreadPoolState::E_INIT; }
+    inline bool IsRunning()     const { return m_eThreadPoolState.load(std::memory_order_acquire) == EThreadPoolState::E_RUNNING; }
+    inline bool IsStopped()     const { return m_eThreadPoolState.load(std::memory_order_acquire) == EThreadPoolState::E_STOPPED; }
 
   private:
     void WorkerThread();
@@ -40,8 +40,7 @@ namespace async
     std::mutex                     m_oMutex;
     std::condition_variable        m_oConditionVar;
                                    
-    std::atomic<EThreadPoolStatus> m_eStatus;
-    std::atomic<uint32_t>          m_uThreadCount;
+    std::atomic<EThreadPoolState> m_eThreadPoolState;
     std::atomic<uint32_t>          m_uActiveTaskCount;
   };
 }

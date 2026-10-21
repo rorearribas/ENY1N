@@ -21,13 +21,19 @@ namespace async
     // Execute the task. This method will be called by the thread pool worker threads.
     virtual bool Execute() = 0;
 
-    // Main-tread will wait until the task is completed. This is a busy-wait loop and may not be efficient for long-running tasks.
-    inline void WaitForTaskCompletion() { while (!IsCompleted() && !IsFailed()) {} }
+    // Wait until the task is completed.
+    inline void WaitTask()
+    {
+      while (!IsCompleted() && !IsFailed())
+      {
+        std::this_thread::yield();
+      }
+    }
 
     // Getters for task status
-    inline bool IsPending()   const { return GetTaskStatus() == ETaskStatus::PENDING;   }
-    inline bool IsRunning()   const { return GetTaskStatus() == ETaskStatus::RUNNING;   }
-    inline bool IsFailed()    const { return GetTaskStatus() == ETaskStatus::FAILED;    }
+    inline bool IsPending()   const { return GetTaskStatus() == ETaskStatus::PENDING; }
+    inline bool IsRunning()   const { return GetTaskStatus() == ETaskStatus::RUNNING; }
+    inline bool IsFailed()    const { return GetTaskStatus() == ETaskStatus::FAILED; }
     inline bool IsCompleted() const { return GetTaskStatus() == ETaskStatus::COMPLETED; }
 
   private:
@@ -35,7 +41,7 @@ namespace async
     inline ETaskStatus GetTaskStatus() const { return m_eTaskStatus.load(std::memory_order_acquire); }
     inline void SetStatus(ETaskStatus _eTaskStatus) { m_eTaskStatus.store(_eTaskStatus, std::memory_order_release); }
 
-  private:  
+  private:
     std::atomic<ETaskStatus> m_eTaskStatus;
   };
 }

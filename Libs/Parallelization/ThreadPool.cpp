@@ -15,7 +15,7 @@ namespace async
     Stop();
 
     // Set initial state
-    m_eStatus.store(EThreadPoolStatus::E_INIT, std::memory_order_release);
+    m_eThreadPoolState.store(EThreadPoolState::E_INIT, std::memory_order_release);
 
     // Set max threads
     uint32_t uMaxThreads = std::thread::hardware_concurrency();
@@ -29,12 +29,12 @@ namespace async
     }
 
     // Update state
-    m_eStatus.store(EThreadPoolStatus::E_RUNNING, std::memory_order_release);
+    m_eThreadPoolState.store(EThreadPoolState::E_RUNNING, std::memory_order_release);
   }
   // ------------------------------------
   void CThreadPool::Stop()
   {
-    m_eStatus.store(EThreadPoolStatus::E_STOPPED, std::memory_order_release);
+    m_eThreadPoolState.store(EThreadPoolState::E_STOPPED, std::memory_order_release);
     m_oConditionVar.notify_all();
 
     for (std::thread& rThread : m_lstThreads)
