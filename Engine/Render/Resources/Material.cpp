@@ -8,11 +8,6 @@ namespace render
 {
   namespace mat
   {
-    CMaterial::~CMaterial()
-    {
-      ClearTextures();
-    }
-    // ------------------------------------
     render::texture::TSharedTexture CMaterial::GetTexture(ETexture _eType) const
     {
       uint32_t uIndex = static_cast<uint32_t>(_eType);
@@ -30,8 +25,7 @@ namespace render
       uint32_t uIndex = 0;
       while (uIndex != s_uTextureCount)
       {
-        m_lstTextures[uIndex].reset();
-        uIndex++;
+        m_lstTextures[uIndex++].reset();
       }
     }
   }

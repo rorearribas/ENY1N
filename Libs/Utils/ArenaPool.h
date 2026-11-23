@@ -12,9 +12,8 @@ namespace utils
   public:
     CArenaPool() : m_tCurrentOffset(0), m_uRegisteredItems(0)
     {
-      m_pBuffer = new unsigned char[CHUNK_SIZE];
+      m_pBuffer = new uint8_t[CHUNK_SIZE];
     }
-
     ~CArenaPool() { Flush(); }
 
     CArenaPool(CArenaPool&& _rOther) noexcept
@@ -54,7 +53,7 @@ namespace utils
       void* pCurrentPtr = m_pBuffer + m_tCurrentOffset;
       size_t tRemainingSpace = static_cast<size_t>(CHUNK_SIZE - m_tCurrentOffset);
 
-      void* pObjectMem = static_cast<unsigned char*>(pCurrentPtr);
+      void* pObjectMem = static_cast<uint8_t*>(pCurrentPtr);
       void* pAlignedObjectPtr = std::align(alignof(_T), sizeof(_T), pObjectMem, tRemainingSpace);
       if (!pAlignedObjectPtr)
       {
@@ -62,7 +61,7 @@ namespace utils
       }
 
       // Calculate next size
-      size_t tBytesConsumed = (static_cast<unsigned char*>(pAlignedObjectPtr) + sizeof(_T)) - static_cast<unsigned char*>(pCurrentPtr);
+      size_t tBytesConsumed = (static_cast<uint8_t*>(pAlignedObjectPtr) + sizeof(_T)) - static_cast<uint8_t*>(pCurrentPtr);
       if ((m_tCurrentOffset + tBytesConsumed) > CHUNK_SIZE)
       {
         return nullptr;
@@ -71,7 +70,7 @@ namespace utils
       // Create object
       _T* pNewObject = ::new (pAlignedObjectPtr) _T(std::forward<Args>(args)...);
       m_tCurrentOffset += tBytesConsumed;
-      m_lstOffsetTable[m_uRegisteredItems++] = static_cast<uint32_t>(static_cast<unsigned char*>(pAlignedObjectPtr) - m_pBuffer);
+      m_lstOffsetTable[m_uRegisteredItems++] = static_cast<uint32_t>(static_cast<uint8_t*>(pAlignedObjectPtr) - m_pBuffer);
       return pNewObject;
     }
 
@@ -124,7 +123,7 @@ namespace utils
     }
 
   private:
-    unsigned char* m_pBuffer = nullptr;
+    uint8_t* m_pBuffer = nullptr;
     std::array<uint32_t, MAX_ITEMS> m_lstOffsetTable;
 
     size_t m_tCurrentOffset;

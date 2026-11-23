@@ -13,15 +13,17 @@ namespace render
   {
     // Set shadow rasterizer config
     D3D11_RASTERIZER_DESC rShadowRasterizerCfg = D3D11_RASTERIZER_DESC();
-    rShadowRasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
-    rShadowRasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
-    rShadowRasterizerCfg.DepthBias = 500;
-    rShadowRasterizerCfg.DepthBiasClamp = 0.0f;
-    rShadowRasterizerCfg.SlopeScaledDepthBias = 1.5f;
-    rShadowRasterizerCfg.DepthClipEnable = true;
-    rShadowRasterizerCfg.ScissorEnable = false;
-    rShadowRasterizerCfg.MultisampleEnable = false;
-    rShadowRasterizerCfg.AntialiasedLineEnable = false;
+    {
+      rShadowRasterizerCfg.FillMode = D3D11_FILL_MODE::D3D11_FILL_SOLID;
+      rShadowRasterizerCfg.CullMode = D3D11_CULL_MODE::D3D11_CULL_FRONT;
+      rShadowRasterizerCfg.DepthBias = 500;
+      rShadowRasterizerCfg.DepthBiasClamp = 0.0f;
+      rShadowRasterizerCfg.SlopeScaledDepthBias = 1.5f;
+      rShadowRasterizerCfg.ScissorEnable = false;
+      rShadowRasterizerCfg.DepthClipEnable = true;
+      rShadowRasterizerCfg.MultisampleEnable = false;
+      rShadowRasterizerCfg.AntialiasedLineEnable = false;
+    }
 
     // Create rasterizer
     return m_pRender->CreateRasterizerState(rShadowRasterizerCfg, &m_pShadowsRasterizer);

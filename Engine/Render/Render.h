@@ -47,7 +47,7 @@ namespace render
     uintptr_t DeferredLighting_ProgramID;
 
     // Global states
-    ID3D11RenderTargetView* RenderTarget = nullptr;
+    ID3D11RenderTargetView* GlobalRT = nullptr;
     ID3D11SamplerState* LinearSampler = nullptr;
     ID3D11SamplerState* ShadowSampler = nullptr;
 
@@ -161,16 +161,16 @@ namespace render
     std::unique_ptr<render::CRenderWindow> m_pRenderWindow = nullptr;
     std::unique_ptr<render::CRenderContextDX11> m_pRenderContext = nullptr;
 
-    TRenderPipeline m_oRenderPipeline;
-    CShaderManager m_oShaderManager = CShaderManager();
+    TRenderPipeline m_oRenderPipeline = TRenderPipeline();
     CTextureManager m_oTextureManager = CTextureManager();
+    CShaderManager m_oShaderManager = CShaderManager();
 
     render::CCamera* m_pRenderCamera = nullptr;
     bool m_bVerticalSync = false;
 
-    std::unique_ptr<render::CShadowRenderer> m_pShadowRenderer = nullptr;
     std::unique_ptr<render::CDeferredRenderer> m_pDeferredRenderer = nullptr;
     std::unique_ptr<render::CForwardRenderer> m_pForwardRenderer = nullptr;
+    std::unique_ptr<render::CShadowRenderer> m_pShadowRenderer = nullptr;
     std::unique_ptr<render::CImGuiRenderer> m_pImGuiRenderer = nullptr;
   };
 }

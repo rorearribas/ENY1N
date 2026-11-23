@@ -13,7 +13,7 @@ namespace render
     CTextureManager() = default;
     ~CTextureManager() = default;
 
-    void Initialize(const CRenderDeviceDX11& _rRenderDevice) { m_pRenderDevice = &_rRenderDevice; }
+    void Init(const CRenderDeviceDX11& _rRenderDevice) { m_pRenderDevice = &_rRenderDevice; }
     const TCachedTextures& GetChachedTexture() { return m_lstTextures; }
 
     render::texture::TSharedTexture Create(const std::string& _sKey, const texture::TTextureData& _rTextureData, const D3D11_SHADER_RESOURCE_VIEW_DESC& _rViewDesc);

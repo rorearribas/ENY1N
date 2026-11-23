@@ -122,7 +122,7 @@ namespace render
     global::api::SafeRelease(m_oRenderPipeline.PrimitiveInstancesBuffer);
 
     // Release render target
-    global::api::SafeRelease(m_oRenderPipeline.RenderTarget);
+    global::api::SafeRelease(m_oRenderPipeline.GlobalRT);
 
     // Release render window
     m_pRenderWindow.reset();
@@ -235,7 +235,7 @@ namespace render
     HRESULT hResult = m_pRenderContext->Init(rRenderContextDesc);
     if (SUCCEEDED(hResult))
     {
-      m_oTextureManager.Initialize(m_pRenderContext->GetDevice());
+      m_oTextureManager.Init(m_pRenderContext->GetDevice());
     }
     return hResult;
   }
@@ -264,12 +264,13 @@ namespace render
     // Clear resources
     BeginMarker(internal::s_sPrepareFrameMrk);
     {
-      // Clear back buffer
-      ClearRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, internal::s_v4ClearColor);
+      // Clear global render target
+      ClearRenderTargets(&m_oRenderPipeline.GlobalRT, 1u, internal::s_v4ClearColor);
 
       // Prepare frame
       m_pDeferredRenderer->PrepareFrame();
       m_pForwardRenderer->PrepareFrame();
+      m_pShadowRenderer->PrepareFrame();
       m_pImGuiRenderer->PrepareFrame();
     }
     EndMarker();
@@ -309,6 +310,7 @@ namespace render
     const uint32_t uFlags = 0;
     m_pRenderContext->GetSwapChain()->Present(m_bVerticalSync, uFlags);
   }
+  // ------------------------------------
   CRenderDeviceDX11& CRender::GetDevice()
   {
     return m_pRenderContext->GetDevice();
@@ -478,7 +480,7 @@ namespace render
     SetRasterizerState(m_oRenderPipeline.DefaultRasterizer);
 
     // Set render target
-    SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, m_pDeferredRenderer->GetDepthStencilView());
+    SetRenderTargets(&m_oRenderPipeline.GlobalRT, 1u, m_pDeferredRenderer->GetDepthStencilView());
     // Set depth stencil state
     SetDepthStencilState(m_pDeferredRenderer->GetDepthStencilState());
 
@@ -490,8 +492,8 @@ namespace render
   // ------------------------------------
   void CRender::OnWindowResizeEvent(uint32_t _uWidth, uint32_t _uHeight)
   {
-    // Remove current target view
-    global::api::SafeRelease(m_oRenderPipeline.RenderTarget);
+    // Remove current global render target
+    global::api::SafeRelease(m_oRenderPipeline.GlobalRT);
 
     // Resize buffers
     HRESULT hResult = m_pRenderContext->GetSwapChain()->ResizeBuffers(0, _uWidth, _uHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
@@ -559,7 +561,8 @@ namespace render
       return E_FAIL;
     }
 
-    HRESULT hResult = m_pRenderContext->GetDevice()->CreateRenderTargetView(pTexture, nullptr, &m_oRenderPipeline.RenderTarget);
+    global::api::SafeRelease(m_oRenderPipeline.GlobalRT);
+    HRESULT hResult = m_pRenderContext->GetDevice()->CreateRenderTargetView(pTexture, nullptr, &m_oRenderPipeline.GlobalRT);
     if (FAILED(hResult))
     {
       return hResult;
@@ -1010,7 +1013,7 @@ namespace render
   void CRender::DrawQuad(ID3D11DepthStencilView* _pStencilView)
   {
     // Bind render target
-    SetRenderTargets(&m_oRenderPipeline.RenderTarget, 1u, _pStencilView);
+    SetRenderTargets(&m_oRenderPipeline.GlobalRT, 1u, _pStencilView);
 
     // Setup quad vertex buffer
     SetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);

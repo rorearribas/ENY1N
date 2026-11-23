@@ -21,7 +21,7 @@ public:
     m_pTextureManager = _pTextureManager;
   }
 
-  [[nodiscard]] unsigned char* LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_);
+  [[nodiscard]] uint8_t* LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_);
   [[nodiscard]] render::gfx::TModelData LoadModel(const char* _sPath);
 
 private:

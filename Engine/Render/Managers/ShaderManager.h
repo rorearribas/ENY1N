@@ -7,11 +7,11 @@ namespace render
   struct TShaderProgramData
   {
     // Vertex shader is mandatory
-    const unsigned char* pVertexShader = nullptr;
+    const uint8_t* pVertexShader = nullptr;
     size_t tVertexShaderSize = 0u;
 
     // Pixel shader is optional, for example, for the quad program
-    const unsigned char* pPixelShader = nullptr;
+    const uint8_t* pPixelShader = nullptr;
     size_t tPixelShaderSize = 0u;
   };
 
@@ -53,7 +53,7 @@ namespace render
 
   private:
     HRESULT InitProgram(const CRenderDeviceDX11& _rRenderDevice, TShaderProgram& _rShaderProgram, const TShaderProgramData& _rProgramData);
-    TPrograms m_lstPrograms;
+    TPrograms m_lstPrograms = TPrograms();
   };
 }
 

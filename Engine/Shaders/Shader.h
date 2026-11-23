@@ -22,7 +22,7 @@ namespace render
       CShader(const CShader& _rOther) = delete;
       CShader& operator=(const CShader& _rOther) = delete;
 
-      HRESULT Init(const CRenderDeviceDX11& _rRenderDevice, const unsigned char* _pBuffer, size_t _tSize);
+      HRESULT Init(const CRenderDeviceDX11& _rRenderDevice, const uint8_t* _pBuffer, size_t _tSize);
       void Release();
 
       void Attach(const CRenderCommandsDX11& _rCommands);
@@ -83,7 +83,7 @@ namespace render
     }
 
     template<EShader T>
-    HRESULT render::shader::CShader<T>::Init(const CRenderDeviceDX11& _rRenderDevice, const unsigned char* _pBuffer, size_t _tSize)
+    HRESULT render::shader::CShader<T>::Init(const CRenderDeviceDX11& _rRenderDevice, const uint8_t* _pBuffer, size_t _tSize)
     {
       switch (T)
       {

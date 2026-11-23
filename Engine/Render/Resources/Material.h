@@ -17,7 +17,7 @@ namespace render
 
     public:
       CMaterial() = default;
-      ~CMaterial();
+      ~CMaterial() { ClearTextures(); }
 
       void SetTexture(render::texture::TSharedTexture _pTexture, ETexture _eType);
       render::texture::TSharedTexture GetTexture(ETexture _eType) const;

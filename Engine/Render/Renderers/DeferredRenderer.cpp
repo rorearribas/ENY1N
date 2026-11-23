@@ -43,8 +43,10 @@ namespace render
 
     // Set depth stencil view desc
     D3D11_DEPTH_STENCIL_VIEW_DESC rDepthStencilViewDesc = D3D11_DEPTH_STENCIL_VIEW_DESC();
-    rDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-    rDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    {
+      rDepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+      rDepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+    }
 
     // Create the depth stencil view
     hResult = m_oDepthStencil.CreateView(_rRenderDevice, rDepthStencilViewDesc);
@@ -56,9 +58,11 @@ namespace render
 
     // Creating view from texture
     D3D11_SHADER_RESOURCE_VIEW_DESC rSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
-    rSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
-    rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    rSRVDesc.Texture2D.MipLevels = 1;
+    {
+      rSRVDesc.Format = DXGI_FORMAT_R32_FLOAT;
+      rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+      rSRVDesc.Texture2D.MipLevels = 1;
+    }
 
     m_oDepthStencilShader.Release();
     hResult = m_oDepthStencilShader.CreateViewFromTexture(_rRenderDevice, m_oDepthStencil, rSRVDesc);
@@ -70,24 +74,26 @@ namespace render
 
     // Create standard depth stencil state for zprepass
     D3D11_DEPTH_STENCIL_DESC rDepthStencilDesc = D3D11_DEPTH_STENCIL_DESC();
-    rDepthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
-    rDepthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
-    rDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-    rDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
-    rDepthStencilDesc.DepthEnable = true;
-    rDepthStencilDesc.StencilEnable = false;
+    {
+      rDepthStencilDesc.StencilReadMask = D3D11_DEFAULT_STENCIL_READ_MASK;
+      rDepthStencilDesc.StencilWriteMask = D3D11_DEFAULT_STENCIL_WRITE_MASK;
+      rDepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+      rDepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+      rDepthStencilDesc.DepthEnable = true;
+      rDepthStencilDesc.StencilEnable = false;
 
-    // Front-face
-    rDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    rDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
-    rDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    rDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+      // Front-face
+      rDepthStencilDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+      rDepthStencilDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+      rDepthStencilDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+      rDepthStencilDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-    // Back-face
-    rDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
-    rDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
-    rDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
-    rDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+      // Back-face
+      rDepthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+      rDepthStencilDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+      rDepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+      rDepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+    }
 
     // Depth
     global::api::SafeRelease(m_pDepthStencilState);
@@ -192,9 +198,11 @@ namespace render
     // Diffuse
     std::unique_ptr<CRenderTarget> pDiffuseRT = std::make_unique<CRenderTarget>();
     TRenderTargetDesc rDiffuseDesc = TRenderTargetDesc();
-    rDiffuseDesc.uWidth = _uWidth;
-    rDiffuseDesc.uHeight = _uHeight;
-    rDiffuseDesc.eFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    {
+      rDiffuseDesc.uWidth = _uWidth;
+      rDiffuseDesc.uHeight = _uHeight;
+      rDiffuseDesc.eFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    }
     HRESULT hResult = pDiffuseRT->Init(_rRenderDevice, rDiffuseDesc);
     if (FAILED(hResult))
     {
@@ -204,9 +212,11 @@ namespace render
     // Normal
     std::unique_ptr<CRenderTarget> pNormalRT = std::make_unique<CRenderTarget>();
     TRenderTargetDesc rNormalDesc = TRenderTargetDesc();
-    rNormalDesc.uWidth = _uWidth;
-    rNormalDesc.uHeight = _uHeight;
-    rNormalDesc.eFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+    {
+      rNormalDesc.uWidth = _uWidth;
+      rNormalDesc.uHeight = _uHeight;
+      rNormalDesc.eFormat = DXGI_FORMAT_R16G16B16A16_FLOAT;
+    }
     hResult = pNormalRT->Init(_rRenderDevice, rNormalDesc);
     if (FAILED(hResult))
     {
@@ -216,9 +226,11 @@ namespace render
     // Specular
     std::unique_ptr<CRenderTarget> pSpecularRT = std::make_unique<CRenderTarget>();
     TRenderTargetDesc rSpecularDesc = TRenderTargetDesc();
-    rSpecularDesc.uWidth = _uWidth;
-    rSpecularDesc.uHeight = _uHeight;
-    rSpecularDesc.eFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    {
+      rSpecularDesc.uWidth = _uWidth;
+      rSpecularDesc.uHeight = _uHeight;
+      rSpecularDesc.eFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+    }
     hResult = pSpecularRT->Init(_rRenderDevice, rSpecularDesc);
     if (FAILED(hResult))
     {

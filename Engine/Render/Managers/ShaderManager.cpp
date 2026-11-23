@@ -51,7 +51,7 @@ namespace render
   HRESULT CShaderManager::InitProgram(const CRenderDeviceDX11& _rRenderDevice, TShaderProgram& _rShaderProgram, const TShaderProgramData& _rProgramData)
   {
     HRESULT hResult = E_FAIL;
-    const unsigned char* pVertexShader = _rProgramData.pVertexShader;
+    const uint8_t* pVertexShader = _rProgramData.pVertexShader;
     if (pVertexShader != nullptr && _rProgramData.tVertexShaderSize > 0u)
     {
       hResult = _rShaderProgram.Vertex.Init(_rRenderDevice, pVertexShader, _rProgramData.tVertexShaderSize);
@@ -61,7 +61,7 @@ namespace render
       return hResult;
     }
 
-    const unsigned char* pPixelShader = _rProgramData.pPixelShader;
+    const uint8_t* pPixelShader = _rProgramData.pPixelShader;
     if (pPixelShader != nullptr && _rProgramData.tPixelShaderSize > 0u)
     {
       hResult = _rShaderProgram.Pixel.Init(_rRenderDevice, pPixelShader, _rProgramData.tPixelShaderSize);

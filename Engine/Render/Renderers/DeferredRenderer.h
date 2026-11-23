@@ -23,8 +23,8 @@ namespace render
     CRenderTarget& GetSpecularRT() const { return *m_pSpecularRT; }
 
     ID3D11DepthStencilView* GetDepthStencilView() const { return m_oDepthStencil.GetView(); }
-    ID3D11ShaderResourceView* GetShaderResourceView() const { return m_oDepthStencilShader.GetView(); }
     ID3D11DepthStencilState* GetDepthStencilState() const { return m_pDepthStencilState; }
+    ID3D11ShaderResourceView* GetShaderResourceView() const { return m_oDepthStencilShader.GetView(); }
 
   private:
     HRESULT SetupRenderTargets(const CRenderDeviceDX11& _rRenderDevice, uint32_t _uWidth, uint32_t _uHeight);

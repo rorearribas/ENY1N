@@ -35,6 +35,9 @@
 #include "Reflection/ReflectionMacros.h"
 #include "Reflection/Base/TypeResolver.h"
 
+#include "Libs/Parallelization/Task.h"
+#include "Libs/Parallelization/ThreadPool.h"
+
 static std::random_device rd;
 std::mt19937 s_oGenerator(rd());
 
@@ -58,8 +61,8 @@ const std::string& GenerateString(const std::vector<std::string>& lstStrings)
 
 static bool bThrowRay = false;
 
-#define WIDTH 1920
-#define HEIGHT 1080
+#define WIDTH 3840
+#define HEIGHT 2160
 
 int main()
 {
@@ -173,6 +176,35 @@ int main()
 
   float fFixedDeltaAcc = 0.0f;
   MSG oMsg = { 0 };
+
+  //// TEST
+  //async::CThreadPool oThreadPool;
+  //oThreadPool.Start();
+  // 
+  //const uint32_t uMAX = 100;
+  //static std::atomic<uint32_t> uCount = 0;
+
+  //struct TPrintMessageTask : public async::ITask
+  //{
+  //  virtual bool Execute() override
+  //  {
+  //    for (uint32_t uIndex = 0; uIndex < 10000; uIndex++) { ++uCount; }
+  //    std::cout << "Task executed in thread: " << std::this_thread::get_id() << " - Count:" << uCount << std::endl;
+  //    return true;
+  //  }
+  //};
+
+  //TPrintMessageTask oPrintMessageTask = TPrintMessageTask();
+  //oThreadPool.AddTask(&oPrintMessageTask);
+  //oPrintMessageTask.WaitTask();
+
+  //for (uint32_t uIndex = 0; uIndex < uMAX; uIndex++)
+  //{
+  //  oThreadPool.AddTask(&oPrintMessageTask);
+  //}
+
+  //// Wait for all tasks to complete
+  //oThreadPool.WaitForAllTasks();
 
   while (WM_QUIT != oMsg.message)
   {

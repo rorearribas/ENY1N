@@ -1,14 +1,7 @@
 #pragma once
+#include "Renderer.h"
 #include "Engine/Render/RenderContext/RenderDeviceDX11.h"
 #include "Engine/Render/RenderContext/RenderCommandsDX11.h"
-#include "Renderer.h"
-
-#ifndef WIN32_LEAN_AND_MEAN
-#define WIN32_LEAN_AND_MEAN
-#endif
-#include <Windows.h>
-#include <cstdint>
-#include <d3d11.h>
 
 namespace render
 {

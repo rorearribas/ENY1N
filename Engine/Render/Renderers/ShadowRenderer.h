@@ -11,7 +11,7 @@ namespace render
 
     HRESULT Init(uint32_t _uWidth, uint32_t _uHeight);
 
-    void PrepareFrame() override {}
+    void PrepareFrame() override { /*Empty*/ }
     void Draw(scene::CRenderScene& _rRenderScene) override;
 
   private:

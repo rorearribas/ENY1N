@@ -12,5 +12,4 @@ namespace render
     void PrepareFrame() override;
     void Draw(scene::CRenderScene& _rRenderScene) override;
   };
-
 }

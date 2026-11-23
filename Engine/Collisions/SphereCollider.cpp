@@ -11,7 +11,7 @@ namespace collision
     static const int s_iMaxSubvH(8);
     static const int s_iMaxSubvV(8);
   }
-
+  // ------------------------------------
   bool CSphereCollider::CheckCollision(const CCollider& _oCollider, THitEvent& _oHitEvent_)
   {
     const EColliderType& eColliderType = _oCollider.GetType();

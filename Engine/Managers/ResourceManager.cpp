@@ -14,7 +14,7 @@
 std::string CResourceManager::s_sRelativeTexturesPath("/textures");
 
 // ------------------------------------
-unsigned char* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
+uint8_t* CResourceManager::LoadImage(const char* _sPath, int& _iWidth_, int& _iHeight_, int& _iChannels_)
 {
   return stbi_load(_sPath, &_iWidth_, &_iHeight_, &_iChannels_, render::texture::s_uRGBA);
 }
@@ -213,7 +213,7 @@ void CResourceManager::RegisterTexture(std::unique_ptr<render::mat::CMaterial>& 
     }
 
     int iWidth = 0, iHeight = 0, iChannels = 0;
-    unsigned char* pBuffer = LoadImage(_sPath.string().c_str(), iWidth, iHeight, iChannels);
+    uint8_t* pBuffer = LoadImage(_sPath.string().c_str(), iWidth, iHeight, iChannels);
 #ifdef _DEBUG
     assert(pBuffer);
 #endif // DEBUG

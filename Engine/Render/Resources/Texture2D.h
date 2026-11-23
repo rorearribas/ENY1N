@@ -166,8 +166,7 @@ namespace render
       rSubresourceData.pSysMem = _rTextureData.Data;
 
       // Create texture
-      return _rRenderDevice->CreateTexture2D(&_rTextureData.Descriptor, _rTextureData.Data ? &rSubresourceData : nullptr, &m_pInternalTexture
-      );
+      return _rRenderDevice->CreateTexture2D(&_rTextureData.Descriptor, _rTextureData.Data ? &rSubresourceData : nullptr, &m_pInternalTexture);
     }
 
     template<render::EView T>

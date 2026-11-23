@@ -16,16 +16,20 @@ namespace render
 
     // Set texture config
     D3D11_TEXTURE2D_DESC rTextureDesc = D3D11_TEXTURE2D_DESC();
-    rTextureDesc.Width = _rDesc.uWidth;
-    rTextureDesc.Height = _rDesc.uHeight;
-    rTextureDesc.MipLevels = 1;
-    rTextureDesc.ArraySize = 1;
-    rTextureDesc.SampleDesc.Count = 1;
-    rTextureDesc.Format = _rDesc.eFormat;
-    rTextureDesc.BindFlags = internal_RT::s_uFlags;
+    {
+      rTextureDesc.Width = _rDesc.uWidth;
+      rTextureDesc.Height = _rDesc.uHeight;
+      rTextureDesc.Format = _rDesc.eFormat;
+      rTextureDesc.MipLevels = 1;
+      rTextureDesc.ArraySize = 1;
+      rTextureDesc.SampleDesc.Count = 1;
+      rTextureDesc.BindFlags = internal_RT::s_uFlags;
+    }
 
     texture::TTextureData rTextureData = texture::TTextureData();
-    rTextureData.Descriptor = rTextureDesc;
+    {
+      rTextureData.Descriptor = rTextureDesc;
+    }
     HRESULT hResult = m_oRTTexture.CreateTexture(_rRenderDevice, rTextureData);
     if (FAILED(hResult))
     {
@@ -35,9 +39,11 @@ namespace render
 
     // Creating a view of the texture to be used when binding it as a render target
     D3D11_RENDER_TARGET_VIEW_DESC rRenderTargetDesc = D3D11_RENDER_TARGET_VIEW_DESC();
-    rRenderTargetDesc.Format = _rDesc.eFormat;
-    rRenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-    rRenderTargetDesc.Texture2D.MipSlice = 0;
+    {
+      rRenderTargetDesc.Format = _rDesc.eFormat;
+      rRenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+      rRenderTargetDesc.Texture2D.MipSlice = 0;
+    }
     hResult = m_oRTTexture.CreateView(_rRenderDevice, rRenderTargetDesc);
     if (FAILED(hResult))
     {
@@ -47,9 +53,11 @@ namespace render
 
     // Creating a view of the texture to be used when binding it as a render target
     D3D11_SHADER_RESOURCE_VIEW_DESC rSRVDesc = D3D11_SHADER_RESOURCE_VIEW_DESC();
-    rSRVDesc.Format = _rDesc.eFormat;
-    rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-    rSRVDesc.Texture2D.MipLevels = 1;
+    {
+      rSRVDesc.Format = _rDesc.eFormat;
+      rSRVDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+      rSRVDesc.Texture2D.MipLevels = 1;
+    }
     return _rRenderDevice->CreateShaderResourceView(m_oRTTexture, &rSRVDesc, &m_pShaderResourceView);
   }
   // ------------------------------------

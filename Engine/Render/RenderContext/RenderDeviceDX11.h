@@ -17,6 +17,7 @@ namespace render
 
     ID3D11Device* GetDevice() const { return m_pDevice; }
     IDXGISwapChain* GetSwapChain() const { return m_pSwapChain; }
+
     ID3D11Device* operator->() const { return m_pDevice; }
     explicit operator bool() const { return m_pDevice != nullptr; }
 
